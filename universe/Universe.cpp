@@ -1239,6 +1239,8 @@ void Universe::UpdateEmpireObjectVisibilities()
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;
 
+        Logger().debugStream() << "Detector object: " << detector->Name();
+
         int detector_id = detector->ID();
 
 
@@ -1282,15 +1284,17 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
             // get stealth
+            double stealth = 0.0;
             const Meter* stealth_meter = target->GetMeter(METER_STEALTH);
-            if (!stealth_meter) continue;
-            double stealth = stealth_meter->Current();
+            if (stealth_meter)
+                stealth = stealth_meter->Current();
 
 
             Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
-            //// zero-stealth objects are always at least basic-level visible
-            //if (stealth <= 0)
-            //    target_visibility_to_detector = VIS_BASIC_VISIBILITY;
+
+            // zero-stealth objects are always at least basic-level visible
+            if (stealth <= 0)
+                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
 
 
             // compare stealth, detection ability and distance between
@@ -1309,12 +1313,12 @@ void Universe::UpdateEmpireObjectVisibilities()
             // is compared to the distance between them. If the distance is
             // less than 10*(detector_detection - target_stealth), then the
             // target is seen by the detector with partial visibility.
-            double detect_range = 10.0*(detection - stealth);
+            double detect_range = std::max(0.0, 10.0*(detection - stealth));
 
             if (dist2 <= detect_range * detect_range)
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
 
-            // Note that owning an object grants FULL visibility
+            // Note that owning an object grants FULL visibility in the containing loop
 
 
             int target_id = target->ID();

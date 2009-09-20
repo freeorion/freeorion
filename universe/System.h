@@ -158,6 +158,7 @@ public:
     virtual void            RemoveOwner(int id);            ///< removing owner from system objects is a no-op
 
     virtual void            MovementPhase();
+    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
     virtual void            PopGrowthProductionResearchPhase();
 
     orbit_iterator          begin();                        ///< begin iterator for all system objects

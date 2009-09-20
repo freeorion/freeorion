@@ -853,6 +853,16 @@ void Fleet::PopGrowthProductionResearchPhase()
     CalculateRoute();
 }
 
+void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
+{
+    //// give fleets base stealth very high, so that they can (almost?) never be
+    //// seen by empires that don't own them, unless their ships are seen and
+    //// that visibility is propegated to the fleet that contains the ships
+    //if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+    //    if (Meter* stealth = GetMeter(METER_STEALTH))
+    //        stealth->AdjustMax(200.0);  // well over 100 (the max meter value) so that effects won't reduce to below 100
+}
+
 void Fleet::CalculateRoute() const
 {
     //Logger().debugStream() << "Fleet::CalculateRoute";
@@ -933,7 +943,7 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last
     // If no Systems in a nonempty route are known reachable, put a null pointer in the route as a sentinel indicating
     // that the route is unknown, but needs not be recomputed.
     if (travel_route.empty() && !m_travel_route.empty())
-        travel_route.push_back(0);
+        travel_route.push_back(*m_travel_route.begin());
 }
 
 std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_fleet_id) {

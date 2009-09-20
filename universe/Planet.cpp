@@ -532,10 +532,10 @@ void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
     ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
     PopCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
 
-    // give planets base stealth slightly above, so that they can't be seen from a distance without high detection ability
+    // give planets base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
         if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AdjustMax(0.001);
+            stealth->AdjustMax(5.0);
 }
 
 void Planet::PopGrowthProductionResearchPhase()

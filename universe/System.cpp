@@ -452,6 +452,14 @@ void System::MovementPhase()
 {
 }
 
+void System::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
+{
+    //// give systems base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
+    //if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+    //    if (Meter* stealth = GetMeter(METER_STEALTH))
+    //        stealth->AdjustMax(1.0);
+}
+
 void System::PopGrowthProductionResearchPhase()
 {
 }

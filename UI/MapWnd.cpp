@@ -170,6 +170,14 @@ namespace {
         return mid_length / full_length;
     }
 
+    /* Returns point that is dist ditance away from (X1, Y1) in the direction
+     * of (X2, Y2) */
+    std::pair<double, double> PositionFractionalAtDistanceBetweenPoints(double X1, double Y1, double X2, double Y2, double dist) {
+        double newX = X1 + (X2 - X1) * dist;
+        double newY = Y1 + (Y2 - Y1) * dist;
+        return std::make_pair(newX, newY);
+    }
+
     /* Returns apparent map X and Y position of an object at universe position
      * \a X and \a Y for an object that is located on a starlane between
      * systems with ids \a lane_start_sys_id and \a lane_end_sys_id
@@ -192,22 +200,12 @@ namespace {
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
         }
 
-        LaneEndpoints universe_lane_endpoints;
-        universe_lane_endpoints.X1 = prev->X();
-        universe_lane_endpoints.Y1 = prev->Y();
-        universe_lane_endpoints.X2 = next->X();
-        universe_lane_endpoints.Y2 = next->Y();
-
-
         // get fractional distance along lane that fleet's universe position is
         double dist_along_lane = FractionalDistanceBetweenPoints(prev->X(), prev->Y(), X, Y, next->X(), next->Y());
 
-
-        // get point on lane between lane endpoints that is the same fractional distance as fleet's actual location is between system locations
-        double buttonX = screen_lane_endpoints.X1 + (screen_lane_endpoints.X2 - screen_lane_endpoints.X1) * dist_along_lane;
-        double buttonY = screen_lane_endpoints.Y1 + (screen_lane_endpoints.Y2 - screen_lane_endpoints.Y1) * dist_along_lane;
-
-        return std::make_pair(buttonX, buttonY);
+        return PositionFractionalAtDistanceBetweenPoints(screen_lane_endpoints.X1, screen_lane_endpoints.Y1,
+                                                         screen_lane_endpoints.X2, screen_lane_endpoints.Y2,
+                                                         dist_along_lane);
     }
 
     /* Updated each frame to shift rendered posistion of dots that are drawn to
@@ -2126,19 +2124,35 @@ void MapWnd::DoFleetButtonsLayout()
 std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const
 {
     // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
-    int sys1_id = fleet->NextSystemID(), sys2_id = fleet->PreviousSystemID();
+    int sys1_id = fleet->PreviousSystemID(), sys2_id = fleet->NextSystemID();
     std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
     std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
     if (endpoints_it == m_starlane_endpoints.end()) {
-        Logger().errorStream() << "MovingFleetMapPositionOnLane couldn't find lane for fleet";
-        // skip current fleetbutton if there are no endpoints available
-        return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        Logger().errorStream() << "MovingFleetMapPositionOnLane couldn't find lane for fleet.  Using object positions";
+
+        const UniverseObject* obj1 = GetUniverse().Object(sys1_id);
+        const UniverseObject* obj2 = GetUniverse().Object(sys2_id);
+
+        if (!obj1 || !obj2) {
+            Logger().errorStream() << "... and MovingFleetMapPositionOnLane couldn't even find objects with ids " << sys1_id << " and " << sys2_id << " to use instead!";
+            // skip current fleetbutton if there are no endpoints available
+            return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        }
+
+        // return actual position of fleet on starlane - ignore the distance
+        // away from the star centre at which starlane endpoints should appear
+        double X1 = obj1->X(), Y1 = obj1->Y(), X2 = obj2->X(), Y2 = obj2->Y(), X = fleet->X(), Y = fleet->Y();
+
+        // get fractional distance along lane that fleet's universe position is
+        double dist = FractionalDistanceBetweenPoints(X1, Y1, X, Y, X2, Y2);
+
+        return PositionFractionalAtDistanceBetweenPoints(X1, Y1, X2, Y2, dist);
     }
-    const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
 
     // return apparent position of fleet on starlane
+    const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
     return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
 }
 
