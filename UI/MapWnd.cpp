@@ -1963,7 +1963,7 @@ void MapWnd::SetFleetMovementLine(const Fleet* fleet)
     m_fleet_lines[fleet] = MovementLineData(fleet->MovePath(), m_starlane_endpoints, line_colour);
 }
 
-void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<System*>& travel_route)
+void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<int>& travel_route)
 {
     // ensure passed fleet exists
     if (!fleet)
@@ -1994,7 +1994,7 @@ void MapWnd::SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<S
     m_projected_fleet_lines[fleet] = MovementLineData(path, m_starlane_endpoints, line_colour);
 }
 
-void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<System*>& travel_route)
+void MapWnd::SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<int>& travel_route)
 {
     for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
         SetProjectedFleetMovementLine(*it, travel_route);
@@ -3007,6 +3007,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Universe& universe = GetUniverse();
 
     std::set<int> fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
@@ -3035,13 +3036,20 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<System*> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
+        std::list<int> route = GetUniverse().ShortestPath(start_system, system_id, empire_id).first;
 
         // disallow "offroad" (direct non-starlane non-wormhole) travel
-        if (route.size() == 2 && *route.begin() != *route.rbegin() &&
-            !(*route.begin())->HasStarlaneTo((*route.rbegin())->ID()) && !(*route.begin())->HasWormholeTo((*route.rbegin())->ID()) &&
-            !(*route.rbegin())->HasStarlaneTo((*route.begin())->ID()) && !(*route.rbegin())->HasWormholeTo((*route.begin())->ID())) {
-            continue;
+        if (route.size() == 2 && *route.begin() != *route.rbegin()) {
+            int begin_id = *route.begin();
+            const System* begin_sys = universe.Object<System>(begin_id);
+            int end_id = *route.rbegin();
+            const System* end_sys = universe.Object<System>(end_id);
+
+            if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
+                !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
+            {
+                continue;
+            }
         }
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so

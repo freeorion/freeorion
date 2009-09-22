@@ -171,9 +171,8 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range. */
-    std::pair<std::list<System*>, double>
-                            ShortestPath(int system1_id, int system2_id,
-                                         int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<int>, double>
+                            ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the sequence of systems, including \a system1 and \a system2,
       * that defines the path with the fewest jumps from \a system1 to
@@ -182,17 +181,15 @@ public:
       * visiblity for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
-    std::pair<std::list<System*>, int>
-                            LeastJumpsPath(int system1_id, int system2_id,
-                                           int empire_id = ALL_EMPIRES) const;
+    std::pair<std::list<int>, int>
+                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
       * the visiblity for empire \a empire_id, or without regard to visibility
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
-    bool                    SystemsConnected(int system1_id, int system2_id,
-                                             int empire_id = ALL_EMPIRES) const;
+    bool                    SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns true iff \a system is reachable from another system (i.e. it
       * has at least one known starlane to it).   This does not guarantee that
@@ -203,8 +200,7 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the system ID is
       * out of range. */
-    bool                    SystemReachable(int system_id,
-                                            int empire_id = ALL_EMPIRES) const;
+    bool                    SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
@@ -213,8 +209,7 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
       * ID is out of range. */
-    std::map<double, System*>   ImmediateNeighbors(int system_id,
-                                                   int empire_id = ALL_EMPIRES) const;
+    std::map<double, int>   ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects

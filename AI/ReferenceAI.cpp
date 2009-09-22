@@ -61,8 +61,7 @@ void ReferenceAI::GenerateOrders()
 }
 
 void ReferenceAI::HandleChatMessage(int sender_id, const std::string& msg)
-{
-}
+{}
 
 void ReferenceAI::Explore(Fleet* fleet) {
     if (!fleet) return;
@@ -71,7 +70,7 @@ void ReferenceAI::Explore(Fleet* fleet) {
 
     Universe& universe = GetUniverse();
     int empire_id = AIInterface::EmpireID();
-     
+
     // ensure this player owns this fleet
     const std::set<int>& owners = fleet->Owners();
     if (owners.size() != 1 || *(owners.begin()) != empire_id) return; // don't own fleet
@@ -83,7 +82,7 @@ void ReferenceAI::Explore(Fleet* fleet) {
     int start_id = fleet->SystemID();   // system where fleet is presently
 
     Logger().debugStream() << "telling fleet to explore2";
-    
+
     // attempt to find an unexplored system that can be explored (fleet can get to)
     std::vector<System*> systems = universe.FindObjects<System>();
     for (std::vector<System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
@@ -91,21 +90,21 @@ void ReferenceAI::Explore(Fleet* fleet) {
         int dest_id = system->ID();   // system to go to
         if (empire->HasExploredSystem(dest_id)) continue;   // already explored system
         if (m_fleet_exploration_targets_map.find(dest_id) != m_fleet_exploration_targets_map.end()) continue;   // another fleet has been dispatched
-        
+
         Logger().debugStream() << "telling fleet to explore3";
-        
+
         // get path to destination.  don't care that it's short, but just that it exists
-        std::list<System*> route = universe.ShortestPath(start_id, dest_id, empire_id).first;
-        
+        std::list<int> route = universe.ShortestPath(start_id, dest_id, empire_id).first;
+
         if (route.empty()) continue; // can't get to system (with present starlanes knowledge)
 
         Logger().debugStream() << "telling fleet to explore4";
-        
+
         // order ship to go ot system
         AIInterface::IssueFleetMoveOrder(fleet->ID(), dest_id);
 
         Logger().debugStream() << "telling fleet to explore5";
-        
+
         // mark system as targeted for exploration, so another ship isn't sent to it redundantly
         m_fleet_exploration_targets_map.insert(std::pair<int, int>(dest_id, fleet->ID()));
 
@@ -114,8 +113,7 @@ void ReferenceAI::Explore(Fleet* fleet) {
 }
 
 void ReferenceAI::ColonizeSomewhere(Fleet* fleet)
-{
-}
+{}
 
 void ReferenceAI::SplitFleet(Fleet* fleet)
 {
@@ -124,7 +122,7 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
  
     Universe& universe = GetUniverse();
     int empire_id = AIInterface::EmpireID();
-     
+
     // ensure this player owns this fleet
     const std::set<int>& owners = fleet->Owners();
 
@@ -138,7 +136,7 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
         const std::set<int>& ship_owners = ship->Owners();
 
         if (ship_owners.size() != 1 || *(ship_owners.begin()) != empire_id) continue; // don't own ship
-    
+
         ship_ids_to_remove.insert(*ship_it);
     }
 
@@ -152,7 +150,6 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
         std::string fleet_name = UserString("FW_NEW_FLEET_NAME");
 
         AIInterface::IssueNewFleetOrder(fleet_name, ship_ids);
-
     }
 }
 

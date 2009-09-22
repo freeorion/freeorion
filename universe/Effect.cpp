@@ -124,9 +124,10 @@ namespace {
                 owner_empire->AddExploredSystem(system_id);
     }
 
-    /** Resets the previous and next systems of \a fleet and recalcultes / resets the fleet's move route.  Used after a fleet
-        has been moved with the MoveTo effect, as its previous route was assigned based on its previous location, and may not
-        be valid for its new location. */
+    /** Resets the previous and next systems of \a fleet and recalcultes /
+      * resets the fleet's move route.  Used after a fleet has been moved with
+      * the MoveTo effect, as its previous route was assigned based on its
+      * previous location, and may not be valid for its new location. */
     void UpdateFleetRoute(Fleet* fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
             Logger().errorStream() << "UpdateFleetRoute passed a null fleet pointer";
@@ -135,10 +136,14 @@ namespace {
 
         Universe& universe = GetUniverse();
 
-        System* next_system = universe.Object<System>(new_next_system);
+        const System* next_system = universe.Object<System>(new_next_system);
         if (!next_system) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
+        }
+
+        if (new_previous_system != UniverseObject::INVALID_OBJECT_ID && !universe.Object<System>(new_previous_system)) {
+            Logger().errorStream() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
         }
 
         fleet->SetNextAndPreviousSystems(new_next_system, new_previous_system);
@@ -157,12 +162,12 @@ namespace {
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<System*>, double> route_pair = universe.ShortestPath(start_system, dest_system, owner);
+        std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, owner);
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
         if (route_pair.first.empty())
-            route_pair.first.push_back(next_system);
+            route_pair.first.push_back(new_next_system);
 
 
         // set fleet with newly recalculated route

@@ -43,14 +43,15 @@ public:
 
     virtual const std::string&          PublicName(int empire_id) const;
 
-    /** Returns the list of systems that this fleet will move through en route to its destination (may be empty). 
-        If this fleet is currently at a system, that system will be the first one in the list. */
-    const std::list<System*>&           TravelRoute() const;
+    /** Returns the list of systems that this fleet will move through en route
+      * to its destination (may be empty).  If this fleet is currently at a
+      * system, that system will be the first one in the list. */
+    const std::list<int>&               TravelRoute() const;
 
     /** Returns a list of locations at which notable events will occur along the fleet's path if it follows the 
         specified route.  It is assumed in the calculation that the fleet starts its move path at its actual current
         location, however the fleet's current location will not be on the list, even if it is currently in a system. */
-    std::list<MovePathNode>             MovePath(const std::list<System*>& route) const;
+    std::list<MovePathNode>             MovePath(const std::list<int>& route) const;
     std::list<MovePathNode>             MovePath() const;                   ///< Returns MovePath for fleet's current TravelRoute
     std::pair<int, int>                 ETA() const;                                            ///< Returns the number of turns which must elapse before the fleet arrives at its current final destination and the turns to the next system, respectively.
     std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
@@ -79,7 +80,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    SetRoute(const std::list<System*>& route);      ///< orders the fleet to move through the systems in the list, in order
+    void                    SetRoute(const std::list<int>& route);      ///< orders the fleet to move through the systems in the list, in order
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
@@ -109,7 +110,7 @@ public:
 private:
     void                    CalculateRoute() const;                         ///< sets m_travel_route and m_travel_distance to their proper values based on the other member data
     void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
-    void                    ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
+    void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 
     ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id
 
@@ -127,7 +128,7 @@ private:
       * the list will be the next system the fleet will reach along its path.  The list may also contain a
       * single null pointer, which indicates that the route is unknown.  The list may also be empty, which
       * indicates that it has not yet been caluclated, and CalculateRoute should be called. */
-    mutable std::list<System*>  m_travel_route;
+    mutable std::list<int>      m_travel_route;
     mutable double              m_travel_distance;
 
     friend class boost::serialization::access;
@@ -142,11 +143,11 @@ BOOST_CLASS_VERSION(Fleet, 1)
 template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility          vis;
-    int                 moving_to;
-    std::list<System*>  travel_route;
-    double              travel_distance;
-    ShipIDSet           ships;
+    Visibility      vis;
+    int             moving_to;
+    std::list<int>  travel_route;
+    double          travel_distance;
+    ShipIDSet       ships;
 
     if (Archive::is_saving::value)
         vis = GetVisibility(Universe::s_encoding_empire);
@@ -161,8 +162,8 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
             travel_distance = m_travel_distance;
             if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != m_travel_route.size()) {
                 if (moving_to == m_moving_to)
-                    moving_to = travel_route.back()->ID();
-                travel_distance -= GetUniverse().ShortestPath(travel_route.back()->ID(), m_travel_route.back()->ID()).second;
+                    moving_to = travel_route.back();
+                travel_distance -= GetUniverse().ShortestPath(travel_route.back(), m_travel_route.back()).second;
             }
         }
 

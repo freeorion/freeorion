@@ -15,8 +15,8 @@ namespace {
     const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
     const double FLEET_MOVEMENT_EPSILON = 1.0e-1;   // how close a fleet needs to be to a system to have arrived in the system
 
-    inline bool SystemNotReachable(System* system, int empire_id) {
-        return !GetUniverse().SystemReachable(system->ID(), empire_id);
+    bool SystemHasNoVisibleStarlanes(int system_id, int empire_id) {
+        return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id);
     }
 
     /** returns true iff one of the empires with the indiated ids can provide
@@ -89,11 +89,11 @@ const std::string& Fleet::PublicName(int empire_id) const
         return UserString("FW_FOREIGN_FLEET");
 }
 
-const std::list<System*>& Fleet::TravelRoute() const
+const std::list<int>& Fleet::TravelRoute() const
 {
     CalculateRoute();
     //Logger().debugStream() << "fleet travel route: ";
-    //for (std::list<System*>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it)
+    //for (std::list<int>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it)
     //    Logger().debugStream() << "... " << (*it)->Name();
     return m_travel_route;
 }
@@ -103,7 +103,7 @@ std::list<MovePathNode> Fleet::MovePath() const
     return MovePath(TravelRoute());
 }
 
-std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
+std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 {
     std::list<MovePathNode> retval = std::list<MovePathNode>();
 
@@ -153,8 +153,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     // get iterator pointing to System* on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
     // if this fleet is not in a system, the iterator will point to the first system in the route
-    std::list<System*>::const_iterator route_it = route.begin();
-    if ((*route_it)->ID() == SystemID())
+    std::list<int>::const_iterator route_it = route.begin();
+    if (*route_it == SystemID())
         ++route_it;     // first system in route is current system of this fleet.  skip to the next system
     if (route_it == route.end())
         return retval;  // current system of this fleet is the *only* system in the route.  path is empty.
@@ -163,7 +163,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
     // get current, previous and next systems of fleet
     const System* cur_system = this->GetSystem();                                   // may be 0
     const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be 0 if this fleet is not moving or ordered to move
-    const System* next_system = *route_it;  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    const System* next_system = universe.Object<System>(*route_it);  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         //Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
         return retval;
@@ -297,7 +297,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<System*>& route) const
                 break;
 
             // update next system on route and distance to it from current position
-            next_system = *route_it;
+            next_system = universe.Object<System>(*route_it);
             next_x = next_system->X();
             next_y = next_system->Y();
         }
@@ -484,7 +484,7 @@ std::vector<int> Fleet::FindObjectIDs() const
 
 bool Fleet::UnknownRoute() const
 {
-    return m_travel_route.size() == 1 && m_travel_route.front()->ID() == UniverseObject::INVALID_OBJECT_ID;
+    return m_travel_route.size() == 1 && m_travel_route.front() == UniverseObject::INVALID_OBJECT_ID;
 }
 
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
@@ -492,7 +492,7 @@ UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
     return visitor.Visit(const_cast<Fleet* const>(this));
 }
 
-void Fleet::SetRoute(const std::list<System*>& route)
+void Fleet::SetRoute(const std::list<int>& route)
 {
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
@@ -500,53 +500,67 @@ void Fleet::SetRoute(const std::list<System*>& route)
     if (UnknownRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an unknown route.");
 
-    if (m_prev_system != SystemID() && m_prev_system == route.front()->ID() && !CanChangeDirectionEnRoute())
+    if (m_prev_system != SystemID() && m_prev_system == route.front() && !CanChangeDirectionEnRoute())
         throw std::invalid_argument("Fleet::SetRoute() : Illegally attempted to change a fleet's direction while it was in transit.");
 
     m_travel_route = route;
+
+    const Universe& universe = GetUniverse();
 
     // calculate length of line segments between systems on route, and sum up to determine length of route between
     // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
     // route length, or this may itself be the total route length if the fleet is at the first system on the route).
     m_travel_distance = 0.0;
-    for (std::list<System*>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it) {
-        std::list<System*>::const_iterator next_it = it;    ++next_it;
+    for (std::list<int>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it) {
+        std::list<int>::const_iterator next_it = it;    ++next_it;
 
         if (next_it == m_travel_route.end())
             break;  // current system is the last on the route, so don't need to add any additional distance.
 
-        const System* cur_sys = *it;
-        const System* next_sys = *next_it;
-        if (!cur_sys || !next_sys)
-            throw std::invalid_argument("Fleet::SetRoute() : passed a null System pointer on route");
+        const System* cur_sys = universe.Object<System>(*it);
+        if (!cur_sys) {
+            Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *it;
+            return;
+        }
+
+        const System* next_sys = universe.Object<System>(*next_it);
+        if (!next_sys) {
+            Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
+            return;
+        }
 
         double dist_x = next_sys->X() - cur_sys->X();
         double dist_y = next_sys->Y() - cur_sys->Y();
-        m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
+        m_travel_distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);
     }
 
 
     // if resetting to no movement while in a system
-    if (SystemID() != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_travel_route.back()->ID()) {
+    if (SystemID() != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_travel_route.back()) {
         m_moving_to = UniverseObject::INVALID_OBJECT_ID;
         m_next_system = UniverseObject::INVALID_OBJECT_ID;
         m_prev_system = UniverseObject::INVALID_OBJECT_ID;
+
     } else {
         // if we're already moving, add in the distance from where we are to the first system in the route
-        if (SystemID() != route.front()->ID()) {
-            System* starting_system = route.front();
-            double dist_x = starting_system->X() - X();
-            double dist_y = starting_system->Y() - Y();
-            m_travel_distance += std::sqrt(dist_x * dist_x + dist_y * dist_y);
+        if (SystemID() != route.front()) {
+            const System* starting_system = universe.Object<System>(route.front());
+            if (!starting_system) {
+                Logger().errorStream() << "Fleet::SetRoute couldn't get system with id " << route.front();
+                return;
+            }
+            double dist_x = starting_system->X() - this->X();
+            double dist_y = starting_system->Y() - this->Y();
+            m_travel_distance += std::sqrt(dist_x*dist_x + dist_y*dist_y);
         }
-        m_moving_to = m_travel_route.back()->ID();
-        if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()->ID()) {
+        m_moving_to = m_travel_route.back();
+        if (m_prev_system != SystemID() && m_prev_system == m_travel_route.front()) {
             m_prev_system = m_next_system;      // if already in transit and turning around, swap prev and next
-        } else if (SystemID() == route.front()->ID()) {
+        } else if (SystemID() == route.front()) {
             m_prev_system = SystemID();
         }
-        std::list<System*>::const_iterator it = m_travel_route.begin();
-        m_next_system = m_prev_system == SystemID() ? (*++it)->ID() : (*it)->ID();
+        std::list<int>::const_iterator it = m_travel_route.begin();
+        m_next_system = m_prev_system == SystemID() ? (*++it) : (*it);
     }
 
     StateChangedSignal();
@@ -865,23 +879,49 @@ void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void Fleet::CalculateRoute() const
 {
+    const Universe& universe = GetUniverse();
+    int owner = ALL_EMPIRES;
+    if (Owners().size() == 1)
+        owner = *Owners().begin();
+
     //Logger().debugStream() << "Fleet::CalculateRoute";
     if (m_moving_to != INVALID_OBJECT_ID && m_travel_route.empty()) {
         m_travel_distance = 0.0;
-        if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) { // if we haven't actually left yet, we have to move from whichever system we are at now
-            std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(m_prev_system, m_moving_to, *Owners().begin());
+        m_travel_route.clear();
+
+        if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
+            // if we haven't actually left yet, we have to move from whichever system we are at now
+
+            std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
             m_travel_route = path.first;
             m_travel_distance = path.second;
-        } else { // if we're between systems, the shortest route may be through either one
-            if (CanChangeDirectionEnRoute()) {
-                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(m_next_system, m_moving_to, *Owners().begin());
-                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(m_prev_system, m_moving_to, *Owners().begin());
-                double dist_x = path1.first.front()->X() - X();
-                double dist_y = path1.first.front()->Y() - Y();
-                double dist1 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
-                dist_x = path2.first.front()->X() - X();
-                dist_y = path2.first.front()->Y() - Y();
-                double dist2 = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+
+        } else {
+
+            // if we're between systems, the shortest route may be through either one
+            if (this->CanChangeDirectionEnRoute()) {
+
+                std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, m_moving_to, owner);
+                const UniverseObject* obj = universe.Object(path1.first.front());
+                if (!obj) {
+                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
+                    return;
+                }
+                double dist_x = obj->X() - this->X();
+                double dist_y = obj->Y() - this->Y();
+                double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
+
+                std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, m_moving_to, owner);
+                obj = universe.Object(path2.first.front());
+                if (!obj) {
+                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
+                    return;
+                }
+                dist_x = obj->X() - this->X();
+                dist_y = obj->Y() - this->Y();
+                double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
+
+                // pick whichever path is quicker
                 if (dist1 + path1.second < dist2 + path2.second) {
                     m_travel_route = path1.first;
                     m_travel_distance = dist1 + path1.second;
@@ -889,11 +929,18 @@ void Fleet::CalculateRoute() const
                     m_travel_route = path2.first;
                     m_travel_distance = dist2 + path2.second;
                 }
+
             } else {
-                std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(m_next_system, m_moving_to, *Owners().begin());
-                double dist_x = route.first.front()->X() - X();
-                double dist_y = route.first.front()->Y() - Y();
-                double dist = std::sqrt(dist_x * dist_x + dist_y * dist_y);
+
+                std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, m_moving_to, owner);
+                const UniverseObject* obj = universe.Object(route.first.front());
+                if (!obj) {
+                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
+                    return;
+                }
+                double dist_x = obj->X() - this->X();
+                double dist_y = obj->Y() - this->Y();
+                double dist = std::sqrt(dist_x*dist_x + dist_y*dist_y);
                 m_travel_route = route.first;
                 m_travel_distance = dist + route.second;
             }
@@ -917,31 +964,38 @@ void Fleet::RecalculateFleetSpeed()
     }
 }
 
-void Fleet::ShortenRouteToEndAtSystem(std::list<System*>& travel_route, int last_system)
+void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system)
 {
-    std::list<System*>::iterator visible_end_it;
+    std::list<int>::iterator visible_end_it;
     if (last_system != m_moving_to) {
-        // The system the fleet will appear to be moving to it's actually it's final destination.  remove any
-        // extra systems from the route after the apparent destination
-        System* final_destination = GetUniverse().Object<System>(last_system);
-        assert(std::find(m_travel_route.begin(), m_travel_route.end(), final_destination) != m_travel_route.end());
-        visible_end_it = ++std::find(m_travel_route.begin(), m_travel_route.end(), final_destination);
+        visible_end_it = std::find(m_travel_route.begin(), m_travel_route.end(), last_system);
+
+
+        // if requested last system not in route, do nothing
+        if (visible_end_it == m_travel_route.end())
+            return;
+
+        ++visible_end_it;
+
     } else {
         visible_end_it = m_travel_route.end();
     }
 
-    int fleet_owner = -1;
+    // remove any extra systems from the route after the apparent destination
+
+    int fleet_owner = ALL_EMPIRES;
     const std::set<int>& owners = Owners();
     if (owners.size() == 1)
         fleet_owner = *(owners.begin());
     const Empire* empire = Empires().Lookup(fleet_owner);
-    if (!empire)        // may occur for destroyed objects whose previous owner has since been eliminated
-        fleet_owner = -1;
+    if (!empire)                    // may occur for destroyed objects whose previous owner has since been eliminated
+        fleet_owner = ALL_EMPIRES;
 
-    std::list<System*>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemNotReachable, _1, fleet_owner));
+    std::list<int>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemHasNoVisibleStarlanes, _1, fleet_owner));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
-    // If no Systems in a nonempty route are known reachable, put a null pointer in the route as a sentinel indicating
-    // that the route is unknown, but needs not be recomputed.
+
+    // If no Systems in a nonempty route are known reachable, default to just
+    // showing the next system on the route.
     if (travel_route.empty() && !m_travel_route.empty())
         travel_route.push_back(*m_travel_route.begin());
 }

@@ -190,9 +190,10 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest
     m_start_system(start_system),
     m_dest_system(dest_system)
 {
-    std::pair<std::list<System*>, double> route = GetUniverse().ShortestPath(start_system, dest_system, empire);
-    for (std::list<System*>::iterator it = route.first.begin(); it != route.first.end(); ++it)
-        m_route.push_back((*it)->ID());
+    std::pair<std::list<int>, double> short_path = GetUniverse().ShortestPath(start_system, dest_system, empire);
+
+    m_route.clear();
+    std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
@@ -247,23 +248,21 @@ void FleetMoveOrder::ExecuteImpl() const
 
 
     // convert list of ids to list of System
-    std::list<System*> route;
-    for (unsigned int i = 0; i < m_route.size(); ++i)
-        route.push_back(universe.Object<System>(m_route[i]));
+    std::list<int> route_list;
+    std::copy(m_route.begin(), m_route.end(), std::back_inserter(route_list));
 
 
     // validate route.  Only allow travel between systems connected in series by starlanes known to this fleet's owner.
 
 
-
     // check destination validity: disallow movement that's out of range
-    std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route));
+    std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route_list));
     if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE) {
         Logger().debugStream() << "FleetMoveOrder::ExecuteImpl rejected out of range move order";
         return;
     }
 
-    fleet->SetRoute(route);
+    fleet->SetRoute(route_list);
 }
 
 

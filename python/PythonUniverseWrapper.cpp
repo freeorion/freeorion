@@ -24,20 +24,18 @@ namespace {
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
     std::vector<int>        LeastJumpsPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<System*>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
+        std::pair<std::list<int>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
         std::vector<int> retval;
-        for (std::list<System*>::const_iterator it = path.first.begin(); it != path.first.end(); ++it)
-            retval.push_back((*it)->ID());
+        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
 
     boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
     std::vector<int>        ShortestPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<System*>, int> path = universe->ShortestPath(start_sys, end_sys, empire_id);
+        std::pair<std::list<int>, int> path = universe->ShortestPath(start_sys, end_sys, empire_id);
         std::vector<int> retval;
-        for (std::list<System*>::const_iterator it = path.first.begin(); it != path.first.end(); ++it)
-            retval.push_back((*it)->ID());
+        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
 
@@ -110,7 +108,7 @@ namespace FreeOrionPython {
             .add_property("systemIDs",          make_function(&Universe::FindObjectIDs<System>,         return_value_policy<return_by_value>()))
             .add_property("fleetIDs",           make_function(&Universe::FindObjectIDs<Fleet>,          return_value_policy<return_by_value>()))
 
-            .def("systemHasStarlane",           &Universe::SystemReachable)
+            .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
             .def("systemsConnected",            &Universe::SystemsConnected)
 
             // put as part of universe class so one doesn't need a UniverseObject object in python to access these

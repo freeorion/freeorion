@@ -1603,21 +1603,21 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
         if (!target_system)
             target_system = universe_object_cast<const System*>(target);
         if (source_system && target_system) {
-            std::pair<std::list<System*>, double> path = GetUniverse().ShortestPath(source_system->ID(), target_system->ID());
+            std::pair<std::list<int>, double> path = GetUniverse().ShortestPath(source_system->ID(), target_system->ID());
             if (!path.first.empty()) { // if path.first is empty, no path exists between the systems
                 return (static_cast<int>(path.first.size()) - 1) <= jump_limit;
             }
         } else if (source_system) {
             if (const Fleet* target_fleet = FleetFromObject(target)) {
-                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->PreviousSystemID());
-                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->NextSystemID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->PreviousSystemID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
            if (const Fleet* source_fleet = FleetFromObject(source)) {
-                std::pair<std::list<System*>, double> path1 = GetUniverse().ShortestPath(source_fleet->PreviousSystemID(), target_system->ID());
-                std::pair<std::list<System*>, double> path2 = GetUniverse().ShortestPath(source_fleet->NextSystemID(), target_system->ID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().ShortestPath(source_fleet->PreviousSystemID(), target_system->ID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().ShortestPath(source_fleet->NextSystemID(), target_system->ID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1 <= jump_limit;
             }
@@ -1629,10 +1629,10 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
                 int source_fleet_next_system_id = source_fleet->NextSystemID();
                 int target_fleet_prev_system_id = target_fleet->PreviousSystemID();
                 int target_fleet_next_system_id = target_fleet->NextSystemID();
-                std::pair<std::list<System*>, int> path1 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<System*>, int> path2 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_next_system_id);
-                std::pair<std::list<System*>, int> path3 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<System*>, int> path4 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_next_system_id);
+                std::pair<std::list<int>, int> path1 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<int>, int> path2 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_next_system_id);
+                std::pair<std::list<int>, int> path3 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<int>, int> path4 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_next_system_id);
                 if (int jumps = static_cast<int>(std::max(std::max(path1.second, path2.second),
                                                           std::max(path3.second, path4.second))))
                     return jumps - 1 <= jump_limit;
@@ -1644,26 +1644,70 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
 }
 
 ///////////////////////////////////////////////////////////
-// EffectTarget                                          //
+// ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
-Condition::EffectTarget::EffectTarget()
+Condition::ExploredByEmpire::ExploredByEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids) :
+    m_empire_ids(empire_ids)
 {}
 
-std::string Condition::EffectTarget::Description(bool negated/* = false*/) const
+Condition::ExploredByEmpire::~ExploredByEmpire()
 {
-    std::string retval;
-    // TODO
+    for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+        delete m_empire_ids[i];
+    }
+}
+
+std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const
+{
+    if (m_empire_ids.size() == 1) {
+        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0))->Name() : m_empire_ids[0]->Description();
+        std::string description_str = "DESC_EXPLORED_BY_SINGLE_EMPIRE";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % value_str);
+    } else {
+        std::string values_str;
+        for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0))->Name() : m_empire_ids[i]->Description();
+            if (2 <= m_empire_ids.size() && i < m_empire_ids.size() - 2) {
+                values_str += ", ";
+            } else if (i == m_empire_ids.size() - 2) {
+                values_str += m_empire_ids.size() < 3 ? " " : ", ";
+                values_str += UserString("OR");
+                values_str += " ";
+            }
+        }
+        std::string description_str = "DESC_EXPLORED_BY_EMPIRES";
+        if (negated)
+            description_str += "_NOT";
+        return str(format(UserString(description_str)) % values_str);
+    }
+}
+
+std::string Condition::ExploredByEmpire::Dump() const
+{
+    std::string retval = DumpIndent() + "ExploredByEmpire empire = ";
+    if (m_empire_ids.size() == 1) {
+        retval += m_empire_ids[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+            retval += m_empire_ids[i]->Dump() + " " ;
+        }
+        retval += "]\n";
+    }
     return retval;
 }
 
-std::string Condition::EffectTarget::Dump() const
+bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return "";
-}
-
-bool Condition::EffectTarget::Match(const UniverseObject* source, const UniverseObject* target) const
-{
-    return false/*TODO*/;
+    const EmpireManager& empires = Empires();
+    for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
+        const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target));
+        if (empire->HasExploredSystem(target->ID()))
+            return true;
+    }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////

@@ -35,7 +35,7 @@
 #include <stdexcept>
 
 namespace {
-    struct vertex_system_pointer_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
+    struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
 
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
 
@@ -96,11 +96,11 @@ namespace {
     template <class Graph>
     int SystemGraphIndex(const Graph& graph, int system_id)
     {
-        typedef typename boost::property_map<Graph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
+        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
+        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
 
         for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
-            const int loop_sys_id = pointer_property_map[i]->ID();    // get system ID of this vertex
+            const int loop_sys_id = pointer_property_map[i];    // get system ID of this vertex
             if (loop_sys_id == system_id)
                 return i;
         }
@@ -114,15 +114,15 @@ namespace {
        has just that system in it, and the path lenth is 0.  If there is no path between the two vertices, then
        the list is empty and the path length is -1.0 */
     template <class Graph>
-    std::pair<std::list<System*>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
+    std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
     {
-        typedef typename boost::property_map<Graph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-        typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type   ConstIndexPropertyMap;
-        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
+        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type     ConstSystemIDPropertyMap;
+        typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
+        typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type   ConstEdgeWeightPropertyMap;
 
-        std::pair<std::list<System*>, double> retval;
+        std::pair<std::list<int>, double> retval;
 
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
+        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
 
 
         int system1_index = SystemGraphIndex(graph, system1_id);
@@ -131,8 +131,7 @@ namespace {
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            System* system = pointer_property_map[system2_index];
-            retval.first.push_back(system);
+            retval.first.push_back(system2_id);
             retval.second = 0.0;    // no jumps needed -> 0 distance
             return retval;
         }
@@ -188,20 +187,19 @@ namespace {
        vertex as system2_id, the path has just that system in it, and the path lenth is 0.  If there is no
        path between the two vertices, then the list is empty and the path length is -1 */
     template <class Graph>
-    std::pair<std::list<System*>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
+    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
     {
-        typedef typename boost::property_map<Graph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
 
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
-        std::pair<std::list<System*>, int> retval;
+        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
+        std::pair<std::list<int>, int> retval;
 
         int system1_index = SystemGraphIndex(graph, system1_id);
         int system2_index = SystemGraphIndex(graph, system2_id);
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
-            System* system = pointer_property_map[system2_index];
-            retval.first.push_back(system);
+            retval.first.push_back(system2_id);
             retval.second = 0;  // no jumps needed
             return retval;
         }
@@ -255,15 +253,15 @@ namespace {
     }
 
     template <class Graph>
-    std::map<double, System*> ImmediateNeighborsImpl(const Graph& graph, int system_id)
+    std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
-        typedef typename boost::property_map<Graph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
+        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
         typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type ConstEdgeWeightPropertyMap;
 
-        std::map<double, System*> retval;
+        std::map<double, int> retval;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-        ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), graph);
+        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
         std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(SystemGraphIndex(graph, system_id), graph);
         for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
             retval[edge_weight_map[*it]] = pointer_property_map[boost::target(*it, graph)];
@@ -279,7 +277,7 @@ const int ALL_EMPIRES = -1;
 /////////////////////////////////////////////
 struct Universe::GraphImpl
 {
-    typedef boost::property<vertex_system_pointer_t, System*,
+    typedef boost::property<vertex_system_id_t, int,
                             boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
     typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
@@ -310,7 +308,7 @@ struct Universe::GraphImpl
                 return false;
 
             // for reverse-lookup System universe ID from graph indices...
-            ConstSystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), *m_graph);
+            ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), *m_graph);
 
 
             Universe& universe = GetUniverse();
@@ -318,8 +316,7 @@ struct Universe::GraphImpl
 
             // get system id from graph index
             int sys_graph_index_1 = boost::source(edge, *m_graph);
-            const System* system1 = pointer_property_map[sys_graph_index_1];
-            int sys_id_1 = system1->ID();
+            int sys_id_1 = pointer_property_map[sys_graph_index_1];
 
             Visibility vis1 = universe.GetObjectVisibilityByEmpire(sys_id_1, m_empire_id);
             if (vis1 < VIS_BASIC_VISIBILITY)
@@ -328,8 +325,7 @@ struct Universe::GraphImpl
 
             // get system id from graph index
             int sys_graph_index_2 = boost::source(edge, *m_graph);
-            const System* system2 = pointer_property_map[sys_graph_index_2];
-            int sys_id_2 = system2->ID();
+            int sys_id_2 = pointer_property_map[sys_graph_index_2];
 
             Visibility vis2 = universe.GetObjectVisibilityByEmpire(sys_id_2, m_empire_id);
             if (vis2 < VIS_BASIC_VISIBILITY)
@@ -346,8 +342,8 @@ struct Universe::GraphImpl
     typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
 
     // declare property map types for properties declared above
-    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::const_type ConstSystemPointerPropertyMap;
-    typedef boost::property_map<SystemGraph, vertex_system_pointer_t>::type       SystemPointerPropertyMap;
+    typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
+    typedef boost::property_map<SystemGraph, vertex_system_id_t>::type       SystemPointerPropertyMap;
     typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type   ConstIndexPropertyMap;
     typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type         IndexPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
@@ -546,7 +542,7 @@ double Universe::LinearDistance(int system1_id, int system2_id) const
     return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
 }
 
-std::pair<std::list<System*>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
+std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     double linear_distance = LinearDistance(system1_id, system2_id);
     if (empire_id == ALL_EMPIRES) {
@@ -556,10 +552,10 @@ std::pair<std::list<System*>, double> Universe::ShortestPath(int system1_id, int
         if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
             return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance);
     }
-    return std::pair<std::list<System*>, double>();
+    return std::pair<std::list<int>, double>();
 }
 
-std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
+std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
         return LeastJumpsPathImpl(m_graph_impl->m_system_graph, system1_id, system2_id);
@@ -568,16 +564,16 @@ std::pair<std::list<System*>, int> Universe::LeastJumpsPath(int system1_id, int 
         if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
             return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id);
     }
-    return std::pair<std::list<System*>, int>();
+    return std::pair<std::list<int>, int>();
 }
 
 bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const
 {
-    std::pair<std::list<System*>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
+    std::pair<std::list<int>, int> path = LeastJumpsPath(system1_id, system2_id, empire_id);
     return (!path.first.empty());
 }
 
-bool Universe::SystemReachable(int system_id, int empire_id) const
+bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES) {
         return SystemReachableImpl(m_graph_impl->m_system_graph, system_id);
@@ -589,7 +585,7 @@ bool Universe::SystemReachable(int system_id, int empire_id) const
     return false;
 }
 
-std::map<double, System*> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
+std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
         return ImmediateNeighborsImpl(m_graph_impl->m_system_graph, system_id);
@@ -598,7 +594,7 @@ std::map<double, System*> Universe::ImmediateNeighbors(int system_id, int empire
         if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
             return ImmediateNeighborsImpl(*graph_it->second, system_id);
     }
-    return std::map<double, System*>();
+    return std::map<double, int>();
 }
 
 int Universe::Insert(UniverseObject* obj)
@@ -1510,7 +1506,7 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
     // to examine
     std::list<int> accessibleSystemsList;
     std::list<int>::iterator sysListIter, sysListEnd;
-    
+
     // map using star index number as the key, and also storing the number of starlane
     // jumps away from system1 a given system is.  this is used to determine if a
     // system has already been added to the accessibleSystemsList without needing
@@ -1536,7 +1532,7 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
     if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
     if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
     if (system1 < 0 || system2 < 0) return false; // out of range
-    
+
     // add starting system to list and set of accessible systems
     accessibleSystemsList.push_back(system1);
     accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
@@ -1546,17 +1542,17 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
     sysListEnd = accessibleSystemsList.end();
     while (sysListIter != sysListEnd) {
         curSys = *sysListIter;
-        
+
         // check that iteration hasn't reached maxLaneJumps levels deep, which would 
         // mean that system2 isn't within maxLaneJumps starlane jumps of system1
         curDepth = (*accessibleSystemsMap.find(curSys)).second;
 
         if (curDepth >= maxLaneJumps) return false;
-        
+
         // get set of starlanes for this system
         curSysLanesSetIter = (laneSetArray[curSys]).begin();
         curSysLanesSetEnd = (laneSetArray[curSys]).end();
-        
+
         // add starlanes accessible from this system to list and set of accessible starlanes
         // (and check for the goal starlane)
         while (curSysLanesSetIter != curSysLanesSetEnd) {
@@ -1577,7 +1573,7 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
         }
 
         sysListIter++;
-    }    
+    }
     return false; // default
 }
 
@@ -1588,29 +1584,30 @@ void Universe::InitializeSystemGraph()
         boost::remove_vertex(i, m_graph_impl->m_system_graph);
     }
 
-    std::vector<System*> systems = FindObjects<System>();
-    m_system_distances.resize(systems.size());
-    GraphImpl::SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_pointer_t(), m_graph_impl->m_system_graph);
+    std::vector<int> system_ids = FindObjectIDs<System>();
+    m_system_distances.resize(system_ids.size());
+    GraphImpl::SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
 
     GraphImpl::EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_graph_impl->m_system_graph);
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
 
     std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_graph_impl->m_system_graph of system's vertex
 
-    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
+    for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         // add a vertex to the graph for this system, and assign it a pointer for its System object
         boost::add_vertex(m_graph_impl->m_system_graph);
-        System* system1 = systems[i];
-        pointer_property_map[i] = system1;
+        int system_id = system_ids[i];
+        pointer_property_map[i] = system_id;
         // add record of index in m_graph_impl->m_system_graph of this system
-        system_id_graph_index_reverse_lookup_map[system1->ID()] = i;
+        system_id_graph_index_reverse_lookup_map[system_id] = i;
     }
 
-    for (int i = 0; i < static_cast<int>(systems.size()); ++i) {
-        System* system1 = systems[i];
+    for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
+        int system1_id = system_ids[i];
+        const System* system1 = Object<System>(system1_id);
 
         // add edges and edge weights
-        for (System::lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
+        for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
             // get id in universe of system at other end of lane
             int lane_dest_id = it->first;
 
@@ -1625,7 +1622,7 @@ void Universe::InitializeSystemGraph()
             if (it->second) {                               // if this is a wormhole
                 edge_weight_map[add_edge_result.first] = 0.0;
             } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
-                UniverseObject* system2 = Object(it->first);
+                const UniverseObject* system2 = Object(it->first);
                 double x_dist = system2->X() - system1->X();
                 double y_dist = system2->Y() - system1->Y();
                 edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -1635,7 +1632,8 @@ void Universe::InitializeSystemGraph()
         // define the straight-line system distances for this system
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
-            UniverseObject* system2 = systems[j];
+            int system2_id = system_ids[i];
+            const UniverseObject* system2 = Object(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
@@ -3407,10 +3405,10 @@ void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<in
         treeSysList.push_front(q);
 
         // put new list into into map (for tree n), indexed by tree number
-        mapInsertable = std::pair<int, std::list<int> >(n, treeSysList);        
+        mapInsertable = std::pair<int, std::list<int> >(n, treeSysList);
         treeSysListsMap.insert(mapInsertable);
 
-        // record the tree to which root system of tree n, roots[n], belongs (tree n)        
+        // record the tree to which root system of tree n, roots[n], belongs (tree n)
         treeOfSystemArray[q] = n;
     }
 

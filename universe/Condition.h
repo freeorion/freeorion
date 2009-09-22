@@ -43,7 +43,7 @@ namespace Condition {
     struct VisibleToEmpire;
     struct WithinDistance;
     struct WithinStarlaneJumps;
-    struct EffectTarget;
+    struct ExploredByEmpire;
     struct And;
     struct Or;
     struct Not;
@@ -554,14 +554,17 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-struct Condition::EffectTarget : Condition::ConditionBase
+/** Matches systems that have been explored by at least one Empire in \a empire_ids. */
+struct Condition::ExploredByEmpire : Condition::ConditionBase
 {
-    EffectTarget();
+    ExploredByEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids);
+    virtual ~ExploredByEmpire();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+    std::vector<const ValueRef::ValueRefBase<int>*> m_empire_ids;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -825,9 +828,10 @@ void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int v
 }
 
 template <class Archive>
-void Condition::EffectTarget::serialize(Archive& ar, const unsigned int version)
+void Condition::ExploredByEmpire::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_ids);
 }
 
 template <class Archive>
