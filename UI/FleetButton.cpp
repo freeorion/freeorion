@@ -153,20 +153,23 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // get fleets
     Universe& universe = GetUniverse();
+    std::vector<const Fleet*> fleets;
+
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
-        Fleet* fleet = universe.Object<Fleet>(*it);
+        const Fleet* fleet = universe.Object<Fleet>(*it);
         if (!fleet) {
             Logger().errorStream() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
             continue;
         }
-        m_fleets.push_back(fleet);
+        m_fleets.push_back(*it);
+        fleets.push_back(fleet);
     }
 
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
     int owner_id = ALL_EMPIRES;
 
-    for (std::vector<Fleet*>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it) {
+    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* fleet = *it;
         const std::set<int>& fleet_owners = fleet->Owners();
 
@@ -203,15 +206,16 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // select icon(s) for fleet(s), and get a fleet for use later
     const Fleet* first_fleet = 0;
     if (m_fleets.size() != 1) {
-        first_fleet = *(m_fleets.begin());
+        first_fleet = *(fleets.begin());
 
         m_head_icon = FleetHeadIcon(0, size_type);
         int num_ships = 0;
-        for (std::vector<Fleet*>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it)
+        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
             num_ships += (*it)->NumShips();
         m_size_icon = FleetSizeIcon(num_ships, size_type);
+
     } else if (!m_fleets.empty()) {
-        first_fleet = *m_fleets.begin();
+        first_fleet = *fleets.begin();
         m_head_icon = FleetHeadIcon(first_fleet, size_type);
         m_size_icon = FleetSizeIcon(first_fleet, size_type);
     }

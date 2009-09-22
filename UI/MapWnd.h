@@ -79,8 +79,6 @@ public:
       * are shown at */
     FleetButton::SizeType       FleetButtonSizeType() const;
 
-    SidePanel*                  GetSidePanel() const;
-
     /** populates the relevant UI state that should be restored after a
       * save-and-load cycle */
     void                        GetSaveGameUIData(SaveGameUIData& data) const;
@@ -129,19 +127,19 @@ public:
     void            SelectFleet(Fleet* fleet);                      //!< programatically selects fleets
     void            ReselectLastFleet();                            //!< re-selects the most recent selected fleet, if a valid one exists
 
-    void            SetFleetMovementLine(const FleetButton* fleet_button);      //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
-    void            SetFleetMovementLine(const Fleet* fleet);                   //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
+    void            SetFleetMovementLine(const FleetButton* fleet_button);  //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
+    void            SetFleetMovementLine(int fleet_id);                     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.
 
     /* creates specially-coloured projected fleet movement line for specified
      * fleet following the specified route.  Move line originates from the
      * fleet's button location. */
-    void            SetProjectedFleetMovementLine(const Fleet* fleet, const std::list<int>& travel_route);
+    void            SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& travel_route);
     /* creates specially-coloured projected fleet movement lines for specified
      * fleets following the specified route.  Move lines originates from the
      * fleets' button locations. */
-    void            SetProjectedFleetMovementLines(const std::vector<const Fleet*>& fleets, const std::list<int>& travel_route);
-    void            RemoveProjectedFleetMovementLine(const Fleet* fleet);   //!< removes projected fleet movement line for specified fleet.
-    void            ClearProjectedFleetMovementLines();                     //!< removes all projected fleet movement lines
+    void            SetProjectedFleetMovementLines(const std::vector<int>& fleet_ids, const std::list<int>& travel_route);
+    void            RemoveProjectedFleetMovementLine(int fleet_id); //!< removes projected fleet movement line for specified fleet.
+    void            ClearProjectedFleetMovementLines();             //!< removes all projected fleet movement lines
 
     void            RegisterPopup(MapWndPopup* popup);              //!< registers a MapWndPopup, which can be cleaned up with a call to DeleteAllPopups( )
     void            RemovePopup(MapWndPopup* popup);                //!< removes a MapWndPopup from the list cleaned up on a call to DeleteAllPopups( )
@@ -318,18 +316,18 @@ private:
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
 
-    std::map<const System*,std::set<FleetButton*> > m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
-    std::map<const System*,std::set<FleetButton*> > m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
+    std::map<int, std::set<FleetButton*> >          m_stationary_fleet_buttons;             //!< icons representing fleets at a system that are not departing, indexed by system
+    std::map<int, std::set<FleetButton*> >          m_departing_fleet_buttons;              //!< icons representing fleets at a system that are departing, indexed by system
     std::set<FleetButton*>                          m_moving_fleet_buttons;                 //!< icons representing fleets not at a system
-    std::map<const Fleet*, FleetButton*>            m_fleet_buttons;                        //!< fleet icons, index by fleet
+    std::map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
 
     std::map<int, boost::signals::connection>               m_fleet_state_change_signals;
     std::map<int, std::vector<boost::signals::connection> > m_system_fleet_insert_remove_signals;
 
     std::set<boost::signals::connection>            m_keyboard_accelerator_signals;         //!< signals connecting keyboard accelerators to GUI responses
 
-    std::map<const Fleet*, MovementLineData>        m_fleet_lines;                          //!< lines used for moving fleets in the main map
-    std::map<const Fleet*, MovementLineData>        m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
+    std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
+    std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
 
     /* OpenGL buffers objects containing vertices, texture coordinates, etc. */
     struct GLBuffer {

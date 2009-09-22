@@ -28,7 +28,7 @@ public:
     /** \name Accessors */ //@{
     virtual bool                InWindow(const GG::Pt& pt) const;       ///< returns true if \a pt is within or over the button
 
-    const std::vector<Fleet*>&  Fleets() const {return m_fleets;}       ///< returns the fleets represented by this control
+    const std::vector<int>&     Fleets() const {return m_fleets;}       ///< returns the fleets represented by this control
 
     bool                        Selected() const {return m_selected;}   ///< returns whether this button has been marked selected
     //@}
@@ -51,7 +51,7 @@ protected:
 private:
     void Init(const std::vector<int>& fleet_IDs, SizeType size_type);
 
-    std::vector<Fleet*>             m_fleets;               ///< the fleets represented by this button
+    std::vector<int>                m_fleets;               ///< the fleets represented by this button
     boost::shared_ptr<GG::Texture>  m_head_icon;            ///< icon texture representing type of fleet
     boost::shared_ptr<GG::Texture>  m_size_icon;            ///< icon texture representing number of ships in fleet
     boost::shared_ptr<GG::Texture>  m_selection_texture;    ///< texture shown to indicate button is selected
