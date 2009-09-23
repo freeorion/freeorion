@@ -1508,7 +1508,7 @@ void SidePanel::RefreshImpl()
             delete row; // delete rows for systems that aren't known to this client, except the selected system
             continue;
         } else {
-            row->push_back(new OwnerColoredSystemName(*sys, SystemNameFontSize()));
+            row->push_back(new OwnerColoredSystemName(sys->ID(), SystemNameFontSize()));
         }
 
         GG::DropDownList::iterator latest_it = m_system_name->Insert(row);

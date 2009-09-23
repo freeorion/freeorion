@@ -111,6 +111,12 @@ public:
     const_lane_iterator     begin_lanes() const;            ///< begin iterator for all starlanes and wormholes terminating in this system
     const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
 
+    /** returns a map of the starlanes and wormholes visible to empire
+      * \a empire_id; the map contains keys that are IDs of connected systems,
+      * and bool values indicating whether each is a starlane (false) or a
+      * wormhole (true)*/
+    StarlaneMap             VisibleStarlanes(int empire_id) const;
+
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
     mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal; ///< fleet is inserted into system
@@ -172,12 +178,6 @@ public:
 
     lane_iterator           begin_lanes();                  ///< begin iterator for all starlanes and wormholes terminating in this system
     lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
-
-    /** returns a map of the starlanes and wormholes visible to empire
-      * \a empire_id; the map contains keys that are IDs of connected systems,
-      * and bool values indicating whether each is a starlane (false) or a
-      * wormhole (true)*/
-    StarlaneMap             VisibleStarlanes(int empire_id) const;
     //@}
 
 private:

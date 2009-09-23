@@ -20,7 +20,7 @@ namespace GG {
 class OwnerColoredSystemName : public GG::Control
 {
 public:
-    OwnerColoredSystemName(const System& system, int font_size, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+    OwnerColoredSystemName(int system_id, int font_size, GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
     virtual void Render();
 
 private:
@@ -44,12 +44,12 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id);     //!< construct from a universe ID at specified size and position
-    ~SystemIcon();                                                      //!< dtor
+    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id);  //!< construct from a universe ID at specified size and position
+    ~SystemIcon();                                                          //!< dtor
     //!@}
 
     //! \name Accessors //!@{
-    const System&       GetSystem() const;
+    int                 SystemID() const;                       //!< returns ID of system this icon represents
 
     const boost::shared_ptr<GG::Texture>& DiscTexture() const;  //!< returns the solid star disc texture
     const boost::shared_ptr<GG::Texture>& HaloTexture() const;  //!< returns the transparent star halo texture
@@ -94,7 +94,7 @@ private:
     void            Init(); //!< common constructor tasks
     void            PositionSystemName();
 
-    const System&                   m_system;               //!< the System object associated with this SystemIcon
+    int                             m_system_id;            //!< the System object associated with this SystemIcon
     boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
     boost::shared_ptr<GG::Texture>  m_halo_texture;         //!< transparent star halo texture
     boost::shared_ptr<GG::Texture>  m_tiny_texture;         //!< alternate texture shown when icon very small

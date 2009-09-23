@@ -1191,15 +1191,20 @@ void MapWnd::InitSystemRenderingBuffers()
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
-        const System& system = icon->GetSystem();
+        int system_id = it->first;
+        const System* system = GetUniverse().Object<System>(system_id);
+        if (!system) {
+            Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
+            continue;
+        }
 
         // Add disc and halo textures for system icon
         // See note above texture coords for why we're making coordinate sets that are 2x too big.
         double icon_size = ClientUI::SystemIconSize();
-        double icon_ul_x = system.X() - icon_size;
-        double icon_ul_y = system.Y() - icon_size;
-        double icon_lr_x = system.X() + icon_size;
-        double icon_lr_y = system.Y() + icon_size;
+        double icon_ul_x = system->X() - icon_size;
+        double icon_ul_y = system->Y() - icon_size;
+        double icon_lr_x = system->X() + icon_size;
+        double icon_lr_y = system->Y() + icon_size;
 
         if (icon->DiscTexture()) {
             glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
@@ -1233,12 +1238,12 @@ void MapWnd::InitSystemRenderingBuffers()
 
 
         // add (rotated) gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system.ID())) {
+        if (boost::shared_ptr<GG::Texture> gaseous_texture = ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "galaxy_decoration", "gaseous", system_id)) {
             glBindTexture(GL_TEXTURE_2D, gaseous_texture->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
             const double GAS_SIZE = ClientUI::SystemIconSize() * 12.0;
-            const double ROTATION = system.ID() * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
+            const double ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const double COS_THETA = std::cos(ROTATION);
             const double SIN_THETA = std::sin(ROTATION);
 
@@ -1262,14 +1267,14 @@ void MapWnd::InitSystemRenderingBuffers()
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
 
             // add to system position to get translated scaled rotated quad corner
-            const double GAS_X1 = system.X() + (X1r * GAS_SIZE);
-            const double GAS_Y1 = system.Y() + (Y1r * GAS_SIZE);
-            const double GAS_X2 = system.X() + (X2r * GAS_SIZE);
-            const double GAS_Y2 = system.Y() + (Y2r * GAS_SIZE);
-            const double GAS_X3 = system.X() + (X3r * GAS_SIZE);
-            const double GAS_Y3 = system.Y() + (Y3r * GAS_SIZE);
-            const double GAS_X4 = system.X() + (X4r * GAS_SIZE);
-            const double GAS_Y4 = system.Y() + (Y4r * GAS_SIZE);
+            const double GAS_X1 = system->X() + (X1r * GAS_SIZE);
+            const double GAS_Y1 = system->Y() + (Y1r * GAS_SIZE);
+            const double GAS_X2 = system->X() + (X2r * GAS_SIZE);
+            const double GAS_Y2 = system->Y() + (Y2r * GAS_SIZE);
+            const double GAS_X3 = system->X() + (X3r * GAS_SIZE);
+            const double GAS_Y3 = system->Y() + (Y3r * GAS_SIZE);
+            const double GAS_X4 = system->X() + (X4r * GAS_SIZE);
+            const double GAS_Y4 = system->Y() + (Y4r * GAS_SIZE);
 
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
             // rotated upper right
@@ -1399,15 +1404,19 @@ void MapWnd::InitStarlaneRenderingBuffers()
     m_starlane_endpoints.clear();
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const SystemIcon* icon = it->second;
-        const System& system = icon->GetSystem();
+        int system_id = it->first;
+        const System* system = universe.Object<System>(system_id);
+        if (!system) {
+            Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
+            continue;
+        }
 
         // add system's starlanes
-        for (System::const_lane_iterator lane_it = system.begin_lanes(); lane_it != system.end_lanes(); ++lane_it) {
+        for (System::const_lane_iterator lane_it = system->begin_lanes(); lane_it != system->end_lanes(); ++lane_it) {
             bool lane_is_wormhole = lane_it->second;
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
-            const System* start_system = &system;
+            const System* start_system = system;
             const System* dest_system = universe.Object<System>(lane_it->first);
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
 
@@ -2036,10 +2045,14 @@ void MapWnd::DoSystemIconsLayout()
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System& system = it->second->GetSystem();
+        const System* system = GetUniverse().Object<System>(it->first);
+        if (!system) {
+            Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
+            continue;
+        }
 
-        GG::Pt icon_ul(GG::X(static_cast<int>(system.X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
-                       GG::Y(static_cast<int>(system.Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
+        GG::Pt icon_ul(GG::X(static_cast<int>(system->X()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)),
+                       GG::Y(static_cast<int>(system->Y()*ZoomFactor() - SYSTEM_ICON_SIZE / 2.0)));
         it->second->SizeMove(icon_ul, icon_ul + GG::Pt(GG::X(SYSTEM_ICON_SIZE), GG::Y(SYSTEM_ICON_SIZE)));
     }
 }
@@ -2702,8 +2715,7 @@ void MapWnd::RenderSystems()
             GG::Pt circle_lr = circle_ul + circle_size;
 
             if (fog_scanlines && m_scanline_shader) {
-                const System& system = icon->GetSystem();
-                if (universe.GetObjectVisibilityByEmpire(system.ID(), empire_id) <= VIS_BASIC_VISIBILITY) {
+                if (universe.GetObjectVisibilityByEmpire(it->first, empire_id) <= VIS_BASIC_VISIBILITY) {
                     m_scanline_shader->Use();
                     m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
@@ -2712,10 +2724,14 @@ void MapWnd::RenderSystems()
             }
 
             // render circles around systems that have at least one starlane, if circles are enabled.
-            if (circles && icon->GetSystem().Starlanes() > 0) {
-                glBegin(GL_LINE_STRIP);
-                CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-                glEnd();
+            if (circles) {
+                if (const System* system = GetUniverse().Object<System>(it->first)) {
+                    if (system->Starlanes() > 0) {
+                        glBegin(GL_LINE_STRIP);
+                        CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
+                        glEnd();
+                    }
+                }
             }
         }
 

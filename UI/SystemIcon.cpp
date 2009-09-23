@@ -39,109 +39,116 @@ namespace {
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(const System& system, int font_size, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
+OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, flags)
 {
-    // TODO: Have this make a single call per color.  Set up texture coord and vertex buffers (quads) for the glyphs.  Consider extending GG::Font to do similar.
-    // get system name
-    std::string system_name = system.Name();
-    if (system_name.empty())
-        system_name = UserString("SP_UNKNOWN_SYSTEM");
+    // TODO: Have this make a single call per color.
+    // Set up texture coord and vertex buffers (quads) for the glyphs.
+    // Consider extending GG::Font to do similar.
 
-
-    // loop through planets in system, checking if any are a homeworld, capitol or have a shipyard
-    bool capitol = false, homeworld = false, has_shipyard = false;
-    const EmpireManager& manager = Empires();
     const Universe& universe = GetUniverse();
-    std::vector<const Planet*> planets = system.FindObjects<Planet>();
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        if (capitol && homeworld && has_shipyard)
-            break;  // don't need to loop any more
+    if (const System* system = universe.Object<System>(system_id)) {
 
-        const Planet* planet = *it;
+        // get system name
+        std::string system_name = system->Name();
+        if (system_name.empty())
+            system_name = UserString("SP_UNKNOWN_SYSTEM");
 
-        // is planet a capitol?
-        if (!capitol) {
-            for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                if (empire_it->second->CapitolID() == planet->ID())
-                    capitol = true;
+
+        // loop through planets in system, checking if any are a homeworld, capitol or have a shipyard
+        bool capitol = false, homeworld = false, has_shipyard = false;
+        const EmpireManager& manager = Empires();
+
+        std::vector<const Planet*> planets = system->FindObjects<Planet>();
+        for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+            if (capitol && homeworld && has_shipyard)
+                break;  // don't need to loop any more
+
+            const Planet* planet = *it;
+
+            // is planet a capitol?
+            if (!capitol) {
+                for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    if (empire_it->second->CapitolID() == planet->ID())
+                        capitol = true;
+                }
             }
-        }
 
-        // is planet a homeworld?
-        if (!homeworld) {
-            for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                if (empire_it->second->HomeworldID() == planet->ID())
-                    homeworld = true;
+            // is planet a homeworld?
+            if (!homeworld) {
+                for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                    if (empire_it->second->HomeworldID() == planet->ID())
+                        homeworld = true;
+                }
             }
-        }
 
-        // does planet contain a shipyard?
-        if (!has_shipyard) {
-            const std::set<int>& buildings = planet->Buildings();
-            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                const Building* building = universe.Object<Building>(*building_it);
-                if (!building)
-                    continue;
-                // annoying hard-coded building name here... not sure how better to deal with it
-                if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
-                    has_shipyard = true;
-                    break;
+            // does planet contain a shipyard?
+            if (!has_shipyard) {
+                const std::set<int>& buildings = planet->Buildings();
+                for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
+                    const Building* building = universe.Object<Building>(*building_it);
+                    if (!building)
+                        continue;
+                    // annoying hard-coded building name here... not sure how better to deal with it
+                    if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
+                        has_shipyard = true;
+                        break;
+                    }
                 }
             }
         }
-    }
 
 
-    // apply formatting tags around planet name to indicate:
-    //    Italic for homeworlds
-    //    Bold for capitol(s)
-    //    Underline for shipyard(s), and
-    // need to check all empires for homeworld or capitols
+        // apply formatting tags around planet name to indicate:
+        //    Italic for homeworlds
+        //    Bold for capitol(s)
+        //    Underline for shipyard(s), and
+        // need to check all empires for homeworld or capitols
 
-    // wrap with formatting tags
-    std::string wrapped_system_name = system_name;
-    if (homeworld)
-        wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
-    if (has_shipyard)
-        wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
-    boost::shared_ptr<GG::Font> font;
-    if (capitol)
-        font = ClientUI::GetBoldFont(font_size);
-    else
-        font = ClientUI::GetFont(font_size);
+        // wrap with formatting tags
+        std::string wrapped_system_name = system_name;
+        if (homeworld)
+            wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
+        if (has_shipyard)
+            wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
+        boost::shared_ptr<GG::Font> font;
+        if (capitol)
+            font = ClientUI::GetBoldFont(font_size);
+        else
+            font = ClientUI::GetFont(font_size);
 
 
-    GG::X width(0);
-    const std::set<int>& owners = system.Owners();
-    if (owners.size() <= 1) {
-        GG::Clr text_color = ClientUI::SystemNameTextColor();
-        if (!owners.empty())
-            text_color = Empires().Lookup(*owners.begin())->Color();
-        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
-        m_subcontrols.push_back(text);
-        AttachChild(m_subcontrols.back());
-        width += m_subcontrols.back()->Width();
-    } else {
-        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-        std::vector<GG::Font::LineData> lines;
-        GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
-        unsigned int first_char_pos = 0;
-        unsigned int last_char_pos = 0;
-        GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
-        int owner_idx = 1;
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-            while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
-                ++last_char_pos;
-            }
-            m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                        font, Empires().Lookup(*it)->Color()));
+        GG::X width(0);
+        const std::set<int>& owners = system->Owners();
+        if (owners.size() <= 1) {
+            GG::Clr text_color = ClientUI::SystemNameTextColor();
+            if (!owners.empty())
+                text_color = Empires().Lookup(*owners.begin())->Color();
+            GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
+            m_subcontrols.push_back(text);
             AttachChild(m_subcontrols.back());
-            first_char_pos = last_char_pos;
             width += m_subcontrols.back()->Width();
+        } else {
+            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            std::vector<GG::Font::LineData> lines;
+            GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
+            unsigned int first_char_pos = 0;
+            unsigned int last_char_pos = 0;
+            GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
+            int owner_idx = 1;
+            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
+                while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
+                    ++last_char_pos;
+                }
+                m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
+                                                            font, Empires().Lookup(*it)->Color()));
+                AttachChild(m_subcontrols.back());
+                first_char_pos = last_char_pos;
+                width += m_subcontrols.back()->Width();
+            }
         }
+        Resize(GG::Pt(width, m_subcontrols[0]->Height()));
     }
-    Resize(GG::Pt(width, m_subcontrols[0]->Height()));
 }
 
 void OwnerColoredSystemName::Render()
@@ -150,12 +157,9 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
+SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_system(*GetUniverse().Object<const System>(id)),
-    m_disc_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::StarTypeFilePrefixes()[m_system.GetStarType()], id)),
-    m_halo_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", ClientUI::HaloStarTypeFilePrefixes()[m_system.GetStarType()], id)),
-    m_tiny_texture(ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars", "tiny_" + ClientUI::StarTypeFilePrefixes()[m_system.GetStarType()], id)),
+    m_system_id(system_id),
     m_tiny_graphic(0),
     m_selection_indicator(0),
     m_mouseover_indicator(0),
@@ -163,13 +167,35 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int id) :
     m_colored_name(0),
     m_showing_name(false)
 {
-    parent->AttachChild(this);
+    ClientUI* ui = ClientUI::GetClientUI();
+    if (const System* system = GetUniverse().Object<System>(m_system_id)) {
+        StarType star_type = system->GetStarType();
+        m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                              ClientUI::StarTypeFilePrefixes()[star_type],
+                                              system_id);
+        m_halo_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                              ClientUI::HaloStarTypeFilePrefixes()[star_type],
+                                              system_id);
+        m_tiny_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
+                                              "tiny_" + ClientUI::StarTypeFilePrefixes()[star_type],
+                                              system_id);
+    } else {
+        m_disc_texture = ui->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png");
+        m_halo_texture = m_disc_texture;
+        m_tiny_texture = m_disc_texture;
+    }
+
+    if (parent)
+        parent->AttachChild(this);
+
     Init();
 }
 
 void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
-    Connect(m_system.StateChangedSignal,    &SystemIcon::Refresh,       this);
+    const System* system = GetUniverse().Object<System>(m_system_id);
+    if (system)
+        Connect(system->StateChangedSignal, &SystemIcon::Refresh,   this);
 
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
@@ -198,10 +224,8 @@ SystemIcon::~SystemIcon()
     delete m_colored_name;
 }
 
-const System& SystemIcon::GetSystem() const
-{
-    return m_system;
-}
+int SystemIcon::SystemID() const
+{ return m_system_id; }
 
 const boost::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
 { return m_disc_texture; }
@@ -374,25 +398,25 @@ void SystemIcon::ManualRender(double halo_scale_factor)
 void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
-        LeftClickedSignal(m_system.ID());
+        LeftClickedSignal(m_system_id);
 }
 
 void SystemIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
-        RightClickedSignal(m_system.ID());
+        RightClickedSignal(m_system_id);
 }
 
 void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
-        LeftDoubleClickedSignal(m_system.ID());
+        LeftDoubleClickedSignal(m_system_id);
 }
 
 void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled())
-        RightDoubleClickedSignal(m_system.ID());
+        RightDoubleClickedSignal(m_system_id);
 }
 
 void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -409,7 +433,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
     PlaySystemIconRolloverSound();
 
-    MouseEnteringSignal(m_system.ID());
+    MouseEnteringSignal(m_system_id);
 }
 
 void SystemIcon::MouseLeave()
@@ -423,7 +447,7 @@ void SystemIcon::MouseLeave()
     if (!m_showing_name)
         DetachChild(m_colored_name);
 
-    MouseLeavingSignal(m_system.ID());
+    MouseLeavingSignal(m_system_id);
 }
 
 void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -449,13 +473,18 @@ void SystemIcon::SetSelected(bool selected)
 
 void SystemIcon::Refresh()
 {
-    SetName(m_system.Name());   // sets GG::Control name.  doesn't affect displayed system name
+    std::string name = "";
+
+    if (const System* system = GetUniverse().Object<System>(m_system_id))
+        name = system->Name();
+
+    SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
 
     // remove existing system name control
     delete m_colored_name;  m_colored_name = 0;
 
     // create new system name control
-    if (!m_system.Name().empty()) {
+    if (!name.empty()) {
         // get font size
         int name_pts = ClientUI::Pts();
         if (const MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd()) {
@@ -463,7 +492,7 @@ void SystemIcon::Refresh()
         }
 
         // create and position
-        m_colored_name = new OwnerColoredSystemName(m_system, name_pts);
+        m_colored_name = new OwnerColoredSystemName(m_system_id, name_pts);
         PositionSystemName();
 
         // attach if appropriate, to display
