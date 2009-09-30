@@ -972,7 +972,7 @@ public:
     //! \name Mutators //@{
     virtual void Render();
 
-    void Update(const Tech* tech = 0);  ///< update indicated \a tech panel or all panels if \a tech is 0, without without redoing layout
+    void Update(const Tech* tech = 0);  ///< update indicated \a tech panel or all panels if \a tech is 0, without redoing layout
     void Clear();                       ///< remove all tech panels
     void Reset();                       ///< redo layout, recentre on a tech
     void SetScale(double scale);

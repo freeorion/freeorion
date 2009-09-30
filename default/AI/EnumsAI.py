@@ -167,3 +167,13 @@ class AIEmpireWarMissionType(object):
 
 def getAIEmpireWarMissionTypes():
     return __getInterval(0, 4)
+
+
+class AIDemandType(object):
+    DEMAND_INVALID = -1
+    DEMAND_RESOURCE = 0
+    DEMAND_PRODUCTION = 1
+    DEMAND_RESEARCH = 2
+
+def getAIDemandTypes():
+    return __getInterval(0, 2)
