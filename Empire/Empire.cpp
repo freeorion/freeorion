@@ -1256,10 +1256,22 @@ void Empire::UpdateSystemSupplyRanges()
 }
 
 void Empire::UpdateSupplyUnobstructedSystems() {
-    UpdateSupplyUnobstructedSystems(this->ExploredSystems());
+    Universe& universe = GetUniverse();
+
+    // get ids of systems partially or better visible to this empire.
+    // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
+    std::set<int> visible_systems;
+    std::vector<int> all_system_ids = universe.FindObjectIDs<System>();
+    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
+        int obj_id = *it;
+        if (universe.GetObjectVisibilityByEmpire(obj_id, m_id) >= VIS_PARTIAL_VISIBILITY)
+            visible_systems.insert(obj_id);
+    }
+
+    UpdateSupplyUnobstructedSystems(visible_systems);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& explored_systems)
+void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& visible_systems)
 {
     //std::cout << "Empire::UpdateSupplyUnobstructedSystems for empire " << this->Name() << std::endl;
     //std::cout << " ... explored systems: ";
@@ -1280,7 +1292,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& explored_syste
 
         // to be unobstructed, systems must both:
         // be explored by this empire...
-        if (explored_systems.find(system_id) == explored_systems.end())
+        if (visible_systems.find(system_id) == visible_systems.end())
             continue;
 
         //std::cout << "... system " << system->Name() << " is explored" << std::endl;

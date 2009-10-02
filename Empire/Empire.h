@@ -410,7 +410,7 @@ public:
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
-    void                    UpdateSupplyUnobstructedSystems(const std::set<int>& explored_systems); ///< Calculates systems that can propegate supply (fleet or resource) using the specified set of \a explored_systems
+    void                    UpdateSupplyUnobstructedSystems(const std::set<int>& visible_systems);  ///< Calculates systems that can propegate supply (fleet or resource) using the specified set of \a visible_systems
     void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply using this empire's own / internal list of explored systems
     void                    UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes);      ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so, using the indicated \a starlanes but subject to obstruction of supply by various factors.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.
     void                    UpdateFleetSupply();                            ///< Calculates systems at which fleets of this empire can be supplied and starlane traversals used to do so using this empire's set of known starlanes.  Call UpdateSystemSupplyRanges and UpdateSupplyUnobstructedSystems before calling this.

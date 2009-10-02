@@ -969,24 +969,32 @@ void MapWnd::InitTurn(int turn_number)
 
 
     const std::map<int, std::set<int> > this_client_known_starlanes = empire->KnownStarlanes();
-    const std::set<int>                 this_client_explored_systems = empire->ExploredSystems();
+    // get ids of systems partially or better visible to this empire.
+    // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
+    std::set<int> this_client_visible_systems;
+    std::vector<int> all_system_ids = universe.FindObjectIDs<System>();
+    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
+        int obj_id = *it;
+        if (universe.GetObjectVisibilityByEmpire(obj_id, empire->EmpireID()) >= VIS_PARTIAL_VISIBILITY)
+            this_client_visible_systems.insert(obj_id);
+    }
 
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        Empire* empire = it->second;
+        Empire* empire2 = it->second;
 
         // use systems this client's player's empire has explored for all empires, so that this client's
         // player can see where other empires can probably propegate supply, even if this client's empire
         // doesn't know what systems the other player has actually explored
-        empire->UpdateSupplyUnobstructedSystems(this_client_explored_systems);
+        empire2->UpdateSupplyUnobstructedSystems(this_client_visible_systems);
 
-        empire->UpdateSystemSupplyRanges();
+        empire2->UpdateSystemSupplyRanges();
 
         // similarly, use this client's player's known starlanes to propegate all empires' supply
-        empire->UpdateFleetSupply(this_client_known_starlanes);
-        empire->UpdateResourceSupply(this_client_known_starlanes);
+        empire2->UpdateFleetSupply(this_client_known_starlanes);
+        empire2->UpdateResourceSupply(this_client_known_starlanes);
 
-        empire->InitResourcePools();
+        empire2->InitResourcePools();
     }
 
 
