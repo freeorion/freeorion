@@ -227,7 +227,7 @@ void EncyclopediaDetailPanel::Refresh() {
     boost::shared_ptr<GG::Texture> texture;
     boost::shared_ptr<GG::Texture> other_texture;
     int turns;
-    double cost;
+    double cost = 0.0;
     std::string cost_units = "";            // "PP" or "RP" or empty string, depending on whether and what something costs
     std::string general_type = "";          // general type of thing being shown, eg. "Building" or "Ship Part"
     std::string specific_type = "";         // specific type of thing; thing's purpose.  eg. "Farming" or "Colonization".  May be left blank for things without specific types (eg. specials)

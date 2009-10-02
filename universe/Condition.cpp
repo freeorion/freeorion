@@ -33,15 +33,15 @@ namespace {
     }
 
     std::string GetTypeName(const UniverseObject* obj) {
-        if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+        if (universe_object_cast<const Fleet*>(obj))
             return "Fleet";
-        if (const Ship* fleet = universe_object_cast<const Ship*>(obj))
+        if (universe_object_cast<const Ship*>(obj))
             return "Ship";
-        if (const Planet* fleet = universe_object_cast<const Planet*>(obj))
+        if (universe_object_cast<const Planet*>(obj))
             return "Planet";
-        if (const System* fleet = universe_object_cast<const System*>(obj))
+        if (universe_object_cast<const System*>(obj))
             return "System";
-        if (const Building* fleet = universe_object_cast<const Building*>(obj))
+        if (universe_object_cast<const Building*>(obj))
             return "Building";
         return "UniverseObject";
     }

@@ -1395,8 +1395,7 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 #endif
             m_combat_setup_wnd->EndShipPlacement();
         } else if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
-            Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
-            assert(clicked_scene_node);
+            assert(movable_object->getParentSceneNode());
             std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
                 m_current_selections.find(movable_object);
             if (it == m_current_selections.end()) {

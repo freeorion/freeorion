@@ -1744,7 +1744,7 @@ void SidePanel::SetSystem(int system_id)
 
     s_system_id = system_id;
 
-    if (const System* system = GetUniverse().Object<const System>(s_system_id))
+    if (GetUniverse().Object<const System>(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

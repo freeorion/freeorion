@@ -214,15 +214,15 @@ namespace {
 
     /* temp */
     std::string GetTypeName(const UniverseObject* obj) {
-        if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj))
+        if (universe_object_cast<const Fleet*>(obj))
             return "Fleet";
-        if (const Ship* fleet = universe_object_cast<const Ship*>(obj))
+        if (universe_object_cast<const Ship*>(obj))
             return "Ship";
-        if (const Planet* fleet = universe_object_cast<const Planet*>(obj))
+        if (universe_object_cast<const Planet*>(obj))
             return "Planet";
-        if (const System* fleet = universe_object_cast<const System*>(obj))
+        if (universe_object_cast<const System*>(obj))
             return "System";
-        if (const Building* fleet = universe_object_cast<const Building*>(obj))
+        if (universe_object_cast<const Building*>(obj))
             return "Building";
         return "UniverseObject";
     }
@@ -2820,8 +2820,6 @@ void MapWnd::RenderFleetMovementLines()
     for (std::map<int, MovementLineData>::const_iterator it = m_fleet_lines.begin(); it != m_fleet_lines.end(); ++it)
         RenderMovementLine(it->second);
 
-    const Universe& universe = GetUniverse();
-
     // re-render selected fleets' movement lines in white
     for (std::set<int>::const_iterator it = m_selected_fleet_ids.begin(); it != m_selected_fleet_ids.end(); ++it) {
         int fleet_id = *it;
@@ -3207,8 +3205,6 @@ void MapWnd::SelectedFleetsChanged()
 void MapWnd::RefreshFleetButtonSelectionIndicators()
 {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
-
-    const Universe& universe = GetUniverse();
 
     // clear old selection indicators
     for (std::map<int, std::set<FleetButton*> >::iterator it = m_stationary_fleet_buttons.begin(); it != m_stationary_fleet_buttons.end(); ++it) {

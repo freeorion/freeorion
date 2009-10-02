@@ -177,8 +177,7 @@ void PopCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
-    UniverseObject* object = GetObjectSignal();
-    assert(object);
+    assert(GetObjectSignal());
 
     Meter* pop = GetMeter(METER_POPULATION);
     Meter* health = GetMeter(METER_HEALTH);

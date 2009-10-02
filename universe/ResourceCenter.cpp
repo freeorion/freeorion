@@ -222,7 +222,6 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 void ResourceCenter::PopGrowthProductionResearchPhase()
 {
     GrowConstructionMeter(GetMeter(METER_CONSTRUCTION));
-    double new_current_construction = GetMeter(METER_CONSTRUCTION)->Current();
     GrowResourceMeter(GetMeter(METER_FARMING));
     GrowResourceMeter(GetMeter(METER_INDUSTRY));
     GrowResourceMeter(GetMeter(METER_MINING));

@@ -680,7 +680,7 @@ namespace {
         {
             SetName("ShipRow");
             EnableChildClipping();
-            if (const Ship* ship = GetUniverse().Object<Ship>(m_ship_id))
+            if (GetUniverse().Object<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
             push_back(new ShipDataPanel(w, h, m_ship_id));
         }
@@ -1406,7 +1406,6 @@ public:
         if (!fleet)
             return;
 
-        Universe& universe = GetUniverse();
         const GG::Pt row_size = ListRowSize();
 
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
@@ -1968,7 +1967,7 @@ void FleetWnd::Refresh()
         std::set<int> validated_fleet_ids;
         for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
             int fleet_id = *it;
-            if (const Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id)) {
+            if (GetUniverse().Object<Fleet>(fleet_id)) {
                 validated_fleet_ids.insert(fleet_id);
                 AddFleet(fleet_id);
             }
@@ -2263,8 +2262,6 @@ void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids)
 {
     if (ship_ids.empty())
         return;
-
-    int system_id = UniverseObject::INVALID_OBJECT_ID;
 
     if (m_fleet_ids.empty()) {
         Logger().errorStream() << "FleetWnd::CreateNewFleetFromDrops tried to create a new fleet from dropped ships in FleetWnd that doesn't already contain any fleets";

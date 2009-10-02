@@ -358,7 +358,6 @@ void PopulationPanel::Render()
 void PopulationPanel::Update()
 {
     const PopCenter*        pop = GetPopCenter();
-    const Universe&         universe = GetUniverse();
     const UniverseObject*   obj = GetUniverse().Object(m_popcenter_id);
 
     if (!pop || !obj) {
@@ -1996,8 +1995,7 @@ IconTextBrowseWnd::IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> textur
 }
 
 bool IconTextBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
-    const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-    assert(mode <= browse_modes.size());
+    assert(mode <= wnd->BrowseModes().size());
     return true;
 }
 
@@ -2022,8 +2020,7 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
 {}
 
 bool SystemResourceSummaryBrowseWnd::WndHasBrowseInfo(const GG::Wnd* wnd, std::size_t mode) const {
-    const std::vector<GG::Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-    assert(mode <= browse_modes.size());
+    assert(mode <= wnd->BrowseModes().size());
     return true;
 }
 
@@ -2438,8 +2435,7 @@ MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, int object_id) :
 }
 
 bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
-    const std::vector<Wnd::BrowseInfoMode>& browse_modes = wnd->BrowseModes();
-    assert(mode <= browse_modes.size());
+    assert(mode <= wnd->BrowseModes().size());
     return true;
 }
 

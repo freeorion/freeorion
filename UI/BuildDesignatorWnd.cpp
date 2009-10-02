@@ -317,7 +317,6 @@ void BuildDesignatorWnd::BuildSelector::MinimizeClicked()
 void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool refresh_list)
 {
     //std::cout << "BuildDesignatorWnd::BuildSelector::SetBuildLocation(" << location_id << ")" << std::endl;
-    int old_location = m_build_location;
     if (m_build_location != location_id) {
         m_build_location = location_id;
         if (refresh_list)
@@ -952,7 +951,6 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
         return;
     }
 
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<const Planet*> planets = sys->FindObjects<Planet>();
 
     if (planets.empty()) {
