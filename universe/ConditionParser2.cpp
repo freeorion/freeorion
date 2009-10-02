@@ -142,6 +142,7 @@ namespace {
         RandomRule              random;
         StockpileRule           owner_stockpile;
         VisibleToEmpireRule     visible_to_empire;
+        Rule                    stationary;
     };
 
     ConditionParser2Definition::ConditionParser2Definition()
@@ -237,6 +238,11 @@ namespace {
                  | ('[' >> +(int_expr_p[push_back_(visible_to_empire.empires, arg1)]) >> ']')))
             [visible_to_empire.this_ = new_<Condition::VisibleToEmpire>(visible_to_empire.empires)];
 
+        stationary =
+            str_p("stationary")
+            [stationary.this_ = new_<Condition::Stationary>()];
+
+
         condition2_p =
             owner_has_tech[condition2_p.this_ = arg1]
             | within_distance[condition2_p.this_ = arg1]
@@ -252,7 +258,8 @@ namespace {
             | design_has_part[condition2_p.this_ = arg1]
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
-            | visible_to_empire[condition2_p.this_ = arg1];
+            | visible_to_empire[condition2_p.this_ = arg1]
+            | stationary[condition2_p.this_ = arg1];
     }
     ConditionParser2Definition condition2_def;
 }

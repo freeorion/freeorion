@@ -1711,6 +1711,47 @@ bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const Univ
 }
 
 ///////////////////////////////////////////////////////////
+// Stationary                                      //
+///////////////////////////////////////////////////////////
+Condition::Stationary::Stationary()
+{}
+
+std::string Condition::Stationary::Description(bool negated/* = false*/) const
+{
+    return UserString("DESC_STATIONARY");
+}
+
+std::string Condition::Stationary::Dump() const
+{
+    return DumpIndent() + "Stationary\n";
+}
+
+bool Condition::Stationary::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    // the only objects that can move are fleets and the ships in them.  so,
+    // attempt to cast the target object to a fleet or ship, and if it's a ship
+    // get the fleet of that ship
+    const Fleet* fleet = universe_object_cast<const Fleet*>(target);
+    if (!fleet)
+        if (const Ship* ship = universe_object_cast<const Ship*>(target))
+            fleet = ship->GetFleet();
+
+    if (fleet) {
+        // if a fleet is available, it is "moving", or not stationary, if it's
+        // next system is a system and isn't the current system.  This will
+        // mean fleets that have arrived at a system on the current turn will
+        // be stationary, but fleets departing won't be stationary.
+        int next_id = fleet->NextSystemID();
+        int cur_id = fleet->SystemID();
+        if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+            return false;
+
+    }
+
+    return true;
+}
+
+///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
 Condition::And::And(const std::vector<const ConditionBase*>& operands) :

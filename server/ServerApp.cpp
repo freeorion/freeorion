@@ -635,6 +635,8 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
     }
 
+
+    // fleet movement
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         // save for possible SitRep generation after moving...
         const Fleet* fleet = m_universe.Object<Fleet>(it->first);

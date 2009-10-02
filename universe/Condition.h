@@ -44,6 +44,7 @@ namespace Condition {
     struct WithinDistance;
     struct WithinStarlaneJumps;
     struct ExploredByEmpire;
+    struct Stationary;
     struct And;
     struct Or;
     struct Not;
@@ -571,6 +572,22 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches objects that are moving. ... What does that mean?  Departing this
+  * turn, or were located somewhere else last turn...? */
+struct Condition::Stationary : Condition::ConditionBase
+{
+    Stationary();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches all objects that match every Condition in \a operands. */
 struct Condition::And : Condition::ConditionBase
 {
@@ -832,6 +849,12 @@ void Condition::ExploredByEmpire::serialize(Archive& ar, const unsigned int vers
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_ids);
+}
+
+template <class Archive>
+void Condition::Stationary::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
 
 template <class Archive>
