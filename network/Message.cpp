@@ -19,6 +19,7 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/weak_ptr.hpp>
+#include <boost/timer.hpp>
 
 #include <zlib.h>
 
@@ -622,8 +623,16 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
            >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
+
+        boost::timer deserialize_timer;
         Deserialize(ia, empires);
+        Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+
+        deserialize_timer.restart();
         Deserialize(ia, universe);
+        Logger().debugStream() << "ExtractMessage universe deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+
+
         ia >> BOOST_SERIALIZATION_NVP(players)
            >> BOOST_SERIALIZATION_NVP(loaded_game_data);
         if (loaded_game_data) {

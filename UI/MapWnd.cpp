@@ -33,6 +33,8 @@
 #include "../network/Message.h"
 #include "../client/human/HumanClientApp.h"
 
+#include <boost/timer.hpp>
+
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
 #include <GG/WndEvent.h>
@@ -911,6 +913,8 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 void MapWnd::InitTurn(int turn_number)
 {
     Logger().debugStream() << "Initializing turn " << turn_number;
+    boost::timer turn_init_timer;
+
 
     SetAccelerators();
 
@@ -928,27 +932,27 @@ void MapWnd::InitTurn(int turn_number)
     //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
     //}
     // DEBUG
-    std::cout << "UniverseObjects: " << std::endl;
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        const UniverseObject* obj = it->second;
-        std::cout << GetTypeName(obj) << "  " << obj->Name();
+    //std::cout << "UniverseObjects: " << std::endl;
+    //for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    //    const UniverseObject* obj = it->second;
+    //    std::cout << GetTypeName(obj) << "  " << obj->Name();
 
-        if (const System* system = obj->GetSystem())
-            std::cout << "  at: " << system->Name();
+    //    if (const System* system = obj->GetSystem())
+    //        std::cout << "  at: " << system->Name();
 
-        const std::set<int>& owners = obj->Owners();
-        if (!owners.empty()) {
-            std::cout << "  owners:";
-            for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
-                std::cout << " " << *own_it;
-        }
+    //    const std::set<int>& owners = obj->Owners();
+    //    if (!owners.empty()) {
+    //        std::cout << "  owners:";
+    //        for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
+    //            std::cout << " " << *own_it;
+    //    }
 
-        Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
-        std::cout << " vis: " << boost::lexical_cast<std::string>(vis);
+    //    Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
+    //    std::cout << " vis: " << boost::lexical_cast<std::string>(vis);
 
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    //    std::cout << std::endl;
+    //}
+    //std::cout << std::endl;
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
@@ -1087,9 +1091,18 @@ void MapWnd::InitTurn(int turn_number)
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
 
+
+    boost::timer ui_refresh_timer;
     m_research_wnd->Refresh();
+    Logger().debugStream() << "MapWnd::InitTurn research wnd refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
+
+    ui_refresh_timer.restart();
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
+    Logger().debugStream() << "MapWnd::InitTurn sidepanel refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
+
+    ui_refresh_timer.restart();
     m_production_wnd->Refresh();
+    Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
 
 
     // start first turn with player's system selected
@@ -1098,11 +1111,14 @@ void MapWnd::InitTurn(int turn_number)
             if (const UniverseObject* obj = GetUniverse().Object(empire->CapitolID()))
                 SelectSystem(obj->SystemID());
     }
+
+    Logger().debugStream() << "MapWnd::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
 }
 
 void MapWnd::InitTurnRendering()
 {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
+    boost::timer timer;
 
     CheckGLVersion();
 
@@ -1168,11 +1184,15 @@ void MapWnd::InitTurnRendering()
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons();
+
+    Logger().debugStream() << "MapWnd::InitTurnRendering time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::InitSystemRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
+    boost::timer timer;
+
     // temp storage
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
     std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
@@ -1389,11 +1409,13 @@ void MapWnd::InitSystemRenderingBuffers()
 
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::InitStarlaneRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
+    boost::timer timer;
 
     // temp storage
     std::vector<float>              raw_starlane_vertices;
@@ -1621,6 +1643,8 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)

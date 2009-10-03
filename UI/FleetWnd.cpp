@@ -125,6 +125,74 @@ namespace {
         }
         return retval;
     }
+
+    void CreateNewFleetFromShips(const std::vector<int>& ship_ids) {
+        if (ship_ids.empty())
+            return;
+
+        // get system where new fleet is to be created.
+        int first_ship_id = ship_ids.front();
+        const Ship* first_ship = GetUniverse().Object<Ship>(first_ship_id);
+        if (!first_ship) {
+            Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
+            return;
+        }
+        int system_id = first_ship->SystemID();
+        const System* system = first_ship->GetSystem(); // may be null
+        double X = first_ship->X(), Y = first_ship->Y();
+
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+
+        // verify that all fleets are at the same system and position and owned by the same empire
+        for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
+            const Ship* ship = GetUniverse().Object<Ship>(*it);
+            if (!ship) {
+                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
+                return;
+            }
+            if (ship->SystemID() != system_id) {
+                Logger().errorStream() << "CreateNewFleetFromShips passed ships with inconsistent system ids";
+                return;
+            }
+            if (system_id == UniverseObject::INVALID_OBJECT_ID) {
+                if (ship->X() != X || ship->Y() != Y) {
+                    Logger().errorStream() << "CreateNewFleetFromShips passed ships with inconsistent locations outside a system";
+                    return;
+                }
+            }
+            if (!ship->OwnedBy(empire_id)) {
+                Logger().errorStream() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
+                return;
+            }
+        }
+
+
+        // get new fleet id
+        int new_fleet_id = GetNewObjectID();
+        if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
+            ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+            return;
+        }
+
+
+        // generate new fleet name
+        std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
+
+        if (system) {
+            // fleet receiving drops is in a system
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+
+        } else {
+            // fleet receiving drops is not in a system.  as of this writing, this shouldn't be
+            // possible, given restrictions in the UI about interacting with fleets outside
+            // of systems.  but just in case...
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, X, Y, ship_ids)));
+        }
+    }
 }
 
 
@@ -2165,6 +2233,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"), 2, false, false));
 
     GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
                         menu_contents, ClientUI::TextColor());
@@ -2184,6 +2253,25 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
             }
             break;
         }
+
+        case 2: { // split ships in fleet into one-ship fleets
+            std::set<int> ship_ids_set = fleet->ShipIDs();
+
+            if (ship_ids_set.size() >= 2) {
+                // remove first ship from set
+                std::set<int>::iterator it = ship_ids_set.begin();
+                ship_ids_set.erase(it);
+
+                // put remaining ships into their own fleets
+                for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+                    std::vector<int> ship_ids_vec;
+                    ship_ids_vec.push_back(*it);
+                    CreateNewFleetFromShips(ship_ids_vec);
+                }
+            }
+            break;
+        }
+
         default:
             break;
         }
@@ -2260,57 +2348,7 @@ std::string FleetWnd::TitleText() const
 
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids)
 {
-    if (ship_ids.empty())
-        return;
-
-    if (m_fleet_ids.empty()) {
-        Logger().errorStream() << "FleetWnd::CreateNewFleetFromDrops tried to create a new fleet from dropped ships in FleetWnd that doesn't already contain any fleets";
-        return;
-        // TODO: in future, might be worth handling this situation by setting the FleetWnd's
-        // system and location info according to the dropped ships, if there isn't already
-        // this info available due to preexisting fleets in the FleetWnd
-    }
-        
-    int first_fleet_id = *(m_fleet_ids.begin());
-    const Fleet* some_fleet = GetUniverse().Object<Fleet>(first_fleet_id);
-    if (!some_fleet) {
-        Logger().errorStream() << "FleetWnd::CreateNewFleetFromDrops couldn't get first fleet";
-        return;
-    }
-
-    Ship* first_ship = GetUniverse().Object<Ship>(*ship_ids.begin());
-    if (!first_ship) {
-        Logger().errorStream() << "FleetWnd::CreateNewFleetFromDrops couldn't get first dropped ship";
-        return;
-    }
-
-    System* system = some_fleet->GetSystem();
-    double some_fleet_x = some_fleet->X();
-    double some_fleet_y = some_fleet->Y();
-
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    int new_fleet_id = GetNewObjectID();
-    if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
-        ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
-        return;
-    }
-
-    std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
-
-    if (system) {
-        // fleet receiving drops is in a system
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id,
-                                       system->ID(), ship_ids)));
-
-    } else {
-        // fleet receiving drops is not in a system.  as of this writing, this shouldn't be
-        // possible, given restrictions in the UI about interacting with fleets outside
-        // of systems.  but just in case...
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id,
-                                       some_fleet_x, some_fleet_y, ship_ids)));
-    }
+    CreateNewFleetFromShips(ship_ids);
 }
 
 void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)

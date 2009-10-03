@@ -633,12 +633,12 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
     }
 
     if (m_queue.empty()) {
-        Logger().debugStream() << "ProductionQueue::Update aborting early due to an empty queue";
+        //Logger().debugStream() << "ProductionQueue::Update aborting early due to an empty queue";
         m_projects_in_progress = 0;
         m_system_group_allocated_pp.clear();
 
         if (!production_status.empty())
-            Logger().errorStream() << "warnong: ProductionQueue::Update queue was empty, but passed production_status was not.";
+            Logger().errorStream() << "warning: ProductionQueue::Update queue was empty, but passed production_status was not.";
 
         ProductionQueueChangedSignal(); // need this so BuildingsPanel updates properly after removing last building
         return;                         // nothing to do for an empty queue

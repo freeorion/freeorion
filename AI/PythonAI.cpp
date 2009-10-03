@@ -11,6 +11,7 @@
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/timer.hpp>
 
 using boost::python::class_;
 using boost::python::def;
@@ -239,6 +240,8 @@ PythonAI::~PythonAI() {
 void PythonAI::GenerateOrders() {
     Logger().debugStream() << "PythonAI::GenerateOrders : initializing turn";
     AIInterface::InitTurn();
+
+    boost::timer order_timer;
     try {
         // call Python function that generates orders for current turn
         //Logger().debugStream() << "PythonAI::GenerateOrders : getting generate orders object";
@@ -251,7 +254,7 @@ void PythonAI::GenerateOrders() {
         AIInterface::DoneTurn();
         //Logger().debugStream() << "PythonAI::GenerateOrders : done with error";
     }
-    //Logger().debugStream() << "PythonAI::GenerateOrders : done successfully";
+    Logger().debugStream() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
 
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {

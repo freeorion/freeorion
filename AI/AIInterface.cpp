@@ -14,6 +14,8 @@
 
 #include "../util/OrderSet.h"
 
+#include <boost/timer.hpp>
+
 #include <stdexcept>
 #include <string>
 #include <map>
@@ -167,10 +169,14 @@ namespace AIInterface {
     }
 
     void InitTurn() {
+        boost::timer turn_init_timer;
+
         InitMeterEstimatesAndDiscrepancies();
         UpdateMeterEstimates();
         InitResourcePoolsAndSupply();
         UpdateResourcePoolsAndQueues();
+
+        Logger().debugStream() << "AIInterface::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);
     }
 
     void UpdateMeterEstimates(bool pretend_unowned_planets_owned_by_this_ai_empire) {

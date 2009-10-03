@@ -30,6 +30,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/timer.hpp>
 
 #include <cmath>
 #include <stdexcept>
@@ -713,6 +714,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters()
 
 void Universe::InitMeterEstimatesAndDiscrepancies()
 {
+    boost::timer timer;
+
     // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
     m_effect_accounting_map.clear();
@@ -758,6 +761,8 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             m_effect_accounting_map[object_id][type].push_back(info);
         }
     }
+
+    Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies time: " << (timer.elapsed() * 1000.0);
 }
 
 void Universe::UpdateMeterEstimates()
@@ -817,6 +822,8 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterType meter_type)
 {
+    boost::timer timer;
+
     std::set<int> objects_set;  // ensures no duplicates
 
     if (meter_type == INVALID_METER_TYPE) {
@@ -839,6 +846,8 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterTy
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
     UpdateMeterEstimatesImpl(final_objects_vec, meter_type);
+
+    Logger().debugStream() << "Universe::UpdateMeterEstimates time: " << (timer.elapsed() * 1000.0);
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type)
