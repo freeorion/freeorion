@@ -577,15 +577,15 @@ void ServerApp::ProcessTurns()
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
     for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
-        Planet *planet = m_universe.Object<Planet>(it->first);
+        Planet* planet = m_universe.Object<Planet>(it->first);
 
         // only one empire?
-        if (it->second.size()==1) {
+        if (it->second.size() == 1) {
             it->second[0]->ServerExecute();
             Empire* empire = empires.Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
-            const System *system = m_universe.Object<System>(planet->SystemID());
+            const System* system = m_universe.Object<System>(planet->SystemID());
 
             std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
             std::set<int> set_empire_with_military;

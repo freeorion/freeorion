@@ -29,41 +29,39 @@ class Order
 public:
     /** \name Structors */ //@{
     Order(); ///< default ctor
-    Order(int empire) : m_empire(empire) {} ///< ctor taking the ID of the Empire issuing the order
+    Order(int empire) : m_empire(empire) {}     ///< ctor taking the ID of the Empire issuing the order
     virtual ~Order() {}
     //@}
 
     /** \name Accessors */ //@{
-    int          EmpireID() const {return m_empire;} ///< returns the ID of the Empire issuing the order
+    int     EmpireID() const {return m_empire;} ///< returns the ID of the Empire issuing the order
+    //@}
 
     /**
      *  Preconditions of Execute():
      *  For all order subclasses, the empire ID for the order
-     *  must be that of an existing empire.  
-     * 
+     *  must be that of an existing empire.
+     *
      *  Subclasses add additional preconditions.  An std::runtime_error
      *   should be thrown if any precondition fails.
      */
-    void                   Execute() const;   ///< executes the order on the Universe and Empires
-    bool                   Undo() const;      ///< if this function returns true, it reverts the game state to what it was before this order was executed, otherwise it returns false and has no effect
-    //@}
+    void    Execute() const;            ///< executes the order on the Universe and Empires
+
+    bool    Undo() const;               ///< if this function returns true, it reverts the game state to what it was before this order was executed, otherwise it returns false and has no effect
 
 protected:
     /** \name Mutators */ //@{
-    /**
-     * This is here so that I do not have to type the same 'if' 5 times.  -- jbarcz1
-     */
-    void ValidateEmpireID() const; ///< verifies that the empire ID in this order is that of an existing empire.  Throws an std::runtime_error if not
-    bool Executed() const;         ///< returns true iff this order has been executed (a second execution indicates server-side execution)
+    void    ValidateEmpireID() const;   ///< verifies that the empire ID in this order is that of an existing empire.  Throws an std::runtime_error if not
+    bool    Executed() const;           ///< returns true iff this order has been executed (a second execution indicates server-side execution)
     //@}
 
 private:
     virtual void ExecuteImpl() const = 0;
     virtual bool UndoImpl() const;
 
-    int m_empire;
+    int             m_empire;
 
-    mutable bool m_executed; // indicates that Execute() has occured, and so an undo is legal
+    mutable bool    m_executed; // indicates that Execute() has occured, and so an undo is legal
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -82,12 +80,12 @@ public:
     RenameOrder();
     RenameOrder(int empire, int object, const std::string& name);
     //@}
-   
+
     /** \name Accessors */ //@{
     int                  ObjectID() const {return m_object;} ///< returns ID of fleet selected in this order
     const std::string&   Name() const     {return m_name;}  ///< returns the new name of the fleet
     //@}
-   
+
 private:
     /**
      * Preconditions of execute: 
@@ -255,11 +253,11 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int   PlanetID() const  {return m_planet;} ///< returns ID of the planet to be colonized
-    int   ShipID  () const  {return m_ship  ;} ///< returns ID of the ship which is colonizing the planet
-
-    virtual void           ServerExecute() const; //< called if the server allows the colonization effort
+    int             PlanetID() const  {return m_planet;}    ///< returns ID of the planet to be colonized
+    int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is colonizing the planet
     //@}
+
+    virtual void    ServerExecute() const;                  ///< called if the server allows the colonization effort
 
 private:
     /**
@@ -278,12 +276,11 @@ private:
      *      - the planet will be added to the empire's list of owned planets
      *     
      */
-    //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
     virtual void ExecuteImpl() const;
     virtual bool UndoImpl() const;
 
-    int   m_ship;
-    int   m_planet;
+    int                 m_ship;
+    int                 m_planet;
 
     // these are for undoing this order only
     mutable int         m_colony_fleet_id;   // the fleet from which the colony ship was taken
@@ -298,8 +295,8 @@ private:
 /////////////////////////////////////////////////////
 // DeleteFleetOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents forming a new fleet. 
-    Only one of system or position will be used to place the new fleet.*/
+/** the Order subclass that represents removing an existing fleet that contains
+  * no ships */
 class DeleteFleetOrder : public Order
 {
 public:
@@ -316,23 +313,15 @@ private:
     /**
      *  Preconditions:
      *     - m_fleet must be the ID of a fleet owned by issuing empire
-     *     - m_planet must be the ID of an un-owned planet.
-     *     - the fleet and the planet must have the same x,y coordinates
-     *     - the fleet must contain a colony ship
+     *     - the fleet must contain no ships
      *
      *  Postconditions:
-     *      - a colony ship will be removed from the fleet and deallocated
-     *        if the fleet becomes empty it will be deallocated.
-     *      - the empire issuing the order will be added to the list of owners
-     *            for the planet
-     *      - the planet's population will be increased
-     *      - the planet will be added to the empire's list of owned planets
-     *     
+     *     - the fleet is deleted
      */
     //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
     virtual void ExecuteImpl() const;
 
-    int                       m_fleet;
+    int m_fleet;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -499,10 +488,41 @@ private:
 
 
 /////////////////////////////////////////////////////
-// FleetMoveOrder
+// ScrapOrder
 /////////////////////////////////////////////////////
-/** the Order subclass that represents fleet movement
-    These orders change the current destination of a fleet */
+/** the Order subclass that represents the scrapping / recycling / destroying
+  * a building or ship owned by an empire. */
+class ScrapOrder : public Order
+{
+public:
+    /** \name Structors */ //@{
+    ScrapOrder();
+    ScrapOrder(int empire, int object_id);
+    //@}
+
+    /** \name Accessors */ //@{
+    int             ObjectID() const {return m_object_id;}  ///< returns ID of object selected in this order
+    //@}
+
+private:
+    /**
+     *  Preconditions:
+     *     - m_object_id must be the ID of an object owned by issuing empire
+     *     - the object must be scrappable: ships or buildings
+     *
+     *  Postconditions:
+     *     - the object is deleted
+     */
+    virtual void    ExecuteImpl() const;
+    virtual bool    UndoImpl() const;
+
+    int m_object_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 // Template Implementations
 template <class Archive>
 void Order::serialize(Archive& ar, const unsigned int version)
@@ -608,4 +628,10 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_create_new_design);
 }
 
+template <class Archive>
+void ScrapOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_object_id);
+}
 #endif // _Order_h_

@@ -708,15 +708,9 @@ void ProductionQueueOrder::ExecuteImpl() const
         throw std::runtime_error("Malformed ProductionQueueOrder.");
 }
 
-
-
 ////////////////////////////////////////////////
 // ShipDesignOrder
 ////////////////////////////////////////////////
-//ShipDesign                  m_ship_design;
-//int                         m_design_id;
-//bool                        m_delete_design_from_empire;
-//bool                        m_create_new_design;
 ShipDesignOrder::ShipDesignOrder() :
     Order(),
     m_ship_design(),
@@ -798,4 +792,30 @@ void ShipDesignOrder::ExecuteImpl() const
     } else {
         throw std::runtime_error("Malformed ShipDesignOrder.");
     }
+}
+
+////////////////////////////////////////////////
+// ShipDesignOrder
+////////////////////////////////////////////////
+ScrapOrder::ScrapOrder() :
+    Order(),
+    m_object_id(UniverseObject::INVALID_OBJECT_ID)
+{}
+
+ScrapOrder::ScrapOrder(int empire, int object_id) :
+    Order(),
+    m_object_id(object_id)
+{}
+
+void ScrapOrder::ExecuteImpl() const
+{
+    ValidateEmpireID();
+
+    // add object to list of objects to be scrapped
+}
+
+bool ScrapOrder::UndoImpl() const
+{
+    // remove object from list of objects to be scrapped
+    return true;
 }
