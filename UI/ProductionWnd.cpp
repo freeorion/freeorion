@@ -14,7 +14,6 @@
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
-#include <boost/format.hpp>
 
 #include <cmath>
 
@@ -130,17 +129,16 @@ namespace {
         }
 
         using boost::io::str;
-        using boost::format;
 
         // things other than buildings can be built in multiple copies with one order
         if (build.item.build_type != BT_BUILDING)
-            name_text = str(format(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
+            name_text = str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
 
 
         // get location indicator text
         std::string location_text;
         if (const UniverseObject* location = GetUniverse().Object(build.location))
-            location_text = str(format(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
+            location_text = str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
 
 
         // create and arrange widgets to display info
@@ -176,7 +174,7 @@ namespace {
 
 
         int turns_left = build.turns_left_to_next_item;
-        std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(format(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
+        std::string turns_left_text = turns_left < 0 ? UserString("PRODUCTION_TURNS_LEFT_NEVER") : str(FlexibleFormat(UserString("PRODUCTION_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_until_next_complete_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                                          turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_until_next_complete_text->ClipText(true);

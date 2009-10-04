@@ -333,7 +333,7 @@ boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
     ExtractMessageData(msg.m_message, empire_id, empire_name);
     Client().EmpireEliminatedSignal(empire_id);
     // TODO: replace this with something better
-    ClientUI::MessageBox(boost::io::str(boost::format(UserString("EMPIRE_DEFEATED")) % empire_name));
+    ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString("EMPIRE_DEFEATED")) % empire_name));
     return discard_event();
 }
 
@@ -349,7 +349,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
     case Message::HOST_DISCONNECTED:
     case Message::NONHOST_DISCONNECTED:
         Client().EndGame(true);
-        reason_message = boost::io::str(boost::format(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
+        reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
     case Message::YOU_ARE_ELIMINATED:

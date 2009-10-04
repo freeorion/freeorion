@@ -69,7 +69,7 @@ namespace {
         GG::Control* panel = new QueueTechPanel(w, tech_, allocated_rp, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
         Resize(panel->Size());
         push_back(panel);
-        
+
         SetDragDropDataType("RESEARCH_QUEUE_ROW");
     }
 

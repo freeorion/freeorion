@@ -24,7 +24,6 @@
 #include <GG/WndEvent.h>
 
 #include <boost/lexical_cast.hpp>
-#include <boost/format.hpp>
 
 using boost::lexical_cast;
 
@@ -1867,7 +1866,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (!building->OrderedScrapped()) {
     // create popup menu with "Scrap" option
         GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SCRAP"), 3, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), 3, false, false));
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
         if (popup.Run()) {
@@ -1885,7 +1884,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     } else {
         // create popup menu with "Cancel Scrap" option
         GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SCRAP"), 3, false, false));
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 3, false, false));
         GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
         if (popup.Run()) {

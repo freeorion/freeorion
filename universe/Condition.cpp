@@ -13,11 +13,8 @@
 #include "../util/Random.h"
 #include "System.h"
 
-#include <boost/format.hpp>
-
-using namespace boost::io;
+using boost::io::str;
 using boost::lexical_cast;
-using boost::format;
 
 extern int g_indent;
 
@@ -110,7 +107,7 @@ std::string Condition::Number::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_NUMBER";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % low_str
                % high_str
                % m_condition->Description());
@@ -175,7 +172,7 @@ std::string Condition::Turn::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_TURN";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % low_str
                % high_str);
 }
@@ -252,7 +249,7 @@ std::string Condition::NumberOf::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_NUMBER_OF";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % value_str
                % m_condition->Description());
 }
@@ -349,12 +346,12 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION_SELF";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % value_str);
+        return str(FlexibleFormat(UserString(description_str)) % value_str);
     } else {
         std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str))
+        return str(FlexibleFormat(UserString(description_str))
                    % UserString(lexical_cast<std::string>(m_affiliation))
                    % value_str);
     }
@@ -505,7 +502,7 @@ std::string Condition::Type::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_TYPE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % value_str);
+    return str(FlexibleFormat(UserString(description_str)) % value_str);
 }
 
 std::string Condition::Type::Dump() const
@@ -570,7 +567,7 @@ std::string Condition::Building::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_BUILDING";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
 }
 
 std::string Condition::Building::Dump() const
@@ -596,7 +593,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_SPECIAL";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
 }
 
 std::string Condition::HasSpecial::Dump() const
@@ -621,7 +618,7 @@ std::string Condition::Contains::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_CONTAINS";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % m_condition->Description());
+    return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
 std::string Condition::Contains::Dump() const
@@ -699,7 +696,7 @@ std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_CONTAINED_BY";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % m_condition->Description());
+    return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
 std::string Condition::ContainedBy::Dump() const
@@ -795,7 +792,7 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_PLANET_TYPE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % values_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::PlanetType::Dump() const
@@ -859,7 +856,7 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_PLANET_SIZE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % values_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::PlanetSize::Dump() const
@@ -923,7 +920,7 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     std::string description_str = "DESC_PLANET_ENVIRONMENT";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % values_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::PlanetEnvironment::Dump() const
@@ -988,7 +985,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
     std::string description_str = m_primary ? "DESC_FOCUS_TYPE_PRIMARY" : "DESC_FOCUS_TYPE_SECONDARY";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % values_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::FocusType::Dump() const
@@ -1053,7 +1050,7 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_STAR_TYPE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % values_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::StarType::Dump() const
@@ -1095,7 +1092,7 @@ std::string Condition::DesignHasHull::Description(bool negated/* = false*/) cons
     std::string description_str = "DESC_DESIGN_HAS_HULL";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
 }
 
 std::string Condition::DesignHasHull::Dump() const
@@ -1134,7 +1131,7 @@ std::string Condition::DesignHasPart::Description(bool negated/* = false*/) cons
     std::string description_str = "DESC_DESIGN_HAS_PART";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % low_str
                % high_str
                % m_name);
@@ -1180,12 +1177,12 @@ std::string Condition::Chance::Description(bool negated/* = false*/) const
         std::string description_str = "DESC_CHANCE_PERCENTAGE";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(0, 0), 1.0)) * 100));
+        return str(FlexibleFormat(UserString(description_str)) % lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(0, 0), 1.0)) * 100));
     } else {
         std::string description_str = "DESC_CHANCE";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % m_chance->Description());
+        return str(FlexibleFormat(UserString(description_str)) % m_chance->Description());
     }
 }
 
@@ -1223,7 +1220,7 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
     std::string description_str = m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % UserString(lexical_cast<std::string>(m_meter))
                % low_str
                % high_str);
@@ -1280,7 +1277,7 @@ std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*
     std::string description_str = "DESC_EMPIRE_STOCKPILE_VALUE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % UserString(lexical_cast<std::string>(m_stockpile))
                % low_str
                % high_str);
@@ -1325,7 +1322,7 @@ std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
     std::string description_str = "DESC_OWNER_HAS_TECH";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
 }
 
 std::string Condition::OwnerHasTech::Dump() const
@@ -1362,7 +1359,7 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
         std::string description_str = "DESC_VISIBLE_TO_SINGLE_EMPIRE";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % value_str);
+        return str(FlexibleFormat(UserString(description_str)) % value_str);
     } else {
         std::string values_str;
         for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
@@ -1378,7 +1375,7 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
         std::string description_str = "DESC_VISIBLE_TO_EMPIRES";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % values_str);
+        return str(FlexibleFormat(UserString(description_str)) % values_str);
     }
 }
 
@@ -1503,7 +1500,7 @@ std::string Condition::WithinDistance::Description(bool negated/* = false*/) con
     std::string description_str = "DESC_WITHIN_DISTANCE";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % value_str
                % m_condition->Description());
 }
@@ -1574,7 +1571,7 @@ std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/
     std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
     if (negated)
         description_str += "_NOT";
-    return str(format(UserString(description_str))
+    return str(FlexibleFormat(UserString(description_str))
                % value_str
                % m_condition->Description());
 }
@@ -1664,7 +1661,7 @@ std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) c
         std::string description_str = "DESC_EXPLORED_BY_SINGLE_EMPIRE";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % value_str);
+        return str(FlexibleFormat(UserString(description_str)) % value_str);
     } else {
         std::string values_str;
         for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
@@ -1680,7 +1677,7 @@ std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) c
         std::string description_str = "DESC_EXPLORED_BY_EMPIRES";
         if (negated)
             description_str += "_NOT";
-        return str(format(UserString(description_str)) % values_str);
+        return str(FlexibleFormat(UserString(description_str)) % values_str);
     }
 }
 

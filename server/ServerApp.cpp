@@ -636,6 +636,22 @@ void ServerApp::ProcessTurns()
     }
 
 
+    // scrap orders
+    std::vector<int> objects_to_scrap;
+    for (Universe::iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
+        int object_id = it->first;
+        if (Ship* ship = universe_object_cast<Ship*>(it->second)) {
+            if (ship->OrderedScrapped())
+                objects_to_scrap.push_back(object_id);
+        } else if (Building* building = universe_object_cast<Building*>(it->second)) {
+            if (building->OrderedScrapped())
+                objects_to_scrap.push_back(object_id);
+        }
+    }
+    for (std::vector<int>::const_iterator it = objects_to_scrap.begin(); it != objects_to_scrap.end(); ++it)
+        m_universe.Destroy(*it);
+
+
     // fleet movement
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         // save for possible SitRep generation after moving...

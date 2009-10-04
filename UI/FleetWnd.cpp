@@ -25,7 +25,6 @@
 #include <GG/TextControl.h>
 
 #include <boost/cast.hpp>
-#include <boost/format.hpp>
 
 namespace {
     const int           ICON_SIZE = 38;
@@ -2232,11 +2231,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
     }
 
     GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_FLEET"), 2, false, false));
+    menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"),           1, false, false));
+    if (fleet->NumShips() > 1)
+        menu_contents.next_level.push_back(GG::MenuItem("SECOND MENU ITEM",   2, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
-                        menu_contents, ClientUI::TextColor());
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
