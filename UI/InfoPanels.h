@@ -157,26 +157,27 @@ private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
     void                    DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    int                         m_planet_id;            ///< object id for the UniverseObject that this panel display info about
+    int                         m_planet_id;                ///< object id for the UniverseObject that this panel display info about
 
-    StatisticIcon*              m_fleet_supply_stat;    ///< icon and number of food production
-    StatisticIcon*              m_shield_stat;          ///< icon and number of minerals production
-    StatisticIcon*              m_defense_stat;         ///< icon and number of industry production
-    StatisticIcon*              m_detection_stat;       ///< icon and number of research production
-    StatisticIcon*              m_stealth_stat;         ///< icon and number of trade production
+    StatisticIcon*              m_fleet_supply_stat;        ///< icon and number of food production
+    StatisticIcon*              m_shield_stat;              ///< icon and number of minerals production
+    StatisticIcon*              m_defense_stat;             ///< icon and number of industry production
+    StatisticIcon*              m_detection_stat;           ///< icon and number of research production
+    StatisticIcon*              m_stealth_stat;             ///< icon and number of trade production
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    GG::Button*                 m_expand_button;    ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*                 m_expand_button;            ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    static std::map<int, bool>  s_expanded_map;     ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+    static std::map<int, bool>  s_expanded_map;             ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
+/** Contains various BuildingIndicator to represent buildings on a planet. */
 class BuildingsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    BuildingsPanel(GG::X w, int columns, int planet_id);  ///< basic ctor
+    BuildingsPanel(GG::X w, int columns, int planet_id);    ///< basic ctor
     ~BuildingsPanel();
     //@}
 
@@ -212,18 +213,20 @@ private:
 /** Represents and allows some user interaction with a building */
 class BuildingIndicator : public GG::Wnd {
 public:
-    BuildingIndicator(GG::X w, const BuildingType &type); ///< constructor for use when building is completed, shown without progress bar
-    BuildingIndicator(GG::X w, const BuildingType &type, int turns_left, int turns_completed,
-                      double partial_turn);             ///< constructor for use when building is partially complete, to show progress bar
+    BuildingIndicator(GG::X w, int building_id);            ///< constructor for use when building is completed, shown without progress bar
+    BuildingIndicator(GG::X w, const BuildingType& type, int turns_left, int turns_completed,
+                      double partial_turn);                 ///< constructor for use when building is partially complete, to show progress bar
 
     virtual void    Render();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
 private:
     GG::StaticGraphic*      m_graphic;
     MultiTurnProgressBar*   m_progress_bar;
+    int                     m_building_id;
 };
 
 /** Displays a set of specials attached to an UniverseObject */

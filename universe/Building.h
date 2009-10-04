@@ -34,6 +34,8 @@ public:
     Planet*                 GetPlanet() const;                  ///< returns a pointer to the planet this building is on
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
+
+    bool                    OrderedScrapped() const {return m_ordered_scrapped;}
     //@}
 
     /** \name Mutators */ //@{
@@ -45,11 +47,13 @@ public:
     virtual void            PopGrowthProductionResearchPhase();
 
     void                    Reset();                            ///< resets any building state, and removes owners
+    void                    SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     //@}
 
 private:
     std::string m_building_type;
     int         m_planet_id;
+    bool        m_ordered_scrapped;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -153,9 +157,24 @@ const BuildingType* GetBuildingType(const std::string& name);
 template <class Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
+    Visibility vis;
+    bool ordered_scrapped = false;
+
+    if (Archive::is_saving::value) {
+        vis = GetVisibility(Universe::s_encoding_empire);
+    }
+
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_building_type)
         & BOOST_SERIALIZATION_NVP(m_planet_id);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(ordered_scrapped);
+    }
+
+    if (Archive::is_loading::value)
+        m_ordered_scrapped = ordered_scrapped;
 }
 
 template <class Archive>

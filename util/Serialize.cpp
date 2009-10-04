@@ -51,6 +51,7 @@ BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
 BOOST_CLASS_EXPORT(ProductionQueueOrder)
 BOOST_CLASS_EXPORT(ShipDesignOrder)
+BOOST_CLASS_EXPORT(ScrapOrder)
 
 // exports for boost serialization of PathingEngine-related classes
 BOOST_CLASS_EXPORT(CombatShip)

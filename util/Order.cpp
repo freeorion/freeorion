@@ -803,7 +803,7 @@ ScrapOrder::ScrapOrder() :
 {}
 
 ScrapOrder::ScrapOrder(int empire, int object_id) :
-    Order(),
+    Order(empire),
     m_object_id(object_id)
 {}
 
@@ -811,11 +811,29 @@ void ScrapOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    // add object to list of objects to be scrapped
+    int empire_id = EmpireID();
+
+    if (Ship* ship = GetUniverse().Object<Ship>(m_object_id)) {
+        if (ship->OwnedBy(empire_id))
+            ship->SetOrderedScrapped(true);
+    } else if (Building* building = GetUniverse().Object<Building>(m_object_id)) {
+        if (building->OwnedBy(empire_id))
+            building->SetOrderedScrapped(true);
+    }
 }
 
 bool ScrapOrder::UndoImpl() const
 {
-    // remove object from list of objects to be scrapped
+    ValidateEmpireID();
+
+    int empire_id = EmpireID();
+
+    if (Ship* ship = GetUniverse().Object<Ship>(m_object_id)) {
+        if (ship->OwnedBy(empire_id))
+            ship->SetOrderedScrapped(false);
+    } else if (Building* building = GetUniverse().Object<Building>(m_object_id)) {
+        if (building->OwnedBy(empire_id))
+            building->SetOrderedScrapped(false);
+    }
     return true;
 }

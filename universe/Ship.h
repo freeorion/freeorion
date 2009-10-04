@@ -23,45 +23,50 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const ShipDesign*          Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                        DesignID() const;                   ///< returns the design id of the ship
-    int                        FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
-    Fleet*                     GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
+    const ShipDesign*           Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                         DesignID() const;                   ///< returns the design id of the ship
+    int                         FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
+    Fleet*                      GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
 
-    virtual const std::string& PublicName(int empire_id) const;
+    virtual const std::string&  PublicName(int empire_id) const;
 
-    bool                       IsArmed() const;
-    bool                       CanColonize() const;
-    double                     Speed() const;
+    bool                        IsArmed() const;
+    bool                        CanColonize() const;
+    double                      Speed() const;
 
-    const ConsumablesMap&      Fighters() const;
-    const ConsumablesMap&      Missiles() const;
+    const ConsumablesMap&       Fighters() const;
+    const ConsumablesMap&       Missiles() const;
 
-    virtual UniverseObject*    Accept(const UniverseObjectVisitor& visitor) const;
+    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double             ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
+    virtual double              ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+
+    bool                        OrderedScrapped() const {return m_ordered_scrapped;}
     //@}
 
     /** \name Mutators */ //@{
-    void                       SetFleetID(int fleet_id);                           ///< sets the ID of the fleet the ship resides in
+    void                        SetFleetID(int fleet_id);                       ///< sets the ID of the fleet the ship resides in
 
-    void                       Resupply();
+    void                        Resupply();
 
-    void                       AddFighters(const std::string& part_name, std::size_t n);
-    void                       RemoveFighters(const std::string& part_name, std::size_t n);
-    void                       RemoveMissiles(const std::string& part_name, std::size_t n);
+    void                        AddFighters(const std::string& part_name, std::size_t n);
+    void                        RemoveFighters(const std::string& part_name, std::size_t n);
+    void                        RemoveMissiles(const std::string& part_name, std::size_t n);
 
-    virtual void               MoveTo(double x, double y);
+    virtual void                MoveTo(double x, double y);
 
-    virtual void               MovementPhase();
-    virtual void               PopGrowthProductionResearchPhase();
+    virtual void                MovementPhase();
+    virtual void                PopGrowthProductionResearchPhase();
+
+    void                        SetOrderedScrapped(bool b = true);              ///< flags ship for scrapping
     //@}
 
 private:
-    int m_design_id;
-    int m_fleet_id;
-    ConsumablesMap m_fighters;
-    ConsumablesMap m_missiles;
+    int             m_design_id;
+    int             m_fleet_id;
+    bool            m_ordered_scrapped;
+    ConsumablesMap  m_fighters;
+    ConsumablesMap  m_missiles;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -72,11 +77,26 @@ private:
 template <class Archive>
 void Ship::serialize(Archive& ar, const unsigned int version)
 {
+    Visibility vis;
+    bool ordered_scrapped = false;
+
+    if (Archive::is_saving::value) {
+        vis = GetVisibility(Universe::s_encoding_empire);
+    }
+
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
+        & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_design_id)
         & BOOST_SERIALIZATION_NVP(m_fleet_id)
         & BOOST_SERIALIZATION_NVP(m_fighters)
         & BOOST_SERIALIZATION_NVP(m_missiles);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(ordered_scrapped);
+    }
+
+    if (Archive::is_loading::value)
+        m_ordered_scrapped = ordered_scrapped;
 }
 
 #endif // _Ship_h_

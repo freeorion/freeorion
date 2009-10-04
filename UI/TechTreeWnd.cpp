@@ -19,7 +19,6 @@
 #include <GG/StaticGraphic.h>
 
 #include <gvc.h>
-#include <boost/format.hpp>
 #include <algorithm>
 
 #include <boost/timer.hpp>

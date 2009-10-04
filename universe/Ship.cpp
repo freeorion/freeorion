@@ -30,12 +30,14 @@ namespace {
 
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
-    m_fleet_id(INVALID_OBJECT_ID)
+    m_fleet_id(INVALID_OBJECT_ID),
+    m_ordered_scrapped(false)
 {}
 
 Ship::Ship(int empire_id, int design_id) :
     m_design_id(design_id),
-    m_fleet_id(INVALID_OBJECT_ID)
+    m_fleet_id(INVALID_OBJECT_ID),
+    m_ordered_scrapped(false)
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
@@ -204,9 +206,19 @@ void Ship::MoveTo(double x, double y)
     }
 }
 
-void Ship::MovementPhase() {
+void Ship::MovementPhase()
+{
     // Fleet::MovementPhase moves ships within fleet around and deals with ship fuel consumption
 }
 
-void Ship::PopGrowthProductionResearchPhase() {
+void Ship::PopGrowthProductionResearchPhase()
+{
+}
+
+void Ship::SetOrderedScrapped(bool b)
+{
+    bool initial_status = m_ordered_scrapped;
+    if (b == initial_status) return;
+    m_ordered_scrapped = b;
+    StateChangedSignal();
 }

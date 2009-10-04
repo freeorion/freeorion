@@ -1615,8 +1615,7 @@ void BuildingsPanel::Update()
             Logger().errorStream() << "... trying to get object as generic UniverseObject: " << (obj ? obj->Name() : " unavailable!");
             continue;
         }
-        const BuildingType* building_type = building->GetBuildingType();
-        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type);
+        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *it);
         m_building_indicators.push_back(ind);
     }
 
@@ -1755,25 +1754,31 @@ void BuildingsPanel::DoExpandCollapseLayout()
 /////////////////////////////////////
 //       BuildingIndicator         //
 /////////////////////////////////////
-BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type) :
+BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
-    m_progress_bar(0)
+    m_progress_bar(0),
+    m_building_id(building_id)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
+    if (const Building* building = GetUniverse().Object<Building>(m_building_id)) {
+        if (const BuildingType* type = building->GetBuildingType()) {
+            boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type->Name());
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type.Name()), UserString(type.Description()))));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type->Name()), UserString(type->Description()))));
 
-    m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-    AttachChild(m_graphic);
+            m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_graphic);
+        }
+    }
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
                                      int turns_completed, double partial_turn) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
-    m_progress_bar(0)
+    m_progress_bar(0),
+    m_building_id(UniverseObject::INVALID_OBJECT_ID)
 {
     boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
 
@@ -1848,6 +1853,54 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 void BuildingIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    // verify that this indicator represents an existing building, and not a
+    // queued production item, and that the owner of the building is this
+    // client's player's empire
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    Building* building = GetUniverse().Object<Building>(m_building_id);
+    if (!building || !building->OwnedBy(empire_id)) {
+        return;
+    }
+
+    if (!building->OrderedScrapped()) {
+    // create popup menu with "Scrap" option
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SCRAP"), 3, false, false));
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+            case 3: { // scrap building
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ScrapOrder(empire_id, m_building_id)));
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    } else {
+        // create popup menu with "Cancel Scrap" option
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SCRAP"), 3, false, false));
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+            case 3: { // un-scrap building
+                // find order to scrap this building, and recind it
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    }
+}
 
 /////////////////////////////////////
 //         SpecialsPanel           //

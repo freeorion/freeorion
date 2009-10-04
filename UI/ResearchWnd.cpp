@@ -1,20 +1,19 @@
 #include "ResearchWnd.h"
 
-#include "../util/AppInterface.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "QueueListBox.h"
 #include "../Empire/Empire.h"
-#include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../universe/Tech.h"
+#include "../util/MultiplayerCommon.h"
+#include "../util/AppInterface.h"
 #include "../UI/TechTreeWnd.h"
+#include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
-#include <boost/format.hpp>
 
 #include <cmath>
 
@@ -126,15 +125,14 @@ namespace {
         top += m_progress_bar->Height() + MARGIN;
 
         using boost::io::str;
-        using boost::format;
 
-        std::string turns_cost_text = str(format(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
+        std::string turns_cost_text = str(FlexibleFormat(UserString("TECH_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
         m_RPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turns_cost_text, font, clr, GG::FORMAT_LEFT);
 
         left += TURNS_AND_COST_WIDTH;
 
-        std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(format(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
+        std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);
