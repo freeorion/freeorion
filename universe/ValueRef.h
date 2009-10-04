@@ -257,7 +257,7 @@ const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
-    boost::format formatter(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
+    boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
     formatter % UserString(m_source_ref ? "DESC_VAR_SOURCE" : "DESC_VAR_TARGET");
     for (unsigned int i = 0; i < m_property_name.size(); ++i) {
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
