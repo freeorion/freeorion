@@ -42,7 +42,7 @@ void StringTable_::Load()
             file_contents += c;
         }
     } else {
-        Logger().errorStream() << "Could not open or read StringTable_ file \"" << m_filename << "\"";
+        Logger().errorStream() << "Could not open or read StringTable file \"" << m_filename << "\"";
         return;
     }
 
@@ -53,55 +53,74 @@ void StringTable_::Load()
     const sregex KEY = IDENTIFIER;
     const sregex SINGLE_LINE_VALUE = *(~_n);
     const sregex MULTI_LINE_VALUE = -*_;
-    const sregex FILE_ =
-        IDENTIFIER >>
-        +(*(space | COMMENT) >>
-          KEY >> _n >>
-          (("'''" >> MULTI_LINE_VALUE >> "'''" >> _n) | SINGLE_LINE_VALUE >> _n));
+    const sregex ENTRY =
+        *(space | COMMENT) >>
+        KEY >> _n >>
+        (("'''" >> MULTI_LINE_VALUE >> "'''" >> _n) | SINGLE_LINE_VALUE >> _n);
+    const sregex TRAILING_WS =
+        *(space | COMMENT);
     const sregex REFERENCE =
         "[[" >> *space >> (s1 = IDENTIFIER) >> +space >> (s2 = IDENTIFIER) >> *space >> "]]";
     const sregex KEYEXPANSION =
         "[[" >> *space >> (s1 = IDENTIFIER) >> *space >> "]]";
 
     // parse input text stream
+    std::string::iterator it = file_contents.begin();
+    std::string::iterator end = file_contents.end();
+
     smatch matches;
-    bool sequence_exists = false;
+    bool well_formed = false;
     try {
         // has caused crashes with "Regex stack space exhausted" exception
-        sequence_exists = regex_search(file_contents, matches, FILE_);
-    } catch(std::exception& e) {
+        well_formed = regex_search(it, end, matches, IDENTIFIER,
+                                   regex_constants::match_continuous);
+        it = end - matches.suffix().length();
+        if (well_formed)
+            m_language = matches.str(0);
+
+        while (well_formed) {
+            well_formed = regex_search(it, end, matches, ENTRY,
+                                       regex_constants::match_continuous);
+            it = end - matches.suffix().length();
+
+            if (well_formed) {
+                std::string key = "";
+                smatch::nested_results_type::const_iterator it =
+                    matches.nested_results().begin();
+                smatch::nested_results_type::const_iterator end =
+                    matches.nested_results().end();
+                for (; it != end; ++it) {
+                    if (it->regex_id() == KEY.regex_id())
+                        key = it->str();
+                    else if (it->regex_id() == SINGLE_LINE_VALUE.regex_id() ||
+                             it->regex_id() == MULTI_LINE_VALUE.regex_id()) {
+                        assert(key != "");
+                        if (m_strings.find(key) == m_strings.end()) {
+                            m_strings[key] = it->str();
+                            boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
+                        } else {
+                            Logger().errorStream() << "Duplicate string ID found: '" << key
+                                                   << "' in file: '" << m_filename
+                                                   << "'.  Ignoring duplicate.";
+                        }
+                        key = "";
+                    }
+                }
+            }
+        }
+
+        regex_search(it, end, matches, TRAILING_WS,
+                     regex_constants::match_continuous);
+        it = end - matches.suffix().length();
+
+        well_formed = it == end;
+    } catch (std::exception& e) {
         Logger().errorStream() << "Exception caught regex parsing Stringtable: " << e.what();
         std::cerr << "Exception caught regex parsing Stringtable: " << e.what() << std::endl;
         return;
     }
 
-
-    if (sequence_exists) {
-        // store pairs of string names and user-readable text, in map
-        smatch::nested_results_type::const_iterator it = matches.nested_results().begin();
-        smatch::nested_results_type::const_iterator end = matches.nested_results().end();
-        std::size_t match_index = 0;
-        std::string key;
-        for (; it != end; ++it) {
-            if (!match_index) {
-                m_language = it->str();
-                ++match_index;
-            } else if (it->regex_id() == KEY.regex_id() ||
-                       it->regex_id() == SINGLE_LINE_VALUE.regex_id() ||
-                       it->regex_id() == MULTI_LINE_VALUE.regex_id()) {
-                if (match_index % 2) {
-                    key = it->str();
-                } else {
-                    if (m_strings.find(key) == m_strings.end()) {
-                        m_strings[key] = it->str();
-                        boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
-                    } else {
-                        Logger().errorStream() << "Duplicate string ID found: '" << key << "' in file: '" << m_filename << "'.  Ignoring duplicate.";
-                    }
-                }
-                ++match_index;
-            }
-        }
+    if (well_formed) {
         for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
         {
             sregex_iterator it(map_it->second.begin(), map_it->second.end(), REFERENCE);
@@ -151,6 +170,6 @@ void StringTable_::Load()
             }
         }
     } else {
-        Logger().errorStream() << "StringTable_ file \"" << m_filename << "\" is malformed";
+        Logger().errorStream() << "StringTable file \"" << m_filename << "\" is malformed";
     }
 }
