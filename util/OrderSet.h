@@ -19,16 +19,16 @@ private:
     typedef std::map<int, OrderPtr> OrderMap;
 
 public:
-    typedef OrderMap::const_iterator const_iterator;   ///< defines a public const_iterator type for OrderSet
-    typedef std::vector<OrderPtr >   OrderVec;         ///< the return type of FindOrders()
+    typedef OrderMap::const_iterator const_iterator;    ///< defines a public const_iterator type for OrderSet
+    typedef std::vector<OrderPtr >   OrderVec;          ///< the return type of FindOrders()
 
     /** \name Structors */ //@{
     OrderSet();
     //@}
-   
+
     /** \name Accessors */ //@{
-    const OrderPtr ExamineOrder(int order) const;   ///< returns a pointer to any order, so that it can be examined through its accessors; returns 0 if no such order exists
-   
+    const OrderPtr ExamineOrder(int order) const;       ///< returns a pointer to any order, so that it can be examined through its accessors; returns 0 if no such order exists
+
     /** returns all the orders that match \a pred.  Predicates used with this function must take a single OrderPtr 
         parameter and must return bool or a type for which there is a conversion to bool.*/
     template <class Pred>

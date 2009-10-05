@@ -173,6 +173,21 @@ namespace {
     const GG::Y     ICON_BROWSE_ICON_HEIGHT(64);
     const GG::X     SPECIAL_ICON_WIDTH(24);
     const GG::Y     SPECIAL_ICON_HEIGHT(24);
+
+   /** Returns map from object ID to issued colonize orders affecting it. */
+    std::map<int, int> PendingScrapOrders() {
+        std::map<int, int> retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                retval[order->ObjectID()] = it->first;
+            }
+        }
+        return retval;
+    }
 }
 
 /////////////////////////////////////
@@ -1863,40 +1878,37 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
+    GG::MenuItem menu_contents;
+
     if (!building->OrderedScrapped()) {
-    // create popup menu with "Scrap" option
-        GG::MenuItem menu_contents;
+        // create popup menu with "Scrap" option
         menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), 3, false, false));
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
-
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-            case 3: { // scrap building
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ScrapOrder(empire_id, m_building_id)));
-                break;
-            }
-
-            default:
-                break;
-            }
-        }
     } else {
         // create popup menu with "Cancel Scrap" option
-        GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 3, false, false));
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 4, false, false));
+    }
 
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-            case 3: { // un-scrap building
-                // find order to scrap this building, and recind it
-                break;
-            }
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+    if (popup.Run()) {
+        switch (popup.MenuID()) {
+        case 3: { // scrap building
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ScrapOrder(empire_id, m_building_id)));
+            break;
+        }
 
-            default:
-                break;
+        case 4: { // un-scrap building
+            // find order to scrap this building, and recind it
+            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+            std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
+            if (it != pending_scrap_orders.end()) {
+                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+            break;
             }
+        }
+
+        default:
+            break;
         }
     }
 }

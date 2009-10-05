@@ -346,6 +346,7 @@ namespace {
         return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
     }
 
+    /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
         db.Add("UI.sidepanel-width",                "OPTIONS_DB_UI_SIDEPANEL_WIDTH",                370,    RangedValidator<int>(64, 512));
         db.Add("UI.sidepanel-planet-max-diameter",  "OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER",  128,    RangedValidator<int>(16, 512));
@@ -353,6 +354,36 @@ namespace {
         db.Add("UI.sidepanel-planet-shown",         "OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN",         true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    /** Returns map from planet ID to issued colonize orders affecting it. */
+    std::map<int, int> PendingColonizationOrders() {
+        std::map<int, int> retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<FleetColonizeOrder> order = boost::dynamic_pointer_cast<FleetColonizeOrder>(it->second)) {
+                retval[order->PlanetID()] = it->first;
+            }
+        }
+        return retval;
+    }
+
+    /** Returns map from object ID to issued colonize orders affecting it. */
+    std::map<int, int> PendingScrapOrders() {
+        std::map<int, int> retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                retval[order->ObjectID()] = it->first;
+            }
+        }
+        return retval;
+    }
 }
 
 /** A single planet's info and controls; several of these may appear at any
@@ -1068,7 +1099,7 @@ void SidePanel::PlanetPanel::ClickColonize()
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    std::map<int, int> pending_colonization_orders = HumanClientApp::GetApp()->PendingColonizationOrders();
+    std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
 
     // colonize
@@ -1090,13 +1121,10 @@ void SidePanel::PlanetPanel::ClickColonize()
                 return;
         }
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder( empire_id, ship->ID(), planet->ID())));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship->ID(), planet->ID())));
 
     } else {
-         // cancel colonization
-        boost::shared_ptr<FleetColonizeOrder> col_order =
-            boost::dynamic_pointer_cast<FleetColonizeOrder>(HumanClientApp::GetApp()->Orders().ExamineOrder(it->second));
-
+        // cancel colonization
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     }
 }

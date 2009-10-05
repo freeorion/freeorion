@@ -182,18 +182,6 @@ const std::string& HumanClientApp::SaveFileName() const
 bool HumanClientApp::SinglePlayerGame() const
 { return m_single_player_game; }
 
-std::map<int, int> HumanClientApp::PendingColonizationOrders() const
-{
-    std::map<int, int> retval;
-    for (OrderSet::const_iterator it = Orders().begin(); it != Orders().end(); ++it) {
-        if (boost::shared_ptr<FleetColonizeOrder> order =
-            boost::dynamic_pointer_cast<FleetColonizeOrder>(it->second)) {
-            retval[order->PlanetID()] = it->first;
-        }
-    }
-    return retval;
-}
-
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32

@@ -192,6 +192,21 @@ namespace {
                 OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, X, Y, ship_ids)));
         }
     }
+
+   /** Returns map from object ID to issued colonize orders affecting it. */
+    std::map<int, int> PendingScrapOrders() {
+        std::map<int, int> retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                retval[order->ObjectID()] = it->first;
+            }
+        }
+        return retval;
+    }
 }
 
 
@@ -1726,13 +1741,20 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         return;
 
 
-    // create popup menu with a rename fleet option in it.
+    // create popup menu with a rename ship option in it.
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RENAME"), 1, false, false));
 
-    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(),
-                        menu_contents, ClientUI::TextColor());
 
+    if (!ship->OrderedScrapped()) {
+        // create popup menu with "Scrap" option
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), 3, false, false));
+    } else {
+        // create popup menu with "Cancel Scrap" option
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_SHIP_SCRAP"), 4, false, false));
+    }
+
+    GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
@@ -1746,13 +1768,30 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(empire_id, ship->ID(), new_name)));
             }
-            break;}
+            break;
+        }
+
+        case 3: { // scrap ship
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ScrapOrder(empire_id, ship->ID())));
+            break;
+        }
+
+        case 4: { // un-scrap ship
+            // find order to scrap this ship, and recind it
+            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+            std::map<int, int>::const_iterator it = pending_scrap_orders.find(ship->ID());
+            if (it != pending_scrap_orders.end()) {
+                HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+            break;
+            }
+        }
+
         default:
             break;
         }
     }
 }
-
 
 
 ////////////////////////////////////////////////
