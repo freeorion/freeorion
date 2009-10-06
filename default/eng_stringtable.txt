@@ -1441,6 +1441,11 @@ BP_COMPLETE_BUILDING_TOOLTIP
 
 %2%'''
 
+ORDER_BUIDLING_SCRAP
+Scrap Building
+
+ORDER_CANCEL_BUIDLING_SCRAP
+Cancel Scrapping Building
 
 ## General Tooltips#########
 
@@ -1505,10 +1510,10 @@ Use one of the departing colony ships?'''
 #################
 
 FW_FLEET_HOLDING_AT
-Holding at %1% System
+Holding at %1%
 
 FW_FLEET_MOVING_TO
-Moving to %1%, ETA %2% (%3%)
+Moving to %1%
 
 FW_FLEET_ETA_NEVER
 Never
@@ -1530,7 +1535,7 @@ FW_NEW_FLEET_LABEL
 <i>New Fleet</i>
 
 FW_EMPIRE_FLEETS_AT_SYSTEM
-%1% Fleets At %2% System
+%1% Fleets At %2%
 
 FW_EMPIRE_FLEETS
 %1% Fleets
@@ -1539,7 +1544,7 @@ FW_NO_FLEET
 No Fleet
 
 FW_GENERIC_FLEETS_AT_SYSTEM
-Fleets At %1% System
+Fleets At %1%
 
 FW_GENERIC_FLEETS
 Fleets
@@ -1558,11 +1563,29 @@ Foreign fleet
 FW_FOREIGN_SHIP
 Foreign ship
 
+SHIP_SPEED_STAT_TITLE
+Speed
+
+SHIP_SPEED_STAT_MAIN
+Maximum distance along starlanes travelled per turn.
+
 FW_FUEL
 Fuel
 
 FW_FLEET_FUEL_SUMMARY
-'''Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.'''
+Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.
+
+FW_FLEET_SPEED_SUMMARY
+Fleet Speed - Equal to the minimum speed of ships in the fleet.
+
+FW_SPLIT_FLEET
+Split Fleet
+
+ORDER_SHIP_SCRAP
+Scrap Ship
+
+ORDER_CANCEL_SHIP_SCRAP
+Cancel Scrapping Ship
 
 ###############
 # TechTreeWnd #
@@ -1585,7 +1608,6 @@ TECH_TURNS_LEFT_STR
 
 TECH_TURNS_LEFT_NEVER
 Never
-
 
 TECH_WND_TECH_COMPLETED
 COMPLETED
@@ -2681,6 +2703,18 @@ DESC_STAR_TYPE
 DESC_STAR_TYPE_NOT
  that is not a system with a %1% star
 
+DESC_DESIGN_HAS_HULL
+ that contains the hull %1%
+
+DESC_DESIGN_HAS_HULL_NOT
+ that does not contain the hull %1%
+
+DESC_DESIGN_HAS_PART
+ that contains between %1% and %2% of the %3% part
+
+DESC_DESIGN_HAS_PART_NOT
+ that does not contain between %1% and %2% of the %3% part
+ 
 DESC_CHANCE_PERCENTAGE
  on a %1%%% chance
 
@@ -2735,6 +2769,24 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
  that is not within %1% starlane jumps of any object%2%
 
+DESC_EXPLORED_BY_SINGLE_EMPIRE
+ that has been explored by the %1% empire
+
+DESC_EXPLORED_BY_SINGLE_EMPIRE_NOT
+ that has not been explored by the %1% empire
+
+DESC_EXPLORED_BY_EMPIRES
+ that has been explored by one of the %1% empires
+
+DESC_EXPLORED_BY_EMPIRES_NOT
+ that has not been explored by any of the %1% empires
+ 
+DESC_STATIONARY
+ that is stationary
+
+DESC_STATIONARY_NOT
+ that is moving
+
 DESC_AND_BETWEEN_OPERANDS
  and
 
@@ -2770,6 +2822,8 @@ DESC_NUMBER
 
 DESC_NUMBER_NOT
  if there are not between %1% and %2% objects%3%
+
+
 
 ###################
 # Tech Categories #

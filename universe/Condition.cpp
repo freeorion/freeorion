@@ -1715,7 +1715,10 @@ Condition::Stationary::Stationary()
 
 std::string Condition::Stationary::Description(bool negated/* = false*/) const
 {
-    return UserString("DESC_STATIONARY");
+    std::string description_str = "DESC_STATIONARY";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
 }
 
 std::string Condition::Stationary::Dump() const
