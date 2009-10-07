@@ -1869,7 +1869,7 @@ void BuildingIndicator::Refresh()
             SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type->Name()), UserString(type->Description()))));
 
             if (building->OrderedScrapped()) {
-                boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
+                boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
                 m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                 AttachChild(m_scrap_indicator);
             }

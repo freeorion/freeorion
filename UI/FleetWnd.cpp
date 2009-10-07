@@ -503,6 +503,7 @@ namespace {
             Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
             m_ship_id(ship_id),
             m_ship_icon(0),
+            m_scrap_indicator(0),
             m_ship_name_text(0),
             m_design_name_text(0),
             m_stat_icons(),
@@ -570,7 +571,6 @@ namespace {
         }
 
         ~ShipDataPanel() {
-            delete m_ship_icon;
             m_ship_connection.disconnect();
             m_fleet_connection.disconnect();
         }
@@ -625,6 +625,9 @@ namespace {
             delete m_ship_icon;
             m_ship_icon = 0;
 
+            delete m_scrap_indicator;
+            m_scrap_indicator = 0;
+
             const Ship* ship = GetUniverse().Object<Ship>(m_ship_id);
             if (!ship)
                 return;
@@ -640,8 +643,15 @@ namespace {
             m_ship_icon = new GG::StaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET),
                                                 GG::X(ICON_SIZE), GG::Y(ICON_SIZE),
                                                 icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-
             AttachChild(m_ship_icon);
+
+            if (ship->OrderedScrapped()) {
+                boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+                m_scrap_indicator = new GG::StaticGraphic(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET),
+                                                          GG::X(ICON_SIZE), GG::Y(ICON_SIZE),
+                                                          scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                AttachChild(m_scrap_indicator);
+            }
         }
 
         void            Refresh() {
@@ -717,7 +727,10 @@ namespace {
                 GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
                 GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
 
-                m_ship_icon->SizeMove(icon_ul, icon_lr);
+                if (m_ship_icon)
+                    m_ship_icon->SizeMove(icon_ul, icon_lr);
+                if (m_scrap_indicator)
+                    m_scrap_indicator->SizeMove(icon_ul, icon_lr);
             }
 
 
@@ -739,6 +752,7 @@ namespace {
 
         int                         m_ship_id;
         GG::StaticGraphic*          m_ship_icon;
+        GG::StaticGraphic*          m_scrap_indicator;
         GG::TextControl*            m_ship_name_text;
         GG::TextControl*            m_design_name_text;
 
@@ -1022,9 +1036,13 @@ void FleetDataPanel::Refresh()
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
+        std::vector<boost::shared_ptr<GG::Texture> > icons; 
+
         boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
+        icons.push_back(head_icon);
+
         boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
-        std::vector<boost::shared_ptr<GG::Texture> > icons; icons.push_back(head_icon); icons.push_back(size_icon);
+        icons.push_back(size_icon);
 
         m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, GG::X(ICON_SIZE), GG::Y(ICON_SIZE),
                                                      icons);
