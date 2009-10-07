@@ -58,4 +58,4 @@ fi
 export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 
 # Call with settings-dir to avoid conflicting installations
-${STRACE} ./freeorion --settings-dir ./default $@
+${STRACE} ./freeorion --resource-dir ./default $@
