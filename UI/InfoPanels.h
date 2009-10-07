@@ -218,15 +218,17 @@ public:
                       double partial_turn);                 ///< constructor for use when building is partially complete, to show progress bar
 
     virtual void    Render();
+    void            Refresh();
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
 private:
-    GG::StaticGraphic*      m_graphic;
-    MultiTurnProgressBar*   m_progress_bar;
-    int                     m_building_id;
+    GG::StaticGraphic*          m_graphic;
+    GG::StaticGraphic*          m_scrap_indicator;  ///< shown to indicate building was ordered scrapped
+    MultiTurnProgressBar*       m_progress_bar;
+    int                         m_building_id;
 };
 
 /** Displays a set of specials attached to an UniverseObject */

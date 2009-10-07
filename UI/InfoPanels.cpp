@@ -1661,7 +1661,7 @@ void BuildingsPanel::Update()
 
             double partial_turn = std::fmod(progress, turn_cost) / turn_cost;
             int turns_completed = static_cast<int>(progress / turn_cost);
-            
+
             BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type, turns, turns_completed, partial_turn);
             m_building_indicators.push_back(ind);
         }
@@ -1771,26 +1771,23 @@ void BuildingsPanel::DoExpandCollapseLayout()
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
+    m_scrap_indicator(0),
     m_progress_bar(0),
     m_building_id(building_id)
 {
-    if (const Building* building = GetUniverse().Object<Building>(m_building_id)) {
-        if (const BuildingType* type = building->GetBuildingType()) {
-            boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type->Name());
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type->Name()), UserString(type->Description()))));
+    if (const Building* building = GetUniverse().Object<Building>(m_building_id))
+        GG::Connect(building->StateChangedSignal,   &BuildingIndicator::Refresh,     this);
 
-            m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            AttachChild(m_graphic);
-        }
-    }
+    Refresh();
 }
 
 BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
                                      int turns_completed, double partial_turn) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
+    m_scrap_indicator(0),
     m_progress_bar(0),
     m_building_id(UniverseObject::INVALID_OBJECT_ID)
 {
@@ -1850,6 +1847,36 @@ void BuildingIndicator::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
+void BuildingIndicator::Refresh()
+{
+    if (const Building* building = GetUniverse().Object<Building>(m_building_id)) {
+        ClearBrowseInfoWnd();
+
+        if (m_graphic) {
+            delete m_graphic;
+            m_graphic = 0;
+        }
+        if (m_scrap_indicator) {
+            delete m_scrap_indicator;
+            m_scrap_indicator = 0;
+        }
+
+        if (const BuildingType* type = building->GetBuildingType()) {
+            boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type->Name());
+            m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_graphic);
+
+            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type->Name()), UserString(type->Description()))));
+
+            if (building->OrderedScrapped()) {
+                boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
+                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), GG::Y(Value(Width())), scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+                AttachChild(m_scrap_indicator);
+            }
+        }
+    }
+}
+
 void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
@@ -1858,6 +1885,9 @@ void BuildingIndicator::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
     if (m_graphic)
         m_graphic->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
+
+    if (m_scrap_indicator)
+        m_scrap_indicator->SizeMove(GG::Pt(GG::X0, GG::Y0), child_lr);
 
     GG::Y bar_top = Height() * 4 / 5;
     if (m_progress_bar)
