@@ -650,6 +650,13 @@ void ServerApp::ProcessTurns()
     }
     for (std::vector<int>::const_iterator it = objects_to_scrap.begin(); it != objects_to_scrap.end(); ++it)
         m_universe.Destroy(*it);
+    // check for empty fleets after scrapping
+    std::vector<Fleet*> fleets = m_universe.FindObjects<Fleet>();
+    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        if (Fleet* fleet = *it)
+            if (fleet->Empty())
+                m_universe.Destroy(fleet->ID());
+    }
 
 
     // fleet movement
