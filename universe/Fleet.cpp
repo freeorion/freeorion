@@ -869,12 +869,12 @@ void Fleet::PopGrowthProductionResearchPhase()
 
 void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
-    //// give fleets base stealth very high, so that they can (almost?) never be
-    //// seen by empires that don't own them, unless their ships are seen and
-    //// that visibility is propegated to the fleet that contains the ships
-    //if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
-    //    if (Meter* stealth = GetMeter(METER_STEALTH))
-    //        stealth->AdjustMax(200.0);  // well over 100 (the max meter value) so that effects won't reduce to below 100
+    // give fleets base stealth very high, so that they can (almost?) never be
+    // seen by empires that don't own them, unless their ships are seen and
+    // that visibility is propegated to the fleet that contains the ships
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+        if (Meter* stealth = GetMeter(METER_STEALTH))
+            stealth->AdjustMax(200.0);  // well over 100 (the max meter value) so that effects won't reduce to below 100
 }
 
 void Fleet::CalculateRoute() const

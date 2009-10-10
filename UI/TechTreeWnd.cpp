@@ -119,7 +119,7 @@ namespace {
                 patch[j].y = control_points[i + j].second;
             }
             retval.push_back(std::make_pair(patch[0].x, patch[0].y));
-            const int SUBDIVISIONS = 20;
+            const int SUBDIVISIONS = 6;
             for (int step = 1; step <= SUBDIVISIONS; ++step) {
                 pointf pt = Bezier(patch, static_cast<double>(step) / SUBDIVISIONS);
                 retval.push_back(std::make_pair(pt.x, pt.y));
@@ -130,52 +130,12 @@ namespace {
 
     void FillTheoryPanel(const GG::Rect& panel, int corner_radius)
     {
-        CircleArc(GG::Pt(panel.lr.x - 2 * corner_radius, panel.ul.y),
-                  GG::Pt(panel.lr.x, panel.ul.y + 2 * corner_radius),
-                  0.0, PI / 2.0, true);
-        CircleArc(panel.ul,
-                  GG::Pt(panel.ul.x + 2 * corner_radius, panel.ul.y + 2 * corner_radius),
-                  PI / 2.0, PI, true);
-        CircleArc(GG::Pt(panel.ul.x, panel.lr.y - 2 * corner_radius),
-                  GG::Pt(panel.ul.x + 2 * corner_radius, panel.lr.y),
-                  PI, 3.0 * PI / 2.0, true);
-        CircleArc(GG::Pt(panel.lr.x - 2 * corner_radius, panel.lr.y - 2 * corner_radius),
-                  panel.lr,
-                  3.0 * PI / 2.0, 0.0, true);
-        glBegin(GL_QUADS);
-        glVertex(panel.ul.x + corner_radius, panel.ul.y);
-        glVertex(panel.ul.x + corner_radius, panel.lr.y);
-        glVertex(panel.lr.x - corner_radius, panel.lr.y);
-        glVertex(panel.lr.x - corner_radius, panel.ul.y);
-        glVertex(panel.ul.x, panel.ul.y + corner_radius);
-        glVertex(panel.ul.x, panel.lr.y - corner_radius);
-        glVertex(panel.ul.x + corner_radius, panel.lr.y - corner_radius);
-        glVertex(panel.ul.x + corner_radius, panel.ul.y + corner_radius);
-        glVertex(panel.lr.x - corner_radius, panel.ul.y + corner_radius);
-        glVertex(panel.lr.x - corner_radius, panel.lr.y - corner_radius);
-        glVertex(panel.lr.x, panel.lr.y - corner_radius);
-        glVertex(panel.lr.x, panel.ul.y + corner_radius);
-        glEnd();
+        PartlyRoundedRect(panel.ul, panel.lr,   corner_radius,  true,   true,   true,   true,   true);
     }
 
     void FillApplicationPanel(const GG::Rect& panel, int corner_radius)
     {
-        CircleArc(GG::Pt(panel.lr.x - 2 * corner_radius, panel.ul.y),
-                  GG::Pt(panel.lr.x, panel.ul.y + 2 * corner_radius),
-                  0.0, PI / 2.0, true);
-        CircleArc(panel.ul,
-                  GG::Pt(panel.ul.x + 2 * corner_radius, panel.ul.y + 2 * corner_radius),
-                  PI / 2.0, PI, true);
-        glBegin(GL_QUADS);
-        glVertex(panel.ul.x + corner_radius, panel.ul.y + corner_radius);
-        glVertex(panel.ul.x + corner_radius, panel.ul.y);
-        glVertex(panel.lr.x - corner_radius, panel.ul.y);
-        glVertex(panel.lr.x - corner_radius, panel.ul.y + corner_radius);
-        glVertex(panel.ul.x, panel.ul.y + corner_radius);
-        glVertex(panel.ul.x, panel.lr.y);
-        glVertex(panel.lr.x, panel.lr.y);
-        glVertex(panel.lr.x, panel.ul.y + corner_radius);
-        glEnd();
+        PartlyRoundedRect(panel.ul, panel.lr,   corner_radius,  true,   true,   false,  false,  true);
     }
 
     void FillRefinementPanel(const GG::Rect& panel)
@@ -241,100 +201,15 @@ namespace {
 
     void TraceTechPanelOutline(TechType tech_type, const GG::Rect& main_panel, const GG::Rect& progress_panel, bool show_progress)
     {
-        glBegin(GL_LINE_STRIP);
-        if (tech_type == TT_THEORY) {
-            if (show_progress) {
-                glVertex(main_panel.lr.x, progress_panel.ul.y);
-                CircleArc(GG::Pt(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y),
-                          GG::Pt(main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(main_panel.ul,
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                CircleArc(GG::Pt(main_panel.ul.x, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS),
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y),
-                          PI, 3.0 * PI / 2.0, false);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-                CircleArc(GG::Pt(progress_panel.ul.x, progress_panel.lr.y - 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          GG::Pt(progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.lr.y),
-                          PI, 3.0 * PI / 2.0, false);
-                CircleArc(GG::Pt(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.lr.y - 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          progress_panel.lr,
-                          3.0 * PI / 2.0, 0.0, false);
-                CircleArc(GG::Pt(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y),
-                          GG::Pt(progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(progress_panel.ul,
-                          GG::Pt(progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-            } else {
-                CircleArc(GG::Pt(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y),
-                          GG::Pt(main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(main_panel.ul,
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                CircleArc(GG::Pt(main_panel.ul.x, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS),
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y),
-                          PI, 3.0 * PI / 2.0, false);
-                CircleArc(GG::Pt(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.lr.y - 2 * MAIN_PANEL_CORNER_RADIUS),
-                          main_panel.lr,
-                          3.0 * PI / 2.0, 0.0, false);
-                glVertex(main_panel.lr.x, main_panel.ul.y + MAIN_PANEL_CORNER_RADIUS);
-            }
-        } else if (tech_type == TT_APPLICATION) {
-            if (show_progress) {
-                glVertex(main_panel.lr.x, progress_panel.ul.y);
-                CircleArc(GG::Pt(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y),
-                          GG::Pt(main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(main_panel.ul,
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                glVertex(main_panel.ul.x, main_panel.lr.y);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-                glVertex(progress_panel.ul.x, progress_panel.lr.y);
-                glVertex(progress_panel.lr.x, progress_panel.lr.y);
-                CircleArc(GG::Pt(progress_panel.lr.x - 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y),
-                          GG::Pt(progress_panel.lr.x, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(progress_panel.ul,
-                          GG::Pt(progress_panel.ul.x + 2 * PROGRESS_PANEL_CORNER_RADIUS, progress_panel.ul.y + 2 * PROGRESS_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-            } else {
-                CircleArc(GG::Pt(main_panel.lr.x - 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y),
-                          GG::Pt(main_panel.lr.x, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          0.0, PI / 2.0, false);
-                CircleArc(main_panel.ul,
-                          GG::Pt(main_panel.ul.x + 2 * MAIN_PANEL_CORNER_RADIUS, main_panel.ul.y + 2 * MAIN_PANEL_CORNER_RADIUS),
-                          PI / 2.0, PI, false);
-                glVertex(main_panel.ul.x, main_panel.lr.y);
-                glVertex(main_panel.lr.x, main_panel.lr.y);
-                glVertex(main_panel.lr.x, main_panel.ul.y + MAIN_PANEL_CORNER_RADIUS);
-            }
-        } else { // tech_type == TT_REFINEMENT
-            if (show_progress) {
-                glVertex(main_panel.lr.x, progress_panel.ul.y);
-                glVertex(main_panel.lr.x, main_panel.ul.y);
-                glVertex(main_panel.ul.x, main_panel.ul.y);
-                glVertex(main_panel.ul.x, main_panel.lr.y);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-                glVertex(progress_panel.ul.x, progress_panel.lr.y);
-                glVertex(progress_panel.lr.x, progress_panel.lr.y);
-                glVertex(progress_panel.lr.x, progress_panel.ul.y);
-                glVertex(progress_panel.ul.x, progress_panel.ul.y);
-                glVertex(progress_panel.ul.x, main_panel.lr.y);
-            } else {
-                glVertex(main_panel.ul.x, main_panel.ul.y);
-                glVertex(main_panel.ul.x, main_panel.lr.y);
-                glVertex(main_panel.lr.x, main_panel.lr.y);
-                glVertex(main_panel.lr.x, main_panel.ul.y);
-                glVertex(main_panel.ul.x, main_panel.ul.y);
-            }
-        }
-        glEnd();
+        if (tech_type == TT_THEORY)
+            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       true,   true,   true,   true,   false);
+        else if (tech_type == TT_APPLICATION)
+            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       true,   true,   false,  false,  false);
+        else
+            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       false,  false,   false,  false,  false);
+
+        if (show_progress)
+            PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   false);
     }
 
     struct ToggleCategoryFunctor
@@ -834,45 +709,16 @@ void TechTreeWnd::TechNavigator::SectionHeaderControl::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight() + GG::Pt(GG::X0, GG::Y(11));
     glDisable(GL_TEXTURE_2D);
     const int CORNER_RADIUS = 5;
+
     glColor(ClientUI::KnownTechFillColor());
-    CircleArc(GG::Pt(lr.x - 2 * CORNER_RADIUS, ul.y),
-              GG::Pt(lr.x, ul.y + 2 * CORNER_RADIUS),
-              0.0, PI / 2.0, true);
-    glBegin(GL_QUADS);
-    glVertex(lr.x - CORNER_RADIUS, ul.y);
-    glVertex(ul.x, ul.y);
-    glVertex(ul.x, lr.y);
-    glVertex(lr.x - CORNER_RADIUS, lr.y);
-    glVertex(lr.x, ul.y + CORNER_RADIUS);
-    glVertex(lr.x - CORNER_RADIUS, ul.y + CORNER_RADIUS);
-    glVertex(lr.x - CORNER_RADIUS, lr.y);
-    glVertex(lr.x, lr.y);
-    glEnd();
-    glEnable(GL_LINE_SMOOTH);
+    PartlyRoundedRect(ul,   lr,   CORNER_RADIUS,    true,   true,   false,  false,  true);
+
     glLineWidth(OUTER_LINE_THICKNESS);
     glColor4ub(ClientUI::KnownTechTextAndBorderColor().r, ClientUI::KnownTechTextAndBorderColor().g, ClientUI::KnownTechTextAndBorderColor().b, 127);
-    glBegin(GL_LINE_STRIP);
-    CircleArc(GG::Pt(lr.x - 2 * CORNER_RADIUS, ul.y),
-              GG::Pt(lr.x, ul.y + 2 * CORNER_RADIUS),
-              0.0, PI / 2.0, false);
-    glVertex(ul.x, ul.y);
-    glVertex(ul.x, lr.y);
-    glVertex(lr.x, lr.y);
-    glVertex(lr.x, ul.y + CORNER_RADIUS);
-    glEnd();
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glColor(ClientUI::KnownTechTextAndBorderColor());
-    glBegin(GL_LINE_STRIP);
-    CircleArc(GG::Pt(lr.x - 2 * CORNER_RADIUS, ul.y),
-              GG::Pt(lr.x, ul.y + 2 * CORNER_RADIUS),
-              0.0, PI / 2.0, false);
-    glVertex(ul.x, ul.y);
-    glVertex(ul.x, lr.y);
-    glVertex(lr.x, lr.y);
-    glVertex(lr.x, ul.y + CORNER_RADIUS);
-    glEnd();
+    PartlyRoundedRect(ul,   lr,   CORNER_RADIUS,    true,   true,   false,  false,  false);
+
     glEnable(GL_TEXTURE_2D);
+    glLineWidth(1.0);
 }
 
 void TechTreeWnd::TechNavigator::SectionHeaderControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr)

@@ -1281,11 +1281,11 @@ void Universe::UpdateEmpireObjectVisibilities()
             if (!target) continue;
 
 
-            // check if stealthy object is a fleet.  if so, don't bother
-            // setting its visibility now, but later get visibility by
-            // propegating from ships in fleet
-            if (universe_object_cast<const Fleet*>(target))
-                continue;
+            //// check if stealthy object is a fleet.  if so, don't bother
+            //// setting its visibility now, but later get visibility by
+            //// propegating from ships in fleet
+            //if (universe_object_cast<const Fleet*>(target))
+            //    continue;
 
 
             // get stealth

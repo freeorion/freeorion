@@ -224,6 +224,8 @@ private:
      * attribute of \a move_line */
     void            RenderMovementLineETAIndicators(const MapWnd::MovementLineData& move_line, GG::Clr clr = GG::CLR_ZERO);
 
+    void            RenderVisibilityRadii();                    //!< renders circles around objects' locations indicating distance they have visibility
+
     void            CorrectMapPosition(GG::Pt &move_to_pt);     //!< ensures that the map data are positioned sensibly
 
     void            SystemDoubleClicked(int system_id);

@@ -798,6 +798,8 @@ void MapWnd::Render()
     RenderGalaxyGas();
     RenderNebulae();
 
+    RenderVisibilityRadii();
+
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_LINE_STIPPLE);
@@ -809,42 +811,6 @@ void MapWnd::Render()
 
     RenderSystems();
     RenderFleetMovementLines();
-
-
-
-    // TEMP: Render visibility radii
-    const Universe& universe = GetUniverse();
-    const double TWO_PI = 2.0*3.1415926536;
-    glPushMatrix();
-    glLoadIdentity();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        if (const Meter* detection_meter = it->second->GetMeter(METER_DETECTION)) {
-            // draw background disc in empire colour, or passed-in colour
-            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->second->X(), it->second->Y());
-
-            double radius = 10.0*detection_meter->Current()*ZoomFactor();
-            if (radius < 20.0) continue;
-
-            GG::Clr circle_colour = GG::CLR_WHITE;
-            const std::set<int>& owners = it->second->Owners();
-            if (owners.size() == 1)
-                if (const Empire* empire = Empires().Lookup(*owners.begin()))
-                    circle_colour = empire->Color();
-
-            glColor(circle_colour);
-
-            GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
-            GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
-
-            glDisable(GL_TEXTURE_2D);
-            glBegin(GL_LINE_STRIP);
-                CircleArc(ul, lr, 0.0, TWO_PI, false);
-            glEnd();
-            glEnable(GL_TEXTURE_2D);
-        }
-    }
-    glPopMatrix();
-    // END TEMP
 
 
     glDisableClientState(GL_VERTEX_ARRAY);
@@ -2759,9 +2725,7 @@ void MapWnd::RenderSystems()
             if (circles) {
                 if (const System* system = GetUniverse().Object<System>(it->first)) {
                     if (system->Starlanes() > 0) {
-                        glBegin(GL_LINE_STRIP);
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
-                        glEnd();
                     }
                 }
             }
@@ -2994,6 +2958,43 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         font->RenderText(ul, lr, text, flags);
     }
     glPopMatrix();
+}
+
+void MapWnd::RenderVisibilityRadii() {
+    const Universe& universe = GetUniverse();
+    const double TWO_PI = 2.0*3.1415926536;
+    glLineWidth(2.0);
+    glPushMatrix();
+    glLoadIdentity();
+    glEnable(GL_LINE_SMOOTH);
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        if (const Meter* detection_meter = it->second->GetMeter(METER_DETECTION)) {
+            // draw background disc in empire colour, or passed-in colour
+            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->second->X(), it->second->Y());
+
+            double radius = 10.0*detection_meter->Current()*ZoomFactor();
+            if (radius < 20.0) continue;
+
+            GG::Clr circle_colour = GG::CLR_WHITE;
+            const std::set<int>& owners = it->second->Owners();
+            if (owners.size() == 1)
+                if (const Empire* empire = Empires().Lookup(*owners.begin()))
+                    circle_colour = empire->Color();
+            circle_colour.a = 128;
+
+            glColor(circle_colour);
+
+            GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
+            GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
+
+            glDisable(GL_TEXTURE_2D);
+            CircleArc(ul, lr, 0.0, TWO_PI, false);
+            glEnable(GL_TEXTURE_2D);
+        }
+    }
+    glDisable(GL_LINE_SMOOTH);
+    glPopMatrix();
+    glLineWidth(1.0);
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)

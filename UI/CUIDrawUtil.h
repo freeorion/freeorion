@@ -42,7 +42,7 @@ void IsoscelesTriangle(const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orie
 bool InIsoscelesTriangle(const GG::Pt& pt, const GG::Pt& ul, const GG::Pt& lr, ShapeOrientation orientation);
 
 /** Draws a filled portion of a circle when \a filled_shape is true (calling glBegin(GL_TRIANGLE_FAN); glVertex2f() ...; glEnd();),
-    or provides the vertices for a portion of a circle (calling glVertex2f() ...;). when \a filled_shape is false. */
+    or an unfilled portion when \a filled_shape is false. (glBegin(GL_LINE_STRIP); glVertex2f() ...; glEnd();). */
 void CircleArc(const GG::Pt& ul, const GG::Pt& lr, double theta1, double theta2, bool filled_shape);
 
 /** Draws a rectangle whose corners are rounded with radius \a radius as indicated by the \a *_round parameters.  If \a
