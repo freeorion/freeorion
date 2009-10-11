@@ -14,5 +14,6 @@ Special
                 SetMaxTrade value = Source.MaxTrade + 2
                 SetMaxSupply value = Source.MaxSupply + 2
                 SetMaxConstruction value = Source.MaxConstruction + 20
+                SetMaxDetection value = Source.MaxDetection + 5
             ]
     graphic = "icons/specials_huge/homeworld.png"

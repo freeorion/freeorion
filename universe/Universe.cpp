@@ -1392,6 +1392,48 @@ void Universe::UpdateEmpireObjectVisibilities()
             }   // end for empire visibility entries
         }   // end for contained objects
     }   // end for container objects
+
+
+    // propegate visibility along starlanes
+    const std::vector<System*> systems = this->FindObjects<System>();
+    for (std::vector<System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+        const System* system = *it;
+        int system_id = system->ID();
+
+        // for each empire with a visibility map
+        for (EmpireObjectVisibilityMap::iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
+            ObjectVisibilityMap& vis_map = empire_it->second;
+
+            // find current system's visibility
+            ObjectVisibilityMap::iterator system_vis_it = vis_map.find(system_id);
+            if (system_vis_it == vis_map.end())
+                continue;
+
+            // skip systems that aren't at least partially visible; they can't propegate visibility along starlanes
+            Visibility system_vis = system_vis_it->second;
+            if (system_vis <= VIS_BASIC_VISIBILITY)
+                continue;
+
+            // get all starlanes emanating from this system, and loop through them
+            System::StarlaneMap starlane_map = system->VisibleStarlanes(ALL_EMPIRES);
+            for (System::StarlaneMap::const_iterator lane_it = starlane_map.begin(); lane_it != starlane_map.end(); ++lane_it) {
+                bool is_wormhole = lane_it->second;
+                if (is_wormhole)
+                    continue;
+
+                // find entry for system on other end of starlane in visibility
+                // map, and upgrade to basic visibility if not already at that
+                // leve, so that starlanes will be visible if either system it
+                // ends at is partially visible or better
+                int lane_end_sys_id = lane_it->first;
+                ObjectVisibilityMap::iterator lane_end_vis_it = vis_map.find(lane_end_sys_id);
+                if (lane_end_vis_it == vis_map.end())
+                    vis_map[lane_end_sys_id] = VIS_BASIC_VISIBILITY;
+                else if (lane_end_vis_it->second < VIS_BASIC_VISIBILITY)
+                    lane_end_vis_it->second = VIS_BASIC_VISIBILITY;
+            }
+        }
+    }
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()
