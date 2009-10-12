@@ -38,8 +38,8 @@ class ClientUI
 {
 public:
     //! \name Structors //!@{
-    ClientUI();     //!< construction (calls Initialize())
-    ~ClientUI();    //!< destruction (calls Cleanup())
+    ClientUI();
+    ~ClientUI();
     //!@}
 
     //! \name Accessors //!@{

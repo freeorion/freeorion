@@ -34,10 +34,40 @@ namespace {
         db.Add<std::string>("external-server-address",  "OPTIONS_DB_EXTERNAL_SERVER_ADDRESS",   "localhost");
         db.Add("UI.main-menu.x",                        "OPTIONS_DB_UI_MAIN_MENU_X",            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
         db.Add("UI.main-menu.y",                        "OPTIONS_DB_UI_MAIN_MENU_Y",            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
-    }
 
+        db.Add("checked-gl-version",                    "OPTIONS_DB_CHECKED_GL_VERSION",        false);
+    }
     bool foo_bool = RegisterOptions(&Options);
 
+    void CheckGLVersion() {
+        // only execute once
+        if (GetOptionsDB().Get<bool>("checked-gl-version"))
+            return;
+        GetOptionsDB().Set<bool>("checked-gl-version", true);
+
+
+        // get OpenGL version string and parse to get version number
+        const GLubyte* gl_version = glGetString(GL_VERSION);
+        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
+
+        float version_number = 0.0;
+        std::istringstream iss(gl_version_string);
+        iss >> version_number;
+        version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
+
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+
+        // if GL version is too low, set various map rendering options to
+        // disabled, so as to prevent crashes when running on systems that
+        // don't support these GL features
+        if (true/*version_number < 2.0*/) {
+            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
+            GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
+            GetOptionsDB().Set<bool>("UI.optimized-system-rendering",   false);
+            GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
+        }
+    }
 }
 
 /////////////////////////////////
@@ -154,6 +184,8 @@ IntroScreen::IntroScreen() :
                                   ClientUI::GetFont(),
                                   ClientUI::TextColor()))
 {
+    CheckGLVersion();
+
     m_splash->AttachChild(m_logo);
     GG::GUI::GetGUI()->Register(m_splash);
 

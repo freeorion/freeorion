@@ -116,30 +116,6 @@ namespace {
         return std::make_pair(std::min(one, two), std::max(one, two));
     }
 
-    static bool checked_gl_version_already = false;
-    void CheckGLVersion() {
-        // only execute once
-        if (checked_gl_version_already)
-            return;
-        else
-            checked_gl_version_already = true;
-
-        // get OpenGL version string and parse to get version number
-        const GLubyte* gl_version = glGetString(GL_VERSION);
-        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
-        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
-
-        float version_number = 0.0;
-        std::istringstream iss(gl_version_string);
-        iss >> version_number;
-        version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
-
-        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
-
-        if (version_number < 2.0)
-            Logger().debugStream() << "OpenGL version number less than 2.0.  FreeOrion requires OpenGL version 2.0 or greater, so you may have problems on this system.";
-    }
-
     /* loads background starfield textures int \a background_textures  */
     void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
         if (!background_textures.empty())
@@ -1085,8 +1061,6 @@ void MapWnd::InitTurnRendering()
 {
     Logger().debugStream() << "MapWnd::InitTurnRendering";
     boost::timer timer;
-
-    CheckGLVersion();
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         m_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
@@ -2980,7 +2954,7 @@ void MapWnd::RenderVisibilityRadii() {
             if (owners.size() == 1)
                 if (const Empire* empire = Empires().Lookup(*owners.begin()))
                     circle_colour = empire->Color();
-            circle_colour.a = 128;
+            circle_colour.a = 64;
 
             glColor(circle_colour);
 
@@ -2988,6 +2962,7 @@ void MapWnd::RenderVisibilityRadii() {
             GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
 
             glDisable(GL_TEXTURE_2D);
+            CircleArc(ul, lr, 0.0, TWO_PI, true);
             CircleArc(ul, lr, 0.0, TWO_PI, false);
             glEnable(GL_TEXTURE_2D);
         }

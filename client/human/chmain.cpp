@@ -219,6 +219,7 @@ int mainSetupAndRunOgre()
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
+
 #ifdef FREEORION_MACOSX
         ois_input_plugin = new OISInput;
         root->installPlugin(ois_input_plugin);
@@ -236,8 +237,9 @@ int mainSetupAndRunOgre()
             app.NewSinglePlayerGame(true);  // acceptable to call before app()
         }
 
+
         // run rendering loop
-        app();
+        app();  // calls GUI::operator() which calls OgreGUI::Run() which starts rendering loop
 
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
