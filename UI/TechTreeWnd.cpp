@@ -83,7 +83,7 @@ namespace {
     const GG::X TECH_PANEL_LAYOUT_WIDTH = THEORY_TECH_PANEL_LAYOUT_WIDTH;
     const GG::Y TECH_PANEL_LAYOUT_HEIGHT = THEORY_TECH_PANEL_LAYOUT_HEIGHT - PROGRESS_PANEL_BOTTOM_EXTRUSION;
 
-    const double OUTER_LINE_THICKNESS = 2.0;
+    const double OUTER_LINE_THICKNESS = 1.5;
     const double ARC_THICKNESS = 3.0;
 
     const double TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR = 1.5;
@@ -128,88 +128,59 @@ namespace {
         return retval;
     }
 
-    void FillTheoryPanel(const GG::Rect& panel, int corner_radius)
+    void RenderTechPanel(TechType tech_type, const GG::Rect& main_panel, const GG::Rect& progress_panel,
+                         GG::Clr interior_color, GG::Clr border_color, bool show_progress, double progress)
     {
-        PartlyRoundedRect(panel.ul, panel.lr,   corner_radius,  true,   true,   true,   true,   true);
-    }
+        glDisable(GL_TEXTURE_2D);
 
-    void FillApplicationPanel(const GG::Rect& panel, int corner_radius)
-    {
-        PartlyRoundedRect(panel.ul, panel.lr,   corner_radius,  true,   true,   false,  false,  true);
-    }
-
-    void FillRefinementPanel(const GG::Rect& panel)
-    {
-        glBegin(GL_QUADS);
-        glVertex(panel.ul.x, panel.ul.y);
-        glVertex(panel.ul.x, panel.lr.y);
-        glVertex(panel.lr.x, panel.lr.y);
-        glVertex(panel.lr.x, panel.ul.y);
-        glEnd();
-    }
-
-    void FillTechPanelInterior(TechType tech_type, const GG::Rect& main_panel, const GG::Rect& progress_panel, GG::Clr color, bool show_progress, double progress)
-    {
-        GG::Clr progress_background_color = ClientUI::TechWndProgressBarBackground();
-        GG::Clr progress_color = ClientUI::TechWndProgressBar();
-        glColor(color);
-        GG::X progress_extent((0.0 < progress && progress < 1.0) ? (progress_panel.ul.x + progress * PROGRESS_PANEL_WIDTH + 0.5) : GG::X_d(0));
+        // main panel background
+        glColor(interior_color);
         if (tech_type == TT_THEORY) {
-            FillTheoryPanel(main_panel, MAIN_PANEL_CORNER_RADIUS);
-            if (show_progress) {
-                if (progress_extent) {
-                    glColor(progress_background_color);
-                    FillTheoryPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    glColor(progress_color);
-                    GG::BeginScissorClipping(progress_panel.ul, GG::Pt(progress_extent, progress_panel.lr.y));
-                    FillTheoryPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    GG::EndScissorClipping();
-                } else {
-                    FillTheoryPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                }
-            }
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   true);
         } else if (tech_type == TT_APPLICATION) {
-            FillApplicationPanel(main_panel, MAIN_PANEL_CORNER_RADIUS);
-            if (show_progress) {
-                if (progress_extent) {
-                    glColor(progress_background_color);
-                    FillApplicationPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    glColor(progress_color);
-                    GG::BeginScissorClipping(progress_panel.ul, GG::Pt(progress_extent, progress_panel.lr.y));
-                    FillApplicationPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                    GG::EndScissorClipping();
-                } else {
-                    FillApplicationPanel(progress_panel, PROGRESS_PANEL_CORNER_RADIUS);
-                }
-            }
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   true,   true,   false,  false,  true);
         } else { // tech_type == TT_REFINEMENT
-            FillRefinementPanel(main_panel);
-            if (show_progress) {
-                if (progress_extent) {
-                    glColor(progress_background_color);
-                    FillRefinementPanel(progress_panel);
-                    glColor(progress_color);
-                    GG::BeginScissorClipping(progress_panel.ul, GG::Pt(progress_extent, progress_panel.lr.y));
-                    FillRefinementPanel(progress_panel);
-                    GG::EndScissorClipping();
-                } else {
-                    FillRefinementPanel(progress_panel);
-                }
-            }
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   false,  false,  false,  false,  true);
         }
-    }
 
-    void TraceTechPanelOutline(TechType tech_type, const GG::Rect& main_panel, const GG::Rect& progress_panel, bool show_progress)
-    {
-        if (tech_type == TT_THEORY)
-            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       true,   true,   true,   true,   false);
-        else if (tech_type == TT_APPLICATION)
-            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       true,   true,   false,  false,  false);
-        else
-            PartlyRoundedRect(main_panel.ul,        main_panel.lr,      MAIN_PANEL_CORNER_RADIUS,       false,  false,   false,  false,  false);
+        // main panel border
+        glColor(border_color);
+        glEnable(GL_LINE_SMOOTH);
+        glLineWidth(OUTER_LINE_THICKNESS);
+        if (tech_type == TT_THEORY) {
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   false);
+        } else if (tech_type == TT_APPLICATION) {
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   true,   true,   false,  false,  false);
+        } else { // tech_type == TT_REFINEMENT
+            PartlyRoundedRect(main_panel.ul,    main_panel.lr,  MAIN_PANEL_CORNER_RADIUS,   false,  false,  false,  false,  false);
+        }
+        glLineWidth(1.0);
+        glDisable(GL_LINE_SMOOTH);
 
-        if (show_progress)
+        if (show_progress) {
+            // progress panel background
+            glColor(ClientUI::TechWndProgressBarBackground());
+            PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   true);
+
+            GG::X progress_extent((0.0 < progress && progress < 1.0) ? (progress_panel.ul.x + progress * progress_panel.Width() + 0.5) : GG::X_d(0));
+            if (progress_extent) {
+                // progress bar
+                glColor(ClientUI::TechWndProgressBar());
+                GG::BeginScissorClipping(progress_panel.ul, GG::Pt(progress_extent, progress_panel.lr.y));
+                PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   true);
+                GG::EndScissorClipping();
+            }
+
+            // progress panel border
+            glColor(border_color);
+            glEnable(GL_LINE_SMOOTH);
+            glLineWidth(OUTER_LINE_THICKNESS);
             PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   false);
+            glLineWidth(1.0);
+            glDisable(GL_LINE_SMOOTH);
+        }
+
+        glEnable(GL_TEXTURE_2D);
     }
 
     struct ToggleCategoryFunctor
@@ -528,8 +499,9 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
 //////////////////////////////////////////////////
 // TechTreeWnd::TechNavigator                   //
 //////////////////////////////////////////////////
-/** A window with a single lisbox in it.  The listbox represents the techs that are required for and are
-    unlocked by some tech.  Clicking on a prereq or unlocked tech will bring up that tech. */
+/** A window with a single lisbox in it.  The listbox represents the techs that
+  * are required for and are unlocked by some tech.  Clicking on a prereq or
+  * unlocked tech will bring up that tech. */
 class TechTreeWnd::TechNavigator : public CUIWnd
 {
 public:
@@ -545,8 +517,9 @@ public:
     virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
 private:
-    /** A control with a label \a str on it, and that is rendered partially onto the next row.
-        The "Requires" and "Unlocks" rows are in of this class. */
+    /** A control with a label \a str on it, and that is rendered partially
+      * onto the next row.  The "Requires" and "Unlocks" rows are in of this
+      * class. */
     class SectionHeaderControl : public GG::Control
     {
     public:
@@ -561,35 +534,35 @@ private:
     {
     public:
         TechControl(const Tech* tech);
-        virtual GG::Pt ClientUpperLeft() const {return UpperLeft() + GG::Pt(GG::X(3), GG::Y(2));}
-        virtual GG::Pt ClientLowerRight() const {return LowerRight() - GG::Pt(GG::X(2), GG::Y(2));}
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-        virtual void Render();
-        virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {ClickedSignal(m_tech);}
-        virtual void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_selected = true;}
-        virtual void MouseLeave() {m_selected = false;}
+        virtual GG::Pt  ClientUpperLeft() const {return UpperLeft() + GG::Pt(GG::X(3), GG::Y(2));}
+        virtual GG::Pt  ClientLowerRight() const {return LowerRight() - GG::Pt(GG::X(2), GG::Y(2));}
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+        virtual void    Render();
+        virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {ClickedSignal(m_tech);}
+        virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_selected = true;}
+        virtual void    MouseLeave() {m_selected = false;}
 
         mutable boost::signal<void (const Tech*)> ClickedSignal;
 
     private:
-        const Tech * const m_tech;
-        GG::Clr m_border_color;
-        GG::TextControl* m_name_text;
-        bool m_selected;
+        const Tech * const  m_tech;
+        GG::Clr             m_border_color;
+        GG::TextControl*    m_name_text;
+        bool                m_selected;
     };
 
-    static const GG::X TECH_ROW_INDENTATION;
-    static const GG::X LB_MARGIN_X;
-    static const GG::Y LB_MARGIN_Y;
-    
-    GG::ListBox::Row* NewSectionHeaderRow(const std::string& str);
-    GG::ListBox::Row* NewTechRow(const Tech* tech);
-    void Reset();
+    static const GG::X  TECH_ROW_INDENTATION;
+    static const GG::X  LB_MARGIN_X;
+    static const GG::Y  LB_MARGIN_Y;
 
-    void DoLayout();
+    GG::ListBox::Row*   NewSectionHeaderRow(const std::string& str);
+    GG::ListBox::Row*   NewTechRow(const Tech* tech);
+    void                Reset();
 
-    const Tech* m_current_tech;
-    GG::ListBox* m_lb;
+    void                DoLayout();
+
+    const Tech*         m_current_tech;
+    GG::ListBox*        m_lb;
 };
 const GG::X TechTreeWnd::TechNavigator::TECH_ROW_INDENTATION(8);
 const GG::X TechTreeWnd::TechNavigator::LB_MARGIN_X(5);
@@ -764,17 +737,7 @@ void TechTreeWnd::TechNavigator::TechControl::Render()
         AdjustBrightness(color_to_use, TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR);
         AdjustBrightness(border_color_to_use, TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR);
     }
-    glDisable(GL_TEXTURE_2D);
-    FillTechPanelInterior(tech_type, rect, GG::Rect(), color_to_use, false, 0.0);
-    glEnable(GL_LINE_SMOOTH);
-    glLineWidth(OUTER_LINE_THICKNESS);
-    glColor4ub(border_color_to_use.r, border_color_to_use.g, border_color_to_use.b, 127);
-    TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glColor(border_color_to_use);
-    TraceTechPanelOutline(tech_type, rect, GG::Rect(), false);
-    glEnable(GL_TEXTURE_2D);
+    RenderTechPanel(tech_type, rect, GG::Rect(), color_to_use, border_color_to_use, false, 0.0);
 }
 
 void TechTreeWnd::TechNavigator::TechControl::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -1007,24 +970,18 @@ bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render()
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight() - GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), static_cast<GG::Y>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale));
-    GG::Clr interior_color_to_use = m_selected ? GG::LightColor(m_fill_color) : m_fill_color;
-    GG::Clr border_color_to_use = m_selected ? GG::LightColor(m_text_and_border_color) : m_text_and_border_color;
+    GG::Pt      ul = UpperLeft();
+    GG::Pt      lr = LowerRight() - GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
+                                           static_cast<GG::Y>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale));
+    GG::Clr     interior_color_to_use = m_selected  ?   GG::LightColor(m_fill_color)            :   m_fill_color;
+    GG::Clr     border_color_to_use =   m_selected  ?   GG::LightColor(m_text_and_border_color) :   m_text_and_border_color;
 
-    GG::Rect main_panel(ul, lr);
-    GG::Rect progress_panel = ProgressPanelRect(ul, lr);
-    TechType tech_type = m_tech->Type();
-    glDisable(GL_TEXTURE_2D);
-    FillTechPanelInterior(tech_type, main_panel, progress_panel, interior_color_to_use, !m_progress_text->Empty(), m_progress);
-    glEnable(GL_LINE_SMOOTH);
-    glLineWidth(OUTER_LINE_THICKNESS * m_scale);
-    glColor4ub(border_color_to_use.r, border_color_to_use.g, border_color_to_use.b, 127);
-    TraceTechPanelOutline(tech_type, main_panel, progress_panel, !m_progress_text->Empty());
-    glLineWidth(1.0);
-    glDisable(GL_LINE_SMOOTH);
-    glColor(border_color_to_use);
-    TraceTechPanelOutline(tech_type, main_panel, progress_panel, !m_progress_text->Empty());
-    glEnable(GL_TEXTURE_2D);
+    GG::Rect    main_panel(ul, lr);
+    GG::Rect    progress_panel = ProgressPanelRect(ul, lr);
+    TechType    tech_type = m_tech->Type();
+    bool        show_progress = !m_progress_text->Empty();
+
+    RenderTechPanel(tech_type, main_panel, progress_panel, interior_color_to_use, border_color_to_use, show_progress, m_progress);
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1225,11 +1182,32 @@ std::set<TechStatus> TechTreeWnd::LayoutPanel::GetTechStatusesShown() const
 
 void TechTreeWnd::LayoutPanel::Render()
 {
+    GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
+
+    glDisable(GL_TEXTURE_2D);
+    GLint initial_modes[2];
+    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
+
+    // draw background
+    glPolygonMode(GL_BACK, GL_FILL);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::CtrlColor());
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
+    glEnd();
+
+    // reset this to whatever it was initially
+    glPolygonMode(GL_BACK, initial_modes[1]);
+
+
 
     BeginClipping();
     // render dependency arcs
-    glDisable(GL_TEXTURE_2D);
+
     glPushMatrix();
     glTranslated(-Value(m_scroll_position.x), -Value(m_scroll_position.y), 0);
 

@@ -31,7 +31,7 @@ About::About():
                               GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY,
                               ClientUI::GetFont(),
                               ClientUI::CtrlBorderColor(), ClientUI::TextColor(),
-                              ClientUI::WndColor(), GG::INTERACTIVE);
+                              ClientUI::CtrlColor(), GG::INTERACTIVE);
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, ClientWidth(), ClientHeight(), 2, 6, 5);
     layout->SetMinimumRowHeight(1, m_license->Height() + 5);
     layout->SetRowStretch(0, 1);

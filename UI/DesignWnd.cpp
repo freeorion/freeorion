@@ -1635,31 +1635,31 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
-    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), font, 
+    m_design_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_NAME"), font,
                                               ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                               GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name_label);
 
     m_design_name = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_NAME_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::WndColor(), GG::INTERACTIVE | GG::ONTOP);
+                                ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_name);
 
-    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font, 
+    m_design_description_label = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), UserString("DESIGN_WND_DESIGN_DESCRIPTION"), font,
                                                      ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER,
                                                      GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description_label);
 
     m_design_description = new CUIEdit(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_DESCRIPTION_DEFAULT"), font, ClientUI::CtrlBorderColor(),
-                                ClientUI::TextColor(), ClientUI::WndColor(), GG::INTERACTIVE | GG::ONTOP);
+                                       ClientUI::TextColor(), ClientUI::CtrlColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_design_description);
 
-    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::WndColor(),
+    m_confirm_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CONFIRM"), font, ClientUI::CtrlColor(),
                                      ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_confirm_button);
     GG::Connect(m_confirm_button->ClickedSignal, DesignConfirmedSignal);
     m_confirm_button->Disable(true);
 
-    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::WndColor(),
+    m_clear_button = new CUIButton(GG::X0, GG::Y0, GG::X(10), UserString("DESIGN_WND_CLEAR"), font, ClientUI::CtrlColor(),
                                    ClientUI::CtrlBorderColor(), 1, ClientUI::TextColor(), GG::INTERACTIVE | GG::ONTOP);
     AttachChild(m_clear_button);
     GG::Connect(m_clear_button->ClickedSignal, &DesignWnd::MainPanel::ClearParts, this);

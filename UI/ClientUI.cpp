@@ -387,11 +387,11 @@ namespace {
         db.Add("UI.title-font-size",            "OPTIONS_DB_UI_TITLE_FONT_SIZE",            12,                     RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color",                  "OPTIONS_DB_UI_WND_COLOR",                  StreamableColor(GG::Clr(0, 0, 0, 220)),         Validator<StreamableColor>());
+        db.Add("UI.wnd-color",                  "OPTIONS_DB_UI_WND_COLOR",                  StreamableColor(GG::Clr(35, 35, 35, 240)),      Validator<StreamableColor>());
         db.Add("UI.wnd-outer-border-color",     "OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR",     StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
-        db.Add("UI.wnd-inner-border-color",     "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",     StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.wnd-inner-border-color",     "OPTIONS_DB_UI_WND_INNER_BORDER_COLOR",     StreamableColor(GG::Clr(192, 192, 192, 255)),   Validator<StreamableColor>());
 
-        db.Add("UI.ctrl-color",                 "OPTIONS_DB_UI_CTRL_COLOR",                 StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
+        db.Add("UI.ctrl-color",                 "OPTIONS_DB_UI_CTRL_COLOR",                 StreamableColor(GG::Clr(15, 15, 15, 255)),      Validator<StreamableColor>());
         db.Add("UI.ctrl-border-color",          "OPTIONS_DB_UI_CTRL_BORDER_COLOR",          StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
 
         db.Add("UI.dropdownlist-arrow-color",   "OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR",   StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());

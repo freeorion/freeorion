@@ -7,17 +7,17 @@
 #include "FleetWnd.h"
 #include "InfoPanels.h"
 #include "MapWnd.h"
-#include "../client/human/HumanClientApp.h"
-#include "../util/MultiplayerCommon.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Building.h"
+#include "../Empire/Empire.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/XMLDoc.h"
-#include "../Empire/Empire.h"
 #include "../util/OptionsDB.h"
+#include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -435,6 +435,7 @@ private:
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
+    GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
     MilitaryPanel*          m_military_panel;           ///< contains icons representing military-related meters
@@ -677,6 +678,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
+    m_empire_colour(GG::CLR_ZERO),
     m_population_panel(0),
     m_resource_panel(0),
     m_military_panel(0),
@@ -811,7 +813,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 
     m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*8),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
-                                      ClientUI::WndColor(), ClientUI::CtrlBorderColor(), 1,
+                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
 
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
@@ -906,7 +908,7 @@ void SidePanel::PlanetPanel::DoLayout()
 void SidePanel::PlanetPanel::Refresh()
 {
     //std::cout << "SidePanel::PlanetPanel::Refresh" << std::endl;
-    const Planet *planet = GetPlanet();
+    const Planet* planet = GetPlanet();
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -933,9 +935,14 @@ void SidePanel::PlanetPanel::Refresh()
 
 
     // colour planet name with owner's empire colour
+    m_empire_colour = GG::CLR_ZERO;
     if (!planet->Owners().empty()) {
-        Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()));
-        m_planet_name->SetTextColor(planet_empire ? planet_empire->Color() : ClientUI::TextColor());
+        if (Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()))) {
+            m_empire_colour = planet_empire->Color();
+            m_planet_name->SetTextColor(planet_empire->Color());
+        } else {
+            m_planet_name->SetTextColor(ClientUI::TextColor());
+        }
     }
 
 
@@ -1041,28 +1048,90 @@ void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG
 
 void SidePanel::PlanetPanel::Render()
 {
-    // main background position and colour
-    const GG::Clr& background_colour = ClientUI::WndColor();
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-
-    // title background colour and position
-    const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
-    const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-
-    GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
-    int border_thick =      m_selected ? 2 : 1;
-
     GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
     GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->LowerRight().y);
+    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y(MAX_PLANET_DIAMETER));
+    bool show_planet_box = true;
 
-    // render
-    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour,  border_thick);  // background and border
-    GG::FlatRectangle(name_ul,  name_lr,    border_colour,      GG::CLR_ZERO,   0);             // title background box
+    if (m_rotating_planet_graphic) {
+        // default OK
+    } else if (m_planet_graphic) {
+        planet_box_lr = m_planet_graphic->LowerRight();
+    } else {
+        show_planet_box = false;    // no planet render to put box behind
+    }
+
+
+    GG::Clr background_colour = ClientUI::CtrlColor();
+    GG::Clr title_background_colour = ClientUI::WndOuterBorderColor();
+    GG::Clr border_colour = (m_selected ? m_empire_colour : ClientUI::WndOuterBorderColor());
+
+
+    const int OFFSET = 15;          // size of corners cut off sticky-out bit of background around planet render
+    glDisable(GL_TEXTURE_2D);
+
+    // standard WndColor background for whole panel
+    glColor(background_colour);
+    glBegin(GL_TRIANGLE_FAN);
+        glVertex(lr.x,                  ul.y);                  // top right corner
+        if (show_planet_box) {
+            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
+            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
+            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
+            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
+        } else {
+            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
+        }
+        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
+        glVertex(lr.x,              lr.y);                      // bottom right
+    glEnd();
+
+    // border
+    glColor(border_colour);
+    glLineWidth(1.5);
+    glBegin(GL_LINE_LOOP);
+        glVertex(lr.x,                  ul.y);                  // top right corner
+        if (show_planet_box) {
+            glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
+            glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
+            glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+            glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
+            glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
+        } else {
+            glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
+        }
+        glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
+        glVertex(lr.x,              lr.y);                      // bottom right
+    glEnd();
+    glLineWidth(1.0);
+
+    // title background box
+    GG::FlatRectangle(name_ul,  name_lr,    title_background_colour,    GG::CLR_ZERO,   0);
 
     // disable greyover
     const GG::Clr HALF_GREY(128, 128, 128, 128);
-    if (Disabled())
-        GG::FlatRectangle(ul,   lr,         HALF_GREY,          HALF_GREY,      0);
+    if (Disabled()) {
+        glColor(HALF_GREY);
+        glBegin(GL_TRIANGLE_FAN);
+            glVertex(lr.x,                  ul.y);                  // top right corner
+            if (show_planet_box) {
+                glVertex(ul.x + OFFSET,     ul.y);                      // top left, offset right to cut off corner
+                glVertex(ul.x,              ul.y + OFFSET);             // top left, offset down to cut off corner
+                glVertex(ul.x,              planet_box_lr.y - OFFSET);  // bottom left, offset up to cut off corner
+                glVertex(ul.x + OFFSET,     planet_box_lr.y);           // bottom left, offset right to cut off corner
+                glVertex(planet_box_lr.x,   planet_box_lr.y);           // inner corner between planet box and rest of panel
+            } else {
+                glVertex(planet_box_lr.x,   ul.y);                      // top left of main panel, excluding planet box
+            }
+            glVertex(planet_box_lr.x,   lr.y);                      // bottom left of main panel
+            glVertex(lr.x,              lr.y);                      // bottom right
+        glEnd();
+    }
+
+    glEnable(GL_TEXTURE_2D);
 }
 
 void SidePanel::PlanetPanel::Select(bool selected)
@@ -1160,7 +1229,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (m_vscroll) {
+    if (m_vscroll && m_vscroll->Parent() == this) {
         if (move < 0)
             m_vscroll->ScrollLineIncr();
         else
@@ -1245,7 +1314,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
     GG::Y available_height = Height();
     if (GG::Wnd* parent = Parent()) {
         GG::Y containing_height = parent->Height();
-        const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(300);
+        const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(50);
         available_height = containing_height - BIG_PAD_TO_BE_SAFE;  // height of visible "page" of panels
     }
 

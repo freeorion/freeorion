@@ -574,17 +574,17 @@ void CUIScroll::ScrollTab::MouseLeave()
 ///////////////////////////////////////
 // class CUIScroll
 ///////////////////////////////////////
-CUIScroll::CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color/* = GG::CLR_ZERO*/, 
-                     GG::Clr border/* = ClientUI::CtrlBorderColor()*/, GG::Clr interior/* = GG::CLR_ZERO*/, 
+CUIScroll::CUIScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation,
+                     GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/, GG::Clr interior_color/* = ClientUI::CtrlColor()*/, 
                      GG::Flags<GG::WndFlag> flags/* = INTERACTIVE | REPEAT_BUTTON_DOWN*/) :
-    Scroll(x, y, w, h, orientation, color, interior, flags),
-    m_border_color(border)
+    Scroll(x, y, w, h, orientation, interior_color, interior_color, flags),
+    m_border_color(border_color)
 {}
 
 void CUIScroll::Render()
 {
-    GG::Clr color_to_use = Disabled() ? DisabledColor(Color()) : Color();
-    GG::Clr border_color_to_use = Disabled() ? DisabledColor(m_border_color) : m_border_color;
+    GG::Clr color_to_use =          Disabled() ? DisabledColor(Color())         :   Color();
+    GG::Clr border_color_to_use =   Disabled() ? DisabledColor(m_border_color)  :   m_border_color;
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     FlatRectangle(ul, lr, color_to_use, border_color_to_use, 1);
@@ -604,13 +604,13 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 ///////////////////////////////////////
 // class CUIListBox
 ///////////////////////////////////////
-CUIListBox::CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
-                       GG::Clr interior/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-    ListBox(x, y, w, h, color, interior, flags)
+CUIListBox::CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/, 
+                       GG::Clr interior_color/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
+    ListBox(x, y, w, h, border_color, interior_color, flags)
 {
     RecreateScrolls();
-    GG::Connect(SelChangedSignal, &PlayListSelectSound, -1);
-    GG::Connect(DroppedSignal, &PlayItemDropSound, -1);
+    GG::Connect(SelChangedSignal,   &PlayListSelectSound,   -1);
+    GG::Connect(DroppedSignal,      &PlayItemDropSound,     -1);
 }
 
 void CUIListBox::Render()
@@ -632,9 +632,9 @@ namespace {
     const int CUIDROPDOWNLIST_ANGLE_OFFSET = 5;
 }
 
-CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr color/* = ClientUI::CtrlBorderColor()*/,
+CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_ht, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/,
                                  GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-    DropDownList(x, y, w, h, drop_ht, color),
+    DropDownList(x, y, w, h, drop_ht, border_color),
     m_render_drop_arrow(true),
     m_mouse_here(false)
 {
@@ -708,10 +708,10 @@ void CUIDropDownList::EnableDropArrow()
 // class CUIEdit
 ///////////////////////////////////////
 CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                 GG::Clr color/* = ClientUI::CtrlBorderColor()*/, 
-                 GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::WndColor()*/, 
+                 GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/, 
+                 GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Clr interior/* = ClientUI::CtrlColor()*/, 
                  GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-    Edit(x, y, w, str, FontOrDefaultFont(font), color, text_color, interior, flags)
+    Edit(x, y, w, str, FontOrDefaultFont(font), border_color, text_color, interior, flags)
 {
     GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
     SetHiliteColor(ClientUI::EditHiliteColor());
@@ -720,13 +720,13 @@ CUIEdit::CUIEdit(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost:
 void CUIEdit::Render()
 {
     GG::Clr color = Color();
-    GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
+    GG::Clr border_color = Disabled() ? DisabledColor(color) : color;
     GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Pt client_ul = ClientUpperLeft(), client_lr = ClientLowerRight();
 
-    FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
+    FlatRectangle(ul, lr, int_color_to_use, border_color, 1);
 
     SetColor(GG::CLR_ZERO);
     Edit::Render();
@@ -736,11 +736,11 @@ void CUIEdit::Render()
 ///////////////////////////////////////
 // class CUIMultiEdit
 ///////////////////////////////////////
-CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/, 
+CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style/* = MULTI_LINEWRAP*/,
                            const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                           GG::Clr color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/, 
-                           GG::Clr interior/* = ClientUI::WndColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
-    MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), color, style, text_color, interior, flags)
+                           GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/, GG::Clr text_color/* = ClientUI::TextColor()*/,
+                           GG::Clr interior/* = ClientUI::CtrlColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) :
+    MultiEdit(x, y, w, h, str, FontOrDefaultFont(font), border_color, style, text_color, interior, flags)
 {
     RecreateScrolls();
     SetHiliteColor(ClientUI::EditHiliteColor());
@@ -749,12 +749,12 @@ CUIMultiEdit::CUIMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string
 void CUIMultiEdit::Render()
 {
     GG::Clr color = Color();
-    GG::Clr color_to_use = Disabled() ? DisabledColor(color) : color;
-    GG::Clr int_color_to_use = Disabled() ? DisabledColor(InteriorColor()) : InteriorColor();
+    GG::Clr border_color =      Disabled()  ?   DisabledColor(color)            :   color;
+    GG::Clr int_color_to_use =  Disabled()  ?   DisabledColor(InteriorColor())  :   InteriorColor();
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
 
-    FlatRectangle(ul, lr, int_color_to_use, color_to_use, 1);
+    FlatRectangle(ul, lr, int_color_to_use, border_color, 1);
 
     SetColor(GG::CLR_ZERO);
     MultiEdit::Render();
@@ -766,9 +766,9 @@ void CUIMultiEdit::Render()
 ///////////////////////////////////////
 CUILinkTextMultiEdit::CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str, GG::Flags<GG::MultiEditStyle> style,
                                            const boost::shared_ptr<GG::Font>& font,
-                                           GG::Clr color, GG::Clr text_color, 
+                                           GG::Clr border_color, GG::Clr text_color, 
                                            GG::Clr interior, GG::Flags<GG::WndFlag> flags) :
-    CUIMultiEdit(x, y, w, h, str, style, font, color, text_color, interior, flags),
+    CUIMultiEdit(x, y, w, h, str, style, font, border_color, text_color, interior, flags),
     TextLinker(),
     m_already_setting_text_so_dont_link(false)
 {}

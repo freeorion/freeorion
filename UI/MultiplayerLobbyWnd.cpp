@@ -173,7 +173,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
 
     GG::X x(CONTROL_MARGIN);
     m_chat_input_edit = new CUIEdit(x, ClientHeight() - (ClientUI::Pts() + 10) - 2 * CONTROL_MARGIN, CHAT_WIDTH - x, "");
-    m_chat_box = new CUIMultiEdit(x, GG::Y(CONTROL_MARGIN), CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "", 
+    m_chat_box = new CUIMultiEdit(x, GG::Y(CONTROL_MARGIN), CHAT_WIDTH - x, m_chat_input_edit->UpperLeft().y - 2 * CONTROL_MARGIN, "",
                                   GG::MULTI_LINEWRAP | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE);
     m_chat_box->SetMaxLinesOfHistory(250);
 
@@ -190,7 +190,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     m_new_load_game_buttons->AddButton(
         new CUIStateButton(GG::X0, GG::Y0, GG::X(100), RADIO_BN_HT, UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
 
-    m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN, 
+    m_saved_games_list = new CUIDropDownList(CHAT_WIDTH + 2 * CONTROL_MARGIN, m_new_load_game_buttons->LowerRight().y + CONTROL_MARGIN,
                                              GALAXY_SETUP_PANEL_WIDTH, SAVED_GAMES_LIST_ROW_HEIGHT, SAVED_GAMES_LIST_DROP_HEIGHT);
     m_saved_games_list->SetStyle(GG::LIST_NOSORT);
 
