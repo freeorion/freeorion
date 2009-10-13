@@ -43,6 +43,7 @@
 		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server & AI */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
 		3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 3402F0FE0F5A36A400DF6FE7 /* Cg.framework */; };
 		340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D14AA0F6483700026044A /* libpython2.5.a */; };
+		3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */; };
 		343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */; };
 		343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */; };
 		343EC6640F3F5C7C00782AD3 /* MarkupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65F0F3F5C7C00782AD3 /* MarkupBox.cpp */; };
@@ -486,6 +487,8 @@
 		3402F0FE0F5A36A400DF6FE7 /* Cg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cg.framework; path = dep/Frameworks/Cg.framework; sourceTree = "<group>"; };
 		340D14AA0F6483700026044A /* libpython2.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.5.a; path = dep/lib/libpython2.5.a; sourceTree = SOURCE_ROOT; };
 		341395C90F549BE0008FF42C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatSetupWnd.cpp; sourceTree = "<group>"; };
+		3415B09F10851BB200009F19 /* CombatSetupWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatSetupWnd.h; sourceTree = "<group>"; };
 		343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UnicodeCharsets.cpp; sourceTree = "<group>"; };
 		343EC64F0F3F528E00782AD3 /* checked.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = checked.h; sourceTree = "<group>"; };
 		343EC6500F3F528E00782AD3 /* core.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = core.h; sourceTree = "<group>"; };
@@ -1138,7 +1141,6 @@
 		471023780CEF3AAC00A7DF2B /* GiGi.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGi.pc.in; sourceTree = "<group>"; };
 		471023790CEF3AAC00A7DF2B /* GiGiOgre.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGiOgre.pc.in; sourceTree = "<group>"; };
 		4710237A0CEF3AAC00A7DF2B /* GiGiSDL.pc.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GiGiSDL.pc.in; sourceTree = "<group>"; };
-		4710237B0CEF3AAC00A7DF2B /* lgpl.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = lgpl.txt; sourceTree = "<group>"; };
 		4710237D0CEF3AAC00A7DF2B /* acinclude.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = acinclude.m4; sourceTree = "<group>"; };
 		4710237E0CEF3AAC00A7DF2B /* aclocal.m4 */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = aclocal.m4; sourceTree = "<group>"; };
 		4710237F0CEF3AAC00A7DF2B /* config-h.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "config-h.in"; sourceTree = "<group>"; };
@@ -1158,7 +1160,6 @@
 		4710238D0CEF3AAC00A7DF2B /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
 		4710238E0CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		4710238F0CEF3AAC00A7DF2B /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
-		471023910CEF3AAC00A7DF2B /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
 		471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignmentFlags.cpp; sourceTree = "<group>"; };
 		471023930CEF3AAC00A7DF2B /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrowseInfoWnd.cpp; sourceTree = "<group>"; };
@@ -2401,7 +2402,6 @@
 				471023780CEF3AAC00A7DF2B /* GiGi.pc.in */,
 				471023790CEF3AAC00A7DF2B /* GiGiOgre.pc.in */,
 				4710237A0CEF3AAC00A7DF2B /* GiGiSDL.pc.in */,
-				4710237B0CEF3AAC00A7DF2B /* lgpl.txt */,
 				4710237C0CEF3AAC00A7DF2B /* libltdl */,
 				4710238F0CEF3AAC00A7DF2B /* SConstruct */,
 				471023900CEF3AAC00A7DF2B /* src */,
@@ -2544,7 +2544,6 @@
 				34BAB1AF0FC5CFE500EF792E /* GIL */,
 				34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */,
 				34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */,
-				471023910CEF3AAC00A7DF2B /* OgreController.mm */,
 				471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */,
 				471023930CEF3AAC00A7DF2B /* Base.cpp */,
 				471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */,
@@ -2843,6 +2842,8 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */,
+				3415B09F10851BB200009F19 /* CombatSetupWnd.h */,
 				346D87ED0FC5F6080095593E /* ShaderProgram.cpp */,
 				346D87EE0FC5F6080095593E /* ShaderProgram.h */,
 				3402E2360F5A30D600DF6FE7 /* PagedGeometry */,
@@ -3572,6 +3573,7 @@
 				346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */,
 				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
 				34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */,
+				3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
