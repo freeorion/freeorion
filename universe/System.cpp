@@ -448,20 +448,12 @@ void System::RemoveOwner(int id)
 {
 }
 
-void System::MovementPhase()
-{
-}
-
 void System::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
     // give systems base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
         if (Meter* stealth = GetMeter(METER_STEALTH))
             stealth->AdjustMax(0.01);
-}
-
-void System::PopGrowthProductionResearchPhase()
-{
 }
 
 System::orbit_iterator System::begin()

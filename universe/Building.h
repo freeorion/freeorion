@@ -42,9 +42,7 @@ public:
     void                    SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
     virtual void            MoveTo(double x, double y);
 
-    virtual void            MovementPhase();
     virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void            PopGrowthProductionResearchPhase();
 
     void                    Reset();                            ///< resets any building state, and removes owners
     void                    SetOrderedScrapped(bool b = true);  ///< flags building for scrapping

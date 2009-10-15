@@ -133,7 +133,7 @@ public:
 
     /** performs the movement that this object is responsible for this object's actions during the movement phase of 
         a turn. */
-    virtual void            MovementPhase() = 0;
+    virtual void            MovementPhase();
 
     /** sets max meter value(s) for meter(s) in this UniverseObject to Meter::METER_MIN.  This should be done before any
       * Effects that alter meter(s) act on the object.  if \a meter_type is INVALID_METER_TYPE, all meters are reset.  if
@@ -151,7 +151,7 @@ public:
 
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
         phase of a turn. */
-    virtual void            PopGrowthProductionResearchPhase() = 0;
+    virtual void            PopGrowthProductionResearchPhase();
     //@}
 
     static const double         INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed

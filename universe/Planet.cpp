@@ -523,10 +523,6 @@ void Planet::MoveTo(double x, double y)
     }
 }
 
-void Planet::MovementPhase()
-{
-}
-
 void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
     ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);

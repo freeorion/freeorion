@@ -206,15 +206,6 @@ void Ship::MoveTo(double x, double y)
     }
 }
 
-void Ship::MovementPhase()
-{
-    // Fleet::MovementPhase moves ships within fleet around and deals with ship fuel consumption
-}
-
-void Ship::PopGrowthProductionResearchPhase()
-{
-}
-
 void Ship::SetOrderedScrapped(bool b)
 {
     bool initial_status = m_ordered_scrapped;

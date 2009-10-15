@@ -111,9 +111,6 @@ void Building::MoveTo(double x, double y)
         planet->RemoveBuilding(this->ID());
 }
 
-void Building::MovementPhase()
-{}
-
 void Building::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
     // give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability
@@ -121,9 +118,6 @@ void Building::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type/* = IN
         if (Meter* stealth = GetMeter(METER_STEALTH))
             stealth->AdjustMax(0.001);
 }
-
-void Building::PopGrowthProductionResearchPhase()
-{}
 
 void Building::Reset()
 {

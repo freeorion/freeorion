@@ -55,9 +55,6 @@ public:
 
     virtual void                MoveTo(double x, double y);
 
-    virtual void                MovementPhase();
-    virtual void                PopGrowthProductionResearchPhase();
-
     void                        SetOrderedScrapped(bool b = true);              ///< flags ship for scrapping
     //@}
 

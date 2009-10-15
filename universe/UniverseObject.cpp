@@ -317,3 +317,9 @@ void UniverseObject::ClampMeters()
     for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         it->second.Clamp();
 }
+
+void UniverseObject::PopGrowthProductionResearchPhase()
+{}
+
+void UniverseObject::MovementPhase()
+{}
