@@ -250,6 +250,9 @@ Sets how far apart to render dots for fleet supply lines.
 OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE
 Sets how fast to render dots for fleet supply lines.
 
+OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
+Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
+
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
 
@@ -564,6 +567,9 @@ Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 
 OPTIONS_DB_QUICKSTART
 Starts a new quickstart game, bypassing the main menu.
+
+OPTIONS_DB_CHECKED_GL_VERSION
+Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
 
 
 #################
@@ -1047,6 +1053,9 @@ Galaxy map starfields rendering
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Galaxy distance scale line
+
+OPTIONS_GALAXY_MAP_DETECTION_RANGE
+Detection range circles
 
 OPTIONS_STARLANES
 Starlanes

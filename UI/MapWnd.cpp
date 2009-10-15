@@ -87,6 +87,7 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE",        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
+        db.Add("UI.show-detection-range",           "OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE",        true,       Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      "OPTIONS_DB_UI_SYSTEM_FOG_SPACING",             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
@@ -2935,6 +2936,9 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 }
 
 void MapWnd::RenderVisibilityRadii() {
+    if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
+        return;
+
     const Universe& universe = GetUniverse();
     const double TWO_PI = 2.0*3.1415926536;
     glLineWidth(2.0);
