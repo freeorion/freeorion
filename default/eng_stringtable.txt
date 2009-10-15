@@ -571,6 +571,8 @@ Starts a new quickstart game, bypassing the main menu.
 OPTIONS_DB_CHECKED_GL_VERSION
 Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
 
+OPTIONS_DB_TECH_DEMO
+Try out the 3D combat tech demo.
 
 #################
 # File Dialog   #

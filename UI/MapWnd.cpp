@@ -2939,32 +2939,51 @@ void MapWnd::RenderVisibilityRadii() {
     if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
         return;
 
+    // for each map position and empire, find max value of detection range at that position
+    std::map<std::pair<int, std::pair<double, double> >, double> empire_position_max_detection_ranges;
     const Universe& universe = GetUniverse();
+    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+        const UniverseObject* obj = it->second;
+        if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
+            double X = obj->X();
+            double Y = obj->Y();
+            double D = detection_meter->Current();
+            const std::set<int>& owners = obj->Owners();
+            for (std::set<int>::const_iterator empire_it = owners.begin(); empire_it != owners.end(); ++empire_it) {
+                // find this empires entry for this location, if any
+                std::pair<int, std::pair<double, double> > key = std::make_pair(*empire_it, std::make_pair(X, Y));
+                std::map<std::pair<int, std::pair<double, double> >, double>::iterator range_it = empire_position_max_detection_ranges.find(key);
+                if (range_it != empire_position_max_detection_ranges.end()) {
+                    if (range_it->second < D) range_it->second = D;   // update existing entry
+                } else {
+                    empire_position_max_detection_ranges[key] = D;  // add new entry to map
+                }
+            }
+        }
+    }
+
+
     const double TWO_PI = 2.0*3.1415926536;
     glLineWidth(2.0);
     glPushMatrix();
     glLoadIdentity();
     glEnable(GL_LINE_SMOOTH);
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
-        if (const Meter* detection_meter = it->second->GetMeter(METER_DETECTION)) {
-            // draw background disc in empire colour, or passed-in colour
-            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->second->X(), it->second->Y());
 
-            double radius = 10.0*detection_meter->Current()*ZoomFactor();
-            if (radius < 20.0) continue;
-
-            GG::Clr circle_colour = GG::CLR_WHITE;
-            const std::set<int>& owners = it->second->Owners();
-            if (owners.size() == 1)
-                if (const Empire* empire = Empires().Lookup(*owners.begin()))
-                    circle_colour = empire->Color();
+    for (std::map<std::pair<int, std::pair<double, double> >, double>::const_iterator it = empire_position_max_detection_ranges.begin();
+         it != empire_position_max_detection_ranges.end(); ++it)
+    {
+        if (const Empire* empire = Empires().Lookup(it->first.first)) {
+            GG::Clr circle_colour = empire->Color();
             circle_colour.a = 64;
 
-            glColor(circle_colour);
+            GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
+            double radius = 10.0*it->second*ZoomFactor();
+            if (radius < 20.0) continue;
 
             GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
             GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
 
+            glColor(circle_colour);
             glDisable(GL_TEXTURE_2D);
             CircleArc(ul, lr, 0.0, TWO_PI, true);
             CircleArc(ul, lr, 0.0, TWO_PI, false);
