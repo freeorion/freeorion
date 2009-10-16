@@ -2480,8 +2480,8 @@ void MapWnd::SetZoom(double steps_in)
     ul_offset_y *= (ZoomFactor() / OLD_ZOOM);
 
 
-    // show / hide system names after zooming
-    if (ZoomFactor() < ClientUI::TinyFleetButtonZoomThreshold())
+    // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
+    if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
         HideSystemNames();
     else
         ShowSystemNames();
