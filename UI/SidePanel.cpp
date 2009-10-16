@@ -1089,6 +1089,15 @@ void SidePanel::PlanetPanel::Render()
         glVertex(lr.x,              lr.y);                      // bottom right
     glEnd();
 
+    // title background box
+    glColor(title_background_colour);
+    glBegin(GL_QUAD_STRIP);
+        glVertex(name_lr.x,             name_ul.y);
+        glVertex(name_ul.x,             name_ul.y);
+        glVertex(name_lr.x,             name_lr.y);
+        glVertex(name_ul.x,             name_lr.y);
+    glEnd();
+
     // border
     glColor(border_colour);
     glLineWidth(1.5);
@@ -1107,9 +1116,6 @@ void SidePanel::PlanetPanel::Render()
         glVertex(lr.x,              lr.y);                      // bottom right
     glEnd();
     glLineWidth(1.0);
-
-    // title background box
-    GG::FlatRectangle(name_ul,  name_lr,    title_background_colour,    GG::CLR_ZERO,   0);
 
     // disable greyover
     const GG::Clr HALF_GREY(128, 128, 128, 128);

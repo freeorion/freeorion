@@ -183,12 +183,16 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
 {
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
-    m_queue_lb = new QueueListBox(GG::X(2), m_research_info_panel->LowerRight().y, m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(), "RESEARCH_QUEUE_ROW");
+
+    m_queue_lb = new QueueListBox(GG::X(2), m_research_info_panel->LowerRight().y,
+                                  m_research_info_panel->Width() - 4, ClientSize().y - 4 - m_research_info_panel->Height(),
+                                  "RESEARCH_QUEUE_ROW");
     GG::Connect(m_queue_lb->QueueItemMoved, &ResearchWnd::QueueItemMoved, this);
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width() + 6, GG::Y(6));
+
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
-    m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width() + 3, GG::Y(3)));
+    m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width(), GG::Y0));
 
     GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal,          &ResearchWnd::AddTechToQueueSlot, this);
     GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot, this);
