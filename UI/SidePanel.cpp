@@ -1314,7 +1314,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
     GG::Y available_height = Height();
     if (GG::Wnd* parent = Parent()) {
         GG::Y containing_height = parent->Height();
-        const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(50);
+        const GG::Y BIG_PAD_TO_BE_SAFE = GG::Y(185);
         available_height = containing_height - BIG_PAD_TO_BE_SAFE;  // height of visible "page" of panels
     }
 

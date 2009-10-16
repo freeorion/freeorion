@@ -41,7 +41,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
     m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
-    m_description_box->SetInteriorColor(GG::CLR_ZERO);
+    m_description_box->SetInteriorColor(ClientUI::CtrlColor());
 
     AttachChild(m_name_text);
     AttachChild(m_cost_text);

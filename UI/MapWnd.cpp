@@ -537,7 +537,7 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(GG::X0,GG::Y0,GG::GUI::GetGUI()->AppWidth(),GG::Y(30));
+    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::Y(30));
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 

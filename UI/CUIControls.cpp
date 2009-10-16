@@ -605,7 +605,7 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 // class CUIListBox
 ///////////////////////////////////////
 CUIListBox::CUIListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr border_color/* = ClientUI::CtrlBorderColor()*/, 
-                       GG::Clr interior_color/* = GG::CLR_ZERO*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
+                       GG::Clr interior_color/* = ClientUI::CtrlColor()*/, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) : 
     ListBox(x, y, w, h, border_color, interior_color, flags)
 {
     RecreateScrolls();
@@ -1049,8 +1049,9 @@ bool CUIToolBar::InWindow(const GG::Pt& pt) const
 
 void CUIToolBar::Render()
 {
-    GG::Pt ul(UpperLeft()),lr(LowerRight());
-    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0f,0.0f,0.0f,0.8f),GG::CLR_ZERO,0);
+    GG::Pt ul(UpperLeft() - GG::Pt(GG::X1, GG::Y1));
+    GG::Pt lr(LowerRight() + GG::Pt(GG::X(1), GG::Y0));
+    GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 }
 
 ///////////////////////////////////////

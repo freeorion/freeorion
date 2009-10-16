@@ -902,7 +902,12 @@ void Fleet::CalculateRoute() const
             if (this->CanChangeDirectionEnRoute()) {
 
                 std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, m_moving_to, owner);
-                const UniverseObject* obj = universe.Object(path1.first.front());
+                const std::list<int>& sys_list1 = path1.first;
+                if (sys_list1.empty()) {
+                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                    return;
+                }
+                const UniverseObject* obj = universe.Object(sys_list1.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
                     return;
@@ -912,7 +917,12 @@ void Fleet::CalculateRoute() const
                 double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
                 std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, m_moving_to, owner);
-                obj = universe.Object(path2.first.front());
+                const std::list<int>& sys_list2 = path2.first;
+                if (sys_list2.empty()) {
+                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                    return;
+                }
+                obj = universe.Object(sys_list2.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
                     return;
@@ -933,7 +943,12 @@ void Fleet::CalculateRoute() const
             } else {
 
                 std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, m_moving_to, owner);
-                const UniverseObject* obj = universe.Object(route.first.front());
+                const std::list<int>& sys_list = route.first;
+                if (sys_list.empty()) {
+                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                    return;
+                }
+                const UniverseObject* obj = universe.Object(sys_list.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
                     return;
