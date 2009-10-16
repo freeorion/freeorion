@@ -43,6 +43,7 @@ const Empire*       (*AIIntGetEmpireVoid)(void) =               &AIInterface::Ge
 const Empire*       (*AIIntGetEmpireInt)(int) =                 &AIInterface::GetEmpire;
 
 int                 (*AIIntNewFleet)(const std::string&, int) = &AIInterface::IssueNewFleetOrder;
+int                 (*AIIntScrap)(int)                        = &AIInterface::IssueScrapOrder;
 
 
 namespace {
@@ -107,6 +108,7 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
     def("issueRenameOrder",         AIInterface::IssueRenameOrder);
+    def("issueScrapOrder",          AIIntScrap);
     def("issueNewFleetOrder",       AIIntNewFleet);
     def("issueFleetTransferOrder",  AIInterface::IssueFleetTransferOrder);
     def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);

@@ -270,6 +270,41 @@ namespace AIInterface {
         return 1;
     }
 
+    int IssueScrapOrder(const std::vector<int>& object_ids) {
+            if (object_ids.empty()) {
+                Logger().errorStream() << "AIInterface::IssueScrapOrder : passed empty vector of object_ids";
+                return 0;
+            }
+
+            const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+            int empire_id = AIClientApp::GetApp()->EmpireID();
+
+            // make sure all objects exist and are owned just by this player
+            for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
+                const UniverseObject* obj = universe.Object(*it);
+
+                if (!obj) {
+                    Logger().errorStream() << "AIInterface::IssueScrapOrder : passed an invalid object_id";
+                    return 0;
+                }
+
+                if (!obj->WhollyOwnedBy(empire_id)) {
+                    Logger().errorStream() << "AIInterface::IssueScrapOrder : passed object_id of object not owned only by player";
+                    return 0;
+                }
+
+                AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, *it)));
+            }
+
+            return 1;
+    }
+
+    int IssueScrapOrder(int object_id) {
+        std::vector<int> object_ids;
+        object_ids.push_back(object_id);
+        return IssueScrapOrder(object_ids);
+    }
+
     int IssueNewFleetOrder(const std::string& fleet_name, const std::vector<int>& ship_ids) {
         if (ship_ids.empty()) {
             Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed empty vector of ship_ids";
