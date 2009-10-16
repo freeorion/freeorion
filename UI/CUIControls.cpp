@@ -93,7 +93,7 @@ namespace {
 }
 
 CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
-                     GG::Clr color/* = ClientUI::WndColor()*/,
+                     GG::Clr color/* = ClientUI::CtrlColor()*/,
                      GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                      GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
@@ -166,7 +166,7 @@ void CUIButton::RenderUnpressed()
 
 void CUIButton::MarkNotSelected()
 {
-    SetColor(ClientUI::WndColor());
+    SetColor(ClientUI::CtrlColor());
     SetBorderColor(ClientUI::CtrlBorderColor());
     SetBorderThick(1);
 }
@@ -176,6 +176,11 @@ void CUIButton::MarkSelectedGray()
     GG::Clr colour = ClientUI::CtrlColor();
     AdjustBrightness(colour, 50);
     SetColor(colour);
+
+    colour = ClientUI::CtrlBorderColor();
+    AdjustBrightness(colour, 50);
+    SetBorderColor(colour);
+
     SetBorderThick(2);
 }
 
