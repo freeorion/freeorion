@@ -319,7 +319,11 @@ void UniverseObject::ClampMeters()
 }
 
 void UniverseObject::PopGrowthProductionResearchPhase()
-{}
+{
+    Meter* meter = GetMeter(METER_STEALTH);
+    assert(meter);
+    meter->SetCurrent(meter->Max());
+}
 
 void UniverseObject::MovementPhase()
 {}

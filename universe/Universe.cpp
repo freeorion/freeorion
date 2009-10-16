@@ -1368,7 +1368,7 @@ void Universe::UpdateEmpireObjectVisibilities()
                     // check whether having a contained object wouldn't change container's
                     // visibility anyway...
                     if (container_vis_it->second >= VIS_PARTIAL_VISIBILITY)
-                        continue;   // having visible container grants part vis only.  if container already has this for current empire, don't need to propegate
+                        continue;   // having visible contained object grants part vis only.  if container already has this for current empire, don't need to propegate
                 }
 
 

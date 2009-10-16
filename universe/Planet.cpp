@@ -536,6 +536,8 @@ void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void Planet::PopGrowthProductionResearchPhase()
 {
+    UniverseObject::PopGrowthProductionResearchPhase();
+
     // do not do production if planet was just conquered
     if (m_just_conquered)
         m_just_conquered = false;

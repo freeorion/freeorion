@@ -862,6 +862,8 @@ Fleet::iterator Fleet::end()
 
 void Fleet::PopGrowthProductionResearchPhase()
 {
+    UniverseObject::PopGrowthProductionResearchPhase();
+
     // ensure that any newly opened or closed routes are taken into account
     m_travel_route.clear();
     CalculateRoute();
