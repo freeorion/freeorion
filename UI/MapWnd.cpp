@@ -2121,6 +2121,10 @@ void MapWnd::DoFleetButtonsLayout()
 
 std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* fleet) const
 {
+    if (!fleet) {
+        return std::make_pair<double, double>(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+    }
+
     // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
     int sys1_id = fleet->PreviousSystemID(), sys2_id = fleet->NextSystemID();
     std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
@@ -2128,17 +2132,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(const Fleet* flee
     // get apparent positions of endpoints for this lane that have been pre-calculated
     std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
     if (endpoints_it == m_starlane_endpoints.end()) {
-        Logger().errorStream() << "MovingFleetMapPositionOnLane couldn't find lane for fleet.  Using object positions";
-
-        const UniverseObject* obj1 = GetUniverse().Object(sys1_id);
-        const UniverseObject* obj2 = GetUniverse().Object(sys2_id);
-
-        if (!obj1 || !obj2) {
-            Logger().errorStream() << "... and MovingFleetMapPositionOnLane couldn't even find objects with ids " << sys1_id << " and " << sys2_id << " to use instead!";
-            // skip current fleetbutton if there are no endpoints available
-            return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
-        }
-
+        // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
         // away from the star centre at which starlane endpoints should appear
         return std::make_pair<double, double>(fleet->X(), fleet->Y());
