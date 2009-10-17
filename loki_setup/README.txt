@@ -17,7 +17,7 @@ http://www.freeorion.org/forum/viewforum.php?f=25
 - Download the latest archiv by
    executing the following commands in a console / command-line prompt:
      cd /tmp
-     wget http://psitronic.de/div/FO/latest.tar.gz
+     wget http://freeorion.psitronic.de/download/latest.tar.gz
    or downloading it with your browser and put it into /tmp
 
 - Use graphical installer:
@@ -56,6 +56,8 @@ http://sourceforge.net/svn/?group_id=75752
 Some sources used to statically link FreeOrion for linux
 can be found in the subdirectory "src" here.
 
+Linux installer scripts can be found in subdirectory 
+loki_setup inside the FreeOrion svn dir.
 
 4. Licensing
 ============
