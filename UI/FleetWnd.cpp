@@ -84,8 +84,8 @@ namespace {
             return retval;
 
         const System* dest = fleet->FinalDestination();
-        const System* current = fleet->GetSystem();
-        if (dest && dest != current) {
+        const System* cur_sys = fleet->GetSystem();
+        if (dest && dest != cur_sys) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
@@ -119,10 +119,34 @@ namespace {
             retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_MOVING_TO")) %
                                                 dest_name % final_eta_text % next_eta_text);
 
-        } else if (current) {
-            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % current->Name());
+        } else if (cur_sys) {
+            // name of current system
+            std::string cur_name = cur_sys->Name();
+            if (cur_name.empty())
+                cur_name = UserString("UNKNOWN_SYSTEM");
+
+            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_name);
         }
         return retval;
+    }
+
+    std::string FleetNameText(int fleet_id) {
+        std::string retval = UserString("ERROR");
+        const Fleet* fleet = GetUniverse().Object<Fleet>(fleet_id);
+        if (!fleet)
+            return retval;
+
+        // name of fleet
+        std::string name = fleet->Name();
+        if (!name.empty())
+            return name;
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        if (fleet->Unowned() || fleet->OwnedBy(empire_id))
+            return UserString("FLEET");
+        else
+            return UserString("FW_FOREIGN_FLEET");
     }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids) {
@@ -672,12 +696,24 @@ namespace {
             }
 
 
-            // name and design name update
-            m_ship_name_text->SetText(ship->Name());
+            int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-            if (const ShipDesign* design = ship->Design()) {
-                if (m_design_name_text)
-                    m_design_name_text->SetText(design->Name());
+
+            // name and design name update
+            std::string ship_name = ship->Name();
+            if (ship_name.empty()) {
+                if (ship->Unowned() || ship->OwnedBy(empire_id))
+                    ship_name = UserString("SHIP");
+                else
+                    ship_name = UserString("FOREIGN_SHIP");
+            }
+            m_ship_name_text->SetText(ship_name);
+
+            if (m_design_name_text) {
+                std::string design_name = UserString("FW_UNKNOWN_DESIGN_NAME");
+                if (const ShipDesign* design = ship->Design())
+                    design_name = design->Name();
+                m_design_name_text->SetText(design_name);
             }
 
 
@@ -865,13 +901,11 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
     EnableChildClipping();
 
     m_fleet_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                            fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
-                                            GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+                                            ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_name_text);
 
     m_fleet_destination_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
-                                                   fleet ? ClientUI::TextColor() : GG::CLR_BLACK,
-                                                   GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                                                   ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_fleet_destination_text);
 
     if (fleet) {
@@ -1032,7 +1066,7 @@ void FleetDataPanel::Refresh()
 
     if (const Fleet* fleet = GetUniverse().Object<Fleet>(m_fleet_id)) {
         // set fleet name and destination text
-        m_fleet_name_text->SetText(fleet->Name());
+        m_fleet_name_text->SetText(FleetNameText(m_fleet_id));
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
@@ -1053,6 +1087,9 @@ void FleetDataPanel::Refresh()
             it->second->SetValue(StatValue(it->first));
         }
     } else {
+        // this class has two roles.  if there is a fleet object attached to it
+        // it displays that fleet's info.  if no fleet object is attached, then
+        // the class becomes a UI drop target for creating new fleets.
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
     }
@@ -1900,7 +1937,7 @@ const GG::Pt& FleetDetailWnd::LastSize()
 ////////////////////////////////////////////////
 // static(s)
 GG::Pt FleetWnd::s_last_position =  GG::Pt(GG::X0, GG::Y0);
-GG::Pt FleetWnd::s_last_size =      GG::Pt(GG::X(300), GG::Y(400));
+GG::Pt FleetWnd::s_last_size =      GG::Pt(GG::X(360), GG::Y(400));
 
 FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool read_only,
          int selected_fleet_id/* = UniverseObject::INVALID_OBJECT_ID*/,
@@ -2386,16 +2423,22 @@ std::string FleetWnd::TitleText() const
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
         if (const System* system = GetUniverse().Object<System>(m_system_id)) {
+            std::string sys_name = system->Name();
+            if (sys_name.empty())
+                sys_name = UserString("SP_UNKNOWN_SYSTEM");
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
-                                  empire->Name() % system->Name());
+                                  empire->Name() % sys_name);
         } else {
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS")) %
                                   empire->Name());
         }
     } else {
         if (const System* system = GetUniverse().Object<System>(m_system_id)) {
+            std::string sys_name = system->Name();
+            if (sys_name.empty())
+                sys_name = UserString("SP_UNKNOWN_SYSTEM");
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
-                                  system->Name());
+                                  sys_name);
         } else {
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS")));
         }

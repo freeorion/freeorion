@@ -91,6 +91,11 @@ Bomber
 INTERCEPTOR
 Interceptor
 
+SHIP
+Ship
+
+FLEET
+Fleet
 
 ###########################
 # Predefined Ship Designs #
@@ -1539,7 +1544,7 @@ FW_SHIP_CLASS
 Ship Class 
 
 FW_UNKNOWN_DESIGN_NAME
-Unknown
+Unknown Design
 
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
