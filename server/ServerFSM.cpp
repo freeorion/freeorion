@@ -278,7 +278,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
         RebuildSaveGameEmpireData(m_lobby_data->m_save_game_empire_data, m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]);
         // reset the current choice of empire for each player, since the new save game's empires may not have the same IDs
         for (unsigned int i = 0; i < m_lobby_data->m_players.size(); ++i) {
-            m_lobby_data->m_players[i].m_save_game_empire_id = -1;
+            m_lobby_data->m_players[i].m_save_game_empire_id = ALL_EMPIRES;
         }
         new_save_file_selected = true;
     }

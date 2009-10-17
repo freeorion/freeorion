@@ -57,11 +57,11 @@ protected:
     void                    Init(double max_pop_mod, double max_health_mod);    ///< initialization that needs to be called by derived class after derived class is constructed
 
 private:
-    PopCenter();                    ///< default ctor
+    PopCenter();                                                                ///< default ctor
 
-    virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-
-    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
+    //virtual Visibility      GetVisibility(int empire_id) const = 0;             ///< implementation should return the visbility of this PopCenter for the empire with the specified \a empire_id
+    virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 
     int         m_race;             ///< the id of the race that occupies this planet
     double      m_allocated_food;   ///< amount of food allocated to this PopCenter by Empire food distribution

@@ -165,9 +165,9 @@ protected:
 private:
     UniverseObject*                     This() {return this;}
 
-    virtual void                        InsertMeter(MeterType meter_type, Meter meter) {UniverseObject::InsertMeter(meter_type, meter);}
-
-    virtual const Meter*                GetPopMeter() const {return GetMeter(METER_POPULATION);}
+    virtual Visibility                  GetVisibility(int empire_id) const              {return UniverseObject::GetVisibility(empire_id);}
+    virtual void                        InsertMeter(MeterType meter_type, Meter meter)  {UniverseObject::InsertMeter(meter_type, meter);}
+    virtual const Meter*                GetPopMeter() const                             {return GetMeter(METER_POPULATION);}
 
     std::set<int>                       VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 

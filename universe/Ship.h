@@ -83,10 +83,13 @@ void Ship::serialize(Archive& ar, const unsigned int version)
 
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(vis)
-        & BOOST_SERIALIZATION_NVP(m_design_id)
-        & BOOST_SERIALIZATION_NVP(m_fleet_id)
-        & BOOST_SERIALIZATION_NVP(m_fighters)
-        & BOOST_SERIALIZATION_NVP(m_missiles);
+        & BOOST_SERIALIZATION_NVP(m_fleet_id);
+
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
+        ar  & BOOST_SERIALIZATION_NVP(m_design_id)
+            & BOOST_SERIALIZATION_NVP(m_fighters)
+            & BOOST_SERIALIZATION_NVP(m_missiles);
+    }
 
     if (vis == VIS_FULL_VISIBILITY) {
         ar  & BOOST_SERIALIZATION_NVP(ordered_scrapped);

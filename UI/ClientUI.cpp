@@ -94,12 +94,13 @@ boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
     std::string graphic_name = "";
     const ShipDesign* design = GetShipDesign(design_id);
-    if (design)
+    if (design) {
         graphic_name = design->Graphic();
-    if (graphic_name.empty()) {
-        const HullType* hull_type = design->GetHull();
-        if (hull_type)
-            return ClientUI::HullTexture(hull_type->Name());
+        if (graphic_name.empty())
+            if (const HullType* hull_type = design->GetHull())
+                return ClientUI::HullTexture(hull_type->Name());
+    } else {
+        return ClientUI::HullTexture("");
     }
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }

@@ -197,17 +197,30 @@ UniverseObject* Default0Combiner::operator()(Iter first, Iter last)
 template <class Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
+    Visibility                  vis;
+    std::map<MeterType, Meter>  meters;
 
-    if (Archive::is_saving::value)
+    if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
+
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            meters = m_meters;
+        } else {
+            for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+                meters[it->first] = Meter();
+        }
+    }
 
     ar  & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_x)
         & BOOST_SERIALIZATION_NVP(m_y)
         & BOOST_SERIALIZATION_NVP(m_system_id)
-        & BOOST_SERIALIZATION_NVP(m_meters);
+        & BOOST_SERIALIZATION_NVP(meters);
+
+    if (Archive::is_loading::value) {
+        m_meters = meters;
+    }
 
     if (vis >= VIS_PARTIAL_VISIBILITY) {
         std::string name;
@@ -222,8 +235,9 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_specials)
             & BOOST_SERIALIZATION_NVP(m_created_on_turn);
 
-        if (Archive::is_loading::value)
+        if (Archive::is_loading::value) {
             m_name = name;
+        }
     }
 }
 

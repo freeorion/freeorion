@@ -381,9 +381,15 @@ double Fleet::Fuel() const
     double fuel = Meter::METER_MAX;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = universe.Object<Ship>(*ship_it);
-        assert(ship);
+        if (!ship) {
+            Logger().errorStream() << "Fleet::Fuel couldn't get ship with id " << *ship_it;
+            continue;
+        }
         const Meter* meter = ship->GetMeter(METER_FUEL);
-        assert(meter);
+        if (!meter) {
+            Logger().errorStream() << "Fleet::Fuel skipping ship with no fuel meter";
+            continue;
+        }
         fuel = std::min(fuel, meter->Current());
     }
     return fuel;
@@ -400,9 +406,15 @@ double Fleet::MaxFuel() const
     double max_fuel = Meter::METER_MAX;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = universe.Object<Ship>(*ship_it);
-        assert(ship);
+        if (!ship) {
+            Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
+            continue;
+        }
         const Meter* meter = ship->GetMeter(METER_FUEL);
-        assert(meter);
+        if (!meter) {
+            Logger().errorStream() << "Fleet::MaxFuel skipping ship with no fuel meter";
+            continue;
+        }
         max_fuel = std::min(max_fuel, meter->Max());
     }
     return max_fuel;

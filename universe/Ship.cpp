@@ -88,15 +88,27 @@ Fleet* Ship::GetFleet() const {
 }
 
 bool Ship::IsArmed() const {
-    return Design()->IsArmed();
+    const ShipDesign* design = Design();
+    if (design)
+        return design->IsArmed();
+    else
+        return false;
 }
 
 bool Ship::CanColonize() const {
-    return Design()->CanColonize();
+    const ShipDesign* design = Design();
+    if (design)
+        return design->CanColonize();
+    else
+        return false;
 }
 
 double Ship::Speed() const {
-    return Design()->StarlaneSpeed();
+    const ShipDesign* design = Design();
+    if (design)
+        return design->StarlaneSpeed();
+    else
+        return false;
 }
 
 const Ship::ConsumablesMap& Ship::Fighters() const {

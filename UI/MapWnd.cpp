@@ -2168,7 +2168,7 @@ void MapWnd::RefreshFleetButtons()
         }
 
         // get owner of fleet
-        int empire_id = -1;
+        int empire_id = ALL_EMPIRES;
         const std::set<int>& owners = fleet->Owners();
         if (owners.size() == 1)
             empire_id = *(owners.begin());
@@ -2197,7 +2197,7 @@ void MapWnd::RefreshFleetButtons()
         }
 
         // get owner of fleet
-        int empire_id = -1;
+        int empire_id = ALL_EMPIRES;
         const std::set<int>& owners = fleet->Owners();
         if (owners.size() == 1)
             empire_id = *(owners.begin());
@@ -2267,9 +2267,8 @@ void MapWnd::RefreshFleetButtons()
 
         // create button for each empire's fleets
         for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const Empire* empire = empires.Lookup(empire_it->first);
             const std::vector<const Fleet*> fleets = empire_it->second;
-            if (!empire || fleets.empty())
+            if (fleets.empty())
                 continue;
 
             // buttons need fleet IDs
@@ -2301,9 +2300,8 @@ void MapWnd::RefreshFleetButtons()
 
         // create button for each empire's fleets
         for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const Empire* empire = empires.Lookup(empire_it->first);
             const std::vector<const Fleet*> fleets = empire_it->second;
-            if (!empire || fleets.empty())
+            if (fleets.empty())
                 continue;
 
             // buttons need fleet IDs
@@ -2334,9 +2332,8 @@ void MapWnd::RefreshFleetButtons()
 
         // create button for each empire's fleets
         for (std::map<int, std::vector<const Fleet*> >::const_iterator empire_it = empires_map.begin(); empire_it != empires_map.end(); ++empire_it) {
-            const Empire* empire = empires.Lookup(empire_it->first);
             const std::vector<const Fleet*>& fleets = empire_it->second;
-            if (!empire || fleets.empty())
+            if (fleets.empty())
                 continue;
 
             //std::cout << " ... creating moving fleet buttons for empire " << empire->Name() << std::endl;
