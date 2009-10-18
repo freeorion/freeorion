@@ -1434,6 +1434,45 @@ void Universe::UpdateEmpireObjectVisibilities()
             }
         }
     }
+
+
+    // ensure systems on either side of a starlane along which a fleet is
+    // moving are at least basically visible, so that the starlane itself will
+    // be visible
+    std::vector<const Fleet*> moving_fleets;
+    Universe::ObjectVec moving_fleet_objects = this->FindObjects(MovingFleetVisitor());
+    for (Universe::ObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
+        if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it)) {
+            if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID || fleet->Unowned())
+                continue;
+
+            int prev = fleet->PreviousSystemID();
+            int next = fleet->NextSystemID();
+
+            // for each empire that owns the fleet, ensure that empire has
+            // at least basic visibility of the next and previous systems
+            // on the fleet's path
+            const std::set<int>& owners = fleet->Owners();
+            for (std::set<int>::const_iterator empire_it = owners.begin(); empire_it != owners.end(); ++empire_it) {
+                ObjectVisibilityMap& vis_map = m_empire_object_visibility[*empire_it];
+
+                ObjectVisibilityMap::iterator system_vis_it = vis_map.find(prev);
+                if (system_vis_it == vis_map.end()) {
+                    vis_map[prev] = VIS_BASIC_VISIBILITY;
+                } else {
+                    if (system_vis_it->second < VIS_BASIC_VISIBILITY)
+                        system_vis_it->second = VIS_BASIC_VISIBILITY;
+                }
+
+                system_vis_it = vis_map.find(next);
+                if (system_vis_it == vis_map.end()) {
+                    vis_map[next] = VIS_BASIC_VISIBILITY;
+                } else {
+                    if (system_vis_it->second < VIS_BASIC_VISIBILITY)
+                        system_vis_it->second = VIS_BASIC_VISIBILITY;
+                }
+            }
+        }
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()

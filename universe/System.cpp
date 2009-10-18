@@ -520,15 +520,43 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
     if (vis2 < VIS_BASIC_VISIBILITY)
         return retval;
 
+
+    std::vector<const Fleet*> moving_empire_fleets;
+    Universe::ObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
+    for (Universe::ObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
+        if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it))
+            if (fleet->OwnedBy(empire_id))
+                moving_empire_fleets.push_back(fleet);
+
+
     // check each connected system, paired with current system, to ensure at
-    // least one is partial, and both are at least basically visible
+    // least one is partial, and both are at least basically visible, or that
+    // both are basically visible if there is a ship owned by the indicated
+    // empire travelling along a lane between them
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
         Visibility vis1 = universe.GetObjectVisibilityByEmpire(it->first, empire_id);
         if (vis1 < VIS_BASIC_VISIBILITY)
             continue;
 
-        if (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY)
+        if (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY) {
+            // one or both systems are partially visible, so lane is visible
             retval.insert(*it);
+            continue;
+
+        } else if (vis1 >= VIS_BASIC_VISIBILITY) {
+            // check for fleets not in a system and with next and previous
+            // systems that are the current pair
+            for (std::vector<const Fleet*>::const_iterator moving_fleet_it = moving_empire_fleets.begin(); moving_fleet_it != moving_empire_fleets.end(); ++moving_fleet_it) {
+                const Fleet* fleet = *moving_fleet_it;
+                if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID &&
+                    ((fleet->NextSystemID() == this->ID() && fleet->PreviousSystemID() == it->first) ||
+                     (fleet->NextSystemID() == it->first && fleet->PreviousSystemID() == this->ID())))
+                {
+                    retval.insert(*it);
+                    break;
+                }
+            }
+        }
     }
     return retval;
 }
