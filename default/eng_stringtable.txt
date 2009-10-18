@@ -97,6 +97,12 @@ Ship
 FLEET
 Fleet
 
+DEFAULT_EMPIRE_NAME
+Terran Imperium
+
+DEFAULT_PLAYER_NAME
+Human_Player
+
 ###########################
 # Predefined Ship Designs #
 ###########################

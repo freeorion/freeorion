@@ -165,6 +165,9 @@ protected:
     void                    Init();                     ///< adds stealth meter
 
 private:
+    std::map<MeterType,
+             Meter>         CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
+
     int                         m_id;
     std::string                 m_name;
     double                      m_x;
@@ -202,13 +205,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_saving::value) {
         vis = GetVisibility(Universe::s_encoding_empire);
-
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            meters = m_meters;
-        } else {
-            for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-                meters[it->first] = Meter();
-        }
+        meters = CensoredMeters(vis);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(vis)

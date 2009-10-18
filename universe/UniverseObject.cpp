@@ -327,3 +327,16 @@ void UniverseObject::PopGrowthProductionResearchPhase()
 
 void UniverseObject::MovementPhase()
 {}
+
+std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
+{
+    std::map<MeterType, Meter> retval;
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
+        retval = m_meters;
+    } else {
+        for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+            retval[it->first] = Meter();
+    }
+    return retval;
+}
+

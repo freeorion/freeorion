@@ -4,6 +4,10 @@
 #include "Sound.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/OptionsDB.h"
+#include "../util/Directories.h"
+
+#include <boost/filesystem/fstream.hpp>
 
 #include <GG/Button.h>
 #include <GG/Layout.h>
@@ -27,6 +31,12 @@ namespace {
         }
         return !name.empty();
     }
+
+    void AddOptions(OptionsDB& db) {
+        db.Add("multiplayersetup.player-name",  "OPTIONS_DB_MP_PLAYER_NAME",    std::string("Human_Player")/*UserString("DEFAULT_PLAYER_NAME")*/,  Validator<std::string>());
+        db.Add("multiplayersetup.host-address", "OPTIONS_DB_MP_HOST_ADDRESS",   std::string("localhost"),           Validator<std::string>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ServerConnectWnd::ServerConnectWnd() : 
@@ -47,7 +57,7 @@ ServerConnectWnd::ServerConnectWnd() :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::TextControl* player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, "");
+    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
     m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
@@ -56,7 +66,7 @@ ServerConnectWnd::ServerConnectWnd() :
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("REFRESH_LIST_BN"));
     m_internet_game_label = new GG::TextControl(GG::X0, GG::Y0, UserString("INTERNET_GAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_IP_address_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, "localhost");
+    m_IP_address_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("multiplayersetup.host-address"));
     m_ok_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("OK"));
     m_cancel_bn = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("CANCEL"));
 
@@ -177,6 +187,23 @@ void ServerConnectWnd::NameEdited(const std::string& str)
 
 void ServerConnectWnd::OkClicked()
 {
+    // record selected galaxy setup options as new defaults
+    GetOptionsDB().Set("multiplayersetup.player-name",  m_player_name_edit->Text());
+    GetOptionsDB().Set("multiplayersetup.host-address", m_IP_address_edit->Text());
+
+    // Save the changes:
+    {
+        boost::filesystem::ofstream ofs(GetConfigPath());
+        if (ofs) {
+            GetOptionsDB().GetXML().WriteDoc(ofs);
+        } else {
+            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+            std::cerr << GetConfigPath().file_string() << std::endl;
+            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+            Logger().errorStream() << GetConfigPath().file_string();
+        }
+    }
+
     m_result.first = *m_player_name_edit;
     if (m_host_or_join_radio_group->CheckedButton() == 0) {
         m_result.second = "HOST GAME SELECTED";

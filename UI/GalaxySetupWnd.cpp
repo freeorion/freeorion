@@ -3,12 +3,12 @@
 #include "CUIControls.h"
 #include "CUISpin.h"
 #include "Sound.h"
+#include "../universe/Universe.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
-#include "../universe/Universe.h"
-
 #include "../util/Directories.h"
+
 #include <boost/filesystem/fstream.hpp>
 
 #include <GG/DrawUtil.h>
@@ -28,15 +28,15 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",               60,                     RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",        SPIRAL_3,               RangedValidator<Shape>(SPIRAL_2, RING));
-        db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",          AGE_MATURE,             RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
-        db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",      PD_AVERAGE,             RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
-        db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",  LANES_MANY,             RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
-        db.Add("GameSetup.specials-frequency",  "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY",  SPECIALS_COMMON,        RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
-        db.Add("GameSetup.empire-name",         "OPTIONS_DB_GAMESETUP_EMPIRE_NAME",         std::string("Human"),   Validator<std::string>());
-        db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",        0,                      RangedValidator<int>(0, 100));
-        db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",      3,                      RangedValidator<int>(0, MAX_AI_PLAYERS));
+        db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",               60,                                 RangedValidator<int>(10, 500));
+        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",        SPIRAL_3,                           RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",          AGE_MATURE,                         RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
+        db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",      PD_AVERAGE,                         RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
+        db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",  LANES_MANY,                         RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
+        db.Add("GameSetup.specials-frequency",  "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY",  SPECIALS_COMMON,                    RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
+        db.Add("GameSetup.empire-name",         "OPTIONS_DB_GAMESETUP_EMPIRE_NAME",         std::string("Human Empire")/*UserString("DEFAULT_EMPIRE_NAME")*/,  Validator<std::string>());
+        db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",        0,                                  RangedValidator<int>(0, 100));
+        db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",      3,                                  RangedValidator<int>(0, MAX_AI_PLAYERS));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
