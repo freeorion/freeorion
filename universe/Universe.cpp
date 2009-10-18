@@ -325,14 +325,26 @@ struct Universe::GraphImpl
 
 
             // get system id from graph index
-            int sys_graph_index_2 = boost::source(edge, *m_graph);
+            int sys_graph_index_2 = boost::target(edge, *m_graph);
             int sys_id_2 = pointer_property_map[sys_graph_index_2];
 
             Visibility vis2 = universe.GetObjectVisibilityByEmpire(sys_id_2, m_empire_id);
             if (vis2 < VIS_BASIC_VISIBILITY)
                 return false;
 
-            return (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY);
+
+            const System* system1 = universe.Object<System>(sys_id_1);
+            if (!system1) {
+                Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
+                return false;
+            }
+
+            // check if starlane is listed in system's visible starlanes
+            System::StarlaneMap lanes = system1->VisibleStarlanes(m_empire_id);
+            if (lanes.find(sys_id_2) != lanes.end())
+                return true;
+
+            return false;
         }
 
     private:
@@ -1647,18 +1659,18 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
         // (and check for the goal starlane)
         while (curSysLanesSetIter != curSysLanesSetEnd) {
             curLaneDest = *curSysLanesSetIter;
-        
+
             // check if curLaneDest has been added to the map of accessible systems
             if (0 == accessibleSystemsMap.count(curLaneDest)) {
-                
+
                 // check for goal
                 if (curLaneDest == system2) return true;
-                
+
                 // add curLaneDest to accessible systems list and map
                 accessibleSystemsList.push_back(curLaneDest);
                 accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
                }
-        
+
             curSysLanesSetIter++;
         }
 
@@ -1710,7 +1722,7 @@ void Universe::InitializeSystemGraph()
             std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_graph_impl->m_system_graph);
 
             if (it->second) {                               // if this is a wormhole
-                edge_weight_map[add_edge_result.first] = 0.0;
+                edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
             } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
                 const UniverseObject* system2 = Object(it->first);
                 double x_dist = system2->X() - system1->X();

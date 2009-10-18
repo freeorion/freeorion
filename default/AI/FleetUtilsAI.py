@@ -107,7 +107,10 @@ def assessFleetRole(fleetID):
     # count shipRoles
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
-        role = foAI.foAIstate.getShipRole(ship.design.id)
+        if ship.design:
+            role = foAI.foAIstate.getShipRole(ship.design.id)
+        else:
+            role = AIShipRoleType.SHIP_ROLE_INVALID
 
         if role != AIShipRoleType.SHIP_ROLE_INVALID:
             shipRoles[role] = shipRoles[role] + 1
