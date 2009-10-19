@@ -722,23 +722,15 @@ void Fleet::MovementPhase()
         }
     }
 
-    std::list<MovePathNode> move_path = this->MovePath();
-
-    if (move_path.empty() || move_path.size() == 1) {
-        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path is empty or has only one entry.  doing nothing";
-        return;
-    }
-
-    //Logger().debugStream() << "Fleet::MovementPhase move path:";
-    //for (std::list<MovePathNode>::const_iterator it = move_path.begin(); it != move_path.end(); ++it)
-    //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
 
     System* current_system = GetSystem();
-    const std::set<int>& owners = this->Owners();
-
-
+    std::list<MovePathNode> move_path = this->MovePath();
     std::list<MovePathNode>::const_iterator it = move_path.begin();
-    std::list<MovePathNode>::const_iterator next_it = it;   next_it++;
+    std::list<MovePathNode>::const_iterator next_it = it;
+    if (next_it != move_path.end())
+        ++next_it;
+
+
     // is the ship stuck in a system for a whole turn?
     if (current_system) {
         // in a system.  if there is no system after the current one in the
@@ -763,6 +755,20 @@ void Fleet::MovementPhase()
             return;
         }
     }
+
+
+    // if fleet not moving, nothing more to do.
+    if (move_path.empty() || move_path.size() == 1) {
+        //Logger().debugStream() << "Fleet::MovementPhase: Fleet move path is empty or has only one entry.  doing nothing";
+        return;
+    }
+
+    //Logger().debugStream() << "Fleet::MovementPhase move path:";
+    //for (std::list<MovePathNode>::const_iterator it = move_path.begin(); it != move_path.end(); ++it)
+    //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
+
+
+    const std::set<int>& owners = this->Owners();
 
 
     // move fleet in sequence to MovePathNodes it can reach this turn
