@@ -3,7 +3,9 @@
 #define _ResourceCenter_h_
 
 #include "Enums.h"
-
+#ifndef _Universe_h_
+#include "Universe.h"
+#endif
 #include <boost/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -57,14 +59,14 @@ private:
     FocusType  m_primary;
     FocusType  m_secondary;
 
-    virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visbility of this ResourceCenter for the empire with the specified \a empire_id
-    virtual const Meter*    GetPopMeter() const = 0;                        ///< implimentation should return the population meter to use when calculating meter points for this resource center
-    virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
+    virtual const Meter*    GetPopMeter() const = 0;                        ///< implementation should return the population meter to use when calculating meter points for this resource center
+    virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const
         UniverseObject*     GetObject() const = 0;                          ///< implementation should return the UniverseObject associated with this ResourceCenter
 
-    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 
     friend class boost::serialization::access;
     template <class Archive>
