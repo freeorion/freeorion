@@ -31,8 +31,8 @@ class System;
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
   * game.  (Other gamestate is contained in the Empire class.)
   * The Universe class also provides functions with which to access objects in
-  * it, information about the objects, and infromation about the objects'
-  * relationships to eachother.  As well, there are functions that generate
+  * it, information about the objects, and information about the objects'
+  * relationships to each other.  As well, there are functions that generate
   * and populate new Universe gamestates when new games are started. */
 class Universe
 {
@@ -167,7 +167,7 @@ public:
       * distance travelled to get there.  If no such path exists, the list
       * will be empty.  Note that the path returned may be via one or more
       * starlane, or may be "offroad".  The path is calculated using the
-      * visiblity for empire \a empire_id, or without regard to visibility if
+      * visibility for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range. */
@@ -178,7 +178,7 @@ public:
       * that defines the path with the fewest jumps from \a system1 to
       * \a system2, and the number of jumps to get there.  If no such path
       * exists, the list will be empty.  The path is calculated using the
-      * visiblity for empire \a empire_id, or without regard to visibility if
+      * visibility for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
     std::pair<std::list<int>, int>
@@ -186,7 +186,7 @@ public:
 
     /** returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
-      * the visiblity for empire \a empire_id, or without regard to visibility
+      * the visibility for empire \a empire_id, or without regard to visibility
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
     bool                    SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
@@ -194,8 +194,8 @@ public:
     /** Returns true iff \a system is reachable from another system (i.e. it
       * has at least one known starlane to it).   This does not guarantee that
       * the system is reachable from any specific other system, as two separate
-      * groups of locally but not globally internonnected systems may exist.
-      * The starlanes considered depend on their visiblity for empire
+      * groups of locally but not globally interconnected systems may exist.
+      * The starlanes considered depend on their visibility for empire
       * \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the system ID is
@@ -204,7 +204,7 @@ public:
 
     /** Returns the systems that are one starlane hop away from system
       * \a system.  The returned systems are indexed by distance from
-      * \a system.  The neighborhood is calculated using the visiblity
+      * \a system.  The neighborhood is calculated using the visibility
       * for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
@@ -235,18 +235,18 @@ public:
       * \note Universe gains ownership of \a obj once it is inserted; the
       * caller should \a never delete \a obj after
       * passing it to InsertID().
-      * Useful mostly for times when ID needs to be consistant on client
+      * Useful mostly for times when ID needs to be consistent on client
       * and server */
     bool            InsertID(UniverseObject* obj, int id);
 
     /** Inserts \a ship_design into the universe; returns the ship design ID
       * assigned to it, or -1 on failure.
-      * \note Unvierse gains ownership of \a ship_design once inserted. */
+      * \note Universe gains ownership of \a ship_design once inserted. */
     int             InsertShipDesign(ShipDesign* ship_design);
 
     /** Inserts \a ship_design into the universe with given \a id;  returns
       * true on success, or false on failure.
-      * \note Unvierse gains ownership of \a ship_design once inserted. */
+      * \note Universe gains ownership of \a ship_design once inserted. */
     bool            InsertShipDesignID(ShipDesign* ship_design, int id);
 
     /** Generates systems and planets, assigns homeworlds and populates them
@@ -314,12 +314,12 @@ public:
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
-      * other effects might depend on their existance) */
+      * other effects might depend on their existence) */
     void            EffectDestroy(int id);
 
     /** Permanently deletes object with ID number \a id.  no information about
       * this object is retained in the Universe.  Can be performed on objects
-      * wether or not the have been destroyed.  Returns true if such an object
+      * whether or not the have been destroyed.  Returns true if such an object
       * was found, false otherwise. */
     bool            Delete(int id);
 
@@ -343,7 +343,7 @@ public:
       * to service new ID requests. */
     int             GenerateObjectID();
 
-    /** Generates adesign ID for a new (ship) design. Usually used by the
+    /** Generates design ID for a new (ship) design. Usually used by the
       * server to service new ID requests. */
     int             GenerateDesignID();
 
@@ -422,7 +422,7 @@ private:
     bool    ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray);
 
     /** Removes lanes from passed graph that are angularly too close to
-      * eachother. */
+      * each other. */
     void    CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems);
 
     /** Removes lanes from passed graph that are too long. */

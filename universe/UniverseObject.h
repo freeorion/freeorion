@@ -32,11 +32,11 @@ struct UniverseObjectVisitor;
     a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
     (right) in X, and 0 (top) to 1000 (bottom) in Y.  This coordinate system was chosen to help with conversion to 
     and from screen coordinates, which originate at the upper-left corner of the screen and increase down and to the 
-    right.  Each UniverseObject-derived class inherits serveral pure virtual members that perform its actions during 
+    right.  Each UniverseObject-derived class inherits several pure virtual members that perform its actions during
     various game phases, such as the movement phase.  These subclasses must define what actions to perform during 
     those phases.  UniverseObjects advertise changes to themselves via the StateChanged signal.  This means that all
     mutators on UniverseObject and its subclasses need to emit this signal.  This is how the UI becomes aware that an
-    object that is being dislayed has changed.*/
+    object that is being displayed has changed.*/
 class UniverseObject
 {
 public:
@@ -145,7 +145,7 @@ public:
       * meter is adjusted. */
     virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
 
-    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outisde the range
+    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outside the range
       * [Meter::METER_MIN, METER::METER_MAX]and that no Meter's Current() value exceed its Max() value. */
     void                    ClampMeters();
 
@@ -223,7 +223,7 @@ void UniverseObject::serialize(Archive& ar, const unsigned int version)
         std::string name;
         if (Archive::is_saving::value) {
             // We don't disclose the real object name for some types of objects, since it would look funny if e.g. the
-            // user saw an incoming enemy cleet called "Decoy".
+            // user saw an incoming enemy fleet called "Decoy".
             name = PublicName(Universe::s_encoding_empire);
         }
 
