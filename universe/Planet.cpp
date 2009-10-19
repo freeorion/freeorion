@@ -93,8 +93,6 @@ Planet::Planet() :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
-    GG::Connect(ResourceCenter::GetObjectSignal,    &Planet::This, this);
-    GG::Connect(PopCenter::GetObjectSignal,         &Planet::This, this);
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
     // in functional form by deserialization.  Also assumes planet-specific meters don't need to be re-added.
 }
@@ -113,8 +111,6 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
-    GG::Connect(ResourceCenter::GetObjectSignal,    &Planet::This, this);
-    GG::Connect(PopCenter::GetObjectSignal,         &Planet::This, this);
     UniverseObject::Init();
     PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
     ResourceCenter::Init();

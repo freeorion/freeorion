@@ -2,11 +2,10 @@
 #ifndef _Planet_h_
 #define _Planet_h_
 
-#include "Universe.h"
 #include "UniverseObject.h"
 #include "PopCenter.h"
 #include "ResourceCenter.h"
-
+#include "Meter.h"
 
 /** A type that is implicitly convertible to and from double, but which is not
     implicitly convertible among other numeric types. */
@@ -163,7 +162,7 @@ protected:
     void Init();
 
 private:
-    UniverseObject*                     This() {return this;}
+    virtual const UniverseObject*       GetObject() const {return this;}
 
     virtual Visibility                  GetVisibility(int empire_id) const              {return UniverseObject::GetVisibility(empire_id);}
     virtual void                        InsertMeter(MeterType meter_type, Meter meter)  {UniverseObject::InsertMeter(meter_type, meter);}

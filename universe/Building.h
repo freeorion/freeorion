@@ -13,8 +13,6 @@ namespace Condition {
     struct ConditionBase;
 }
 
-enum CaptureResult;
-
 /** A Building UniverseObject type. */
 class Building : public UniverseObject
 {

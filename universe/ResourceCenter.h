@@ -3,10 +3,13 @@
 #define _ResourceCenter_h_
 
 #include "Enums.h"
-#include "Meter.h"
-#include "UniverseObject.h"
+
+#include <boost/signal.hpp>
+#include <boost/serialization/nvp.hpp>
 
 class Empire;
+class Meter;
+class UniverseObject;
 
 /** The ResourceCenter class is an abstract base class for anything in the FreeOrion gamestate that generates
  *  resources (food, minerals, etc.).  Most likely, such an object will also be a subclass of UniverseObject.
@@ -18,8 +21,7 @@ class ResourceCenter
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>                                  ResourceCenterChangedSignalType;    ///< emitted when the ResourceCenter is altered in any way
-    typedef boost::signal<UniverseObject* (), Default0Combiner>     GetObjectSignalType;                ///< emitted as a request for the UniverseObject to which this ResourceCenter is attached
+    typedef boost::signal<void ()>  ResourceCenterChangedSignalType;    ///< emitted when the ResourceCenter is altered in any way
     //@}
 
     /** \name Structors */ //@{
@@ -49,8 +51,6 @@ public:
     //@}
 
 protected:
-    mutable GetObjectSignalType GetObjectSignal;    ///< the UniverseObject-retreiving signal object for this ResourceCenter
-
     void                    Init();                                         ///< initialization that needs to be called by derived class after derived class is constructed
 
 private:
@@ -61,6 +61,8 @@ private:
     virtual const Meter*    GetPopMeter() const = 0;                        ///< implimentation should return the population meter to use when calculating meter points for this resource center
     virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual const
+        UniverseObject*     GetObject() const = 0;                          ///< implementation should return the UniverseObject associated with this ResourceCenter
 
     virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implimentation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 

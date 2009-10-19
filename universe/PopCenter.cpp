@@ -165,8 +165,11 @@ double PopCenter::ProjectedMeterPoints(MeterType type) const
 
 void PopCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
-    UniverseObject* object = GetObjectSignal();
-    assert(object);
+    const UniverseObject* object = GetObject();
+    if (!object) {
+        Logger().errorStream() << "PopCenter GetObject returned 0";
+        return;
+    }
 
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_POPULATION)
         GetMeter(METER_POPULATION)->AdjustMax(MaxPopModFromObject(object));

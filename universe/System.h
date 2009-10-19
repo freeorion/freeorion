@@ -6,10 +6,6 @@
 #include "UniverseObject.h"
 #endif
 
-#ifndef _AppInterface_h_
-#include "../util/AppInterface.h"
-#endif
-
 #include <boost/type_traits/remove_const.hpp>
 
 #include <map>

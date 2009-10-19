@@ -183,8 +183,11 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
 
-    UniverseObject* object = GetObjectSignal();
-    assert(object);
+    const UniverseObject* object = GetObject();
+    if (!object) {
+        Logger().errorStream() << "ResourceCenter GetObject returned 0";
+        return;
+    }
 
     // special cases for construction, farming and industry
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_CONSTRUCTION)

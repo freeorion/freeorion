@@ -2,9 +2,7 @@
 #ifndef _Fleet_h_
 #define _Fleet_h_
 
-#include "System.h"
-
-#include <list>
+#include "UniverseObject.h"
 
 ////////////////////////////////////////////////
 // MovePathNode

@@ -21,7 +21,7 @@ class OrderSet;
 struct PlayerInfo;
 struct SaveGameUIData;
 struct SinglePlayerSetupData;
-struct System;
+class System;
 class Universe;
 class UniverseObject;
 

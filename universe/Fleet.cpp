@@ -1,6 +1,7 @@
 #include "Fleet.h"
 
 #include "Ship.h"
+#include "System.h"
 #include "Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
