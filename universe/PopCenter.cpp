@@ -180,8 +180,6 @@ void PopCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
 void PopCenter::PopGrowthProductionResearchPhase()
 {
-    assert(GetObjectSignal());
-
     Meter* pop = GetMeter(METER_POPULATION);
     Meter* health = GetMeter(METER_HEALTH);
 
