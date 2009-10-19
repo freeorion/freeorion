@@ -418,8 +418,6 @@ public:
 private:
     void                    DoLayout();
 
-    bool                    InPlanet(const GG::Pt& pt) const;   ///< returns true if pt is within the planet image
-
     void                    SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
     void                    SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
 
@@ -1001,7 +999,32 @@ void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    return (ul <= pt && pt < lr || m_specials_panel->InWindow(pt) || InPlanet(pt));
+    if (!(ul <= pt && pt < lr))
+        return false;
+
+    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y(MAX_PLANET_DIAMETER));
+
+    // if pt is to the right of the space where the planet render could be,
+    // it doesn't matter whether the render is being shown
+    if (pt.x >= planet_box_lr.x)
+        return true;
+
+    // if pt is in the horizontal space of the planet render, it matters
+    // whether the render is being shown
+    if (m_rotating_planet_graphic) {
+        // showing full sized graphic.  size defaulted to above is accurate
+    } else if (m_planet_graphic) {
+        planet_box_lr = m_planet_graphic->LowerRight(); // smaller sized image being shown.  use its size.
+    } else {
+        return false;   // not showing a render, and pt is outside the non-render space, so is not over panel
+    }
+
+    // if pt is below planet render space, it can't be over the panel
+    if (pt.y > planet_box_lr.y)
+        return false;
+
+    // TODO: consider corners
 }
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1146,21 +1169,6 @@ void SidePanel::PlanetPanel::Select(bool selected)
         m_selected = selected;
         // TODO: consider setting text box colours?
     }
-}
-
-bool SidePanel::PlanetPanel::InPlanet(const GG::Pt& pt) const
-{
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    GG::Pt center = UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER / 2), GG::Y(MAX_PLANET_DIAMETER / 2));
-    GG::Pt diff = pt - center;
-
-    int r;
-    if (const Planet* planet = GetPlanet())
-        r = PlanetDiameter(planet->Size()) / 2;
-    else
-        r = MAX_PLANET_DIAMETER / 2;
-
-    return Value(diff.x * diff.x) + Value(diff.y * diff.y) <= r * r;
 }
 
 void SidePanel::PlanetPanel::ClickColonize()
