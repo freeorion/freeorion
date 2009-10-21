@@ -34,6 +34,7 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <boost/timer.hpp>
+#include <boost/tuple/tuple.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
@@ -2148,7 +2149,6 @@ void MapWnd::RefreshFleetButtons()
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
     const Universe& universe = GetUniverse();
-    const EmpireManager& empires = Empires();
 
     // for each system, each empire's fleets that are ordered to move, but still at the system: "departing fleets"
     std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
@@ -2953,13 +2953,8 @@ void MapWnd::RenderVisibilityRadii() {
         }
     }
 
-
-    const double TWO_PI = 2.0*3.1415926536;
-    glLineWidth(2.0);
-    glPushMatrix();
-    glLoadIdentity();
-    glEnable(GL_LINE_SMOOTH);
-
+    std::vector<boost::tuple<GG::Pt, GG::Pt, GG::Clr> > circles;
+    circles.reserve(empire_position_max_detection_ranges.size());
     for (std::map<std::pair<int, std::pair<double, double> >, double>::const_iterator it = empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
     {
@@ -2969,21 +2964,65 @@ void MapWnd::RenderVisibilityRadii() {
 
             GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
             double radius = 10.0*it->second*ZoomFactor();
-            if (radius < 20.0) continue;
+            if (radius < 20.0)
+                continue;
 
             GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
             GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
 
-            glColor(circle_colour);
-            glDisable(GL_TEXTURE_2D);
-            CircleArc(ul, lr, 0.0, TWO_PI, true);
-            CircleArc(ul, lr, 0.0, TWO_PI, false);
-            glEnable(GL_TEXTURE_2D);
+            circles.push_back(boost::make_tuple(ul, lr, circle_colour));
         }
     }
+
+#define USE_STENCILS 1
+
+#if USE_STENCILS
+    glClear(GL_STENCIL_BUFFER_BIT);
+    glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT);
+    glEnable(GL_STENCIL_TEST);
+#endif
+
+    const double TWO_PI = 2.0*3.1415926536;
+    glLineWidth(1.5);
+    glPushMatrix();
+    glLoadIdentity();
+    glEnable(GL_LINE_SMOOTH);
+    glDisable(GL_TEXTURE_2D);
+
+    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+    glStencilFunc(GL_EQUAL, 0x0, 0x1);
+
+    GG::Clr current_colour;
+    for (std::size_t i = 0; i < circles.size(); ++i)
+    {
+        if (!i || circles[i].get<2>() != current_colour)
+            glColor(current_colour = circles[i].get<2>());
+        CircleArc(circles[i].get<0>(), circles[i].get<1>(), 0.0, TWO_PI, true);
+    }
+
+    glStencilFunc(GL_EQUAL, 0x1, 0x1);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+
+    const GG::Pt UNIT(GG::X1, GG::Y1);
+    for (std::size_t i = 0; i < circles.size(); ++i)
+    {
+        if (!i || circles[i].get<2>() != current_colour)
+            glColor(current_colour = circles[i].get<2>());
+        CircleArc(circles[i].get<0>() + UNIT, circles[i].get<1>() - UNIT, 0.0, TWO_PI, false);
+    }
+
+#if !USE_STENCILS
+    glEnable(GL_TEXTURE_2D);
     glDisable(GL_LINE_SMOOTH);
+#endif
     glPopMatrix();
     glLineWidth(1.0);
+
+#if USE_STENCILS
+    glPopAttrib();
+#endif
+
+#undef USE_STENCILS
 }
 
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
