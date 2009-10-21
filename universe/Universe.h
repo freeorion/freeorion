@@ -4,7 +4,6 @@
 
 #include "Enums.h"
 #include "Predicates.h"
-#include "Effect.h"
 
 #include <boost/signal.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
@@ -26,6 +25,12 @@ class XMLElement;
 class ShipDesign;
 class UniverseObject;
 class System;
+namespace Condition {
+    typedef std::set<UniverseObject*> ObjectSet;
+}
+namespace Effect {
+    class EffectsGroup;
+}
 
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
@@ -76,8 +81,8 @@ public:
     /** Combination of targets and cause for an effects group. */
     struct EffectTargetAndCause {
         EffectTargetAndCause();
-        EffectTargetAndCause(const Effect::EffectsGroup::TargetSet& target_set_, const EffectCause& effect_cause_);
-        Effect::EffectsGroup::TargetSet                 target_set;
+        EffectTargetAndCause(const Condition::ObjectSet& target_set_, const EffectCause& effect_cause_);
+        Condition::ObjectSet                            target_set;
         EffectCause                                     effect_cause;
     };
     /** Map from (effects group and source object) to target set of for

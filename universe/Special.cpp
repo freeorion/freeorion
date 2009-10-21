@@ -1,6 +1,7 @@
 #include "Special.h"
 
-#include "../universe/ParserUtil.h"
+#include "ParserUtil.h"
+#include "Effect.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"

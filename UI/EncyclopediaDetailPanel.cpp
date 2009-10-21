@@ -5,6 +5,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/Building.h"
 #include "../universe/Special.h"
+#include "../universe/Effect.h"
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/DrawUtil.h>

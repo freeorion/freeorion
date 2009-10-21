@@ -8,6 +8,7 @@
 #include "../Empire/EmpireManager.h"
 #include "ParserUtil.h"
 #include "Condition.h"
+#include "Effect.h"
 
 #include <boost/filesystem/fstream.hpp>
 
