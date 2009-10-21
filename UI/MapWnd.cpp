@@ -2990,7 +2990,7 @@ void MapWnd::RenderVisibilityRadii() {
     glDisable(GL_TEXTURE_2D);
 
     glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-    glStencilFunc(GL_EQUAL, 0x0, 0x1);
+    glStencilFunc(GL_EQUAL, 0x0, 0xf);
 
     GG::Clr current_colour;
     for (std::size_t i = 0; i < circles.size(); ++i)
@@ -3000,7 +3000,7 @@ void MapWnd::RenderVisibilityRadii() {
         CircleArc(circles[i].get<0>(), circles[i].get<1>(), 0.0, TWO_PI, true);
     }
 
-    glStencilFunc(GL_EQUAL, 0x1, 0x1);
+    glStencilFunc(GL_GREATER, 0x2, 0xf);
     glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
 
     const GG::Pt UNIT(GG::X1, GG::Y1);
