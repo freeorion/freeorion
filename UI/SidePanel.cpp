@@ -1025,6 +1025,8 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
         return false;
 
     // TODO: consider corners
+
+    return false;
 }
 
 void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
