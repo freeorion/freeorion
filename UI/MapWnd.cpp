@@ -34,7 +34,6 @@
 #include "../client/human/HumanClientApp.h"
 
 #include <boost/timer.hpp>
-#include <boost/tuple/tuple.hpp>
 
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
@@ -58,6 +57,20 @@ namespace {
     const GG::X     SCALE_LINE_MAX_WIDTH(200);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
+
+    struct ClrLess
+    {
+        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs)
+            {
+                if (rhs.r != lhs.r)
+                    return rhs.r < lhs.r;
+                if (rhs.g != lhs.g)
+                    return rhs.g < lhs.g;
+                if (rhs.b != lhs.b)
+                    return rhs.b < lhs.b;
+                return rhs.a < lhs.a;
+            }
+    };
 
     double  ZoomScaleFactor(double steps_in) {
         if (steps_in > ZOOM_IN_MAX_STEPS) {
@@ -2953,8 +2966,7 @@ void MapWnd::RenderVisibilityRadii() {
         }
     }
 
-    std::vector<boost::tuple<GG::Pt, GG::Pt, GG::Clr> > circles;
-    circles.reserve(empire_position_max_detection_ranges.size());
+    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess> circles;
     for (std::map<std::pair<int, std::pair<double, double> >, double>::const_iterator it = empire_position_max_detection_ranges.begin();
          it != empire_position_max_detection_ranges.end(); ++it)
     {
@@ -2970,45 +2982,46 @@ void MapWnd::RenderVisibilityRadii() {
             GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
             GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
 
-            circles.push_back(boost::make_tuple(ul, lr, circle_colour));
+            circles[circle_colour].push_back(std::make_pair(ul, lr));
         }
     }
 
 #define USE_STENCILS 1
 
 #if USE_STENCILS
-    glClear(GL_STENCIL_BUFFER_BIT);
     glPushAttrib(GL_ENABLE_BIT | GL_STENCIL_BUFFER_BIT);
     glEnable(GL_STENCIL_TEST);
 #endif
 
     const double TWO_PI = 2.0*3.1415926536;
+    const GG::Pt UNIT(GG::X1, GG::Y1);
+
     glLineWidth(1.5);
     glPushMatrix();
     glLoadIdentity();
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
-    glStencilOp(GL_INCR, GL_INCR, GL_INCR);
-    glStencilFunc(GL_EQUAL, 0x0, 0xf);
-
-    GG::Clr current_colour;
-    for (std::size_t i = 0; i < circles.size(); ++i)
-    {
-        if (!i || circles[i].get<2>() != current_colour)
-            glColor(current_colour = circles[i].get<2>());
-        CircleArc(circles[i].get<0>(), circles[i].get<1>(), 0.0, TWO_PI, true);
-    }
-
-    glStencilFunc(GL_GREATER, 0x2, 0xf);
-    glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
-
-    const GG::Pt UNIT(GG::X1, GG::Y1);
-    for (std::size_t i = 0; i < circles.size(); ++i)
-    {
-        if (!i || circles[i].get<2>() != current_colour)
-            glColor(current_colour = circles[i].get<2>());
-        CircleArc(circles[i].get<0>() + UNIT, circles[i].get<1>() - UNIT, 0.0, TWO_PI, false);
+    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
+         it != circles.end();
+         ++it) {
+        glClear(GL_STENCIL_BUFFER_BIT);
+        glStencilOp(GL_INCR, GL_INCR, GL_INCR);
+        glStencilFunc(GL_EQUAL, 0x0, 0xf);
+        glColor(it->first);
+        const std::vector<std::pair<GG::Pt, GG::Pt> >& circles_in_this_colour = it->second;
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i)
+        {
+            CircleArc(circles_in_this_colour[i].first, circles_in_this_colour[i].second,
+                      0.0, TWO_PI, true);
+        }
+        glStencilFunc(GL_GREATER, 0x2, 0xf);
+        glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);
+        for (std::size_t i = 0; i < circles_in_this_colour.size(); ++i)
+        {
+            CircleArc(circles_in_this_colour[i].first + UNIT, circles_in_this_colour[i].second - UNIT,
+                      0.0, TWO_PI, false);
+        }
     }
 
 #if !USE_STENCILS
