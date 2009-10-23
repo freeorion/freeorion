@@ -60,16 +60,16 @@ namespace {
 
     struct ClrLess
     {
-        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs)
-            {
-                if (rhs.r != lhs.r)
-                    return rhs.r < lhs.r;
-                if (rhs.g != lhs.g)
-                    return rhs.g < lhs.g;
-                if (rhs.b != lhs.b)
-                    return rhs.b < lhs.b;
-                return rhs.a < lhs.a;
-            }
+        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs) const
+        {
+            if (rhs.r != lhs.r)
+                return rhs.r < lhs.r;
+            if (rhs.g != lhs.g)
+                return rhs.g < lhs.g;
+            if (rhs.b != lhs.b)
+                return rhs.b < lhs.b;
+            return rhs.a < lhs.a;
+        }
     };
 
     double  ZoomScaleFactor(double steps_in) {
@@ -929,6 +929,7 @@ void MapWnd::InitTurn(int turn_number)
     UpdateMeterEstimates();
 
 
+    boost::timer timer;
     const std::map<int, std::set<int> > this_client_known_starlanes = empire->KnownStarlanes();
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
@@ -939,7 +940,10 @@ void MapWnd::InitTurn(int turn_number)
         if (universe.GetObjectVisibilityByEmpire(obj_id, empire->EmpireID()) >= VIS_PARTIAL_VISIBILITY)
             this_client_visible_systems.insert(obj_id);
     }
+    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
 
+
+    timer.restart();
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         Empire* empire2 = it->second;
@@ -957,6 +961,7 @@ void MapWnd::InitTurn(int turn_number)
 
         empire2->InitResourcePools();
     }
+    Logger().debugStream() << "MapWnd::InitTurn resource pools init time: " << (timer.elapsed() * 1000.0);
 
 
     //// re-update meter estimates of ships after resource pools and fleet supply
@@ -976,8 +981,8 @@ void MapWnd::InitTurn(int turn_number)
     std::vector<const System*> systems = const_universe.FindObjects<System>();
     for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System *system = *it;
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal, &MapWnd::FleetAddedOrRemoved, this));
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal, &MapWnd::FleetAddedOrRemoved, this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetInsertedSignal,   &MapWnd::FleetAddedOrRemoved,   this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetRemovedSignal,    &MapWnd::FleetAddedOrRemoved,   this));
     }
 
     RefreshFleetSignals();
@@ -1045,21 +1050,26 @@ void MapWnd::InitTurn(int turn_number)
     m_toolbar->Show();
     m_FPS->Show();
 
+
+    timer.restart();
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
+    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
 
 
-    boost::timer ui_refresh_timer;
+    timer.restart();
     m_research_wnd->Refresh();
-    Logger().debugStream() << "MapWnd::InitTurn research wnd refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
+    Logger().debugStream() << "MapWnd::InitTurn research wnd refresh time: " << (timer.elapsed() * 1000.0);
 
-    ui_refresh_timer.restart();
+
+    timer.restart();
     SidePanel::Refresh();       // recreate contents of all SidePanels.  ensures previous turn's objects and signals are disposed of
-    Logger().debugStream() << "MapWnd::InitTurn sidepanel refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
+    Logger().debugStream() << "MapWnd::InitTurn sidepanel refresh time: " << (timer.elapsed() * 1000.0);
 
-    ui_refresh_timer.restart();
+
+    timer.restart();
     m_production_wnd->Refresh();
-    Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (ui_refresh_timer.elapsed() * 1000.0);
+    Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
     // start first turn with player's system selected
@@ -3002,7 +3012,7 @@ void MapWnd::RenderVisibilityRadii() {
     glEnable(GL_LINE_SMOOTH);
     glDisable(GL_TEXTURE_2D);
 
-    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > >::iterator it = circles.begin();
+    for (std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> >, ClrLess>::iterator it = circles.begin();
          it != circles.end();
          ++it) {
         glClear(GL_STENCIL_BUFFER_BIT);
