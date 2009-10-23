@@ -42,24 +42,31 @@ namespace Effect {
 class Universe
 {
 private:
-    typedef std::map<int, UniverseObject*>      ObjectMap;              ///< container type used to hold the objects in the universe; keyed by ID number
-    typedef std::map<int, std::set<int> >       ObjectKnowledgeMap;     ///< container type used to hold sets of IDs of Empires which known information about an object (or deleted object); keyed by object ID number
-    typedef std::map<int, ShipDesign*>          ShipDesignMap;          ///< container type used to hold ShipDesigns created by players, keyed by design id number
+    typedef std::map<int, UniverseObject*>          ObjectMap;                      ///< Objects in universe; keyed by id
+    typedef std::map<int, ObjectMap>                EmpireLatestKnownObjectMap;     ///< Most recent known information each empire had about objects in the Universe; keyed by empire id
+
+    typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
+    typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
+    typedef std::map<int,  ObjectVisibilityTurnMap> EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
+
+    typedef std::map<int, std::set<int> >           ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+
+    typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
 
 public:
-    static const bool ALL_OBJECTS_VISIBLE;                              ///< Set to true to make everything visible for everyone. Useful for debugging.
+    static const bool ALL_OBJECTS_VISIBLE;                                          ///< Set to true to make everything visible for everyone. Useful for debugging.
 
-    typedef ObjectMap::const_iterator           const_iterator;         ///< a const_iterator for sequences over the objects in the universe
-    typedef ObjectMap::iterator                 iterator;               ///< an iterator for sequences over the objects in the universe
+    typedef ObjectMap::const_iterator               const_iterator;                 ///< a const_iterator for sequences over the objects in the universe
+    typedef ObjectMap::iterator                     iterator;                       ///< an iterator for sequences over the objects in the universe
 
-    typedef ShipDesignMap::const_iterator       ship_design_iterator;   ///< const iterator over ship designs created by players that are known by this client
+    typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
-    typedef std::vector<const UniverseObject*>  ConstObjectVec;         ///< the return type of FindObjects()
-    typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of the non-const FindObjects()
-    typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
+    typedef std::vector<const UniverseObject*>      ConstObjectVec;                 ///< the return type of FindObjects()
+    typedef std::vector<UniverseObject*>            ObjectVec;                      ///< the return type of the non-const FindObjects()
+    typedef std::vector<int>                        ObjectIDVec;                    ///< the return type of FindObjectIDs()
 
-    typedef std::map<int, Visibility>           ObjectVisibilityMap;    ///< map from object id to Visibility level for a particular empire
-    typedef std::map<int, ObjectVisibilityMap>  EmpireObjectVisibilityMap;  ///< map from empire id to ObjectVisibilityMap for that empire
+    typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
+    typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
 
 
     /** Combination of an EffectsGroup and the id of a source object. */
@@ -163,7 +170,7 @@ public:
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
 
 
-    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id);      ///< returns the Visibility level of empire with id \a empire_id of UniverseObject with id \a object_id as determined by calling UpdateEmpireObjectVisibilities
+    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id) const;///< returns the Visibility level of empire with id \a empire_id of UniverseObject with id \a object_id as determined by calling UpdateEmpireObjectVisibilities
 
     double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
@@ -362,7 +369,7 @@ public:
       * serialized.  The use of this global variable is done just so I don't
       * have to rewrite any custom boost::serialization classes that implement
       * empire-dependent visibility. */
-    static int                  s_encoding_empire;
+    static int                      s_encoding_empire;
 
 private:
     typedef std::vector< std::vector<double> > DistanceMatrix;
@@ -455,37 +462,39 @@ private:
 
     void    DestroyImpl(int id);
 
-    ObjectMap                   m_objects;                      ///< UniverseObjects in the universe
+    ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
 
-    ObjectMap                   m_destroyed_objects;            ///< objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
-    ObjectKnowledgeMap          m_destroyed_object_knowers;     ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+    ObjectMap                       m_destroyed_objects;                ///< map from object id to objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
+    ObjectKnowledgeMap              m_destroyed_object_knowers;         ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
 
-    EmpireObjectVisibilityMap   m_empire_object_visibility;     ///< map from empire id to (map from object id to visibility of that object for that empire)
+    EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
 
-    ShipDesignMap               m_ship_designs;                 ///< ship designs in the universe
-
-    DistanceMatrix              m_system_distances;             ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
-    GraphImpl*                  m_graph_impl;                   ///< a graph in which the systems are vertices and the starlanes are edges
-
-    EffectAccountingMap         m_effect_accounting_map;        ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
-    EffectDiscrepancyMap        m_effect_discrepancy_map;       ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
+    EmpireLatestKnownObjectMap      m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
+    EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
 
-    int                         m_last_allocated_object_id;
-    int                         m_last_allocated_design_id;
+    ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
 
-    std::set<int>                   m_marked_destroyed;         ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
-    std::multimap<int, std::string> m_marked_for_victory;       ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
+    DistanceMatrix                  m_system_distances;                 ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
+    GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
 
-    static double               s_universe_width;
-    static bool                 s_inhibit_universe_object_signals;
+    EffectAccountingMap             m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
+    EffectDiscrepancyMap            m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
 
-    void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize);
+    int                             m_last_allocated_object_id;
+    int                             m_last_allocated_design_id;
 
-    void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire);
-    void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire);
-    void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire);
-    void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire);
+    std::set<int>                   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object
+    std::multimap<int, std::string> m_marked_for_victory;               ///< used while applying effects to cache objects whose owner should be victorious.  Victory testing is done separately from effects execution, so this needs to be stored temporarily...
+
+    static double                   s_universe_width;
+    static bool                     s_inhibit_universe_object_signals;
+
+    void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize) const;
+    void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+    void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+    void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const;
+    void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -526,6 +535,11 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
+
+    if (s_encoding_empire == ALL_EMPIRES) {
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_latest_known_objects)
+            & BOOST_SERIALIZATION_NVP(m_empire_object_visibility_turns);
+    }
 
     if (Archive::is_loading::value) {
         m_objects = objects;

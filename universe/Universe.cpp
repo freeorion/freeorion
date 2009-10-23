@@ -273,6 +273,7 @@ namespace {
 
 const int ALL_EMPIRES = -1;
 
+
 /////////////////////////////////////////////
 // struct Universe::GraphImpl
 /////////////////////////////////////////////
@@ -366,6 +367,7 @@ struct Universe::GraphImpl
     EmpireViewSystemGraphMap    m_empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
 };
 
+
 /////////////////////////////////////////////
 // struct Universe::SourcedEffectsGroup
 /////////////////////////////////////////////
@@ -384,6 +386,7 @@ bool Universe::SourcedEffectsGroup::operator<(const SourcedEffectsGroup& right) 
         (this->source_object_id == right.source_object_id) && this->effects_group < right.effects_group);
 }
 
+
 /////////////////////////////////////////////
 // struct Universe::EffectCause
 /////////////////////////////////////////////
@@ -396,6 +399,7 @@ Universe::EffectCause::EffectCause(EffectsCauseType cause_type_, const std::stri
     cause_type(cause_type_),
     specific_cause(specific_cause_)
 {}
+
 
 /////////////////////////////////////////////
 // struct Universe::EffectTargetAndCause
@@ -466,6 +470,12 @@ Universe::~Universe()
     for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
         delete it->second;
     delete m_graph_impl;
+
+    for (EmpireLatestKnownObjectMap::iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it) {
+        ObjectMap& empire_latest_known_object_map = it->second;
+        for (ObjectMap::iterator map_it = empire_latest_known_object_map.begin(); map_it != empire_latest_known_object_map.end(); ++map_it)
+            delete map_it->second;
+    }
 }
 
 const UniverseObject* Universe::Object(int id) const
@@ -534,17 +544,22 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
     return (it != m_ship_designs.end() ? it->second : 0);
 }
 
-Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id)
+Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
         return VIS_FULL_VISIBILITY;
 
-    ObjectVisibilityMap& vis_map = m_empire_object_visibility[empire_id];
-    ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
-    if (vis_map_it != vis_map.end())
-        return vis_map_it->second;
-    else
+    EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.find(empire_id);
+    if (empire_it == m_empire_object_visibility.end())
         return VIS_NO_VISIBILITY;
+
+    const ObjectVisibilityMap& vis_map = empire_it->second;
+
+    ObjectVisibilityMap::const_iterator vis_map_it = vis_map.find(object_id);
+    if (vis_map_it == vis_map.end())
+        return VIS_NO_VISIBILITY;
+
+    return vis_map_it->second;
 }
 
 double Universe::LinearDistance(int system1_id, int system2_id) const
@@ -1787,7 +1802,7 @@ void Universe::DestroyImpl(int id)
     }
 }
 
-void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize)
+void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize) const
 {
     if (s_encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
@@ -1797,20 +1812,26 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
             Ship* ship = universe_object_cast<Ship*>(it->second);
             if (ship) {
                 int design_id = ship->DesignID();
-                if (design_id != UniverseObject::INVALID_OBJECT_ID)
-                    designs_to_serialize[design_id] = m_ship_designs[design_id];
+                if (design_id != UniverseObject::INVALID_OBJECT_ID) {
+                    ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);
+                    if (design_it != m_ship_designs.end())
+                        designs_to_serialize[design_id] = design_it->second;
+                }
             }
         }
 
         // add all ship designs owned by this empire
         Empire* empire = Empires().Lookup(s_encoding_empire);
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-            designs_to_serialize[*it] = m_ship_designs[*it];
+            int design_id = *it;
+            ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);
+            if (design_it != m_ship_designs.end())
+                designs_to_serialize[design_id] = design_it->second;
         }
     }
 }
 
-void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire)
+void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const
 {
     objects.clear();
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
@@ -1818,7 +1839,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire)
             objects.insert(*it);
 }
 
-void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire)
+void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
         empire_object_visibility = m_empire_object_visibility;
@@ -1838,7 +1859,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     }
 }
 
-void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire)
+void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const
 {
     if (Universe::ALL_OBJECTS_VISIBLE || encoding_empire == ALL_EMPIRES) {
         // serialize all destroyed objects
@@ -1859,7 +1880,7 @@ void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int 
     }
 }
 
-void Universe::GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire)
+void Universe::GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire) const
 {
     // who knows about destroyed objects?  this data is only serialized when all encoding is for
     // all empires.  this way it is saved as part of a saved game, but isn't sent out to players.
