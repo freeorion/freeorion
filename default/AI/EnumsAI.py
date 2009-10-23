@@ -48,8 +48,8 @@ def getAIPriorityTypes():
 class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_INVALID = -1
     EXPLORABLE_SYSTEM_UNEXPLORED = 0
-    EXPLORABLE_SYSTEM_TARGET = 1
-    EXPLORABLE_SYSTEM_EXPLORED = 2
+    EXPLORABLE_SYSTEM_EXPLORED = 1
+    EXPLORABLE_SYSTEM_VISIBLE = 2
 
 def getAIExplorableSystemTypes():
     return __getInterval(0, 2)
@@ -72,16 +72,17 @@ def getAIFleetMissionTypes():
 
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
-    ORDER_MOVE = 0
-    ORDER_RESUPPLY = 1
-    ORDER_SPLIT_FLEET = 2
-    ORDER_MERGE_FLEET = 3
-    ORDER_COLONISE = 4
-    ORDER_ATACK = 5
-    ORDER_DEFEND = 6
+    ORDER_SCRAP = 0
+    ORDER_MOVE = 1
+    ORDER_RESUPPLY = 2
+    ORDER_SPLIT_FLEET = 3
+    ORDER_MERGE_FLEET = 4
+    ORDER_COLONISE = 5
+    ORDER_ATACK = 6
+    ORDER_DEFEND = 7
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 6)
+    return __getInterval(0, 7)
 
 
 class AIShipRoleType(object):

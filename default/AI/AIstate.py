@@ -241,32 +241,32 @@ class AIstate(object):
         "cleanup of all explorable systems"
 
         universe = fo.getUniverse()
-        objectIDs = universe.allObjectIDs
+        systemIDs = universe.systemIDs
         empireID = fo.empireID()
         empire = fo.getEmpire()
 
-        for objectID in objectIDs:
-            system = universe.getSystem(objectID)
+        for systemID in systemIDs:
+            system = universe.getSystem(systemID)
             if not system: continue
 
-            #print "system with id: " + str(objectID)
+            #print "system with id: " + str(systemID)
 
-            if (empire.hasExploredSystem(objectID)):
-                self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED, objectID)
-                self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, objectID)
+            if (empire.hasExploredSystem(systemID)):
+                self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED, systemID)
+                self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
                 #print "    has been explored"
                 continue
-            if (not universe.systemsConnected(objectID, startSystemID, empireID)):
+            if (not universe.systemsConnected(systemID, startSystemID, empireID)):
                 for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
-                    self.removeExplorableSystem(explorableSystemsType, objectID)
+                    self.removeExplorableSystem(explorableSystemsType, systemID)
                 #print "    is not connected to system with id: " + str(startSystemID)
                 continue
-            explorableSystemsType = self.getExplorableSystem(objectID)
-            if (explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_TARGET):
-                print "    is already an explorable system target"
+            explorableSystemsType = self.getExplorableSystem(systemID)
+            if (explorableSystemsType == AIExplorableSystemType.EXPLORABLE_SYSTEM_VISIBLE):
+                #print "    is already explored system target"
                 continue
-            #print "    is now an untargetted unexplored system"
-            self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, objectID)
+            #print "    is now an unexplored system"
+            self.addExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
 
     def getExplorableSystems(self, explorableSystemsType):
         "get all explorable systems determined by type "

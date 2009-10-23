@@ -93,7 +93,7 @@ namespace AIInterface
     void                SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
 
     void                DoneTurn();        ///< AI player is done submitting orders for this turn
-    void                CombatSetup();     ///< AI player is done submitting intial setup orders for this combat
+    void                CombatSetup();     ///< AI player is done submitting initial setup orders for this combat
     void                DoneCombatTurn();  ///< AI player is done submitting orders for this combat turn
     //@}
 
