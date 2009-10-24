@@ -298,7 +298,14 @@ GG::Pt CombatSetupWnd::ListRowSize() const
 
 bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
-    if (event.Type() == GG::WndEvent::LClick) {
+    bool retval = false;
+    if (event.Type() == GG::WndEvent::LButtonDown) {
+        if (PlaceableShipNode())
+            retval = true;
+    } else if (event.Type() == GG::WndEvent::LDrag) {
+        HandleMouseMoves(event.Point());
+        retval = true;
+    } else if (event.Type() == GG::WndEvent::LClick) {
         Ogre::SceneNode* placement_node = 0;
         if ((placement_node = PlaceableShipNode()) && isVisible(*placement_node)) {
 #if 0
@@ -310,8 +317,10 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 #endif
             EndCurrentShipPlacement();
         }
+        retval = true;
     } else if (event.Type() == GG::WndEvent::RClick) {
         EndCurrentShipPlacement();
+        retval = true;
     } else if (event.Type() == GG::WndEvent::MouseEnter) {
         HandleMouseMoves(event.Point());
     } else if (event.Type() == GG::WndEvent::MouseHere) {
@@ -320,7 +329,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         if (Ogre::SceneNode* placement_node = PlaceableShipNode())
             placement_node->setVisible(false);
     }
-    return false;
+    return retval;
 }
 
 Ogre::SceneNode* CombatSetupWnd::PlaceableShipNode() const
