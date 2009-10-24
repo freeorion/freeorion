@@ -1733,11 +1733,19 @@ void MapWnd::ReselectLastSystem()
 void MapWnd::SelectSystem(int system_id)
 {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
+    const System* system = GetUniverse().Object<System>(system_id);
+    if (!system) {
+        system_id = UniverseObject::INVALID_OBJECT_ID;
+        Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
+    }
 
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
-        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
-            m_system_icons[SidePanel::SystemID()]->SetSelected(false);
+        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            if (it != m_system_icons.end())
+                it->second->SetSelected(false);
+        }
 
         // set selected system on sidepanel and production screen, as appropriate
         if (m_in_production_view_mode)
@@ -1746,8 +1754,11 @@ void MapWnd::SelectSystem(int system_id)
             SidePanel::SetSystem(system_id);
 
         // place map selection indicator on newly selected system
-        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID)
-            m_system_icons[SidePanel::SystemID()]->SetSelected(true);
+        if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+            std::map<int, SystemIcon*>::iterator it = m_system_icons.find(SidePanel::SystemID());
+            if (it != m_system_icons.end())
+                it->second->SetSelected(true);
+        }
     }
 
 

@@ -47,7 +47,7 @@ private:
 
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
     typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
-    typedef std::map<int,  ObjectVisibilityTurnMap> EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
+    typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
     typedef std::map<int, std::set<int> >           ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
@@ -493,6 +493,7 @@ private:
     void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize) const;
     void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
     void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+    void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
     void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const;
     void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire) const;
 
@@ -510,16 +511,18 @@ private:
 template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
-    ObjectMap                   objects;
-    ObjectMap                   destroyed_objects;
-    ObjectKnowledgeMap          destroyed_object_knowers;
-    EmpireObjectVisibilityMap   empire_object_visibility;
+    ObjectMap                       objects;
+    ObjectMap                       destroyed_objects;
+    ObjectKnowledgeMap              destroyed_object_knowers;
+    EmpireObjectVisibilityMap       empire_object_visibility;
+    EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
 
     if (Archive::is_saving::value) {
-        GetObjectsToSerialize(          objects,                    s_encoding_empire);
-        GetEmpireObjectVisibilityMap(   empire_object_visibility,   s_encoding_empire);
-        GetDestroyedObjectsToSerialize( destroyed_objects,          s_encoding_empire);
-        GetDestroyedObjectKnowers(      destroyed_object_knowers,   s_encoding_empire);
+        GetObjectsToSerialize(              objects,                        s_encoding_empire);
+        GetEmpireObjectVisibilityMap(       empire_object_visibility,       s_encoding_empire);
+        GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns, s_encoding_empire);
+        GetDestroyedObjectsToSerialize(     destroyed_objects,              s_encoding_empire);
+        GetDestroyedObjectKnowers(          destroyed_object_knowers,       s_encoding_empire);
     }
 
     // ship designs
@@ -530,6 +533,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility)
+        & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns)
         & BOOST_SERIALIZATION_NVP(destroyed_objects)
         & BOOST_SERIALIZATION_NVP(destroyed_object_knowers)
         & BOOST_SERIALIZATION_NVP(ship_designs)
@@ -537,13 +541,13 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
 
     if (s_encoding_empire == ALL_EMPIRES) {
-        ar  & BOOST_SERIALIZATION_NVP(m_empire_latest_known_objects)
-            & BOOST_SERIALIZATION_NVP(m_empire_object_visibility_turns);
+        ar  & BOOST_SERIALIZATION_NVP(m_empire_latest_known_objects);
     }
 
     if (Archive::is_loading::value) {
         m_objects = objects;
         m_empire_object_visibility = empire_object_visibility;
+        m_empire_object_visibility_turns = empire_object_visibility_turns;
         m_destroyed_objects = destroyed_objects;
         m_destroyed_object_knowers = destroyed_object_knowers;
         m_ship_designs = ship_designs;

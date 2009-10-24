@@ -1049,7 +1049,11 @@ bool ShipDesign::ValidDesign(const ShipDesign& design) {
 void ShipDesign::BuildStatCaches()
 {
     const HullType* hull = GetHullType(m_hull);
-    assert(hull);
+    if (!hull) {
+        Logger().errorStream() << "ShipDesign::BuildStatCaches couldn't get hull with name " << m_hull;
+        return;
+    }
+
     m_build_turns = hull->BuildTime();
     m_build_cost = hull->Cost() * hull->BuildTime();
 
@@ -1058,7 +1062,10 @@ void ShipDesign::BuildStatCaches()
             continue;
 
         const PartType* part = GetPartType(*it);
-        assert(part);
+        if (!part) {
+            Logger().errorStream() << "ShipDesign::BuildStatCaches couldn't get part with name " << *it;
+            continue;
+        }
 
         m_build_turns = std::max(m_build_turns, part->BuildTime()); // assume hull and parts are built in parallel
         m_build_cost += part->Cost();                               // add up costs of all parts

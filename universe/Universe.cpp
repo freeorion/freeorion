@@ -1846,16 +1846,30 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
         return;
     }
 
-    // include just requested empire's visibility for each object it has
-    // better than no visibility of.  TODO: include requested empire's
-    // visibility, and what requested empire knows about other empires'
-    // visibilites
+    // include just requested empire's visibility for each object it has better
+    // than no visibility of.  TODO: include what requested empire knows about
+    // other empires' visibilites of objects
     empire_object_visibility.clear();
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         int object_id = it->first;
         Visibility vis = GetObjectVisibilityByEmpire(object_id, encoding_empire);
         if (vis > VIS_NO_VISIBILITY)
             empire_object_visibility[encoding_empire][object_id] = vis;
+    }
+}
+
+void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const
+{
+    if (encoding_empire == ALL_EMPIRES) {
+        empire_object_visibility_turns = m_empire_object_visibility_turns;
+        return;
+    }
+
+    // include just requested empire's visibility turn information
+    empire_object_visibility_turns.clear();
+    EmpireObjectVisibilityTurnMap::const_iterator it = m_empire_object_visibility_turns.find(encoding_empire);
+    if (it != m_empire_object_visibility_turns.end()) {
+        empire_object_visibility_turns[encoding_empire] = it->second;
     }
 }
 
