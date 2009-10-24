@@ -913,16 +913,37 @@ void Fleet::CalculateRoute() const
         if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
             // if we haven't actually left yet, we have to move from whichever system we are at now
 
+            if (!universe.Object<System>(m_moving_to))
+                return; // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
+
             std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
             m_travel_route = path.first;
             m_travel_distance = path.second;
 
         } else {
+            int dest_system_id = m_moving_to;
+
+            if (universe.GetObjectVisibilityByEmpire(dest_system_id, owner) <= VIS_NO_VISIBILITY) {
+                // destination system isn't visible to this fleet's owner, so the fleet can't move to it
+
+                // check if system to which fleet is moving is visible to the fleet's owner.  this should always be true, but just in case...
+                if (universe.GetObjectVisibilityByEmpire(m_next_system, owner) <= VIS_NO_VISIBILITY)
+                    return; // next system also isn't visible; leave route empty.
+
+                // safety check: ensure supposedly visible object actually exists in known universe.
+                if (!universe.Object<System>(m_next_system)) {
+                    Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
+                    return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
+                }
+
+                // next system is visible, so move to that instead of ordered destination (m_moving_to)
+                dest_system_id = m_next_system;
+            }
 
             // if we're between systems, the shortest route may be through either one
             if (this->CanChangeDirectionEnRoute()) {
 
-                std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, m_moving_to, owner);
+                std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, dest_system_id, owner);
                 const std::list<int>& sys_list1 = path1.first;
                 if (sys_list1.empty()) {
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
@@ -937,7 +958,7 @@ void Fleet::CalculateRoute() const
                 double dist_y = obj->Y() - this->Y();
                 double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-                std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, m_moving_to, owner);
+                std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, dest_system_id, owner);
                 const std::list<int>& sys_list2 = path2.first;
                 if (sys_list2.empty()) {
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
@@ -963,7 +984,7 @@ void Fleet::CalculateRoute() const
 
             } else {
 
-                std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, m_moving_to, owner);
+                std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, dest_system_id, owner);
                 const std::list<int>& sys_list = route.first;
                 if (sys_list.empty()) {
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
