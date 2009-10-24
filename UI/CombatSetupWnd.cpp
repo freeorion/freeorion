@@ -1,5 +1,6 @@
 #include "CombatSetupWnd.h"
 
+#include "CombatWnd.h"
 #include "InfoPanels.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -260,14 +261,18 @@ namespace {
 }
 
 CombatSetupWnd::CombatSetupWnd(std::vector<Fleet*> fleets,
+                               CombatWnd* combat_wnd,
                                Ogre::SceneManager* scene_manager,
+                               boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
+                               intersect_mouse_with_ecliptic,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
-    m_scene_manager(scene_manager)
+    m_scene_manager(scene_manager),
+    m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic)
 {
     AttachChild(m_listbox);
     GridLayout();
@@ -284,23 +289,54 @@ CombatSetupWnd::CombatSetupWnd(std::vector<Fleet*> fleets,
     }
 
     GG::Connect(m_listbox->SelChangedSignal, &CombatSetupWnd::PlaceableShipSelected_, this);
+
+    combat_wnd->InstallEventFilter(this);
 }
 
 GG::Pt CombatSetupWnd::ListRowSize() const
 { return GG::Pt(m_listbox->Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
-Ship* CombatSetupWnd::PlaceableShip() const
-{ return m_selected_placeable_ship; }
+bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
+{
+    if (event.Type() == GG::WndEvent::LClick) {
+        Ogre::SceneNode* placement_node = 0;
+        if ((placement_node = PlaceableShipNode()) && isVisible(*placement_node)) {
+#if 0
+            CombatShipPtr combat_ship(new CombatShip(m_combat_setup_wnd->PlaceableShip(),
+                                                     ToOgre(placement_node->getPosition()),
+                                                     ToOgre(placement_node->direction()),
+                                                     m_pathing_engine));
+            ShipPlaced(combat_ship);
+#endif
+            EndCurrentShipPlacement();
+        }
+    } else if (event.Type() == GG::WndEvent::RClick) {
+        EndCurrentShipPlacement();
+    } else if (event.Type() == GG::WndEvent::MouseEnter) {
+        HandleMouseMoves(event.Point());
+    } else if (event.Type() == GG::WndEvent::MouseHere) {
+        HandleMouseMoves(event.Point());
+    } else if (event.Type() == GG::WndEvent::MouseLeave) {
+        if (Ogre::SceneNode* placement_node = PlaceableShipNode())
+            placement_node->setVisible(false);
+    }
+    return false;
+}
 
 Ogre::SceneNode* CombatSetupWnd::PlaceableShipNode() const
 { return m_selected_placeable_ship ? m_placeable_ship_node : 0; }
 
-void CombatSetupWnd::EndShipPlacement()
+void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
 {
-    m_selected_placeable_ship = 0;
-    if (m_placeable_ship_node)
-        m_placeable_ship_node->setVisible(false);
-    m_listbox->DeselectAll();
+    if (Ogre::SceneNode* node = PlaceableShipNode()) {
+        std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(pt);
+        if (intersection.first) {
+            node->setVisible(true);
+            node->setPosition(intersection.second);
+        } else {
+            node->setVisible(false);
+        }
+    }
 }
 
 void CombatSetupWnd::PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels)
@@ -348,4 +384,12 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
             m_placeable_ship_node->attachObject(entity);
         }
     }
+}
+
+void CombatSetupWnd::EndCurrentShipPlacement()
+{
+    m_selected_placeable_ship = 0;
+    if (m_placeable_ship_node)
+        m_placeable_ship_node->setVisible(false);
+    m_listbox->DeselectAll();
 }

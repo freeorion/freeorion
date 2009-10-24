@@ -77,11 +77,7 @@ public:
     virtual void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseEnter(const GG::Pt& pt,GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void MouseLeave();
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
 
@@ -240,5 +236,7 @@ private:
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
+
+bool isVisible(const Ogre::SceneNode& node);
 
 #endif

@@ -438,16 +438,6 @@ namespace {
         }
     }
 
-    bool isVisible(const Ogre::SceneNode& node)
-    {
-        bool retval = true;
-        Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
-        while (retval && iterator.hasMoreElements()) {
-            retval &= iterator.getNext()->isVisible();
-        }
-        return retval;
-    }
-
     void AddOptions(OptionsDB& db)
     {
         db.AddFlag("tech-demo",             "OPTIONS_DB_TECH_DEMO",                 false);
@@ -1187,7 +1177,9 @@ void CombatWnd::InitCombat(CombatData& combat_data)
                 fleets.push_back(fleet);
         }
     }
-    m_combat_setup_wnd = new CombatSetupWnd(fleets, m_scene_manager);
+    m_combat_setup_wnd =
+        new CombatSetupWnd(fleets, this, m_scene_manager,
+                           boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1));
     AttachChild(m_combat_setup_wnd);
 }
 
@@ -1382,19 +1374,7 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         SelectObjectsInVolume(mod_keys & GG::MOD_KEY_CTRL);
         EndSelectionDrag();
     } else if (!m_mouse_dragged) {
-        Ogre::SceneNode* placement_node = 0;
-        if (m_combat_setup_wnd &&
-            (placement_node = m_combat_setup_wnd->PlaceableShipNode()) &&
-            isVisible(*placement_node)) {
-#if 0
-            CombatShipPtr combat_ship(new CombatShip(m_combat_setup_wnd->PlaceableShip(),
-                                                     ToOgre(placement_node->getPosition()),
-                                                     ToOgre(placement_node->direction()),
-                                                     m_pathing_engine));
-            ShipPlaced(combat_ship);
-#endif
-            m_combat_setup_wnd->EndShipPlacement();
-        } else if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             assert(movable_object->getParentSceneNode());
             std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
                 m_current_selections.find(movable_object);
@@ -1470,38 +1450,8 @@ void CombatWnd::RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
 }
 
-void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (m_combat_setup_wnd)
-        m_combat_setup_wnd->EndShipPlacement();
-}
-
 void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-}
-
-void CombatWnd::MouseEnter(const GG::Pt& pt,GG::Flags<GG::ModKey> mod_keys)
-{ MouseHere(pt, mod_keys); }
-
-void CombatWnd::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    Ogre::SceneNode* node = 0;
-    if (m_combat_setup_wnd && (node = m_combat_setup_wnd->PlaceableShipNode())) {
-        std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
-        if (intersection.first) {
-            node->setVisible(true);
-            node->setPosition(intersection.second);
-        } else {
-            node->setVisible(false);
-        }
-    }
-}
-
-void CombatWnd::MouseLeave()
-{
-    Ogre::SceneNode* placement_node = 0;
-    if (m_combat_setup_wnd && (placement_node = m_combat_setup_wnd->PlaceableShipNode()))
-        placement_node->setVisible(false);
 }
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1664,7 +1614,7 @@ void CombatWnd::UpdateCameraPosition()
 void CombatWnd::UpdateStarFromCameraPosition()
 {
     // Determine occlusion of the horizontal midline across the star by objects
-    // in the scene.  This is only enabled if glow in in play, since the effect
+    // in the scene.  This is only enabled if glow is in play, since the effect
     // doesn't look right when glow is not used.
     if (GetOptionsDB().Get<bool>("combat.enable-glow")) {
         const Ogre::Vector3 RIGHT = m_camera->getRealRight();
@@ -2153,4 +2103,17 @@ void CombatWnd::ChatMessageSentSlot()
         EnableAlphaNumAccels();
         GG::GUI::GetGUI()->SetFocusWnd(this);
     }
+}
+
+////////////////////////////////////////
+// Free function(s)
+////////////////////////////////////////
+bool isVisible(const Ogre::SceneNode& node)
+{
+    bool retval = true;
+    Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
+    while (retval && iterator.hasMoreElements()) {
+        retval &= iterator.getNext()->isVisible();
+    }
+    return retval;
 }
