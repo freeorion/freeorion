@@ -13,22 +13,21 @@ class Empire;
 class Meter;
 class UniverseObject;
 
-/** The ResourceCenter class is an abstract base class for anything in the FreeOrion gamestate that generates
- *  resources (food, minerals, etc.).  Most likely, such an object will also be a subclass of UniverseObject.
- *  
- *  Planet is the most obvious class to inherit ResourceCenter, but other classes could be made from it as well
- *  (e.g., a trade-ship or mining vessel, or a non-Planet UniverseObject- and PopCenter- derived object of some 
- *  sort. */
+/** The ResourceCenter class is an abstract base class for anything in the
+  * FreeOrion gamestate that generates resources (food, minerals, etc.).  Most
+  * likely, such an object will also be a subclass of UniverseObject.
+  *  
+  * Planet is the most obvious class to inherit ResourceCenter, but other
+  * classes could be made from it as well (e.g., a trade-ship or mining vessel,
+  * or a non-Planet UniverseObject- and PopCenter- derived object of some
+  * sort. */
 class ResourceCenter
 {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void ()>  ResourceCenterChangedSignalType;    ///< emitted when the ResourceCenter is altered in any way
-    //@}
-
     /** \name Structors */ //@{
-    ResourceCenter();           ///< default ctor
-    virtual ~ResourceCenter();  ///< dtor
+    ResourceCenter();                           ///< default ctor
+    virtual ~ResourceCenter();                  ///< dtor
+    ResourceCenter(const ResourceCenter& rhs);  ///< copy ctor
     //@}
 
     /** \name Accessors */ //@{
@@ -39,10 +38,12 @@ public:
     virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
     virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
 
-    mutable ResourceCenterChangedSignalType ResourceCenterChangedSignal;    ///< the state changed signal object for this ResourceCenter
+    mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
     //@}
 
     /** \name Mutators */ //@{
+    void                    VisibilityLimitedCopy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
     void                    SetPrimaryFocus(FocusType focus);
     void                    SetSecondaryFocus(FocusType focus);
 

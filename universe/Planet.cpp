@@ -14,8 +14,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-#include <GG/SignalsAndSlots.h>
-
 #include <boost/lexical_cast.hpp>
 
 #include <stdexcept>
@@ -124,6 +122,14 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     if (RandZeroToOne() < REVERSE_SPIN_CHANCE)
         m_rotational_period = -m_rotational_period;
 }
+
+Planet* Planet::Clone() const
+{
+    return new Planet(*this);
+}
+
+void Planet::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+{}
 
 void Planet::Init() {
     InsertMeter(METER_SUPPLY, Meter());
@@ -578,7 +584,7 @@ PlanetEnvironment Planet::Environment(PlanetType type)
 std::set<int> Planet::VisibleContainedObjects(int empire_id) const
 {
     std::set<int> retval;
-    Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         int object_id = *it;
         if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)

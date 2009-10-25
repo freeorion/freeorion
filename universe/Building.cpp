@@ -70,6 +70,14 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
     UniverseObject::Init();
 }
 
+Building* Building::Clone() const
+{
+    return new Building(*this);
+}
+
+void Building::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+{}
+
 const BuildingType* Building::GetBuildingType() const
 {
     return ::GetBuildingType(m_building_type);

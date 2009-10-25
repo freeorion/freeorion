@@ -15,17 +15,18 @@ public:
     typedef typename T::slot_type slot_type;
     typedef typename T::group_type group_type;
     InhibitableSignal(const bool& inhibitor) : m_inhibitor(inhibitor) {}
+//    InhibitableSignal(const InhibitableSignal& rhs) : m_inhibitor(rhs.m_inhibitor) {}
 
     void operator()()
-        { if (!m_inhibitor) m_sig(); }
+    { if (!m_inhibitor) m_sig(); }
 
     boost::signals::connection
     connect(const slot_type& slot, boost::signals::connect_position at = boost::signals::at_back)
-        { return m_sig.connect(slot, at); }
+    { return m_sig.connect(slot, at); }
 
     boost::signals::connection
     connect(const group_type& group, const slot_type& slot, boost::signals::connect_position at = boost::signals::at_back)
-        { return m_sig.connect(group, slot, at); }
+    { return m_sig.connect(group, slot, at); }
 
 private:
     const bool& m_inhibitor;

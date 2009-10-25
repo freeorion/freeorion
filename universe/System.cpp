@@ -52,7 +52,19 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     UniverseObject::Init();
 }
 
-System::~System()
+System::System(const System& rhs) :
+    m_star(rhs.m_star),
+    m_orbits(rhs.m_orbits),
+    m_objects(rhs.m_objects),
+    m_starlanes_wormholes(rhs.m_starlanes_wormholes)
+{}
+
+System* System::Clone() const
+{
+    return new System(*this);;
+}
+
+void System::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
 {}
 
 StarType System::GetStarType() const
@@ -508,7 +520,7 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
     if (empire_id == ALL_EMPIRES)
         return m_starlanes_wormholes;
 
-    Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse();
     StarlaneMap retval;
 
 
@@ -522,8 +534,8 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
 
 
     std::vector<const Fleet*> moving_empire_fleets;
-    Universe::ObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
-    for (Universe::ObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
+    Universe::ConstObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
+    for (Universe::ConstObjectVec::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
         if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
@@ -564,7 +576,7 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
 System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const
 {
     ObjectMultimap retval;
-    Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         int object_id = it->second;
         if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)

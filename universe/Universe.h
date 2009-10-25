@@ -120,7 +120,6 @@ public:
 
     /** \name Structors */ //@{
     Universe();                                     ///< default ctor
-    const   Universe& operator=(Universe& rhs);     ///< assignment operator (move semantics)
     virtual ~Universe();                            ///< dtor
     //@}
 
@@ -312,6 +311,12 @@ public:
     /** Determines which empires can see which objects at what visibility
       * level, based on  */
     void            UpdateEmpireObjectVisibilities();
+
+    /** Stores latest known information about each object for each empire and
+      * updates the record of the last turn on which each empire has visibility
+      * of object that can be seen on the current turn with the level of
+      * visibility that the empire has this turn. */
+    void            UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     /** Reconstructs the per-empire system graph views needed to calculate
       * routes based on visibility. */

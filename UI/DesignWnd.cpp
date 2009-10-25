@@ -1378,11 +1378,11 @@ public:
     mutable boost::signal<void (const PartType*)> PartTypeClickedSignal;
 
 private:
-    void            EmitNullSlotContentsAlteredSignal();            // emits SlotContentsAlteredSignal with PartType* = 0.  needed because boost::signal is noncopyable, so boost::bind can't be used to bind the parameter 0 to SlotContentsAlteredSignal::operator()
+    void            EmitNullSlotContentsAlteredSignal();                //!< emits SlotContentsAlteredSignal with PartType* = 0.  needed because boost::signal is noncopyable, so boost::bind can't be used to bind the parameter 0 to SlotContentsAlteredSignal::operator()
 
     bool                m_highlighted;
     ShipSlotType        m_slot_type;
-    double              m_x_position_fraction, m_y_position_fraction;   // position on hull image where slot should be shown, as a fraction of that image's size
+    double              m_x_position_fraction, m_y_position_fraction;   //!< position on hull image where slot should be shown, as a fraction of that image's size
     PartControl*        m_part_control;
     GG::StaticGraphic*  m_background;
 };

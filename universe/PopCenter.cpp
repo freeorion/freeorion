@@ -49,6 +49,9 @@ PopCenter::PopCenter() :
 PopCenter::~PopCenter()
 {}
 
+void PopCenter::VisibilityLimitedCopy(const PopCenter* copied_object, Visibility vis)
+{}
+
 void PopCenter::Init(double max_pop_mod, double max_health_mod)
 {
     InsertMeter(METER_POPULATION, Meter());

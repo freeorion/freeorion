@@ -65,6 +65,14 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     AddOwner(owner);
 }
 
+Fleet* Fleet::Clone() const
+{
+    return new Fleet(*this);
+}
+
+void Fleet::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+{}
+
 Fleet::const_iterator Fleet::begin() const
 {
     return m_ships.begin();
@@ -1069,7 +1077,7 @@ std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_f
 Fleet::ShipIDSet Fleet::VisibleContainedObjects(int empire_id) const
 {
     ShipIDSet retval;
-    Universe& universe = GetUniverse();
+    const Universe& universe = GetUniverse();
     for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
         int object_id = *it;
         if (universe.GetObjectVisibilityByEmpire(object_id, empire_id) >= VIS_BASIC_VISIBILITY)

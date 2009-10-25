@@ -26,7 +26,7 @@ struct UniverseObjectVisitor;
 class System : public UniverseObject
 {
 private:
-    typedef std::multimap<int, int>             ObjectMultimap; 
+    typedef std::multimap<int, int>             ObjectMultimap;
 
 public:
     typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of FindObjects()
@@ -52,7 +52,9 @@ public:
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
            const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-    ~System();   ///< dtor
+    System(const System& rhs);                              ///< copy ctor
+
+    virtual System*         Clone() const;                  ///< returns new copy of this System
     //@}
 
     /** \name Accessors */ //@{
@@ -120,6 +122,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
     /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
         particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this),
         and obj->MoveTo( this system's position )*/

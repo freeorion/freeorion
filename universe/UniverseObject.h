@@ -28,36 +28,46 @@ class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
 
-/** the abstract base class for all objects in the universe.  The UniverseObject class itself has only an ID, a name, 
-    a position, possibly a System in which it is, and zero or more owners.  The position can range from 0 (left) to 1000 
-    (right) in X, and 0 (top) to 1000 (bottom) in Y.  This coordinate system was chosen to help with conversion to 
-    and from screen coordinates, which originate at the upper-left corner of the screen and increase down and to the 
-    right.  Each UniverseObject-derived class inherits several pure virtual members that perform its actions during
-    various game phases, such as the movement phase.  These subclasses must define what actions to perform during 
-    those phases.  UniverseObjects advertise changes to themselves via the StateChanged signal.  This means that all
-    mutators on UniverseObject and its subclasses need to emit this signal.  This is how the UI becomes aware that an
-    object that is being displayed has changed.*/
+/** The abstract base class for all objects in the universe
+  * The UniverseObject class itself has an ID number, a name, a position, an ID
+  * of the system in which it is, a list of zero or more owners, and other
+  * common object data.
+  * Position in the Universe can range from 0 (left) to 1000 (right) in X, and
+  * 0 (top) to 1000 (bottom) in Y.  This coordinate system was chosen to help
+  * with conversion to and from screen coordinates, which originate at the
+  * upper-left corner of the screen and increase down and to the right.  Each
+  * UniverseObject-derived class inherits several pure virtual members that
+  * perform its actions during various game phases, such as the movement phase.
+  * These subclasses must define what actions to perform during those phases.
+  * UniverseObjects advertise changes to themselves via the StateChanged
+  * Signal.  This means that all mutators on UniverseObject and its subclasses
+  * need to emit this signal.  This is how the UI becomes aware that an object
+  * that is being displayed has changed.*/
 class UniverseObject
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void ()> StateChangedSignalBaseType; ///< used to define StateChangedSignalType
-    typedef InhibitableSignal<StateChangedSignalBaseType> StateChangedSignalType; ///< emitted when the UniverseObject is altered in any way
+    typedef boost::signal<void ()>                          StateChangedSignalBaseType;
+    typedef InhibitableSignal<StateChangedSignalBaseType>   StateChangedSignalType;
     //@}
 
     /** \name Slot Types */ //@{
-    typedef StateChangedSignalType::slot_type StateChangedSlotType; ///< type of functor(s) invoked on a StateChangedSignalType
+    typedef StateChangedSignalType::slot_type               StateChangedSlotType;
     //@}
 
     /** \name Structors */ //@{
-    UniverseObject();    ///< default ctor
+    UniverseObject();                                           ///< default ctor
 
     /** general ctor.  \throw std::invalid_argument May throw
         std::invalid_argument if the either x or y coordinate is
         outside the map area.*/
     UniverseObject(const std::string name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-    virtual ~UniverseObject();   ///< dtor
+    UniverseObject(const UniverseObject& rhs);                  ///< copy ctor
+
+    virtual ~UniverseObject();                                  ///< dtor
+
+    virtual UniverseObject* Clone() const = 0;                  ///< returns new copy of this UniverseObject
     //@}
 
     /** \name Accessors */ //@{
@@ -98,10 +108,15 @@ public:
     int                     CreationTurn() const;               ///< returns game turn on which object was created
     int                     AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
 
-    mutable StateChangedSignalType StateChangedSignal;          ///< returns the state changed signal object for this UniverseObject
+    mutable StateChangedSignalType StateChangedSignal;          ///< emitted when the UniverseObject is altered in any way
     //@}
 
     /** \name Mutators */ //@{
+    /** copies data from \a copied_object to this object, limited to only copy
+      * data that would be known to an empire that detects the copied object at
+      * the specified Visibility level \a vis */
+    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY) = 0;
+
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id
     void                    Rename(const std::string& name);    ///< renames this object to \a name
 

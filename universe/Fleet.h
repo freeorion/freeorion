@@ -25,12 +25,14 @@ class Fleet : public UniverseObject
 {
 public:
     typedef std::set<int>               ShipIDSet;
-    typedef ShipIDSet::iterator         iterator;               ///< an iterator to the ships in the fleet
-    typedef ShipIDSet::const_iterator   const_iterator;   ///< a const iterator to the ships in the fleet
+    typedef ShipIDSet::iterator         iterator;                       ///< an iterator to the ships in the fleet
+    typedef ShipIDSet::const_iterator   const_iterator;                 ///< a const iterator to the ships in the fleet
 
     /** \name Structors */ //@{
-    Fleet(); ///< default ctor
-    Fleet(const std::string& name, double x, double y, int owner);
+    Fleet();                                                            ///< default ctor
+    Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
+
+    virtual Fleet*                      Clone() const;                  ///< returns new copy of this Fleet
     //@}
 
     /** \name Accessors */ //@{
@@ -78,7 +80,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    SetRoute(const std::list<int>& route);      ///< orders the fleet to move through the systems in the list, in order
+    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
+    void                    SetRoute(const std::list<int>& route);          ///< orders the fleet to move through the systems in the list, in order
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.

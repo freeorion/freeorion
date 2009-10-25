@@ -895,6 +895,9 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
 
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+
+
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {

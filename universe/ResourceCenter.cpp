@@ -68,10 +68,20 @@ namespace {
     }
 }
 
-ResourceCenter::ResourceCenter()
+ResourceCenter::ResourceCenter() :
+    m_primary(INVALID_FOCUS_TYPE),
+    m_secondary(INVALID_FOCUS_TYPE)
 {}
 
 ResourceCenter::~ResourceCenter()
+{}
+
+ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
+    m_primary(rhs.m_primary),
+    m_secondary(rhs.m_secondary)
+{}
+
+void ResourceCenter::VisibilityLimitedCopy(const ResourceCenter* copied_object, Visibility vis)
 {}
 
 void ResourceCenter::Init()

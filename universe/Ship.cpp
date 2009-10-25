@@ -71,6 +71,14 @@ Ship::Ship(int empire_id, int design_id) :
     }
 }
 
+Ship* Ship::Clone() const
+{
+    return new Ship(*this);;
+}
+
+void Ship::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+{}
+
 const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);
 }

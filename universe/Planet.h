@@ -86,8 +86,10 @@ class Planet :
 {
 public:
     /** \name Structors */ //@{
-    Planet(); ///< default ctor
-    Planet(PlanetType type, PlanetSize size); ///< general ctor taking just the planet's type and size
+    Planet();                                           ///< default ctor
+    Planet(PlanetType type, PlanetSize size);           ///< general ctor taking just the planet's type and size
+
+    virtual Planet*                     Clone() const;  ///< returns new copy of this Planet
     //@}
 
     /** \name Accessors */ //@{
@@ -122,6 +124,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void                        VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
     virtual void                        SetSystem(int sys);
     virtual void                        MoveTo(double x, double y);
 
@@ -169,7 +173,6 @@ private:
     virtual const Meter*                GetPopMeter() const                             {return GetMeter(METER_POPULATION);}
 
     std::set<int>                       VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
-
 
     PlanetType      m_type;
     PlanetSize      m_size;

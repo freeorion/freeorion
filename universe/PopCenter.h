@@ -19,8 +19,8 @@ class PopCenter
 {
 public:
     /** \name Structors */ //@{
-    PopCenter(int race); ///< basic ctor
-    virtual ~PopCenter(); ///< dtor
+    explicit PopCenter(int race);   ///< basic ctor
+    virtual ~PopCenter();           ///< dtor
     //@}
 
     /** \name Accessors */ //@{
@@ -40,6 +40,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void                    VisibilityLimitedCopy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
     void                    SetRace(int race)                       {m_race = race;}                        ///< sets the race of the population to \a race
     void                    SetAllocatedFood(double allocated_food) {m_allocated_food = allocated_food;}    ///< sets the amount of food which is currently available
 

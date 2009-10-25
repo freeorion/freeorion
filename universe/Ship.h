@@ -18,15 +18,17 @@ public:
     typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
 
     /** \name Structors */ //@{
-    Ship(); ///< default ctor
-    Ship(int empire_id, int design_id);     ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
+    Ship();                                         ///< default ctor
+    Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
+
+    virtual Ship*               Clone() const;      ///< returns new copy of this Ship
     //@}
 
     /** \name Accessors */ //@{
-    const ShipDesign*           Design() const;                     ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                         DesignID() const;                   ///< returns the design id of the ship
-    int                         FleetID() const;                    ///< returns the ID of the fleet the ship is residing in
-    Fleet*                      GetFleet() const;                   ///< returns the ID of the fleet the ship is residing in
+    const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                         DesignID() const;   ///< returns the design id of the ship
+    int                         FleetID() const;    ///< returns the ID of the fleet the ship is residing in
+    Fleet*                      GetFleet() const;   ///< returns the ID of the fleet the ship is residing in
 
     virtual const std::string&  PublicName(int empire_id) const;
 
@@ -45,6 +47,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void                VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+
     void                        SetFleetID(int fleet_id);                       ///< sets the ID of the fleet the ship resides in
 
     void                        Resupply();

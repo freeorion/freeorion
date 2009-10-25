@@ -31,8 +31,8 @@ UniverseObject::UniverseObject() :
     m_created_on_turn = CurrentTurn();
 }
 
-UniverseObject::UniverseObject(const std::string name, double x, double y, 
-                               const std::set<int>& owners/* = std::set<int>()*/) : 
+UniverseObject::UniverseObject(const std::string name, double x, double y,
+                               const std::set<int>& owners/* = std::set<int>()*/) :
     StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_name(name),
@@ -47,8 +47,25 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_created_on_turn = CurrentTurn();
 }
 
+UniverseObject::UniverseObject(const UniverseObject& rhs) :
+    StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
+    m_id(rhs.m_id),
+    m_name(rhs.m_name),
+    m_x(rhs.m_x),
+    m_y(rhs.m_y),
+    m_owners(rhs.m_owners),
+    m_system_id(rhs.m_system_id),
+    m_specials(rhs.m_specials),
+    m_meters(rhs.m_meters),
+    m_created_on_turn(rhs.m_created_on_turn)
+{}
+
 UniverseObject::~UniverseObject()
 {}
+
+void UniverseObject::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+{
+}
 
 void UniverseObject::Init()
 {

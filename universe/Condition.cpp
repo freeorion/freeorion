@@ -187,7 +187,7 @@ bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* 
     double low = std::max(0, m_low->Eval(source, target));
     double high = std::min(m_high->Eval(source, target), IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
-        
+
     return (low <= turn && turn < high);
 }
 
