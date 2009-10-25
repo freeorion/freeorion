@@ -71,13 +71,42 @@ Ship::Ship(int empire_id, int design_id) :
     }
 }
 
-Ship* Ship::Clone() const
+Ship* Ship::Clone(Visibility vis) const
 {
-    return new Ship(*this);;
+    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+        return 0;
+
+    Ship* retval = new Ship(*this);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        // return full object
+
+    } else if (vis == VIS_PARTIAL_VISIBILITY) {
+        // hide some information
+
+    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
+        // hide more information
+    }
+    return retval;
 }
 
-void Ship::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
-{}
+void Ship::Copy(const UniverseObject* copied_object, Visibility vis)
+{
+    UniverseObject::Copy(copied_object, vis);
+
+    const Ship* copied_ship = universe_object_cast<Ship*>(copied_object);
+    if (!copied_ship) {
+        Logger().errorStream() << "Ship::Copy passed an object that wasn't a Ship";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);

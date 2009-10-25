@@ -123,13 +123,45 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone() const
+Planet* Planet::Clone(Visibility vis) const
 {
-    return new Planet(*this);
+    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+        return 0;
+
+    Planet* retval = new Planet(*this);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        // return full object
+
+    } else if (vis == VIS_PARTIAL_VISIBILITY) {
+        // hide some information
+
+    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
+        // hide more information
+    }
+    return retval;
 }
 
-void Planet::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
-{}
+void Planet::Copy(const UniverseObject* copied_object, Visibility vis)
+{
+    UniverseObject::Copy(copied_object, vis);
+
+    const Planet* copied_planet = universe_object_cast<Planet*>(copied_object);
+    if (!copied_planet) {
+        Logger().errorStream() << "Planet::Copy passed an object that wasn't a Planet";
+        return;
+    }
+
+    PopCenter::Copy(copied_planet, vis);
+    ResourceCenter::Copy(copied_planet, vis);
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 void Planet::Init() {
     InsertMeter(METER_SUPPLY, Meter());

@@ -63,8 +63,19 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
+void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 {
+    if (!copied_object) {
+        Logger().errorStream() << "UniverseObject::Copy passed a null object";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
 }
 
 void UniverseObject::Init()

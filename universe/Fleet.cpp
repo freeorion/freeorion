@@ -65,13 +65,42 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     AddOwner(owner);
 }
 
-Fleet* Fleet::Clone() const
+Fleet* Fleet::Clone(Visibility vis) const
 {
-    return new Fleet(*this);
+    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+        return 0;
+
+    Fleet* retval = new Fleet(*this);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        // return full object
+
+    } else if (vis == VIS_PARTIAL_VISIBILITY) {
+        // hide some information
+
+    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
+        // hide more information
+    }
+    return retval;
 }
 
-void Fleet::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
-{}
+void Fleet::Copy(const UniverseObject* copied_object, Visibility vis)
+{
+    UniverseObject::Copy(copied_object, vis);
+
+    const Fleet* copied_fleet = universe_object_cast<Fleet*>(copied_object);
+    if (!copied_fleet) {
+        Logger().errorStream() << "Fleet::Copy passed an object that wasn't a Fleet";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 Fleet::const_iterator Fleet::begin() const
 {

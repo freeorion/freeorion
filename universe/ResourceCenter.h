@@ -42,7 +42,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    VisibilityLimitedCopy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void                    Copy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
     void                    SetPrimaryFocus(FocusType focus);
     void                    SetSecondaryFocus(FocusType focus);

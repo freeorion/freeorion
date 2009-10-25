@@ -79,7 +79,7 @@ struct RangedValidator : public Validator<T>
             throw boost::bad_lexical_cast();
         return boost::any(val);
     }
-        
+
     virtual RangedValidator *Clone() const 
     {
         return new RangedValidator<T>(m_min, m_max);
@@ -103,7 +103,7 @@ struct StepValidator : public Validator<T>
             throw boost::bad_lexical_cast();
         return boost::any(val);
     }
-        
+
     virtual StepValidator *Clone() const
     {
         return new StepValidator<T>(m_step_size, m_origin);

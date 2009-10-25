@@ -32,7 +32,7 @@ public:
     Fleet();                                                            ///< default ctor
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
-    virtual Fleet*                      Clone() const;                  ///< returns new copy of this Fleet
+    virtual Fleet*                      Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this Fleet
     //@}
 
     /** \name Accessors */ //@{
@@ -80,7 +80,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void            Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
     void                    SetRoute(const std::list<int>& route);          ///< orders the fleet to move through the systems in the list, in order
 

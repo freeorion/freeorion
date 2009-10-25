@@ -36,8 +36,8 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
     UniverseObject::Init();
 }
 
-System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes, 
-               const std::string& name, double x, double y, const std::set<int>& owners/* = std::set<int>()*/) : 
+System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
+               const std::string& name, double x, double y, const std::set<int>& owners/* = std::set<int>()*/) :
     UniverseObject(name, x, y, owners),
     m_star(star),
     m_orbits(orbits),
@@ -59,13 +59,42 @@ System::System(const System& rhs) :
     m_starlanes_wormholes(rhs.m_starlanes_wormholes)
 {}
 
-System* System::Clone() const
+System* System::Clone(Visibility vis) const
 {
-    return new System(*this);;
+    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+        return 0;
+
+    System* retval = new System(*this);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        // return full object
+
+    } else if (vis == VIS_PARTIAL_VISIBILITY) {
+        // hide some information
+
+    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
+        // hide more information
+    }
+    return retval;
 }
 
-void System::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
-{}
+void System::Copy(const UniverseObject* copied_object, Visibility vis)
+{
+    UniverseObject::Copy(copied_object, vis);
+
+    const System* copied_system = universe_object_cast<System*>(copied_object);
+    if (!copied_system) {
+        Logger().errorStream() << "System::Copy passed an object that wasn't a System";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 StarType System::GetStarType() const
 {

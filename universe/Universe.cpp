@@ -1518,7 +1518,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
     // for each object in universe
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         int object_id = it->first;
-        const UniverseObject* obj = it->second;
+        const UniverseObject* full_object = it->second; // not filtered on server by visibility
 
         // for each empire with a visibility map
         for (EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
@@ -1552,7 +1552,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
                 // update pointed-to known object
 
             } else {
-                // create visibility-filtered copy of 
+                // create visibility-filtered copy of full_object
             }
 
             // create or update known_object

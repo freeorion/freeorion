@@ -49,8 +49,20 @@ PopCenter::PopCenter() :
 PopCenter::~PopCenter()
 {}
 
-void PopCenter::VisibilityLimitedCopy(const PopCenter* copied_object, Visibility vis)
-{}
+void PopCenter::Copy(const PopCenter* copied_object, Visibility vis)
+{
+    if (!copied_object) {
+        Logger().errorStream() << "PopCenter::Copy passed a null object";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 void PopCenter::Init(double max_pop_mod, double max_health_mod)
 {

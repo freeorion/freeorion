@@ -70,13 +70,42 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
     UniverseObject::Init();
 }
 
-Building* Building::Clone() const
+Building* Building::Clone(Visibility vis) const
 {
-    return new Building(*this);
+    if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
+        return 0;
+
+    Building* retval = new Building(*this);
+
+    if (vis == VIS_FULL_VISIBILITY) {
+        // return full object
+
+    } else if (vis == VIS_PARTIAL_VISIBILITY) {
+        // hide some information
+
+    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
+        // hide more information
+    }
+    return retval;
 }
 
-void Building::VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis)
-{}
+void Building::Copy(const UniverseObject* copied_object, Visibility vis)
+{
+    UniverseObject::Copy(copied_object, vis);
+
+    const Building* copied_building = universe_object_cast<Building*>(copied_object);
+    if (!copied_building) {
+        Logger().errorStream() << "Building::Copy passed an object that wasn't a Building";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 const BuildingType* Building::GetBuildingType() const
 {

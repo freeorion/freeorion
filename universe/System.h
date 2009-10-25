@@ -40,7 +40,7 @@ public:
     typedef StarlaneMap::const_iterator         const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
     /** \name Structors */ //@{
-    System();       ///< default ctor
+    System();                                                                   ///< default ctor
 
     /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
         of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
@@ -52,9 +52,9 @@ public:
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
            const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-    System(const System& rhs);                              ///< copy ctor
+    System(const System& rhs);                                                  ///< copy ctor
 
-    virtual System*         Clone() const;                  ///< returns new copy of this System
+    virtual System*         Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this System
     //@}
 
     /** \name Accessors */ //@{
@@ -122,7 +122,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void            Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
     /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
         particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this),

@@ -86,10 +86,10 @@ class Planet :
 {
 public:
     /** \name Structors */ //@{
-    Planet();                                           ///< default ctor
-    Planet(PlanetType type, PlanetSize size);           ///< general ctor taking just the planet's type and size
+    Planet();                                                                               ///< default ctor
+    Planet(PlanetType type, PlanetSize size);                                               ///< general ctor taking just the planet's type and size
 
-    virtual Planet*                     Clone() const;  ///< returns new copy of this Planet
+    virtual Planet*                     Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this Planet
     //@}
 
     /** \name Accessors */ //@{
@@ -124,7 +124,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                        VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void                        Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
     virtual void                        SetSystem(int sys);
     virtual void                        MoveTo(double x, double y);

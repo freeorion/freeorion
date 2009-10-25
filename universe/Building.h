@@ -21,7 +21,7 @@ public:
     Building();                                                                 ///< default ctor
     Building(int empire_id, const std::string& building_type, int planet_id);   ///< basic ctor
 
-    virtual Building*       Clone() const;                                      ///< returns new copy of this Building
+    virtual Building*       Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this Building
     //@}
 
     /** \name Accessors */ //@{
@@ -39,7 +39,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            VisibilityLimitedCopy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void            Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
     void                    SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
     virtual void            MoveTo(double x, double y);

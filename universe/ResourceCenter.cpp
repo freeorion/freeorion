@@ -81,8 +81,20 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_secondary(rhs.m_secondary)
 {}
 
-void ResourceCenter::VisibilityLimitedCopy(const ResourceCenter* copied_object, Visibility vis)
-{}
+void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
+{
+    if (!copied_object) {
+        Logger().errorStream() << "ResourceCenter::Copy passed a null object";
+        return;
+    }
+
+    if (vis >= VIS_BASIC_VISIBILITY) {
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+            }
+        }
+    }
+}
 
 void ResourceCenter::Init()
 {
