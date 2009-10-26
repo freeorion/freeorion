@@ -56,11 +56,9 @@ void PopCenter::Copy(const PopCenter* copied_object, Visibility vis)
         return;
     }
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
-        }
+    if (vis >= VIS_PARTIAL_VISIBILITY) {
+        this->m_race =              copied_object->m_race;
+        this->m_allocated_food =    copied_object->m_allocated_food;
     }
 }
 

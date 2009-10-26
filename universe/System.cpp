@@ -59,39 +59,39 @@ System::System(const System& rhs) :
     m_starlanes_wormholes(rhs.m_starlanes_wormholes)
 {}
 
-System* System::Clone(Visibility vis) const
+System* System::Clone(int empire_id) const
 {
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
-    System* retval = new System(*this);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        // return full object
-
-    } else if (vis == VIS_PARTIAL_VISIBILITY) {
-        // hide some information
-
-    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
-        // hide more information
-    }
+    System* retval = new System();
+    retval->Copy(this, empire_id);
     return retval;
 }
 
-void System::Copy(const UniverseObject* copied_object, Visibility vis)
+void System::Copy(const UniverseObject* copied_object, int empire_id)
 {
-    UniverseObject::Copy(copied_object, vis);
-
     const System* copied_system = universe_object_cast<System*>(copied_object);
     if (!copied_system) {
         Logger().errorStream() << "System::Copy passed an object that wasn't a System";
         return;
     }
 
+    int copied_object_id = copied_object->ID();
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_object, vis);
+
     if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
+        this->m_objects =               copied_system->VisibleContainedObjects(empire_id);
+        this->m_starlanes_wormholes =   copied_system->VisibleStarlanes(empire_id);
+
+        this->m_star =                  copied_system->m_star;
+
+        if (vis >= VIS_FULL_VISIBILITY) {
+            this->m_orbits =            copied_system->m_orbits;
         }
     }
 }

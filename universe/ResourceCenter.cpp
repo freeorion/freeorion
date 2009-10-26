@@ -88,11 +88,9 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
         return;
     }
 
-    if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
-        }
+    if (vis == VIS_FULL_VISIBILITY) {
+        this->m_primary =   copied_object->m_primary;
+        this->m_secondary = copied_object->m_secondary;
     }
 }
 

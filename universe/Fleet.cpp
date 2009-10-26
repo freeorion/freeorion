@@ -37,6 +37,7 @@ namespace {
         assert(fuel_meter);
         fuel_meter->AdjustCurrent(0.1001);  // TODO: make this configurable.  slightly larger than 0.1 ensures rounding will go up, not down, which is preferable for gameplay and UI purposes
     }
+
 }
 
 // static(s)
@@ -65,39 +66,59 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     AddOwner(owner);
 }
 
-Fleet* Fleet::Clone(Visibility vis) const
+Fleet* Fleet::Clone(int empire_id) const
 {
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
-    Fleet* retval = new Fleet(*this);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        // return full object
-
-    } else if (vis == VIS_PARTIAL_VISIBILITY) {
-        // hide some information
-
-    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
-        // hide more information
-    }
+    Fleet* retval = new Fleet();
+    retval->Copy(this, empire_id);
     return retval;
 }
 
-void Fleet::Copy(const UniverseObject* copied_object, Visibility vis)
+void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
 {
-    UniverseObject::Copy(copied_object, vis);
-
     const Fleet* copied_fleet = universe_object_cast<Fleet*>(copied_object);
     if (!copied_fleet) {
         Logger().errorStream() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
     }
 
+    int copied_object_id = copied_object->ID();
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_object, vis);
+
     if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
+        this->m_ships =         copied_fleet->VisibleContainedObjects(empire_id);
+        this->m_next_system =   copied_fleet->m_next_system;
+        this->m_prev_system =   copied_fleet->m_prev_system;
+
+        if (vis == VIS_FULL_VISIBILITY) {
+            this->m_moving_to =             copied_fleet->m_moving_to;
+            this->m_travel_route =          copied_fleet->m_travel_route;
+            this->m_travel_distance =       copied_fleet->m_travel_distance;
+            this->m_speed =                 copied_fleet->m_speed;
+
+        } else {
+            int             moving_to =         copied_fleet->m_next_system;
+            std::list<int>  travel_route;
+            double          travel_distance =   copied_fleet->m_travel_distance;;
+
+            const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
+
+            ShortenRouteToEndAtSystem(travel_route, moving_to);
+            if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != copied_fleet_route.size()) {
+                if (moving_to == copied_fleet->m_moving_to)
+                    moving_to = travel_route.back();
+                travel_distance -= GetUniverse().ShortestPath(travel_route.back(), copied_fleet_route.back()).second;
             }
+
+            this->m_moving_to = moving_to;
+            this->m_travel_route = travel_route;
+            this->m_travel_distance = travel_distance;
         }
     }
 }

@@ -68,10 +68,10 @@ public:
     virtual ~UniverseObject();                                  ///< dtor
 
     /** returns new copy of this UniverseObject, limited to only copy data that
-      * would be known to an empire that detects the copied object at the
-      * specified Visibility level \a vis .  Caller takes ownership of returned
-      * pointee. */
-    virtual UniverseObject* Clone(Visibility vis = VIS_FULL_VISIBILITY) const = 0;
+      * is visible to the empire with the specified \a empire_id as determined
+      * by the detection and visibility system.  Caller takes ownership of
+      * returned pointee. */
+    virtual UniverseObject* Clone(int empire_id = ALL_EMPIRES) const = 0;
     //@}
 
     /** \name Accessors */ //@{
@@ -119,7 +119,7 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data that would be known to an empire that detects the copied object at
       * the specified Visibility level \a vis */
-    virtual void            Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY) = 0;
+    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES) = 0;
 
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id
     void                    Rename(const std::string& name);    ///< renames this object to \a name
@@ -180,12 +180,13 @@ public:
     static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
-    void                    InsertMeter(MeterType meter_type, const Meter& meter);  ///< inserts \a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
+    void                    InsertMeter(MeterType meter_type, const Meter& meter);      ///< inserts \a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                     ///< adds stealth meter
 
+    void                    Copy(const UniverseObject* copied_object, Visibility vis);  ///< used by public UniverseObject::Copy and derived classes' ::Copy methods
+
 private:
-    std::map<MeterType,
-             Meter>         CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
+    std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
     int                         m_id;
     std::string                 m_name;

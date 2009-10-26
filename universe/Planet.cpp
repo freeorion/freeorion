@@ -123,42 +123,47 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(Visibility vis) const
+Planet* Planet::Clone(int empire_id) const
 {
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
-    Planet* retval = new Planet(*this);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        // return full object
-
-    } else if (vis == VIS_PARTIAL_VISIBILITY) {
-        // hide some information
-
-    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
-        // hide more information
-    }
+    Planet* retval = new Planet();
+    retval->Copy(this, empire_id);
     return retval;
 }
 
-void Planet::Copy(const UniverseObject* copied_object, Visibility vis)
+void Planet::Copy(const UniverseObject* copied_object, int empire_id)
 {
-    UniverseObject::Copy(copied_object, vis);
-
     const Planet* copied_planet = universe_object_cast<Planet*>(copied_object);
     if (!copied_planet) {
         Logger().errorStream() << "Planet::Copy passed an object that wasn't a Planet";
         return;
     }
 
+    int copied_object_id = copied_object->ID();
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_object, vis);
     PopCenter::Copy(copied_planet, vis);
     ResourceCenter::Copy(copied_planet, vis);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
+        this->m_buildings =                 copied_planet->VisibleContainedObjects(empire_id);
+
+        this->m_type =                      copied_planet->m_type;
+        this->m_size =                      copied_planet->m_size;
+        this->m_orbital_period =            copied_planet->m_orbital_period;
+        this->m_initial_orbital_position =  copied_planet->m_initial_orbital_position;
+        this->m_rotational_period =         copied_planet->m_rotational_period;
+        this->m_axial_tilt =                copied_planet->m_axial_tilt;
+        this->m_just_conquered =            copied_planet->m_just_conquered;
+
+        if (vis >= VIS_FULL_VISIBILITY) {
+            this->m_available_trade =           copied_planet->m_available_trade;
+            this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
         }
     }
 }

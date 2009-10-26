@@ -173,13 +173,13 @@ public:
 
     double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
-    /** Returns the sequence of systems, including \a system1 and \a system2,
-      * that defines the shortest path from \a system1 to \a system2, and the
-      * distance travelled to get there.  If no such path exists, the list
-      * will be empty.  Note that the path returned may be via one or more
-      * starlane, or may be "offroad".  The path is calculated using the
-      * visibility for empire \a empire_id, or without regard to visibility if
-      * \a empire_id == ALL_EMPIRES.
+    /** Returns the sequence of systems, including \a system1_id and
+      * \a system2_id, that defines the shortest path from \a system1 to
+      * \a system2, and the distance travelled to get there.  If no such path
+      * exists, the list will be empty.  Note that the path returned may be via
+      * one or more starlane, or may be "offroad".  The path is calculated
+      * using the visibility for empire \a empire_id, or without regard to
+      * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
       * is out of range. */
     std::pair<std::list<int>, double>

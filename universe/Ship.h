@@ -21,7 +21,7 @@ public:
     Ship();                                         ///< default ctor
     Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
 
-    virtual Ship*               Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this Ship
+    virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Ship
     //@}
 
     /** \name Accessors */ //@{
@@ -47,7 +47,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void                Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
     void                        SetFleetID(int fleet_id);                       ///< sets the ID of the fleet the ship resides in
 

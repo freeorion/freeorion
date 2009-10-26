@@ -71,38 +71,41 @@ Ship::Ship(int empire_id, int design_id) :
     }
 }
 
-Ship* Ship::Clone(Visibility vis) const
+Ship* Ship::Clone(int empire_id) const
 {
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
-    Ship* retval = new Ship(*this);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        // return full object
-
-    } else if (vis == VIS_PARTIAL_VISIBILITY) {
-        // hide some information
-
-    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
-        // hide more information
-    }
+    Ship* retval = new Ship();
+    retval->Copy(this, empire_id);
     return retval;
 }
 
-void Ship::Copy(const UniverseObject* copied_object, Visibility vis)
+void Ship::Copy(const UniverseObject* copied_object, int empire_id)
 {
-    UniverseObject::Copy(copied_object, vis);
-
     const Ship* copied_ship = universe_object_cast<Ship*>(copied_object);
     if (!copied_ship) {
         Logger().errorStream() << "Ship::Copy passed an object that wasn't a Ship";
         return;
     }
 
+    int copied_object_id = copied_object->ID();
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_object, vis);
+
     if (vis >= VIS_BASIC_VISIBILITY) {
+        this->m_fleet_id =                  copied_ship->m_fleet_id;
+
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+            this->m_design_id =             copied_ship->m_design_id;
+            this->m_fighters =              copied_ship->m_fighters;
+            this->m_missiles =              copied_ship->m_missiles;
+
             if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_ordered_scrapped =  copied_ship->m_ordered_scrapped;
             }
         }
     }

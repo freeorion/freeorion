@@ -54,7 +54,7 @@ public:
 
     System(const System& rhs);                                                  ///< copy ctor
 
-    virtual System*         Clone(Visibility vis = VIS_FULL_VISIBILITY) const;  ///< returns new copy of this System
+    virtual System*         Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this System
     //@}
 
     /** \name Accessors */ //@{
@@ -122,7 +122,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            Copy(const UniverseObject* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
     /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
         particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this),

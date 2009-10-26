@@ -63,6 +63,19 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
 UniverseObject::~UniverseObject()
 {}
 
+//void UniverseObject::Copy(const UniverseObject* copied_object, int empire_id)
+//{
+//    if (!copied_object) {
+//        Logger().errorStream() << "UniverseObject::Copy passed a null object";
+//        return;
+//    }
+//
+//    int copied_object_id = copied_object->ID();
+//    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+//
+//    Copy(copied_object, vis);
+//}
+
 void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 {
     if (!copied_object) {
@@ -70,8 +83,22 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
         return;
     }
 
+    std::map<MeterType, Meter> meters = copied_object->CensoredMeters(vis);
+    this->m_meters = meters;
+
     if (vis >= VIS_BASIC_VISIBILITY) {
+        this->m_id =                    copied_object->m_id;
+        this->m_x =                     copied_object->m_x;
+        this->m_y =                     copied_object->m_y;
+        this->m_system_id =             copied_object->m_system_id;
+
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+
+            this->m_name =              copied_object->m_name;  // may be overwritten by derived class' Copy
+            this->m_owners =            copied_object->m_owners;
+            this->m_specials =          copied_object->m_specials;
+            this->m_created_on_turn =   copied_object->m_created_on_turn;
+
             if (vis >= VIS_FULL_VISIBILITY) {
             }
         }

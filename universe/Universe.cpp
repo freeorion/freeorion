@@ -1483,27 +1483,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
 {
-    /** Stores latest known information about each object for each empire and
-      * updates the record of the last turn on which each empire has visibility
-      * of object that can be seen on the current turn with the level of
-      * visibility that the empire has this turn. */
-
-    //typedef std::map<int, ObjectMap>                EmpireLatestKnownObjectMap;     ///< Most recent known information each empire had about objects in the Universe; keyed by empire id
-
-    //typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
-    //typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
-    //typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
-
-
-
-    // Update contents of:
-
-    //EmpireLatestKnownObjectMap      m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
-    //EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
-
-
     // assumes m_empire_object_visibility has been updated
-
 
     //  for each object in universe
     //      for each empire that can see object this turn
@@ -1519,12 +1499,16 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
     for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         int object_id = it->first;
         const UniverseObject* full_object = it->second; // not filtered on server by visibility
+        if (!full_object) {
+            Logger().errorStream() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects with id " << object_id;
+            continue;
+        }
 
         // for each empire with a visibility map
         for (EmpireObjectVisibilityMap::const_iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
 
             // can empire see object?
-            const ObjectVisibilityMap&  vis_map = empire_it->second;    // stores level of visibility empire has for each object it can detect this turn
+            const ObjectVisibilityMap& vis_map = empire_it->second;    // stores level of visibility empire has for each object it can detect this turn
             ObjectVisibilityMap::const_iterator vis_it = vis_map.find(object_id);
             if (vis_it == vis_map.end())
                 continue;   // empire can't see current object, so move to next empire
@@ -1533,10 +1517,12 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
                 continue;   // empire can't see current object, so move to next empire
 
 
-            /** empire can see object.  need to update empire's latest known
-              * information about object, and historical turns on which object
-              * was seen at various visibility levels. */
+            // empire can see object.  need to update empire's latest known
+            // information about object, and historical turns on which object
+            // was seen at various visibility levels.
+
             int empire_id = empire_it->first;
+
             ObjectMap&                  known_object_map = m_empire_latest_known_objects[empire_id];        // creates empty map if none yet present
             ObjectVisibilityTurnMap&    object_vis_turn_map = m_empire_object_visibility_turns[empire_id];  // creates empty map if none yet present
             VisibilityTurnMap&          vis_turn_map = object_vis_turn_map[object_id];                      // creates empty map if none yet present
@@ -1545,22 +1531,13 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            UniverseObject* known_object = 0;
             ObjectMap::iterator known_obj_it = known_object_map.find(object_id);
             if (known_obj_it != known_object_map.end()) {
-                known_object = known_obj_it->second;
-                // update pointed-to known object
-
+                known_obj_it->second->Copy(full_object, empire_id);             // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
-                // create visibility-filtered copy of full_object
+                if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
+                    known_object_map[object_id] = new_obj;
             }
-
-            // create or update known_object
-
-            //if (known_obj_it == known_object_map.end())
-            //    known_obj_it->second = known_object;
-            //else
-            //    known_object_map[object_id] = known_object;
 
 
             // update empire's visibility turn history for current vis, and lesser vis levels
@@ -1578,17 +1555,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
             }
         }
     }
-
-
-
-
-
-        //if (GetObjectVisibilityByEmpire(it->first, encoding_empire) > VIS_NO_VISIBILITY)
-
-    //// for each empire
-    //for (EmpireObjectVisibilityMap::iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
-    //    ObjectVisibilityMap& vis_map = empire_it->second;
-    //}
 }
 
 void Universe::RebuildEmpireViewSystemGraphs()

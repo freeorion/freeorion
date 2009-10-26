@@ -328,6 +328,7 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
                               m_networking.NumPlayers() - m_ai_clients.size(), m_ai_clients.size(), player_setup_data);
     m_current_turn = 1;                     // after all game initialization stuff has been created, can set current turn to 1 for start of game
 
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
     // Determine initial supply distribution and exchanging and resource pools for empires
     EmpireManager& empires = Empires();

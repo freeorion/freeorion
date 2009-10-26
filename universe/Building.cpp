@@ -70,39 +70,37 @@ Building::Building(int empire_id, const std::string& building_type, int planet_i
     UniverseObject::Init();
 }
 
-Building* Building::Clone(Visibility vis) const
+Building* Building::Clone(int empire_id) const
 {
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
         return 0;
 
-    Building* retval = new Building(*this);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        // return full object
-
-    } else if (vis == VIS_PARTIAL_VISIBILITY) {
-        // hide some information
-
-    } else /* if (vis == VIS_BASIC_VISIBILITY) */ {
-        // hide more information
-    }
+    Building* retval = new Building();
+    retval->Copy(this, empire_id);
     return retval;
 }
 
-void Building::Copy(const UniverseObject* copied_object, Visibility vis)
+void Building::Copy(const UniverseObject* copied_object, int empire_id)
 {
-    UniverseObject::Copy(copied_object, vis);
-
     const Building* copied_building = universe_object_cast<Building*>(copied_object);
     if (!copied_building) {
         Logger().errorStream() << "Building::Copy passed an object that wasn't a Building";
         return;
     }
 
+    int copied_object_id = copied_object->ID();
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(copied_object_id, empire_id);
+
+    UniverseObject::Copy(copied_object, vis);
+
     if (vis >= VIS_BASIC_VISIBILITY) {
-        if (vis >= VIS_PARTIAL_VISIBILITY) {
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
+        this->m_building_type =             copied_building->m_building_type;
+        this->m_planet_id =                 copied_building->m_planet_id;
+
+        if (vis >= VIS_FULL_VISIBILITY) {
+            this->m_ordered_scrapped =  copied_building->m_ordered_scrapped;
         }
     }
 }
