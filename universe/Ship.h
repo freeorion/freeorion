@@ -78,29 +78,12 @@ private:
 template <class Archive>
 void Ship::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
-    bool ordered_scrapped = false;
-
-    if (Archive::is_saving::value) {
-        vis = GetVisibility(Universe::s_encoding_empire);
-    }
-
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(vis)
-        & BOOST_SERIALIZATION_NVP(m_fleet_id);
-
-    if (vis >= VIS_PARTIAL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(m_design_id)
-            & BOOST_SERIALIZATION_NVP(m_fighters)
-            & BOOST_SERIALIZATION_NVP(m_missiles);
-    }
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(ordered_scrapped);
-    }
-
-    if (Archive::is_loading::value)
-        m_ordered_scrapped = ordered_scrapped;
+        & BOOST_SERIALIZATION_NVP(m_design_id)
+        & BOOST_SERIALIZATION_NVP(m_fleet_id)
+        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
+        & BOOST_SERIALIZATION_NVP(m_fighters)
+        & BOOST_SERIALIZATION_NVP(m_missiles);
 }
 
 #endif // _Ship_h_

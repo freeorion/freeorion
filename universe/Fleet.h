@@ -145,56 +145,14 @@ BOOST_CLASS_VERSION(Fleet, 1)
 template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility      vis;
-    int             moving_to;
-    std::list<int>  travel_route;
-    double          travel_distance;
-    ShipIDSet       ships;
-
-    if (Archive::is_saving::value)
-        vis = GetVisibility(Universe::s_encoding_empire);
-
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(vis);
-
-    if (Archive::is_saving::value) {
-        moving_to = (vis == VIS_FULL_VISIBILITY) ? m_moving_to : m_next_system;
-        if (1 <= version) {
-            ShortenRouteToEndAtSystem(travel_route, moving_to);
-            travel_distance = m_travel_distance;
-            if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != m_travel_route.size()) {
-                if (moving_to == m_moving_to)
-                    moving_to = travel_route.back();
-                travel_distance -= GetUniverse().ShortestPath(travel_route.back(), m_travel_route.back()).second;
-            }
-        }
-
-        ships = VisibleContainedObjects(Universe::s_encoding_empire);
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(ships)
-        & BOOST_SERIALIZATION_NVP(moving_to)
+        & BOOST_SERIALIZATION_NVP(m_ships)
+        & BOOST_SERIALIZATION_NVP(m_moving_to)
+        & BOOST_SERIALIZATION_NVP(m_speed)
         & BOOST_SERIALIZATION_NVP(m_prev_system)
-        & BOOST_SERIALIZATION_NVP(m_next_system);
-
-    if (1 <= version) {
-        ar  & BOOST_SERIALIZATION_NVP(m_speed)
-            & BOOST_SERIALIZATION_NVP(travel_route)
-            & BOOST_SERIALIZATION_NVP(travel_distance);
-    }
-
-    if (Archive::is_loading::value) {
-        m_moving_to = moving_to;
-        if (1 <= version) {
-            std::swap(m_travel_route, travel_route);
-            m_travel_distance = travel_distance;
-        }
-
-        m_ships = ships;
-    }
-
-    if (vis == VIS_FULL_VISIBILITY)
-        ar  & BOOST_SERIALIZATION_NVP(m_speed);
+        & BOOST_SERIALIZATION_NVP(m_next_system)
+        & BOOST_SERIALIZATION_NVP(m_travel_route)
+        & BOOST_SERIALIZATION_NVP(m_travel_distance);
 }
 
 #endif // _Fleet_h_

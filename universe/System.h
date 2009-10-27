@@ -302,37 +302,11 @@ std::vector<T*> System::FindObjectsInOrbit(int orbit)
 template <class Archive>
 void System::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
-    int orbits = 0;
-    ObjectMultimap objects;
-    StarlaneMap starlanes_wormholes;
-
-    if (Archive::is_saving::value) {
-        vis = GetVisibility(Universe::s_encoding_empire);
-        if (vis == VIS_FULL_VISIBILITY)
-            orbits = m_orbits;
-
-        objects =               VisibleContainedObjects(Universe::s_encoding_empire);
-        starlanes_wormholes =   VisibleStarlanes(       Universe::s_encoding_empire);
-    }
-
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_star)
-        & BOOST_SERIALIZATION_NVP(orbits)
-        & BOOST_SERIALIZATION_NVP(objects)
-        & BOOST_SERIALIZATION_NVP(starlanes_wormholes);
-
-    if (Archive::is_loading::value) {
-        m_orbits = orbits;
-        m_objects = objects;
-        m_starlanes_wormholes = starlanes_wormholes;
-        //// DEBUG
-        //Logger().debugStream() << "system " << this->Name() << " deserialized objects ids:";
-        //for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        //    Logger().debugStream() << ".... " << it->second;
-        //// END DEBUG
-    }
+        & BOOST_SERIALIZATION_NVP(m_orbits)
+        & BOOST_SERIALIZATION_NVP(m_objects)
+        & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes);
 }
 
 #endif // _System_h_

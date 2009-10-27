@@ -211,33 +211,19 @@ double AsteroidBeltRadius();
 template <class Archive>
 void Planet::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
-    std::set<int> buildings;
-    if (Archive::is_saving::value) {
-        vis = GetVisibility(Universe::s_encoding_empire);
-        buildings = VisibleContainedObjects(Universe::s_encoding_empire);
-    }
-
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(PopCenter)
         & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ResourceCenter)
-        & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_size)
         & BOOST_SERIALIZATION_NVP(m_orbital_period)
         & BOOST_SERIALIZATION_NVP(m_initial_orbital_position)
         & BOOST_SERIALIZATION_NVP(m_rotational_period)
         & BOOST_SERIALIZATION_NVP(m_axial_tilt)
+        & BOOST_SERIALIZATION_NVP(m_buildings)
+        & BOOST_SERIALIZATION_NVP(m_available_trade)
         & BOOST_SERIALIZATION_NVP(m_just_conquered)
-        & BOOST_SERIALIZATION_NVP(buildings);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(m_available_trade)
-            & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized);
-    }
-
-    if (Archive::is_loading::value)
-        m_buildings = buildings;
+        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized);
 }
 
 #endif // _Planet_h_

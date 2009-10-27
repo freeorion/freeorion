@@ -157,24 +157,10 @@ const BuildingType* GetBuildingType(const std::string& name);
 template <class Archive>
 void Building::serialize(Archive& ar, const unsigned int version)
 {
-    Visibility vis;
-    bool ordered_scrapped = false;
-
-    if (Archive::is_saving::value) {
-        vis = GetVisibility(Universe::s_encoding_empire);
-    }
-
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(vis)
         & BOOST_SERIALIZATION_NVP(m_building_type)
-        & BOOST_SERIALIZATION_NVP(m_planet_id);
-
-    if (vis == VIS_FULL_VISIBILITY) {
-        ar  & BOOST_SERIALIZATION_NVP(ordered_scrapped);
-    }
-
-    if (Archive::is_loading::value)
-        m_ordered_scrapped = ordered_scrapped;
+        & BOOST_SERIALIZATION_NVP(m_planet_id)
+        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped);
 }
 
 template <class Archive>
