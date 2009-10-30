@@ -210,12 +210,12 @@ namespace {
 
         create_building =
             (str_p("createbuilding")
-             >> design_name_label >> name_p[create_building.type = arg1])
+             >> name_label >> name_p[create_building.type = arg1])
             [create_building.this_ = new_<Effect::CreateBuilding>(create_building.type)];
 
         create_ship =
             (str_p("createship")
-             >> name_label >> name_p[create_ship.design_name = arg1]
+             >> design_name_label >> name_p[create_ship.design_name = arg1]
              >> empire_label >> int_expr_p[create_ship.empire = arg1])
             [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_name, create_ship.empire)];
 
