@@ -21,6 +21,21 @@ namespace {
 }
 
 namespace {
+    struct store_ship_design_impl {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::map<std::string, ShipDesign*>& ship_designs, const T& ship_design) const {
+            if (ship_designs.find(ship_design->Name(false)) != ship_designs.end()) {
+                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + ship_design->Name(false);
+                throw std::runtime_error(error_str.c_str());
+            }
+            ship_designs[ship_design->Name(false)] = ship_design;
+        }
+    };
+
+    const phoenix::function<store_ship_design_impl> store_ship_design_;
+
     struct store_part_type_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
@@ -1158,3 +1173,112 @@ std::string ShipDesign::Dump() const
     return retval; 
 }
 
+/////////////////////////////////////
+// PredefinedShipDesignManager     //
+/////////////////////////////////////
+// static(s)
+PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = 0;
+
+PredefinedShipDesignManager::PredefinedShipDesignManager() {
+    if (s_instance)
+        throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
+
+    s_instance = this;
+
+    Logger().debugStream() << "Initializing PredefinedShipDesignManager";
+
+    std::string file_name = "premade_ship_designs.txt";
+    std::string input;
+
+    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+    if (ifs) {
+        std::getline(ifs, input, '\0');
+        ifs.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << file_name;
+        return;
+    }
+
+    using namespace boost::spirit;
+    using namespace phoenix;
+    parse_info<const char*> result =
+        parse(input.c_str(),
+              as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
+              >> end_p,
+              skip_p);
+    if (!result.full)
+        ReportError(input.c_str(), result);
+
+#ifdef OUTPUT_DESIGNS_LIST
+    Logger().debugStream() << "Predefined Ship Designs:";
+    for (iterator it = begin(); it != end(); ++it) {
+        const ShipDesign* d = it->second;
+        Logger().debugStream() << " ... " << d->Name();
+    }
+#endif
+}
+
+PredefinedShipDesignManager::~PredefinedShipDesignManager() {
+    for (std::map<std::string, ShipDesign*>::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
+        delete it->second;
+}
+
+std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
+    std::map<std::string, int> retval;
+
+    if (!empire)
+        return retval;
+
+    for (iterator it = begin(); it != end(); ++it) {
+        ShipDesign* d = it->second;
+
+        if (it->first != d->Name(false)) {
+            Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
+        }
+
+        ShipDesign* copy = new ShipDesign(d->Name(), d->Description(), empire->EmpireID(),
+                                          d->DesignedOnTurn(), d->Hull(), d->Parts(),
+                                          d->Graphic(), d->Model(), false);
+
+        int design_id = empire->AddShipDesign(copy);
+
+        if (design_id == UniverseObject::INVALID_OBJECT_ID) {
+            delete copy;
+            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
+        } else {
+            retval[it->first] = design_id;
+        }
+    }
+
+    return retval;
+}
+
+PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {
+    static PredefinedShipDesignManager manager;
+    return manager;
+}
+
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin() const {
+    return m_ship_designs.begin();
+}
+
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const {
+    return m_ship_designs.end();
+}
+
+const ShipDesign* PredefinedShipDesignManager::GetShipDesign(const std::string& name) const {
+    std::map<std::string, ShipDesign*>::const_iterator it = m_ship_designs.find(name);
+    return it != m_ship_designs.end() ? it->second : 0;
+}
+
+
+///////////////////////////////////////////////////////////
+// Free Functions                                        //
+///////////////////////////////////////////////////////////
+const PredefinedShipDesignManager& GetPredefinedShipDesignManager() {
+    return PredefinedShipDesignManager::GetPredefinedShipDesignManager();
+}
+
+const ShipDesign* GetPredefinedShipDesign(const std::string& name) {
+    return GetPredefinedShipDesignManager().GetShipDesign(name);
+}

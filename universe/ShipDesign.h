@@ -19,6 +19,7 @@ namespace Condition {
 namespace Effect {
     class EffectsGroup;
 }
+class Empire;
 
 /** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part types. */
 struct DirectFireStats
@@ -498,6 +499,48 @@ private:
     is present in the Universe (because it doesn't exist, or isn't know to this client), 0 is
     returned instead. */
 const ShipDesign* GetShipDesign(int ship_design_id);
+
+
+class PredefinedShipDesignManager {
+public:
+    typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
+
+    /** \name Accessors */ //@{
+    /** returns iterator pointing to first ship design. */
+    iterator                            begin() const;
+
+    /** returns iterator pointing one past last ship design. */
+    iterator                            end() const;
+
+    /** returns the building type with the name \a name; you should use the
+      * free function GetShipDesign() instead, mainly to save some typing. */
+    const ShipDesign*                   GetShipDesign(const std::string& name) const;
+    //@}
+
+    /** Adds designs in this manager to the specified \a empire using that
+      * Empire's AddShipDesign(ShipDesign*) function.  Returns a map from
+      * ship design name to design id in universe. */
+    std::map<std::string, int>          AddShipDesignsToEmpire(Empire* empire) const;
+
+    /** Returns the predefined ShipDesign with the name \a name.  If no such
+      * ship design exists, 0 is returned instead. */
+    static PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+
+private:
+    PredefinedShipDesignManager();
+    ~PredefinedShipDesignManager();
+
+    std::map<std::string, ShipDesign*>    m_ship_designs;
+
+    static PredefinedShipDesignManager*   s_instance;
+};
+
+/** returns the singleton predefined ship design manager type manager */
+const PredefinedShipDesignManager& GetPredefinedShipDesignManager();
+
+/** Returns the predefined ShipDesign with the name \a name.  If no such
+  * ship design exists, 0 is returned instead. */
+const ShipDesign* GetPredefinedShipDesign(const std::string& name);
 
 
 // template implementations

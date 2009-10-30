@@ -2617,6 +2617,8 @@ Creates a new planet of type %1% and size %2%
 DESC_CREATE_BUILDING
 Creates a new %1% building
 
+DESC_CREATE_SHIP
+Creates a new ship of design %1% owned by the %2% empire
 
 # Conditions
 

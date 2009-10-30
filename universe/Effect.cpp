@@ -57,8 +57,10 @@ namespace {
         return retval;
     }
 
-    /** creates a new fleet at \a system and inserts \a ship into it.  used when a ship has been moved by the MoveTo
-        effect separately from the fleet that previously held it.  all ships need to be within fleets. */
+    /** Creates a new fleet at \a system and inserts \a ship into it.  Used
+      * when a ship has been moved by the MoveTo effect separately from the
+      * fleet that previously held it.  Also used by CreateShip effect to give
+      * the new ship a fleet.  All ships need to be within fleets. */
     Fleet* CreateNewFleet(System* system, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!system || !ship)
@@ -85,9 +87,10 @@ namespace {
         return fleet;
     }
 
-    /** creates a new fleet at a specified \a x and \a y location within the Universe, and and inserts \a ship into it.
-        used when a ship has been moved by the MoveTo effect separately from the fleet that previously held it.  all
-        ships need to be within fleets. */
+    /** creates a new fleet at a specified \a x and \a y location within the
+      * Universe, and and inserts \a ship into it.  Used when a ship has been
+      * moved by the MoveTo effect separately from the fleet that previously
+      * held it.  All ships need to be within fleets. */
     Fleet* CreateNewFleet(double x, double y, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!ship)
@@ -639,7 +642,11 @@ RemoveOwner::~RemoveOwner()
 void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     int empire_id = m_empire_id->Eval(source, target);
-    assert(Empires().Lookup(empire_id));
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
+        return;
+    }
     target->RemoveOwner(empire_id);
 }
 
@@ -738,7 +745,11 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
     }
 
     Building* building = new Building(ALL_EMPIRES, m_type, location->ID());
-    assert(building);
+    if (!building) {
+        Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
+        return;
+    }
+
     int new_building_id = GetNewObjectID();
     GetUniverse().InsertID(building, new_building_id);
 
@@ -758,6 +769,75 @@ std::string CreateBuilding::Description() const
 std::string CreateBuilding::Dump() const
 {
     return DumpIndent() + "CreateBuilding type = " + m_type + "\n";
+}
+
+
+///////////////////////////////////////////////////////////
+// CreateShip                                            //
+///////////////////////////////////////////////////////////
+CreateShip::CreateShip(const std::string& predefined_ship_design_name, const ValueRef::ValueRefBase<int>* empire_id) :
+    m_design_name(predefined_ship_design_name),
+    m_empire_id(empire_id)
+{}
+
+void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    if (!target) {
+        Logger().errorStream() << "CreateShip::Execute passed null target";
+        return;
+    }
+
+    System* system = GetUniverse().Object<System>(target->SystemID());
+    if (!system) {
+        Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
+        return;
+    }
+
+    const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
+    if (!ship_design) {
+        Logger().errorStream() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
+        return;
+    }
+    int design_id = ship_design->ID();
+
+    int empire_id = m_empire_id->Eval(source, target);
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
+        return;
+    }
+
+    //// possible future modification: try to put new ship into existing fleet if
+    //// ownership with target object's fleet works out (if target is a ship)
+    //// attempt to find a
+    //Fleet* fleet = universe_object_cast<Fleet*>(target);
+    //if (!fleet)
+    //    if (const Ship* ship = universe_object_cast<const Ship*>(target))
+    //        fleet = ship->GetFleet();
+    //// etc.
+
+    Ship* ship = new Ship(empire_id, design_id);
+    if (!ship) {
+        Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
+    }
+    int new_ship_id = GetNewObjectID();
+    GetUniverse().InsertID(ship, new_ship_id);
+
+
+    CreateNewFleet(system, ship);
+}
+
+std::string CreateShip::Description() const
+{
+    std::string owner_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
+               % UserString(m_design_name)
+               % owner_str);
+}
+
+std::string CreateShip::Dump() const
+{
+    return DumpIndent() + "CreateShip predefined_ship_design_name = " + m_design_name + " empire = " + m_empire_id->Dump() + "\n";
 }
 
 
@@ -1060,7 +1140,10 @@ void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* 
     if (!empire) return;
 
     const Tech* tech = GetTech(m_tech_name);
-    if (!tech) return;
+    if (!tech) {
+        Logger().errorStream() << "SetTechAvailability::Execute couldn't get tech with name " << m_tech_name;
+        return;
+    }
 
     const std::vector<ItemSpec>& items = tech->UnlockedItems();
     for (unsigned int i = 0; i < items.size(); ++i) {

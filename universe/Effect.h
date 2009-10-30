@@ -30,6 +30,7 @@ namespace Effect {
     class RemoveOwner;
     class CreatePlanet;
     class CreateBuilding;
+    class CreateShip;
     class Destroy;
     class AddSpecial;
     class RemoveSpecial;
@@ -273,7 +274,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Creates a new Building with specified \a type at the system with specified \a location_id */
+/** Creates a new Building with specified \a type on the \a target Planet. */
 class Effect::CreateBuilding : public Effect::EffectBase
 {
 public:
@@ -284,6 +285,26 @@ public:
     virtual std::string Dump() const;
 private:
     const std::string   m_type;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Creates a new Ship with specified \a predefined_ship_design_name design
+  * from those in the list of PredefinedShipDesignManager, and owned by the
+  * empire with the specified \a empire_id */
+class Effect::CreateShip : public Effect::EffectBase
+{
+public:
+    CreateShip(const std::string& predefined_ship_design_name, const ValueRef::ValueRefBase<int>* empire_id);
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+private:
+    const std::string                   m_design_name;
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -523,6 +544,14 @@ void Effect::CreateBuilding::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_type);
+}
+
+template <class Archive>
+void Effect::CreateShip::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_design_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>

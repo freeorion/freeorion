@@ -85,6 +85,13 @@ namespace {
             member2 type;
         };
 
+        struct CreateShipClosure : boost::spirit::closure<CreateShipClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 design_name;
+            member3 empire;
+        };
+
         struct SetTechAvailabilityClosure : boost::spirit::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
         {
             member1 this_;
@@ -103,6 +110,7 @@ namespace {
         typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
         typedef rule<Scanner, CreatePlanetClosure::context_t>           CreatePlanetRule;
         typedef rule<Scanner, CreateBuildingClosure::context_t>         CreateBuildingRule;
+        typedef rule<Scanner, CreateShipClosure::context_t>             CreateShipRule;
         typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
 
         SetMeterRule            set_meter;
@@ -114,6 +122,7 @@ namespace {
         EmpireParamRule         remove_owner;
         CreatePlanetRule        create_planet;
         CreateBuildingRule      create_building;
+        CreateShipRule          create_ship;
         ConditionParamRule      move_to;
         Rule                    destroy;
         NameParamRule           victory;
@@ -127,6 +136,7 @@ namespace {
         ParamLabel              planetsize_label;
         ParamLabel              empire_label;
         ParamLabel              name_label;
+        ParamLabel              design_name_label;
         ParamLabel              destination_label;
         ParamLabel              reason_label;
     };
@@ -137,6 +147,7 @@ namespace {
         planetsize_label("size"),
         empire_label("empire"),
         name_label("name"),
+        design_name_label("designname"),
         destination_label("destination"),
         reason_label("reason")
     {
@@ -199,8 +210,14 @@ namespace {
 
         create_building =
             (str_p("createbuilding")
-             >> name_label >> name_p[create_building.type = arg1])
+             >> design_name_label >> name_p[create_building.type = arg1])
             [create_building.this_ = new_<Effect::CreateBuilding>(create_building.type)];
+
+        create_ship =
+            (str_p("createship")
+             >> name_label >> name_p[create_ship.design_name = arg1]
+             >> empire_label >> int_expr_p[create_ship.empire = arg1])
+            [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_name, create_ship.empire)];
 
         move_to =
             (str_p("moveto")
@@ -249,6 +266,7 @@ namespace {
             | remove_owner[effect_p.this_ = arg1]
             | create_planet[effect_p.this_ = arg1]
             | create_building[effect_p.this_ = arg1]
+            | create_ship[effect_p.this_ = arg1]
             | move_to[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
             | victory[effect_p.this_ = arg1]

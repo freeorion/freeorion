@@ -124,13 +124,13 @@ public:
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
       * free function GetBuildingType() instead, mainly to save some typing. */
-    const BuildingType* GetBuildingType(const std::string& name) const;
+    const BuildingType*         GetBuildingType(const std::string& name) const;
 
     /** iterator to the first building type */
-    iterator begin() const;
+    iterator                    begin() const;
 
     /** iterator to the last + 1th building type */
-    iterator end() const;
+    iterator                    end() const;
 
     /** returns the instance of this singleton class; you should use the free function GetBuildingTypeManager() instead */
     static BuildingTypeManager& GetBuildingTypeManager();
@@ -148,8 +148,8 @@ private:
 /** returns the singleton building type manager */
 BuildingTypeManager& GetBuildingTypeManager();
 
-/** Returns the BuildingType specification object for a building of type \a name.  If no such BuildingType
-    exists, 0 is returned instead. */
+/** Returns the BuildingType specification object for a building of
+  * type \a name.  If no such BuildingType exists, 0 is returned instead. */
 const BuildingType* GetBuildingType(const std::string& name);
 
 
