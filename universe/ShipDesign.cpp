@@ -1265,9 +1265,9 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
             Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
         }
 
-        ShipDesign* copy = new ShipDesign(d->Name(), d->Description(), empire->EmpireID(),
+        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(), empire->EmpireID(),
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
-                                          d->Graphic(), d->Model(), false);
+                                          d->Graphic(), d->Model(), true);
 
         int design_id = empire->AddShipDesign(copy);    // also inserts design into Universe
 
@@ -1296,7 +1296,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
 
         ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(), ALL_EMPIRES,
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
-                                          d->Graphic(), d->Model(), false);
+                                          d->Graphic(), d->Model(), true);
 
         if (!copy) {
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << d->Name();
@@ -1319,7 +1319,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
 
             if (DesignsTheSame(existing_design_ref, design_ref)) {
                 Logger().debugStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found there already is an exact duplicate of a design to be added, so is not re-adding it";
-                m_design_generic_ids[design_ref.Name()] = existing_design_ref.ID();
+                m_design_generic_ids[design_ref.Name(false)] = existing_design_ref.ID();
                 already_added = true;
                 break;
             }
@@ -1347,7 +1347,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
             return m_design_generic_ids;
         }
 
-        m_design_generic_ids[design_ref.Name()] = new_design_id;
+        m_design_generic_ids[design_ref.Name(false)] = new_design_id;
     }
 
     return m_design_generic_ids;
