@@ -130,7 +130,7 @@ namespace {
 
             // if group has no pp available, can't build anything this turn
             if (group_pp_available <= 0.0) {
-                Logger().debugStream() << "no pp available in group";
+                //Logger().debugStream() << "no pp available in group";
                 queue_element.allocated_pp = 0.0;
                 continue;
             }

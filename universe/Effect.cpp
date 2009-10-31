@@ -799,6 +799,10 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
     int design_id = ship_design->ID();
+    if (design_id == -1) {
+        Logger().errorStream() << "CreateShip::Execute got design with id -1 from premade ship design name " << m_design_name;
+        return;
+    }
 
     int empire_id = m_empire_id->Eval(source, target);
     const Empire* empire = Empires().Lookup(empire_id);
@@ -819,6 +823,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     Ship* ship = new Ship(empire_id, design_id);
     if (!ship) {
         Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
+        return;
     }
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);

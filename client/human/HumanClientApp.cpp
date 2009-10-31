@@ -546,37 +546,38 @@ void HumanClientApp::Autosave(bool new_game)
             }
         }
 
-        std::set<std::string> similar_save_files;
-        std::set<std::string> old_save_files;
-        std::string extension = m_single_player_game ? ".sav" : ".mps";
         namespace fs = boost::filesystem;
         fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
-        fs::directory_iterator end_it;
-        for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-            if (!fs::is_directory(*it)) {
-                std::string filename = it->filename();
-                if (!new_game &&
-                    filename.find(extension) == filename.size() - extension.size() && 
-                    filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {
-                    similar_save_files.insert(filename);
-                } else if (filename.find("AS_") == 0) {
-                    // this simple condition means that at the beginning of an autosave run, we'll clear out all old autosave files,
-                    // even if they don't match the current empire name, or if they are MP vs. SP games, or whatever
-                    old_save_files.insert(filename);
-                }
-            }
-        }
 
-        for (std::set<std::string>::iterator it = old_save_files.begin(); it != old_save_files.end(); ++it) {
-            fs::remove(save_dir / *it);
-        }
+        //std::set<std::string> similar_save_files;
+        //std::set<std::string> old_save_files;
+        //std::string extension = m_single_player_game ? ".sav" : ".mps";
+        //fs::directory_iterator end_it;
+        //for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
+        //    if (!fs::is_directory(*it)) {
+        //        std::string filename = it->filename();
+        //        if (!new_game &&
+        //            filename.find(extension) == filename.size() - extension.size() && 
+        //            filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {
+        //            similar_save_files.insert(filename);
+        //        } else if (filename.find("AS_") == 0) {
+        //            // this simple condition means that at the beginning of an autosave run, we'll clear out all old autosave files,
+        //            // even if they don't match the current empire name, or if they are MP vs. SP games, or whatever
+        //            old_save_files.insert(filename);
+        //        }
+        //    }
+        //}
 
-        unsigned int max_autosaves = GetOptionsDB().Get<int>("autosave.saves");
-        std::set<std::string>::reverse_iterator rit = similar_save_files.rbegin();
-        std::advance(rit, std::min(similar_save_files.size(), (size_t)(max_autosaves - 1)));
-        for (; rit != similar_save_files.rend(); ++rit) {
-            fs::remove(save_dir / *rit);
-        }
+        //for (std::set<std::string>::iterator it = old_save_files.begin(); it != old_save_files.end(); ++it) {
+        //    fs::remove(save_dir / *it);
+        //}
+
+        //unsigned int max_autosaves = GetOptionsDB().Get<int>("autosave.saves");
+        //std::set<std::string>::reverse_iterator rit = similar_save_files.rbegin();
+        //std::advance(rit, std::min(similar_save_files.size(), (size_t)(max_autosaves - 1)));
+        //for (; rit != similar_save_files.rend(); ++rit) {
+        //    fs::remove(save_dir / *rit);
+        //}
 
         SaveGame((save_dir / save_filename).file_string());
     }

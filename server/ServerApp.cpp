@@ -202,11 +202,12 @@ void ServerApp::CleanupAIs()
 void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection)
 {
     if (msg.SendingPlayer() != player_connection->ID()) {
-        m_log_category.errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs "
-            "from the sending player's ID.  Terminating connection.";
+        Logger().errorStream() << "ServerApp::HandleMessage : Received an message with a sender ID that differs from the sending player's ID.  Terminating connection.";
         m_networking.Disconnect(player_connection);
         return;
     }
+
+    Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
     case Message::HOST_SP_GAME:          m_fsm.process_event(HostSPGame(msg, player_connection)); break;
@@ -230,8 +231,7 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::DEBUG:                 break;
 #endif
     default:
-        m_log_category.errorStream() << "ServerApp::HandleMessage : Received an unknown message type \""
-                                     << msg.Type() << "\".  Terminating connection.";
+        Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);
         break;
     }
@@ -374,6 +374,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                              const std::map<int, int>& player_id_to_save_game_data_index,
                              std::set<int>& unused_save_game_data, boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
+    Logger().debugStream() << "ServerApp::LoadGameInit";
     assert(!player_save_game_data.empty());
 
     m_turn_sequence.clear();
@@ -508,6 +509,7 @@ void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
 
 bool ServerApp::AllOrdersReceived()
 {
+    Logger().debugStream() << "ServerApp::AllOrdersReceived()";
     // Loop through to find empire ID and check for valid orders pointer
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         if (!it->second)
@@ -534,6 +536,7 @@ void ServerApp::ProcessTurns()
     EmpireManager& empires = Empires();
 
 
+    Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
     // Now all orders, then process turns
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         // broadcast UI message to all players
@@ -551,6 +554,7 @@ void ServerApp::ProcessTurns()
         }
     }
 
+    Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
     // filter FleetColonizeOrder for later processing
     typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
     ColonizeOrderMap colonize_order_map;
@@ -631,12 +635,7 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // process movement phase
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
-    }
-
-
+    Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
     // scrap orders
     std::vector<int> objects_to_scrap;
     for (Universe::iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
@@ -660,7 +659,13 @@ void ServerApp::ProcessTurns()
     }
 
 
+    Logger().debugStream() << "ServerApp::ProcessTurns movement";
+    // process movement phase
+
     // fleet movement
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::FLEET_MOVEMENT, -1));
+    }
     for (Universe::const_iterator it = m_universe.begin(); it != m_universe.end(); ++it) {
         // save for possible SitRep generation after moving...
         const Fleet* fleet = m_universe.Object<Fleet>(it->first);
@@ -692,6 +697,7 @@ void ServerApp::ProcessTurns()
     m_universe.UpdateEmpireObjectVisibilities();
 
 
+    Logger().debugStream() << "ServerApp::ProcessTurns combat";
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it =
              m_networking.established_begin();
