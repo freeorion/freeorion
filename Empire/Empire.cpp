@@ -451,7 +451,7 @@ ProductionQueue::ProductionItem::ProductionItem()
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
     build_type(build_type_),
     name(name_),
-    design_id(UniverseObject::INVALID_OBJECT_ID)
+    design_id(ShipDesign::INVALID_DESIGN_ID)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_) :
@@ -1172,7 +1172,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
-    if (ProductionCostAndTime(build_type, design_id) == std::make_pair(-1.0, -1)) {
+    if (ProductionCostAndTime(build_type, design_id) == std::make_pair(-1.0, ShipDesign::INVALID_DESIGN_ID)) {
         // item is unknown, unavailable, or invalid.
         return false;
     }
@@ -2107,7 +2107,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
     // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
     int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
 
-    if (new_design_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (new_design_id == ShipDesign::INVALID_DESIGN_ID) {
         Logger().errorStream() << "Empire::AddShipDesign Unable to get new design id";
         return new_design_id;
     }

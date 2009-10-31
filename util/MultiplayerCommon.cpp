@@ -252,7 +252,7 @@ PlayerSetupData::PlayerSetupData() :
     m_player_id(-1),
     m_empire_name("Humans"),
     m_empire_color(GG::Clr(127, 127, 127, 255)),
-    m_save_game_empire_id(-1)
+    m_save_game_empire_id(ALL_EMPIRES)
 {}
 
 
@@ -302,7 +302,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 ////////////////////////////////////////////////
 PlayerInfo::PlayerInfo() :
     name(""),
-    empire_id(-1),
+    empire_id(ALL_EMPIRES),
     AI(false),
     host(false)
 {}

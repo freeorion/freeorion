@@ -150,7 +150,7 @@ const std::size_t CombatFighter::FORMATION_SIZE = 5;
 CombatFighter::CombatFighter() :
     m_proximity_token(0),
     m_leader(false),
-    m_empire_id(-1),
+    m_empire_id(ALL_EMPIRES),
     m_id(-1),
     m_mission_queue(),
     m_mission_weight(0.0),

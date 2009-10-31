@@ -14,7 +14,7 @@
 
 Missile::Missile() :
     m_proximity_token(0),
-    m_empire_id(-1),
+    m_empire_id(ALL_EMPIRES),
     m_part_name(),
     m_last_steer(),
     m_destination(),

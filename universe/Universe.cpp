@@ -436,8 +436,8 @@ int         Universe::s_encoding_empire = ALL_EMPIRES;
 
 Universe::Universe() :
     m_graph_impl(new GraphImpl),
-    m_last_allocated_object_id(UniverseObject::INVALID_OBJECT_ID),
-    m_last_allocated_design_id(UniverseObject::INVALID_OBJECT_ID)
+    m_last_allocated_object_id(-1), // this is conicidentally equal to UniverseObject::INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
+    m_last_allocated_design_id(-1)  // same, but for ShipDesign::INVALID_DESIGN_ID
 {}
 
 Universe::~Universe()
@@ -519,6 +519,8 @@ const UniverseObject* Universe::DestroyedObject(int id) const
 
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
 {
+    if (ship_design_id == ShipDesign::INVALID_DESIGN_ID)
+        return 0;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
     return (it != m_ship_designs.end() ? it->second : 0);
 }
@@ -644,14 +646,14 @@ bool Universe::InsertID(UniverseObject* obj, int id)
 
 int Universe::InsertShipDesign(ShipDesign* ship_design)
 {
-    int retval = UniverseObject::INVALID_OBJECT_ID;
+    int retval = ShipDesign::INVALID_DESIGN_ID;
     if (ship_design) {
         if (m_last_allocated_design_id + 1 < UniverseObject::MAX_ID) {
             m_ship_designs[++m_last_allocated_design_id] = ship_design;
             retval = m_last_allocated_design_id;
         } else { // we'll probably never execute this branch, considering how many IDs are available
             // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+            int last_id_seen = ShipDesign::INVALID_DESIGN_ID;
             for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
                 if (1 < it->first - last_id_seen) {
                     m_ship_designs[last_id_seen + 1] = ship_design;
@@ -668,12 +670,10 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
 {
     bool retval = false;
 
-    if (ship_design) {
-        if (id < UniverseObject::MAX_ID) {
-            ship_design->SetID(id);
-            m_ship_designs[id] = ship_design;
-            retval = true;
-        }
+    if (ship_design  &&  id != ShipDesign::INVALID_DESIGN_ID  &&  id < ShipDesign::MAX_ID) {
+        ship_design->SetID(id);
+        m_ship_designs[id] = ship_design;
+        retval = true;
     }
     return retval;
 }
@@ -1865,7 +1865,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
             Ship* ship = universe_object_cast<Ship*>(it->second);
             if (ship) {
                 int design_id = ship->DesignID();
-                if (design_id != UniverseObject::INVALID_OBJECT_ID) {
+                if (design_id != ShipDesign::INVALID_DESIGN_ID) {
                     ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);
                     if (design_it != m_ship_designs.end())
                         designs_to_serialize[design_id] = design_it->second;
@@ -2883,6 +2883,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateHomeworlds(players + ai_players, homeworlds);
     NamePlanets();
     GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
+
+    GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 

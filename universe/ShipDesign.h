@@ -451,6 +451,9 @@ public:
     ///< returns true if the \a design passed is a valid ShipDesign in terms of its hull and parts.  does not check any other member variables
     static bool                     ValidDesign(const ShipDesign& design);
 
+    static const int                INVALID_DESIGN_ID;
+    static const int                MAX_ID;
+
 private:
     void BuildStatCaches();
 
@@ -495,9 +498,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Returns the ShipDesign specification object with id \a ship_design_id.  If no such ShipDesign
-    is present in the Universe (because it doesn't exist, or isn't know to this client), 0 is
-    returned instead. */
+/** Returns the ShipDesign specification object with id \a ship_design_id.  If
+  * no such ShipDesign is present in the Universe (because it doesn't exist,
+  * or isn't know to this client), 0 is returned instead. */
 const ShipDesign* GetShipDesign(int ship_design_id);
 
 
@@ -506,21 +509,34 @@ public:
     typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
 
     /** \name Accessors */ //@{
-    /** returns iterator pointing to first ship design. */
+    /** Returns iterator pointing to first ship design. */
     iterator                            begin() const;
 
-    /** returns iterator pointing one past last ship design. */
+    /** Returns iterator pointing one past last ship design. */
     iterator                            end() const;
 
-    /** returns the building type with the name \a name; you should use the
-      * free function GetShipDesign() instead, mainly to save some typing. */
-    const ShipDesign*                   GetShipDesign(const std::string& name) const;
+    /** Returns ship design id in the universe under which the premade ship
+      * design with the indicated name was stored without an empire creator.
+      * Most designs have an empire that created them, including designs added
+      * to empires with AddShipDesignsToEmpire(), but designs added to the
+      * universe with AddShipDesignsToUniverse() don't have an empire creator
+      * set, and aren't tracked in an Empire object, so to get those generic
+      * creatorless designs, this function can be used. */
+    int                                 GenericUniverseDesignID(const std::string& name) const;
     //@}
 
     /** Adds designs in this manager to the specified \a empire using that
-      * Empire's AddShipDesign(ShipDesign*) function.  Returns a map from
+      * Empire's AddShipDesign(ShipDesign*) function.  Designs are added with
+      * the specified empire as the creator of the design, so each empire
+      * for which designs are added actually creates a separate copy of the
+      * design, with different designed-by empire for each  Returns a map from
       * ship design name to design id in universe. */
     std::map<std::string, int>          AddShipDesignsToEmpire(Empire* empire) const;
+
+    /** Adds designs in this manager to the universe with the design creator
+      * left as no empire.  Returns a map from ship design name to design id in
+      * the universe. */
+    const std::map<std::string, int>&   AddShipDesignsToUniverse() const;
 
     /** Returns the predefined ShipDesign with the name \a name.  If no such
       * ship design exists, 0 is returned instead. */
@@ -530,9 +546,10 @@ private:
     PredefinedShipDesignManager();
     ~PredefinedShipDesignManager();
 
-    std::map<std::string, ShipDesign*>    m_ship_designs;
+    std::map<std::string, ShipDesign*>  m_ship_designs;
+    mutable std::map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
 
-    static PredefinedShipDesignManager*   s_instance;
+    static PredefinedShipDesignManager* s_instance;
 };
 
 /** returns the singleton predefined ship design manager type manager */

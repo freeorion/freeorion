@@ -83,7 +83,7 @@ const double CombatShip::NON_PD_VS_FIGHTER_FACTOR = 1.0 / 50.0;
 
 CombatShip::CombatShip() :
     m_proximity_token(0),
-    m_empire_id(-1),
+    m_empire_id(ALL_EMPIRES),
     m_ship(),
     m_mission_queue(),
     m_mission_weight(0.0),

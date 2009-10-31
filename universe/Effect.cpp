@@ -799,13 +799,13 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
     int design_id = ship_design->ID();
-    if (design_id == -1) {
+    if (design_id == ShipDesign::INVALID_DESIGN_ID) {
         Logger().errorStream() << "CreateShip::Execute got design with id -1 from premade ship design name " << m_design_name;
         return;
     }
 
     int empire_id = m_empire_id->Eval(source, target);
-    const Empire* empire = Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
         return;
@@ -825,6 +825,8 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
         return;
     }
+    ship->Rename(empire->NewShipName());
+
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);
 
