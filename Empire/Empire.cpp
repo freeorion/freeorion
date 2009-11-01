@@ -42,10 +42,16 @@ namespace {
         for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
             // get details on what is being researched...
             const Tech* tech = it->tech;
+            if (!tech) {
+                Logger().errorStream() << "SetTechQueueElementSpending found null tech on research queue?!";
+                continue;
+            }
             const std::string name = tech->Name();
             std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(name);
-            if (status_it == research_status.end())
-                throw std::runtime_error("SetTechQueueElementSpending couldn't find tech!");
+            if (status_it == research_status.end()) {
+                Logger().errorStream() << "SetTechQueueElementSpending couldn't find tech with name " << name << " in the research status map";
+                continue;
+            }
             bool researchable = false;
             if (status_it->second == TS_RESEARCHABLE) researchable = true;
 
@@ -97,8 +103,10 @@ namespace {
         //for (ProductionQueue::QueueType::const_iterator it = queue.begin(); it != queue.end(); ++it)
         //    Logger().debugStream() << " ... name: " << it->item.name << "id: " << it->item.design_id << " allocated: " << it->allocated_pp << " locationid: " << it->location << " ordered: " << it->ordered;
 
-        assert(production_status.size() == queue.size());
-        assert(production_status.size() == queue_element_resource_sharing_system_groups.size());
+        if (production_status.size() != queue.size() || production_status.size() != queue_element_resource_sharing_system_groups.size()) {
+            Logger().errorStream() << "SetProdQueueElementSpending status size and queue size or sharing groups size inconsistent. aborting";
+            return;
+        }
 
         projects_in_progress = 0;
         allocated_pp.clear();
@@ -349,6 +357,10 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].tech;
+                if (!tech) {
+                    Logger().errorStream() << "ResearchQueue::Update found null tech on future simulated research queue.  skipping.";
+                    continue;
+                }
                 double& status = sim_research_progress[tech->Name()];
                 status += sim_queue[i].allocated_rp;
                 if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
@@ -364,7 +376,9 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             // that might now be researched
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
                 const Tech* tech = sim_queue[i].tech;
-                const std::string tech_name = tech->Name();
+                if (!tech) {
+                    continue;   // already output error message above
+                }                const std::string tech_name = tech->Name();
                 // if tech is currently not researchable, this is because one or more of its prereqs is not researched
                 if (sim_tech_status_map[tech_name] == TS_UNRESEARCHABLE) {
                     const std::set<std::string>& prereqs = tech->Prerequisites();
@@ -2563,10 +2577,12 @@ void Empire::UpdateTradeSpending()
     Universe::ObjectVec buildings = GetUniverse().FindObjects(OwnedVisitor<Building>(m_id));
     for (Universe::ObjectVec::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
     {
-        Building *building = universe_object_cast<Building*>(*it);
+        Building* building = universe_object_cast<Building*>(*it);
         if (!building) continue;
+        const BuildingType* building_type = building->GetBuildingType();
+        if (!building_type) continue;
         //if (building->Operating())
-            m_maintenance_total_cost += building->GetBuildingType()->MaintenanceCost();
+            m_maintenance_total_cost += building_type->MaintenanceCost();
     }
     m_resource_pools[RE_TRADE]->ChangedSignal();
 }

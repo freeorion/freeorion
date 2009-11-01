@@ -1015,8 +1015,10 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     // apply hull location conditions to potential location
     const HullType* hull = GetHull();
-    if (!hull)
-        throw std::runtime_error("ShipDesign couldn't get its own hull...?");
+    if (!hull) {
+        Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
+        return false;
+    }
     hull->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
     if (locations.empty())
         return false;
@@ -1028,8 +1030,10 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
             continue;       // empty slots don't limit build location
 
         const PartType* part = GetPartType(part_name);
-        if (!part)
-            throw std::runtime_error("ShipDesign couldn't get one of its own part: '" + part_name + "'");
+        if (!part) {
+            Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
+            return false;
+            }
         part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
         if (locations.empty())
             return false;
