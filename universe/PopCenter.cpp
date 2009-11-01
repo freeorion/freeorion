@@ -123,7 +123,7 @@ double PopCenter::FutureHealthGrowth() const
 {
     double max = GetMeter(METER_HEALTH)->Max();
     double cur = GetMeter(METER_HEALTH)->Current();
-    return std::min(max - cur, cur * (((max + 1.0) - cur) / (max + 1.0)));
+    return std::min(max - cur, 1.0);
 }
 
 double PopCenter::ProjectedCurrentMeter(MeterType type) const
@@ -202,7 +202,7 @@ void PopCenter::PopGrowthProductionResearchPhase()
     if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
         pop->SetCurrent(new_pop);
 
-        double health_delta = 1.0;
+        double health_delta = FutureHealthGrowth();
         health->AdjustCurrent(health_delta);
     } else {
         // if population falls below threshold, fall completely to zero.
