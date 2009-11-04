@@ -149,7 +149,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::se
         std::string player_name = "AI_" + boost::lexical_cast<std::string>(ai_client_base_number + i);
         expected_ai_player_names.insert(player_name);
         std::vector<std::string> args;
-        args.push_back(AI_CLIENT_EXE);
+        args.push_back("\"" + AI_CLIENT_EXE + "\"");
         args.push_back(player_name);
         args.push_back("--resource-dir");
         args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");

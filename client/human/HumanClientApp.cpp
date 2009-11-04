@@ -189,7 +189,8 @@ void HumanClientApp::StartServer()
 #else
     const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").file_string();
 #endif
-    std::vector<std::string> args(1, SERVER_CLIENT_EXE);
+    std::vector<std::string> args;
+    args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
     args.push_back("--log-level");
