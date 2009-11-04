@@ -79,8 +79,19 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     m_object(object),
     m_name(name)
 {
-    if (name == "")
-        throw std::invalid_argument("RenameOrder::RenameOrder() : Attempted to name an object \"\".");
+    const Universe& universe = GetUniverse();
+    const UniverseObject* obj = universe.Object(object);
+    if (!obj) {
+        Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
+        return;
+    }
+
+    if (m_name == "") {
+        Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to name an object \"\".";
+        // make order do nothing
+        m_object = UniverseObject::INVALID_OBJECT_ID;
+        return;
+    }
 }
 
 void RenameOrder::ExecuteImpl() const
@@ -89,13 +100,22 @@ void RenameOrder::ExecuteImpl() const
 
     UniverseObject* obj = GetUniverse().Object(m_object);
 
+    if (!obj) {
+        Logger().errorStream() << "Attempted to rename nonexistant object with id " << m_object;
+        return;
+    }
+
     // verify that empire specified in order owns specified object
-    if (!obj->WhollyOwnedBy(EmpireID()))
-        throw std::runtime_error("Empire specified in rename order does not own specified object.");
+    if (!obj->WhollyOwnedBy(EmpireID())) {
+        Logger().errorStream() << "Empire specified in rename order does not own specified object.";
+        return;
+    }
 
     // disallow the name "", since that denotes an unknown object
-    if (m_name == "")
-        throw std::runtime_error("Name \"\" specified in rename order is invalid.");
+    if (m_name == "") {
+        Logger().errorStream() << "Name \"\" specified in rename order is invalid.";
+        return;
+    }
 
     obj->Rename(m_name);
 }
@@ -167,8 +187,10 @@ void NewFleetOrder::ExecuteImpl() const
     }
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        if (!universe.Object(m_ship_ids[i])->OwnedBy(EmpireID()))
-            throw std::runtime_error("Empire attempted to create a new fleet with ships from another's fleet.");
+        if (!universe.Object(m_ship_ids[i])->OwnedBy(EmpireID())) {
+            Logger().errorStream() << "Empire attempted to create a new fleet with ships from another's fleet.";
+            return;
+        }
         fleet->AddShip(m_ship_ids[i]);
     }
 }
@@ -177,27 +199,48 @@ void NewFleetOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // FleetMoveOrder
 ////////////////////////////////////////////////
-FleetMoveOrder::FleetMoveOrder() : 
+FleetMoveOrder::FleetMoveOrder() :
     Order(),
     m_fleet(UniverseObject::INVALID_OBJECT_ID),
     m_start_system(UniverseObject::INVALID_OBJECT_ID),
     m_dest_system(UniverseObject::INVALID_OBJECT_ID)
 {}
 
-FleetMoveOrder::FleetMoveOrder(int empire, int fleet, int start_system, int dest_system) :
+FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, int dest_system_id) :
     Order(empire),
-    m_fleet(fleet),
-    m_start_system(start_system),
-    m_dest_system(dest_system)
+    m_fleet(fleet_id),
+    m_start_system(start_system_id),
+    m_dest_system(dest_system_id)
 {
-    std::pair<std::list<int>, double> short_path = GetUniverse().ShortestPath(start_system, dest_system, empire);
+    const Universe& universe = GetUniverse();
+
+    // perform sanity checks
+    const Fleet* fleet = universe.Object<Fleet>(FleetID());
+    if (!fleet) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
+        return;
+    }
+
+    const System* destination_system = universe.Object<System>(DestinationSystemID());
+    if (!destination_system) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists";
+        return;
+    }
+
+    // verify that empire specified in order owns specified fleet
+    if ( !fleet->OwnedBy(EmpireID()) ) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
+        return;
+    }
+
+    std::pair<std::list<int>, double> short_path = GetUniverse().ShortestPath(m_start_system, m_dest_system, empire);
 
     m_route.clear();
     std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
 
     // ensure a zero-length (invalid) route is not requested / sent to a fleet
     if (m_route.empty())
-        m_route.push_back(start_system);
+        m_route.push_back(m_start_system);
 
 #if DEBUG_FLEET_MOVE_ORDER
     std::cerr << "FleetMoveOrder(int empire, int fleet, int start_syste, int dest_system) : " << std::endl
@@ -219,31 +262,40 @@ void FleetMoveOrder::ExecuteImpl() const
     System* destination_system = universe.Object<System>(DestinationSystemID());
 
     // perform sanity checks
-    if (!fleet) throw std::runtime_error("Non-fleet object ID specified in fleet move order.");
-    if (!destination_system) throw std::runtime_error("Non-system destination ID specified in fleet move order.");
+    if (!fleet) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
+        return;
+    }
+    if (!destination_system) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists";
+        return;
+    }
 
 
     // verify that empire specified in order owns specified fleet
-    if ( !fleet->OwnedBy(EmpireID()) )
-        throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
-                                 " specified in fleet order does not own specified fleet " + boost::lexical_cast<std::string>(FleetID()) + ".");
+    if ( !fleet->OwnedBy(EmpireID()) ) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
+        return;
+    }
 
 
     // verify fleet route first system
     int fleet_sys_id = fleet->SystemID();
     if (fleet_sys_id != UniverseObject::INVALID_OBJECT_ID) {
         // fleet is in a system.  Its move path should also start from that system.
-        if (fleet_sys_id != m_start_system)
-            throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
-                                     " ordered a fleet to move from a system with id " + boost::lexical_cast<std::string>(m_start_system) +
-                                     " that it is not at.  Fleet is located at system with id " + boost::lexical_cast<std::string>(fleet_sys_id) + ".");
+        if (fleet_sys_id != m_start_system) {
+            Logger().errorStream() << "Empire " << EmpireID() << " ordered a fleet to move from a system with id " << m_start_system <<
+                                     " that it is not at.  Fleet is located at system with id " << fleet_sys_id;
+            return;
+        }
     } else {
         // fleet is not in a system.  Its move path should start from the next system it is moving to.
         int next_system = fleet->NextSystemID();
-        if (next_system != m_start_system)
-            throw std::runtime_error("Empire " + boost::lexical_cast<std::string>(EmpireID()) +
-                                     " ordered a fleet to move starting from a system with id " + boost::lexical_cast<std::string>(m_start_system) +
-                                     ", but the fleet's next destination is system with id " + boost::lexical_cast<std::string>(next_system) + ".");
+        if (next_system != m_start_system) {
+            Logger().errorStream() << "Empire " << EmpireID() << " ordered a fleet to move starting from a system with id " << m_start_system <<
+                                     ", but the fleet's next destination is system with id " << next_system;
+            return;
+        }
     }
 
 
@@ -293,19 +345,25 @@ void FleetTransferOrder::ExecuteImpl() const
     Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
 
     // sanity check
-    if (!source_fleet || !target_fleet)
-        throw std::runtime_error("Illegal fleet id specified in fleet merge order.");
+    if (!source_fleet || !target_fleet) {
+        Logger().errorStream() << "Illegal fleet id specified in fleet merge order.";
+        return;
+    }
 
     // verify that empire is not trying to take ships from somebody else's fleet
-    if ( !source_fleet->OwnedBy(EmpireID()) )
-        throw std::runtime_error("Empire attempted to merge ships from another's fleet.");
+    if ( !source_fleet->OwnedBy(EmpireID()) ) {
+        Logger().errorStream() << "Empire attempted to merge ships from another's fleet.";
+        return;
+    }
 
     // verify that empire cannot merge ships into somebody else's fleet.
     // this is just an additional security measure.  IT could be removed to
     // allow 'donations' of ships to other players, provided the server
     // verifies IDs of the Empires issuing the orders.
-    if ( !target_fleet->OwnedBy(EmpireID()) )
-        throw std::runtime_error("Empire attempted to merge ships into another's fleet.");
+    if ( !target_fleet->OwnedBy(EmpireID()) ) {
+        Logger().errorStream() << "Empire attempted to merge ships into another's fleet.";
+        return;
+    }
 
 
     // iterate down the ship vector and add each one to the fleet
@@ -315,13 +373,17 @@ void FleetTransferOrder::ExecuteImpl() const
         // find the ship, verify that ID is valid
         int curr = (*itr);
         Ship* a_ship = universe.Object<Ship>(curr);
-        if (!a_ship)
-            throw std::runtime_error("Illegal ship id specified in fleet merge order.");
+        if (!a_ship) {
+            Logger().errorStream() << "Illegal ship id specified in fleet merge order.";
+            return;
+        }
 
         // figure out what fleet this ship is coming from -- verify its the one we
         // said it comes from
-        if (a_ship->FleetID() != SourceFleet())
-            throw std::runtime_error("Ship in merge order is not in specified source fleet.");
+        if (a_ship->FleetID() != SourceFleet()) {
+            Logger().errorStream() << "Ship in merge order is not in specified source fleet.";
+            return;
+        }
 
         // send the ship to its new fleet
         //a_ship->SetFleetID(DestinationFleet());  // redundant: AddShip resets the Fleet ID of ships it adds
@@ -425,22 +487,27 @@ void FleetColonizeOrder::ExecuteImpl() const
     Fleet* fleet = universe.Object<Fleet>(ship->FleetID());
 
     // verify that empire issuing order owns specified fleet
-    if (!fleet->OwnedBy(EmpireID()))
-        throw std::runtime_error("Empire attempted to issue colonize order to another's fleet.");
+    if (!fleet->OwnedBy(EmpireID())) {
+        Logger().errorStream() << "Empire attempted to issue colonize order to another's fleet.";
+        return;
+    }
 
     // verify that planet exists and is un-occupied.
     Planet* planet = universe.Object<Planet>(m_planet);
-    if (!planet)
-        throw std::runtime_error("Colonization order issued with invalid planet id.");
+    if (!planet) {
+        Logger().errorStream() << "Colonization order issued with invalid planet id.";
+        return;
+    }
 
-    if (!planet->Unowned())
-        throw std::runtime_error("Colonization order issued for owned planet.");    
+    if (!planet->Unowned()) {
+        Logger().errorStream() << "Colonization order issued for owned planet.";
+        return;
+    }
 
     // verify that planet is in same system as the fleet
-    if (planet->SystemID() != fleet->SystemID() ||
-        planet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
-        throw std::runtime_error("Fleet specified in colonization order is not in "
-                                 "specified system.");
+    if (planet->SystemID() != fleet->SystemID() || planet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "Fleet specified in colonization order is not in specified system.";
+        return;
     }
 
     planet->SetIsAboutToBeColonized(true);
@@ -489,8 +556,10 @@ bool FleetColonizeOrder::UndoImpl() const
         }
 
         fleet = new Fleet(new_fleet_name, system->X(), system->Y(), EmpireID());
-        if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID)
-            throw std::runtime_error("FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID");
+        if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID";
+            return false;
+        }
         universe.InsertID(fleet, new_fleet_id);
         fleet->AddShip(ship->ID());
         system->Insert(fleet);
@@ -523,11 +592,15 @@ void DeleteFleetOrder::ExecuteImpl() const
 
     Fleet* fleet = GetUniverse().Object<Fleet>(FleetID());
 
-    if (!fleet)
-        throw std::runtime_error("Illegal fleet id specified in fleet delete order.");
+    if (!fleet) {
+        Logger().errorStream() << "Illegal fleet id specified in fleet delete order.";
+        return;
+    }
 
-    if (!fleet->OwnedBy(EmpireID()))
-        throw std::runtime_error("Empire attempted to issue deletion order to another's fleet.");
+    if (!fleet->OwnedBy(EmpireID())) {
+        Logger().errorStream() << "Empire attempted to issue deletion order to another's fleet.";
+        return;
+    }
 
     // this needs to be a no-op, instead of an exception case, because of its interaction with cancelled colonize orders
     // that cause a fleet to be deleted, then silently reconsistuted
@@ -560,11 +633,15 @@ void ChangeFocusOrder::ExecuteImpl() const
 
     Planet* planet = GetUniverse().Object<Planet>(PlanetID());
 
-    if (!planet)
-        throw std::runtime_error("Illegal planet id specified in change planet focus order.");
+    if (!planet) {
+        Logger().errorStream() << "Illegal planet id specified in change planet focus order.";
+        return;
+    }
 
-    if (!planet->OwnedBy(EmpireID()))
-        throw std::runtime_error("Empire attempted to issue change planet focus to another's planet.");
+    if (!planet->OwnedBy(EmpireID())) {
+        Logger().errorStream() << "Empire attempted to issue change planet focus to another's planet.";
+        return;
+    }
 
     m_primary ? planet->SetPrimaryFocus(m_focus) : planet->SetSecondaryFocus(m_focus);
 
@@ -633,8 +710,11 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, con
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_SHIP)
-        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id");
+    if (build_type == BT_SHIP) {
+        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_SHIP with a name, not a design id";
+        build_type = INVALID_BUILD_TYPE;
+        return;
+    }
 }
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int design_id, int number, int location) :
@@ -648,8 +728,11 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     m_new_quantity(INVALID_QUANTITY),
     m_new_index(INVALID_INDEX)
 {
-    if (build_type == BT_BUILDING)
-        throw std::invalid_argument("Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name");
+    if (build_type == BT_BUILDING) {
+        Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
+        build_type = INVALID_BUILD_TYPE;
+        return;
+    }
 }
 
 
@@ -698,6 +781,8 @@ void ProductionQueueOrder::ExecuteImpl() const
         empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
+    else if (m_build_type == INVALID_BUILD_TYPE)
+        Logger().errorStream() << "ProductionQueueOrder specified with INVALID_BUILD_TYPE";
     else if (m_new_quantity != INVALID_QUANTITY)
         empire->SetBuildQuantity(m_index, m_new_quantity);
     else if (m_new_index != INVALID_INDEX)
@@ -705,7 +790,7 @@ void ProductionQueueOrder::ExecuteImpl() const
     else if (m_index != INVALID_INDEX)
         empire->RemoveBuildFromQueue(m_index);
     else
-        throw std::runtime_error("Malformed ProductionQueueOrder.");
+        Logger().errorStream() << "Malformed ProductionQueueOrder.";
 }
 
 ////////////////////////////////////////////////
@@ -749,19 +834,25 @@ void ShipDesignOrder::ExecuteImpl() const
 
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_delete_design_from_empire) {
-        if (!empire->ShipDesignKept(m_design_id))
-            throw std::runtime_error("Tried to remove a ShipDesign that the empire wasn't remembering");
+        if (!empire->ShipDesignKept(m_design_id)) {
+            Logger().errorStream() << "Tried to remove a ShipDesign that the empire wasn't remembering";
+            return;
+        }
         empire->RemoveShipDesign(m_design_id);
 
     } else if (m_create_new_design) {
-        if (m_ship_design.DesignedByEmpire() != EmpireID())
-            throw std::runtime_error("Tried to create a new ShipDesign designed by another empire");
+        if (m_ship_design.DesignedByEmpire() != EmpireID()) {
+            Logger().errorStream() << "Tried to create a new ShipDesign designed by another empire";
+            return;
+        }
 
         Universe& universe = GetUniverse();
 
         // check if a design with this ID already exists
-        if (universe.GetShipDesign(m_design_id))
-            throw std::runtime_error("Tried to create a new ShipDesign with an id of an already-existing ShipDesign");
+        if (universe.GetShipDesign(m_design_id)) {
+            Logger().errorStream() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
+            return;
+        }
         ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
 
         universe.InsertShipDesignID(new_ship_design, m_design_id);
@@ -769,8 +860,10 @@ void ShipDesignOrder::ExecuteImpl() const
 
     } else if (!m_create_new_design && !m_delete_design_from_empire) {
         // check if empire is already remembering the design
-        if (empire->ShipDesignKept(m_design_id))
-            throw std::runtime_error("Tried to remember a ShipDesign that was already being remembered");
+        if (empire->ShipDesignKept(m_design_id)) {
+            Logger().errorStream() << "Tried to remember a ShipDesign that was already being remembered";
+            return;
+        }
 
         // check if the empire can see any objects that have this design (thus enabling it to be copied)
         std::vector<Ship*> ship_vec = GetUniverse().FindObjects<Ship>();
@@ -784,13 +877,16 @@ void ShipDesignOrder::ExecuteImpl() const
             }
         }
 
-        if (known)
+        if (known) {
             empire->AddShipDesign(m_design_id);
-        else
-            throw std::runtime_error("Tried to remember a ShipDesign that this empire can't see");
- 
+        } else {
+            Logger().errorStream() << "Tried to remember a ShipDesign that this empire can't see";
+            return;
+        }
+
     } else {
-        throw std::runtime_error("Malformed ShipDesignOrder.");
+        Logger().errorStream() << "Malformed ShipDesignOrder.";
+        return;
     }
 }
 

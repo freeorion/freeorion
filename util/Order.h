@@ -162,7 +162,7 @@ class FleetMoveOrder : public Order
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
-    FleetMoveOrder(int empire, int fleet, int start_system, int dest_system);
+    FleetMoveOrder(int empire, int fleet_id, int start_system_id, int dest_system_id);
     //@}
 
     /** \name Accessors */ //@{
