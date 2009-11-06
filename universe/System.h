@@ -230,8 +230,9 @@ System::ObjectIDVec System::FindObjectIDs() const
     const Universe& universe = GetUniverse();
     ObjectIDVec retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
-            retval.push_back(it->second);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+                retval.push_back(it->second);
     }
     return retval;
 }
@@ -243,8 +244,9 @@ System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit) const
     ObjectIDVec retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
-            retval.push_back(it->second);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
+                retval.push_back(it->second);
     }
     return retval;
 }

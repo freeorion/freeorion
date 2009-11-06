@@ -176,6 +176,10 @@ void NewFleetOrder::ExecuteImpl() const
     Fleet* fleet = 0;
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
         System* system = universe.Object<System>(m_system_id);
+        if (!system) {
+            Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
+            return;
+        }
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
@@ -187,7 +191,12 @@ void NewFleetOrder::ExecuteImpl() const
     }
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        if (!universe.Object(m_ship_ids[i])->OwnedBy(EmpireID())) {
+        const Ship* ship = universe.Object<Ship>(m_ship_ids[i]);
+        if (!ship) {
+            Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
+            return;
+        }
+        if (!ship->OwnedBy(EmpireID())) {
             Logger().errorStream() << "Empire attempted to create a new fleet with ships from another's fleet.";
             return;
         }
@@ -344,9 +353,8 @@ void FleetTransferOrder::ExecuteImpl() const
     Fleet* source_fleet = universe.Object<Fleet>(SourceFleet());
     Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
 
-    // sanity check
     if (!source_fleet || !target_fleet) {
-        Logger().errorStream() << "Illegal fleet id specified in fleet merge order.";
+        Logger().errorStream() << "Empire attempted to move ships to or from a nonexistant fleet";
         return;
     }
 
@@ -447,6 +455,10 @@ void FleetColonizeOrder::ServerExecute() const
     }
 
     Planet* planet = universe.Object<Planet>(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "Empire attempted to colonize a nonexistant planet";
+        return;
+    }
 
     planet->SetPrimaryFocus(FOCUS_FARMING);
     planet->SetSecondaryFocus(FOCUS_FARMING);
@@ -484,7 +496,16 @@ void FleetColonizeOrder::ExecuteImpl() const
 
     // look up the ship and fleet in question
     Ship* ship = universe.Object<Ship>(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "Empire attempted to colonize with a nonexistant ship";
+        return;
+    }
+
     Fleet* fleet = universe.Object<Fleet>(ship->FleetID());
+    if (!fleet) {
+        Logger().errorStream() << "Empire attempte to colonize with a ship that somehow doesn't have a fleet...?";
+        return;
+    }
 
     // verify that empire issuing order owns specified fleet
     if (!fleet->OwnedBy(EmpireID())) {
@@ -534,8 +555,17 @@ bool FleetColonizeOrder::UndoImpl() const
     Universe& universe = GetUniverse();
 
     Planet* planet = universe.Object<Planet>(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "Attempting to undo a fleet colonize order with an invalid planet id";
+        return false;
+    }
     Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
+    // not having a fleet is OK - it may have been removed if the colony ship was the last ship in the fleet
     Ship* ship = universe.Object<Ship>(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "Attempting to under a fleet colonize order with an invalid ship id";
+        return false;
+    }
 
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
