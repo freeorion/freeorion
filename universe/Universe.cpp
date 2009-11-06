@@ -1889,12 +1889,13 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
     if (s_encoding_empire == ALL_EMPIRES) {
         objects = m_objects;
     } else {
-        EmpireLatestKnownObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
-        if (it == m_empire_latest_known_objects.end()) {
-            objects.clear();
-            return; // nothing to send
-        }
-        objects = it->second;
+
+        // TODO: send contents of m_empire_latest_known_objects instead of filtering m_objects by visibility
+
+        objects.clear();
+        for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+            if (GetObjectVisibilityByEmpire(it->first, encoding_empire) > VIS_NO_VISIBILITY)
+                objects.insert(*it);
     }
 }
 

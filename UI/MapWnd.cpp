@@ -1413,6 +1413,8 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
             const System* start_system = system;
             const System* dest_system = universe.Object<System>(lane_it->first);
+            if (!start_system || ! dest_system)
+                continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
 
 

@@ -255,8 +255,9 @@ std::vector<const T*> System::FindObjects() const
     const Universe& universe = GetUniverse();
     std::vector<const T*> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const T* obj = static_cast<const T*>(universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+                retval.push_back(t_obj);
     }
     return retval;
 }
@@ -268,8 +269,9 @@ std::vector<const T*> System::FindObjectsInOrbit(int orbit) const
     std::vector<const T*> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const T* obj = static_cast<const T*>(universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+                retval.push_back(t_obj);
     }
     return retval;
 }
@@ -280,8 +282,9 @@ std::vector<T*> System::FindObjects()
     Universe& universe = GetUniverse();
     std::vector<T*> retval;
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (T* obj = static_cast<T*>(universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+                retval.push_back(t_obj);
     }
     return retval;
 }
@@ -293,8 +296,9 @@ std::vector<T*> System::FindObjectsInOrbit(int orbit)
     std::vector<T*> retval;
     std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-        if (T* obj = static_cast<T*>(universe.Object(it->second)->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
+        if (const UniverseObject* obj = universe.Object(it->second))
+            if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+                retval.push_back(t_obj);
     }
     return retval;
 }
