@@ -966,7 +966,9 @@ void SidePanel::PlanetPanel::Refresh()
     // create colonize or cancel button, if appropriate (a ship is in the system that can colonize, or the planet has been ordered to be colonized already this turn)
     if (!Disabled() && owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
         AttachChild(m_button_colonize);
-        m_button_colonize->SetText(UserString("PL_COLONIZE") + " " + boost::lexical_cast<std::string>(planet->GetMeter(METER_POPULATION)->Max()));
+        std::string max_pop = DoubleToString(planet->GetMeter(METER_POPULATION)->Max(), 2, false);
+        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % max_pop);
+        m_button_colonize->SetText(colonize_text);
 
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);

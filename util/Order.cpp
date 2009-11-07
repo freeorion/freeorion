@@ -761,10 +761,8 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, BuildType build_type, int
     if (build_type == BT_BUILDING) {
         Logger().errorStream() << "Attempted to construct a ProductionQueueOrder for a BT_BUILDING with a design id, not a name";
         build_type = INVALID_BUILD_TYPE;
-        return;
     }
 }
-
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
     Order(empire),
@@ -811,8 +809,6 @@ void ProductionQueueOrder::ExecuteImpl() const
         empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
-    else if (m_build_type == INVALID_BUILD_TYPE)
-        Logger().errorStream() << "ProductionQueueOrder specified with INVALID_BUILD_TYPE";
     else if (m_new_quantity != INVALID_QUANTITY)
         empire->SetBuildQuantity(m_index, m_new_quantity);
     else if (m_new_index != INVALID_INDEX)

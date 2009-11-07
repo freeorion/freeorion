@@ -1394,7 +1394,7 @@ PL_SIZE
 Size
 
 PL_COLONIZE
-Colonize
+Colonize (%1%)
 
 
 ##Population Panel#########
