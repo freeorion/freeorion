@@ -385,7 +385,12 @@ public:
       * otherwise, the raw name string is returned. */
     const std::string&              Name(bool stringtable_lookup = true) const;
 
-    const std::string&              Description() const;        ///< returns description of design
+    /** returns description of design.  if \a stringtable_lookup is true and
+      * the design was constructed specifying name_desc_in_stringtable true,
+      * the description string is looked up in the stringtable before being
+      * returned.  otherwise, the raw name string is returned. */
+    const std::string&              Description(bool stringtable_lookup = true) const;
+
     int                             DesignedByEmpire() const;   ///< returns id of empire that created design
     int                             DesignedOnTurn() const;     ///< returns turn on which design was created
 

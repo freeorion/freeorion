@@ -824,9 +824,9 @@ const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const
         return m_name;
 }
 
-const std::string& ShipDesign::Description() const
+const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const
 {
-    if (m_name_desc_in_stringtable)
+    if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_description);
     else
         return m_description;
@@ -1269,7 +1269,7 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
             Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
         }
 
-        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(), empire->EmpireID(),
+        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), empire->EmpireID(),
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
                                           d->Graphic(), d->Model(), true);
 
@@ -1298,7 +1298,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
             Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
         }
 
-        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(), ALL_EMPIRES,
+        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), ALL_EMPIRES,
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
                                           d->Graphic(), d->Model(), true);
 
