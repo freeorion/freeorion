@@ -716,16 +716,18 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 {
     SetBuild(queue_idx);
 
+    const ObjectMap& objects = GetUniverse().Objects();
+
     Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
-        UniverseObject* build_location = GetUniverse().Object(queue[queue_idx].location);
-        assert(build_location);
-
-        // centre map on system of build location
-        int system_id = build_location->SystemID();
-        MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
-        map->CenterOnObject(system_id);
+        int location_id = queue[queue_idx].location;
+        if (const UniverseObject* build_location = objects.Object(location_id)) {
+            // centre map on system of build location
+            int system_id = build_location->SystemID();
+            MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
+            map->CenterOnObject(system_id);
+        }
     }
 }
 
@@ -943,7 +945,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    const System* sys = GetUniverse().Object<System>(system_id);
+    const System* sys = GetUniverse().Objects().Object<System>(system_id);
     if (!sys) {
         Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;

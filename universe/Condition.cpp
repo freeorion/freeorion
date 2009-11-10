@@ -127,8 +127,8 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
     // get set of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator uit = universe.begin(); uit != universe.end(); ++uit) {
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
         condition_non_targets.insert(uit->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets, NON_TARGETS);
@@ -636,8 +636,8 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         condition_non_targets.insert(it->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
@@ -714,8 +714,8 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         condition_non_targets.insert(it->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
@@ -1424,8 +1424,8 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         condition_non_targets.insert(it->second);
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
@@ -1543,8 +1543,8 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
-    const Universe& universe = GetUniverse();
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it) {
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         condition_non_targets.insert(it->second);
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);

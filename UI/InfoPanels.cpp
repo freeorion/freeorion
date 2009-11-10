@@ -203,7 +203,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 {
     SetName("PopulationPanel");
 
-    const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_popcenter_id);
     const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
@@ -372,7 +372,7 @@ void PopulationPanel::Render()
 void PopulationPanel::Update()
 {
     const PopCenter*        pop = GetPopCenter();
-    const UniverseObject*   obj = GetUniverse().Object(m_popcenter_id);
+    const UniverseObject*   obj = GetUniverse().Objects().Object(m_popcenter_id);
 
     if (!pop || !obj) {
         Logger().errorStream() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
@@ -418,10 +418,16 @@ void PopulationPanel::Refresh()
 
 const PopCenter* PopulationPanel::GetPopCenter() const
 {
-    const UniverseObject* obj = GetUniverse().Object(m_popcenter_id);
-    if (!obj) throw std::runtime_error("PopulationPanel tried to get an object with an invalid m_popcenter_id");
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_popcenter_id);
+    if (!obj) {
+        Logger().errorStream() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
+        return 0;
+    }
     const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
-    if (!pop) throw std::runtime_error("PopulationPanel failed casting an object pointer to a PopCenter pointer");
+    if (!pop) {
+        Logger().errorStream() << "PopulationPanel failed casting an object pointer to a PopCenter pointer";
+        return 0;
+    }
     return pop;
 }
 
@@ -447,7 +453,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 {
     SetName("ResourcePanel");
 
-    const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_rescenter_id);
     if (!obj)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an object_id that is not an UniverseObject");
     const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
@@ -605,7 +611,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
     if (!s_expanded_map[m_rescenter_id]) {
         Resize(GG::Pt(Width(), icon_height));
 
-        const UniverseObject* obj = GetUniverse().Object(m_rescenter_id);
+        const UniverseObject* obj = GetUniverse().Objects().Object(m_rescenter_id);
         const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
 
         if (res) {
@@ -753,8 +759,7 @@ void ResourcePanel::Update()
     m_multi_icon_value_indicator->ClearToolTip(METER_CONSTRUCTION);
 
 
-    const Universe& universe = GetUniverse();
-    const UniverseObject* obj = universe.Object(m_rescenter_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_rescenter_id);
     if (!obj) {
         Logger().errorStream() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
@@ -1110,7 +1115,7 @@ void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey>
 
 void MilitaryPanel::Update()
 {
-    const UniverseObject* obj = GetUniverse().Object(m_planet_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_planet_id);
     if (!obj) {
         Logger().errorStream() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -1316,12 +1321,18 @@ void MultiIconValueIndicator::MouseWheel(const GG::Pt& pt, int move, GG::Flags<G
 
 void MultiIconValueIndicator::Update()
 {
-    assert(m_icons.size() == m_meter_types.size());
+    if (m_icons.size() != m_meter_types.size()) {
+        Logger().errorStream() << "MultiIconValueIndicator::Update has inconsitent numbers of icons and meter types";
+        return;
+    }
+
+    const ObjectMap& objects = GetUniverse().Objects();
+
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
         double sum = 0.0;
         for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
-            const UniverseObject* obj = GetUniverse().Object(m_object_ids[j]);
+            const UniverseObject* obj = objects.Object(m_object_ids[j]);
             if (!obj) {
                 Logger().errorStream() << "MultiIconValueIndicator::Update coudln't get object with id " << m_object_ids[j];
                 continue;
@@ -1467,7 +1478,7 @@ void MultiMeterStatusBar::Update()
     m_projected_maxes.clear();
     m_projected_currents.clear();
 
-    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);
     if (!obj) {
         Logger().errorStream() << "MultiMeterStatusBar couldn't get object with id " << m_object_id;
         return;
@@ -1522,7 +1533,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owners, connect their production queue changed signals to update this panel
-    if (const UniverseObject* planet = GetUniverse().Object(m_planet_id)) {
+    if (const UniverseObject* planet = GetUniverse().Objects().Object(m_planet_id)) {
         const std::set<int>& owners = planet->Owners();
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
             if (const Empire* empire = Empires().Lookup(*it)) {
@@ -1610,8 +1621,8 @@ void BuildingsPanel::Update()
     }
     m_building_indicators.clear();
 
-    const Universe& universe = GetUniverse();
-    const Planet* plt = universe.Object<Planet>(m_planet_id);
+    const ObjectMap& objects = GetUniverse().Objects();
+    const Planet* plt = objects.Object<Planet>(m_planet_id);
     if (!plt) {
         Logger().errorStream() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
@@ -1622,10 +1633,10 @@ void BuildingsPanel::Update()
 
     // get existing / finished buildings and use them to create building indicators
     for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        const Building* building = universe.Object<Building>(*it);
+        const Building* building = objects.Object<Building>(*it);
         if (!building) {
             Logger().errorStream() << "BuildingsPanel::Update couldn't get building with id: " << *it << " on planet " << plt->Name();
-            const UniverseObject* obj = universe.Object(*it);
+            const UniverseObject* obj = objects.Object(*it);
             Logger().errorStream() << "... trying to get object as generic UniverseObject: " << (obj ? obj->Name() : " unavailable!");
             continue;
         }
@@ -1777,7 +1788,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    if (const Building* building = GetUniverse().Object<Building>(m_building_id))
+    if (const Building* building = GetUniverse().Objects().Object<Building>(m_building_id))
         GG::Connect(building->StateChangedSignal,   &BuildingIndicator::Refresh,     this);
 
     Refresh();
@@ -1849,7 +1860,7 @@ void BuildingIndicator::Render()
 
 void BuildingIndicator::Refresh()
 {
-    if (const Building* building = GetUniverse().Object<Building>(m_building_id)) {
+    if (const Building* building = GetUniverse().Objects().Object<Building>(m_building_id)) {
         ClearBrowseInfoWnd();
 
         if (m_graphic) {
@@ -1903,7 +1914,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Building* building = GetUniverse().Object<Building>(m_building_id);
+    Building* building = GetUniverse().Objects().Object<Building>(m_building_id);
     if (!building || !building->OwnedBy(empire_id)) {
         return;
     }
@@ -1981,7 +1992,7 @@ void SpecialsPanel::Update()
 
 
     // get specials to display
-    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);
     if (!obj) {
         Logger().errorStream() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
@@ -2188,7 +2199,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    const System* system = GetUniverse().Object<System>(m_system_id);
+    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -2286,7 +2297,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    const System* system = GetUniverse().Object<System>(m_system_id);
+    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -2589,7 +2600,7 @@ void MeterBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);
     if (!obj)
         return;
     const Meter* meter = obj->GetMeter(m_meter_type);
@@ -2653,7 +2664,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
 
     // get object and meter, aborting if not valid
-    const UniverseObject* obj = GetUniverse().Object(m_object_id);
+    const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);
     if (!obj) {
         Logger().errorStream() << "MeterBrowseWnd::UpdateEffectLabelsAndValues couldn't get object with id " << m_object_id;
         return;
@@ -2681,7 +2692,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // add label-value pairs for each alteration recorded for this meter
     for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-        const UniverseObject* source = GetUniverse().Object(info_it->source_id);
+        const UniverseObject* source = GetUniverse().Objects().Object(info_it->source_id);
 
         int             empire_id = ALL_EMPIRES;
         const Empire*   empire = 0;

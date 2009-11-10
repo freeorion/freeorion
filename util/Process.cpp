@@ -6,12 +6,12 @@
 
 
 
-Process::Process() : 
+Process::Process() :
     m_empty(true)
 {
 }
 
-Process::Process(const std::string& cmd, const std::vector<std::string>& argv) : 
+Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
     m_impl(new ProcessImpl(cmd, argv)), 
     m_empty(false)
 {

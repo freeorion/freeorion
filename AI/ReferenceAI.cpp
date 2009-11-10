@@ -18,13 +18,14 @@ ReferenceAI::ReferenceAI()
 void ReferenceAI::GenerateOrders()
 {
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
     int empire_id = AIInterface::EmpireID();
 
     Fleet* fleet;
 
     // 1) Split stationary multi-ship fleets into multiple single-ship fleets
-    Universe::ObjectVec stat_fleets = universe.FindObjects(StationaryFleetVisitor(empire_id));    
-    Universe::ObjectVec::iterator fleet_it;
+    std::vector<UniverseObject*> stat_fleets = objects.FindObjects(StationaryFleetVisitor(empire_id));
+    std::vector<UniverseObject*>::iterator fleet_it;
 
     for (fleet_it = stat_fleets.begin(); fleet_it != stat_fleets.end(); ++fleet_it) {
         if(!(fleet = dynamic_cast<Fleet*>(*fleet_it))) continue;
@@ -36,7 +37,7 @@ void ReferenceAI::GenerateOrders()
     }
 
     // 2) Give stationary fleets orders
-    stat_fleets = universe.FindObjects(StationaryFleetVisitor(empire_id));  // redo to get any newly created fleets from above
+    stat_fleets = objects.FindObjects(StationaryFleetVisitor(empire_id));  // redo to get any newly created fleets from above
 
     for (fleet_it = stat_fleets.begin(); fleet_it != stat_fleets.end(); ++fleet_it) {
         if(!(fleet = dynamic_cast<Fleet*>(*fleet_it))) continue;
@@ -44,16 +45,14 @@ void ReferenceAI::GenerateOrders()
         if (fleet->NumShips() < 1) continue;    // shouldn't be possible... but to be safe...
 
         // get ship, design
-        Ship* ship = universe.Object<Ship>(*(fleet->begin()));  if (!ship) continue;
+        Ship* ship = objects.Object<Ship>(*(fleet->begin()));  if (!ship) continue;
         const ShipDesign *design = ship->Design();
-        
+
         // give orders according to type of ship in fleet
         if (design->Name() == "Scout") {
             Explore(fleet);
-
         } else if (design->Name() == "Colony Ship") {
             ColonizeSomewhere(fleet);
-
         }
     }
 
@@ -69,6 +68,7 @@ void ReferenceAI::Explore(Fleet* fleet) {
     Logger().debugStream() << "telling fleet to explore";
 
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
     int empire_id = AIInterface::EmpireID();
 
     // ensure this player owns this fleet
@@ -84,7 +84,7 @@ void ReferenceAI::Explore(Fleet* fleet) {
     Logger().debugStream() << "telling fleet to explore2";
 
     // attempt to find an unexplored system that can be explored (fleet can get to)
-    std::vector<System*> systems = universe.FindObjects<System>();
+    std::vector<System*> systems = objects.FindObjects<System>();
     for (std::vector<System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
         System* system = *system_it;
         int dest_id = system->ID();   // system to go to
@@ -119,8 +119,8 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
 {
     if (!fleet) return; // no fleet to process...
     if (fleet->NumShips() < 2) return;    // can't split fleet with one (or no?) ships
- 
-    Universe& universe = GetUniverse();
+
+    const ObjectMap& objects = GetUniverse().Objects();
     int empire_id = AIInterface::EmpireID();
 
     // ensure this player owns this fleet
@@ -132,7 +132,7 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
     std::set<int> ship_ids_to_remove;
     for (Fleet::iterator ship_it = ++(fleet->begin()); ship_it != fleet->end(); ++ship_it) {
 
-        Ship *ship = universe.Object<Ship>(*ship_it);
+        const Ship* ship = objects.Object<Ship>(*ship_it);
         const std::set<int>& ship_owners = ship->Owners();
 
         if (ship_owners.size() != 1 || *(ship_owners.begin()) != empire_id) continue; // don't own ship

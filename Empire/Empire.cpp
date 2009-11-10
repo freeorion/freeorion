@@ -668,7 +668,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
         // get location object for element
         const ProductionQueue::Element& element = *queue_it;
         int location_id = element.location;
-        const UniverseObject* location_obj = GetUniverse().Object(location_id);
+        const UniverseObject* location_obj = GetUniverse().Objects().Object(location_id);
         if (!location_obj) {
             Logger().errorStream() << "ProductionQueue::Update couldn't get a location object for a production queue element";
             queue_element_groups.push_back(std::set<int>());    // record empty resource sharing system group for this element
@@ -968,10 +968,26 @@ int Empire::CapitolID() const
     return m_capitol_id;
 }
 
+int Empire::StockpileID(ResourceType res) const
+{
+    switch (res) {
+    case RE_MINERALS:
+    case RE_FOOD:
+    case RE_TRADE:
+        return m_capitol_id;
+        break;
+    case RE_INDUSTRY:
+    case RE_RESEARCH:
+    default:
+        return UniverseObject::INVALID_OBJECT_ID;
+        break;
+    }
+}
+
 void Empire::SetCapitolID(int id)
 {
     const Universe& universe = GetUniverse();
-    const Planet* planet = universe.Object<Planet>(id);
+    const Planet* planet = universe.Objects().Object<Planet>(id);
     if (planet) {
         const std::set<int>& owners = planet->Owners();
         if (owners.size() == 1 && *owners.begin() == EmpireID()) {
@@ -1163,7 +1179,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         return false;
     }
 
-    UniverseObject* build_location = GetUniverse().Object(location);
+    UniverseObject* build_location = GetUniverse().Objects().Object(location);
     if (!build_location) return false;
 
     if (build_type == BT_BUILDING) {
@@ -1174,7 +1190,8 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         return building_type->ProductionLocation(m_id, location);
 
     } else {
-        throw std::invalid_argument("Empire::BuildableItem was passed an invalid BuildType");
+        Logger().errorStream() << "Empire::BuildableItem was passed an invalid BuildType";
+        return false;
     }
 }
 
@@ -1191,7 +1208,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         return false;
     }
 
-    UniverseObject* build_location = GetUniverse().Object(location);
+    UniverseObject* build_location = GetUniverse().Objects().Object(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1202,7 +1219,8 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         return ship_design->ProductionLocation(m_id, location);
 
     } else {
-        throw std::invalid_argument("Empire::BuildableItem was passed an invalid BuildType");
+        Logger().errorStream() << "Empire::BuildableItem was passed an invalid BuildType";
+        return false;
     }
 }
 
@@ -1230,9 +1248,9 @@ void Empire::UpdateSystemSupplyRanges()
 
     // as of this writing, only planets can distribute supplies to fleets or other planets.  If other objects
     // get the ability to distribute supplies, this should be expanded to them as well
-    Universe::ObjectVec owned_planets = GetUniverse().FindObjects(OwnedVisitor<Planet>(m_id));
+    std::vector<UniverseObject*> owned_planets = GetUniverse().Objects().FindObjects(OwnedVisitor<Planet>(m_id));
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (Universe::ObjectVec::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
+    for (std::vector<UniverseObject*>::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
         const UniverseObject* obj = *it;
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
@@ -1275,7 +1293,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
     std::set<int> visible_systems;
-    std::vector<int> all_system_ids = universe.FindObjectIDs<System>();
+    std::vector<int> all_system_ids = universe.Objects().FindObjectIDs<System>();
     for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
         int obj_id = *it;
         if (universe.GetObjectVisibilityByEmpire(obj_id, m_id) >= VIS_PARTIAL_VISIBILITY)
@@ -1287,18 +1305,10 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 
 void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& visible_systems)
 {
-    //std::cout << "Empire::UpdateSupplyUnobstructedSystems for empire " << this->Name() << std::endl;
-    //std::cout << " ... explored systems: ";
-    //for (std::set<int>::const_iterator it = explored_systems.begin(); it != explored_systems.end(); ++it) {
-    //    if (const UniverseObject* obj = GetUniverse().Object(*it))
-    //        std::cout << obj->Name() << ", ";
-    //}
-    //std::cout << std::endl;
-
     m_supply_unobstructed_systems.clear();
 
     // find "unobstructed" systems that can propegate fleet supply routes
-    const std::vector<System*> all_systems = GetUniverse().FindObjects<System>();
+    const std::vector<System*> all_systems = GetUniverse().Objects().FindObjects<System>();
 
     for (std::vector<System*>::const_iterator it = all_systems.begin(); it != all_systems.end(); ++it) {
         const System* system = *it;
@@ -1733,21 +1743,59 @@ const std::set<int>& Empire::ExploredSystems() const
 
 const std::map<int, std::set<int> > Empire::KnownStarlanes() const
 {
-    // compile starlanes leading out of each system
-    std::map<int, std::set<int> > starlanes;
+    // compile starlanes leading into or out of each system
+    std::map<int, std::set<int> > retval;
 
-    std::vector<const System*> systems = GetUniverse().FindObjects<const System>();
+    std::vector<const System*> systems = GetUniverse().EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
     for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System* system = *it;
         int start_id = system->ID();
-        System::StarlaneMap lanes = system->VisibleStarlanes(m_id);
+        System::StarlaneMap lanes = system->StarlanesWormholes();
         for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
+            if (lane_it->second)
+                continue;   // is a wormhole, not a starlane
             int end_id = lane_it->first;
-            starlanes[start_id].insert(end_id);
+            retval[start_id].insert(end_id);
+            retval[end_id].insert(start_id);
         }
     }
 
-    return starlanes;
+    return retval;
+}
+
+const std::map<int, std::set<int> > Empire::VisibleStarlanes() const
+{
+    std::map<int, std::set<int> > retval;   // compile starlanes leading into or out of each system
+
+    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+
+    std::vector<const System*> systems = objects.FindObjects<const System>();
+
+    for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
+        const System* system = *it;
+        if (!system)
+            continue;
+        int start_id = system->ID();
+
+        // is system visible to this empire?
+        if (universe.GetObjectVisibilityByEmpire(start_id, m_id) <= VIS_NO_VISIBILITY)
+            continue;
+
+        // get system's visible lanes for this empire
+        System::StarlaneMap lanes = system->VisibleStarlanesWormholes(m_id);
+
+        // copy to retval
+        for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
+            if (lane_it->second)
+                continue;   // is a wormhole, not a starlane
+            int end_id = lane_it->first;
+            retval[start_id].insert(end_id);
+            retval[end_id].insert(start_id);
+        }
+    }
+
+    return retval;
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
@@ -2067,10 +2115,10 @@ void Empire::AddHullType(const std::string& name)
 
 void Empire::AddExploredSystem(int ID)
 {
-    const System* system = GetUniverse().Object<System>(ID);
-    if (!system)
+    if (const System* system = GetUniverse().Objects().Object<System>(ID))
+        m_explored_systems.insert(ID);
+    else
         Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;
-    m_explored_systems.insert(ID);
 }
 
 std::string Empire::NewShipName()
@@ -2246,6 +2294,8 @@ void Empire::CheckProductionProgress()
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
     // m_production_queue.Update(this, m_resource_pools, m_production_progress);
 
+    Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
     // go through queue, updating production progress.  If a build item is completed, create the built object or take whatever other
     // action is appropriate, and record that queue item as complete, so it can be erased from the queue
@@ -2263,8 +2313,7 @@ void Empire::CheckProductionProgress()
             m_production_progress[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
-                Universe& universe = GetUniverse();
-                Planet* planet = universe.Object<Planet>(m_production_queue[i].location);
+                Planet* planet = objects.Object<Planet>(m_production_queue[i].location);
                 assert(planet);
                 Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
                 int building_id = universe.Insert(building);
@@ -2276,8 +2325,7 @@ void Empire::CheckProductionProgress()
             }
 
             case BT_SHIP: {
-                Universe& universe = GetUniverse();
-                UniverseObject* build_location = universe.Object(m_production_queue[i].location);
+                UniverseObject* build_location = objects.Object(m_production_queue[i].location);
                 System* system = universe_object_cast<System*>(build_location);
                 if (!system && build_location)
                     system = build_location->GetSystem();
@@ -2482,7 +2530,9 @@ void Empire::SetPlayerName(const std::string& player_name)
 
 void Empire::InitResourcePools()
 {
-    Universe::ObjectVec object_vec = GetUniverse().FindObjects(OwnedVisitor<UniverseObject>(m_id));
+    ObjectMap& objects = GetUniverse().Objects();
+
+    std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
     std::vector<ResourceCenter*> res_vec;
     std::vector<PopCenter*> pop_vec;
 
@@ -2512,7 +2562,7 @@ void Empire::InitResourcePools()
     // set non-blockadeable resrouce pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    const std::vector<System*> all_systems_vec = GetUniverse().FindObjects<System>();
+    const std::vector<System*> all_systems_vec = objects.FindObjects<System>();
     for (std::vector<System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
         all_systems_set.insert((*it)->ID());
     sets_set.insert(all_systems_set);
@@ -2520,20 +2570,20 @@ void Empire::InitResourcePools()
     m_resource_pools[RE_TRADE]->SetSystemSupplyGroups(sets_set);
 
 
-    // set stockpile location
-    m_resource_pools[RE_INDUSTRY]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);       // industry and research are not stockpileable
-    m_resource_pools[RE_RESEARCH]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+    // set stockpile system locations for each resource, ensuring those systems exist
+    std::vector<ResourceType> res_type_vec;
+    res_type_vec.push_back(RE_FOOD);
+    res_type_vec.push_back(RE_MINERALS);
+    res_type_vec.push_back(RE_INDUSTRY);
+    res_type_vec.push_back(RE_TRADE);
+    res_type_vec.push_back(RE_RESEARCH);
 
-    const UniverseObject* capitol = GetUniverse().Object(CapitolID());                          // other resources are stockpilable, and stockpile location is currently the capitol.  could be changed later to let an effect set the stockpile location
-    if (capitol) {
-        int system_id = capitol->SystemID();
-        m_resource_pools[RE_MINERALS]->SetStockpileSystem(system_id);
-        m_resource_pools[RE_FOOD]->SetStockpileSystem(system_id);
-        m_resource_pools[RE_TRADE]->SetStockpileSystem(system_id);
-    } else {
-        m_resource_pools[RE_MINERALS]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);   // if there is no capitol, there's nowhere to stockpile, so resources become nonstockpilable
-        m_resource_pools[RE_FOOD]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
-        m_resource_pools[RE_TRADE]->SetStockpileSystem(UniverseObject::INVALID_OBJECT_ID);
+    for (std::vector<ResourceType>::const_iterator res_it = res_type_vec.begin(); res_it != res_type_vec.end(); ++res_it) {
+        ResourceType res_type = *res_it;
+        int stockpile_system_id = UniverseObject::INVALID_OBJECT_ID;
+        if (const UniverseObject* stockpile_obj = objects.Object(StockpileID(res_type)))
+            stockpile_system_id = stockpile_obj->SystemID();
+        m_resource_pools[res_type]->SetStockpileSystem(stockpile_system_id);
     }
 }
 
@@ -2574,15 +2624,18 @@ void Empire::UpdateTradeSpending()
     // TODO: Replace with call to some other subsystem, similar to the Update...Queue functions
     m_maintenance_total_cost = 0.0;
 
-    Universe::ObjectVec buildings = GetUniverse().FindObjects(OwnedVisitor<Building>(m_id));
-    for (Universe::ObjectVec::const_iterator it = buildings.begin(); it != buildings.end(); ++it)
-    {
+    std::vector<UniverseObject*> buildings = GetUniverse().Objects().FindObjects(OwnedVisitor<Building>(m_id));
+    for (std::vector<UniverseObject*>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
         Building* building = universe_object_cast<Building*>(*it);
-        if (!building) continue;
+        if (!building)
+            continue;
+
         const BuildingType* building_type = building->GetBuildingType();
-        if (!building_type) continue;
+        if (!building_type)
+            continue;
+
         //if (building->Operating())
-            m_maintenance_total_cost += building_type->MaintenanceCost();
+        m_maintenance_total_cost += building_type->MaintenanceCost();
     }
     m_resource_pools[RE_TRADE]->ChangedSignal();
 }

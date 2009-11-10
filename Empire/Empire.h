@@ -267,6 +267,7 @@ public:
 
     int                     HomeworldID() const;                                    ///< Returns the numeric ID of the empire's homeworld
     int                     CapitolID() const;                                      ///< Returns the numeric ID of the empire's capitol
+    int                     StockpileID(ResourceType res = INVALID_RESOURCE_TYPE) const;    ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
     const std::set<std::string>&    AvailableTechs() const;                         ///< Returns the set of all available techs.
     const std::set<std::string>&    AvailableBuildingTypes() const;                 ///< Returns the set of all available building types.
@@ -325,6 +326,8 @@ public:
     const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
     const std::map<int, std::set<int> >
                             KnownStarlanes() const;             ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    const std::map<int, std::set<int> >
+                            VisibleStarlanes() const;           ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
     TechItr                 TechBegin() const;                  ///< starting iterator for techs this empire has researched
     TechItr                 TechEnd() const;                    ///< end iterator for techs

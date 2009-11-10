@@ -122,7 +122,7 @@ int Building::PlanetID() const
 
 Planet* Building::GetPlanet() const
 {
-    return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Object<Planet>(m_planet_id);
+    return m_planet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Objects().Object<Planet>(m_planet_id);
 }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
@@ -278,9 +278,9 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet locations;
     Condition::ObjectSet non_locations;
 
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
 
-    UniverseObject* loc = universe.Object(location_id);
+    UniverseObject* loc = objects.Object(location_id);
     if (!loc) return false;
 
     Empire* empire = Empires().Lookup(empire_id);
@@ -289,7 +289,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
         return false;
     }
 
-    UniverseObject* source = universe.Object(empire->CapitolID());
+    UniverseObject* source = objects.Object(empire->CapitolID());
     if (!source) return false;
 
     locations.insert(loc);
@@ -303,7 +303,7 @@ CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_id
                                              int location_id, bool as_production_item) const
 {
     Empire*         to_empire =     Empires().Lookup(to_empire_id);
-    UniverseObject* location =      GetUniverse().Object(location_id);
+    UniverseObject* location =      GetUniverse().Objects().Object(location_id);
 
     if (as_production_item && location && to_empire)
         return CR_CAPTURE;

@@ -92,8 +92,8 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const EmpireManager& empire_manager)
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>& object_map)
-{ oa << BOOST_SERIALIZATION_NVP(object_map); }
+void Serialize(FREEORION_OARCHIVE_TYPE& oa, const std::map<int, UniverseObject*>& objects)
+{ oa << BOOST_SERIALIZATION_NVP(objects); }
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
 { oa << BOOST_SERIALIZATION_NVP(order_set); }
@@ -110,8 +110,8 @@ void Deserialize(FREEORION_IARCHIVE_TYPE& ia, EmpireManager& empire_manager)
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe)
 { ia >> BOOST_SERIALIZATION_NVP(universe); }
 
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& object_map)
-{ ia >> BOOST_SERIALIZATION_NVP(object_map); }
+void Deserialize(FREEORION_IARCHIVE_TYPE& ia, std::map<int, UniverseObject*>& objects)
+{ ia >> BOOST_SERIALIZATION_NVP(objects); }
 
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }

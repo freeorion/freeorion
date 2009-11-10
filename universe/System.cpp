@@ -86,7 +86,7 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_objects =               copied_system->VisibleContainedObjects(empire_id);
-        this->m_starlanes_wormholes =   copied_system->VisibleStarlanes(empire_id);
+        this->m_starlanes_wormholes =   copied_system->VisibleStarlanesWormholes(empire_id);
 
         this->m_star =                  copied_system->m_star;
 
@@ -106,7 +106,7 @@ int System::Orbits() const
     return m_orbits;
 }
 
-int System::Starlanes() const
+int System::NumStarlanes() const
 {
     int retval = 0;
     for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
@@ -116,7 +116,7 @@ int System::Starlanes() const
     return retval;
 }
 
-int System::Wormholes() const
+int System::NumWormholes() const
 {
     int retval = 0;
     for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
@@ -149,10 +149,10 @@ int System::SystemID() const
 
 std::vector<UniverseObject*> System::FindObjects() const
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<UniverseObject*> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        UniverseObject* obj = universe.Object(it->second);
+        UniverseObject* obj = objects.Object(it->second);
         if (!obj) {
             Logger().errorStream() << "System::FindObjects couldn't get a UniverseObject for an object ID in the system";
             continue;
@@ -164,11 +164,11 @@ std::vector<UniverseObject*> System::FindObjects() const
 
 std::vector<int> System::FindObjectIDs() const
 {
-    Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     std::vector<int> retval;
     // add objects contained in this system, and objects contained in those objects
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        UniverseObject* object = universe.Object(it->second);
+        const UniverseObject* object = objects.Object(it->second);
         retval.push_back(it->second);
         std::vector<int> contained_objects = object->FindObjectIDs();
         std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(retval));
@@ -178,10 +178,10 @@ std::vector<int> System::FindObjectIDs() const
 
 System::ObjectIDVec System::FindObjectIDs(const UniverseObjectVisitor& visitor) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ObjectIDVec retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (universe.Object(it->second)->Accept(visitor))
+        if (objects.Object(it->second)->Accept(visitor))
             retval.push_back(it->second);
     }
     return retval;
@@ -189,11 +189,11 @@ System::ObjectIDVec System::FindObjectIDs(const UniverseObjectVisitor& visitor) 
 
 System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ObjectIDVec retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (universe.Object(it->second)->Accept(visitor))
+        if (objects.Object(it->second)->Accept(visitor))
             retval.push_back(it->second);
     }
     return retval;
@@ -201,10 +201,10 @@ System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit, const UniverseObject
 
 System::ConstObjectVec System::FindObjects(const UniverseObjectVisitor& visitor) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ConstObjectVec retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+        if (const UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
             retval.push_back(obj);
     }
     return retval;
@@ -222,8 +222,7 @@ System::const_orbit_iterator System::end() const
 
 bool System::Contains(int object_id) const
 {
-    const UniverseObject* object = GetUniverse().Object(object_id);
-    if (object)
+    if (const UniverseObject* object = GetUniverse().Objects().Object(object_id))
         return (ID() == object->SystemID());
     else
         return false;
@@ -251,11 +250,11 @@ System::const_lane_iterator System::end_lanes() const
 
 System::ConstObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ConstObjectVec retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+        if (const UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
             retval.push_back(obj);
     }
     return retval;
@@ -343,7 +342,7 @@ int System::Insert(int obj_id, int orbit)
 {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
-    UniverseObject* object = GetUniverse().Object(obj_id);
+    UniverseObject* object = GetUniverse().Objects().Object(obj_id);
     if (!object)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in a System, when the object is not already in the Universe");
 
@@ -415,7 +414,7 @@ void System::Remove(UniverseObject* obj)
 
 void System::Remove(int id)
 {
-    Remove(GetUniverse().Object(id));
+    Remove(GetUniverse().Objects().Object(id));
 }
 
 void System::SetStarType(StarType type)
@@ -460,10 +459,10 @@ bool System::RemoveWormhole(int id)
 
 System::ObjectVec System::FindObjects(const UniverseObjectVisitor& visitor)
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     ObjectVec retval;
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+        if (UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
             retval.push_back(obj);
     }
     return retval;
@@ -471,23 +470,21 @@ System::ObjectVec System::FindObjects(const UniverseObjectVisitor& visitor)
 
 System::ObjectVec System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor)
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     ObjectVec retval;
     std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-        if (UniverseObject* obj = universe.Object(it->second)->Accept(visitor))
+        if (UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
             retval.push_back(obj);
     }
     return retval;
 }
 
 void System::AddOwner(int id)
-{
-}
+{}  ///< adding owner to system objects is a no-op
 
 void System::RemoveOwner(int id)
-{
-}
+{}  ///< removing owner from system objects is a no-op
 
 void System::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
@@ -544,12 +541,19 @@ System::lane_iterator System::end_lanes()
     return m_starlanes_wormholes.end();
 }
 
-System::StarlaneMap System::VisibleStarlanes(int empire_id) const
+System::StarlaneMap System::StarlanesWormholes() const
+{
+    return m_starlanes_wormholes;
+}
+
+System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
 {
     if (empire_id == ALL_EMPIRES)
         return m_starlanes_wormholes;
 
     const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
+
     StarlaneMap retval;
 
 
@@ -563,8 +567,8 @@ System::StarlaneMap System::VisibleStarlanes(int empire_id) const
 
 
     std::vector<const Fleet*> moving_empire_fleets;
-    Universe::ConstObjectVec moving_fleet_objects = universe.FindObjects(MovingFleetVisitor());
-    for (Universe::ConstObjectVec::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
+    std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
+    for (std::vector<const UniverseObject*>::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
         if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
@@ -621,7 +625,7 @@ void System::UpdateOwnership()
         UniverseObject::RemoveOwner(*it);
     }
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (Planet *planet = GetUniverse().Object<Planet>(it->second)) {
+        if (Planet* planet = GetUniverse().Objects().Object<Planet>(it->second)) {
             for (std::set<int>::const_iterator it2 = planet->Owners().begin(); it2 != planet->Owners().end(); ++it2) {
                 UniverseObject::AddOwner(*it2);
             }
@@ -652,8 +656,12 @@ double StarlaneEntranceRadius()
 
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
 {
-    System* system_1 = GetUniverse().Object<System>(from_system);
-    System* system_2 = GetUniverse().Object<System>(to_system);
-    assert(system_1 && system_2);
+    const ObjectMap& objects = GetUniverse().Objects();
+    const System* system_1 = objects.Object<System>(from_system);
+    const System* system_2 = objects.Object<System>(to_system);
+    if (!system_1 || !system_2) {
+        Logger().errorStream() << "StarlaneEntranceOrbitalPosition passed invalid system id";
+        return 0.0;
+    }
     return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
 }

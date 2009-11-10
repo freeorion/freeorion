@@ -74,13 +74,12 @@ RenameOrder::RenameOrder() :
     m_object(UniverseObject::INVALID_OBJECT_ID)
 {}
 
-RenameOrder::RenameOrder(int empire, int object, const std::string& name) : 
+RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     Order(empire),
     m_object(object),
     m_name(name)
 {
-    const Universe& universe = GetUniverse();
-    const UniverseObject* obj = universe.Object(object);
+    const UniverseObject* obj = GetUniverse().Objects().Object(object);
     if (!obj) {
         Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
         return;
@@ -98,7 +97,7 @@ void RenameOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    UniverseObject* obj = GetUniverse().Object(m_object);
+    UniverseObject* obj = GetUniverse().Objects().Object(m_object);
 
     if (!obj) {
         Logger().errorStream() << "Attempted to rename nonexistant object with id " << m_object;
@@ -173,9 +172,11 @@ void NewFleetOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
+
     Fleet* fleet = 0;
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
-        System* system = universe.Object<System>(m_system_id);
+        System* system = objects.Object<System>(m_system_id);
         if (!system) {
             Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
             return;
@@ -191,7 +192,7 @@ void NewFleetOrder::ExecuteImpl() const
     }
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        const Ship* ship = universe.Object<Ship>(m_ship_ids[i]);
+        const Ship* ship = objects.Object<Ship>(m_ship_ids[i]);
         if (!ship) {
             Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
             return;
@@ -222,15 +223,16 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     m_dest_system(dest_system_id)
 {
     const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
 
     // perform sanity checks
-    const Fleet* fleet = universe.Object<Fleet>(FleetID());
+    const Fleet* fleet = objects.Object<Fleet>(FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
-    const System* destination_system = universe.Object<System>(DestinationSystemID());
+    const System* destination_system = objects.Object<System>(DestinationSystemID());
     if (!destination_system) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists";
         return;
@@ -242,7 +244,7 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
         return;
     }
 
-    std::pair<std::list<int>, double> short_path = GetUniverse().ShortestPath(m_start_system, m_dest_system, empire);
+    std::pair<std::list<int>, double> short_path = universe.ShortestPath(m_start_system, m_dest_system, empire);
 
     m_route.clear();
     std::copy(short_path.first.begin(), short_path.first.end(), std::back_inserter(m_route));
@@ -266,9 +268,10 @@ void FleetMoveOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
-    Fleet* fleet = universe.Object<Fleet>(FleetID());
-    System* destination_system = universe.Object<System>(DestinationSystemID());
+    Fleet* fleet = objects.Object<Fleet>(FleetID());
+    System* destination_system = objects.Object<System>(DestinationSystemID());
 
     // perform sanity checks
     if (!fleet) {
@@ -347,11 +350,11 @@ void FleetTransferOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
 
     // look up the source fleet and destination fleet
-    Fleet* source_fleet = universe.Object<Fleet>(SourceFleet());
-    Fleet* target_fleet = universe.Object<Fleet>(DestinationFleet());
+    Fleet* source_fleet = objects.Object<Fleet>(SourceFleet());
+    Fleet* target_fleet = objects.Object<Fleet>(DestinationFleet());
 
     if (!source_fleet || !target_fleet) {
         Logger().errorStream() << "Empire attempted to move ships to or from a nonexistant fleet";
@@ -380,7 +383,7 @@ void FleetTransferOrder::ExecuteImpl() const
     while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
         int curr = (*itr);
-        Ship* a_ship = universe.Object<Ship>(curr);
+        Ship* a_ship = objects.Object<Ship>(curr);
         if (!a_ship) {
             Logger().errorStream() << "Illegal ship id specified in fleet merge order.";
             return;
@@ -421,10 +424,11 @@ FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
 void FleetColonizeOrder::ServerExecute() const
 {
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
     // get colonist capacity of ship: sum of capacities of parts
     double colonist_capacity = 0.0;
-    const Ship* ship = universe.Object<Ship>(m_ship);
+    const Ship* ship = objects.Object<Ship>(m_ship);
     if (!ship) {
         Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship with id " << m_ship;
         return;
@@ -454,7 +458,7 @@ void FleetColonizeOrder::ServerExecute() const
         return;
     }
 
-    Planet* planet = universe.Object<Planet>(m_planet);
+    Planet* planet = objects.Object<Planet>(m_planet);
     if (!planet) {
         Logger().errorStream() << "Empire attempted to colonize a nonexistant planet";
         return;
@@ -474,7 +478,7 @@ void FleetColonizeOrder::ServerExecute() const
 
     const std::set<int>& planet_buildings = planet->Buildings();
     for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
-        if (Building* building = universe.Object<Building>(*it)) {
+        if (Building* building = objects.Object<Building>(*it)) {
             building->ClearOwners();
             building->AddOwner(EmpireID()); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
         } else {
@@ -493,15 +497,16 @@ void FleetColonizeOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
     // look up the ship and fleet in question
-    Ship* ship = universe.Object<Ship>(m_ship);
+    Ship* ship = objects.Object<Ship>(m_ship);
     if (!ship) {
         Logger().errorStream() << "Empire attempted to colonize with a nonexistant ship";
         return;
     }
 
-    Fleet* fleet = universe.Object<Fleet>(ship->FleetID());
+    Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire attempte to colonize with a ship that somehow doesn't have a fleet...?";
         return;
@@ -514,7 +519,7 @@ void FleetColonizeOrder::ExecuteImpl() const
     }
 
     // verify that planet exists and is un-occupied.
-    Planet* planet = universe.Object<Planet>(m_planet);
+    Planet* planet = objects.Object<Planet>(m_planet);
     if (!planet) {
         Logger().errorStream() << "Colonization order issued with invalid planet id.";
         return;
@@ -553,15 +558,16 @@ bool FleetColonizeOrder::UndoImpl() const
     // same time.
 
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
-    Planet* planet = universe.Object<Planet>(m_planet);
+    Planet* planet = objects.Object<Planet>(m_planet);
     if (!planet) {
         Logger().errorStream() << "Attempting to undo a fleet colonize order with an invalid planet id";
         return false;
     }
-    Fleet* fleet = universe.Object<Fleet>(m_colony_fleet_id);
+    Fleet* fleet = objects.Object<Fleet>(m_colony_fleet_id);
     // not having a fleet is OK - it may have been removed if the colony ship was the last ship in the fleet
-    Ship* ship = universe.Object<Ship>(m_ship);
+    Ship* ship = objects.Object<Ship>(m_ship);
     if (!ship) {
         Logger().errorStream() << "Attempting to under a fleet colonize order with an invalid ship id";
         return false;
@@ -620,7 +626,7 @@ void DeleteFleetOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Fleet* fleet = GetUniverse().Object<Fleet>(FleetID());
+    Fleet* fleet = GetUniverse().Objects().Object<Fleet>(FleetID());
 
     if (!fleet) {
         Logger().errorStream() << "Illegal fleet id specified in fleet delete order.";
@@ -661,7 +667,7 @@ void ChangeFocusOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Planet* planet = GetUniverse().Object<Planet>(PlanetID());
+    Planet* planet = GetUniverse().Objects().Object<Planet>(PlanetID());
 
     if (!planet) {
         Logger().errorStream() << "Illegal planet id specified in change planet focus order.";
@@ -858,6 +864,9 @@ void ShipDesignOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
+    Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
+
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_delete_design_from_empire) {
         if (!empire->ShipDesignKept(m_design_id)) {
@@ -871,8 +880,6 @@ void ShipDesignOrder::ExecuteImpl() const
             Logger().errorStream() << "Tried to create a new ShipDesign designed by another empire";
             return;
         }
-
-        Universe& universe = GetUniverse();
 
         // check if a design with this ID already exists
         if (universe.GetShipDesign(m_design_id)) {
@@ -892,7 +899,7 @@ void ShipDesignOrder::ExecuteImpl() const
         }
 
         // check if the empire can see any objects that have this design (thus enabling it to be copied)
-        std::vector<Ship*> ship_vec = GetUniverse().FindObjects<Ship>();
+        std::vector<Ship*> ship_vec = objects.FindObjects<Ship>();
         bool known = false;
         for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
             if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != VIS_NO_VISIBILITY) {
@@ -932,13 +939,13 @@ ScrapOrder::ScrapOrder(int empire, int object_id) :
 void ScrapOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
-
+    ObjectMap& objects = GetUniverse().Objects();
     int empire_id = EmpireID();
 
-    if (Ship* ship = GetUniverse().Object<Ship>(m_object_id)) {
+    if (Ship* ship = objects.Object<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(true);
-    } else if (Building* building = GetUniverse().Object<Building>(m_object_id)) {
+    } else if (Building* building = objects.Object<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(true);
     }
@@ -947,13 +954,13 @@ void ScrapOrder::ExecuteImpl() const
 bool ScrapOrder::UndoImpl() const
 {
     ValidateEmpireID();
-
+    ObjectMap& objects = GetUniverse().Objects();
     int empire_id = EmpireID();
 
-    if (Ship* ship = GetUniverse().Object<Ship>(m_object_id)) {
+    if (Ship* ship = objects.Object<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(false);
-    } else if (Building* building = GetUniverse().Object<Building>(m_object_id)) {
+    } else if (Building* building = objects.Object<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(false);
     }

@@ -32,6 +32,129 @@ namespace Effect {
     class EffectsGroup;
 }
 
+
+/** Contains a set of objects that make up a (known or complete) Universe. */
+class ObjectMap {
+public:
+    typedef std::map<int, UniverseObject*>::const_iterator          iterator;       ///< iterator that allows modification of pointed-to UniverseObjects
+    typedef std::map<int, const UniverseObject*>::const_iterator    const_iterator; ///< iterator that does not allow modification of UniverseObjects
+
+    /** \name Structors */ //@{
+    ObjectMap();                            ///< default ctor
+    ~ObjectMap();                           ///< dtor
+
+    /** Copies contents of this ObjectMap to a new ObjectMap, which is
+      * returned.  Copies are limited to only duplicate information that the
+      * empire with id \a empire_id would know about the copied objects. */
+    ObjectMap*                          Clone(int empire_id = ALL_EMPIRES) const;
+    //@}
+
+    /** \name Accessors */ //@{
+    /** Returns a pointer to the universe object with ID number \a id, or 0 if
+      * none exists */
+    const UniverseObject*               Object(int id) const;
+
+    /** Returns a pointer to the universe object with ID number \a id, or 0 if
+      * none exists */
+    UniverseObject*                     Object(int id);
+
+    /** Returns a pointer to the object of type T with ID number \a id.
+      * Returns 0 if none exists or the object with ID \a id is not of
+      * type T. */
+    template <class T>
+    const T*                            Object(int id) const;
+
+    /** Returns a pointer to the object of type T with ID number \a id.
+      * Returns 0 if none exists or the object with ID \a id is not of
+      * type T */
+    template <class T>
+    T*                                  Object(int id);
+
+    /** Returns all the objects that match \a visitor */
+    std::vector<const UniverseObject*>  FindObjects(const UniverseObjectVisitor& visitor) const;
+
+    /** Returns all the objects that match \a visitor */
+    std::vector<UniverseObject*>        FindObjects(const UniverseObjectVisitor& visitor);
+
+    /** Returns all the objects of type T */
+    template <class T>
+    std::vector<const T*>               FindObjects() const;
+
+    /** Returns all the objects of type T */
+    template <class T>
+    std::vector<T*>                     FindObjects();
+
+    /** Returns the IDs of all the objects that match \a visitor */
+    std::vector<int>                    FindObjectIDs(const UniverseObjectVisitor& visitor) const;
+
+    /** Returns the IDs of all the objects of type T */
+    template <class T>
+    std::vector<int>                    FindObjectIDs() const;
+
+    /** iterators */
+    iterator                            begin();
+    iterator                            end();
+    const_iterator                      const_begin() const;
+    const_iterator                      const_end() const;
+    //@}
+
+    /** \name Mutators */ //@{
+    /** Transfers ownership of contained pointed-to UniverseObjects from
+      * \a object_map to this ObjectMap, clearing the contents of \a object_map
+      * in the process.  This ObjectMap retains ownership of pointed-to objects
+      * and \a object_map can be destructed or cleared without affecting the
+      * pointed-to UniverseObjectes. */
+    void                                TransferObjectsFrom(ObjectMap& object_map);
+
+    /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
+      * Each object in \a copied_map has information transferred to this map.
+      * If there already is a version of an object in \a copied_map in this map
+      * then information is copied onto this map's version of the object using
+      * the UniverseObject::Copy function.  If there is no corresponding object
+      * in this map, a new object is created using the UinverseObject::Clone
+      * function.  The copied objects are complete copies if \a empire_id is
+      * ALL_EMPIRES, but if another \a empire_id is specified, the copied
+      * information is limited by passing \a empire_id to are limited to the
+      * Copy or Clone functions of the copied UniverseObjects.  Any objects
+      * in this ObjectMap that have no corresponding object in \a copied_map
+      * are left unchanged. */
+    void                                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+
+    /** Adds object \a obj to the map under id \a id if id is a valid object id
+      * and obj is an object with that id set.  If there already was an object
+      * in the map with the id \a id then that object is first removed, and
+      * is returned. This ObjectMap takes ownership of the passed
+      * UniverseObject. The caller takes ownership of any returned
+      * UniverseObject. */
+    UniverseObject*                     Insert(int id, UniverseObject* obj);
+
+    /** Removes object with id \a id from map, and returns that object, if
+      * there was an object under that ID in the map.  If no such object
+      * existed in the map, 0 is returned and nothing is removed. The caller
+      * takes ownership of any returned UniverseObject. */
+    UniverseObject*                     Remove(int id);
+
+    /** Removes object with id \a id from map, and deletes that object, if
+      * there was an object under that ID in the map.  If no such object
+      * existed in the map, nothing is done. */
+    void                                Delete(int id);
+
+    /** Empties map and deletes all objects within. */
+    void                                Clear();
+    //@}
+private:
+    void                                CopyObjectsToConstObjects();
+
+    std::map<int, UniverseObject*>          m_objects;
+    std::map<int, const UniverseObject*>    m_const_objects;
+
+    friend class Universe;
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
 /** The Universe class contains the majority of FreeOrion gamestate: All the
   * UniverseObjects in a game, and (of less importance) all ShipDesigns in a
   * game.  (Other gamestate is contained in the Empire class.)
@@ -42,7 +165,6 @@ namespace Effect {
 class Universe
 {
 private:
-    typedef std::map<int, UniverseObject*>          ObjectMap;                      ///< Objects in universe; keyed by id
     typedef std::map<int, ObjectMap>                EmpireLatestKnownObjectMap;     ///< Most recent known information each empire had about objects in the Universe; keyed by empire id
 
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
@@ -56,14 +178,7 @@ private:
 public:
     static const bool ALL_OBJECTS_VISIBLE;                                          ///< Set to true to make everything visible for everyone. Useful for debugging.
 
-    typedef ObjectMap::const_iterator               const_iterator;                 ///< a const_iterator for sequences over the objects in the universe
-    typedef ObjectMap::iterator                     iterator;                       ///< an iterator for sequences over the objects in the universe
-
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
-
-    typedef std::vector<const UniverseObject*>      ConstObjectVec;                 ///< the return type of FindObjects()
-    typedef std::vector<UniverseObject*>            ObjectVec;                      ///< the return type of the non-const FindObjects()
-    typedef std::vector<int>                        ObjectIDVec;                    ///< the return type of FindObjectIDs()
 
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
     typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
@@ -124,45 +239,23 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const UniverseObject*   Object(int id) const;   ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
-    UniverseObject*         Object(int id);         ///< returns a pointer to the universe object with ID number \a id, or 0 if none exists
+    /** Returns objects in this Universe. */
+    const ObjectMap&        Objects() const;
 
-    template <class T>
-    const T*                Object(int id) const;   ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
-    template <class T>
-    T*                      Object(int id);         ///< returns a pointer to the object of type T with ID number \a id. Returns 0 if none exists or the object with ID \a id is not of type T.
+    /** Returns objects in this Universe. */
+    ObjectMap&              Objects();
 
-    /** Returns all the objects that match \a visitor */
-    ConstObjectVec          FindObjects(const UniverseObjectVisitor& visitor) const;
+    /** Returns objects that have been destroyed from this Universe. */
+    const ObjectMap&        DestroyedObjects() const;
 
-    /** Returns all the objects that match \a visitor */
-    ObjectVec               FindObjects(const UniverseObjectVisitor& visitor);
+    /** Returns latest known state of objects for the Empire with
+      * id \a empire_id */
+    const ObjectMap&        EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
 
-    /** Returns all the objects of type T */
-    template <class T>
-    std::vector<const T*>   FindObjects() const;
-
-    /** Returns all the objects of type T */
-    template <class T>
-    std::vector<T*>         FindObjects();
-
-    /** Returns the IDs of all the objects that match \a visitor */
-    ObjectIDVec             FindObjectIDs(const UniverseObjectVisitor& visitor) const;
-
-    /** Returns the IDs of all the objects of type T */
-    template <class T>
-    ObjectIDVec             FindObjectIDs() const;
-
-    iterator                begin();
-    iterator                end();
-    const_iterator          begin() const;                                                  ///< returns the begin const_iterator for the objects in the universe
-    const_iterator          end() const;                                                    ///< returns the end const_iterator for the objects in the universe
-
-
-    const UniverseObject*   DestroyedObject(int id) const;                                  ///< returns a pointer to the destroyed universe object with ID number \a id, or 0 if none exists
-    const_iterator          beginDestroyed() const  {return m_destroyed_objects.begin();}   ///< returns the begin const_iterator for the destroyed objects from the universe
-    const_iterator          endDestroyed() const    {return m_destroyed_objects.end();}     ///< returns the end const_iterator for the destroyed objects from the universe
-
+    /** Returns IDs of objects that the Empire with id \a empire_id has vision
+      * of on the current turn, or objects that at least one empire has vision
+      * of on the current turn if \a empire_id = ALL_EMPIRES */
+    std::set<int>           EmpireVisibleObjectIDs(int empire_id = ALL_EMPIRES) const;
 
     const ShipDesign*       GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
@@ -195,7 +288,7 @@ public:
     std::pair<std::list<int>, int>
                             LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
-    /** returns whether there is a path known to empire \a empire_id between
+    /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
       * the visibility for empire \a empire_id, or without regard to visibility
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
@@ -513,6 +606,67 @@ private:
 #  include "UniverseObject.h"
 #endif
 
+template <class T>
+const T* ObjectMap::Object(int id) const
+{
+    const_iterator it = m_const_objects.find(id);
+    return (it != m_const_objects.end() ?
+            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+            0);
+}
+
+template <class T>
+T* ObjectMap::Object(int id)
+{
+    iterator it = m_objects.find(id);
+    return (it != m_objects.end() ?
+            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
+            0);
+}
+
+template <class T>
+std::vector<const T*> ObjectMap::FindObjects() const
+{
+    std::vector<const T*> retval;
+    for (ObjectMap::const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
+        if (const T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<T*> ObjectMap::FindObjects()
+{
+    std::vector<T*> retval;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+template <class T>
+std::vector<int> ObjectMap::FindObjectIDs() const
+{
+    std::vector<int> retval;
+    for (ObjectMap::const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
+        if (static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
+
+template <class Archive>
+void ObjectMap::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(m_objects);
+
+    if (Archive::is_loading::value) {
+        CopyObjectsToConstObjects();
+    }
+}
+
 template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
@@ -550,77 +704,14 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        m_objects = objects;
+        m_objects.TransferObjectsFrom(objects);
         m_empire_object_visibility = empire_object_visibility;
         m_empire_object_visibility_turns = empire_object_visibility_turns;
-        m_destroyed_objects = destroyed_objects;
+        m_destroyed_objects.TransferObjectsFrom(destroyed_objects);
         m_destroyed_object_knowers = destroyed_object_knowers;
         m_ship_designs = ship_designs;
         InitializeSystemGraph();
     }
-
-    //Logger().debugStream() << "Universe::serialize destroyed objects at end: ";
-    //for (ObjectMap::const_iterator it = destroyed_objects.begin(); it != destroyed_objects.end(); ++it) {
-    //    Logger().debugStream() << " ... " << it->second->Name() << " with id " << it->first;
-    //}
-    //Logger().debugStream() << "Universe::serialize destroyed object knowers at end: ";
-    //for (ObjectKnowledgeMap::const_iterator know_it = destroyed_object_knowers.begin(); know_it != destroyed_object_knowers.end(); ++know_it) {
-    //    Logger().debugStream() << " ... object id: " << know_it->first << " known by: ";
-    //    const std::set<int>& knowers = know_it->second;
-    //    for (std::set<int>::const_iterator it = knowers.begin(); it != knowers.end(); ++it)
-    //        Logger().debugStream() << " ... ... " << *it;
-    //}
-}
-
-template <class T> 
-const T* Universe::Object(int id) const
-{
-    const_iterator it = m_objects.find(id);
-    return (it != m_objects.end() ?
-            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
-            0);
-}
-
-template <class T> 
-T* Universe::Object(int id)
-{
-    iterator it = m_objects.find(id);
-    return (it != m_objects.end() ?
-            static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())) :
-            0);
-}
-
-template <class T>
-std::vector<const T*> Universe::FindObjects() const
-{
-    std::vector<const T*> retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<T*> Universe::FindObjects()
-{
-    std::vector<T*> retval;
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (T* obj = static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-template <class T>
-Universe::ObjectIDVec Universe::FindObjectIDs() const
-{
-    Universe::ObjectIDVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (static_cast<T*>(it->second->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-            retval.push_back(it->first);
-    }
-    return retval;
 }
 
 #endif // _Universe_h_

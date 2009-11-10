@@ -206,7 +206,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
     }
 
 
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
 
 
     // get iterator pointing to System* on route that is the first after where this fleet is currently.
@@ -221,8 +221,8 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 
     // get current, previous and next systems of fleet
     const System* cur_system = this->GetSystem();                                   // may be 0
-    const System* prev_system = universe.Object<System>(this->PreviousSystemID());  // may be 0 if this fleet is not moving or ordered to move
-    const System* next_system = universe.Object<System>(*route_it);  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    const System* prev_system = objects.Object<System>(this->PreviousSystemID());   // may be 0 if this fleet is not moving or ordered to move
+    const System* next_system = objects.Object<System>(*route_it);  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         //Logger().errorStream() << "Fleet::MovePath couldn't get next system for this fleet " << this->Name();
         return retval;
@@ -356,7 +356,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
                 break;
 
             // update next system on route and distance to it from current position
-            next_system = universe.Object<System>(*route_it);
+            next_system = objects.Object<System>(*route_it);
             next_x = next_system->X();
             next_y = next_system->Y();
         }
@@ -436,10 +436,10 @@ double Fleet::Fuel() const
         return 0.0;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     double fuel = Meter::METER_MAX;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = universe.Object<Ship>(*ship_it);
+        const Ship* ship = objects.Object<Ship>(*ship_it);
         if (!ship) {
             Logger().errorStream() << "Fleet::Fuel couldn't get ship with id " << *ship_it;
             continue;
@@ -461,10 +461,10 @@ double Fleet::MaxFuel() const
 
     // determine the maximum amount of fuel that can be stored by the ship in the fleet that
     // can store the least amount of fuel
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     double max_fuel = Meter::METER_MAX;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = universe.Object<Ship>(*ship_it);
+        const Ship* ship = objects.Object<Ship>(*ship_it);
         if (!ship) {
             Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
             continue;
@@ -483,7 +483,7 @@ int Fleet::FinalDestinationID() const
 { return m_moving_to; }
 
 System* Fleet::FinalDestination() const
-{ return GetUniverse().Object<System>(m_moving_to); }
+{ return GetUniverse().Objects().Object<System>(m_moving_to); }
 
 int Fleet::PreviousSystemID() const
 { return m_prev_system; }
@@ -505,20 +505,24 @@ bool Fleet::CanChangeDirectionEnRoute() const
 
 bool Fleet::HasArmedShips() const
 {
+    const ObjectMap& objects = GetUniverse().Objects();
     for (Fleet::const_iterator it = begin(); it != end(); it++) {
-        if (GetUniverse().Object<Ship>(*it)->IsArmed())
-            return true;
+        if (const Ship* ship = objects.Object<Ship>(*it))
+            if (ship->IsArmed())
+                return true;
     }
     return false;
 }
 
 bool Fleet::HasColonyShips() const
 {
-    for (Fleet::const_iterator it = begin(); it != end(); it++) {
-        if (GetUniverse().Object<Ship>(*it)->CanColonize())
-            return true;
-    }
-    return false;}
+    const ObjectMap& objects = GetUniverse().Objects();
+    for (Fleet::const_iterator it = begin(); it != end(); it++)
+        if (const Ship* ship = objects.Object<Ship>(*it))
+            if (ship->CanColonize())
+                return true;
+    return false;
+}
 
 int Fleet::NumShips() const
 {
@@ -537,11 +541,12 @@ bool Fleet::Contains(int object_id) const
 
 std::vector<UniverseObject*> Fleet::FindObjects() const
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<UniverseObject*> retval;
     // add ships in this fleet
     for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it)
-        retval.push_back(universe.Object(*it));
+        if (UniverseObject* obj = objects.Object(*it))
+            retval.push_back(obj);
     return retval;
 }
 
@@ -576,7 +581,7 @@ void Fleet::SetRoute(const std::list<int>& route)
 
     m_travel_route = route;
 
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
 
     // calculate length of line segments between systems on route, and sum up to determine length of route between
     // systems on route.  (Might later add distance from fleet to first system on route to this to get the total
@@ -588,13 +593,13 @@ void Fleet::SetRoute(const std::list<int>& route)
         if (next_it == m_travel_route.end())
             break;  // current system is the last on the route, so don't need to add any additional distance.
 
-        const System* cur_sys = universe.Object<System>(*it);
+        const System* cur_sys = objects.Object<System>(*it);
         if (!cur_sys) {
             Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *it;
             return;
         }
 
-        const System* next_sys = universe.Object<System>(*next_it);
+        const System* next_sys = objects.Object<System>(*next_it);
         if (!next_sys) {
             Logger().errorStream() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
             return;
@@ -615,7 +620,7 @@ void Fleet::SetRoute(const std::list<int>& route)
     } else {
         // if we're already moving, add in the distance from where we are to the first system in the route
         if (SystemID() != route.front()) {
-            const System* starting_system = universe.Object<System>(route.front());
+            const System* starting_system = objects.Object<System>(route.front());
             if (!starting_system) {
                 Logger().errorStream() << "Fleet::SetRoute couldn't get system with id " << route.front();
                 return;
@@ -639,6 +644,8 @@ void Fleet::SetRoute(const std::list<int>& route)
 
 void Fleet::AddShips(const std::vector<int>& ships)
 {
+    ObjectMap& objects = GetUniverse().Objects();
+
     for (unsigned int i = 0; i < ships.size(); ++i) {
         int ship_id = ships[i];
 
@@ -647,7 +654,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
             continue;
         }
 
-        if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
+        if (Ship* s = objects.Object<Ship>(ship_id)) {
             if (System* system = GetSystem()) {
                 system->Insert(s);
             } else {
@@ -657,7 +664,7 @@ void Fleet::AddShips(const std::vector<int>& ships)
             s->SetFleetID(ID());
             m_ships.insert(ship_id);
         } else {
-            throw std::invalid_argument("Fleet::AddShips() : Attempted to add an id of a non-ship object to a fleet.");
+            Logger().errorStream() << "Fleet::AddShips() : Attempted to add an id (" << ship_id << ") of a non-ship object to a fleet.";
         }
     }
     RecalculateFleetSpeed();
@@ -666,13 +673,15 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
 void Fleet::AddShip(int ship_id)
 {
+    ObjectMap& objects = GetUniverse().Objects();
+
     if (this->Contains(ship_id)) {
         Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
         return;
     }
 
     Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
-    if (Ship* s = GetUniverse().Object<Ship>(ship_id)) {
+    if (Ship* s = objects.Object<Ship>(ship_id)) {
         if (System* system = GetSystem()) {
             system->Insert(s);
         } else {
@@ -682,7 +691,7 @@ void Fleet::AddShip(int ship_id)
         s->SetFleetID(ID());
         m_ships.insert(ship_id);
     } else {
-        Logger().errorStream() << "Fleet::AddShip() : Attempted to add an id of a non-ship object to a fleet.";
+        Logger().errorStream() << "Fleet::AddShips() : Attempted to add an id (" << ship_id << ") of a non-ship object to a fleet.";
     }
     RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
     StateChangedSignal();
@@ -739,11 +748,10 @@ void Fleet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Fleet::SetSystem(int sys)";
     UniverseObject::SetSystem(sys);
-    for (iterator it = begin(); it != end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
-        obj->SetSystem(sys);
-    }
+    ObjectMap& objects = GetUniverse().Objects();
+    for (iterator it = begin(); it != end(); ++it)
+        if (UniverseObject* obj = objects.Object(*it))
+            obj->SetSystem(sys);
 }
 
 void Fleet::MoveTo(double x, double y)
@@ -752,11 +760,10 @@ void Fleet::MoveTo(double x, double y)
     // move fleet itself
     UniverseObject::MoveTo(x, y);
     // move ships in fleet
-    for (iterator it = begin(); it != end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
-        obj->UniverseObject::MoveTo(x, y);
-    }
+    ObjectMap& objects = GetUniverse().Objects();
+    for (iterator it = begin(); it != end(); ++it)
+        if (UniverseObject* obj = objects.Object(*it))
+            obj->UniverseObject::MoveTo(x, y);
 }
 
 void Fleet::SetNextAndPreviousSystems(int next, int prev)
@@ -768,16 +775,14 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev)
 void Fleet::MovementPhase()
 {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
 
     // find if any of owners of fleet can resupply ships at the location of this fleet
     if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
         // resupply all ships
-        for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-            Ship* ship = universe.Object<Ship>(*ship_it);
-            assert(ship);
-            ship->Resupply();
-        }
+        for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it)
+            if (Ship* ship = objects.Object<Ship>(*ship_it))
+                ship->Resupply();
     }
 
 
@@ -803,11 +808,9 @@ void Fleet::MovementPhase()
                 this->FinalDestinationID() == this->SystemID())
             {
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-                    Ship* ship = universe.Object<Ship>(*ship_it);
-                    if (!ship) continue;
-                    Meter* fuel_meter = ship->GetMeter(METER_FUEL);
-                    if (!fuel_meter) continue;
-                    GrowFuelMeter(fuel_meter);
+                    if (Ship* ship = objects.Object<Ship>(*ship_it))
+                        if (Meter* fuel_meter = ship->GetMeter(METER_FUEL))
+                            GrowFuelMeter(fuel_meter);
                 }
             }
             return;
@@ -834,7 +837,7 @@ void Fleet::MovementPhase()
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
-        System* system = universe.Object<System>(it->object_id);
+        System* system = objects.Object<System>(it->object_id);
 
         //Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
 
@@ -860,7 +863,7 @@ void Fleet::MovementPhase()
                 //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-                    Ship* ship = universe.Object<Ship>(*ship_it);
+                    Ship* ship = objects.Object<Ship>(*ship_it);
                     assert(ship);
                     ship->Resupply();
                 }
@@ -902,7 +905,7 @@ void Fleet::MovementPhase()
     if (m_moving_to != SystemID() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
-            if (universe.Object<System>(next_it->object_id)) {
+            if (objects.Object<System>(next_it->object_id)) {
                 //Logger().debugStream() << "___ setting m_next_system to " << next_it->object_id;
                 m_next_system = next_it->object_id;
                 break;
@@ -917,13 +920,10 @@ void Fleet::MovementPhase()
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0) {
-        for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-            Ship* ship = universe.Object<Ship>(*ship_it);
-            assert(ship);
-            Meter* meter = ship->GetMeter(METER_FUEL);
-            assert(meter);
-            meter->AdjustCurrent(-fuel_consumed);
-        }
+        for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it)
+            if (Ship* ship = objects.Object<Ship>(*ship_it))
+                if (Meter* meter = ship->GetMeter(METER_FUEL))
+                    meter->AdjustCurrent(-fuel_consumed);
     }
 }
 
@@ -959,6 +959,7 @@ void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 void Fleet::CalculateRoute() const
 {
     const Universe& universe = GetUniverse();
+    const ObjectMap& objects = universe.Objects();
     int owner = ALL_EMPIRES;
     if (Owners().size() == 1)
         owner = *Owners().begin();
@@ -971,7 +972,7 @@ void Fleet::CalculateRoute() const
         if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
             // if we haven't actually left yet, we have to move from whichever system we are at now
 
-            if (!universe.Object<System>(m_moving_to))
+            if (!objects.Object<System>(m_moving_to))
                 return; // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
 
             std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
@@ -989,7 +990,7 @@ void Fleet::CalculateRoute() const
                     return; // next system also isn't visible; leave route empty.
 
                 // safety check: ensure supposedly visible object actually exists in known universe.
-                if (!universe.Object<System>(m_next_system)) {
+                if (!objects.Object<System>(m_next_system)) {
                     Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
                     return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
                 }
@@ -1007,7 +1008,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                const UniverseObject* obj = universe.Object(sys_list1.front());
+                const UniverseObject* obj = objects.Object(sys_list1.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
                     return;
@@ -1022,7 +1023,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                obj = universe.Object(sys_list2.front());
+                obj = objects.Object(sys_list2.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
                     return;
@@ -1048,7 +1049,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                const UniverseObject* obj = universe.Object(sys_list.front());
+                const UniverseObject* obj = objects.Object(sys_list.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
                     return;
@@ -1065,14 +1066,13 @@ void Fleet::CalculateRoute() const
 
 void Fleet::RecalculateFleetSpeed()
 {
+    const ObjectMap& objects = GetUniverse().Objects();
     if (!(m_ships.empty())) {
         m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
         for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-            Ship* ship = GetUniverse().Object<Ship>(*it);
-            if (ship) {
+            if (const Ship* ship = objects.Object<Ship>(*it))
                 if (ship->Speed() < m_speed)
                     m_speed = ship->Speed();
-            }
         }
     } else {
         m_speed = 0.0;

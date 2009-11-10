@@ -277,12 +277,12 @@ CombatSetupWnd::CombatSetupWnd(std::vector<Fleet*> fleets,
     AttachChild(m_listbox);
     GridLayout();
 
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     const GG::Pt row_size = ListRowSize();
 
     for (std::size_t i = 0; i < fleets.size(); ++i) {
         for (Fleet::const_iterator it = fleets[i]->begin(); it != fleets[i]->end(); ++it) {
-            ShipRow* row = new ShipRow(universe.Object<Ship>(*it), GG::X1, row_size.y);
+            ShipRow* row = new ShipRow(objects.Object<Ship>(*it), GG::X1, row_size.y);
             m_listbox->Insert(row);
             row->Resize(row_size);
         }

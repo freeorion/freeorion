@@ -152,11 +152,11 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
 
 void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // get fleets
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<const Fleet*> fleets;
 
     for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
-        const Fleet* fleet = universe.Object<Fleet>(*it);
+        const Fleet* fleet = objects.Object<Fleet>(*it);
         if (!fleet) {
             Logger().errorStream() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
             continue;
@@ -240,8 +240,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     if (first_fleet && !first_fleet->GetSystem()) {
         int next_sys_id = first_fleet->NextSystemID();
-        const UniverseObject* obj = GetUniverse().Object(next_sys_id);
-        if (obj) {
+        if (const UniverseObject* obj = objects.Object(next_sys_id)) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their 
             // actual universe position, but if they're moving along a starlane, this code will assume

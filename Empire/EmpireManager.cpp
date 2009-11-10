@@ -54,10 +54,18 @@ EmpireManager::iterator EmpireManager::end()
 Empire* EmpireManager::CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID)
 {
     Empire* empire = new Empire(name, player_name, id, color, planet_ID);
-    Universe& universe = GetUniverse();
-    Planet* planet = universe.Object<Planet>(planet_ID);
-    empire->AddExploredSystem(planet->SystemID());
+
+    const ObjectMap& objects = GetUniverse().Objects();
+    if (const Planet* planet = objects.Object<Planet>(planet_ID)) {
+        int sys_id = planet->SystemID();
+        if (sys_id != UniverseObject::INVALID_OBJECT_ID)
+            empire->AddExploredSystem(sys_id);
+    } else {
+        Logger().errorStream() << "EmpireManager::CreateEmpire passed invalid planet id (" << planet_ID << ")";
+    }
+
     InsertEmpire(empire);
+
     return empire;
 }
 

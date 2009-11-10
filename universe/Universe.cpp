@@ -36,6 +36,10 @@
 #include <stdexcept>
 
 namespace {
+    const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;  // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
+}
+
+namespace {
     struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
 
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
@@ -275,6 +279,198 @@ const int ALL_EMPIRES = -1;
 
 
 /////////////////////////////////////////////
+// class ObjectMap
+/////////////////////////////////////////////
+ObjectMap::ObjectMap()
+{}
+
+ObjectMap::~ObjectMap()
+{
+    Clear();
+}
+
+void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id)
+{
+    if (&copied_map == this)
+        return;
+
+    // loop through objects in copied map, copying or cloning each depending
+    // on whether there already is a corresponding object in this map
+    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
+        int object_id = it->first;
+
+        // can empire see object at all?  if not, skip copying object's info
+        if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
+            continue;
+
+        // copy object...
+        const UniverseObject* copy_from_object = it->second;
+        if (UniverseObject* copy_to_object = this->Object(object_id)) {
+            copy_to_object->Copy(copy_from_object, empire_id);
+        } else {
+            UniverseObject* clone = copy_from_object->Clone(empire_id);
+            this->Insert(object_id, clone);
+        }
+    }
+}
+
+ObjectMap* ObjectMap::Clone(int empire_id) const
+{
+    ObjectMap* retval = new ObjectMap();
+    retval->Copy(*this, empire_id);
+    return retval;
+}
+
+void ObjectMap::TransferObjectsFrom(ObjectMap& object_map)
+{
+    if (&object_map == this)
+        return;
+
+    // remove any existing objects in this ObjectMap
+    Clear();
+
+    // copy contents (map from id to pointers) from parameter
+    m_objects = object_map.m_objects;
+    CopyObjectsToConstObjects();    // duplicate as internal const pointers map
+
+    // clear parameter's pointers, so that this ObjectMap has sole ownership of pointed-to UniverseObjects
+    object_map.m_objects.clear();
+    object_map.m_const_objects.clear();
+}
+
+const UniverseObject* ObjectMap::Object(int id) const
+{
+    const_iterator it = m_const_objects.find(id);
+    return (it != m_const_objects.end() ? it->second : 0);
+}
+
+UniverseObject* ObjectMap::Object(int id)
+{
+    iterator it = m_objects.find(id);
+    return (it != m_objects.end() ? it->second : 0);
+}
+
+std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const
+{
+    std::vector<const UniverseObject*> retval;
+    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+std::vector<UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor)
+{
+    std::vector<UniverseObject*> retval;
+    for (iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second->Accept(visitor))
+            retval.push_back(obj);
+    }
+    return retval;
+}
+
+std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) const
+{
+    std::vector<int> retval;
+    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it) {
+        if (it->second->Accept(visitor))
+            retval.push_back(it->first);
+    }
+    return retval;
+}
+
+ObjectMap::iterator ObjectMap::begin()
+{
+    return m_objects.begin();
+}
+
+ObjectMap::iterator ObjectMap::end()
+{
+    return m_objects.end();
+}
+
+ObjectMap::const_iterator ObjectMap::const_begin() const
+{
+    return m_const_objects.begin();
+}
+
+ObjectMap::const_iterator ObjectMap::const_end() const
+{
+    return m_const_objects.end();
+}
+
+UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj)
+{
+    // safety checks...
+    if (!obj || id == UniverseObject::INVALID_OBJECT_ID)
+        return 0;
+
+    if (obj->ID() != id) {
+        Logger().errorStream() << "ObjectMap::Insert passed object and id that doesn't match the object's id";
+        obj->SetID(id);
+    }
+
+    // check if an object is in the map already with specified id
+    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
+    if (it == m_objects.end()) {
+        // no pre-existing object was stored under specified id, so just insert
+        // the new object
+        m_objects[id] = obj;
+        m_const_objects[id] = obj;
+        return 0;
+    }
+
+    // pre-existing object is present.  need to get it and store it first...
+    UniverseObject* old_obj = it->second;
+
+    // and update maps
+    it->second = obj;
+    m_const_objects[id] = obj;
+
+    // and return old object for external handling
+    return old_obj;
+}
+
+UniverseObject* ObjectMap::Remove(int id)
+{
+    // search for object in objects maps
+    std::map<int, UniverseObject*>::iterator it = m_objects.find(id);
+    if (it == m_objects.end())
+        return 0;
+
+    // object found, so store pointer for later...
+    UniverseObject* retval = it->second;
+
+    // and erase from pointer maps
+    m_objects.erase(it);
+    m_const_objects.erase(id);
+
+    return retval;
+}
+
+void ObjectMap::Delete(int id)
+{
+    delete Remove(id);
+}
+
+void ObjectMap::Clear()
+{
+    for (iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        delete it->second;
+    m_objects.clear();
+    m_const_objects.clear();
+}
+
+void ObjectMap::CopyObjectsToConstObjects()
+{
+    // remove existing entries in const objects and replace with values from non-const objects
+    m_const_objects.clear();
+    m_const_objects.insert(m_objects.begin(), m_objects.end());
+}
+
+
+/////////////////////////////////////////////
 // struct Universe::GraphImpl
 /////////////////////////////////////////////
 struct Universe::GraphImpl
@@ -312,9 +508,8 @@ struct Universe::GraphImpl
             // for reverse-lookup System universe ID from graph indices...
             ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), *m_graph);
 
-
-            Universe& universe = GetUniverse();
-
+            const Universe& universe = GetUniverse();
+            const ObjectMap& objects = universe.EmpireKnownObjects(m_empire_id);
 
             // get system id from graph index
             int sys_graph_index_1 = boost::source(edge, *m_graph);
@@ -334,14 +529,14 @@ struct Universe::GraphImpl
                 return false;
 
 
-            const System* system1 = universe.Object<System>(sys_id_1);
+            const System* system1 = objects.Object<System>(sys_id_1);
             if (!system1) {
                 Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
             }
 
             // check if starlane is listed in system's visible starlanes
-            System::StarlaneMap lanes = system1->VisibleStarlanes(m_empire_id);
+            System::StarlaneMap lanes = system1->StarlanesWormholes();
             if (lanes.find(sys_id_2) != lanes.end())
                 return true;
 
@@ -442,79 +637,63 @@ Universe::Universe() :
 
 Universe::~Universe()
 {
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        delete it->second;
-    for (ObjectMap::iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it)
-        delete it->second;
     for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
         delete it->second;
+
     delete m_graph_impl;
+}
 
-    for (EmpireLatestKnownObjectMap::iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it) {
-        ObjectMap& empire_latest_known_object_map = it->second;
-        for (ObjectMap::iterator map_it = empire_latest_known_object_map.begin(); map_it != empire_latest_known_object_map.end(); ++map_it)
-            delete map_it->second;
+const ObjectMap& Universe::Objects() const
+{ return m_objects; }
+
+ObjectMap& Universe::Objects()
+{ return m_objects; }
+
+const ObjectMap& Universe::DestroyedObjects() const
+{ return m_destroyed_objects; }
+
+const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const
+{
+    if (empire_id == ALL_EMPIRES)
+        return m_objects;
+
+    EmpireLatestKnownObjectMap::const_iterator it = m_empire_latest_known_objects.find(empire_id);
+    if (it != m_empire_latest_known_objects.end()) {
+        const ObjectMap& test = it->second;
     }
+
+//    return it->second;
+
+    static const ObjectMap empty_map;
+    return empty_map;
 }
 
-const UniverseObject* Universe::Object(int id) const
+std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) const
 {
-    const_iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? it->second : 0);
-}
+    std::set<int> retval;
 
-UniverseObject* Universe::Object(int id)
-{
-    iterator it = m_objects.find(id);
-    return (it != m_objects.end() ? it->second : 0);
-}
+    // get id(s) of all empires to consider visibility of...
+    std::set<int> empire_ids;
+    if (empire_id != ALL_EMPIRES)
+        empire_ids.insert(empire_id);
+    else
+        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
+            empire_ids.insert(empire_it->first);
 
-Universe::ConstObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor) const
-{
-    ConstObjectVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
+    // check each object's visibility against all empires, including the object
+    // if an empire has visibility of it
+    for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
+        int id = obj_it->first;
+        for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+            Visibility vis = GetObjectVisibilityByEmpire(id, empire_id);
+            if (vis >= VIS_BASIC_VISIBILITY) {
+                retval.insert(id);
+                break;
+            }
+        }
     }
+
     return retval;
-}
-
-Universe::ObjectVec Universe::FindObjects(const UniverseObjectVisitor& visitor)
-{
-    ObjectVec retval;
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-Universe::ObjectIDVec Universe::FindObjectIDs(const UniverseObjectVisitor& visitor) const
-{
-    ObjectIDVec retval;
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (it->second->Accept(visitor))
-            retval.push_back(it->first);
-    }
-    return retval;
-}
-
-Universe::iterator Universe::begin()
-{ return m_objects.begin(); }
-
-Universe::iterator Universe::end()
-{ return m_objects.end(); }
-
-Universe::const_iterator Universe::begin() const
-{ return m_objects.begin(); }
-
-Universe::const_iterator Universe::end() const
-{ return m_objects.end(); }
-
-const UniverseObject* Universe::DestroyedObject(int id) const
-{
-    const_iterator it = m_destroyed_objects.find(id);
-    return (it != m_destroyed_objects.end() ? it->second : 0);
 }
 
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
@@ -608,40 +787,39 @@ std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/
 
 int Universe::Insert(UniverseObject* obj)
 {
-    int retval = UniverseObject::INVALID_OBJECT_ID;
-    if (obj) {
-        if (m_last_allocated_object_id + 1 < UniverseObject::MAX_ID) {
-            m_objects[++m_last_allocated_object_id] = obj;
-            obj->SetID(m_last_allocated_object_id);
-            retval = m_last_allocated_object_id;
-        } else { // we'll probably never execute this branch, considering how many IDs are available
-            // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
-            for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-                if (1 < it->first - last_id_seen) {
-                    m_objects[last_id_seen + 1] = obj;
-                    obj->SetID(last_id_seen + 1);
-                    retval = last_id_seen + 1;
-                    break;
-                }
-            }
+    if (!obj)
+        return UniverseObject::INVALID_OBJECT_ID;
+
+    if (m_last_allocated_object_id + 1 < UniverseObject::MAX_ID) {
+        int id = ++m_last_allocated_object_id;
+        obj->SetID(id);
+        m_objects.Insert(id, obj);
+        return id;
+    }
+
+    // we'll probably never execute this branch, considering how many IDs are available
+    // find a hole in the assigned IDs in which to place the object
+    int last_id_seen = UniverseObject::INVALID_OBJECT_ID;
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (1 < it->first - last_id_seen) {
+            int id = last_id_seen + 1;
+            obj->SetID(id);
+            m_objects.Insert(id, obj);
+            return id;
         }
     }
-    return retval;
+
+    return UniverseObject::INVALID_OBJECT_ID;
 }
 
 bool Universe::InsertID(UniverseObject* obj, int id)
 {
-    bool retval = false;
+    if (!obj || id == UniverseObject::INVALID_OBJECT_ID || id >= UniverseObject::MAX_ID)
+        return false;
 
-    if (obj) {
-        if ( id < UniverseObject::MAX_ID) {
-            m_objects[id] = obj;
-            obj->SetID(id);
-            retval = true;
-        }
-    }
-    return retval;
+    obj->SetID(id);
+    m_objects.Insert(id, obj);
+    return true;
 }
 
 int Universe::InsertShipDesign(ShipDesign* ship_design)
@@ -686,15 +864,16 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
     GetEffectsAndTargets(targets_causes_map);
 
     // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         it->second->ResetMaxMeters();
         it->second->ApplyUniverseTableMaxMeterAdjustments();
     }
 
     ExecuteEffects(targets_causes_map);
 
-    for (const_iterator it = begin(); it != end(); ++it) {
-        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        it->second->ClampMeters();
     }
 }
 
@@ -706,14 +885,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters()
     GetEffectsAndTargets(targets_causes_map);
 
     // reset max meter state that is affected by the application of effects
-    for (const_iterator it = begin(); it != end(); ++it) {
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         it->second->ResetMaxMeters();
         it->second->ApplyUniverseTableMaxMeterAdjustments();
     }
 
     ExecuteMeterEffects(targets_causes_map);
 
-    for (const_iterator it = begin(); it != end(); ++it) {
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
     }
 }
@@ -733,7 +912,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
 
     // determine meter max discrepancies
     for (EffectAccountingMap::iterator obj_it = m_effect_accounting_map.begin(); obj_it != m_effect_accounting_map.end(); ++obj_it) {
-        UniverseObject* obj = Object(obj_it->first);    // object that has some meters
+        UniverseObject* obj = m_objects.Object(obj_it->first);    // object that has some meters
         if (!obj) {
             Logger().errorStream() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -781,7 +960,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
     if (object_id == UniverseObject::INVALID_OBJECT_ID) {
         // update meters for all objects.  Value of updated_contained_objects is irrelivant and is ignored in this case.
         std::vector<int> object_ids;
-        for (iterator obj_it = begin(); obj_it != end(); ++obj_it)
+        for (ObjectMap::iterator obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it)
             object_ids.push_back(obj_it->first);
 
         UpdateMeterEstimates(object_ids, meter_type);
@@ -797,7 +976,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
     for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
         // get next object on list
         int cur_object_id = *list_it;
-        UniverseObject* cur_object = Object(cur_object_id);
+        UniverseObject* cur_object = m_objects.Object(cur_object_id);
         if (!cur_object) {
             Logger().errorStream() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
             return;
@@ -842,7 +1021,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterTy
         // need to check that each object has the requested meter type
         for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
             int cur_object_id = *obj_it;
-            UniverseObject* cur_object = Object(cur_object_id);
+            UniverseObject* cur_object = m_objects.Object(cur_object_id);
             if (cur_object->GetMeter(meter_type)) {
                 m_effect_accounting_map[cur_object_id][meter_type].clear();
                 objects_set.insert(cur_object_id);
@@ -861,7 +1040,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     // update meter estimates for indicated MeterType for all relevant objects
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
-        UniverseObject* obj = Object(obj_id);
+        UniverseObject* obj = m_objects.Object(obj_id);
 
         // Reset max meters to METER_MIN
         obj->ResetMaxMeters(meter_type);
@@ -915,7 +1094,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     if (!m_effect_discrepancy_map.empty()) {
         for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
             int obj_id = *obj_it;
-            UniverseObject* obj = Object(obj_id);
+            UniverseObject* obj = m_objects.Object(obj_id);
 
             // check if this object has any discrepancies
             EffectDiscrepancyMap::iterator dis_it = m_effect_discrepancy_map.find(obj_id);
@@ -953,7 +1132,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
-        Object(*obj_it)->ClampMeters();
+        m_objects.Object(*obj_it)->ClampMeters();
     }
 }
 
@@ -961,7 +1140,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
     targets_causes_map.clear();
 
-    std::vector<int> all_objects = FindObjectIDs<UniverseObject>();
+    std::vector<int> all_objects = m_objects.FindObjectIDs<UniverseObject>();
     GetEffectsAndTargets(targets_causes_map, all_objects);
 }
 
@@ -969,7 +1148,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
 {
     //Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 1) EffectsGroups from Specials
-    for (Universe::const_iterator it = begin(); it != end(); ++it) {
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
         const std::set<std::string>& specials = it->second->Specials();
         for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
@@ -997,7 +1176,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 3) EffectsGroups from Buildings
-    std::vector<Building*> buildings = FindObjects<Building>();
+    std::vector<Building*> buildings = m_objects.FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         const Building* building = *building_it;
         if (!building) {
@@ -1015,7 +1194,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
-    std::vector<Ship*> ships = FindObjects<Ship>();
+    std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
         if (!ship) {
@@ -1060,7 +1239,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     // transfer target objects from input vector to a set
     Condition::ObjectSet all_potential_targets;
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
-        all_potential_targets.insert(Object(*it));
+        all_potential_targets.insert(m_objects.Object(*it));
 
     // process all effects groups in set provided
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
@@ -1242,7 +1421,7 @@ void Universe::UpdateEmpireObjectVisibilities()
     m_empire_object_visibility.clear();
 
     // for each detecting object
-    for (Universe::const_iterator detector_it = this->begin(); detector_it != this->end(); ++detector_it) {
+    for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
         // get detector object
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;
@@ -1273,7 +1452,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
         // for each detectable object
-        for (Universe::const_iterator target_it = this->begin(); target_it != this->end(); ++target_it) {
+        for (ObjectMap::const_iterator target_it = m_objects.const_begin(); target_it != m_objects.const_end(); ++target_it) {
             // special case for pairs
 
             if (target_it == detector_it)
@@ -1338,7 +1517,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
     // propegate visibility from contained to container objects
-    for (Universe::const_iterator container_object_it = this->begin(); container_object_it != this->end(); ++container_object_it) {
+    for (ObjectMap::const_iterator container_object_it = m_objects.const_begin(); container_object_it != m_objects.const_end(); ++container_object_it) {
         int container_obj_id = container_object_it->first;
 
         // get contained object
@@ -1398,7 +1577,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
     // propegate visibility along starlanes
-    const std::vector<System*> systems = this->FindObjects<System>();
+    const std::vector<System*> systems = m_objects.FindObjects<System>();
     for (std::vector<System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System* system = *it;
         int system_id = system->ID();
@@ -1418,7 +1597,7 @@ void Universe::UpdateEmpireObjectVisibilities()
                 continue;
 
             // get all starlanes emanating from this system, and loop through them
-            System::StarlaneMap starlane_map = system->VisibleStarlanes(ALL_EMPIRES);
+            System::StarlaneMap starlane_map = system->StarlanesWormholes();
             for (System::StarlaneMap::const_iterator lane_it = starlane_map.begin(); lane_it != starlane_map.end(); ++lane_it) {
                 bool is_wormhole = lane_it->second;
                 if (is_wormhole)
@@ -1443,8 +1622,8 @@ void Universe::UpdateEmpireObjectVisibilities()
     // moving are at least basically visible, so that the starlane itself will
     // be visible
     std::vector<const Fleet*> moving_fleets;
-    Universe::ObjectVec moving_fleet_objects = this->FindObjects(MovingFleetVisitor());
-    for (Universe::ObjectVec::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
+    std::vector<UniverseObject*> moving_fleet_objects = m_objects.FindObjects(MovingFleetVisitor());
+    for (std::vector<UniverseObject*>::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
         if (const Fleet* fleet = universe_object_cast<const Fleet*>(*it)) {
             if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID || fleet->Unowned())
                 continue;
@@ -1494,7 +1673,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
 
 
     // for each object in universe
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int object_id = it->first;
         const UniverseObject* full_object = it->second; // not filtered on server by visibility
         if (!full_object) {
@@ -1529,12 +1708,11 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            ObjectMap::iterator known_obj_it = known_object_map.find(object_id);
-            if (known_obj_it != known_object_map.end()) {
-                known_obj_it->second->Copy(full_object, empire_id);             // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
+            if (UniverseObject* known_obj = known_object_map.Object(object_id)) {
+                known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
                 if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
-                    known_object_map[object_id] = new_obj;
+                    known_object_map.Insert(object_id, new_obj);
             }
 
 
@@ -1569,51 +1747,48 @@ void Universe::RebuildEmpireViewSystemGraphs()
 void Universe::Destroy(int id)
 {
     // remove object from any containing UniverseObject
-    iterator it = m_objects.find(id);
-    if (it != m_objects.end()) {
-        UniverseObject* obj = it->second;
-        //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
-
-        // get and record set of empires that can presently see this object
-        std::set<int> knowing_empires;
-        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
-            int empire_id = emp_it->first;
-            if (obj->GetVisibility(empire_id) != VIS_NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
-                knowing_empires.insert(empire_id);
-                //Logger().debugStream() << "..visible to empire: " << empire_id;
-            }
-        }
-        m_destroyed_object_knowers[id] = knowing_empires;
-
-
-        // move object to its own position, thereby removing it from anything
-        // that contained it and propegating associated signals
-        obj->MoveTo(obj->X(), obj->Y());
-
-
-        // remove from existing objects set and insert into destroyed objects set
-        m_objects.erase(id);
-        UniverseObjectDeleteSignal(obj);
-        m_destroyed_objects[id] = obj;
-    } else {
+    UniverseObject* obj = m_objects.Object(id);
+    if (!obj) {
         Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;
+        return;
     }
+    //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
+
+    // get and record set of empires that can presently see this object
+    std::set<int> knowing_empires;
+    for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
+        int empire_id = emp_it->first;
+        if (obj->GetVisibility(empire_id) != VIS_NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
+            knowing_empires.insert(empire_id);
+            //Logger().debugStream() << "..visible to empire: " << empire_id;
+        }
+    }
+    m_destroyed_object_knowers[id] = knowing_empires;
+
+
+    // move object to its own position, thereby removing it from anything
+    // that contained it and propegating associated signals
+    obj->MoveTo(obj->X(), obj->Y());
+
+
+    // remove from existing objects set and insert into destroyed objects set
+    m_objects.Remove(id);
+    m_destroyed_objects.Insert(id, obj);
+    UniverseObjectDeleteSignal(obj);
 }
 
 bool Universe::Delete(int id)
 {
     // find object amongst existing objects and delete directly, without storing any info
     // about the previous object (as is done for destroying an object)
-    iterator it = m_objects.find(id);
-    if (it != m_objects.end()) {
-        UniverseObject* obj = it->second;
-
+    UniverseObject* obj = m_objects.Object(id);
+    if (obj) {
         // move object to invalid position, thereby removing it from anything that contained it
         // and propegating associated signals
         obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
 
         // remove from existing objects set
-        m_objects.erase(id);
+        m_objects.Remove(id);
 
         UniverseObjectDeleteSignal(obj);
 
@@ -1624,17 +1799,13 @@ bool Universe::Delete(int id)
 
 
     // find object amongst destroyed objects
-    it = m_destroyed_objects.find(id);
-    if (it != m_destroyed_objects.end()) {
+    obj = m_destroyed_objects.Object(id);
+    if (obj) {
         // remove from destroyed objects set
-        m_destroyed_objects.erase(id);
+        delete obj;
 
         // remove from knowledge of destroyed objects
         m_destroyed_object_knowers.erase(id);
-
-        UniverseObject* obj = it->second;
-
-        delete obj;
 
         return true;
     }
@@ -1754,7 +1925,7 @@ void Universe::InitializeSystemGraph()
         boost::remove_vertex(i, m_graph_impl->m_system_graph);
     }
 
-    std::vector<int> system_ids = FindObjectIDs<System>();
+    std::vector<int> system_ids = m_objects.FindObjectIDs<System>();
     m_system_distances.resize(system_ids.size());
     GraphImpl::SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
 
@@ -1774,7 +1945,7 @@ void Universe::InitializeSystemGraph()
 
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
-        const System* system1 = Object<System>(system1_id);
+        const System* system1 = m_objects.Object<System>(system1_id);
 
         // add edges and edge weights
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
@@ -1792,7 +1963,7 @@ void Universe::InitializeSystemGraph()
             if (it->second) {                               // if this is a wormhole
                 edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
             } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
-                const UniverseObject* system2 = Object(it->first);
+                const UniverseObject* system2 = m_objects.Object(it->first);
                 double x_dist = system2->X() - system1->X();
                 double y_dist = system2->Y() - system1->Y();
                 edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -1803,7 +1974,7 @@ void Universe::InitializeSystemGraph()
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[i];
-            const UniverseObject* system2 = Object(system2_id);
+            const UniverseObject* system2 = m_objects.Object(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
@@ -1831,7 +2002,7 @@ void Universe::InhibitUniverseObjectSignals(bool inhibit)
 
 void Universe::DestroyImpl(int id)
 {
-    UniverseObject* obj = Object(id);
+    UniverseObject* obj = m_objects.Object(id);
     if (!obj)
         return;
     if (Ship* ship = universe_object_cast<Ship*>(obj)) {
@@ -1861,7 +2032,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
         designs_to_serialize = m_ship_designs;
     } else {
         // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
-        for (ObjectMap::const_iterator it = serialized_objects.begin(); it != serialized_objects.end(); ++it) {
+        for (ObjectMap::const_iterator it = serialized_objects.const_begin(); it != serialized_objects.const_end(); ++it) {
             Ship* ship = universe_object_cast<Ship*>(it->second);
             if (ship) {
                 int design_id = ship->DesignID();
@@ -1886,16 +2057,27 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
 
 void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const
 {
-    if (s_encoding_empire == ALL_EMPIRES) {
-        objects = m_objects;
+    if (&objects == &m_objects)
+        return;
+
+    objects.Clear();
+
+    if (encoding_empire == ALL_EMPIRES || !ENABLE_VISIBILITY_EMPIRE_MEMORY) {
+        // if encoding for all empires, copy true full universe state (by specifying ALL_EMPIRES)
+        // or if encoding without memory, copy all info visible to specified empire
+        objects.Copy(m_objects, encoding_empire);
     } else {
+        // if encoding for a specific empire with memory...
 
-        // TODO: send contents of m_empire_latest_known_objects instead of filtering m_objects by visibility
+        // find indicated empire's knowledge about objects, current and previous
+        EmpireLatestKnownObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
+        if (it == m_empire_latest_known_objects.end())
+            return;                 // empire has no object knowledge, so there is nothing to send
 
-        objects.clear();
-        for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-            if (GetObjectVisibilityByEmpire(it->first, encoding_empire) > VIS_NO_VISIBILITY)
-                objects.insert(*it);
+        // copy as ALL_EMPIRES becase this is already copying specified
+        // empire's knowledge, so want to copy the previously-acquired info in
+        // addition to info that is visible this turn
+        objects.Copy(it->second, ALL_EMPIRES);
     }
 }
 
@@ -1910,7 +2092,7 @@ void Universe::GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_ob
     // than no visibility of.  TODO: include what requested empire knows about
     // other empires' visibilites of objects
     empire_object_visibility.clear();
-    for (ObjectMap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int object_id = it->first;
         Visibility vis = GetObjectVisibilityByEmpire(object_id, encoding_empire);
         if (vis > VIS_NO_VISIBILITY)
@@ -1935,20 +2117,26 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
 
 void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const
 {
-    if (Universe::ALL_OBJECTS_VISIBLE || encoding_empire == ALL_EMPIRES) {
-        // serialize all destroyed objects
-        destroyed_objects = m_destroyed_objects;
+    if (&destroyed_objects == &m_destroyed_objects)
+        return;
 
+    destroyed_objects.Clear();
+
+    if (encoding_empire == ALL_EMPIRES) {
+        destroyed_objects.Copy(m_destroyed_objects, ALL_EMPIRES);
     } else {
         // only serialize objects known about by encoding_empire
-        for (ObjectMap::const_iterator it = m_destroyed_objects.begin(); it != m_destroyed_objects.end(); ++it) {
+        for (ObjectMap::const_iterator it = m_destroyed_objects.const_begin(); it != m_destroyed_objects.const_end(); ++it) {
             ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
             if (know_it == m_destroyed_object_knowers.end())
                 continue;   // no empires know about this destroyed object
+
             const std::set<int>& knowers = know_it->second;
             if (knowers.find(encoding_empire) != knowers.end()) {
                 //Logger().debugStream() << "empire " << s_encoding_empire << " knows about destroyed object object " << know_it->first;
-                destroyed_objects.insert(*it);
+                const UniverseObject* obj = it->second;
+                UniverseObject* clone = obj->Clone(encoding_empire);
+                destroyed_objects.Insert(it->first, clone);
             }
         }
     }
@@ -2820,10 +3008,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     ClockSeed();
 #endif
 
-    // wipe out anything present in the object map
-    for (ObjectMap::iterator itr = m_objects.begin(); itr != m_objects.end(); ++itr)
-        delete itr->second;
-    m_objects.clear();
+    m_objects.Clear();  // wipe out anything present in the object map
 
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
@@ -2894,7 +3079,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     // set all current and previous meters of all objects initially in universe to their max values
     // so that planets start with population and able to produce resources, initial ships have fuel, etc.
-    for (Universe::const_iterator it = GetUniverse().begin(); it != GetUniverse().end(); ++it) {
+    for (ObjectMap::iterator it = Objects().begin(); it != Objects().end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
                 // set all meter current and max values to initial max value
@@ -2915,7 +3100,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 {
     Logger().debugStream() << "PopulateSystems";
 #ifdef FREEORION_BUILD_SERVER
-    std::vector<System*> sys_vec = FindObjects<System>();
+    std::vector<System*> sys_vec = Objects().FindObjects<System>();
 
     if (sys_vec.empty())
         throw std::runtime_error("Attempted to populate an empty galaxy.");
@@ -3023,7 +3208,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
     std::set<int>::iterator laneSetIter, laneSetEnd, laneSetIter2, laneSetEnd2;
 
     // get systems
-    std::vector<System*> sys_vec = FindObjects<System>();
+    std::vector<System*> sys_vec = Objects().FindObjects<System>();
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
@@ -3598,7 +3783,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 #ifdef FREEORION_BUILD_SERVER
     homeworlds.clear();
 
-    std::vector<System*> sys_vec = FindObjects<System>();
+    std::vector<System*> sys_vec = Objects().FindObjects<System>();
     //Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
     //for (std::vector<System*>::const_iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
     //    const System* sys = *it;
@@ -3624,7 +3809,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
                 //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
-                System* existing_system = Object(homeworlds[j])->GetSystem();
+                System* existing_system = Objects().Object(homeworlds[j])->GetSystem();
                 //Logger().debugStream() << ".... existing system ptr: " << existing_system;
 
                 if (!existing_system) {
@@ -3677,7 +3862,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 void Universe::NamePlanets()
 {
 #ifdef FREEORION_BUILD_SERVER
-    std::vector<System*> sys_vec = FindObjects<System>();
+    std::vector<System*> sys_vec = Objects().FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
         int num_planets_in_system = 0;
@@ -3768,7 +3953,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
 
         // set ownership of home planet
-        Planet* home_planet = Object<Planet>(homeworlds[i]);
+        Planet* home_planet = Objects().Object<Planet>(homeworlds[i]);
         Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);

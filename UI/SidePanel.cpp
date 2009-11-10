@@ -613,7 +613,9 @@ namespace {
     }
 
     Ship*       FindColonyShip(int system_id) {
-        const System *system = GetUniverse().Object<const System>(system_id);
+        ObjectMap& objects = GetUniverse().Objects();
+
+        const System* system = objects.Object<const System>(system_id);
         if (!system) return 0;
 
         std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
@@ -631,7 +633,7 @@ namespace {
 
             // check if any of the ship in this fleet is a colony ship
             for (Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it) {
-                Ship* s = GetUniverse().Object<Ship>(*it);
+                Ship* s = objects.Object<Ship>(*it);
 
                 if (!s) {
                     Logger().errorStream() << "coudln't find ship with id: " << *it;
@@ -739,8 +741,10 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     //    Underline for shipyard(s), and
     bool capitol = false, homeworld = false, has_shipyard = false;
     // need to check all empires for homeworld or capitols
-    const Universe& universe = GetUniverse();
+
+    const ObjectMap& objects = GetUniverse().Objects();
     const EmpireManager& manager = Empires();
+
     for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
         if (capitol && homeworld)
             break;  // don't need to check any more empires if already have both possible true results
@@ -753,7 +757,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     // check for shipyard
     const std::set<int>& buildings = planet.Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        const Building* building = universe.Object<Building>(*building_it);
+        const Building* building = objects.Object<Building>(*building_it);
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
@@ -843,12 +847,12 @@ SidePanel::PlanetPanel::~PlanetPanel()
 
 Planet* SidePanel::PlanetPanel::GetPlanet()
 {
-    return GetUniverse().Object<Planet>(m_planet_id);
+    return GetUniverse().Objects().Object<Planet>(m_planet_id);
 }
 
 const Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
-    return GetUniverse().Object<const Planet>(m_planet_id);
+    return GetUniverse().Objects().Object<const Planet>(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::DoLayout()
@@ -1274,9 +1278,11 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     // remove old panels
     Clear();
 
+    const ObjectMap& objects = GetUniverse().Objects();
+
     // create new panels and connect their signals
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        const Planet* planet = GetUniverse().Object<Planet>(*it);
+        const Planet* planet = objects.Object<Planet>(*it);
         if (!planet) {
             Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't get planet with id " << *it;
             continue;
@@ -1391,6 +1397,8 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
     m_candidate_ids.clear();
     std::set<PlanetPanel*>   disabled_panels;
 
+    const ObjectMap& objects = GetUniverse().Objects();
+
     if (m_valid_selection_predicate) {
         // if there is a selection predicate, which determines which planet panels
         // can be selected, refresh the candidiates and disable the non-selectables
@@ -1399,7 +1407,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
         for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
             PlanetPanel*    panel =     *it;
             int             planet_id = panel->PlanetID();
-            Planet*         planet =    GetUniverse().Object<Planet>(planet_id);
+            const Planet*   planet =    objects.Object<Planet>(planet_id);
 
             if (planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
@@ -1575,7 +1583,7 @@ void SidePanel::Refresh()
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    const System* system = GetUniverse().Object<const System>(s_system_id);
+    const System* system = GetUniverse().Objects().Object<const System>(s_system_id);
     if (!system)
         return;
     std::vector<const Planet*> planets = system->FindObjects<Planet>();
@@ -1604,16 +1612,17 @@ void SidePanel::RefreshImpl()
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
+    const ObjectMap& objects = GetUniverse().Objects();
 
     // get system object for this sidepanel.  if there isn't one, abort.
-    const System* system = GetUniverse().Object<const System>(s_system_id);
+    const System* system = objects.Object<const System>(s_system_id);
     if (!system)
         return;
 
 
 
     // populate droplist of system names
-    std::vector<const System*> sys_vec = GetUniverse().FindObjects<const System>();
+    std::vector<const System*> sys_vec = objects.FindObjects<const System>();
 
     int system_names_in_droplist = 0;
     for (unsigned int i = 0; i < sys_vec.size(); i++) {
@@ -1682,7 +1691,7 @@ void SidePanel::RefreshImpl()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        const Planet* planet = GetUniverse().Object<Planet>(*it);
+        const Planet* planet = objects.Object<Planet>(*it);
         if (planet && planet->WhollyOwnedBy(empire_id))
             owned_planets.push_back(*it);
     }
@@ -1860,7 +1869,7 @@ void SidePanel::SetSystem(int system_id)
 
     s_system_id = system_id;
 
-    if (GetUniverse().Object<const System>(s_system_id))
+    if (GetUniverse().Objects().Object<const System>(s_system_id))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

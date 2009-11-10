@@ -113,7 +113,7 @@ void ChatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG
                     names.insert(it->second->PlayerName());
                 }
                 // add system names
-                std::vector<System*> systems = GetUniverse().FindObjects<System>();
+                std::vector<System*> systems = GetUniverse().Objects().FindObjects<System>();
                 for (unsigned int i = 0; i < systems.size(); ++i) {
                     if (systems[i]->Name() != "")
                         names.insert(systems[i]->Name());

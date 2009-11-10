@@ -14,12 +14,43 @@
 #include <boost/python.hpp>
 
 namespace {
-    const UniverseObject*   (Universe::*UniverseGetObject)(int) =   &Universe::Object;
-    const Fleet*            (Universe::*UniverseGetFleet)(int) =    &Universe::Object;
-    const Ship*             (Universe::*UniverseGetShip)(int) =     &Universe::Object;
-    const Planet*           (Universe::*UniverseGetPlanet)(int) =   &Universe::Object;
-    const System*           (Universe::*UniverseGetSystem)(int) =   &Universe::Object;
-    const Building*         (Universe::*UniverseGetBuilding)(int) = &Universe::Object;
+    const UniverseObject*   GetObject(const Universe& universe, int id) {
+        return universe.Objects().Object(id);
+    }
+    const Fleet*            GetFleet(const Universe& universe, int id) {
+        return universe.Objects().Object<Fleet>(id);
+    }
+    const Ship*             GetShip(const Universe& universe, int id) {
+        return universe.Objects().Object<Ship>(id);
+    }
+    const Planet*           GetPlanet(const Universe& universe, int id) {
+        return universe.Objects().Object<Planet>(id);
+    }
+    const System*           GetSystem(const Universe& universe, int id) {
+        return universe.Objects().Object<System>(id);
+    }
+    const Building*         GetBuilding(const Universe& universe, int id) {
+        return universe.Objects().Object<Building>(id);
+    }
+
+    std::vector<int>        ObjectIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<UniverseObject>();
+    }
+    std::vector<int>        FleetIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<Fleet>();
+    }
+    std::vector<int>        SystemIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<System>();
+    }
+    std::vector<int>        PlanetIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<Planet>();
+    }
+    std::vector<int>        ShipIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<Ship>();
+    }
+    std::vector<int>        BuildingIDs(const Universe& universe) {
+        return universe.Objects().FindObjectIDs<Building>();
+    }
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
@@ -39,7 +70,7 @@ namespace {
         return retval;
     }
 
-    boost::function<std::vector<int>(const Universe*, int, int, int)> ShortestPathFunc =          &ShortestPath;
+    boost::function<std::vector<int>(const Universe*, int, int, int)> ShortestPathFunc =        &ShortestPath;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -97,16 +128,19 @@ namespace FreeOrionPython {
         //    Universe    //
         ////////////////////
         class_<Universe, noncopyable>("universe", no_init)
-            .def("getObject",                   UniverseGetObject,              return_value_policy<reference_existing_object>())
-            .def("getFleet",                    UniverseGetFleet,               return_value_policy<reference_existing_object>())
-            .def("getShip",                     UniverseGetShip,                return_value_policy<reference_existing_object>())
-            .def("getPlanet",                   UniverseGetPlanet,              return_value_policy<reference_existing_object>())
-            .def("getSystem",                   UniverseGetSystem,              return_value_policy<reference_existing_object>())
-            .def("getBuilding",                 UniverseGetBuilding,            return_value_policy<reference_existing_object>())
+            .def("getObject",                   make_function(GetObject,    return_value_policy<reference_existing_object>()))
+            .def("getFleet",                    make_function(GetFleet,     return_value_policy<reference_existing_object>()))
+            .def("getShip",                     make_function(GetShip,      return_value_policy<reference_existing_object>()))
+            .def("getPlanet",                   make_function(GetPlanet,    return_value_policy<reference_existing_object>()))
+            .def("getSystem",                   make_function(GetSystem,    return_value_policy<reference_existing_object>()))
+            .def("getBuilding",                 make_function(GetBuilding,  return_value_policy<reference_existing_object>()))
 
-            .add_property("allObjectIDs",       make_function(&Universe::FindObjectIDs<UniverseObject>, return_value_policy<return_by_value>()))
-            .add_property("systemIDs",          make_function(&Universe::FindObjectIDs<System>,         return_value_policy<return_by_value>()))
-            .add_property("fleetIDs",           make_function(&Universe::FindObjectIDs<Fleet>,          return_value_policy<return_by_value>()))
+            .add_property("allObjectIDs",       make_function(ObjectIDs,    return_value_policy<return_by_value>()))
+            .add_property("fleetIDs",           make_function(FleetIDs,     return_value_policy<return_by_value>()))
+            .add_property("systemIDs",          make_function(SystemIDs,    return_value_policy<return_by_value>()))
+            .add_property("planetIDs",          make_function(PlanetIDs,    return_value_policy<return_by_value>()))
+            .add_property("shipIDs",            make_function(ShipIDs,      return_value_policy<return_by_value>()))
+            .add_property("buildingIDs",        make_function(BuildingIDs,  return_value_policy<return_by_value>()))
 
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
             .def("systemsConnected",            &Universe::SystemsConnected)
@@ -297,8 +331,8 @@ namespace FreeOrionPython {
         class_<System, bases<UniverseObject>, noncopyable>("system", no_init)
             .add_property("starType",           &System::GetStarType)
             .add_property("numOrbits",          &System::Orbits)
-            .add_property("numStarlanes",       &System::Starlanes)
-            .add_property("numWormholes",       &System::Wormholes)
+            .add_property("numStarlanes",       &System::NumStarlanes)
+            .add_property("numWormholes",       &System::NumWormholes)
             .def("HasStarlaneToSystemID",       &System::HasStarlaneTo)
             .def("HasWormholeToSystemID",       &System::HasWormholeTo)
             .add_property("allObjectIDs",       make_function(&System::FindObjectIDs<UniverseObject>,   return_value_policy<return_by_value>()))

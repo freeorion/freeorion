@@ -331,8 +331,10 @@ CombatData::CombatData(System* system) :
     using OpenSteer::Vec3;
     m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius(), Vec3()));
 
+    ObjectMap& objects = GetUniverse().Objects();
+
     for (System::const_orbit_iterator it = system->begin(); it != system->end(); ++it) {
-        m_combat_universe[it->second] = GetUniverse().Object(it->second);
+        m_combat_universe[it->second] = objects.Object(it->second);
         if (const Planet* planet =
             universe_object_cast<Planet*>(m_combat_universe[it->second])) {
             double orbit_radius = OrbitalRadius(it->first);

@@ -199,9 +199,9 @@ double Planet::AvailableTrade() const
 double Planet::BuildingCosts() const
 {
     double retval = 0.0;
-    Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        Building* building = universe.Object<Building>(*it);
+        const Building* building = objects.Object<Building>(*it);
 //        if (building->Operating()) {
             const BuildingType* bulding_type = GetBuildingType(building->BuildingTypeName());
             retval += bulding_type->MaintenanceCost();
@@ -217,11 +217,11 @@ bool Planet::Contains(int object_id) const
 
 std::vector<UniverseObject*> Planet::FindObjects() const
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<UniverseObject*> retval;
     // add buildings on this planet
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        retval.push_back(universe.Object(*it));
+        retval.push_back(objects.Object(*it));
     return retval;
 }
 
@@ -393,7 +393,7 @@ void Planet::AddBuilding(int building_id)
         return;
     }
     Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
-    if (Building* building = GetUniverse().Object<Building>(building_id)) {
+    if (Building* building = GetUniverse().Objects().Object<Building>(building_id)) {
         if (System* system = GetSystem()) {
             system->Insert(building);
         } else {
@@ -469,7 +469,7 @@ void Planet::Reset()
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        if (Building* building = GetUniverse().Object<Building>(*it))
+        if (Building* building = GetUniverse().Objects().Object<Building>(*it))
             building->Reset();
 
     // reset other state
@@ -542,9 +542,13 @@ void Planet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
+    ObjectMap& objects = GetUniverse().Objects();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
+        UniverseObject* obj = objects.Object(*it);
+        if (!obj) {
+            Logger().errorStream() << "Planet::SetSystem couldn't get building object with id " << *it;
+            continue;
+        }
         obj->SetSystem(sys);
     }
 }
@@ -554,10 +558,14 @@ void Planet::MoveTo(double x, double y)
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
+    ObjectMap& objects = GetUniverse().Objects();
     // move buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
-        UniverseObject* obj = GetUniverse().Object(*it);
-        assert(obj);
+        UniverseObject* obj = objects.Object(*it);
+        if (!obj) {
+            Logger().errorStream() << "Planet::MoveTo couldn't get building object with id " << *it;
+            continue;
+        }
         obj->UniverseObject::MoveTo(x, y);
     }
 }

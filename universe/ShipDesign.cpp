@@ -997,18 +997,18 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet locations;
     Condition::ObjectSet non_locations;
 
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
 
-    UniverseObject* loc = universe.Object(location_id);
+    UniverseObject* loc = objects.Object(location_id);
     if (!loc) return false;
 
-    Empire * empire = Empires().Lookup(empire_id);
+    Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
-    UniverseObject * source = universe.Object(empire->CapitolID());
+    UniverseObject* source = objects.Object(empire->CapitolID());
     if (!source) return false;
 
     locations.insert(loc);

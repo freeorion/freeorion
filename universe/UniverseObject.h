@@ -117,8 +117,8 @@ public:
 
     /** \name Mutators */ //@{
     /** copies data from \a copied_object to this object, limited to only copy
-      * data that would be known to an empire that detects the copied object at
-      * the specified Visibility level \a vis */
+      * data about the copied object that is known to the empire with id
+      * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
     virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES) = 0;
 
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id

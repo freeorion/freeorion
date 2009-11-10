@@ -32,7 +32,7 @@ public:
     typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of FindObjects()
     typedef std::vector<const UniverseObject*>  ConstObjectVec;         ///< the return type of FindObjects()
     typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
-    typedef std::map<int, bool>                 StarlaneMap;            ///< the return type of VisibleStarlanes()
+    typedef std::map<int, bool>                 StarlaneMap;            ///< the return type of VisibleStarlanesWormholes()
 
     typedef ObjectMultimap::iterator            orbit_iterator;         ///< iterator for system objects
     typedef ObjectMultimap::const_iterator      const_orbit_iterator;   ///< const_iterator for system objects
@@ -40,38 +40,42 @@ public:
     typedef StarlaneMap::const_iterator         const_lane_iterator;    ///< const_iterator for starlanes and wormholes
 
     /** \name Structors */ //@{
-    System();                                                                   ///< default ctor
+    System();                                                           ///< default ctor
 
-    /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-        of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+    /** general ctor.  \throw std::invalid_arugment May throw
+      * std::invalid_arugment if \a star is out of the range of StarType,
+      * \a orbits is negative, or either x or y coordinate is outside the map
+      * area.*/
     System(StarType star, int orbits, const std::string& name, double x, double y,
            const std::set<int>& owners = std::set<int>());
 
-    /** general ctor.  \throw std::invalid_arugment May throw std::invalid_arugment if \a star is out of the range
-        of StarType, \a orbits is negative, or either x or y coordinate is outside the map area.*/
+    /** general ctor.  \throw std::invalid_arugment May throw
+      * std::invalid_arugment if \a star is out of the range of StarType,
+      * \a orbits is negative, or either x or y coordinate is outside the map
+      * area.*/
     System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
            const std::string& name, double x, double y, const std::set<int>& owners = std::set<int>());
 
-    System(const System& rhs);                                                  ///< copy ctor
+    System(const System& rhs);                                          ///< copy ctor
 
-    virtual System*         Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this System
+    virtual System*         Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this System
     //@}
 
     /** \name Accessors */ //@{
-    StarType                GetStarType() const;            ///< returns the type of star for this system
-    int                     Orbits() const;                 ///< returns the number of orbits in this system
+    StarType                GetStarType() const;                        ///< returns the type of star for this system
+    int                     Orbits() const;                             ///< returns the number of orbits in this system
 
-    int                     Starlanes() const;              ///< returns the number of starlanes from this system to other systems
-    int                     Wormholes() const;              ///< returns the number of wormholes from this system to other systems
-    bool                    HasStarlaneTo(int id) const;    ///< returns true if there is a starlane from this system to the system with ID number \a id
-    bool                    HasWormholeTo(int id) const;    ///< returns true if there is a wormhole from this system to the system with ID number \a id
+    int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
+    int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
+    bool                    HasStarlaneTo(int id) const;                ///< returns true if there is a starlane from this system to the system with ID number \a id
+    bool                    HasWormholeTo(int id) const;                ///< returns true if there is a wormhole from this system to the system with ID number \a id
 
-    virtual int             SystemID() const;               ///< returns this->ID()
+    virtual int             SystemID() const;                           ///< returns this->ID()
 
     virtual std::vector<UniverseObject*>
-                            FindObjects() const;                ///< returns objects contained within this system
+                            FindObjects() const;                        ///< returns objects contained within this system
     virtual std::vector<int>
-                            FindObjectIDs() const;              ///< returns ids of objects contained within this system
+                            FindObjectIDs() const;                      ///< returns ids of objects contained within this system
 
     ObjectIDVec             FindObjectIDs(const UniverseObjectVisitor& visitor) const;  ///< returns the IDs of all the objects that match \a visitor
 
@@ -93,49 +97,56 @@ public:
     template <class T>
     std::vector<const T*>   FindObjectsInOrbit(int orbit) const;                        ///< returns all the objects of type T in orbit \a orbit
 
-    virtual bool            Contains(int object_id) const;  ///< returns true if object with id \a object_id is in this system
+    virtual bool            Contains(int object_id) const;              ///< returns true if object with id \a object_id is in this system
 
-    const_orbit_iterator    begin() const;                  ///< begin iterator for all system objects
-    const_orbit_iterator    end() const;                    ///< end iterator for all system objects
+    const_orbit_iterator    begin() const;                              ///< begin iterator for all system objects
+    const_orbit_iterator    end() const;                                ///< end iterator for all system objects
 
     std::pair<const_orbit_iterator, const_orbit_iterator>
-                            orbit_range(int o) const;       ///< returns begin and end iterators for all system objects in orbit
+                            orbit_range(int o) const;                   ///< returns begin and end iterators for all system objects in orbit
     std::pair<const_orbit_iterator, const_orbit_iterator>
-                            non_orbit_range() const;        ///< returns begin and end iterators for all system objects not in an orbit
+                            non_orbit_range() const;                    ///< returns begin and end iterators for all system objects not in an orbit
 
-    bool                    OrbitOccupied(int orbit) const; ///< returns true if there is an object in \a orbit
-    std::set<int>           FreeOrbits() const;             ///< returns the set of orbit numbers that are unoccupied
+    bool                    OrbitOccupied(int orbit) const;             ///< returns true if there is an object in \a orbit
+    std::set<int>           FreeOrbits() const;                         ///< returns the set of orbit numbers that are unoccupied
 
-    const_lane_iterator     begin_lanes() const;            ///< begin iterator for all starlanes and wormholes terminating in this system
-    const_lane_iterator     end_lanes() const;              ///< end iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator     begin_lanes() const;                        ///< begin iterator for all starlanes and wormholes terminating in this system
+    const_lane_iterator     end_lanes() const;                          ///< end iterator for all starlanes and wormholes terminating in this system
+
+    StarlaneMap             StarlanesWormholes() const;                 ///< returns map of all starlanes and wormholes; map contains keys that are IDs of connected systems, and bool values indicating whether each is a starlane (false) or a wormhole (true)
 
     /** returns a map of the starlanes and wormholes visible to empire
       * \a empire_id; the map contains keys that are IDs of connected systems,
       * and bool values indicating whether each is a starlane (false) or a
       * wormhole (true)*/
-    StarlaneMap             VisibleStarlanes(int empire_id) const;
+    StarlaneMap             VisibleStarlanesWormholes(int empire_id) const;
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
-    mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal; ///< fleet is inserted into system
-    mutable boost::signal<void (Fleet& fleet)> FleetRemovedSignal;  ///< fleet is removed from system
+    mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
+    mutable boost::signal<void (Fleet& fleet)> FleetRemovedSignal;      ///< fleet is removed from system
     //@}
 
     /** \name Mutators */ //@{
     virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    /** inserts a UniversObject into the system, though not in any particular orbit.  Only objects free of any
-        particular orbit, such as ships, should be inserted using this function.  This function calls obj->SetSystem(this),
-        and obj->MoveTo( this system's position )*/
+    /** inserts a UniversObject into the system, though not in any particular
+      * orbit.  Only objects free of any particular orbit, such as ships,
+      * should be inserted using this function.  This function calls
+      * obj->SetSystem(this), and obj->MoveTo( this system's position )*/
     int                     Insert(UniverseObject* obj);
 
-    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-        objects should be inserted with this function.  This function calls obj->SetSystem(this) and obj->MoveTo( here )
-        \throw std::invalid_arugment May throw std::invalid_arugment if \a orbit is out of the range [0, Orbits()].*/
+    /** inserts an object into a specific orbit position.  Only orbit-bound
+      * objects, such as Planets, and planet-bound objects should be inserted
+      * with this function.  This function calls obj->SetSystem(this) and
+      * obj->MoveTo( here )
+      * \throw std::invalid_arugment May throw std::invalid_arugment if
+      * \a orbit is out of the range [0, Orbits()].*/
     int                     Insert(UniverseObject* obj, int orbit);
 
-    /** inserts an object into a specific orbit position.  Only orbit-bound objects, such as Planets, and planet-bound
-        objects should be inserted with this function. */
+    /** inserts an object into a specific orbit position.  Only orbit-bound
+      * objects, such as Planets, and planet-bound objects should be inserted
+      * with this function. */
     int                     Insert(int obj_id, int orbit);
 
     /** removes object \a obj from this system. */
@@ -199,38 +210,38 @@ private:
 // Tactical combat system geometry free functions:
 
 /** Returns the radius, in tactical combat units, of a system.  Note that the
-    tactical combat map is square. */
+  * tactical combat map is square. */
 double SystemRadius();
 
-/** Returns the radius, in tactical combat units, of the star at the center of a system. */
+/** Returns the radius, in tactical combat units, of the star at the center of
+  * a system. */
 double StarRadius();
 
 /** Returns the radius, in tactical combat units, of orbit \a orbit of a
-    system.  \a orbit must be < 10. */
+  * system.  \a orbit must be < 10. */
 double OrbitalRadius(unsigned int orbit);
 
 /** Returns the orbital radius, in tactical combat units, of starlane entrance
-    points out of a system.  */
+  * points out of a system.  */
 double StarlaneEntranceOrbitalRadius();
 
 /** Returns the angular position, in radians, of a starlane entrance point out
-    of the system with id \a from_system.  */
+  * of the system with id \a from_system.  */
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
 
 /** Returns the radius, in tactical combat units, of starlane entrance points
-    out of a system.  */
+  * out of a system.  */
 double StarlaneEntranceRadius();
 
 
 // template implementations
-
 template <class T>
 System::ObjectIDVec System::FindObjectIDs() const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ObjectIDVec retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
@@ -240,11 +251,11 @@ System::ObjectIDVec System::FindObjectIDs() const
 template <class T>
 System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     ObjectIDVec retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
     }
@@ -254,10 +265,10 @@ System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit) const
 template <class T>
 std::vector<const T*> System::FindObjects() const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     std::vector<const T*> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
                 retval.push_back(t_obj);
     }
@@ -267,11 +278,11 @@ std::vector<const T*> System::FindObjects() const
 template <class T>
 std::vector<const T*> System::FindObjectsInOrbit(int orbit) const
 {
-    const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetUniverse().Objects();
     std::vector<const T*> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
                 retval.push_back(t_obj);
     }
@@ -281,10 +292,10 @@ std::vector<const T*> System::FindObjectsInOrbit(int orbit) const
 template <class T>
 std::vector<T*> System::FindObjects()
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<T*> retval;
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
                 retval.push_back(t_obj);
     }
@@ -294,11 +305,11 @@ std::vector<T*> System::FindObjects()
 template <class T>
 std::vector<T*> System::FindObjectsInOrbit(int orbit)
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     std::vector<T*> retval;
     std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = universe.Object(it->second))
+        if (const UniverseObject* obj = objects.Object(it->second))
             if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
                 retval.push_back(t_obj);
     }

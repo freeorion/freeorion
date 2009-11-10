@@ -137,15 +137,16 @@ namespace {
             return;
         }
 
-        Universe& universe = GetUniverse();
+        const Universe& universe = GetUniverse();
+        const ObjectMap& objects = universe.Objects();
 
-        const System* next_system = universe.Object<System>(new_next_system);
+        const System* next_system = objects.Object<System>(new_next_system);
         if (!next_system) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
         }
 
-        if (new_previous_system != UniverseObject::INVALID_OBJECT_ID && !universe.Object<System>(new_previous_system)) {
+        if (new_previous_system != UniverseObject::INVALID_OBJECT_ID && !objects.Object<System>(new_previous_system)) {
             Logger().errorStream() << "UpdateFleetRoute couldn't get new previous system with id: " << new_previous_system;
         }
 
@@ -214,8 +215,7 @@ EffectsGroup::~EffectsGroup()
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
-    Universe& universe = GetUniverse();
-    UniverseObject* source = universe.Object(source_id);
+    UniverseObject* source = GetUniverse().Objects().Object(source_id);
     assert(source);
 
     targets.clear();
@@ -237,16 +237,16 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 {
-    Universe& universe = GetUniverse();
+    ObjectMap& objects = GetUniverse().Objects();
     Condition::ObjectSet potential_targets;
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_targets.insert(it->second);
     GetTargetSet(source_id, targets, potential_targets);
 }
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 {
-    UniverseObject* source = GetUniverse().Object(source_id);
+    UniverseObject* source = GetUniverse().Objects().Object(source_id);
     if (!source) {
         Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
         return;
@@ -262,7 +262,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_index) const
 {
-    UniverseObject* source = GetUniverse().Object(source_id);
+    UniverseObject* source = GetUniverse().Objects().Object(source_id);
     if (!source) {
         // TODO: Don't necessarily need to abort at this stage... some effects can function without a source object.
         Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
@@ -787,7 +787,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    System* system = GetUniverse().Object<System>(target->SystemID());
+    System* system = GetUniverse().Objects().Object<System>(target->SystemID());
     if (!system) {
         Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -962,10 +962,11 @@ MoveTo::~MoveTo()
 void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
-    for (Universe::const_iterator it = universe.begin(); it != universe.end(); ++it)
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_locations.insert(it->second);
 
     Condition::ObjectSet valid_locations;

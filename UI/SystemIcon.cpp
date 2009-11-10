@@ -46,8 +46,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
     // Set up texture coord and vertex buffers (quads) for the glyphs.
     // Consider extending GG::Font to do similar.
 
-    const Universe& universe = GetUniverse();
-    if (const System* system = universe.Object<System>(system_id)) {
+    const ObjectMap& objects = GetUniverse().Objects();
+
+    if (const System* system = objects.Object<System>(system_id)) {
 
         // get system name
         std::string system_name = system->Name();
@@ -86,7 +87,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
             if (!has_shipyard) {
                 const std::set<int>& buildings = planet->Buildings();
                 for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                    const Building* building = universe.Object<Building>(*building_it);
+                    const Building* building = objects.Object<Building>(*building_it);
                     if (!building)
                         continue;
                     // annoying hard-coded building name here... not sure how better to deal with it
@@ -168,7 +169,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetUniverse().Object<System>(m_system_id)) {
+    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -193,7 +194,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
 
 void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
-    const System* system = GetUniverse().Object<System>(m_system_id);
+    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
     if (system)
         Connect(system->StateChangedSignal, &SystemIcon::Refresh,   this);
 
@@ -475,7 +476,7 @@ void SystemIcon::Refresh()
 {
     std::string name = "";
 
-    if (const System* system = GetUniverse().Object<System>(m_system_id))
+    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id))
         name = system->Name();
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name

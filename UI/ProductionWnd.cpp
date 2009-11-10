@@ -128,17 +128,16 @@ namespace {
             name_text = UserString("FW_UNKNOWN_DESIGN_NAME");
         }
 
-        using boost::io::str;
 
         // things other than buildings can be built in multiple copies with one order
         if (build.item.build_type != BT_BUILDING)
-            name_text = str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
+            name_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_MULTIPLES")) % number) + name_text;
 
 
         // get location indicator text
         std::string location_text;
-        if (const UniverseObject* location = GetUniverse().Object(build.location))
-            location_text = str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
+        if (const UniverseObject* location = GetUniverse().Objects().Object(build.location))
+            location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
 
 
         // create and arrange widgets to display info
@@ -166,7 +165,7 @@ namespace {
 
         top += m_progress_bar->Height() + MARGIN;
 
-        std::string turn_spending_text = str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
+        std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR")) % DoubleToString(turn_spending, 3, false));
         m_PPs_and_turns_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                    turn_spending_text, font, clr, GG::FORMAT_LEFT);
 

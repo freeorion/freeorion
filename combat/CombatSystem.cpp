@@ -60,19 +60,16 @@ namespace
 
 static void RemoveShip(int nID)
 {
-    Ship* shp = GetUniverse().Object<Ship>(nID);
-    if (shp)
-    {
+    Ship* shp = GetUniverse().Objects().Object<Ship>(nID);
+    if (shp) {
         System* sys = shp->GetSystem();
         if (sys)
             sys->Remove(shp->ID());
 
         Fleet* flt = shp->GetFleet();
-        if (flt)
-        {
+        if (flt) {
             flt->RemoveShip(shp->ID());
-            if (flt->NumShips() == 0)
-            { 
+            if (flt->Empty()) {
                 if ((sys = flt->GetSystem()))
                     sys->Remove(flt->ID());
                 GetUniverse().Destroy(flt->ID());
@@ -90,38 +87,38 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 
     debug = "\ncurrent forces\n";
 
-    for(unsigned int i=0;i<empire_combat_forces.size();i++)
-    {
+    for (unsigned int i = 0; i < empire_combat_forces.size(); i++) {
         debug+= "  " + empire_combat_forces[i].owner->Name() + " "
             +" ships (cmb,non cmb,destr,retr): (";
 
-        hit_points=0;
-        for(unsigned int j=0;j<empire_combat_forces[i].combat_ships.size();j++)
+        hit_points = 0;
+        for(unsigned int j = 0; j < empire_combat_forces[i].combat_ships.size(); j++)
             hit_points+=empire_combat_forces[i].combat_ships[j].second;
 
-        debug+= "#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].combat_ships.size()) 
-            +":" + boost::lexical_cast<std::string,int>(hit_points);
+        debug += "#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].combat_ships.size()) 
+              + ":" + boost::lexical_cast<std::string,int>(hit_points);
 
-        hit_points=0;
-        for(unsigned int j=0;j<empire_combat_forces[i].non_combat_ships.size();j++)
-            hit_points+=empire_combat_forces[i].non_combat_ships[j].second;
+        hit_points = 0;
+        for (unsigned int j = 0; j < empire_combat_forces[i].non_combat_ships.size(); j++)
+            hit_points += empire_combat_forces[i].non_combat_ships[j].second;
 
-        debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].non_combat_ships.size())
-            +":" + boost::lexical_cast<std::string,int>(hit_points);
-    
-        debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].destroyed_ships.size());
-        debug+= ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].retreated_ships.size()) + ")";
+        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].non_combat_ships.size())
+              +":" + boost::lexical_cast<std::string,int>(hit_points);
 
-        hit_points=0;
-        for(unsigned int j=0;j<empire_combat_forces[i].planets.size();j++)
-            hit_points+=empire_combat_forces[i].planets[j].second;
+        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].destroyed_ships.size());
+        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].retreated_ships.size()) + ")";
 
-        debug+= "; planets : #" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].planets.size()) 
-            +":" + boost::lexical_cast<std::string,int>(hit_points);
+        hit_points = 0;
+        for(unsigned int j = 0; j < empire_combat_forces[i].planets.size(); j++)
+            hit_points += empire_combat_forces[i].planets[j].second;
 
-        debug+="\n";
+        debug += "; planets : #" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].planets.size()) 
+              +":" + boost::lexical_cast<std::string,int>(hit_points);
+
+        debug += "\n";
     }
-    log4cpp::Category::getRoot().debugStream() << debug;
+
+    Logger().debugStream() << debug;
 }
 #endif
 
@@ -142,50 +139,44 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
     // index to empire_combat_forces
     std::vector<int> combat_assets;
 
-    for(unsigned int e=0; e < assets.size(); e++)
-    {
+    for (unsigned int e = 0; e < assets.size(); e++) {
         CombatAssetsHitPoints cahp;
-        cahp.owner           = assets[e].owner;
+        cahp.owner = assets[e].owner;
 
-        for(unsigned int i=0; i<assets[e].fleets.size(); i++)
-        {
+        for (unsigned int i = 0; i < assets[e].fleets.size(); i++) {
             Fleet *flt = assets[e].fleets[i];
-            for(Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it)
-            {
-                Ship *shp = GetUniverse().Object<Ship>(*shp_it);
+            for (Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it) {
+                Ship* shp = GetUniverse().Objects().Object<Ship>(*shp_it);
 
-                if(shp->IsArmed())
-                    cahp.combat_ships    .push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
-                else   
+                if (shp->IsArmed())
+                    cahp.combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
+                else
                     cahp.non_combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
             }
         }
-        for(unsigned int i=0; i<assets[e].planets.size(); i++)
-        {
-            Planet *plt = assets[e].planets[i];
+        for (unsigned int i = 0; i < assets[e].planets.size(); i++) {
+            Planet* plt = assets[e].planets[i];
             cahp.defenseless_planets.push_back(plt);
         }
 
         empire_combat_forces.push_back(cahp);
-        if(cahp.CountAssets()>0)
-            combat_assets.push_back(empire_combat_forces.size()-1);
+        if (cahp.CountAssets() > 0)
+            combat_assets.push_back(empire_combat_forces.size() - 1);
     }
 
     // if only non combat forces meet, no battle take place
     unsigned int e;
-    for(e=0;e<combat_assets.size();e++)
-        if(empire_combat_forces[combat_assets[e]].combat_ships.size()>0)
+    for (e = 0; e < combat_assets.size(); e++)
+        if (empire_combat_forces[combat_assets[e]].combat_ships.size() > 0)
             break;
-    if(e>=combat_assets.size())
+    if (e >= combat_assets.size())
         return;
 
-    while(combat_assets.size()>1)
-    {
+    while (combat_assets.size() > 1) {
         // give all non combat shpis a base chance to retreat
-        for(unsigned int e=0;e<combat_assets.size();e++)
-            for(unsigned int i=0; i<empire_combat_forces[combat_assets[e]].non_combat_ships.size(); i++)
-                if((small_int_dist()%100)<=(int)(base_chance_to_retreat*100.0))
-                {
+        for (unsigned int e = 0; e < combat_assets.size(); e++)
+            for (unsigned int i = 0; i < empire_combat_forces[combat_assets[e]].non_combat_ships.size(); i++)
+                if ((small_int_dist() % 100) <= (int)(base_chance_to_retreat*100.0)) {
                     empire_combat_forces[combat_assets[e]].retreated_ships .push_back(empire_combat_forces[combat_assets[e]].non_combat_ships[i].first);
                     empire_combat_forces[combat_assets[e]].non_combat_ships.erase    (empire_combat_forces[combat_assets[e]].non_combat_ships.begin()+i);
                     i--;
@@ -193,11 +184,11 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 
         // are there any armed combat forces left?
         int count_armed_combat_forces = combat_assets.size();
-        for(unsigned int i=0;i<combat_assets.size();i++)
-            if(empire_combat_forces[combat_assets[i]].CountArmedAssets()==0)
+        for (unsigned int i=0;i<combat_assets.size();i++)
+            if (empire_combat_forces[combat_assets[i]].CountArmedAssets() == 0)
                 count_armed_combat_forces--;
 
-        if(count_armed_combat_forces==0)
+        if (count_armed_combat_forces == 0)
             break;
 
 #ifdef DEBUG_COMBAT
@@ -207,11 +198,9 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         damage_done.resize(empire_combat_forces.size());
 
         // calc damage each empire combat force causes
-        for(unsigned int e=0; e < empire_combat_forces.size(); e++)
-        {
-            for(unsigned int i=0; i<empire_combat_forces[e].combat_ships.size(); i++)
-            {
-                Ship *shp = empire_combat_forces[e].combat_ships[i].first;
+        for (unsigned int e = 0; e < empire_combat_forces.size(); e++) {
+            for (unsigned int i = 0; i < empire_combat_forces[e].combat_ships.size(); i++) {
+                Ship* shp = empire_combat_forces[e].combat_ships[i].first;
 
                 damage_done[e] += small_int_dist() % (static_cast<int>(shp->Design()->Attack()) + 1);
             }
@@ -223,12 +212,10 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         }
 
         // apply damage each empire combat force has done
-        for(int e=0; e < static_cast<int>(damage_done.size()); e++)
-            while(damage_done[e]>0) // any damage?
-            {
+        for (int e = 0; e < static_cast<int>(damage_done.size()); e++)
+            while (damage_done[e] > 0) { // any damage?
                 // all or all other forces destroyed!!
-                if(   (combat_assets.size() == 0)
-                      ||((combat_assets.size() == 1) && (e == combat_assets[0])))
+                if ((combat_assets.size() == 0) ||((combat_assets.size() == 1) && (e == combat_assets[0])))
                     break;
 
                 // calc damage target assets at random, but don't shoot at yourself (+1)
@@ -239,65 +226,53 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
                 int target_empire_index = combat_assets[target_combat_assets];
 
                 // first  - damage to planet defence bases
-                for(unsigned int i=0; damage_done[e]>0 && i<empire_combat_forces[target_empire_index].planets.size(); i++)
-                {
+                for (unsigned int i = 0; damage_done[e] > 0 && i<empire_combat_forces[target_empire_index].planets.size(); i++) {
                     unsigned int defence_points_left = empire_combat_forces[target_empire_index].planets[i].second;
 
-                    if(damage_done[e]>=defence_points_left)
-                    {
+                    if (damage_done[e]>=defence_points_left) {
                         empire_combat_forces[target_empire_index].defenseless_planets.push_back(empire_combat_forces[target_empire_index].planets[i].first);
                         empire_combat_forces[target_empire_index].planets.erase(empire_combat_forces[target_empire_index].planets.begin()+i);
                         damage_done[e]-=defence_points_left;
-                    }
-                    else
-                    {
+                    } else {
                         empire_combat_forces[target_empire_index].planets[i].second -= damage_done[e];
                         damage_done[e] = 0;
                     }
                 }
 
                 // second - damage to armed ships
-                for(unsigned int i=0; damage_done[e]>0 && i<empire_combat_forces[target_empire_index].combat_ships.size(); i++)
-                {
+                for (unsigned int i = 0; damage_done[e] > 0 && i < empire_combat_forces[target_empire_index].combat_ships.size(); i++) {
                     unsigned int defence_points_left = empire_combat_forces[target_empire_index].combat_ships[i].second;
 
-                    if(damage_done[e]>=defence_points_left)
-                    {
+                    if(damage_done[e]>=defence_points_left) {
                         empire_combat_forces[target_empire_index].destroyed_ships.push_back(empire_combat_forces[target_empire_index].combat_ships[i].first);
                         empire_combat_forces[target_empire_index].combat_ships.erase(empire_combat_forces[target_empire_index].combat_ships.begin()+i);
                         damage_done[e]-=defence_points_left;
                         i--;
-                    }
-                    else
-                    {
+                    } else {
                         empire_combat_forces[target_empire_index].combat_ships[i].second -= damage_done[e];
                         damage_done[e] = 0;
                     }
                 }
 
                 // third  - damage to unarmed ships
-                for(unsigned int i=0; damage_done[e]>0 && i<empire_combat_forces[target_empire_index].non_combat_ships.size(); i++)
-                {
+                for (unsigned int i = 0; damage_done[e] > 0 && i < empire_combat_forces[target_empire_index].non_combat_ships.size(); i++) {
                     unsigned int defence_points_left = empire_combat_forces[target_empire_index].non_combat_ships[i].second;
 
-                    if(damage_done[e]>=defence_points_left)
-                    {
+                    if (damage_done[e]>=defence_points_left) {
                         empire_combat_forces[target_empire_index].destroyed_ships.push_back(empire_combat_forces[target_empire_index].non_combat_ships[i].first);
                         empire_combat_forces[target_empire_index].non_combat_ships.erase(empire_combat_forces[target_empire_index].non_combat_ships.begin()+i);
                         damage_done[e]-=defence_points_left;
-                    }
-                    else
-                    {
+                    } else {
                         empire_combat_forces[target_empire_index].non_combat_ships[i].second -= damage_done[e];
                         damage_done[e] = 0;
                     }
                 }
-                for(unsigned int i=0; i < combat_assets.size(); i++)
-                    if(empire_combat_forces[combat_assets[i]].CountAssets() == 0)
-                    {
+                for (unsigned int i=0; i < combat_assets.size(); i++) {
+                    if (empire_combat_forces[combat_assets[i]].CountAssets() == 0) {
                         combat_assets.erase(combat_assets.begin()+ i);
                         i--;
                     }
+                }
             }
     }
 
@@ -306,7 +281,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
 #endif
     // evaluation
     // victor: the empire which is the sole survivor and still has armed forces
-    int victor = combat_assets.size()==1 && empire_combat_forces[combat_assets[0]].CountArmedAssets()>0
+    int victor = combat_assets.size() == 1 && empire_combat_forces[combat_assets[0]].CountArmedAssets() > 0
         ?combat_assets[0]:-1;
 
     for(int e=0;e<static_cast<int>(empire_combat_forces.size());e++)
