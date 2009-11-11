@@ -165,7 +165,7 @@ private:
 class Universe
 {
 private:
-    typedef std::map<int, ObjectMap>                EmpireLatestKnownObjectMap;     ///< Most recent known information each empire had about objects in the Universe; keyed by empire id
+    typedef std::map<int, ObjectMap>                EmpireObjectMap;                ///< Known information each empire had about objects in the Universe; keyed by empire id
 
     typedef std::map<Visibility, int>               VisibilityTurnMap;              ///< Most recent turn number on which a something, such as a Universe object, was observed at various Visibility ratings or better
     typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
@@ -241,21 +241,26 @@ public:
     /** \name Accessors */ //@{
     /** Returns objects in this Universe. */
     const ObjectMap&        Objects() const;
-
-    /** Returns objects in this Universe. */
     ObjectMap&              Objects();
 
-    /** Returns objects that have been destroyed from this Universe. */
-    const ObjectMap&        DestroyedObjects() const;
-
     /** Returns latest known state of objects for the Empire with
-      * id \a empire_id */
+      * id \a empire_id or the true / complete state of all objects in this
+      * Universe (the same as calling Objects()) if \a empire_id is
+      * ALL_EMPIRES*/
     const ObjectMap&        EmpireKnownObjects(int empire_id = ALL_EMPIRES) const;
+    ObjectMap&              EmpireKnownObjects(int empire_id = ALL_EMPIRES);
 
     /** Returns IDs of objects that the Empire with id \a empire_id has vision
       * of on the current turn, or objects that at least one empire has vision
       * of on the current turn if \a empire_id = ALL_EMPIRES */
     std::set<int>           EmpireVisibleObjectIDs(int empire_id = ALL_EMPIRES) const;
+
+    /** Returns IDs of objects that the Empire with id \a empire_id knows have
+      * been destroyed.  Each empire's latest known objects data contains the
+      * last known information about each object, whether it has been destroyed
+      * or not.  If \a empire_id = ALL_EMPIRES and empty set of IDs is
+      * returned. */
+    const std::set<int>&    EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
     const ShipDesign*       GetShipDesign(int ship_design_id) const;                        ///< returns the ship design with id \a ship_design id, or 0 if non exists
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
@@ -561,15 +566,12 @@ private:
     void    DestroyImpl(int id);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
-
-    ObjectMap                       m_destroyed_objects;                ///< map from object id to objects that have been destroyed from the universe.  for the server: all of them;  for clients, only those that the local client knows about, not including previously-seen objects that the client no longer can see
-    ObjectKnowledgeMap              m_destroyed_object_knowers;         ///< keyed by (destroyed) object ID, map of sets of Empires' IDs that know the objects have been destroyed (ie. could see the object when it was destroyed)
+    EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
 
     EmpireObjectVisibilityMap       m_empire_object_visibility;         ///< map from empire id to (map from object id to visibility of that object for that empire)
-
-    EmpireLatestKnownObjectMap      m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
     EmpireObjectVisibilityTurnMap   m_empire_object_visibility_turns;   ///< map from empire id to (map from object id to (map from Visibility rating to turn number on which the empire last saw the object at the indicated Visibility rating or higher)
 
+    ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
 
@@ -588,18 +590,69 @@ private:
     static double                   s_universe_width;
     static bool                     s_inhibit_universe_object_signals;
 
-    void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize) const;
+    /** Fills \a designs_to_serialize with ShipDesigns based on the objects
+      * being serialized in \a serialized_objects and the empire with id
+      * \a encoding_empire for which designs are being serialized, so that all
+      * the designs of ships being serialized and all the designs known of and
+      * remembered by the indicated empire are included.  If encoding_empire is
+      * ALL_EMPIRES, then all designs are included. */
+    void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+
+    /** Fills \a objects with copies of UniverseObjects that should be sent
+      * to the empire with id \a encoding_empires */
     void    GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) const;
+
+    /** Fills \a empire_latest_known_objects map with the latest known data
+      * about UniverseObjects for the empire with id \a encoding_empire.  If
+      * the encoding empire is ALL_EMPIRES then all stored empire object
+      * knowledge is included. */
+    void    GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const;
+
+    /***/
     void    GetEmpireObjectVisibilityMap(EmpireObjectVisibilityMap& empire_object_visibility, int encoding_empire) const;
+
+    /***/
     void    GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& empire_object_visibility_turns, int encoding_empire) const;
-    void    GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const;
-    void    GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire) const;
+
+    /***/
+    void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& m_empire_known_destroyed_object_ids, int encoding_empire) const;
+
+    static void TransferEmpireObjectMapContents(EmpireObjectMap& to_map, EmpireObjectMap& from_map);
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Free function UniverseObject getters. */
+UniverseObject*         GetObject(int object_id);
+const UniverseObject*   GetConstObject(int object_id);
+UniverseObject*         GetEmpireKnownObject(int object_id, int empire_id);
+const UniverseObject*   GetEmpireKnownConstObject(int object_id, int empire_id);
+
+template <class T>
+T*                      GetObject(int object_id)
+{
+    return GetUniverse().Objects().Object<T>(object_id);
+}
+
+template <class T>
+const T*                GetConstObject(int object_id)
+{
+    return GetUniverse().Objects().Object<T>(object_id);
+}
+
+template <class T>
+T*                      GetEmpireKnownObject(int object_id, int empire_id)
+{
+    return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
+}
+
+template <class T>
+const T*                GetEmpireKnownConstObject(int object_id, int empire_id)
+{
+    return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
+}
 
 // template implementations
 #if (10 * __GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)
@@ -671,45 +724,38 @@ template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap                       objects;
-    ObjectMap                       destroyed_objects;
-    ObjectKnowledgeMap              destroyed_object_knowers;
+    EmpireObjectMap                 empire_latest_known_objects;
     EmpireObjectVisibilityMap       empire_object_visibility;
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
+    ObjectKnowledgeMap              empire_known_destroyed_object_ids;
+    ShipDesignMap                   ship_designs;
 
     if (Archive::is_saving::value) {
-        GetObjectsToSerialize(              objects,                        s_encoding_empire);
-        GetEmpireObjectVisibilityMap(       empire_object_visibility,       s_encoding_empire);
-        GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns, s_encoding_empire);
-        GetDestroyedObjectsToSerialize(     destroyed_objects,              s_encoding_empire);
-        GetDestroyedObjectKnowers(          destroyed_object_knowers,       s_encoding_empire);
+        GetObjectsToSerialize(              objects,                            s_encoding_empire);
+        GetEmpireKnownObjectsToSerialize(   empire_latest_known_objects,        s_encoding_empire);
+        GetEmpireObjectVisibilityMap(       empire_object_visibility,           s_encoding_empire);
+        GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     s_encoding_empire);
+        GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  s_encoding_empire);
+        GetShipDesignsToSerialize(          objects,    ship_designs,           s_encoding_empire);
     }
 
-    // ship designs
-    ShipDesignMap ship_designs;
-    if (Archive::is_saving::value)
-        GetShipDesignsToSerialize(objects, ship_designs);
-
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
-        & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns)
-        & BOOST_SERIALIZATION_NVP(destroyed_objects)
-        & BOOST_SERIALIZATION_NVP(destroyed_object_knowers)
-        & BOOST_SERIALIZATION_NVP(ship_designs)
+        & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids)
+        & BOOST_SERIALIZATION_NVP(objects)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
 
-    if (s_encoding_empire == ALL_EMPIRES) {
-        ar  & BOOST_SERIALIZATION_NVP(m_empire_latest_known_objects);
-    }
-
     if (Archive::is_loading::value) {
         m_objects.TransferObjectsFrom(objects);
-        m_empire_object_visibility = empire_object_visibility;
-        m_empire_object_visibility_turns = empire_object_visibility_turns;
-        m_destroyed_objects.TransferObjectsFrom(destroyed_objects);
-        m_destroyed_object_knowers = destroyed_object_knowers;
-        m_ship_designs = ship_designs;
+        TransferEmpireObjectMapContents(m_empire_latest_known_objects, empire_latest_known_objects);
+
+        m_empire_object_visibility =            empire_object_visibility;
+        m_empire_object_visibility_turns =      empire_object_visibility_turns;
+        m_empire_known_destroyed_object_ids =   empire_known_destroyed_object_ids;
+        m_ship_designs =                        ship_designs;
         InitializeSystemGraph();
     }
 }

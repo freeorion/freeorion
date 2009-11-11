@@ -84,6 +84,8 @@ Building* Building::Clone(int empire_id) const
 
 void Building::Copy(const UniverseObject* copied_object, int empire_id)
 {
+    if (copied_object == this)
+        return;
     const Building* copied_building = universe_object_cast<Building*>(copied_object);
     if (!copied_building) {
         Logger().errorStream() << "Building::Copy passed an object that wasn't a Building";

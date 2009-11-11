@@ -65,6 +65,8 @@ UniverseObject::~UniverseObject()
 
 //void UniverseObject::Copy(const UniverseObject* copied_object, int empire_id)
 //{
+//    if (copied_object == this)
+//        return;
 //    if (!copied_object) {
 //        Logger().errorStream() << "UniverseObject::Copy passed a null object";
 //        return;
@@ -78,6 +80,8 @@ UniverseObject::~UniverseObject()
 
 void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 {
+    if (copied_object == this)
+        return;
     if (!copied_object) {
         Logger().errorStream() << "UniverseObject::Copy passed a null object";
         return;

@@ -649,22 +649,32 @@ const ObjectMap& Universe::Objects() const
 ObjectMap& Universe::Objects()
 { return m_objects; }
 
-const ObjectMap& Universe::DestroyedObjects() const
-{ return m_destroyed_objects; }
-
 const ObjectMap& Universe::EmpireKnownObjects(int empire_id) const
 {
     if (empire_id == ALL_EMPIRES)
         return m_objects;
 
-    EmpireLatestKnownObjectMap::const_iterator it = m_empire_latest_known_objects.find(empire_id);
+    EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(empire_id);
     if (it != m_empire_latest_known_objects.end()) {
-        const ObjectMap& test = it->second;
+        return it->second;
     }
 
-//    return it->second;
+    static const ObjectMap const_empty_map;
+    return const_empty_map;
+}
 
-    static const ObjectMap empty_map;
+ObjectMap& Universe::EmpireKnownObjects(int empire_id)
+{
+    if (empire_id == ALL_EMPIRES)
+        return m_objects;
+
+    EmpireObjectMap::iterator it = m_empire_latest_known_objects.find(empire_id);
+    if (it != m_empire_latest_known_objects.end()) {
+        return it->second;
+    }
+
+    static ObjectMap empty_map;
+    empty_map.Clear();
     return empty_map;
 }
 
@@ -694,6 +704,15 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     }
 
     return retval;
+}
+
+const std::set<int>& Universe::EmpireKnownDestroyedObjectIDs(int empire_id) const
+{
+    ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(empire_id);
+    if (it != m_empire_known_destroyed_object_ids.end())
+        return it->second;
+    static const std::set<int> empty_set;
+    return empty_set;
 }
 
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
@@ -1754,16 +1773,15 @@ void Universe::Destroy(int id)
     }
     //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
-    // get and record set of empires that can presently see this object
-    std::set<int> knowing_empires;
+    // record empires that know this object has been destroyed
     for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
         int empire_id = emp_it->first;
-        if (obj->GetVisibility(empire_id) != VIS_NO_VISIBILITY || universe_object_cast<System*>(obj) || obj->OwnedBy(empire_id)) {
-            knowing_empires.insert(empire_id);
-            //Logger().debugStream() << "..visible to empire: " << empire_id;
+        if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
+            m_empire_known_destroyed_object_ids[empire_id].insert(id);
+
+            // TODO: Update m_empire_latest_known_objects somehow?
         }
     }
-    m_destroyed_object_knowers[id] = knowing_empires;
 
 
     // move object to its own position, thereby removing it from anything
@@ -1772,8 +1790,7 @@ void Universe::Destroy(int id)
 
 
     // remove from existing objects set and insert into destroyed objects set
-    m_objects.Remove(id);
-    m_destroyed_objects.Insert(id, obj);
+    delete m_objects.Remove(id);
     UniverseObjectDeleteSignal(obj);
 }
 
@@ -1782,37 +1799,19 @@ bool Universe::Delete(int id)
     // find object amongst existing objects and delete directly, without storing any info
     // about the previous object (as is done for destroying an object)
     UniverseObject* obj = m_objects.Object(id);
-    if (obj) {
-        // move object to invalid position, thereby removing it from anything that contained it
-        // and propegating associated signals
-        obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
-
-        // remove from existing objects set
-        m_objects.Remove(id);
-
-        UniverseObjectDeleteSignal(obj);
-
-        delete obj;
-
-        return true;
+    if (!obj) {
+        Logger().errorStream() << "Tried to delete a nonexistant object with id: " << id;
+        return false;
     }
 
+    // move object to invalid position, thereby removing it from anything that contained it
+    // and propegating associated signals
+    obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
 
-    // find object amongst destroyed objects
-    obj = m_destroyed_objects.Object(id);
-    if (obj) {
-        // remove from destroyed objects set
-        delete obj;
+    // remove from existing objects set
+    delete m_objects.Remove(id);
 
-        // remove from knowledge of destroyed objects
-        m_destroyed_object_knowers.erase(id);
-
-        return true;
-    }
-
-    Logger().errorStream() << "Tried to delete a nonexistant object with id: " << id;
-
-    return false;
+    return true;
 }
 
 void Universe::EffectDestroy(int id)
@@ -2026,9 +2025,9 @@ void Universe::DestroyImpl(int id)
     }
 }
 
-void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize) const
+void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize, int encoding_empire) const
 {
-    if (s_encoding_empire == ALL_EMPIRES) {
+    if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {
         // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
@@ -2070,7 +2069,7 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         // if encoding for a specific empire with memory...
 
         // find indicated empire's knowledge about objects, current and previous
-        EmpireLatestKnownObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
+        EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
         if (it == m_empire_latest_known_objects.end())
             return;                 // empire has no object knowledge, so there is nothing to send
 
@@ -2078,6 +2077,36 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         // empire's knowledge, so want to copy the previously-acquired info in
         // addition to info that is visible this turn
         objects.Copy(it->second, ALL_EMPIRES);
+    }
+}
+
+void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_known_objects, int encoding_empire) const
+{
+    if (&empire_latest_known_objects == &m_empire_latest_known_objects)
+        return;
+
+    for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
+        it->second.Clear();
+    empire_latest_known_objects.clear();
+
+    if (!ENABLE_VISIBILITY_EMPIRE_MEMORY)
+        return;
+
+    if (encoding_empire == ALL_EMPIRES) {
+        // copy all ObjectMaps' contents
+        for (EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it) {
+            int empire_id = it->first;
+            const ObjectMap& map = it->second;
+            empire_latest_known_objects[empire_id].Copy(map, ALL_EMPIRES);
+        }
+        return;
+    }
+
+    // copy just encoding_empire's known objects
+    EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
+    if (it != m_empire_latest_known_objects.end()) {
+        const ObjectMap& map = it->second;
+        empire_latest_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
     }
 }
 
@@ -2115,44 +2144,41 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
     }
 }
 
-void Universe::GetDestroyedObjectsToSerialize(ObjectMap& destroyed_objects, int encoding_empire) const
+void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const
 {
-    if (&destroyed_objects == &m_destroyed_objects)
+    if (&empire_known_destroyed_object_ids == &m_empire_known_destroyed_object_ids)
         return;
 
-    destroyed_objects.Clear();
-
     if (encoding_empire == ALL_EMPIRES) {
-        destroyed_objects.Copy(m_destroyed_objects, ALL_EMPIRES);
-    } else {
-        // only serialize objects known about by encoding_empire
-        for (ObjectMap::const_iterator it = m_destroyed_objects.const_begin(); it != m_destroyed_objects.const_end(); ++it) {
-            ObjectKnowledgeMap::const_iterator know_it = m_destroyed_object_knowers.find(it->first);
-            if (know_it == m_destroyed_object_knowers.end())
-                continue;   // no empires know about this destroyed object
-
-            const std::set<int>& knowers = know_it->second;
-            if (knowers.find(encoding_empire) != knowers.end()) {
-                //Logger().debugStream() << "empire " << s_encoding_empire << " knows about destroyed object object " << know_it->first;
-                const UniverseObject* obj = it->second;
-                UniverseObject* clone = obj->Clone(encoding_empire);
-                destroyed_objects.Insert(it->first, clone);
-            }
-        }
+        empire_known_destroyed_object_ids = m_empire_known_destroyed_object_ids;
+        return;
     }
+
+    empire_known_destroyed_object_ids.clear();
+
+    // copy info about what encoding empire knows
+    ObjectKnowledgeMap::const_iterator it = m_empire_known_destroyed_object_ids.find(encoding_empire);
+    if (it != m_empire_known_destroyed_object_ids.end())
+        empire_known_destroyed_object_ids[encoding_empire] = it->second;
 }
 
-void Universe::GetDestroyedObjectKnowers(ObjectKnowledgeMap& destroyed_object_knowers, int encoding_empire) const
+void Universe::TransferEmpireObjectMapContents(EmpireObjectMap& to_map, EmpireObjectMap& from_map)
 {
-    // who knows about destroyed objects?  this data is only serialized when all encoding is for
-    // all empires.  this way it is saved as part of a saved game, but isn't sent out to players.
-    // we don't want to tell all players what destroyed objects other players know about, or worry
-    // about who knows who knows what objects were destroyed, so instead, no players get any info
-    // about who knows what was destroyed.  (players can tell whether they know something was
-    // destroyed by checking whether they got the object in the Universe's destroyed objects, so
-    // that info doesn't need to be sent with turn updates...)
-    if (encoding_empire == ALL_EMPIRES)
-        destroyed_object_knowers = m_destroyed_object_knowers;
+    if (&to_map == &from_map)
+        return;
+
+    // empty to_map
+    for (EmpireObjectMap::iterator it = to_map.begin(); it != to_map.end(); ++it)
+        it->second.Clear();
+    to_map.clear();
+
+    // transfer contents of each ObjectMap in from_map to corresponding ObjectMap in to_map
+    for (EmpireObjectMap::iterator it = from_map.begin(); it != from_map.end(); ++it) {
+        int empire_id = it->first;
+        ObjectMap& from = it->second;
+        to_map[empire_id].TransferObjectsFrom(from);
+    }
+    from_map.clear();
 }
 
 //////////////////////////////////////////
@@ -4033,5 +4059,28 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 #else
     throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
 #endif
+}
+
+///////////////////////////////////////////////////////////
+// Free Functions                                        //
+///////////////////////////////////////////////////////////
+UniverseObject* GetObject(int object_id)
+{
+    return GetUniverse().Objects().Object(object_id);
+}
+
+const UniverseObject* GetConstObject(int object_id)
+{
+    return GetUniverse().Objects().Object(object_id);
+}
+
+UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
+{
+    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
+}
+
+const UniverseObject* GetEmpireKnownConstObject(int object_id, int empire_id)
+{
+    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
 }
 

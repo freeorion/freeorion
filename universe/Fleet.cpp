@@ -80,6 +80,8 @@ Fleet* Fleet::Clone(int empire_id) const
 
 void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
 {
+    if (copied_object == this)
+        return;
     const Fleet* copied_fleet = universe_object_cast<Fleet*>(copied_object);
     if (!copied_fleet) {
         Logger().errorStream() << "Fleet::Copy passed an object that wasn't a Fleet";

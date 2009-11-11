@@ -83,6 +83,8 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
 
 void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
 {
+    if (copied_object == this)
+        return;
     if (!copied_object) {
         Logger().errorStream() << "ResourceCenter::Copy passed a null object";
         return;

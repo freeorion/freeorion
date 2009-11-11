@@ -85,6 +85,8 @@ Ship* Ship::Clone(int empire_id) const
 
 void Ship::Copy(const UniverseObject* copied_object, int empire_id)
 {
+    if (copied_object == this)
+        return;
     const Ship* copied_ship = universe_object_cast<Ship*>(copied_object);
     if (!copied_ship) {
         Logger().errorStream() << "Ship::Copy passed an object that wasn't a Ship";

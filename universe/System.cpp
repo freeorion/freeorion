@@ -73,6 +73,8 @@ System* System::Clone(int empire_id) const
 
 void System::Copy(const UniverseObject* copied_object, int empire_id)
 {
+    if (copied_object == this)
+        return;
     const System* copied_system = universe_object_cast<System*>(copied_object);
     if (!copied_system) {
         Logger().errorStream() << "System::Copy passed an object that wasn't a System";

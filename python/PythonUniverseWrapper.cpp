@@ -14,7 +14,7 @@
 #include <boost/python.hpp>
 
 namespace {
-    const UniverseObject*   GetObject(const Universe& universe, int id) {
+    const UniverseObject*   GetObjectA(const Universe& universe, int id) {
         return universe.Objects().Object(id);
     }
     const Fleet*            GetFleet(const Universe& universe, int id) {
@@ -128,7 +128,7 @@ namespace FreeOrionPython {
         //    Universe    //
         ////////////////////
         class_<Universe, noncopyable>("universe", no_init)
-            .def("getObject",                   make_function(GetObject,    return_value_policy<reference_existing_object>()))
+            .def("getObject",                   make_function(GetObjectA,   return_value_policy<reference_existing_object>()))
             .def("getFleet",                    make_function(GetFleet,     return_value_policy<reference_existing_object>()))
             .def("getShip",                     make_function(GetShip,      return_value_policy<reference_existing_object>()))
             .def("getPlanet",                   make_function(GetPlanet,    return_value_policy<reference_existing_object>()))

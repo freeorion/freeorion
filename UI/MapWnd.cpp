@@ -1019,23 +1019,6 @@ void MapWnd::InitTurn(int turn_number)
         ShowSystemNames();
 
 
-    //// if we're at the default start position, the odds are very good that this is a fresh game
-    //if (ClientUpperLeft() == GG::Pt()) {
-    //    // center the map on player's home system at the start of the game
-    //    int capitol_id = empire->CapitolID();
-    //    const UniverseObject *obj = objects.Object(capitol_id);
-    //    if (obj) {
-    //        CenterOnMapCoord(obj->X(), obj->Y());
-    //    } else {
-    //        // default to centred on whole universe if there is no capitol
-    //        CenterOnMapCoord(Universe::UniverseWidth() / 2, Universe::UniverseWidth() / 2);
-    //    }
-
-    //    // default the tech tree to be centred on something interesting
-    //    m_research_wnd->Reset();
-    //}
-
-
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
     GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
@@ -1072,11 +1055,16 @@ void MapWnd::InitTurn(int turn_number)
     Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    // start first turn with player's system selected
     if (turn_number == 1) {
-        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = objects.Object(empire->CapitolID()))
+        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
+            // start first turn with player's system selected
+            if (const UniverseObject* obj = objects.Object(empire->CapitolID())) {
                 SelectSystem(obj->SystemID());
+                CenterOnMapCoord(obj->X(), obj->Y());
+            }
+        }
+        // default the tech tree to be centred on something interesting
+        m_research_wnd->Reset();
     }
 
     Logger().debugStream() << "MapWnd::InitTurn time: " << (turn_init_timer.elapsed() * 1000.0);

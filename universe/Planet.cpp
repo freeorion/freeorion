@@ -137,6 +137,8 @@ Planet* Planet::Clone(int empire_id) const
 
 void Planet::Copy(const UniverseObject* copied_object, int empire_id)
 {
+    if (copied_object == this)
+        return;
     const Planet* copied_planet = universe_object_cast<Planet*>(copied_object);
     if (!copied_planet) {
         Logger().errorStream() << "Planet::Copy passed an object that wasn't a Planet";

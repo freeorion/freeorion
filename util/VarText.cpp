@@ -42,8 +42,8 @@ namespace {
                 int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
                 const UniverseObject* obj = GetUniverse().Objects().Object(object_id);
 
-                if (!obj)
-                    obj = GetUniverse().DestroyedObjects().Object(object_id);
+                //if (!obj)
+                //    obj = GetUniverse().DestroyedObjects().Object(object_id);
 
                 if (!obj) {
                     m_str += UserString("ERROR");
