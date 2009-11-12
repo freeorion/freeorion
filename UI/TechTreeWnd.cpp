@@ -38,23 +38,27 @@ const lt_symlist_t lt_preloaded_symbols[] __attribute__((used)) = {
 #endif
 
 #ifndef M_PI
-#define M_PI      3.14159265358979323846
+#define M_PI                3.14159265358979323846
 #endif
 
 #ifndef PI
-#define PI      M_PI
+#define PI                  M_PI
 #endif
 
 #ifndef POINTS_PER_INCH
-#define POINTS_PER_INCH   72
+#define POINTS_PER_INCH     72
 #endif
 
 #ifndef POINTS
-#define POINTS(f_inch)   (ROUND((f_inch)*POINTS_PER_INCH))
+#define POINTS(f_inch)      (ROUND((f_inch)*POINTS_PER_INCH))
 #endif
 
 #ifndef PS2INCH
-#define PS2INCH(ps)      ((ps)/(double)POINTS_PER_INCH)
+#define PS2INCH(ps)         ((ps)/(double)POINTS_PER_INCH)
+#endif
+
+#ifndef ND_coord_i
+#define ND_coord_i(n)       (ND_coord(n))
 #endif
 
 namespace {
