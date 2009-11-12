@@ -14,15 +14,6 @@
 #include <string>
 #include <vector>
 
-/** Signal return value combiner used by ResourceCenter, PopCenter, and any other UniverseObject decorator that needs
-    access to its UniverseObject subclass. */
-struct Default0Combiner
-{
-    typedef UniverseObject* result_type;
-    template <class Iter>
-    UniverseObject* operator()(Iter first, Iter last);
-};
-
 class Meter;
 class System;
 class SitRepEntry;
@@ -204,19 +195,6 @@ private:
 };
 
 // template implementations
-template <class Iter>
-UniverseObject* Default0Combiner::operator()(Iter first, Iter last)
-{
-    UniverseObject* retval = 0;
-    while (first != last) {
-        assert(!retval); // ensure we retrieve at most one UniverseObject
-        retval = *first++;
-    }
-    return retval;
-}
-
-#include "../util/AppInterface.h"
-
 template <class Archive>
 void UniverseObject::serialize(Archive& ar, const unsigned int version)
 {

@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 #include "Predicates.h"
+#include "../util/AppInterface.h"
 
 #include <boost/signal.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
