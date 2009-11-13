@@ -102,10 +102,10 @@ namespace {
     int SystemGraphIndex(const Graph& graph, int system_id)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
-        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
+        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
         for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
-            const int loop_sys_id = pointer_property_map[i];    // get system ID of this vertex
+            const int loop_sys_id = sys_id_property_map[i];    // get system ID of this vertex
             if (loop_sys_id == system_id)
                 return i;
         }
@@ -127,7 +127,7 @@ namespace {
 
         std::pair<std::list<int>, double> retval;
 
-        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
+        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
 
         int system1_index = SystemGraphIndex(graph, system1_id);
@@ -170,7 +170,7 @@ namespace {
 
         int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
-            retval.first.push_front(pointer_property_map[current_system]);
+            retval.first.push_front(sys_id_property_map[current_system]);
             current_system = predecessors[current_system];
         }
         retval.second = distances[system2_index];
@@ -181,7 +181,7 @@ namespace {
             return retval;
         } else {
             // add start system to path, as it wasn't added by traversing predecessors array
-            retval.first.push_front(pointer_property_map[system1_index]);
+            retval.first.push_front(sys_id_property_map[system1_index]);
         }
 
         return retval;
@@ -196,7 +196,7 @@ namespace {
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
 
-        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
+        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         std::pair<std::list<int>, int> retval;
 
         int system1_index = SystemGraphIndex(graph, system1_id);
@@ -235,7 +235,7 @@ namespace {
 
         int current_system = system2_index;
         while (predecessors[current_system] != current_system) {
-            retval.first.push_front(pointer_property_map[current_system]);
+            retval.first.push_front(sys_id_property_map[current_system]);
             current_system = predecessors[current_system];
         }
         retval.second = retval.first.size() - 1;    // number of jumps is number of systems in path minus one for the starting system
@@ -245,7 +245,7 @@ namespace {
             retval.second = -1;
         } else {
             // add start system to path, as it wasn't added by traversing predecessors array
-            retval.first.push_front(pointer_property_map[system1_index]);
+            retval.first.push_front(sys_id_property_map[system1_index]);
         }
 
         return retval;
@@ -266,10 +266,10 @@ namespace {
 
         std::map<double, int> retval;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
-        ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), graph);
+        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(SystemGraphIndex(graph, system_id), graph);
         for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
-            retval[edge_weight_map[*it]] = pointer_property_map[boost::target(*it, graph)];
+            retval[edge_weight_map[*it]] = sys_id_property_map[boost::target(*it, graph)];
         }
         return retval;
     }
@@ -497,7 +497,10 @@ struct Universe::GraphImpl
         EdgeVisibilityFilter(const SystemGraph* graph, int empire_id) :
             m_graph(graph),
             m_empire_id(empire_id)
-        {}
+        {
+            if (!graph)
+                Logger().errorStream() << "EdgeVisibilityFilter passed null graph pointer";
+        }
 
         template <typename EdgeDescriptor>
         bool operator()(const EdgeDescriptor& edge) const
@@ -505,58 +508,40 @@ struct Universe::GraphImpl
             if (!m_graph)
                 return false;
 
-            // for reverse-lookup System universe ID from graph indices...
-            ConstSystemIDPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), *m_graph);
-
-            const Universe& universe = GetUniverse();
-            const ObjectMap& objects = universe.EmpireKnownObjects(m_empire_id);
-
-            // get system id from graph index
+            // get system ids from graph indices
+            ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), *m_graph); // for reverse-lookup System universe ID from graph index
             int sys_graph_index_1 = boost::source(edge, *m_graph);
-            int sys_id_1 = pointer_property_map[sys_graph_index_1];
-
-            Visibility vis1 = universe.GetObjectVisibilityByEmpire(sys_id_1, m_empire_id);
-            if (vis1 < VIS_BASIC_VISIBILITY)
-                return false;
-
-
-            // get system id from graph index
+            int sys_id_1 = sys_id_property_map[sys_graph_index_1];
             int sys_graph_index_2 = boost::target(edge, *m_graph);
-            int sys_id_2 = pointer_property_map[sys_graph_index_2];
+            int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
-            Visibility vis2 = universe.GetObjectVisibilityByEmpire(sys_id_2, m_empire_id);
-            if (vis2 < VIS_BASIC_VISIBILITY)
-                return false;
-
-
-            const System* system1 = objects.Object<System>(sys_id_1);
+            // look up lane between systems
+            const System* system1 = GetEmpireKnownConstObject<System>(sys_id_1, m_empire_id);
             if (!system1) {
                 Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
             }
-
-            // check if starlane is listed in system's visible starlanes
-            System::StarlaneMap lanes = system1->StarlanesWormholes();
-            if (lanes.find(sys_id_2) != lanes.end())
+            if (system1->HasStarlaneTo(sys_id_2))
                 return true;
 
+            // lane not found
             return false;
         }
 
     private:
-        const SystemGraph*  m_graph;
-        int                 m_empire_id;
+        const SystemGraph*      m_graph;
+        int                     m_empire_id;
     };
     typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
     typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
 
     // declare property map types for properties declared above
-    typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
-    typedef boost::property_map<SystemGraph, vertex_system_id_t>::type       SystemPointerPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type   ConstIndexPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type         IndexPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type    ConstEdgeWeightPropertyMap;
-    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type          EdgeWeightPropertyMap;
+    typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
+    typedef boost::property_map<SystemGraph, vertex_system_id_t>::type              SystemIDPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::const_type     ConstIndexPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::vertex_index_t>::type           IndexPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type      ConstEdgeWeightPropertyMap;
+    typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type            EdgeWeightPropertyMap;
 
     SystemGraph                 m_system_graph;                 ///< a graph in which the systems are vertices and the starlanes are edges
     EmpireViewSystemGraphMap    m_empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
@@ -782,13 +767,9 @@ bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) c
 
 bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 {
-    if (empire_id == ALL_EMPIRES) {
-        return SystemReachableImpl(m_graph_impl->m_system_graph, system_id);
-    } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
-            return SystemReachableImpl(*graph_it->second, system_id);
-    }
+    if (const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id))
+        if (!system->StarlanesWormholes().empty())
+            return true;
     return false;
 }
 
@@ -1569,7 +1550,7 @@ void Universe::UpdateEmpireObjectVisibilities()
                     // check whether having a contained object wouldn't change container's
                     // visibility anyway...
                     if (container_vis_it->second >= VIS_BASIC_VISIBILITY)
-                        continue;   // having visible contained object grants part vis only.  if container already has this for current empire, don't need to propegate
+                        continue;   // having visible contained object grants basic vis only.  if container already has this for current empire, don't need to propegate
                 }
 
 
@@ -1926,7 +1907,7 @@ void Universe::InitializeSystemGraph()
 
     std::vector<int> system_ids = m_objects.FindObjectIDs<System>();
     m_system_distances.resize(system_ids.size());
-    GraphImpl::SystemPointerPropertyMap pointer_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
+    GraphImpl::SystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
 
     GraphImpl::EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_graph_impl->m_system_graph);
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
@@ -1934,10 +1915,10 @@ void Universe::InitializeSystemGraph()
     std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_graph_impl->m_system_graph of system's vertex
 
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
-        // add a vertex to the graph for this system, and assign it a pointer for its System object
+        // add a vertex to the graph for this system, and assign it the system's universe ID as a property
         boost::add_vertex(m_graph_impl->m_system_graph);
         int system_id = system_ids[i];
-        pointer_property_map[i] = system_id;
+        sys_id_property_map[i] = system_id;
         // add record of index in m_graph_impl->m_system_graph of this system
         system_id_graph_index_reverse_lookup_map[system_id] = i;
     }
@@ -1966,19 +1947,21 @@ void Universe::InitializeSystemGraph()
                 double x_dist = system2->X() - system1->X();
                 double y_dist = system2->Y() - system1->Y();
                 edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
+                std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
             }
         }
 
         // define the straight-line system distances for this system
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
-            int system2_id = system_ids[i];
+            int system2_id = system_ids[j];
             const UniverseObject* system2 = m_objects.Object(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
+            std::cout << "m_system_distances: " << system1_id << " to " << system2_id << ": " << m_system_distances[i].back() << std::endl;
         }
-        m_system_distances[i].push_back(0.0);
+        m_system_distances[i].push_back(0.0);   // distance from system to itself
     }
 
     RebuildEmpireViewSystemGraphs();

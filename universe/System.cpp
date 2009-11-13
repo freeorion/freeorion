@@ -88,12 +88,34 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_objects =               copied_system->VisibleContainedObjects(empire_id);
-        this->m_starlanes_wormholes =   copied_system->VisibleStarlanesWormholes(empire_id);
+
+        // add any visible lanes, without removing existing entries
+        StarlaneMap visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
+        for (StarlaneMap::const_iterator it = visible_lanes_holes.begin(); it != visible_lanes_holes.end(); ++it)
+            this->m_starlanes_wormholes[it->first] = it->second;
 
         this->m_star =                  copied_system->m_star;
 
-        if (vis >= VIS_FULL_VISIBILITY) {
-            this->m_orbits =            copied_system->m_orbits;
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            // remove any not-visible lanes that were previously known: with
+            // partial vis, they should be seen, but aren't, so are known not
+            // to exist any more
+
+            // assemble all previously known lanes
+            std::vector<int> initial_known_lanes;
+            for (StarlaneMap::const_iterator it = this->m_starlanes_wormholes.begin(); it != this->m_starlanes_wormholes.end(); ++it)
+                initial_known_lanes.push_back(it->first);
+
+            // remove previously known lanes that aren't currently visible
+            for (std::vector<int>::const_iterator it = initial_known_lanes.begin(); it != initial_known_lanes.end(); ++it) {
+                int lane_end_sys_id = *it;
+                if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end())
+                    this->m_starlanes_wormholes.erase(lane_end_sys_id);
+            }
+
+            if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_orbits =            copied_system->m_orbits;
+            }
         }
     }
 }
@@ -556,18 +578,39 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
 
+
+    Visibility this_system_vis = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
+
+    //visible starlanes are:
+    //  - those connected to systems with vis >= partial
+    //  - those with visible ships travelling along them
+
+
+    // return all starlanes if partially visible or better
+    if (this_system_vis >= VIS_PARTIAL_VISIBILITY)
+        return m_starlanes_wormholes;
+
+
+    // compile visible lanes connected to this only basically-visible system
     StarlaneMap retval;
 
 
-    // starlanes are visible if both systems have basic visibility or greater,
-    // and one or both systems has partial visibility or greater
+    // check if any of the adjacent systems are partial or better visible
+    for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
+        int lane_end_sys_id = it->first;
+        if (universe.GetObjectVisibilityByEmpire(lane_end_sys_id, empire_id) >= VIS_PARTIAL_VISIBILITY)
+            retval[lane_end_sys_id] = it->second;
+    }
 
-    // check that current system has at least basic visibility
-    Visibility vis2 = universe.GetObjectVisibilityByEmpire(this->ID(), empire_id);
-    if (vis2 < VIS_BASIC_VISIBILITY)
+
+    // early exit check... can't see any more lanes than exist, so don't need to check for more if all lanes are already visible
+    if (retval == m_starlanes_wormholes)
         return retval;
 
 
+    // check if any fleets owned by empire are moving along a starlane connected to this system...
+
+    // get moving fleets owned by empire
     std::vector<const Fleet*> moving_empire_fleets;
     std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
     for (std::vector<const UniverseObject*>::const_iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it)
@@ -575,36 +618,37 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
 
-
-    // check each connected system, paired with current system, to ensure at
-    // least one is partial, and both are at least basically visible, or that
-    // both are basically visible if there is a ship owned by the indicated
-    // empire travelling along a lane between them
-    for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end(); ++it) {
-        Visibility vis1 = universe.GetObjectVisibilityByEmpire(it->first, empire_id);
-        if (vis1 < VIS_BASIC_VISIBILITY)
+    // add any lanes an owned fleet is moving along that connect to this system
+    for (std::vector<const Fleet*>::const_iterator it = moving_empire_fleets.begin(); it != moving_empire_fleets.end(); ++it) {
+        const Fleet* fleet = *it;
+        if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;
+        }
 
-        if (vis1 >= VIS_PARTIAL_VISIBILITY || vis2 >= VIS_PARTIAL_VISIBILITY) {
-            // one or both systems are partially visible, so lane is visible
-            retval.insert(*it);
-            continue;
+        int prev_sys_id = fleet->PreviousSystemID();
+        int next_sys_id = fleet->NextSystemID();
 
-        } else if (vis1 >= VIS_BASIC_VISIBILITY) {
-            // check for fleets not in a system and with next and previous
-            // systems that are the current pair
-            for (std::vector<const Fleet*>::const_iterator moving_fleet_it = moving_empire_fleets.begin(); moving_fleet_it != moving_empire_fleets.end(); ++moving_fleet_it) {
-                const Fleet* fleet = *moving_fleet_it;
-                if (fleet->SystemID() == UniverseObject::INVALID_OBJECT_ID &&
-                    ((fleet->NextSystemID() == this->ID() && fleet->PreviousSystemID() == it->first) ||
-                     (fleet->NextSystemID() == it->first && fleet->PreviousSystemID() == this->ID())))
-                {
-                    retval.insert(*it);
-                    break;
-                }
+        // see if previous or next system is this system, and if so, is other
+        // system on lane along which ship is moving one of this system's
+        // starlanes or wormholes?
+        int other_lane_end_sys_id = UniverseObject::INVALID_OBJECT_ID;
+
+        if (prev_sys_id == this->ID())
+            other_lane_end_sys_id = next_sys_id;
+        else if (next_sys_id == this->ID())
+            other_lane_end_sys_id = prev_sys_id;
+
+        if (other_lane_end_sys_id != UniverseObject::INVALID_OBJECT_ID) {
+            StarlaneMap::const_iterator lane_it = m_starlanes_wormholes.find(other_lane_end_sys_id);
+            if (lane_it == m_starlanes_wormholes.end()) {
+                Logger().errorStream() << "System::VisibleStarlanesWormholes found an owned fleet moving along a starlane connected to this system that isn't also connected to one of this system's starlane-connected systems...?";
+                continue;
             }
+            retval[other_lane_end_sys_id] = lane_it->second;
         }
     }
+
     return retval;
 }
 
