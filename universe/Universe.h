@@ -97,15 +97,11 @@ public:
     iterator                            end();
     const_iterator                      const_begin() const;
     const_iterator                      const_end() const;
+
+    void                                Dump() const;
     //@}
 
     /** \name Mutators */ //@{
-    /** Transfers ownership of contained pointed-to UniverseObjects from
-      * \a object_map to this ObjectMap, clearing the contents of \a object_map
-      * in the process.  This ObjectMap retains ownership of pointed-to objects
-      * and \a object_map can be destructed or cleared without affecting the
-      * pointed-to UniverseObjectes. */
-    void                                TransferObjectsFrom(ObjectMap& object_map);
 
     /** Copies the contents of the ObjectMap \a copied_map into this ObjectMap.
       * Each object in \a copied_map has information transferred to this map.
@@ -618,8 +614,6 @@ private:
     /***/
     void    GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& m_empire_known_destroyed_object_ids, int encoding_empire) const;
 
-    static void TransferEmpireObjectMapContents(EmpireObjectMap& to_map, EmpireObjectMap& from_map);
-
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -746,13 +740,20 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns)
         & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids)
         & BOOST_SERIALIZATION_NVP(objects)
+        & BOOST_SERIALIZATION_NVP(empire_latest_known_objects)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_object_id)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
 
-    if (Archive::is_loading::value) {
-        m_objects.TransferObjectsFrom(objects);
-        TransferEmpireObjectMapContents(m_empire_latest_known_objects, empire_latest_known_objects);
+    if (Archive::is_saving::value) {
+        // clean up temporary objects in ObjectMaps
+        objects.Clear();
+        for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
+            it->second.Clear();
+    }
 
+    if (Archive::is_loading::value) {
+        m_objects =                             objects;
+        m_empire_latest_known_objects =         empire_latest_known_objects;
         m_empire_object_visibility =            empire_object_visibility;
         m_empire_object_visibility_turns =      empire_object_visibility_turns;
         m_empire_known_destroyed_object_ids =   empire_known_destroyed_object_ids;

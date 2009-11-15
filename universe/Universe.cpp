@@ -35,6 +35,24 @@
 #include <cmath>
 #include <stdexcept>
 
+/* temp */
+namespace {
+    std::string GetTypeName(const UniverseObject* obj) {
+        if (universe_object_cast<const Fleet*>(obj))
+            return "Fleet";
+        if (universe_object_cast<const Ship*>(obj))
+            return "Ship";
+        if (universe_object_cast<const Planet*>(obj))
+            return "Planet";
+        if (universe_object_cast<const System*>(obj))
+            return "System";
+        if (universe_object_cast<const Building*>(obj))
+            return "Building";
+        return "UniverseObject";
+    }
+}
+
+
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;  // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 }
@@ -286,7 +304,9 @@ ObjectMap::ObjectMap()
 
 ObjectMap::~ObjectMap()
 {
-    Clear();
+    // Make sure to call ObjectMap::Clear() before destruction somewhere if
+    // this ObjectMap contains any unique pointers to UniverseObject objects.
+    // Otherwise, the pointed-to UniverseObjects will be leaked memory...
 }
 
 void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id)
@@ -306,9 +326,9 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id)
         // copy object...
         const UniverseObject* copy_from_object = it->second;
         if (UniverseObject* copy_to_object = this->Object(object_id)) {
-            copy_to_object->Copy(copy_from_object, empire_id);
+            copy_to_object->Copy(copy_from_object, empire_id);          // there already is a version of this object present in this ObjectMap, so just update it
         } else {
-            UniverseObject* clone = copy_from_object->Clone(empire_id);
+            UniverseObject* clone = copy_from_object->Clone(empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
             this->Insert(object_id, clone);
         }
     }
@@ -319,23 +339,6 @@ ObjectMap* ObjectMap::Clone(int empire_id) const
     ObjectMap* retval = new ObjectMap();
     retval->Copy(*this, empire_id);
     return retval;
-}
-
-void ObjectMap::TransferObjectsFrom(ObjectMap& object_map)
-{
-    if (&object_map == this)
-        return;
-
-    // remove any existing objects in this ObjectMap
-    Clear();
-
-    // copy contents (map from id to pointers) from parameter
-    m_objects = object_map.m_objects;
-    CopyObjectsToConstObjects();    // duplicate as internal const pointers map
-
-    // clear parameter's pointers, so that this ObjectMap has sole ownership of pointed-to UniverseObjects
-    object_map.m_objects.clear();
-    object_map.m_const_objects.clear();
 }
 
 const UniverseObject* ObjectMap::Object(int id) const
@@ -456,10 +459,12 @@ void ObjectMap::Delete(int id)
 
 void ObjectMap::Clear()
 {
+    std::cout << "ObjectMap::Clear() initial size of objects: " << m_objects.size() << std::endl;
     for (iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         delete it->second;
     m_objects.clear();
     m_const_objects.clear();
+    std::cout << "ObjectMap::Clear() final size of objects: " << m_objects.size() << std::endl;
 }
 
 void ObjectMap::CopyObjectsToConstObjects()
@@ -467,6 +472,30 @@ void ObjectMap::CopyObjectsToConstObjects()
     // remove existing entries in const objects and replace with values from non-const objects
     m_const_objects.clear();
     m_const_objects.insert(m_objects.begin(), m_objects.end());
+}
+
+void ObjectMap::Dump() const
+{
+    Logger().debugStream() << "ObjectMap contains UniverseObjects: ";
+    for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
+        const UniverseObject* obj = it->second;
+        const System* system = obj->GetSystem();
+
+        Logger().debugStream() << obj->ID() << ": "
+                               << GetTypeName(obj) << "  "
+                               << obj->Name()
+                               << (system ? ("  at: " + system->Name()) : "");
+
+        //const std::set<int>& owners = obj->Owners();
+        //if (!owners.empty()) {
+        //    Logger().debugStream() << "  owners:";
+        //    for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
+        //        Logger().debugStream() << " ... " << *own_it;
+        //}
+
+        //Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
+        //Logger().debugStream() << " vis: " << boost::lexical_cast<std::string>(vis);
+    }
 }
 
 
@@ -1906,6 +1935,10 @@ void Universe::InitializeSystemGraph()
     }
 
     std::vector<int> system_ids = m_objects.FindObjectIDs<System>();
+    Logger().debugStream() << "InitializeSystemGraph system_ids: ";
+    for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
+        Logger().debugStream() << " ... " << *it;
+    std::cout << std::endl;
     m_system_distances.resize(system_ids.size());
     GraphImpl::SystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
 
@@ -1940,14 +1973,16 @@ void Universe::InitializeSystemGraph()
 
             std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_graph_impl->m_system_graph);
 
-            if (it->second) {                               // if this is a wormhole
-                edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
-            } else if (add_edge_result.second) {            // if this is a non-duplicate starlane
-                const UniverseObject* system2 = m_objects.Object(it->first);
-                double x_dist = system2->X() - system1->X();
-                double y_dist = system2->Y() - system1->Y();
-                edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
-                std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
+            if (add_edge_result.second) {                   // if this is a non-duplicate starlane or wormhole
+                if (it->second) {                               // if this is a wormhole
+                    edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
+                } else {                                        // if this is a starlane
+                    const UniverseObject* system2 = m_objects.Object(it->first);
+                    double x_dist = system2->X() - system1->X();
+                    double y_dist = system2->Y() - system1->Y();
+                    edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
+                    //std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
+                }
             }
         }
 
@@ -1959,7 +1994,7 @@ void Universe::InitializeSystemGraph()
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
-            std::cout << "m_system_distances: " << system1_id << " to " << system2_id << ": " << m_system_distances[i].back() << std::endl;
+            //std::cout << "m_system_distances: " << system1_id << " to " << system2_id << ": " << m_system_distances[i].back() << std::endl;
         }
         m_system_distances[i].push_back(0.0);   // distance from system to itself
     }
@@ -2068,6 +2103,8 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
     if (&empire_latest_known_objects == &m_empire_latest_known_objects)
         return;
 
+    Logger().debugStream() << "GetEmpireKnownObjectsToSerialize";
+
     for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
         it->second.Clear();
     empire_latest_known_objects.clear();
@@ -2089,7 +2126,20 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
     EmpireObjectMap::const_iterator it = m_empire_latest_known_objects.find(encoding_empire);
     if (it != m_empire_latest_known_objects.end()) {
         const ObjectMap& map = it->second;
+
+        //Logger().debugStream() << "empire " << encoding_empire << " latest known map initial: ";
+        //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
+        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
+
         empire_latest_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
+
+        //Logger().debugStream() << "empire " << encoding_empire << " latest known map after copying: ";
+        //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
+        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
+
+        //Logger().debugStream() << "empire_latest_known_objects[" << encoding_empire << "] after copying: ";
+        //for (ObjectMap::const_iterator oit = empire_latest_known_objects[encoding_empire].const_begin(); oit != empire_latest_known_objects[encoding_empire].const_end(); ++oit)
+        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
     }
 }
 
@@ -2145,24 +2195,6 @@ void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_d
         empire_known_destroyed_object_ids[encoding_empire] = it->second;
 }
 
-void Universe::TransferEmpireObjectMapContents(EmpireObjectMap& to_map, EmpireObjectMap& from_map)
-{
-    if (&to_map == &from_map)
-        return;
-
-    // empty to_map
-    for (EmpireObjectMap::iterator it = to_map.begin(); it != to_map.end(); ++it)
-        it->second.Clear();
-    to_map.clear();
-
-    // transfer contents of each ObjectMap in from_map to corresponding ObjectMap in to_map
-    for (EmpireObjectMap::iterator it = from_map.begin(); it != from_map.end(); ++it) {
-        int empire_id = it->first;
-        ObjectMap& from = it->second;
-        to_map[empire_id].TransferObjectsFrom(from);
-    }
-    from_map.clear();
-}
 
 //////////////////////////////////////////
 //    Server-Only General Functions     //

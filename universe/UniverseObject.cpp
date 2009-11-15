@@ -20,7 +20,7 @@ const int       UniverseObject::MAX_ID            = 2000000000;
 const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using big negative number to allow for potential negative object ages, which might be useful in the event of time travel.
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
-UniverseObject::UniverseObject() : 
+UniverseObject::UniverseObject() :
     StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),

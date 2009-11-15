@@ -889,10 +889,10 @@ void MapWnd::InitTurn(int turn_number)
     //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
     //}
     // DEBUG
-    std::cout << "UniverseObjects: " << std::endl;
+    std::cout << "Visible UniverseObjects: " << std::endl;
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         const UniverseObject* obj = it->second;
-        std::cout << GetTypeName(obj) << "  " << obj->Name();
+        std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
 
         if (const System* system = obj->GetSystem())
             std::cout << "  at: " << system->Name();
@@ -910,6 +910,27 @@ void MapWnd::InitTurn(int turn_number)
         std::cout << std::endl;
     }
     std::cout << std::endl;
+
+    const ObjectMap& known_objects = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+    std::cout << "Latest Known UniverseObjects: " << std::endl;
+    for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
+        const UniverseObject* obj = it->second;
+        std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
+
+        if (const System* system = obj->GetSystem())
+            std::cout << "  at: " << system->Name();
+
+        const std::set<int>& owners = obj->Owners();
+        if (!owners.empty()) {
+            std::cout << "  owners:";
+            for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
+                std::cout << " " << *own_it;
+        }
+
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
