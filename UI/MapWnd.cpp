@@ -934,8 +934,8 @@ void MapWnd::InitTurn(int turn_number)
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-    Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire) {
+    Empire* this_client_empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!this_client_empire) {
         Logger().errorStream() << "MapWnd::InitTurn couldn't get an empire!";
         return;
     }
@@ -951,14 +951,14 @@ void MapWnd::InitTurn(int turn_number)
 
 
     boost::timer timer;
-    const std::map<int, std::set<int> > this_client_known_starlanes = empire->KnownStarlanes();
+    const std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
     std::set<int> this_client_visible_systems;
     std::vector<int> all_system_ids = objects.FindObjectIDs<System>();
     for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
         int obj_id = *it;
-        if (universe.GetObjectVisibilityByEmpire(obj_id, empire->EmpireID()) >= VIS_PARTIAL_VISIBILITY)
+        if (universe.GetObjectVisibilityByEmpire(obj_id, this_client_empire->EmpireID()) >= VIS_PARTIAL_VISIBILITY)
             this_client_visible_systems.insert(obj_id);
     }
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
@@ -1025,7 +1025,7 @@ void MapWnd::InitTurn(int turn_number)
     m_sitrep_panel->Update();
 
     //empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->NumSitRepEntries())
+    if (this_client_empire->NumSitRepEntries() > 0)
         ShowSitRep();
 
 
@@ -1042,13 +1042,13 @@ void MapWnd::InitTurn(int turn_number)
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
-    GG::Connect(empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
-    GG::Connect(empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
-    GG::Connect(empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
-    GG::Connect(empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
-    GG::Connect(empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-    GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
+    GG::Connect(this_client_empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
+    GG::Connect(this_client_empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
+    GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
+    GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
+    GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
+    GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
+    GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
 
 
     m_toolbar->Show();
@@ -1077,13 +1077,12 @@ void MapWnd::InitTurn(int turn_number)
 
 
     if (turn_number == 1) {
-        if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID())) {
-            // start first turn with player's system selected
-            if (const UniverseObject* obj = objects.Object(empire->CapitolID())) {
-                SelectSystem(obj->SystemID());
-                CenterOnMapCoord(obj->X(), obj->Y());
-            }
+        // start first turn with player's system selected
+        if (const UniverseObject* obj = objects.Object(this_client_empire->CapitolID())) {
+            SelectSystem(obj->SystemID());
+            CenterOnMapCoord(obj->X(), obj->Y());
         }
+
         // default the tech tree to be centred on something interesting
         m_research_wnd->Reset();
     }

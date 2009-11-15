@@ -117,6 +117,16 @@ public:
       * are left unchanged. */
     void                                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
+    /** Copies the objects of the ObjectMap \a copied_map that are visisble to
+      * the empire with id \a empire_id into this ObjectMap.  Copied objects
+      * are complete copies of all information in \a copied_map about objects
+      * that are visisble, and no information about not-visible objects is
+      * copied.  Any existing objects in this ObjectMap that are not visible to
+      * the empire with id \a empire_id are left unchanged.  If \a empire_id is
+      * ALL_EMPIRES, then all objects in \a copied_map are copied completely
+      * and this function acts just like ObjectMap::Copy .*/
+    void                                CompleteCopyVisible(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+
     /** Adds object \a obj to the map under id \a id if id is a valid object id
       * and obj is an object with that id set.  If there already was an object
       * in the map with the id \a id then that object is first removed, and

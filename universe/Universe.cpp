@@ -334,6 +334,35 @@ void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id)
     }
 }
 
+void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id)
+{
+    if (&copied_map == this)
+        return;
+
+    // loop through objects in copied map, copying or cloning each depending
+    // on whether there already is a corresponding object in this map
+    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
+        int object_id = it->first;
+
+        // can empire see object at all?  if not, skip copying object's info
+        if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
+            continue;
+
+        // copy object...  Note that the difference between this function and
+        // the ObjectMap::Copy function is that any copied object here is
+        // copied completely, whereas Copy only transfers the visible
+        // information about each object that is copied.  If an object is
+        // basic or partially visible, this function will still copy all
+        // information about it in the copied_map.
+        const UniverseObject* copy_from_object = it->second;
+        if (UniverseObject* copy_to_object = this->Object(object_id)) {
+            copy_to_object->Copy(copy_from_object, ALL_EMPIRES);            // there already is a version of this object present in this ObjectMap, so just update it
+        } else {
+            UniverseObject* clone = copy_from_object->Clone(ALL_EMPIRES);   // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+            this->Insert(object_id, clone);
+        }
+    }}
+
 ObjectMap* ObjectMap::Clone(int empire_id) const
 {
     ObjectMap* retval = new ObjectMap();
@@ -2103,10 +2132,12 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         if (it == m_empire_latest_known_objects.end())
             return;                 // empire has no object knowledge, so there is nothing to send
 
-        // copy as ALL_EMPIRES becase this is already copying specified
-        // empire's knowledge, so want to copy the previously-acquired info in
-        // addition to info that is visible this turn
-        objects.Copy(it->second, ALL_EMPIRES);
+        // completely copy visisble objects, rather than copying only the
+        // currently visisble information as would be done with 
+        // objects.Copy as the empire's latest known objects map already
+        // contains only information known to the empire for which objects are
+        // being serialized.
+        objects.CompleteCopyVisible(it->second, encoding_empire);
     }
 }
 
