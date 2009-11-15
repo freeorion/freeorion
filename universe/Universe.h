@@ -415,7 +415,7 @@ public:
 
     /** Reconstructs the per-empire system graph views needed to calculate
       * routes based on visibility. */
-    void            RebuildEmpireViewSystemGraphs();
+    void            RebuildEmpireViewSystemGraphs(int for_empire_id = ALL_EMPIRES);
 
     /** Removes the object with ID number \a id from the universe's map of
       * existing objects and places it into the map of destroyed objects.
@@ -546,8 +546,10 @@ private:
     void    GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray);
 
     /** Resizes the system graph to the appropriate size and populates
-      * m_system_distances. */
-    void    InitializeSystemGraph();
+      * m_system_distances.  Uses the Universe latest known set of objects for
+      * the empire with id \a for_empire_id or uses the main / true / visible
+      * objects if \a for_empire_id is ALL_EMPIRES*/
+    void    InitializeSystemGraph(int for_empire_id = ALL_EMPIRES);
 
     /** Picks systems to host homeworlds, generates planets for them, stores
       * the ID's of the homeworld planets into the homeworld vector. */
@@ -758,7 +760,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_empire_object_visibility_turns =      empire_object_visibility_turns;
         m_empire_known_destroyed_object_ids =   empire_known_destroyed_object_ids;
         m_ship_designs =                        ship_designs;
-        InitializeSystemGraph();
+        InitializeSystemGraph(ALL_EMPIRES);
     }
 }
 

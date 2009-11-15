@@ -1762,17 +1762,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
     }
 }
 
-void Universe::RebuildEmpireViewSystemGraphs()
-{
-    m_graph_impl->m_empire_system_graph_views.clear();
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        int empire_id = it->first;
-        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, empire_id);
-        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
-        m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
-    }
-}
-
 void Universe::Destroy(int id)
 {
     // remove object from any containing UniverseObject
@@ -1927,18 +1916,20 @@ bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::
     return false; // default
 }
 
-void Universe::InitializeSystemGraph()
+void Universe::InitializeSystemGraph(int for_empire_id)
 {
+    const ObjectMap& objects = EmpireKnownObjects(for_empire_id);
+
     for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->m_system_graph)) - 1; i >= 0; --i) {
         boost::clear_vertex(i, m_graph_impl->m_system_graph);
         boost::remove_vertex(i, m_graph_impl->m_system_graph);
     }
 
-    std::vector<int> system_ids = m_objects.FindObjectIDs<System>();
-    Logger().debugStream() << "InitializeSystemGraph system_ids: ";
+    std::vector<int> system_ids = objects.FindObjectIDs<System>();
+    Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: ";
     for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
         Logger().debugStream() << " ... " << *it;
-    std::cout << std::endl;
+
     m_system_distances.resize(system_ids.size());
     GraphImpl::SystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
 
@@ -1958,7 +1949,7 @@ void Universe::InitializeSystemGraph()
 
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
-        const System* system1 = m_objects.Object<System>(system1_id);
+        const System* system1 = objects.Object<System>(system1_id);
 
         // add edges and edge weights
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
@@ -1977,7 +1968,7 @@ void Universe::InitializeSystemGraph()
                 if (it->second) {                               // if this is a wormhole
                     edge_weight_map[add_edge_result.first] = 0.1;   // arbitrary small distance
                 } else {                                        // if this is a starlane
-                    const UniverseObject* system2 = m_objects.Object(it->first);
+                    const UniverseObject* system2 = objects.Object(it->first);
                     double x_dist = system2->X() - system1->X();
                     double y_dist = system2->Y() - system1->Y();
                     edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
@@ -1990,7 +1981,7 @@ void Universe::InitializeSystemGraph()
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[j];
-            const UniverseObject* system2 = m_objects.Object(system2_id);
+            const UniverseObject* system2 = objects.Object(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
             m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
@@ -2000,6 +1991,27 @@ void Universe::InitializeSystemGraph()
     }
 
     RebuildEmpireViewSystemGraphs();
+}
+
+void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
+{
+    if (for_empire_id == ALL_EMPIRES) {
+        m_graph_impl->m_empire_system_graph_views.clear();
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+            int empire_id = it->first;
+            GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, empire_id);
+            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
+            m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
+        }
+    } else {
+        if (!Empires().Lookup(for_empire_id)) {
+            Logger().errorStream() << "Universe::RebuildEmpireViewSystemGraphs couldn't find empire with id " << for_empire_id;
+            return;
+        }
+        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, for_empire_id);
+        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
+        m_graph_impl->m_empire_system_graph_views[for_empire_id] = filtered_graph_ptr;
+    }
 }
 
 double Universe::UniverseWidth()
@@ -2062,7 +2074,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
         }
 
         // add all ship designs owned by this empire
-        Empire* empire = Empires().Lookup(s_encoding_empire);
+        Empire* empire = Empires().Lookup(encoding_empire);
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
             int design_id = *it;
             ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);

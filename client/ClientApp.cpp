@@ -12,7 +12,7 @@
 // static member(s)
 ClientApp* ClientApp::s_app = 0;
 
-ClientApp::ClientApp() : 
+ClientApp::ClientApp() :
     m_universe(),
     m_player_id(-1),
     m_empire_id(ALL_EMPIRES),
