@@ -29,9 +29,6 @@ private:
     typedef std::multimap<int, int>             ObjectMultimap;
 
 public:
-    typedef std::vector<UniverseObject*>        ObjectVec;              ///< the return type of FindObjects()
-    typedef std::vector<const UniverseObject*>  ConstObjectVec;         ///< the return type of FindObjects()
-    typedef std::vector<int>                    ObjectIDVec;            ///< the return type of FindObjectIDs()
     typedef std::map<int, bool>                 StarlaneMap;            ///< the return type of VisibleStarlanesWormholes()
 
     typedef ObjectMultimap::iterator            orbit_iterator;         ///< iterator for system objects
@@ -77,22 +74,24 @@ public:
     virtual std::vector<int>
                             FindObjectIDs() const;                      ///< returns ids of objects contained within this system
 
-    ObjectIDVec             FindObjectIDs(const UniverseObjectVisitor& visitor) const;  ///< returns the IDs of all the objects that match \a visitor
+    std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;  ///< returns the IDs of all the objects that match \a visitor
 
     template <class T>
-    ObjectIDVec             FindObjectIDs() const;                                      ///< returns the IDs of all the objects of type T
+    std::vector<int>        FindObjectIDs() const;                                      ///< returns the IDs of all the objects of type T
 
-    ObjectIDVec             FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;    ///< returns the IDs of all the objects that match \a visitor
+    std::vector<int>        FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;    ///< returns the IDs of all the objects that match \a visitor
 
     template <class T>
-    ObjectIDVec             FindObjectIDsInOrbit(int orbit) const;                      ///< returns the IDs of all the objects of type T in orbit \a orbit
+    std::vector<int>        FindObjectIDsInOrbit(int orbit) const;                      ///< returns the IDs of all the objects of type T in orbit \a orbit
 
-    ConstObjectVec          FindObjects(const UniverseObjectVisitor& visitor) const;    ///< returns all the objects that match \a visitor
+    std::vector<const UniverseObject*>
+                            FindObjects(const UniverseObjectVisitor& visitor) const;    ///< returns all the objects that match \a visitor
 
     template <class T>
     std::vector<const T*>   FindObjects() const;                                        ///< returns all the objects of type T
 
-    ConstObjectVec          FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;      ///< returns all the objects that match \a visitor in orbit \a orbit
+    std::vector<const UniverseObject*>
+                            FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;      ///< returns all the objects that match \a visitor in orbit \a orbit
 
     template <class T>
     std::vector<const T*>   FindObjectsInOrbit(int orbit) const;                        ///< returns all the objects of type T in orbit \a orbit
@@ -161,12 +160,14 @@ public:
     bool                    RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
     bool                    RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-    ObjectVec               FindObjects(const UniverseObjectVisitor& visitor);                      ///< returns all the objects that match \a visitor
+    std::vector<UniverseObject*>
+                            FindObjects(const UniverseObjectVisitor& visitor);                      ///< returns all the objects that match \a visitor
 
     template <class T> std::vector<T*>
                             FindObjects();                                                          ///< returns all the objects of type T
 
-    ObjectVec               FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor);    ///< returns all the objects that match \a visitor in orbit \a orbit
+    std::vector<UniverseObject*>
+                            FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor);    ///< returns all the objects that match \a visitor in orbit \a orbit
 
     template <class T> std::vector<T*>
                             FindObjectsInOrbit(int orbit);                                          ///< returns all the objects of type T in orbit \a orbit
@@ -236,10 +237,10 @@ double StarlaneEntranceRadius();
 
 // template implementations
 template <class T>
-System::ObjectIDVec System::FindObjectIDs() const
+std::vector<int> System::FindObjectIDs() const
 {
     const ObjectMap& objects = GetUniverse().Objects();
-    ObjectIDVec retval;
+    std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (const UniverseObject* obj = objects.Object(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
@@ -249,10 +250,10 @@ System::ObjectIDVec System::FindObjectIDs() const
 }
 
 template <class T>
-System::ObjectIDVec System::FindObjectIDsInOrbit(int orbit) const
+std::vector<int> System::FindObjectIDsInOrbit(int orbit) const
 {
     const ObjectMap& objects = GetUniverse().Objects();
-    ObjectIDVec retval;
+    std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
         if (const UniverseObject* obj = objects.Object(it->second))

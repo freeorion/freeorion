@@ -36,6 +36,15 @@ Universe& GetUniverse()
 #endif
 }
 
+ObjectMap& GetMainObjectMap()
+{
+#ifdef FREEORION_BUILD_SERVER
+    return GetUniverse().Objects();
+#else
+    return GetUniverse().EmpireKnownObjects(ClientApp::GetApp()->EmpireID());
+#endif
+}
+
 log4cpp::Category& Logger()
 { return log4cpp::Category::getRoot(); }
 

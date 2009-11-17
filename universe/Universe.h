@@ -770,7 +770,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         m_empire_object_visibility_turns =      empire_object_visibility_turns;
         m_empire_known_destroyed_object_ids =   empire_known_destroyed_object_ids;
         m_ship_designs =                        ship_designs;
-        InitializeSystemGraph(ALL_EMPIRES);
+        InitializeSystemGraph(s_encoding_empire);
     }
 }
 

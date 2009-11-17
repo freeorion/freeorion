@@ -160,7 +160,7 @@ int UniverseObject::SystemID() const
 
 System* UniverseObject::GetSystem() const
 {
-    return SystemID() == INVALID_OBJECT_ID ? 0 : GetUniverse().Objects().Object<System>(SystemID());
+    return SystemID() == INVALID_OBJECT_ID ? 0 : GetMainObjectMap().Object<System>(SystemID());
 }
 
 const std::set<std::string>& UniverseObject::Specials() const
@@ -185,7 +185,7 @@ bool UniverseObject::Contains(int object_id) const
 
 bool UniverseObject::ContainedBy(int object_id) const
 {
-    const UniverseObject* object = GetUniverse().Objects().Object(object_id);
+    const UniverseObject* object = GetMainObjectMap().Object(object_id);
     if (object)
         return object->Contains(m_id);
     else
@@ -279,7 +279,7 @@ void UniverseObject::Move(double x, double y)
 
 void UniverseObject::MoveTo(int object_id)
 {
-    MoveTo(GetUniverse().Objects().Object(object_id));
+    MoveTo(GetMainObjectMap().Object(object_id));
 }
 
 void UniverseObject::MoveTo(UniverseObject* object)

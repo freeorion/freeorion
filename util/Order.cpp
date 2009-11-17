@@ -79,7 +79,7 @@ RenameOrder::RenameOrder(int empire, int object, const std::string& name) :
     m_object(object),
     m_name(name)
 {
-    const UniverseObject* obj = GetUniverse().Objects().Object(object);
+    const UniverseObject* obj = GetMainObjectMap().Object(object);
     if (!obj) {
         Logger().errorStream() << "RenameOrder::RenameOrder() : Attempted to rename nonexistant object with id " << object;
         return;
@@ -97,7 +97,7 @@ void RenameOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    UniverseObject* obj = GetUniverse().Objects().Object(m_object);
+    UniverseObject* obj = GetObject(m_object);
 
     if (!obj) {
         Logger().errorStream() << "Attempted to rename nonexistant object with id " << m_object;
@@ -223,7 +223,7 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     m_dest_system(dest_system_id)
 {
     const Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
+    const ObjectMap& objects = GetMainObjectMap();
 
     // perform sanity checks
     const Fleet* fleet = objects.Object<Fleet>(FleetID());
@@ -267,22 +267,23 @@ void FleetMoveOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
-    Fleet* fleet = objects.Object<Fleet>(FleetID());
-    System* destination_system = objects.Object<System>(DestinationSystemID());
-
-    // perform sanity checks
+    Fleet* fleet = GetObject<Fleet>(FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
+
+    const System* destination_system = GetEmpireKnownConstObject<System>(DestinationSystemID(), EmpireID());
     if (!destination_system) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists";
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
         return;
     }
 
+    // reject empty routes
+    if (m_route.empty()) {
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move on empty route";
+        return;
+    }
 
     // verify that empire specified in order owns specified fleet
     if ( !fleet->OwnedBy(EmpireID()) ) {
@@ -296,7 +297,7 @@ void FleetMoveOrder::ExecuteImpl() const
     if (fleet_sys_id != UniverseObject::INVALID_OBJECT_ID) {
         // fleet is in a system.  Its move path should also start from that system.
         if (fleet_sys_id != m_start_system) {
-            Logger().errorStream() << "Empire " << EmpireID() << " ordered a fleet to move from a system with id " << m_start_system <<
+            Logger().errorStream() << "Empire with id " << EmpireID() << " ordered a fleet to move from a system with id " << m_start_system <<
                                      " that it is not at.  Fleet is located at system with id " << fleet_sys_id;
             return;
         }
@@ -304,7 +305,7 @@ void FleetMoveOrder::ExecuteImpl() const
         // fleet is not in a system.  Its move path should start from the next system it is moving to.
         int next_system = fleet->NextSystemID();
         if (next_system != m_start_system) {
-            Logger().errorStream() << "Empire " << EmpireID() << " ordered a fleet to move starting from a system with id " << m_start_system <<
+            Logger().errorStream() << "Empire with id " << EmpireID() << " ordered a fleet to move starting from a system with id " << m_start_system <<
                                      ", but the fleet's next destination is system with id " << next_system;
             return;
         }
@@ -317,7 +318,6 @@ void FleetMoveOrder::ExecuteImpl() const
 
 
     // validate route.  Only allow travel between systems connected in series by starlanes known to this fleet's owner.
-
 
     // check destination validity: disallow movement that's out of range
     std::pair<int, int> eta = fleet->ETA(fleet->MovePath(route_list));
@@ -626,7 +626,7 @@ void DeleteFleetOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Fleet* fleet = GetUniverse().Objects().Object<Fleet>(FleetID());
+    Fleet* fleet = GetObject<Fleet>(FleetID());
 
     if (!fleet) {
         Logger().errorStream() << "Illegal fleet id specified in fleet delete order.";
@@ -667,7 +667,7 @@ void ChangeFocusOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
 
-    Planet* planet = GetUniverse().Objects().Object<Planet>(PlanetID());
+    Planet* planet = GetObject<Planet>(PlanetID());
 
     if (!planet) {
         Logger().errorStream() << "Illegal planet id specified in change planet focus order.";
@@ -939,13 +939,12 @@ ScrapOrder::ScrapOrder(int empire, int object_id) :
 void ScrapOrder::ExecuteImpl() const
 {
     ValidateEmpireID();
-    ObjectMap& objects = GetUniverse().Objects();
     int empire_id = EmpireID();
 
-    if (Ship* ship = objects.Object<Ship>(m_object_id)) {
+    if (Ship* ship = GetObject<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(true);
-    } else if (Building* building = objects.Object<Building>(m_object_id)) {
+    } else if (Building* building = GetObject<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(true);
     }
@@ -954,13 +953,12 @@ void ScrapOrder::ExecuteImpl() const
 bool ScrapOrder::UndoImpl() const
 {
     ValidateEmpireID();
-    ObjectMap& objects = GetUniverse().Objects();
     int empire_id = EmpireID();
 
-    if (Ship* ship = objects.Object<Ship>(m_object_id)) {
+    if (Ship* ship = GetObject<Ship>(m_object_id)) {
         if (ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(false);
-    } else if (Building* building = objects.Object<Building>(m_object_id)) {
+    } else if (Building* building = GetObject<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(false);
     }

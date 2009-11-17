@@ -126,7 +126,7 @@ int Ship::FleetID() const {
 }
 
 Fleet* Ship::GetFleet() const {
-    return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetUniverse().Objects().Object<Fleet>(m_fleet_id);
+    return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetMainObjectMap().Object<Fleet>(m_fleet_id);
 }
 
 bool Ship::IsArmed() const {

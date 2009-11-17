@@ -10,12 +10,22 @@
 
 class EmpireManager;
 class Universe;
+class ObjectMap;
 
 /** Accessor for the App's empire manager */
 EmpireManager& Empires();
 
 /** Accessor for the App's universe object */
 Universe& GetUniverse();
+
+/** Gets the "main" ObjectMap for this process.  On the server, this returns
+  * GetUniverse().Objects() and on clients it returns the ObjectMap containing
+  * the latest known objects of the client's (human or AI player) empire.  This
+  * allows an ObjectMap to be gotten from within UniverseObject and classes
+  * derived from it, which will be sure to get the most available information
+  * about the Universe in the current process, without needing to know whether
+  * they are running on the server or on a client. */
+ObjectMap& GetMainObjectMap();
 
 /** Accessor for the App's logger */
 log4cpp::Category& Logger();

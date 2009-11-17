@@ -201,7 +201,7 @@ double Planet::AvailableTrade() const
 double Planet::BuildingCosts() const
 {
     double retval = 0.0;
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetMainObjectMap();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         const Building* building = objects.Object<Building>(*it);
 //        if (building->Operating()) {
@@ -219,7 +219,7 @@ bool Planet::Contains(int object_id) const
 
 std::vector<UniverseObject*> Planet::FindObjects() const
 {
-    ObjectMap& objects = GetUniverse().Objects();
+    ObjectMap& objects = GetMainObjectMap();
     std::vector<UniverseObject*> retval;
     // add buildings on this planet
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
@@ -395,7 +395,7 @@ void Planet::AddBuilding(int building_id)
         return;
     }
     Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
-    if (Building* building = GetUniverse().Objects().Object<Building>(building_id)) {
+    if (Building* building = GetMainObjectMap().Object<Building>(building_id)) {
         if (System* system = GetSystem()) {
             system->Insert(building);
         } else {
@@ -471,7 +471,7 @@ void Planet::Reset()
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
-        if (Building* building = GetUniverse().Objects().Object<Building>(*it))
+        if (Building* building = GetMainObjectMap().Object<Building>(*it))
             building->Reset();
 
     // reset other state
@@ -544,7 +544,7 @@ void Planet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
-    ObjectMap& objects = GetUniverse().Objects();
+    ObjectMap& objects = GetMainObjectMap();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         UniverseObject* obj = objects.Object(*it);
         if (!obj) {
@@ -560,7 +560,7 @@ void Planet::MoveTo(double x, double y)
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
-    ObjectMap& objects = GetUniverse().Objects();
+    ObjectMap& objects = GetMainObjectMap();
     // move buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
         UniverseObject* obj = objects.Object(*it);

@@ -40,7 +40,7 @@ namespace {
     {
         for (System::const_orbit_iterator it = system.begin(); it != system.end(); ++it) {
             int object_id = it->second;
-            combat_universe[object_id] = GetUniverse().Objects().Object(object_id);
+            combat_universe[object_id] = GetMainObjectMap().Object(object_id);
         }
     }
 }

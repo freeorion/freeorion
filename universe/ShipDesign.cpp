@@ -997,7 +997,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet locations;
     Condition::ObjectSet non_locations;
 
-    ObjectMap& objects = GetUniverse().Objects();
+    ObjectMap& objects = GetMainObjectMap();
 
     UniverseObject* loc = objects.Object(location_id);
     if (!loc) return false;

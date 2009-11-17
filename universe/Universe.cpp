@@ -270,12 +270,6 @@ namespace {
     }
 
     template <class Graph>
-    bool SystemReachableImpl(const Graph& graph, int system_id)
-    {
-        return boost::in_degree(SystemGraphIndex(graph, system_id), graph);
-    }
-
-    template <class Graph>
     std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
@@ -521,9 +515,6 @@ void ObjectMap::Dump() const
         //    for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
         //        Logger().debugStream() << " ... " << *own_it;
         //}
-
-        //Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
-        //Logger().debugStream() << " vis: " << boost::lexical_cast<std::string>(vis);
     }
 }
 
@@ -1818,8 +1809,8 @@ void Universe::Destroy(int id)
 
 
     // remove from existing objects set and insert into destroyed objects set
-    delete m_objects.Remove(id);
     UniverseObjectDeleteSignal(obj);
+    delete m_objects.Remove(id);
 }
 
 bool Universe::Delete(int id)
@@ -2001,7 +1992,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
                     double x_dist = system2->X() - system1->X();
                     double y_dist = system2->Y() - system1->Y();
                     edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
-                    //std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
+                    std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
                 }
             }
         }
@@ -2019,7 +2010,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         m_system_distances[i].push_back(0.0);   // distance from system to itself
     }
 
-    RebuildEmpireViewSystemGraphs();
+    RebuildEmpireViewSystemGraphs(for_empire_id);
 }
 
 void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)

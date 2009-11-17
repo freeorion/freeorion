@@ -46,7 +46,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
     // Set up texture coord and vertex buffers (quads) for the glyphs.
     // Consider extending GG::Font to do similar.
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     if (const System* system = objects.Object<System>(system_id)) {
 
@@ -60,12 +60,13 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
         bool capitol = false, homeworld = false, has_shipyard = false;
         const EmpireManager& manager = Empires();
 
-        std::vector<const Planet*> planets = system->FindObjects<Planet>();
-        for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-            if (capitol && homeworld && has_shipyard)
-                break;  // don't need to loop any more
-
-            const Planet* planet = *it;
+        std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+        for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
+            const Planet* planet = objects.Object<Planet>(*it);
+            if (!planet) {
+                Logger().errorStream() << "OwnerColoredSystemName couldn't get planet with ID " << *it;
+                continue;
+            }
 
             // is planet a capitol?
             if (!capitol) {
@@ -169,7 +170,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
+    if (const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -194,7 +195,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
 
 void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
-    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
+    const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
     if (system)
         Connect(system->StateChangedSignal, &SystemIcon::Refresh,   this);
 
@@ -476,7 +477,7 @@ void SystemIcon::Refresh()
 {
     std::string name = "";
 
-    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id))
+    if (const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID()))
         name = system->Name();
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name

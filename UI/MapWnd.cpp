@@ -183,11 +183,11 @@ namespace {
     std::pair<double, double> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
         std::pair<int, int> lane = UnorderedIntPair(lane_start_sys_id, lane_end_sys_id);
 
-        // get endpoints of lane in universe.  may be different because on-screen lanes are drawn between
-        // system circles, not system centres
-        const ObjectMap& objects = GetUniverse().Objects();
-        const UniverseObject* prev = objects.Object(lane.first);
-        const UniverseObject* next = objects.Object(lane.second);
+        // get endpoints of lane in universe.  may be different because on-
+        // screen lanes are drawn between system circles, not system centres
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        const UniverseObject* prev = GetEmpireKnownConstObject(lane.first, empire_id);
+        const UniverseObject* next = GetEmpireKnownConstObject(lane.second, empire_id);
         if (!next || !prev) {
             Logger().errorStream() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -1101,7 +1101,8 @@ void MapWnd::InitTurnRendering()
     }
 
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& visible_objects = GetUniverse().Objects();
+    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
@@ -1126,7 +1127,7 @@ void MapWnd::InitTurnRendering()
 
 
     // create system icons
-    std::vector<const System*> systems = objects.FindObjects<System>();
+    std::vector<const System*> systems = known_objects.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
         // create new system icon
         const System* start_system = systems[i];
@@ -1189,12 +1190,13 @@ void MapWnd::InitSystemRenderingBuffers()
         raw_star_texture_coords.push_back(1.5);
     }
 
-    const ObjectMap& objects = GetUniverse().Objects();
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
-        const System* system = objects.Object<System>(system_id);
+        const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -1400,7 +1402,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
 
 
@@ -1409,7 +1411,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         int system_id = it->first;
-        const System* system = objects.Object<System>(system_id);
+        const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -1421,7 +1423,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
             const System* start_system = system;
-            const System* dest_system = objects.Object<System>(lane_it->first);
+            const System* dest_system = GetEmpireKnownConstObject<System>(lane_it->first, empire_id);
             if (!start_system || ! dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -2063,10 +2065,10 @@ bool MapWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 void MapWnd::DoSystemIconsLayout()
 {
     // position and resize system icons and gaseous substance
-    const ObjectMap& objects = GetUniverse().Objects();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System* system = objects.Object<System>(it->first);
+        const System* system = GetEmpireKnownConstObject<System>(it->first, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
@@ -2643,7 +2645,7 @@ void MapWnd::RenderGalaxyGas()
 void MapWnd::RenderSystems()
 {
     const double HALO_SCALE_FACTOR = SystemHaloScaleFactor();
-    const ObjectMap& objects = GetUniverse().Objects();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -2696,7 +2698,7 @@ void MapWnd::RenderSystems()
     bool fog_scanlines = false;
     float fog_scanline_spacing = 4.0f;
     Universe& universe = GetUniverse();
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         fog_scanlines = true;
         fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
@@ -2738,7 +2740,7 @@ void MapWnd::RenderSystems()
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (const System* system = objects.Object<System>(it->first)) {
+                if (const System* system = GetEmpireKnownConstObject<System>(it->first, empire_id)) {
                     if (system->NumStarlanes() > 0) {
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
                     }
@@ -2981,8 +2983,8 @@ void MapWnd::RenderVisibilityRadii() {
 
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, double> empire_position_max_detection_ranges;
-    const ObjectMap& objects = GetUniverse().Objects();
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+    for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
         const UniverseObject* obj = it->second;
         if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
             double X = obj->X();
@@ -3147,7 +3149,6 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const ObjectMap& objects = GetUniverse().Objects();
 
     std::set<int> fleet_ids = FleetUIManager::GetFleetUIManager().ActiveFleetWnd()->SelectedFleetIDs();
 
@@ -3155,7 +3156,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
         int fleet_id = *it;
 
-        const Fleet* fleet = objects.Object<Fleet>(fleet_id);
+        const Fleet* fleet = GetConstObject<Fleet>(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
             continue;
@@ -3183,9 +3184,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            const System* begin_sys = objects.Object<System>(begin_id);
+            const System* begin_sys = GetEmpireKnownConstObject<System>(begin_id, empire_id);
             int end_id = *route.rbegin();
-            const System* end_sys = objects.Object<System>(end_id);
+            const System* end_sys = GetEmpireKnownConstObject<System>(end_id, empire_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -3582,13 +3583,11 @@ void MapWnd::ShowProduction()
     // indicate selection on button
     m_btn_production->MarkSelectedGray();
 
-    const ObjectMap& objects = GetUniverse().Objects();
-
     // if no system is currently shown in sidepanel, default to this empire's
     // home system (ie. where the capitol is)
     if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = objects.Object(empire->CapitolID()))
+            if (const UniverseObject* obj = GetConstObject(empire->CapitolID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
