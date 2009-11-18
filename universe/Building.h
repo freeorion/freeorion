@@ -31,7 +31,6 @@ public:
 
     const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
     int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
-    Planet*                 GetPlanet() const;                  ///< returns a pointer to the planet this building is on
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 

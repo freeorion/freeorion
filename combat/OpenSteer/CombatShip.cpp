@@ -594,7 +594,7 @@ void CombatShip::UpdateMissionQueue()
         break;
     }
     case ShipMission::ENTER_STARLANE: {
-        System* system = GetShip().GetSystem();
+        System* system = GetObject<System>(GetShip().SystemID());
         assert(system);
         for (System::const_lane_iterator it = system->begin_lanes();
              it != system->end_lanes();

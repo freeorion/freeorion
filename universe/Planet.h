@@ -166,7 +166,7 @@ protected:
     void Init();
 
 private:
-    virtual const UniverseObject*       GetObject() const {return this;}
+    virtual const UniverseObject*       GetThisObject() const {return this;}
 
     virtual Visibility                  GetVisibility(int empire_id) const              {return UniverseObject::GetVisibility(empire_id);}
     virtual void                        InsertMeter(MeterType meter_type, Meter meter)  {UniverseObject::InsertMeter(meter_type, meter);}

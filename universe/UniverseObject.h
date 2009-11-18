@@ -72,12 +72,9 @@ public:
     double                  Y() const;                          ///< the Y-coordinate of this object
     const std::set<int>&    Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
     virtual int             SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    System*                 GetSystem() const;                  ///< returns system in which this object can be found, or null if the object is not within any system
     const std::set<std::string>&
                             Specials() const;                   ///< returns the set of names of the Specials attached to this object
 
-    virtual std::vector<UniverseObject*>
-                            FindObjects() const;                ///< returns objects contained within this object
     virtual std::vector<int>
                             FindObjectIDs() const;              ///< returns ids of objects contained within this object
 

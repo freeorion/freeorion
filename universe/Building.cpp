@@ -122,11 +122,6 @@ int Building::PlanetID() const
     return m_planet_id;
 }
 
-Planet* Building::GetPlanet() const
-{
-    return m_planet_id == INVALID_OBJECT_ID ? 0 : GetMainObjectMap().Object<Planet>(m_planet_id);
-}
-
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Building* const>(this));
@@ -134,8 +129,8 @@ UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 
 void Building::SetPlanetID(int planet_id)
 {
-    if (Planet* planet = GetPlanet())
-        planet->RemoveBuilding(ID());
+    if (Planet* planet = GetObject<Planet>(m_planet_id))
+        planet->RemoveBuilding(this->ID());
     m_planet_id = planet_id;
 }
 
@@ -144,7 +139,7 @@ void Building::MoveTo(double x, double y)
     UniverseObject::MoveTo(x, y);
 
     // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
-    if (Planet* planet = GetPlanet())
+    if (Planet* planet = GetObject<Planet>(m_planet_id))
         planet->RemoveBuilding(this->ID());
 }
 

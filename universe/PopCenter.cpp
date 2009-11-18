@@ -180,9 +180,9 @@ double PopCenter::ProjectedMeterPoints(MeterType type) const
 
 void PopCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 {
-    const UniverseObject* object = GetObject();
+    const UniverseObject* object = GetThisObject();
     if (!object) {
-        Logger().errorStream() << "PopCenter GetObject returned 0";
+        Logger().errorStream() << "PopCenter GetThisObject returned 0";
         return;
     }
 

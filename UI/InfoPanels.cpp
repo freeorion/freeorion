@@ -2717,10 +2717,8 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             break;
 
         case ECT_BUILDING:
-            building = universe_object_cast<const Building*>(source);
-            if (building) {
-                planet = building->GetPlanet();
-                if (planet) {
+            if (building = universe_object_cast<const Building*>(source)) {
+                if (planet = GetObject<Planet>(building->PlanetID())) {
                     name = planet->Name();
                 }
             }

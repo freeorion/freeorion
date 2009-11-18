@@ -30,16 +30,17 @@ namespace {
                                           std::vector<std::string>::const_iterator last,
                                           const UniverseObject* obj)
     {
+        const ObjectMap& objects = GetMainObjectMap();
         while (first != last) {
             if (*first == "Planet") {
                 if (const Building* b = universe_object_cast<const Building*>(obj)) {
-                    obj = b->GetPlanet();
+                    obj = objects.Object<Planet>(b->PlanetID());
                 } else {
                     obj = 0;
                 }
             } else if (*first == "System") {
                 if (obj)
-                    obj = obj->GetSystem();
+                    obj = objects.Object<System>(obj->SystemID());
             }
             ++first;
         }

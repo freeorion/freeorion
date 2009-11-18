@@ -678,7 +678,7 @@ CreatePlanet::~CreatePlanet()
 
 void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    System* location = target->GetSystem();
+    System* location = GetObject<System>(target->SystemID());
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -817,7 +817,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     //Fleet* fleet = universe_object_cast<Fleet*>(target);
     //if (!fleet)
     //    if (const Ship* ship = universe_object_cast<const Ship*>(target))
-    //        fleet = ship->GetFleet();
+    //        fleet = ship->FleetID();
     //// etc.
 
     Ship* ship = new Ship(empire_id, design_id);
@@ -987,7 +987,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
-        if (System* dest_system = destination->GetSystem()) {
+        if (System* dest_system = GetObject<System>(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
                 dest_system->Insert(target);
                 ExploreSystem(dest_system->ID(), target);
@@ -1009,7 +1009,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
             dest_fleet = universe_object_cast<const Fleet*>(destination);
             if (!dest_fleet)
                 if (const Ship* dest_ship = universe_object_cast<const Ship*>(destination))
-                    dest_fleet = universe_object_cast<const Fleet*>(dest_ship->GetFleet());
+                    dest_fleet = GetObject<Fleet>(dest_ship->FleetID());
 
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
@@ -1023,7 +1023,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
-        Fleet* old_fleet = ship->GetFleet();
+        Fleet* old_fleet = GetObject<Fleet>(ship->FleetID());
         Fleet* dest_fleet = universe_object_cast<Fleet*>(destination);  // may be 0 if destination is not a fleet
         bool same_owners = SameOwners(ship, destination);
         int dest_sys_id = destination->SystemID();
@@ -1044,7 +1044,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         } else {
             // need to create a new fleet for ship
             Fleet* new_fleet = 0;
-            if (System* dest_system = destination->GetSystem()) {
+            if (System* dest_system = GetObject<System>(destination->SystemID())) {
                 new_fleet = CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), target);
 
@@ -1058,7 +1058,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 
     } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
         // planets need to be located in systems, so get system that contains destination object
-        if (System* dest_system = destination->GetSystem()) {
+        if (System* dest_system = GetObject<System>(destination->SystemID())) {
             // check if planet is already in this system.  if so, don't need to do anything
             if (planet->SystemID() == UniverseObject::INVALID_OBJECT_ID || planet->SystemID() != dest_system->ID()) {
                 //  determine if and which orbits are available
@@ -1077,14 +1077,14 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         // or attempt to get the planet on which the destination object is located and insert target building into that
         if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
             dest_planet->AddBuilding(building->ID());
-            if (const System* dest_system = dest_planet->GetSystem())
+            if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
                 ExploreSystem(dest_system->ID(), target);
 
 
         } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
-            if (Planet* dest_planet = dest_building->GetPlanet()) {
+            if (Planet* dest_planet = GetObject<Planet>(dest_building->PlanetID())) {
                 dest_planet->AddBuilding(building->ID());
-                if (const System* dest_system = dest_planet->GetSystem())
+                if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
                     ExploreSystem(dest_system->ID(), target);
             }
         }

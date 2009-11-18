@@ -273,7 +273,7 @@ void FleetMoveOrder::ExecuteImpl() const
         return;
     }
 
-    const System* destination_system = GetEmpireKnownConstObject<System>(DestinationSystemID(), EmpireID());
+    const System* destination_system = GetEmpireKnownObject<System>(DestinationSystemID(), EmpireID());
     if (!destination_system) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system is known to that empire";
         return;
@@ -575,7 +575,7 @@ bool FleetColonizeOrder::UndoImpl() const
 
     // if the fleet from which the colony ship came no longer exists or has moved, recreate it
     if (!fleet || fleet->SystemID() != ship->SystemID()) {
-        System* system = planet->GetSystem();
+        System* system = objects.Object<System>(planet->SystemID());
 
         int         new_fleet_id =      m_colony_fleet_id;
         std::string new_fleet_name =    m_colony_fleet_name;

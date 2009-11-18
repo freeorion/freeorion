@@ -125,10 +125,6 @@ int Ship::FleetID() const {
     return m_fleet_id;
 }
 
-Fleet* Ship::GetFleet() const {
-    return m_fleet_id == INVALID_OBJECT_ID ? 0 : GetMainObjectMap().Object<Fleet>(m_fleet_id);
-}
-
 bool Ship::IsArmed() const {
     const ShipDesign* design = Design();
     if (design)
@@ -175,11 +171,18 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::ProjectedCurrentMeter(MeterType type) const {
+    const ObjectMap& objects = GetMainObjectMap();
     const Meter* original_meter = GetMeter(type);
-    assert(original_meter);
+    if (!original_meter) {
+        Logger().errorStream() << "Ship::ProjectedeCurrentMeter couldn't get meter of type " << boost::lexical_cast<std::string>(type);
+        return 0.0;
+    }
     Meter meter = Meter(*original_meter);
-    const Fleet* fleet = this->GetFleet();
-    assert(fleet);
+    const Fleet* fleet = objects.Object<Fleet>(this->FleetID());
+    if (!fleet) {
+        Logger().errorStream() << "Ship::ProjectedeCurrentMeter couldn't get fleet with id " << this->FleetID();
+        return 0.0;
+    }
 
     switch (type) {
     case METER_FUEL:
@@ -254,7 +257,7 @@ void Ship::MoveTo(double x, double y)
     UniverseObject::MoveTo(x, y);
 
     // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
-    if (Fleet* fleet = GetFleet()) {
+    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
         Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
         fleet->RemoveShip(this->ID());
     }

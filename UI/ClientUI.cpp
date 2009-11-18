@@ -456,7 +456,7 @@ bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
     if (Planet* planet = GetUniverse().Objects().Object<Planet>(id)) {
-        ZoomToSystem(planet->GetSystem());
+        ZoomToSystem(planet->SystemID());
         return true;
     }
     return false;
@@ -484,7 +484,7 @@ bool ClientUI::ZoomToShip(int id)
 {
     // this just zooms to the appropriate fleet window, until we create a ship window of some kind
     if (Ship* ship = GetUniverse().Objects().Object<Ship>(id)) {
-        ZoomToFleet(ship->GetFleet());
+        ZoomToFleet(ship->FleetID());
         return true;
     }
     return false;

@@ -19,6 +19,12 @@
 #include <string>
 #include <set>
 
+#ifdef FREEORION_WIN32
+// because the linker gets confused about Win32 API functions...
+#  undef GetObject
+#  undef GetObjectA
+#endif
+
 struct PlayerSetupData;
 class Empire;
 struct UniverseObjectVisitor;
@@ -633,18 +639,10 @@ private:
 
 /** Free function UniverseObject getters. */
 UniverseObject*         GetObject(int object_id);
-const UniverseObject*   GetConstObject(int object_id);
 UniverseObject*         GetEmpireKnownObject(int object_id, int empire_id);
-const UniverseObject*   GetEmpireKnownConstObject(int object_id, int empire_id);
 
 template <class T>
 T*                      GetObject(int object_id)
-{
-    return GetUniverse().Objects().Object<T>(object_id);
-}
-
-template <class T>
-const T*                GetConstObject(int object_id)
 {
     return GetUniverse().Objects().Object<T>(object_id);
 }
@@ -655,11 +653,6 @@ T*                      GetEmpireKnownObject(int object_id, int empire_id)
     return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
 }
 
-template <class T>
-const T*                GetEmpireKnownConstObject(int object_id, int empire_id)
-{
-    return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
-}
 
 // template implementations
 #if (10 * __GNUC__ + __GNUC_MINOR__ > 33) && (!defined _UniverseObject_h_)

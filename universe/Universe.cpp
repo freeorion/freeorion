@@ -502,7 +502,7 @@ void ObjectMap::Dump() const
     Logger().debugStream() << "ObjectMap contains UniverseObjects: ";
     for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
         const UniverseObject* obj = it->second;
-        const System* system = obj->GetSystem();
+        const System* system = Object<System>(obj->SystemID());
 
         Logger().debugStream() << obj->ID() << ": "
                                << GetTypeName(obj) << "  "
@@ -565,7 +565,7 @@ struct Universe::GraphImpl
             int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
             // look up lane between systems
-            const System* system1 = GetEmpireKnownConstObject<System>(sys_id_1, m_empire_id);
+            const System* system1 = GetEmpireKnownObject<System>(sys_id_1, m_empire_id);
             if (!system1) {
                 Logger().errorStream() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
@@ -816,7 +816,7 @@ bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) c
 
 bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 {
-    if (const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id))
+    if (const System* system = GetEmpireKnownObject<System>(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -1044,9 +1044,8 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
 
         // add contained objects to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
         if (update_contained_objects) {
-            const std::vector<UniverseObject*> contained_objects = cur_object->FindObjects(); // get all contained objects
-            for (std::vector<UniverseObject*>::const_iterator cont_it = contained_objects.begin(); cont_it != contained_objects.end(); ++cont_it)
-                objects_list.push_back((*cont_it)->ID());
+            std::vector<int> contained_objects = cur_object->FindObjectIDs(); // get all contained objects
+            std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
         }
     }
     std::vector<int> objects_vec;
@@ -2056,7 +2055,7 @@ void Universe::DestroyImpl(int id)
         return;
     if (Ship* ship = universe_object_cast<Ship*>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = ship->GetFleet();
+        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
         Destroy(id);
         if (fleet && fleet->Empty())
             Destroy(fleet->ID());
@@ -3884,7 +3883,13 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
 
             for (unsigned int j = 0; j < homeworlds.size(); ++j) {
                 //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
-                System* existing_system = Objects().Object(homeworlds[j])->GetSystem();
+                Planet* homeworld = GetObject<Planet>(homeworlds[j]);
+                if (!homeworld) {
+                    Logger().errorStream() << "couldn't find homeworld!";
+                    continue;
+                }
+
+                System* existing_system = GetObject<System>(homeworld->SystemID());
                 //Logger().debugStream() << ".... existing system ptr: " << existing_system;
 
                 if (!existing_system) {
@@ -4028,13 +4033,17 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
 
         // set ownership of home planet
-        Planet* home_planet = Objects().Object<Planet>(homeworlds[i]);
-        Logger().debugStream() << "Setting " << home_planet->GetSystem()->Name() << " (Planet #" <<  home_planet->ID()
+        Planet* home_planet = GetObject<Planet>(homeworlds[i]);
+        System* home_system = GetObject<System>(home_planet->SystemID());
+        if (!home_planet || !home_system) {
+            Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
+            continue;
+        }
+
+        Logger().debugStream() << "Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
-
-        System* home_system = home_planet->GetSystem();
-        home_system->AddOwner(empire_id);
+        //home_system->AddOwner(empire_id);   // should be redundant
 
 
         // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
@@ -4118,18 +4127,18 @@ UniverseObject* GetObject(int object_id)
     return GetUniverse().Objects().Object(object_id);
 }
 
-const UniverseObject* GetConstObject(int object_id)
-{
-    return GetUniverse().Objects().Object(object_id);
-}
-
+//const UniverseObject* GetConstObject(int object_id)
+//{
+//    return GetUniverse().Objects().Object(object_id);
+//}
+//
 UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
 {
     return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
 }
 
-const UniverseObject* GetEmpireKnownConstObject(int object_id, int empire_id)
-{
-    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
-}
-
+//const UniverseObject* GetEmpireKnownConstObject(int object_id, int empire_id)
+//{
+//    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
+//}
+//

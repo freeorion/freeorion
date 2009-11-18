@@ -79,12 +79,12 @@ namespace {
 
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
-        const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+        const Fleet* fleet = GetObject<Fleet>(fleet_id);
         if (!fleet)
             return retval;
 
-        const System* dest = fleet->FinalDestination();
-        const System* cur_sys = fleet->GetSystem();
+        const System* dest = GetObject<System>(fleet->FinalDestinationID());
+        const System* cur_sys = GetObject<System>(fleet->SystemID());
         if (dest && dest != cur_sys) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
@@ -161,7 +161,7 @@ namespace {
             return;
         }
         int system_id = first_ship->SystemID();
-        const System* system = first_ship->GetSystem(); // may be null
+        const System* system = GetObject<System>(first_ship->SystemID()); // may be null
         double X = first_ship->X(), Y = first_ship->Y();
 
 
@@ -455,7 +455,7 @@ namespace {
         if (!ship || !new_fleet)
             return false;   // can't transfer no ship or to no fleet
 
-        const Fleet* current_fleet = ship->GetFleet();
+        const Fleet* current_fleet = GetObject<Fleet>(ship->FleetID());
         if (current_fleet && current_fleet->ID() == new_fleet->ID())
             return false;   // can't transfer a fleet to a fleet it already is in
 
@@ -587,7 +587,7 @@ namespace {
                 // bookkeeping
                 m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
-                if (Fleet* fleet = ship->GetFleet())
+                if (Fleet* fleet = GetObject<Fleet>(ship->FleetID()))
                     m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
 
                 Refresh();
@@ -1569,7 +1569,7 @@ public:
 
 
             const Ship* ship = ship_row->GetShip();
-            const Fleet* fleet = this->GetFleet();
+            const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
 
             if (ship && ValidShipTransfer(ship, fleet))
                 continue;   // leave false: ship transfer not valid

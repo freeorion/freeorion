@@ -395,8 +395,8 @@ void Planet::AddBuilding(int building_id)
         return;
     }
     Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
-    if (Building* building = GetMainObjectMap().Object<Building>(building_id)) {
-        if (System* system = GetSystem()) {
+    if (Building* building = GetObject<Building>(building_id)) {
+        if (System* system = GetObject<System>(this->SystemID())) {
             system->Insert(building);
         } else {
             Logger().errorStream() << "... planet is not located in a system?!?!";
@@ -428,13 +428,17 @@ void Planet::SetAvailableTrade(double trade)
 
 void Planet::AddOwner(int id)
 {
-    GetSystem()->UniverseObject::AddOwner(id);
+    if (System* system = GetObject<System>(this->SystemID()))
+        system->UniverseObject::AddOwner(id);
+    else
+        Logger().errorStream() << "Planet::Addowner couldn't get system with id " << this->SystemID();
+
     UniverseObject::AddOwner(id);
 }
 
 void Planet::RemoveOwner(int id)
 {
-    System* system = GetSystem();
+    System* system = GetObject<System>(this->SystemID());
 
     // check if Empire(id) is owner of at least one other planet in same system
     std::vector<Planet*> planets = system->FindObjects<Planet>();

@@ -202,7 +202,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
-    if (fuel < 1.0 && this->GetSystem() && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
+    if (fuel < 1.0 && this->SystemID() && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
         MovePathNode node(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
                           this->SystemID(),
                           UniverseObject::INVALID_OBJECT_ID,
@@ -226,9 +226,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 
 
     // get current, previous and next systems of fleet
-    const System* cur_system = this->GetSystem();                                   // may be 0
+    const System* cur_system = objects.Object<System>(this->SystemID());            // may be 0
     const System* prev_system = objects.Object<System>(this->PreviousSystemID());   // may be 0 if this fleet is not moving or ordered to move
-    const System* next_system = objects.Object<System>(*route_it);  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    const System* next_system = objects.Object<System>(*route_it);                  // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         Logger().errorStream() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
         return retval;
@@ -362,7 +362,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
                 break;
 
             // update next system on route and distance to it from current position
-            next_system = GetEmpireKnownConstObject<System>(*route_it, owner);
+            next_system = GetEmpireKnownObject<System>(*route_it, owner);
             if (!next_system) {
                 Logger().errorStream() << "Fleet::MovePath couldn't get system with id " << *route_it;
                 break;
@@ -491,9 +491,6 @@ double Fleet::MaxFuel() const
 
 int Fleet::FinalDestinationID() const
 { return m_moving_to; }
-
-System* Fleet::FinalDestination() const
-{ return GetMainObjectMap().Object<System>(m_moving_to); }
 
 int Fleet::PreviousSystemID() const
 { return m_prev_system; }
@@ -654,8 +651,6 @@ void Fleet::SetRoute(const std::list<int>& route)
 
 void Fleet::AddShips(const std::vector<int>& ships)
 {
-    ObjectMap& objects = GetMainObjectMap();
-
     for (unsigned int i = 0; i < ships.size(); ++i) {
         int ship_id = ships[i];
 
@@ -664,8 +659,8 @@ void Fleet::AddShips(const std::vector<int>& ships)
             continue;
         }
 
-        if (Ship* s = objects.Object<Ship>(ship_id)) {
-            if (System* system = GetSystem()) {
+        if (Ship* s = GetObject<Ship>(ship_id)) {
+            if (System* system = GetObject<System>(this->SystemID())) {
                 system->Insert(s);
             } else {
                 s->MoveTo(X(), Y());
@@ -683,16 +678,14 @@ void Fleet::AddShips(const std::vector<int>& ships)
 
 void Fleet::AddShip(int ship_id)
 {
-    ObjectMap& objects = GetMainObjectMap();
-
     if (this->Contains(ship_id)) {
         Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
         return;
     }
 
     Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
-    if (Ship* s = objects.Object<Ship>(ship_id)) {
-        if (System* system = GetSystem()) {
+    if (Ship* s = GetObject<Ship>(ship_id)) {
+        if (System* system = GetObject<System>(this->SystemID())) {
             system->Insert(s);
         } else {
             s->MoveTo(X(), Y());
@@ -785,18 +778,17 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev)
 void Fleet::MovementPhase()
 {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
-    ObjectMap& objects = GetMainObjectMap();
 
     // find if any of owners of fleet can resupply ships at the location of this fleet
     if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
         // resupply all ships
         for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it)
-            if (Ship* ship = objects.Object<Ship>(*ship_it))
+            if (Ship* ship = GetObject<Ship>(*ship_it))
                 ship->Resupply();
     }
 
 
-    System* current_system = GetSystem();
+    System* current_system = GetObject<System>(SystemID());
     std::list<MovePathNode> move_path = this->MovePath();
     std::list<MovePathNode>::const_iterator it = move_path.begin();
     std::list<MovePathNode>::const_iterator next_it = it;
@@ -818,7 +810,7 @@ void Fleet::MovementPhase()
                 this->FinalDestinationID() == this->SystemID())
             {
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-                    if (Ship* ship = objects.Object<Ship>(*ship_it))
+                    if (Ship* ship = GetObject<Ship>(*ship_it))
                         if (Meter* fuel_meter = ship->GetMeter(METER_FUEL))
                             GrowFuelMeter(fuel_meter);
                 }
@@ -847,7 +839,7 @@ void Fleet::MovementPhase()
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
-        System* system = objects.Object<System>(it->object_id);
+        System* system = GetObject<System>(it->object_id);
 
         //Logger().debugStream() << "... node " << (system ? system->Name() : "no system");
 
@@ -873,7 +865,7 @@ void Fleet::MovementPhase()
                 //Logger().debugStream() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0;
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
-                    Ship* ship = objects.Object<Ship>(*ship_it);
+                    Ship* ship = GetObject<Ship>(*ship_it);
                     assert(ship);
                     ship->Resupply();
                 }
@@ -915,7 +907,7 @@ void Fleet::MovementPhase()
     if (m_moving_to != SystemID() && next_it != move_path.end() && it != move_path.end()) {
         // there is another system later on the path to aim for.  find it
         for (; next_it != move_path.end(); ++next_it) {
-            if (objects.Object<System>(next_it->object_id)) {
+            if (GetObject<System>(next_it->object_id)) {
                 //Logger().debugStream() << "___ setting m_next_system to " << next_it->object_id;
                 m_next_system = next_it->object_id;
                 break;
@@ -931,7 +923,7 @@ void Fleet::MovementPhase()
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0) {
         for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it)
-            if (Ship* ship = objects.Object<Ship>(*ship_it))
+            if (Ship* ship = GetObject<Ship>(*ship_it))
                 if (Meter* meter = ship->GetMeter(METER_FUEL))
                     meter->AdjustCurrent(-fuel_consumed);
     }

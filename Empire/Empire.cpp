@@ -2328,7 +2328,7 @@ void Empire::CheckProductionProgress()
                 UniverseObject* build_location = objects.Object(m_production_queue[i].location);
                 System* system = universe_object_cast<System*>(build_location);
                 if (!system && build_location)
-                    system = build_location->GetSystem();
+                    system = objects.Object<System>(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
                 assert(system);
 

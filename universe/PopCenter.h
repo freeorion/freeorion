@@ -63,7 +63,7 @@ private:
     virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
     virtual const
-        UniverseObject*     GetObject() const = 0;                              ///< implementation should return the UniverseObject associated with this PopCenter
+        UniverseObject*     GetThisObject() const = 0;                          ///< implementation should return the UniverseObject associated with this PopCenter
 
     int         m_race;             ///< the id of the race that occupies this planet
     double      m_allocated_food;   ///< amount of food allocated to this PopCenter by Empire food distribution

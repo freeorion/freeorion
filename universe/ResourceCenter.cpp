@@ -205,9 +205,9 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
     double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
     double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
 
-    const UniverseObject* object = GetObject();
+    const UniverseObject* object = GetThisObject();
     if (!object) {
-        Logger().errorStream() << "ResourceCenter GetObject returned 0";
+        Logger().errorStream() << "ResourceCenter GetThisObject returned 0";
         return;
     }
 

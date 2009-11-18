@@ -828,7 +828,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
     // the sidepanel's Refresh will be called when that signal is emitted, which will refresh
     // all the PlanetPanel in the SidePanel
-    //if (System* system = plt->GetSystem())
+    //if (System* system = plt->SystemID())
     //    GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
     GG::Connect(planet.StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 }
@@ -1202,7 +1202,12 @@ void SidePanel::PlanetPanel::ClickColonize()
             return;
         }
 
-        if (!ship->GetFleet()->Accept(StationaryFleetVisitor(*ship->GetFleet()->Owners().begin()))) {
+        const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize fleet not found!";
+            return;
+        }
+        if (!fleet->Accept(StationaryFleetVisitor(*fleet->Owners().begin()))) {
             GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
                                    ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::CtrlBorderColor(),
                                    ClientUI::WndColor(), ClientUI::TextColor(), 2,

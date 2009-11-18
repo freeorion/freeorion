@@ -65,7 +65,7 @@ private:
     virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const
-        UniverseObject*     GetObject() const = 0;                          ///< implementation should return the UniverseObject associated with this ResourceCenter
+        UniverseObject*     GetThisObject() const = 0;                      ///< implementation should return the UniverseObject associated with this ResourceCenter
 
     virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
 

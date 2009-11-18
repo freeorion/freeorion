@@ -58,7 +58,6 @@ public:
     double                              Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
     double                              MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
     int                                 FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to.
-    System*                             FinalDestination() const;           ///< Returns system that this fleet is moving to (may be null).
     int                                 PreviousSystemID() const;           ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
     int                                 NextSystemID() const;               ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)

@@ -21,10 +21,11 @@ extern int g_indent;
 namespace {
     const Fleet* FleetFromObject(const UniverseObject* obj)
     {
+        const ObjectMap& objects = GetMainObjectMap();
         const Fleet* retval = universe_object_cast<const Fleet*>(obj);
         if (!retval) {
             if (const Ship* ship = universe_object_cast<const Ship*>(obj))
-                retval = ship->GetFleet();
+                retval = objects.Object<Fleet>(ship->FleetID());
         }
         return retval;
     }
@@ -812,10 +813,11 @@ std::string Condition::PlanetType::Dump() const
 
 bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
-        planet = building->GetPlanet();
+        planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -876,10 +878,11 @@ std::string Condition::PlanetSize::Dump() const
 
 bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
-        planet = building->GetPlanet();
+        planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -940,10 +943,11 @@ std::string Condition::PlanetEnvironment::Dump() const
 
 bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     const Planet* planet = universe_object_cast<const Planet*>(target);
     const ::Building* building = 0;
     if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
-        planet = building->GetPlanet();
+        planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
@@ -1006,10 +1010,16 @@ std::string Condition::FocusType::Dump() const
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target);
     const ::Building* building = 0;
     if (!prod_center && (building = universe_object_cast<const ::Building*>(target))) {
-        prod_center = static_cast<const ResourceCenter*>(building->GetPlanet());
+        const Planet* planet = objects.Object<Planet>(building->PlanetID());
+        if (!planet) {
+            Logger().errorStream() << "Condition::FocusType::Match couldn't find a planet with id " << building->PlanetID();
+            return false;
+        }
+        prod_center = static_cast<const ResourceCenter*>(planet);
     }
     if (prod_center) {
         for (unsigned int i = 0; i < m_foci.size(); ++i) {
@@ -1070,7 +1080,8 @@ std::string Condition::StarType::Dump() const
 
 bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const System* system = target->GetSystem();
+    const ObjectMap& objects = GetMainObjectMap();
+    const System* system = objects.Object<System>(target->SystemID());
     if (system || (system = universe_object_cast<const System*>(target))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
             if (m_types[i]->Eval(source, target) == system->GetStarType())
@@ -1587,16 +1598,17 @@ std::string Condition::WithinStarlaneJumps::Dump() const
 
 bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     int jump_limit = m_jumps->Eval(source, target);
     if (jump_limit == 0) { // special case, since ShortestPath() doesn't expect the start point to be the end point
         double delta_x = source->X() - target->X();
         double delta_y = source->Y() - target->Y();
         return !(delta_x * delta_x + delta_y * delta_y);
     } else {
-        const System* source_system = source->GetSystem();
+        const System* source_system = objects.Object<System>(source->SystemID());
         if (!source_system)
             source_system = universe_object_cast<const System*>(source);
-        const System* target_system = target->GetSystem();
+        const System* target_system = objects.Object<System>(target->SystemID());
         if (!target_system)
             target_system = universe_object_cast<const System*>(target);
         if (source_system && target_system) {
@@ -1728,13 +1740,14 @@ std::string Condition::Stationary::Dump() const
 
 bool Condition::Stationary::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the target object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
     const Fleet* fleet = universe_object_cast<const Fleet*>(target);
     if (!fleet)
         if (const Ship* ship = universe_object_cast<const Ship*>(target))
-            fleet = ship->GetFleet();
+            fleet = objects.Object<Fleet>(ship->FleetID());
 
     if (fleet) {
         // if a fleet is available, it is "moving", or not stationary, if it's

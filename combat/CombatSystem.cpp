@@ -60,17 +60,17 @@ namespace
 
 static void RemoveShip(int nID)
 {
-    Ship* shp = GetUniverse().Objects().Object<Ship>(nID);
+    Ship* shp = GetObject<Ship>(nID);
     if (shp) {
-        System* sys = shp->GetSystem();
+        System* sys = GetObject<System>(shp->SystemID());
         if (sys)
             sys->Remove(shp->ID());
 
-        Fleet* flt = shp->GetFleet();
+        Fleet* flt = GetObject<Fleet>(shp->FleetID());
         if (flt) {
             flt->RemoveShip(shp->ID());
             if (flt->Empty()) {
-                if ((sys = flt->GetSystem()))
+                if (sys = GetObject<System>(flt->SystemID()))
                     sys->Remove(flt->ID());
                 GetUniverse().Destroy(flt->ID());
             }

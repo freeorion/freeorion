@@ -158,19 +158,9 @@ int UniverseObject::SystemID() const
     return m_system_id;
 }
 
-System* UniverseObject::GetSystem() const
-{
-    return SystemID() == INVALID_OBJECT_ID ? 0 : GetMainObjectMap().Object<System>(SystemID());
-}
-
 const std::set<std::string>& UniverseObject::Specials() const
 {
     return m_specials;
-}
-
-std::vector<UniverseObject*> UniverseObject::FindObjects() const
-{
-    return std::vector<UniverseObject*>();
 }
 
 std::vector<int> UniverseObject::FindObjectIDs() const
@@ -299,7 +289,7 @@ void UniverseObject::MoveTo(double x, double y)
     m_x = x;
     m_y = y;
 
-    if (System* system = GetSystem())
+    if (System* system = GetObject<System>(this->SystemID()))
         system->Remove(this);
     StateChangedSignal();
 }

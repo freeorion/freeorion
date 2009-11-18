@@ -186,8 +186,8 @@ namespace {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const UniverseObject* prev = GetEmpireKnownConstObject(lane.first, empire_id);
-        const UniverseObject* next = GetEmpireKnownConstObject(lane.second, empire_id);
+        const UniverseObject* prev = GetEmpireKnownObject(lane.first, empire_id);
+        const UniverseObject* next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
             Logger().errorStream() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -894,7 +894,7 @@ void MapWnd::InitTurn(int turn_number)
         const UniverseObject* obj = it->second;
         std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
 
-        if (const System* system = obj->GetSystem())
+        if (const System* system = objects.Object<System>(obj->SystemID()))
             std::cout << "  at: " << system->Name();
 
         const std::set<int>& owners = obj->Owners();
@@ -917,7 +917,7 @@ void MapWnd::InitTurn(int turn_number)
         const UniverseObject* obj = it->second;
         std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
 
-        if (const System* system = obj->GetSystem())
+        if (const System* system = known_objects.Object<System>(obj->SystemID()))
             std::cout << "  at: " << system->Name();
 
         const std::set<int>& owners = obj->Owners();
@@ -1196,7 +1196,7 @@ void MapWnd::InitSystemRenderingBuffers()
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         const SystemIcon* icon = it->second;
         int system_id = it->first;
-        const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id);
+        const System* system = GetEmpireKnownObject<System>(system_id, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -1411,7 +1411,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         int system_id = it->first;
-        const System* system = GetEmpireKnownConstObject<System>(system_id, empire_id);
+        const System* system = GetEmpireKnownObject<System>(system_id, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -1423,7 +1423,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
             const System* start_system = system;
-            const System* dest_system = GetEmpireKnownConstObject<System>(lane_it->first, empire_id);
+            const System* dest_system = GetEmpireKnownObject<System>(lane_it->first, empire_id);
             if (!start_system || ! dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -1884,7 +1884,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
         const std::set<int>& owners = fleet->Owners();
-        System* system = fleet->GetSystem();
+        System* system = GetObject<System>(fleet->SystemID());
         int this_client_player_id = HumanClientApp::GetApp()->EmpireID();
 
 
@@ -2068,7 +2068,7 @@ void MapWnd::DoSystemIconsLayout()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-        const System* system = GetEmpireKnownConstObject<System>(it->first, empire_id);
+        const System* system = GetEmpireKnownObject<System>(it->first, empire_id);
         if (!system) {
             Logger().errorStream() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << it->first;
             continue;
@@ -2211,7 +2211,7 @@ void MapWnd::RefreshFleetButtons()
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        const System* system = fleet->GetSystem();
+        const System* system = objects.Object<System>(fleet->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
             continue;
@@ -2240,7 +2240,7 @@ void MapWnd::RefreshFleetButtons()
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        const System* system = fleet->GetSystem();
+        const System* system = objects.Object<System>(fleet->SystemID());
         if (!system) {
             Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
             continue;
@@ -2269,7 +2269,7 @@ void MapWnd::RefreshFleetButtons()
             Logger().errorStream() << "couldn't cast object to fleet in RefreshFleetButtons()";
             continue;
         }
-        if (fleet->GetSystem()) {
+        if (fleet->SystemID() != UniverseObject::INVALID_OBJECT_ID) {
             Logger().errorStream() << "a fleet that was supposed to be moving had a valid system in RefreshFleetButtons()";
             continue;
         }
@@ -2740,7 +2740,7 @@ void MapWnd::RenderSystems()
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (const System* system = GetEmpireKnownConstObject<System>(it->first, empire_id)) {
+                if (const System* system = GetEmpireKnownObject<System>(it->first, empire_id)) {
                     if (system->NumStarlanes() > 0) {
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
                     }
@@ -3156,7 +3156,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
     for (std::set<int>::iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
         int fleet_id = *it;
 
-        const Fleet* fleet = GetConstObject<Fleet>(fleet_id);
+        const Fleet* fleet = GetObject<Fleet>(fleet_id);
         if (!fleet) {
             Logger().errorStream() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << *it;
             continue;
@@ -3184,9 +3184,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move)
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            const System* begin_sys = GetEmpireKnownConstObject<System>(begin_id, empire_id);
+            const System* begin_sys = GetEmpireKnownObject<System>(begin_id, empire_id);
             int end_id = *route.rbegin();
-            const System* end_sys = GetEmpireKnownConstObject<System>(end_id, empire_id);
+            const System* end_sys = GetEmpireKnownObject<System>(end_id, empire_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -3587,7 +3587,7 @@ void MapWnd::ShowProduction()
     // home system (ie. where the capitol is)
     if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = GetConstObject(empire->CapitolID()))
+            if (const UniverseObject* obj = GetObject(empire->CapitolID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -3950,9 +3950,8 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 
         // add contained objects within current object to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
         if (update_contained_objects) {
-            const std::vector<UniverseObject*> contained_objects = cur_object->FindObjects(); // get all contained objects
-            for (std::vector<UniverseObject*>::const_iterator cont_it = contained_objects.begin(); cont_it != contained_objects.end(); ++cont_it)
-                objects_list.push_back((*cont_it)->ID());
+            std::vector<int> contained_objects = cur_object->FindObjectIDs(); // get all contained objects
+            std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(objects_list));
         }
     }
     std::vector<int> objects_vec;

@@ -326,9 +326,11 @@ int System::Insert(UniverseObject* obj, int orbit)
     std::list<UniverseObject*> inserted_objects;
     inserted_objects.push_back(obj);
     // recursively get all objects contained within obj
-    for(std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
-        std::vector<UniverseObject*> contained_objects = (*it)->FindObjects();
-        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(inserted_objects));
+    for (std::list<UniverseObject*>::iterator it = inserted_objects.begin(); it != inserted_objects.end(); ++it) {
+        std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
+        for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
+            if (UniverseObject* cobj = GetObject(*coit))
+                inserted_objects.push_back(cobj);
     }
 
 
@@ -385,9 +387,11 @@ void System::Remove(UniverseObject* obj)
     removed_objects.push_back(obj);
     obj = 0;    // to ensure I don't accidentally use obj instead of cur_obj in subsequent code
     // recursively get all objects contained within obj
-    for(std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
-        std::vector<UniverseObject*> contained_objects = (*it)->FindObjects();
-        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(removed_objects));
+    for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
+        std::vector<int> contained_object_ids = (*it)->FindObjectIDs();
+        for (std::vector<int>::const_iterator coit = contained_object_ids.begin(); coit != contained_object_ids.end(); ++coit)
+            if (UniverseObject* cobj = GetObject(*coit))
+                removed_objects.push_back(cobj);
     }
 
 

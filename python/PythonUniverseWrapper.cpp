@@ -229,7 +229,6 @@ namespace FreeOrionPython {
             .add_property("design",             make_function(&Ship::Design,                return_value_policy<reference_existing_object>()))
             .add_property("designID",           &Ship::DesignID)
             .add_property("fleetID",            &Ship::FleetID)
-            .add_property("getFleet",           make_function(&Ship::GetFleet,              return_value_policy<reference_existing_object>()))
             .add_property("isArmed",            &Ship::IsArmed)
             .add_property("canColonize",        &Ship::CanColonize)
             .add_property("speed",              &Ship::Speed)
@@ -282,8 +281,8 @@ namespace FreeOrionPython {
         //////////////////
         class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
             .def("getBuildingType",             &Building::GetBuildingType,                     return_value_policy<reference_existing_object>())
-//            .add_property("operating",          &Building::Operating)
-            .def("getPlanet",                   &Building::GetPlanet,                           return_value_policy<reference_existing_object>())
+            //.add_property("operating",          &Building::Operating)
+            .def("planetID",                    &Building::PlanetID)
         ;
 
         //////////////////

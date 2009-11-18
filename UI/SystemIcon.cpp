@@ -170,7 +170,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -195,7 +195,7 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
 
 void SystemIcon::Init() {
     // state change signals for system itself and fleets in it
-    const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
+    const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
     if (system)
         Connect(system->StateChangedSignal, &SystemIcon::Refresh,   this);
 
@@ -477,7 +477,7 @@ void SystemIcon::Refresh()
 {
     std::string name = "";
 
-    if (const System* system = GetEmpireKnownConstObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID()))
+    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID()))
         name = system->Name();
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
