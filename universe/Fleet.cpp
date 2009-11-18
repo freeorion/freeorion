@@ -961,7 +961,6 @@ void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 void Fleet::CalculateRoute() const
 {
     const Universe& universe = GetUniverse();
-    const ObjectMap& objects = universe.Objects();
     int owner = ALL_EMPIRES;
     if (Owners().size() == 1)
         owner = *Owners().begin();
@@ -974,7 +973,7 @@ void Fleet::CalculateRoute() const
         if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
             // if we haven't actually left yet, we have to move from whichever system we are at now
 
-            if (!objects.Object<System>(m_moving_to))
+            if (!GetObject<System>(m_moving_to))
                 return; // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
 
             std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
@@ -992,7 +991,7 @@ void Fleet::CalculateRoute() const
                     return; // next system also isn't visible; leave route empty.
 
                 // safety check: ensure supposedly visible object actually exists in known universe.
-                if (!objects.Object<System>(m_next_system)) {
+                if (!GetObject<System>(m_next_system)) {
                     Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
                     return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
                 }
@@ -1010,7 +1009,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                const UniverseObject* obj = objects.Object(sys_list1.front());
+                const UniverseObject* obj = GetObject(sys_list1.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
                     return;
@@ -1025,7 +1024,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                obj = objects.Object(sys_list2.front());
+                obj = GetObject(sys_list2.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
                     return;
@@ -1051,7 +1050,7 @@ void Fleet::CalculateRoute() const
                     Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
                     return;
                 }
-                const UniverseObject* obj = objects.Object(sys_list.front());
+                const UniverseObject* obj = GetObject(sys_list.front());
                 if (!obj) {
                     Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
                     return;

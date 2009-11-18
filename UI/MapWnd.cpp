@@ -1972,7 +1972,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id)
     if (fleet_id == UniverseObject::INVALID_OBJECT_ID)
         return;
 
-    const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+    const Fleet* fleet = GetObject<Fleet>(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;

@@ -172,11 +172,10 @@ void NewFleetOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
 
     Fleet* fleet = 0;
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
-        System* system = objects.Object<System>(m_system_id);
+        System* system = GetObject<System>(m_system_id);
         if (!system) {
             Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
             return;
@@ -192,7 +191,7 @@ void NewFleetOrder::ExecuteImpl() const
     }
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
-        const Ship* ship = objects.Object<Ship>(m_ship_ids[i]);
+        const Ship* ship = GetObject<Ship>(m_ship_ids[i]);
         if (!ship) {
             Logger().errorStream() << "Empire attempted to create a new fleet with an invalid ship";
             return;
@@ -223,18 +222,18 @@ FleetMoveOrder::FleetMoveOrder(int empire, int fleet_id, int start_system_id, in
     m_dest_system(dest_system_id)
 {
     const Universe& universe = GetUniverse();
-    const ObjectMap& objects = GetMainObjectMap();
+    const ObjectMap& main_object_map = GetMainObjectMap();
 
     // perform sanity checks
-    const Fleet* fleet = objects.Object<Fleet>(FleetID());
+    const Fleet* fleet = GetObject<Fleet>(FleetID());
     if (!fleet) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet with id " << FleetID() << " to move, but no such fleet exists";
         return;
     }
 
-    const System* destination_system = objects.Object<System>(DestinationSystemID());
+    const System* destination_system = main_object_map.Object<System>(DestinationSystemID());
     if (!destination_system) {
-        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists";
+        Logger().errorStream() << "Empire with id " << EmpireID() << " ordered fleet to move to system with id " << DestinationSystemID() << " but no such system exists / is known to exist";
         return;
     }
 
