@@ -2981,10 +2981,19 @@ void MapWnd::RenderVisibilityRadii() {
     if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
         return;
 
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(client_empire_id);
+
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<double, double> >, double> empire_position_max_detection_ranges;
-    const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
     for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
+        // skip destroyed objects
+        int object_id = it->first;
+        if (known_destroyed_object_ids.find(object_id) != known_destroyed_object_ids.end())
+            continue;
+
+        // if this object has the largest yet checked visibility range at this location, update the location's range
         const UniverseObject* obj = it->second;
         if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
             double X = obj->X();
@@ -2996,7 +3005,7 @@ void MapWnd::RenderVisibilityRadii() {
                 std::pair<int, std::pair<double, double> > key = std::make_pair(*empire_it, std::make_pair(X, Y));
                 std::map<std::pair<int, std::pair<double, double> >, double>::iterator range_it = empire_position_max_detection_ranges.find(key);
                 if (range_it != empire_position_max_detection_ranges.end()) {
-                    if (range_it->second < D) range_it->second = D;   // update existing entry
+                    if (range_it->second < D) range_it->second = D; // update existing entry
                 } else {
                     empire_position_max_detection_ranges[key] = D;  // add new entry to map
                 }
