@@ -304,20 +304,21 @@ Meter* UniverseObject::GetMeter(MeterType type)
 
 void UniverseObject::AddOwner(int id)
 {
-    if (id != ALL_EMPIRES) {
+    if (id != ALL_EMPIRES && m_owners.find(id) == m_owners.end()) {
         m_owners.insert(id);
         StateChangedSignal();
     }
     /* TODO: if adding an owner to an object gives an the added owner an
      * observer in, or ownership of a previoiusly unexplored system, then need
      * to call empire->AddExploredSystem(system_id); */
-
 }
 
 void UniverseObject::RemoveOwner(int id)
 {
-    m_owners.erase(id);
-    StateChangedSignal();
+    if (m_owners.find(id) != m_owners.end()) {
+        m_owners.erase(id);
+        StateChangedSignal();
+    }
 }
 
 void UniverseObject::ClearOwners()

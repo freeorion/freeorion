@@ -732,7 +732,6 @@ std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
     return retval;
 }
 
-
 bool Fleet::RemoveShip(int ship)
 {
     //std::cout << "Fleet::RemoveShip" << std::endl;

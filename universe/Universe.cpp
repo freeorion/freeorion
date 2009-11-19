@@ -1568,14 +1568,18 @@ void Universe::UpdateEmpireObjectVisibilities()
     for (ObjectMap::const_iterator container_object_it = m_objects.const_begin(); container_object_it != m_objects.const_end(); ++container_object_it) {
         int container_obj_id = container_object_it->first;
 
-        // get contained object
+        // get container object
         const UniverseObject* container_obj = container_object_it->second;
         if (!container_obj)
             continue;   // shouldn't be necessary, but I like to be safe...
 
+        // does object actually contain any other objects?
         std::vector<int> contained_objects = container_obj->FindObjectIDs();
         if (contained_objects.empty())
             continue;   // nothing to propegate if no objects contained
+
+        // check if container object is a fleet, for special case later...
+        const Fleet* container_fleet = universe_object_cast<const Fleet*>(container_obj);
 
 
         // for each contained object within container
@@ -1595,10 +1599,20 @@ void Universe::UpdateEmpireObjectVisibilities()
                     // get iterator pointing at newly-created entry
                     container_vis_it = vis_map.find(container_obj_id);
                 } else {
-                    // check whether having a contained object wouldn't change container's
-                    // visibility anyway...
-                    if (container_vis_it->second >= VIS_BASIC_VISIBILITY)
-                        continue;   // having visible contained object grants basic vis only.  if container already has this for current empire, don't need to propegate
+                    // check whether having a contained object would change container's visibility
+                    if (container_fleet) {
+                        // special case for fleets: grant partial visibility if
+                        // a contained ship is seen with partial visibility or
+                        // higher visibilitly
+                        if (container_vis_it->second >= VIS_PARTIAL_VISIBILITY)
+                            continue;
+                    } else if (container_vis_it->second >= VIS_BASIC_VISIBILITY) {
+                        // general case: for non-fleets, having visible
+                        // contained object grants basic vis only.  if
+                        // container already has this or better for the current
+                        // empire, don't need to propegate anything
+                        continue;
+                    }
                 }
 
 
@@ -1618,6 +1632,11 @@ void Universe::UpdateEmpireObjectVisibilities()
                     // higher than partially visible
                     if (container_vis_it->second < VIS_BASIC_VISIBILITY)
                         container_vis_it->second = VIS_BASIC_VISIBILITY;
+
+                    // special case for fleets: grant partial visibility if
+                    // visible contained object is partially or better visible
+                    if (container_fleet && contained_obj_vis >= VIS_PARTIAL_VISIBILITY && container_vis_it->second < VIS_PARTIAL_VISIBILITY)
+                        container_vis_it->second = VIS_PARTIAL_VISIBILITY;
                 }
             }   // end for empire visibility entries
         }   // end for contained objects
@@ -1667,8 +1686,8 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
     // ensure systems on either side of a starlane along which a fleet is
-    // moving are at least basically visible, so that the starlane itself will
-    // be visible
+    // moving are at least basically visible, so that the starlane itself can /
+    // will be visible
     std::vector<const Fleet*> moving_fleets;
     std::vector<UniverseObject*> moving_fleet_objects = m_objects.FindObjects(MovingFleetVisitor());
     for (std::vector<UniverseObject*>::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
