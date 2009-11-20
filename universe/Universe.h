@@ -644,13 +644,13 @@ UniverseObject*         GetEmpireKnownObject(int object_id, int empire_id);
 template <class T>
 T*                      GetObject(int object_id)
 {
-    return GetUniverse().Objects().Object<T>(object_id);
+    return GetUniverse().Objects().template Object<T>(object_id);
 }
 
 template <class T>
 T*                      GetEmpireKnownObject(int object_id, int empire_id)
 {
-    return GetUniverse().EmpireKnownObjects(empire_id).Object<T>(object_id);
+    return GetUniverse().EmpireKnownObjects(empire_id).template Object<T>(object_id);
 }
 
 
