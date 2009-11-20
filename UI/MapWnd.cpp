@@ -952,15 +952,11 @@ void MapWnd::InitTurn(int turn_number)
 
     boost::timer timer;
     const std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
-    // get ids of systems partially or better visible to this empire.
-    // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
-    std::set<int> this_client_visible_systems;
-    std::vector<int> all_system_ids = objects.FindObjectIDs<System>();
-    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
-        int obj_id = *it;
-        if (universe.GetObjectVisibilityByEmpire(obj_id, this_client_empire->EmpireID()) >= VIS_PARTIAL_VISIBILITY)
-            this_client_visible_systems.insert(obj_id);
-    }
+    // get ids of systems known to this empire.
+    std::set<int> this_client_known_systems;
+    std::vector<int> all_system_ids = known_objects.FindObjectIDs<System>();
+    std::copy(all_system_ids.begin(), all_system_ids.end(), std::inserter(this_client_known_systems, this_client_known_systems.end()));
+
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
 
 
@@ -972,7 +968,7 @@ void MapWnd::InitTurn(int turn_number)
         // use systems this client's player's empire has explored for all empires, so that this client's
         // player can see where other empires can probably propegate supply, even if this client's empire
         // doesn't know what systems the other player has actually explored
-        empire2->UpdateSupplyUnobstructedSystems(this_client_visible_systems);
+        empire2->UpdateSupplyUnobstructedSystems(this_client_known_systems);
 
         empire2->UpdateSystemSupplyRanges();
 

@@ -545,22 +545,6 @@ private:
     /** Creates starlanes and adds them systems already generated. */
     void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid);
 
-    /** Used by GenerateStarlanes.  Determines if two systems are connected by
-      * maxLaneJumps or less edges on graph. */
-    bool    ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray);
-
-    /** Removes lanes from passed graph that are angularly too close to
-      * each other. */
-    void    CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems);
-
-    /** Removes lanes from passed graph that are too long. */
-    void    CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems);
-
-    /** Grows trees to connect stars...  takes an array of sets of potential
-      * starlanes for each star, and puts the starlanes of the tree into
-      * another set. */
-    void    GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray);
-
     /** Resizes the system graph to the appropriate size and populates
       * m_system_distances.  Uses the Universe latest known set of objects for
       * the empire with id \a for_empire_id or uses the main / true / visible
@@ -569,14 +553,14 @@ private:
 
     /** Picks systems to host homeworlds, generates planets for them, stores
       * the ID's of the homeworld planets into the homeworld vector. */
-    void    GenerateHomeworlds(int players, std::vector<int>& homeworlds);
+    void    GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids);
 
     /** Names the planets in each system, based on the system's name. */
     void    NamePlanets();
 
     /** Will create empire objects, assign them homeworlds, setup the homeworld
       * population, industry, and starting fleets. */
-    void    GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data);
+    void    GenerateEmpires(int players, std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
 
     void    DestroyImpl(int id);
 

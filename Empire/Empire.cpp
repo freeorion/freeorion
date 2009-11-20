@@ -1292,31 +1292,25 @@ void Empire::UpdateSupplyUnobstructedSystems() {
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
-    std::set<int> visible_systems;
-    std::vector<int> all_system_ids = universe.Objects().FindObjectIDs<System>();
-    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it) {
-        int obj_id = *it;
-        if (universe.GetObjectVisibilityByEmpire(obj_id, m_id) >= VIS_PARTIAL_VISIBILITY)
-            visible_systems.insert(obj_id);
-    }
-
-    UpdateSupplyUnobstructedSystems(visible_systems);
+    std::vector<int> known_systems_vec = universe.EmpireKnownObjects(this->EmpireID()).FindObjectIDs<System>();
+    std::set<int> known_systems_set;
+    std::copy(known_systems_vec.begin(), known_systems_vec.end(), std::inserter(known_systems_set, known_systems_set.end()));
+    UpdateSupplyUnobstructedSystems(known_systems_set);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& visible_systems)
+void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 {
     m_supply_unobstructed_systems.clear();
 
     // find "unobstructed" systems that can propegate fleet supply routes
-    const std::vector<System*> all_systems = GetUniverse().Objects().FindObjects<System>();
+    const std::vector<System*> all_systems = GetMainObjectMap().FindObjects<System>();
 
     for (std::vector<System*>::const_iterator it = all_systems.begin(); it != all_systems.end(); ++it) {
         const System* system = *it;
         int system_id = system->ID();
 
-        // to be unobstructed, systems must both:
-        // be explored by this empire...
-        if (visible_systems.find(system_id) == visible_systems.end())
+        // to be unobstructed, systems must be known to this empire
+        if (known_systems.find(system_id) == known_systems.end())
             continue;
 
         //std::cout << "... system " << system->Name() << " is explored" << std::endl;

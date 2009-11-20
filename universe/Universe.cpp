@@ -658,10 +658,10 @@ Universe::EffectAccountingInfo::EffectAccountingInfo() :
 // class Universe
 /////////////////////////////////////////////
 // static(s)
-const bool  Universe::ALL_OBJECTS_VISIBLE = false;
-double      Universe::s_universe_width = 1000.0;
-bool        Universe::s_inhibit_universe_object_signals = false;
-int         Universe::s_encoding_empire = ALL_EMPIRES;
+const bool  Universe::ALL_OBJECTS_VISIBLE =                 false;
+double      Universe::s_universe_width =                    1000.0;
+bool        Universe::s_inhibit_universe_object_signals =   false;
+int         Universe::s_encoding_empire =                   ALL_EMPIRES;
 
 Universe::Universe() :
     m_graph_impl(new GraphImpl),
@@ -1876,84 +1876,6 @@ void Universe::HandleEmpireElimination(int empire_id)
     //}
 }
 
-bool Universe::ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
-    // list of indices of systems that are accessible from previously visited systems.
-    // when a new system is found to be accessible, it is added to the back of the
-    // list.  the list is iterated through from front to back to find systems
-    // to examine
-    std::list<int> accessibleSystemsList;
-    std::list<int>::iterator sysListIter, sysListEnd;
-
-    // map using star index number as the key, and also storing the number of starlane
-    // jumps away from system1 a given system is.  this is used to determine if a
-    // system has already been added to the accessibleSystemsList without needing
-    // to iterate through the list.  it also provides some indication of the
-    // current depth of the search, which allows the serch to terminate after searching
-    // to the depth of maxLaneJumps without finding system2
-    // (considered using a vector for this, but felt that for large galaxies, the
-    // size of the vector and the time to intialize would be too much)
-    std::map<int, int> accessibleSystemsMap;
-
-    // system currently being investigated, destination of a starlane origination at curSys
-    int curSys, curLaneDest;
-    // "depth" level in tree of system currently being investigated
-    int curDepth;
-
-    // iterators to set of starlanes, in graph, for the current system    
-    std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
-    
-    // check for simple cases for quick termination
-    if (system1 == system2) return true; // system is always connected to itself
-    if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
-    if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
-    if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
-    if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
-    if (system1 < 0 || system2 < 0) return false; // out of range
-
-    // add starting system to list and set of accessible systems
-    accessibleSystemsList.push_back(system1);
-    accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
-
-    // loop through visited systems
-    sysListIter = accessibleSystemsList.begin();
-    sysListEnd = accessibleSystemsList.end();
-    while (sysListIter != sysListEnd) {
-        curSys = *sysListIter;
-
-        // check that iteration hasn't reached maxLaneJumps levels deep, which would 
-        // mean that system2 isn't within maxLaneJumps starlane jumps of system1
-        curDepth = (*accessibleSystemsMap.find(curSys)).second;
-
-        if (curDepth >= maxLaneJumps) return false;
-
-        // get set of starlanes for this system
-        curSysLanesSetIter = (laneSetArray[curSys]).begin();
-        curSysLanesSetEnd = (laneSetArray[curSys]).end();
-
-        // add starlanes accessible from this system to list and set of accessible starlanes
-        // (and check for the goal starlane)
-        while (curSysLanesSetIter != curSysLanesSetEnd) {
-            curLaneDest = *curSysLanesSetIter;
-
-            // check if curLaneDest has been added to the map of accessible systems
-            if (0 == accessibleSystemsMap.count(curLaneDest)) {
-
-                // check for goal
-                if (curLaneDest == system2) return true;
-
-                // add curLaneDest to accessible systems list and map
-                accessibleSystemsList.push_back(curLaneDest);
-                accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
-               }
-
-            curSysLanesSetIter++;
-        }
-
-        sysListIter++;
-    }
-    return false; // default
-}
-
 void Universe::InitializeSystemGraph(int for_empire_id)
 {
     const ObjectMap& objects = EmpireKnownObjects(for_empire_id);
@@ -3091,6 +3013,530 @@ namespace {
     }
 };
 
+namespace {
+    /** Used by GenerateStarlanes.  Determines if two systems are connected by
+      * maxLaneJumps or less edges on graph. */
+    bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
+        // list of indices of systems that are accessible from previously visited systems.
+        // when a new system is found to be accessible, it is added to the back of the
+        // list.  the list is iterated through from front to back to find systems
+        // to examine
+        std::list<int> accessibleSystemsList;
+        std::list<int>::iterator sysListIter, sysListEnd;
+
+        // map using star index number as the key, and also storing the number of starlane
+        // jumps away from system1 a given system is.  this is used to determine if a
+        // system has already been added to the accessibleSystemsList without needing
+        // to iterate through the list.  it also provides some indication of the
+        // current depth of the search, which allows the serch to terminate after searching
+        // to the depth of maxLaneJumps without finding system2
+        // (considered using a vector for this, but felt that for large galaxies, the
+        // size of the vector and the time to intialize would be too much)
+        std::map<int, int> accessibleSystemsMap;
+
+        // system currently being investigated, destination of a starlane origination at curSys
+        int curSys, curLaneDest;
+        // "depth" level in tree of system currently being investigated
+        int curDepth;
+
+        // iterators to set of starlanes, in graph, for the current system    
+        std::set<int>::iterator curSysLanesSetIter, curSysLanesSetEnd;
+
+        // check for simple cases for quick termination
+        if (system1 == system2) return true; // system is always connected to itself
+        if (0 == maxLaneJumps) return false; // no system is connected to any other system by less than 1 jump
+        if (0 == (laneSetArray[system1]).size()) return false; // no lanes out of start system
+        if (0 == (laneSetArray[system2]).size()) return false; // no lanes into destination system
+        if (system1 >= static_cast<int>(laneSetArray.size()) || system2 >= static_cast<int>(laneSetArray.size())) return false; // out of range
+        if (system1 < 0 || system2 < 0) return false; // out of range
+
+        // add starting system to list and set of accessible systems
+        accessibleSystemsList.push_back(system1);
+        accessibleSystemsMap.insert(std::pair<int, int>(system1, 0));
+
+        // loop through visited systems
+        sysListIter = accessibleSystemsList.begin();
+        sysListEnd = accessibleSystemsList.end();
+        while (sysListIter != sysListEnd) {
+            curSys = *sysListIter;
+
+            // check that iteration hasn't reached maxLaneJumps levels deep, which would 
+            // mean that system2 isn't within maxLaneJumps starlane jumps of system1
+            curDepth = (*accessibleSystemsMap.find(curSys)).second;
+
+            if (curDepth >= maxLaneJumps) return false;
+
+            // get set of starlanes for this system
+            curSysLanesSetIter = (laneSetArray[curSys]).begin();
+            curSysLanesSetEnd = (laneSetArray[curSys]).end();
+
+            // add starlanes accessible from this system to list and set of accessible starlanes
+            // (and check for the goal starlane)
+            while (curSysLanesSetIter != curSysLanesSetEnd) {
+                curLaneDest = *curSysLanesSetIter;
+
+                // check if curLaneDest has been added to the map of accessible systems
+                if (0 == accessibleSystemsMap.count(curLaneDest)) {
+
+                    // check for goal
+                    if (curLaneDest == system2) return true;
+
+                    // add curLaneDest to accessible systems list and map
+                    accessibleSystemsList.push_back(curLaneDest);
+                    accessibleSystemsMap.insert(std::pair<int, int>(curLaneDest, curDepth + 1));
+                   }
+
+                curSysLanesSetIter++;
+            }
+
+            sysListIter++;
+        }
+        return false; // default
+    }
+
+    /** Removes lanes from passed graph that are angularly too close to
+      * each other. */
+    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
+        // start and end systems of a new lane being considered, and end points of lanes that already exist with that
+        // start at the start or destination of the new lane
+        int curSys, dest1, dest2;
+
+        // geometry stuff... points componenets, vector componenets dot product & magnitudes of vectors
+        double startX, startY, vectX1, vectX2, vectY1, vectY2, dotProd, mag1, mag2;
+        // 2 component vector and vect + magnitude typedefs
+
+        typedef std::pair<double, double> VectTypeQQ;
+        typedef std::pair<VectTypeQQ, double> VectAndMagTypeQQ;
+        typedef std::pair<int, VectAndMagTypeQQ> MapInsertableTypeQQ;
+
+        std::map<int, VectAndMagTypeQQ> laneVectsMap;  // componenets of vectors of lanes of current system, indexed by destination system number
+        std::map<int, VectAndMagTypeQQ>::iterator laneVectsMapIter;
+
+        VectTypeQQ tempVect;
+        VectAndMagTypeQQ tempVectAndMag;
+
+        // iterators to go through sets of lanes in array
+        std::set<int>::iterator laneSetIter1, laneSetIter2, laneSetEnd;
+
+        std::set<std::pair<int, int> > lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
+        std::set<std::pair<int, int> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
+        std::pair<int, int> lane1, lane2;
+
+        int curNumLanes;
+
+        int numSys = systems.size();
+        // make sure data is consistent
+        if (static_cast<int>(laneSetArray.size()) != numSys) {
+            Logger().errorStream() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
+            return;
+        }
+        
+        if (numSys < 3) return;  // nothing worth doing for less than three systems
+
+        //Logger().debugStream() << "Culling Too Close Angularly Lanes";
+
+        // loop through systems
+        for (curSys = 0; curSys < numSys; curSys++) {
+            // get position of current system (for use in calculated vectors)
+            startX = systems[curSys]->X();
+            startY = systems[curSys]->Y();
+
+            // get number of starlanes current system has
+            curNumLanes = laneSetArray[curSys].size();
+
+            // can't have pairs of lanes with less than two lanes...
+            if (curNumLanes > 1) {
+
+                // remove any old lane Vector Data
+                laneVectsMap.clear();
+
+                // get unit vectors for all lanes of this system
+                laneSetIter1 = laneSetArray[curSys].begin();
+                laneSetEnd = laneSetArray[curSys].end();
+                while (laneSetIter1 != laneSetEnd) {
+                    // get destination for this lane
+                    dest1 = *laneSetIter1;
+                    // get vector to this lane destination
+                    vectX1 = systems[dest1]->X() - startX;
+                    vectY1 = systems[dest1]->Y() - startY;
+                    // normalize
+                    mag1 = std::sqrt(vectX1 * vectX1 + vectY1 * vectY1);
+                    vectX1 /= mag1;
+                    vectY1 /= mag1;
+
+                    // store lane in map of lane vectors
+                    tempVect = VectTypeQQ(vectX1, vectY1);
+                    tempVectAndMag = VectAndMagTypeQQ(tempVect, mag1);
+                    laneVectsMap.insert( MapInsertableTypeQQ(dest1, tempVectAndMag) );
+
+                    laneSetIter1++;
+                }
+
+                // iterate through lanes of curSys
+                laneSetIter1 = laneSetArray[curSys].begin();
+                laneSetIter1++;  // start at second, since iterators are used in pairs, and starting both at the first wouldn't be a valid pair
+                while (laneSetIter1 != laneSetEnd) {
+                    // get destination of current starlane
+                    dest1 = *laneSetIter1;
+
+                    if (curSys < dest1) 
+                        lane1 = std::pair<int, int>(curSys, dest1);
+                    else
+                        lane1 = std::pair<int, int>(dest1, curSys);
+
+                    // check if this lane has already been added to the set of lanes to remove
+                    if (0 == lanesToRemoveSet.count(lane1)) {
+
+                        // extract data on starlane vector...
+                        laneVectsMapIter = laneVectsMap.find(dest1);
+                        assert(laneVectsMapIter != laneVectsMap.end());
+                        tempVectAndMag = laneVectsMapIter->second;
+                        tempVect = tempVectAndMag.first;
+                        vectX1 = tempVect.first;
+                        vectY1 = tempVect.second;
+                        mag1 = tempVectAndMag.second;
+
+                        // iterate through other lanes of curSys, in order to get all possible pairs of lanes
+                        laneSetIter2 = laneSetArray[curSys].begin();
+                        while (laneSetIter2 != laneSetIter1) {
+                            dest2 = *laneSetIter2;
+
+                            if (curSys < dest2) 
+                                lane2 = std::pair<int, int>(curSys, dest2);
+                            else
+                                lane2 = std::pair<int, int>(dest2, curSys);
+
+                            // check if this lane has already been added to the set of lanes to remove
+                            if (0 == lanesToRemoveSet.count(lane2)) {
+
+                                // extract data on starlane vector...
+                                laneVectsMapIter = laneVectsMap.find(dest2);
+                                assert(laneVectsMapIter != laneVectsMap.end());
+                                tempVectAndMag = laneVectsMapIter->second;
+                                tempVect = tempVectAndMag.first;
+                                vectX2 = tempVect.first;
+                                vectY2 = tempVect.second;
+                                mag2 = tempVectAndMag.second;
+
+                                // find dot product
+                                dotProd = vectX1 * vectX2 + vectY1 * vectY2;
+
+                                // if dotProd is big enough, then lanes are too close angularly
+                                // thus one needs to be removed.
+                                if (dotProd > maxLaneUVectDotProd) {
+
+                                     // preferentially remove the longer lane
+                                    if (mag1 > mag2) {
+                                        lanesToRemoveSet.insert(lane1);
+                                        break;  // don't need to check any more lanes against lane1, since lane1 has been removed
+                                    }
+                                    else {
+                                        lanesToRemoveSet.insert(lane2);
+                                    }
+                                }
+                            }
+
+                            laneSetIter2++;
+                        }
+                    }
+
+                    laneSetIter1++;
+                }
+            }
+        }
+
+        // iterate through set of lanes to remove, and remove them in turn...
+        lanesToRemoveIter = lanesToRemoveSet.begin();
+        lanesToRemoveEnd = lanesToRemoveSet.end();
+        while (lanesToRemoveIter != lanesToRemoveEnd) {
+            lane1 = *lanesToRemoveIter;
+
+            laneSetArray[lane1.first].erase(lane1.second);
+            laneSetArray[lane1.second].erase(lane1.first);
+
+            // check that removing lane hasn't disconnected systems
+            if (!ConnectedWithin(lane1.first, lane1.second, numSys, laneSetArray)) {
+                // they aren't connected... reconnect them
+                laneSetArray[lane1.first].insert(lane1.second);
+                laneSetArray[lane1.second].insert(lane1.first);
+            }
+
+            lanesToRemoveIter++;
+        }
+    }
+
+    /** Removes lanes from passed graph that are angularly too close to
+      * each other. */
+    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+    {
+        // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
+        // at the start or destination of the new lane
+        int curSys, dest;
+
+        // geometry stuff... points components, vector componenets
+        double startX, startY, vectX, vectY;
+
+        // iterators to go through sets of lanes in array
+        std::set<int>::iterator laneSetIter, laneSetEnd;
+
+        // map, indexed by lane length, of start and end stars of lanes to be removed
+        std::multimap<double, std::pair<int, int>, std::greater<double> > lanesToRemoveMap;
+        std::multimap<double, std::pair<int, int>, std::greater<double> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
+        std::pair<int, int> lane;
+        typedef std::pair<double, std::pair<int, int> > MapInsertableTypeQQ;
+
+        int numSys = systems.size();
+        // make sure data is consistent
+        if (static_cast<int>(laneSetArray.size()) != numSys) {
+            return;
+        }
+
+        if (numSys < 2) return;  // nothing worth doing for less than two systems (no lanes!)
+
+        // get squared max lane lenth, so as to eliminate the need to take square roots of lane lenths...
+        double maxLaneLength2 = maxLaneLength*maxLaneLength;
+
+        // loop through systems
+        for (curSys = 0; curSys < numSys; curSys++) {
+            // get position of current system (for use in calculating vector)
+            startX = systems[curSys]->X();
+            startY = systems[curSys]->Y();
+
+            // iterate through all lanes in system, checking lengths and marking to be removed if necessary
+            laneSetIter = laneSetArray[curSys].begin();
+            laneSetEnd = laneSetArray[curSys].end();
+            while (laneSetIter != laneSetEnd) {
+                // get destination for this lane
+                dest = *laneSetIter;
+                // convert start and end into ordered pair to represent lane
+                if (curSys < dest) 
+                    lane = std::pair<int, int>(curSys, dest);
+                else
+                    lane = std::pair<int, int>(dest, curSys);
+
+                // get vector to this lane destination
+                vectX = systems[dest]->X() - startX;
+                vectY = systems[dest]->Y() - startY;
+
+                // compare magnitude of vector to max allowed
+                double laneLength2 = vectX*vectX + vectY*vectY;
+                if (laneLength2 > maxLaneLength2) {
+                    // lane is too long!  mark it to be removed
+                    lanesToRemoveMap.insert( MapInsertableTypeQQ(laneLength2, lane) );
+                } 
+
+                laneSetIter++;
+            }
+        }
+
+        // Iterate through set of lanes to remove, and remove them in turn.  Since lanes were inserted in the map indexed by
+        // their length, iteration starting with begin starts with the longest lane first, then moves through the lanes as
+        // they get shorter, ensuring that the longest lanes are removed first.
+        lanesToRemoveIter = lanesToRemoveMap.begin();
+        lanesToRemoveEnd = lanesToRemoveMap.end();
+        while (lanesToRemoveIter != lanesToRemoveEnd) {
+            lane = lanesToRemoveIter->second;
+
+            // ensure the lane still exists
+            if (laneSetArray[lane.first].count(lane.second) > 0 &&
+                laneSetArray[lane.second].count(lane.first) > 0) {
+
+                // remove lane
+                laneSetArray[lane.first].erase(lane.second);
+                laneSetArray[lane.second].erase(lane.first);
+
+                // if removing lane has disconnected systems, reconnect them
+                if (!ConnectedWithin(lane.first, lane.second, numSys, laneSetArray)) {
+                    laneSetArray[lane.first].insert(lane.second);
+                    laneSetArray[lane.second].insert(lane.first);
+                }
+            }
+            lanesToRemoveIter++;
+        }
+    }
+
+    /** Grows trees to connect stars...  takes an array of sets of potential
+      * starlanes for each star, and puts the starlanes of the tree into
+      * another set. */
+    void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray) {
+        // array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
+        std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
+
+        //  map index by tree number, containing a list for each tree, each of which contains the systems in a particular tree
+        std::map<int, std::list<int> > treeSysListsMap;
+        std::map<int, std::list<int> >::iterator treeSysListsMapIter, treeSysListsMapEnd;
+        std::pair<int, std::list<int> > mapInsertable;
+        std::list<int> treeSysList, *pTreeSysList, *pTreeToMergeSysList;
+        std::list<int>::iterator sysListIter;
+        std::set<int>::iterator lanesSetIter, lanesSetEnd;
+
+        int n, q, d, curTree, destTree, curSys, destSys, mergeSys;
+
+        int numSys = potentialLaneSetArray.size();
+        int numTrees = roots.size();
+
+        // number of new connections to make from each connected node that is processed.  
+        // could be made a parameter, possibly a function of the starlane frequency
+
+        // make sure data is consistent
+        if (static_cast<int>(laneSetArray.size()) != numSys) {
+            Logger().errorStream() << "GrowSpanningTrees got different size vectors of potential lane set(s) and systems.  Doing nothing.";
+            return;
+        }
+        if ((numTrees < 1) || (numTrees > numSys)) {
+            Logger().errorStream() << "GrowSpanningTrees was asked to grow too many or too few trees simultaneously.  Doing nothing.";
+            return;
+        }
+        if (static_cast<int>(roots.size()) > numSys) {
+            Logger().errorStream() << "GrowSpanningTrees was asked to grow more separate trees than there are systems to grow from.  Doing nothing.";
+            return;
+        }
+
+        laneSetArray.resize(numSys);
+
+        // set up data structures...
+        treeOfSystemArray.resize(numSys);
+        for (n = 0; n < numSys; n++) 
+            treeOfSystemArray[n] = -1;  // sentinel value for not connected to any tree
+
+        treeSysListsMap.clear();
+        for (n = 0; n < numTrees; n++) {
+            // check that next root is within valid range...
+            q = roots[n];
+            if ((q >= numSys) || (q < 0)) {
+                //Logger().debugStream() << "GrowSpanningTrees was asked to grow to grow a tree from a system that doesn't exist.";
+                return;
+            }
+
+            // make new tree to put into map
+            treeSysList.clear();        
+            treeSysList.push_front(q);
+
+            // put new list into into map (for tree n), indexed by tree number
+            mapInsertable = std::pair<int, std::list<int> >(n, treeSysList);
+            treeSysListsMap.insert(mapInsertable);
+
+            // record the tree to which root system of tree n, roots[n], belongs (tree n)
+            treeOfSystemArray[q] = n;
+        }
+
+        //Logger().debugStream() << "Growing Trees Algorithm Starting...";
+
+        // loop through map (indexed by tree number) of lists of systems, until map (and all lists) are empty...
+        treeSysListsMapIter = treeSysListsMap.begin();
+        treeSysListsMapEnd = treeSysListsMap.end();
+        while (treeSysListsMapIter != treeSysListsMapEnd) {
+            // extract number and list of tree
+            curTree = treeSysListsMapIter->first;
+            pTreeSysList = &(treeSysListsMapIter->second);
+
+            if (pTreeSysList->empty()) {
+                // no systems left for tree to grow.  Remove it from map of growing trees.
+                treeSysListsMap.erase(curTree);
+                //Logger().debugStream() << "Tree " << curTree << " was empty, so was removed from map of trees.";
+
+                // check if set is empty...
+                if (treeSysListsMap.empty()) break;  // and stop loop if it is
+                // (iterator invalidated by erasing, so set to first tree remaining in map)
+                treeSysListsMapIter = treeSysListsMap.begin();
+            }
+            else {
+                //Logger().debugStream() << "Tree " << curTree << " contains " << pTreeSysList->size() << " systems.";
+                // tree has systems left to grow.
+
+                // extract and remove a random system from the list
+
+                // iterate to the position of the random system
+                sysListIter = pTreeSysList->begin();
+                for (d = RandSmallInt(0, pTreeSysList->size() - 1); d > 0; --d) // RandSmallInt(int min, int max);
+                    sysListIter++;
+
+                curSys = *sysListIter; // extract
+                pTreeSysList->erase(sysListIter); // erase
+
+                //Logger().debugStream() << "Processing system " << curSys << " from tree " << curTree;
+
+                // iterate through list of potential lanes for current system
+                lanesSetIter = potentialLaneSetArray[curSys].begin();
+                lanesSetEnd = potentialLaneSetArray[curSys].end();
+                while (lanesSetIter != lanesSetEnd) {
+                    // get destination system of potential lane
+                    destSys = *lanesSetIter;
+
+                    // get which, if any, tree the destination system belongs to currently
+                    destTree = treeOfSystemArray[destSys];
+
+                    //Logger().debugStream() << "Considering lane from system " << curSys << " to system " << destSys << " of tree " << destTree;
+
+                    // check if the destination system already belongs to the current tree.
+                    if (curTree != destTree) {
+                        // destination system is either in no tree, or is in a tree other than the current tree
+
+                        // add lane between current and destination systems
+                        laneSetArray[curSys].insert(destSys);
+                        laneSetArray[destSys].insert(curSys);
+
+                        // mark destination system as part of this tree
+                        treeOfSystemArray[destSys] = curTree;
+
+                        //Logger().debugStream() << "Added lane from " << curSys << " to " << destSys << ", and added " << destSys << " to list of systems to process in tree " << curTree;
+                    }
+                    //else
+                    //    Logger().debugStream() << "Both systems were already part of the same tree, so no lane was added";
+
+                    // check what, if any, tree the destination system was before being added to the current tree
+                    if (-1 == destTree) {
+                        // destination system was not yet part of any tree.
+                        // add system to list of systems to consider for this tree in future
+                        pTreeSysList->push_back(destSys);
+
+                        //Logger().debugStream() << "System was not yet part of an tree, so was added to the list of systems to process for tree " << curTree;
+                    }
+                    else if (destTree != curTree) {
+                        // tree was already part of another tree
+                        // merge the two trees.
+
+                        //Logger().debugStream() << "Merging tree " << destTree << " into current tree " << curTree;
+
+                        pTreeToMergeSysList = &((treeSysListsMap.find(destTree))->second);
+
+                        //Logger().debugStream() << "...got pointer to systems list for tree to merge into current tree";
+                        //Logger().debugStream() << "...list to merge has " << pTreeToMergeSysList->size() << " systems.";
+
+                        // extract systems from tree to be merged into current tree
+                        while (!pTreeToMergeSysList->empty()) {
+                            // get system from list
+                            mergeSys = pTreeToMergeSysList->front();
+                            pTreeToMergeSysList->pop_front();
+                            // add to current list
+                            pTreeSysList->push_back(mergeSys);
+
+                            //Logger().debugStream() << "Adding system " << mergeSys << " to current tree " << curTree << " from old tree " << destTree;
+                        }
+
+                        // reassign all systems from destination tree to current tree (gets systems even after they're removed
+                        // from the list of systems for the dest tree)
+                        for (q = 0; q < numSys; q++) 
+                            if (treeOfSystemArray[q] == destTree)
+                                treeOfSystemArray[q] = curTree;
+
+                        treeSysListsMap.erase(destTree);
+                    }
+
+                    lanesSetIter++;
+                }
+            }
+
+            //Logger().debugStream() << "Moving to next tree...";
+
+            treeSysListsMapIter++;
+            treeSysListsMapEnd = treeSysListsMap.end();  // incase deleting or merging trees messed things up
+            if (treeSysListsMapIter == treeSysListsMapEnd)
+                treeSysListsMapIter = treeSysListsMap.begin();
+        }
+    }
+}
+
 #endif  // FREEORION_BUILD_SERVER  (although the following functions should also only be used on the server)
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
                               SpecialsFrequency specials_freq, int players, int ai_players,
@@ -3114,9 +3560,9 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
         size = total_players*MIN_SYSTEMS_PER_PLAYER;
     }
 
-    Logger().debugStream() << "Creating universe with " << size << " stars and " << players << " players.";
+    Logger().debugStream() << "Creating universe with " << size << " stars, " << players << " human players and " << ai_players << " AI players";
 
-    std::vector<int> homeworlds;
+    std::vector<int> homeworld_planet_ids;
 
     // a grid of ADJACENCY_BOXES x ADJACENCY_BOXES boxes to hold the positions of the systems as they are generated,
     // in order to ensure that they get spaced out properly
@@ -3159,9 +3605,9 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     PopulateSystems(planet_density, specials_freq);
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
-    GenerateHomeworlds(players + ai_players, homeworlds);
+    GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
-    GenerateEmpires(players + ai_players, homeworlds, player_setup_data);
+    GenerateEmpires(total_players, homeworld_planet_ids, player_setup_data);
 
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
 
@@ -3185,7 +3631,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     UpdateEmpireObjectVisibilities();
 
 #else
-        throw std::runtime_error("Non-server called Universe::CreateUniverse; only server should call this while creating the universe");
+    Logger().errorStream() << "Non-server called Universe::CreateUniverse; only server should call this while creating the universe";
 #endif
 }
 
@@ -3276,7 +3722,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
         }
     }
 #else
-    throw std::runtime_error("Non-server called Universe::PopulateSystems; only server should call this while creating the universe");
+    Logger().errorStream() << "Non-server called Universe::PopulateSystems; only server should call this while creating the universe";
 #endif
 }
 
@@ -3290,10 +3736,10 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
     int n; // loop counter
 
     std::vector<int> triVerts;  // indices of stars that form vertices of a triangle
-    
+
     // array of set to store final, included starlanes for each star
     std::vector<std::set<int> > laneSetArray;
-    
+
     // array of set to store possible starlanes for each star, as extracted form triangulation
     std::vector<std::set<int> > potentialLaneSetArray;
 
@@ -3305,10 +3751,10 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
     std::list<Delauney::DTTriangle>* triList = Delauney::DelauneyTriangulate(sys_vec);
-    if (0 == triList) return;
-
-    if (triList->empty())
-        throw std::runtime_error("Got blank list of triangles from Triangulation.");
+    if (!triList ||triList->empty()) {
+        Logger().errorStream() << "Got no list or blank list of triangles from Triangulation.";
+        return;
+    }
 
     Delauney::DTTriangle tri;
 
@@ -3338,7 +3784,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
         s2 = triVerts[1];
         s3 = triVerts[2];
 
-        // add starlanes to list of potential starlanes for each star, making sure each pair involves 
+        // add starlanes to list of potential starlanes for each star, making sure each pair involves
         // only stars that actually exist.  triangle generation uses three extra points which don't
         // represent actual systems and which need to be weeded out here.
         if ((s1 >= 0) && (s2 >= 0) && (s3 >= 0)) {
@@ -3371,510 +3817,93 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 
     //Logger().debugStream() << "Culled Agularly Too Close Lanes";
 
-    for (n = 0; n < numSys; n++)
-        laneSetArray[n].clear();
+    laneSetArray = potentialLaneSetArray;
 
-    // array of indices of systems from which to start growing spanning tree(s).  This can later be replaced with
-    // some sort of user input.  It can also be ommited entirely, so just the ConnectedWithin loop below is used.
-    std::vector<int> roots(4);
-    roots[0] = 0;  roots[1] = 1;  roots[2] = 2;  roots[3] = 3;
-    GrowSpanningTrees(roots, potentialLaneSetArray, laneSetArray);
-    //Logger().debugStream() << "Constructed initial spanning trees.";
-
-    // add starlanes of spanning tree to stars
-    for (n = 0; n < numSys; n++) {
-        laneSetIter = laneSetArray[n].begin();
-        laneSetEnd = laneSetArray[n].end();
-        while (laneSetIter != laneSetEnd) {
-            s1 = *laneSetIter;
-            // add the starlane to the stars
-            sys_vec[n]->AddStarlane(s1);
-            sys_vec[s1]->AddStarlane(n);
-            laneSetIter++;
-        } // end while
-    } // end for n
-
-
-    // loop through stars, seeing if any are too far away from stars they could be connected to by a
-    // potential starlane.  If so, add the potential starlane to the stars to directly connect them
-    for (n = 0; n < numSys; n++) {
+    // attempt removing lanes, but don't do so if it would make the systems
+    // the lane connects too far apart
+    for (n = 0; n < numSys; ++n) {
         laneSetIter = potentialLaneSetArray[n].begin();
-        laneSetEnd = potentialLaneSetArray[n].end();
 
-        while (laneSetIter != laneSetEnd) {
+        while (laneSetIter != potentialLaneSetArray[n].end()) {
             s1 = *laneSetIter;
+
+            // try removing lane
+            laneSetArray[n].erase(s1);
+            laneSetArray[s1].erase(n);
 
             if (!ConnectedWithin(n, s1, maxJumpsBetweenSystems, laneSetArray)) {
-
-                // add the starlane to the sets of starlanes for each star
+                // lane removal was a bad idea.  restore it
                 laneSetArray[n].insert(s1);
                 laneSetArray[s1].insert(n);
-                // add the starlane to the stars
-                sys_vec[n]->AddStarlane(s1);
-                sys_vec[s1]->AddStarlane(n);
             }
 
             laneSetIter++;
         } // end while
-    } // end for n
+    }
+
+     // add the starlane to the stars
+    for (n = 0; n < numSys; ++n) {
+        const std::set<int>& lanes = laneSetArray[n];
+        for (std::set<int>::const_iterator it = lanes.begin(); it != lanes.end(); ++it)
+            sys_vec[n]->AddStarlane(*it);
+    }
+
+
+    //for (n = 0; n < numSys; n++)
+    //    laneSetArray[n].clear();
+
+    //// array of indices of systems from which to start growing spanning tree(s).  This can later be replaced with
+    //// some sort of user input.  It can also be ommited entirely, so just the ConnectedWithin loop below is used.
+    //std::vector<int> roots(4);
+    //roots[0] = 0;  roots[1] = 1;  roots[2] = 2;  roots[3] = 3;
+    //GrowSpanningTrees(roots, potentialLaneSetArray, laneSetArray);
+    ////Logger().debugStream() << "Constructed initial spanning trees.";
+
+    //// add starlanes of spanning tree to stars
+    //for (n = 0; n < numSys; n++) {
+    //    laneSetIter = laneSetArray[n].begin();
+    //    laneSetEnd = laneSetArray[n].end();
+    //    while (laneSetIter != laneSetEnd) {
+    //        s1 = *laneSetIter;
+    //        // add the starlane to the stars
+    //        sys_vec[n]->AddStarlane(s1);
+    //        sys_vec[s1]->AddStarlane(n);
+    //        laneSetIter++;
+    //    } // end while
+    //} // end for n
+
+
+    //// loop through stars, seeing if any are too far away from stars they could be connected to by a
+    //// potential starlane.  If so, add the potential starlane to the stars to directly connect them
+    //for (n = 0; n < numSys; n++) {
+    //    laneSetIter = potentialLaneSetArray[n].begin();
+    //    laneSetEnd = potentialLaneSetArray[n].end();
+
+    //    while (laneSetIter != laneSetEnd) {
+    //        s1 = *laneSetIter;
+
+    //        if (!ConnectedWithin(n, s1, maxJumpsBetweenSystems, laneSetArray)) {
+
+    //            // add the starlane to the sets of starlanes for each star
+    //            laneSetArray[n].insert(s1);
+    //            laneSetArray[s1].insert(n);
+    //            // add the starlane to the stars
+    //            sys_vec[n]->AddStarlane(s1);
+    //            sys_vec[s1]->AddStarlane(n);
+    //        }
+
+    //        laneSetIter++;
+    //    } // end while
+    //} // end for n
 #else
-    throw std::runtime_error("Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe");
+        Logger().errorStream() << "Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe";
 #endif
 }
 
-void Universe::CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids)
 {
 #ifdef FREEORION_BUILD_SERVER
-    // start and end systems of a new lane being considered, and end points of lanes that already exist with that
-    // start at the start or destination of the new lane
-    int curSys, dest1, dest2;
-
-    // geometry stuff... points componenets, vector componenets dot product & magnitudes of vectors
-    double startX, startY, vectX1, vectX2, vectY1, vectY2, dotProd, mag1, mag2;
-    // 2 component vector and vect + magnitude typedefs
-
-    typedef std::pair<double, double> VectTypeQQ;
-    typedef std::pair<VectTypeQQ, double> VectAndMagTypeQQ;
-    typedef std::pair<int, VectAndMagTypeQQ> MapInsertableTypeQQ;
-
-    std::map<int, VectAndMagTypeQQ> laneVectsMap;  // componenets of vectors of lanes of current system, indexed by destination system number
-    std::map<int, VectAndMagTypeQQ>::iterator laneVectsMapIter;
-
-    VectTypeQQ tempVect;
-    VectAndMagTypeQQ tempVectAndMag;
-
-    // iterators to go through sets of lanes in array
-    std::set<int>::iterator laneSetIter1, laneSetIter2, laneSetEnd;
-
-    std::set<std::pair<int, int> > lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
-    std::set<std::pair<int, int> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
-    std::pair<int, int> lane1, lane2;
-
-    int curNumLanes;
-
-    int numSys = systems.size();
-    // make sure data is consistent
-    if (static_cast<int>(laneSetArray.size()) != numSys) {
-        //Logger().debugStream() << "CullAngularlyTooCloseLanes got different size vectors of lane sets and systems.  Doing nothing.";
-        return;
-    }
-    
-    if (numSys < 3) return;  // nothing worth doing for less than three systems
-
-    //Logger().debugStream() << "Culling Too Close Angularly Lanes";
-
-    // loop through systems
-    for (curSys = 0; curSys < numSys; curSys++) {
-        // get position of current system (for use in calculated vectors)
-        startX = systems[curSys]->X();
-        startY = systems[curSys]->Y();
-
-        // get number of starlanes current system has
-        curNumLanes = laneSetArray[curSys].size();
-
-        // can't have pairs of lanes with less than two lanes...
-        if (curNumLanes > 1) {
-
-            // remove any old lane Vector Data
-            laneVectsMap.clear();
-
-            // get unit vectors for all lanes of this system
-            laneSetIter1 = laneSetArray[curSys].begin();
-            laneSetEnd = laneSetArray[curSys].end();
-            while (laneSetIter1 != laneSetEnd) {
-                // get destination for this lane
-                dest1 = *laneSetIter1;
-                // get vector to this lane destination
-                vectX1 = systems[dest1]->X() - startX;
-                vectY1 = systems[dest1]->Y() - startY;
-                // normalize
-                mag1 = std::sqrt(vectX1 * vectX1 + vectY1 * vectY1);
-                vectX1 /= mag1;
-                vectY1 /= mag1;
-
-                // store lane in map of lane vectors
-                tempVect = VectTypeQQ(vectX1, vectY1);
-                tempVectAndMag = VectAndMagTypeQQ(tempVect, mag1);
-                laneVectsMap.insert( MapInsertableTypeQQ(dest1, tempVectAndMag) );
-
-                laneSetIter1++;
-            }
-
-            // iterate through lanes of curSys
-            laneSetIter1 = laneSetArray[curSys].begin();
-            laneSetIter1++;  // start at second, since iterators are used in pairs, and starting both at the first wouldn't be a valid pair
-            while (laneSetIter1 != laneSetEnd) {
-                // get destination of current starlane
-                dest1 = *laneSetIter1;
-
-                if (curSys < dest1) 
-                    lane1 = std::pair<int, int>(curSys, dest1);
-                else
-                    lane1 = std::pair<int, int>(dest1, curSys);
-
-                // check if this lane has already been added to the set of lanes to remove
-                if (0 == lanesToRemoveSet.count(lane1)) {
-
-                    // extract data on starlane vector...
-                    laneVectsMapIter = laneVectsMap.find(dest1);
-                    assert(laneVectsMapIter != laneVectsMap.end());
-                    tempVectAndMag = laneVectsMapIter->second;
-                    tempVect = tempVectAndMag.first;
-                    vectX1 = tempVect.first;
-                    vectY1 = tempVect.second;
-                    mag1 = tempVectAndMag.second;
-
-                    // iterate through other lanes of curSys, in order to get all possible pairs of lanes
-                    laneSetIter2 = laneSetArray[curSys].begin();
-                    while (laneSetIter2 != laneSetIter1) {
-                        dest2 = *laneSetIter2;
-
-                        if (curSys < dest2) 
-                            lane2 = std::pair<int, int>(curSys, dest2);
-                        else
-                            lane2 = std::pair<int, int>(dest2, curSys);
-
-                        // check if this lane has already been added to the set of lanes to remove
-                        if (0 == lanesToRemoveSet.count(lane2)) {
-
-                            // extract data on starlane vector...
-                            laneVectsMapIter = laneVectsMap.find(dest2);
-                            assert(laneVectsMapIter != laneVectsMap.end());
-                            tempVectAndMag = laneVectsMapIter->second;
-                            tempVect = tempVectAndMag.first;
-                            vectX2 = tempVect.first;
-                            vectY2 = tempVect.second;
-                            mag2 = tempVectAndMag.second;
-
-                            // find dot product
-                            dotProd = vectX1 * vectX2 + vectY1 * vectY2;
-
-                            // if dotProd is big enough, then lanes are too close angularly
-                            // thus one needs to be removed.
-                            if (dotProd > maxLaneUVectDotProd) {
-
-                                 // preferentially remove the longer lane
-                                if (mag1 > mag2) {
-                                    lanesToRemoveSet.insert(lane1);
-                                    break;  // don't need to check any more lanes against lane1, since lane1 has been removed
-                                }
-                                else {
-                                    lanesToRemoveSet.insert(lane2);
-                                }
-                            }
-                        }
-
-                        laneSetIter2++;
-                    }
-                }
-
-                laneSetIter1++;
-            }
-        }
-    }
-
-    // iterate through set of lanes to remove, and remove them in turn...
-    lanesToRemoveIter = lanesToRemoveSet.begin();
-    lanesToRemoveEnd = lanesToRemoveSet.end();
-    while (lanesToRemoveIter != lanesToRemoveEnd) {
-        lane1 = *lanesToRemoveIter;
-
-        laneSetArray[lane1.first].erase(lane1.second);
-        laneSetArray[lane1.second].erase(lane1.first);
-
-        // check that removing lane hasn't disconnected systems
-        if (!ConnectedWithin(lane1.first, lane1.second, numSys, laneSetArray)) {
-            // they aren't connected... reconnect them
-            laneSetArray[lane1.first].insert(lane1.second);
-            laneSetArray[lane1.second].insert(lane1.first);
-        }
-
-        lanesToRemoveIter++;
-    }
-#else
-    throw std::runtime_error("Non-server called Universe::CullAngularlyTooCloseLanes; only server should call this while creating the universe");
-#endif
-}
-
-void Universe::CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
-{
-#ifdef FREEORION_BUILD_SERVER
-    // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
-    // at the start or destination of the new lane
-    int curSys, dest;
-
-    // geometry stuff... points components, vector componenets
-    double startX, startY, vectX, vectY;
-
-    // iterators to go through sets of lanes in array
-    std::set<int>::iterator laneSetIter, laneSetEnd;
-
-    // map, indexed by lane length, of start and end stars of lanes to be removed
-    std::multimap<double, std::pair<int, int>, std::greater<double> > lanesToRemoveMap;
-    std::multimap<double, std::pair<int, int>, std::greater<double> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
-    std::pair<int, int> lane;
-    typedef std::pair<double, std::pair<int, int> > MapInsertableTypeQQ;
-
-    int numSys = systems.size();
-    // make sure data is consistent
-    if (static_cast<int>(laneSetArray.size()) != numSys) {
-        return;
-    }
-
-    if (numSys < 2) return;  // nothing worth doing for less than two systems (no lanes!)
-
-    // get squared max lane lenth, so as to eliminate the need to take square roots of lane lenths...
-    double maxLaneLength2 = maxLaneLength*maxLaneLength;
-
-    // loop through systems
-    for (curSys = 0; curSys < numSys; curSys++) {
-        // get position of current system (for use in calculating vector)
-        startX = systems[curSys]->X();
-        startY = systems[curSys]->Y();
-
-        // iterate through all lanes in system, checking lengths and marking to be removed if necessary
-        laneSetIter = laneSetArray[curSys].begin();
-        laneSetEnd = laneSetArray[curSys].end();
-        while (laneSetIter != laneSetEnd) {
-            // get destination for this lane
-            dest = *laneSetIter;
-            // convert start and end into ordered pair to represent lane
-            if (curSys < dest) 
-                lane = std::pair<int, int>(curSys, dest);
-            else
-                lane = std::pair<int, int>(dest, curSys);
-
-            // get vector to this lane destination
-            vectX = systems[dest]->X() - startX;
-            vectY = systems[dest]->Y() - startY;
-
-            // compare magnitude of vector to max allowed
-            double laneLength2 = vectX*vectX + vectY*vectY;
-            if (laneLength2 > maxLaneLength2) {
-                // lane is too long!  mark it to be removed
-                lanesToRemoveMap.insert( MapInsertableTypeQQ(laneLength2, lane) );
-            } 
-
-            laneSetIter++;
-        }
-    }
-
-    // Iterate through set of lanes to remove, and remove them in turn.  Since lanes were inserted in the map indexed by
-    // their length, iteration starting with begin starts with the longest lane first, then moves through the lanes as
-    // they get shorter, ensuring that the longest lanes are removed first.
-    lanesToRemoveIter = lanesToRemoveMap.begin();
-    lanesToRemoveEnd = lanesToRemoveMap.end();
-    while (lanesToRemoveIter != lanesToRemoveEnd) {
-        lane = lanesToRemoveIter->second;
-
-        // ensure the lane still exists
-        if (laneSetArray[lane.first].count(lane.second) > 0 &&
-            laneSetArray[lane.second].count(lane.first) > 0) {
-
-            // remove lane
-            laneSetArray[lane.first].erase(lane.second);
-            laneSetArray[lane.second].erase(lane.first);
-
-            // if removing lane has disconnected systems, reconnect them
-            if (!ConnectedWithin(lane.first, lane.second, numSys, laneSetArray)) {
-                laneSetArray[lane.first].insert(lane.second);
-                laneSetArray[lane.second].insert(lane.first);
-            }
-        }
-        lanesToRemoveIter++;
-    }
-#else
-    throw std::runtime_error("Non-server called Universe::CullTooLongLanes; only server should call this while creating the universe");
-#endif
-}
-
-void Universe::GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray)
-{
-#ifdef FREEORION_BUILD_SERVER
-    // array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
-    std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
-
-    //  map index by tree number, containing a list for each tree, each of which contains the systems in a particular tree
-    std::map<int, std::list<int> > treeSysListsMap;
-    std::map<int, std::list<int> >::iterator treeSysListsMapIter, treeSysListsMapEnd;
-    std::pair<int, std::list<int> > mapInsertable;
-    std::list<int> treeSysList, *pTreeSysList, *pTreeToMergeSysList;
-    std::list<int>::iterator sysListIter;
-    std::set<int>::iterator lanesSetIter, lanesSetEnd;
-
-    int n, q, d, curTree, destTree, curSys, destSys, mergeSys;
-
-    int numSys = potentialLaneSetArray.size();
-    int numTrees = roots.size();
-
-    // number of new connections to make from each connected node that is processed.  
-    // could be made a parameter, possibly a function of the starlane frequency
-
-    // make sure data is consistent
-    if (static_cast<int>(laneSetArray.size()) != numSys) {
-        //Logger().debugStream() << "GrowSpanningTrees got different size vectors of potential lane set(s) and systems.  Doing nothing.";
-        return;
-    }
-    if ((numTrees < 1) || (numTrees > numSys)) {
-        //Logger().debugStream() << "GrowSpanningTrees was asked to grow too many or too few trees simultaneously.  Doing nothing.";
-        return;
-    }
-    if (static_cast<int>(roots.size()) > numSys) {
-        //Logger().debugStream() << "GrowSpanningTrees was asked to grow more separate trees than there are systems to grow from.  Doing nothing.";
-        return;
-    }
-
-    laneSetArray.resize(numSys);
-
-    // set up data structures...
-    treeOfSystemArray.resize(numSys);
-    for (n = 0; n < numSys; n++) 
-        treeOfSystemArray[n] = -1;  // sentinel value for not connected to any tree
-
-    treeSysListsMap.clear();
-    for (n = 0; n < numTrees; n++) {
-        // check that next root is within valid range...
-        q = roots[n];
-        if ((q >= numSys) || (q < 0)) {
-            //Logger().debugStream() << "GrowSpanningTrees was asked to grow to grow a tree from a system that doesn't exist.";
-            return;
-        }
-
-        // make new tree to put into map
-        treeSysList.clear();        
-        treeSysList.push_front(q);
-
-        // put new list into into map (for tree n), indexed by tree number
-        mapInsertable = std::pair<int, std::list<int> >(n, treeSysList);
-        treeSysListsMap.insert(mapInsertable);
-
-        // record the tree to which root system of tree n, roots[n], belongs (tree n)
-        treeOfSystemArray[q] = n;
-    }
-
-    //Logger().debugStream() << "Growing Trees Algorithm Starting...";
-
-    // loop through map (indexed by tree number) of lists of systems, until map (and all lists) are empty...
-    treeSysListsMapIter = treeSysListsMap.begin();
-    treeSysListsMapEnd = treeSysListsMap.end();
-    while (treeSysListsMapIter != treeSysListsMapEnd) {
-        // extract number and list of tree
-        curTree = treeSysListsMapIter->first;
-        pTreeSysList = &(treeSysListsMapIter->second);
-
-        if (pTreeSysList->empty()) {
-            // no systems left for tree to grow.  Remove it from map of growing trees.
-            treeSysListsMap.erase(curTree);
-            //Logger().debugStream() << "Tree " << curTree << " was empty, so was removed from map of trees.";
-
-            // check if set is empty...
-            if (treeSysListsMap.empty()) break;  // and stop loop if it is
-            // (iterator invalidated by erasing, so set to first tree remaining in map)
-            treeSysListsMapIter = treeSysListsMap.begin();
-        }
-        else {
-            //Logger().debugStream() << "Tree " << curTree << " contains " << pTreeSysList->size() << " systems.";
-            // tree has systems left to grow.
-
-            // extract and remove a random system from the list
-
-            // iterate to the position of the random system
-            sysListIter = pTreeSysList->begin();
-            for (d = RandSmallInt(0, pTreeSysList->size() - 1); d > 0; --d) // RandSmallInt(int min, int max);
-                sysListIter++;
-
-            curSys = *sysListIter; // extract
-            pTreeSysList->erase(sysListIter); // erase
-
-            //Logger().debugStream() << "Processing system " << curSys << " from tree " << curTree;
-
-            // iterate through list of potential lanes for current system
-            lanesSetIter = potentialLaneSetArray[curSys].begin();
-            lanesSetEnd = potentialLaneSetArray[curSys].end();
-            while (lanesSetIter != lanesSetEnd) {
-                // get destination system of potential lane
-                destSys = *lanesSetIter;
-
-                // get which, if any, tree the destination system belongs to currently
-                destTree = treeOfSystemArray[destSys];
-
-                //Logger().debugStream() << "Considering lane from system " << curSys << " to system " << destSys << " of tree " << destTree;
-
-                // check if the destination system already belongs to the current tree.
-                if (curTree != destTree) {
-                    // destination system is either in no tree, or is in a tree other than the current tree
-
-                    // add lane between current and destination systems
-                    laneSetArray[curSys].insert(destSys);
-                    laneSetArray[destSys].insert(curSys);
-
-                    // mark destination system as part of this tree
-                    treeOfSystemArray[destSys] = curTree;
-
-                    //Logger().debugStream() << "Added lane from " << curSys << " to " << destSys << ", and added " << destSys << " to list of systems to process in tree " << curTree;
-                }
-                //else
-                //    Logger().debugStream() << "Both systems were already part of the same tree, so no lane was added";
-
-                // check what, if any, tree the destination system was before being added to the current tree
-                if (-1 == destTree) {
-                    // destination system was not yet part of any tree.
-                    // add system to list of systems to consider for this tree in future
-                    pTreeSysList->push_back(destSys);
-
-                    //Logger().debugStream() << "System was not yet part of an tree, so was added to the list of systems to process for tree " << curTree;
-                }
-                else if (destTree != curTree) {
-                    // tree was already part of another tree
-                    // merge the two trees.
-
-                    //Logger().debugStream() << "Merging tree " << destTree << " into current tree " << curTree;
-
-                    pTreeToMergeSysList = &((treeSysListsMap.find(destTree))->second);
-
-                    //Logger().debugStream() << "...got pointer to systems list for tree to merge into current tree";
-                    //Logger().debugStream() << "...list to merge has " << pTreeToMergeSysList->size() << " systems.";
-
-                    // extract systems from tree to be merged into current tree
-                    while (!pTreeToMergeSysList->empty()) {
-                        // get system from list
-                        mergeSys = pTreeToMergeSysList->front();
-                        pTreeToMergeSysList->pop_front();
-                        // add to current list
-                        pTreeSysList->push_back(mergeSys);
-
-                        //Logger().debugStream() << "Adding system " << mergeSys << " to current tree " << curTree << " from old tree " << destTree;
-                    }
-
-                    // reassign all systems from destination tree to current tree (gets systems even after they're removed
-                    // from the list of systems for the dest tree)
-                    for (q = 0; q < numSys; q++) 
-                        if (treeOfSystemArray[q] == destTree)
-                            treeOfSystemArray[q] = curTree;
-
-                    treeSysListsMap.erase(destTree);
-                }
-
-                lanesSetIter++;
-            }
-        }
-
-        //Logger().debugStream() << "Moving to next tree...";
-
-        treeSysListsMapIter++;
-        treeSysListsMapEnd = treeSysListsMap.end();  // incase deleting or merging trees messed things up
-        if (treeSysListsMapIter == treeSysListsMapEnd)
-            treeSysListsMapIter = treeSysListsMap.begin();
-    }
-#else
-    throw std::runtime_error("Non-server called Universe::GrowSpanningTrees; only server should call this while creating the universe");
-#endif
-}
-
-void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
-{
-#ifdef FREEORION_BUILD_SERVER
-    homeworlds.clear();
+    homeworld_planet_ids.clear();
 
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
     //Logger().debugStream() << "Universe::GenerateHomeworlds sys_vec:";
@@ -3900,9 +3929,9 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
             system = sys_vec[system_index];
             //Logger().debugStream() << "... system ptr: " << system << " name: " << (system ? system->Name() : "no system!?") << " id: " << (system ? boost::lexical_cast<std::string>(system->ID()) : "none?!");
 
-            for (unsigned int j = 0; j < homeworlds.size(); ++j) {
-                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworlds[j];
-                Planet* homeworld = GetObject<Planet>(homeworlds[j]);
+            for (unsigned int j = 0; j < homeworld_planet_ids.size(); ++j) {
+                //Logger().debugStream() << "Universe::GenerateHomeworlds checking previously-existing homeworld with id " << homeworld_planet_ids[j];
+                Planet* homeworld = GetObject<Planet>(homeworld_planet_ids[j]);
                 if (!homeworld) {
                     Logger().errorStream() << "couldn't find homeworld!";
                     continue;
@@ -3951,10 +3980,10 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworlds)
         planet->Rename(planet_name);
         system->Insert(planet, home_orbit);
 
-        homeworlds.push_back(planet_id);
+        homeworld_planet_ids.push_back(planet_id);
     }
 #else
-    throw std::runtime_error("Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe");
+    Logger().errorStream() << "Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe";
 #endif
 }
 
@@ -3978,11 +4007,11 @@ void Universe::NamePlanets()
         }
     }
 #else
-    throw std::runtime_error("Non-server called Universe::NamePlanets; only server should call this while creating the universe");
+    Logger().errorStream() << "Non-server called Universe::NamePlanets; only server should call this while creating the universe";
 #endif
 }
 
-void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const std::map<int, PlayerSetupData>& player_setup_data)
+void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_BUILD_SERVER
     Logger().debugStream() << "Generating " << players << " empires";
@@ -4044,7 +4073,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
         Logger().debugStream() << "creating empire named: " << empire_name;
 
-        int home_planet_id = homeworlds[i];
+        int home_planet_id = homeworld_planet_ids[i];
 
         // create new Empire object through empire manager
         Empire* empire = Empires().CreateEmpire((*it)->ID(), empire_name, (*it)->PlayerName(), color, home_planet_id);
@@ -4052,7 +4081,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
 
 
         // set ownership of home planet
-        Planet* home_planet = GetObject<Planet>(homeworlds[i]);
+        Planet* home_planet = GetObject<Planet>(homeworld_planet_ids[i]);
         System* home_system = GetObject<System>(home_planet->SystemID());
         if (!home_planet || !home_system) {
             Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
@@ -4134,7 +4163,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworlds, const 
         }
     }
 #else
-    throw std::runtime_error("Non-server called Universe::GenerateEmpires; only server should call this while creating the universe");
+    Logger().errorStream() << "Non-server called Universe::GenerateEmpires; only server should call this while creating the universe";
 #endif
 }
 
@@ -4146,18 +4175,8 @@ UniverseObject* GetObject(int object_id)
     return GetUniverse().Objects().Object(object_id);
 }
 
-//const UniverseObject* GetConstObject(int object_id)
-//{
-//    return GetUniverse().Objects().Object(object_id);
-//}
-//
 UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
 {
     return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
 }
 
-//const UniverseObject* GetEmpireKnownConstObject(int object_id, int empire_id)
-//{
-//    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
-//}
-//
