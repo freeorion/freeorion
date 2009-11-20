@@ -202,7 +202,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
-    if (fuel < 1.0 && this->SystemID() && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
+    if (fuel < 1.0 && this->SystemID() != UniverseObject::INVALID_OBJECT_ID && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
         MovePathNode node(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
                           this->SystemID(),
                           UniverseObject::INVALID_OBJECT_ID,
