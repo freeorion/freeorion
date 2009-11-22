@@ -98,11 +98,14 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
         this->m_next_system =   copied_fleet->m_next_system;
         this->m_prev_system =   copied_fleet->m_prev_system;
 
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            this->m_speed =                 copied_fleet->m_speed;
+        }
+
         if (vis == VIS_FULL_VISIBILITY) {
             this->m_moving_to =             copied_fleet->m_moving_to;
             this->m_travel_route =          copied_fleet->m_travel_route;
             this->m_travel_distance =       copied_fleet->m_travel_distance;
-            this->m_speed =                 copied_fleet->m_speed;
 
         } else {
             int             moving_to =         copied_fleet->m_next_system;
@@ -960,6 +963,7 @@ void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 void Fleet::CalculateRoute() const
 {
     const Universe& universe = GetUniverse();
+    const ObjectMap& objects = GetMainObjectMap();
     int owner = ALL_EMPIRES;
     if (Owners().size() == 1)
         owner = *Owners().begin();
@@ -972,94 +976,96 @@ void Fleet::CalculateRoute() const
         if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
             // if we haven't actually left yet, we have to move from whichever system we are at now
 
-            if (!GetObject<System>(m_moving_to))
+            if (!objects.Object<System>(m_moving_to))
                 return; // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
 
             std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
             m_travel_route = path.first;
             m_travel_distance = path.second;
 
-        } else {
-            int dest_system_id = m_moving_to;
+            return;
+        }
 
-            if (universe.GetObjectVisibilityByEmpire(dest_system_id, owner) <= VIS_NO_VISIBILITY) {
-                // destination system isn't visible to this fleet's owner, so the fleet can't move to it
 
-                // check if system to which fleet is moving is visible to the fleet's owner.  this should always be true, but just in case...
-                if (universe.GetObjectVisibilityByEmpire(m_next_system, owner) <= VIS_NO_VISIBILITY)
-                    return; // next system also isn't visible; leave route empty.
+        int dest_system_id = m_moving_to;
 
-                // safety check: ensure supposedly visible object actually exists in known universe.
-                if (!GetObject<System>(m_next_system)) {
-                    Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
-                    return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
-                }
+        //if (universe.GetObjectVisibilityByEmpire(dest_system_id, owner) <= VIS_NO_VISIBILITY) {
+        //    // destination system isn't visible to this fleet's owner, so the fleet can't move to it
 
-                // next system is visible, so move to that instead of ordered destination (m_moving_to)
-                dest_system_id = m_next_system;
+        //    // check if system to which fleet is moving is visible to the fleet's owner.  this should always be true, but just in case...
+        //    if (universe.GetObjectVisibilityByEmpire(m_next_system, owner) <= VIS_NO_VISIBILITY)
+        //        return; // next system also isn't visible; leave route empty.
+
+        //    // safety check: ensure supposedly visible object actually exists in known universe.
+        //    if (!GetObject<System>(m_next_system)) {
+        //        Logger().errorStream() << "Fleet::CalculateRoute found system with id " << m_next_system << " should be visible to this fleet's owner, but the system doesn't exist in the known universe!";
+        //        return; // abort if object doesn't exist in known universe... can't path to it if it's not there, even if it's considered visible for some reason...
+        //    }
+
+        //    // next system is visible, so move to that instead of ordered destination (m_moving_to)
+        //    dest_system_id = m_next_system;
+        //}
+
+        // if we're between systems, the shortest route may be through either one
+        if (this->CanChangeDirectionEnRoute()) {
+
+            std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, dest_system_id, owner);
+            const std::list<int>& sys_list1 = path1.first;
+            if (sys_list1.empty()) {
+                Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                return;
             }
+            const UniverseObject* obj = objects.Object(sys_list1.front());
+            if (!obj) {
+                Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
+                return;
+            }
+            double dist_x = obj->X() - this->X();
+            double dist_y = obj->Y() - this->Y();
+            double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-            // if we're between systems, the shortest route may be through either one
-            if (this->CanChangeDirectionEnRoute()) {
+            std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, dest_system_id, owner);
+            const std::list<int>& sys_list2 = path2.first;
+            if (sys_list2.empty()) {
+                Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                return;
+            }
+            obj = objects.Object(sys_list2.front());
+            if (!obj) {
+                Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
+                return;
+            }
+            dist_x = obj->X() - this->X();
+            dist_y = obj->Y() - this->Y();
+            double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-                std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, dest_system_id, owner);
-                const std::list<int>& sys_list1 = path1.first;
-                if (sys_list1.empty()) {
-                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
-                    return;
-                }
-                const UniverseObject* obj = GetObject(sys_list1.front());
-                if (!obj) {
-                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
-                    return;
-                }
-                double dist_x = obj->X() - this->X();
-                double dist_y = obj->Y() - this->Y();
-                double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
-
-                std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, dest_system_id, owner);
-                const std::list<int>& sys_list2 = path2.first;
-                if (sys_list2.empty()) {
-                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
-                    return;
-                }
-                obj = GetObject(sys_list2.front());
-                if (!obj) {
-                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << path2.first.front();
-                    return;
-                }
-                dist_x = obj->X() - this->X();
-                dist_y = obj->Y() - this->Y();
-                double dist2 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
-
-                // pick whichever path is quicker
-                if (dist1 + path1.second < dist2 + path2.second) {
-                    m_travel_route = path1.first;
-                    m_travel_distance = dist1 + path1.second;
-                } else {
-                    m_travel_route = path2.first;
-                    m_travel_distance = dist2 + path2.second;
-                }
-
+            // pick whichever path is quicker
+            if (dist1 + path1.second < dist2 + path2.second) {
+                m_travel_route = path1.first;
+                m_travel_distance = dist1 + path1.second;
             } else {
-
-                std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, dest_system_id, owner);
-                const std::list<int>& sys_list = route.first;
-                if (sys_list.empty()) {
-                    Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
-                    return;
-                }
-                const UniverseObject* obj = GetObject(sys_list.front());
-                if (!obj) {
-                    Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
-                    return;
-                }
-                double dist_x = obj->X() - this->X();
-                double dist_y = obj->Y() - this->Y();
-                double dist = std::sqrt(dist_x*dist_x + dist_y*dist_y);
-                m_travel_route = route.first;
-                m_travel_distance = dist + route.second;
+                m_travel_route = path2.first;
+                m_travel_distance = dist2 + path2.second;
             }
+
+        } else {
+
+            std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, dest_system_id, owner);
+            const std::list<int>& sys_list = route.first;
+            if (sys_list.empty()) {
+                Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
+                return;
+            }
+            const UniverseObject* obj = objects.Object(sys_list.front());
+            if (!obj) {
+                Logger().errorStream() << "Fleet::CalculateRoute couldn't get path start object with id " << route.first.front();
+                return;
+            }
+            double dist_x = obj->X() - this->X();
+            double dist_y = obj->Y() - this->Y();
+            double dist = std::sqrt(dist_x*dist_x + dist_y*dist_y);
+            m_travel_route = route.first;
+            m_travel_distance = dist + route.second;
         }
     }
 }

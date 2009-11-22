@@ -1955,22 +1955,38 @@ void Universe::InitializeSystemGraph(int for_empire_id)
 
 void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
 {
+    if (!Empires().Lookup(for_empire_id))
+        Logger().errorStream() << "Universe::RebuildEmpireViewSystemGraphs couldn't find empire with id " << for_empire_id;
+
+    m_graph_impl->m_empire_system_graph_views.clear();
+
+    // if building system graph views for all empires, then each empire's graph
+    // should accurately filter for that empire's visibility.  if building
+    // graphs for one empire, that empire won't know what systems other empires
+    // have visibility of, so instead, have all empires' filtered graphs be
+    // equal to the empire for which filtering is being done.  this way, on the
+    // clients, enemy fleets can have move paths even though the client doesn't
+    // know what systems those empires know about (so can't make an accurate
+    // filtered graph for other empires)
+
     if (for_empire_id == ALL_EMPIRES) {
-        m_graph_impl->m_empire_system_graph_views.clear();
+        // all empires get their own, accurately filtered graph
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             int empire_id = it->first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, empire_id);
             boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
             m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
+
     } else {
-        if (!Empires().Lookup(for_empire_id)) {
-            Logger().errorStream() << "Universe::RebuildEmpireViewSystemGraphs couldn't find empire with id " << for_empire_id;
-            return;
-        }
+        // all empires share a single filtered graph, filtered by the for_empire_id
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, for_empire_id);
         boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
-        m_graph_impl->m_empire_system_graph_views[for_empire_id] = filtered_graph_ptr;
+
+        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
+            int empire_id = it->first;
+            m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
+        }
     }
 }
 
