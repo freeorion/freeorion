@@ -1,3 +1,7 @@
+#ifdef FREEORION_WIN32
+#include <GL/glew.h>
+#endif
+
 #include "SidePanel.h"
 
 #include "CUIWnd.h"
@@ -7,12 +11,14 @@
 #include "FleetWnd.h"
 #include "InfoPanels.h"
 #include "MapWnd.h"
+#include "ShaderProgram.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Building.h"
 #include "../Empire/Empire.h"
+#include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/XMLDoc.h"
@@ -39,7 +45,8 @@ class BuildingsPanel;
 class SpecialsPanel;
 
 namespace {
-    const int   EDGE_PAD(3);
+    const int       EDGE_PAD(3);
+    const double    TWO_PI(2.0*3.1415926536);
 
     void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
     void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
@@ -521,6 +528,7 @@ public:
         double axial_tilt = std::max(-30.0, std::min(static_cast<double>(m_planet.AxialTilt()), 60.0));
         RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_initial_rotation,
                      1.0 / m_planet.RotationalPeriod(), axial_tilt, m_planet_data.shininess, m_star_type);
+
         if (m_atmosphere_texture) {
             int texture_w = Value(m_atmosphere_texture->DefaultWidth());
             int texture_h = Value(m_atmosphere_texture->DefaultHeight());
@@ -531,6 +539,21 @@ public:
                                                    static_cast<GG::Y>(ul.y - m_atmosphere_planet_rect.ul.y * y_scale)),
                                             GG::Pt(static_cast<GG::X>(lr.x + (texture_w - m_atmosphere_planet_rect.lr.x) * x_scale),
                                                    static_cast<GG::Y>(lr.y + (texture_h - m_atmosphere_planet_rect.lr.y) * y_scale)));
+        }
+
+        // render fog of war over planet if it's not visible to this client's player
+        if (GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
+            GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        {
+            if (!s_scanline_shader)
+                s_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
+                    ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
+
+            float fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
+            s_scanline_shader->Use();
+            s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
+            CircleArc(ul, lr, 0.0, TWO_PI, true);
+            glUseProgram(0);
         }
     }
 
@@ -549,7 +572,11 @@ private:
     GG::Rect                        m_atmosphere_planet_rect;
     double                          m_initial_rotation;
     StarType                        m_star_type;
+
+    static boost::shared_ptr<ShaderProgram> s_scanline_shader;
 };
+boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
+
 
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanel
@@ -739,7 +766,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
             }
         }
     }
-
 
 
     // create planet name text
