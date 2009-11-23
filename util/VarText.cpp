@@ -19,6 +19,8 @@ namespace {
         SubstituteAndAppend(const XMLElement& variables, std::string& str) : m_variables(variables), m_str(str) {}
         void operator()(const char* first, const char* last) const
         {
+            const ObjectMap& objects = GetMainObjectMap();
+
             std::string token(first, last);
 
             // special case: "%%" is interpreted to be a '%' character
@@ -40,10 +42,7 @@ namespace {
             // universe object token types
             if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG || token == VarText::FLEET_ID_TAG) {
                 int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-                const UniverseObject* obj = GetObject(object_id);
-
-                //if (!obj)
-                //    obj = GetUniverse().DestroyedObjects().Object(object_id);
+                const UniverseObject* obj = objects.Object(object_id);
 
                 if (!obj) {
                     m_str += UserString("ERROR");
