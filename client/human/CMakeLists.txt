@@ -93,7 +93,7 @@ find_package(Graphviz)
 if (GRAPHVIZ_FOUND)
     include_directories(${GRAPHVIZ_INCLUDE_DIR})
 else ()
-    message(FATAL_ERROR "Bullet library not found.")
+    message(FATAL_ERROR "Graphviz library not found.")
 endif ()
 
 # TODO: Are these necessary to link against as well?
