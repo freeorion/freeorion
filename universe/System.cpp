@@ -175,12 +175,12 @@ std::vector<int> System::FindObjectIDs() const
 {
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
-    // add objects contained in this system, and objects contained in those objects
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        const UniverseObject* object = objects.Object(it->second);
-        retval.push_back(it->second);
-        std::vector<int> contained_objects = object->FindObjectIDs();
-        std::copy(contained_objects.begin(), contained_objects.end(), std::back_inserter(retval));
+        if (const UniverseObject* obj = objects.Object(it->second)) {
+            retval.push_back(it->second);
+        } else {
+            Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
+        }
     }
     return retval;
 }
@@ -190,8 +190,12 @@ std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) con
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (objects.Object(it->second)->Accept(visitor))
-            retval.push_back(it->second);
+        if (const UniverseObject* obj = objects.Object(it->second)) {
+            if (obj->Accept(visitor))
+                retval.push_back(it->second);
+        } else {
+            Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
+        }
     }
     return retval;
 }
@@ -202,8 +206,12 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (objects.Object(it->second)->Accept(visitor))
-            retval.push_back(it->second);
+        if (const UniverseObject* obj = objects.Object(it->second)) {
+            if (obj->Accept(visitor))
+                retval.push_back(it->second);
+        } else {
+            Logger().errorStream() << "System::FindObjectIDsInOrbit couldn't get Object with ID " << it->second;
+        }
     }
     return retval;
 }
@@ -220,10 +228,11 @@ System::const_orbit_iterator System::end() const
 
 bool System::Contains(int object_id) const
 {
-    if (const UniverseObject* object = GetMainObjectMap().Object(object_id))
-        return (ID() == object->SystemID());
-    else
-        return false;
+    const ObjectMap& objects = GetMainObjectMap();
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        if (it->second == object_id)
+            return true;
+    return false;
 }
 
 std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::orbit_range(int o) const
