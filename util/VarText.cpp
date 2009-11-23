@@ -40,7 +40,7 @@ namespace {
             // universe object token types
             if (token == VarText::PLANET_ID_TAG || token == VarText::SYSTEM_ID_TAG || token == VarText::SHIP_ID_TAG || token == VarText::FLEET_ID_TAG) {
                 int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
-                const UniverseObject* obj = GetUniverse().Objects().Object(object_id);
+                const UniverseObject* obj = GetObject(object_id);
 
                 //if (!obj)
                 //    obj = GetUniverse().DestroyedObjects().Object(object_id);

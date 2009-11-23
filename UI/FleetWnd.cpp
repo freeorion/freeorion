@@ -132,7 +132,7 @@ namespace {
 
     std::string FleetNameText(int fleet_id) {
         std::string retval = UserString("ERROR");
-        const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+        const Fleet* fleet = GetObject<Fleet>(fleet_id);
         if (!fleet)
             return retval;
 
@@ -155,7 +155,7 @@ namespace {
 
         // get system where new fleet is to be created.
         int first_ship_id = ship_ids.front();
-        const Ship* first_ship = GetUniverse().Objects().Object<Ship>(first_ship_id);
+        const Ship* first_ship = GetObject<Ship>(first_ship_id);
         if (!first_ship) {
             Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
             return;
@@ -533,7 +533,7 @@ namespace {
             m_stat_icons(),
             m_selected(false)
         {
-            const Ship* ship = GetUniverse().Objects().Object<Ship>(m_ship_id);
+            const Ship* ship = GetObject<Ship>(m_ship_id);
 
             EnableChildClipping();
 
@@ -652,7 +652,7 @@ namespace {
             delete m_scrap_indicator;
             m_scrap_indicator = 0;
 
-            const Ship* ship = GetUniverse().Objects().Object<Ship>(m_ship_id);
+            const Ship* ship = GetObject<Ship>(m_ship_id);
             if (!ship)
                 return;
 
@@ -681,7 +681,7 @@ namespace {
         void            Refresh() {
             SetShipIcon();
 
-            const Ship* ship = GetUniverse().Objects().Object<Ship>(m_ship_id);
+            const Ship* ship = GetObject<Ship>(m_ship_id);
             if (!ship) {
                 // blank text and delete icons
                 m_ship_name_text->SetText("");
@@ -741,7 +741,7 @@ namespace {
         }
 
         double StatValue(const std::string& stat_name) const {
-            if (const Ship* ship = GetUniverse().Objects().Object<Ship>(m_ship_id)) {
+            if (const Ship* ship = GetObject<Ship>(m_ship_id)) {
                 if (stat_name == SPEED_STAT_STRING) {
                     return ship->Speed();
                 } else {
@@ -812,7 +812,7 @@ namespace {
         {
             SetName("ShipRow");
             EnableChildClipping();
-            if (GetUniverse().Objects().Object<Ship>(m_ship_id))
+            if (GetObject<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
             push_back(new ShipDataPanel(w, h, m_ship_id));
         }
@@ -826,7 +826,7 @@ namespace {
         }
 
         int             ShipID() const {return m_ship_id;}
-        Ship*           GetShip() const {return GetUniverse().Objects().Object<Ship>(m_ship_id);}
+        Ship*           GetShip() const {return GetObject<Ship>(m_ship_id);}
 
     private:
         int m_ship_id;
@@ -884,7 +884,7 @@ private:
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
                                int empire, int system_id, double x, double y) :
-    Control(GG::X0, GG::Y0, w, h, GetUniverse().Objects().Object<Fleet>(fleet_id) ? GG::Flags<GG::WndFlag>() : GG::INTERACTIVE),
+    Control(GG::X0, GG::Y0, w, h, GetObject<Fleet>(fleet_id) ? GG::Flags<GG::WndFlag>() : GG::INTERACTIVE),
     m_fleet_id(fleet_id),
     m_empire(empire),
     m_system_id(system_id),
@@ -896,7 +896,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
     m_stat_icons(),
     m_selected(false)
 {
-    const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(m_fleet_id);
+    const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
 
     EnableChildClipping();
 
@@ -1064,7 +1064,7 @@ void FleetDataPanel::Refresh()
     DeleteChild(m_fleet_icon);
     m_fleet_icon = 0;
 
-    if (const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(m_fleet_id)) {
+    if (const Fleet* fleet = GetObject<Fleet>(m_fleet_id)) {
         // set fleet name and destination text
         m_fleet_name_text->SetText(FleetNameText(m_fleet_id));
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
@@ -1099,7 +1099,7 @@ void FleetDataPanel::Refresh()
 
 double FleetDataPanel::StatValue(const std::string& stat_name) const
 {
-    if (const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(m_fleet_id)) {
+    if (const Fleet* fleet = GetObject<Fleet>(m_fleet_id)) {
         if (stat_name == SPEED_STAT_STRING)
             return fleet->Speed();
         else if (stat_name == MeterStatString(METER_FUEL))
@@ -1152,7 +1152,7 @@ namespace {
     class FleetRow : public GG::ListBox::Row {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
-            GG::ListBox::Row(w, h, GetUniverse().Objects().Object<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
+            GG::ListBox::Row(w, h, GetObject<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
             m_fleet_id(fleet_id)
         {
             SetName("FleetRow");
@@ -1169,7 +1169,7 @@ namespace {
         }
 
         int             FleetID() const {return m_fleet_id;}
-        Fleet*          GetFleet() const {return GetUniverse().Objects().Object<Fleet>(m_fleet_id);}
+        Fleet*          GetFleet() const {return GetObject<Fleet>(m_fleet_id);}
     private:
         int m_fleet_id;
     };
@@ -1540,7 +1540,7 @@ public:
         m_fleet_id = fleet_id;
         Clear();
 
-        const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(m_fleet_id);
+        const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
         if (!fleet)
             return;
 
@@ -1623,7 +1623,7 @@ public:
         return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
     }
 
-    Fleet*          GetFleet() const {return GetUniverse().Objects().Object<Fleet>(m_fleet_id);}
+    Fleet*          GetFleet() const {return GetObject<Fleet>(m_fleet_id);}
 
 private:
     int         m_fleet_id;
@@ -1711,7 +1711,7 @@ void FleetDetailPanel::SetFleet(int fleet_id)
 
     m_ships_lb->SetFleet(fleet_id);
 
-    if (const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id)) {
+    if (const Fleet* fleet = GetObject<Fleet>(fleet_id)) {
         if (fleet && !fleet->Empty()) {
             // update desintation text and change signal connection
             if (old_fleet_id != fleet_id)
@@ -1724,7 +1724,7 @@ void FleetDetailPanel::SetFleet(int fleet_id)
 
 Fleet* FleetDetailPanel::GetFleet() const
 {
-    return GetUniverse().Objects().Object<Fleet>(m_fleet_id);
+    return GetObject<Fleet>(m_fleet_id);
 }
 
 int FleetDetailPanel::FleetID() const
@@ -1970,25 +1970,19 @@ FleetWnd::FleetWnd(int system_id, int empire_id, bool read_only,
     m_new_fleet_drop_target(0),
     m_fleet_detail_panel(0)
 {
-    // get fleets for specified system and empire
-    // need to know what fleets to put in the Wnd, given the specified system and empire.
+    //// get fleets for specified system and empire
+    //// need to know what fleets to put in the Wnd, given the specified system and empire.
+    //const ObjectMap& visible_objects = GetUniverse().Objects();
 
-    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
-        // get all fleets in system.
-        std::vector<int> all_system_fleets = system->FindObjectIDs<Fleet>();
-
-        // transfer appropriately owned fleets
-        for (std::vector<int>::const_iterator it = all_system_fleets.begin(); it != all_system_fleets.end(); ++it) {\
-            int fleet_id = *it;
-            const Fleet* wnd_fleet = GetObject<Fleet>(fleet_id);
-            if (!wnd_fleet) {
-                Logger().errorStream() << "FleetWnd::FleetWnd couldn't get fleet with id " << fleet_id;
-                continue;
-            }
-            if (wnd_fleet->OwnedBy(m_empire_id))
-                m_fleet_ids.insert(fleet_id);
-        }
-    }
+    //if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    //    // get all fleets in system.
+    //    std::vector<const Fleet*> all_fleets = visible_objects.FindObjects<Fleet>();
+    //    for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
+    //        const Fleet* fleet = *it;
+    //        if (fleet->SystemID() == m_system_id && fleet->OwnedBy(m_empire_id))
+    //            m_fleet_ids.insert(fleet->ID());
+    //    }
+    //}
 
     Init(selected_fleet_id);
 }
@@ -2044,7 +2038,7 @@ void FleetWnd::Init(int selected_fleet_id)
         } else {
             // get universe position of fleet and use to create drop target for creating new fleets
             int fleet_id = *(m_fleet_ids.begin());
-            const Fleet* first_fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+            const Fleet* first_fleet = GetObject<Fleet>(fleet_id);
             assert(first_fleet);
             m_new_fleet_drop_target = new FleetDataPanel(GG::X1, ListRowHeight(), 0,
                                                          m_empire_id, m_system_id,
@@ -2065,7 +2059,7 @@ void FleetWnd::Init(int selected_fleet_id)
     // random other signals... deletion and state changes
     GG::Connect(GetUniverse().UniverseObjectDeleteSignal,               &FleetWnd::UniverseObjectDeleted,   this);
 
-    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
+    if (const System* system = GetObject<System>(m_system_id)) {
         GG::Connect(system->StateChangedSignal,                         &FleetWnd::SystemChangedSlot,       this);
         GG::Connect(system->FleetRemovedSignal,                         &FleetWnd::SystemFleetRemovedSlot,  this);
         GG::Connect(system->FleetInsertedSignal,                        &FleetWnd::SystemFleetInsertedSlot, this);
@@ -2104,27 +2098,23 @@ void FleetWnd::Init(int selected_fleet_id)
 void FleetWnd::Refresh()
 {
     // TODO: save selected fleet(s) and reselect after repopulating, if still present?
+    const ObjectMap& objects = GetUniverse().Objects();
 
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
 
-    const ObjectMap& objects = GetUniverse().Objects();
-
     // repopulate m_fleet_ids according to FleetWnd settings
-    if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
+    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
         // get fleets to show from system, based on required ownership
         m_fleet_ids.clear();
-        std::vector<int> system_fleets = system->FindObjectIDs<Fleet>();
-        for (std::vector<int>::const_iterator it = system_fleets.begin(); it != system_fleets.end(); ++it) {
-            int fleet_id = *it;
-            const Fleet* fleet = GetObject<Fleet>(fleet_id);
-            if (!fleet) {
-                Logger().errorStream() << "FleetWnd::Refresh couldn't get fleet with id " << fleet_id;
+        std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
+        for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
+            const Fleet* fleet = *it;
+            if (fleet->SystemID() != m_system_id)
                 continue;
-            }
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
-                m_fleet_ids.insert(fleet_id);
-                AddFleet(fleet_id);
+                m_fleet_ids.insert(fleet->ID());
+                AddFleet(fleet->ID());
             }
         }
 
@@ -2199,7 +2189,7 @@ void FleetWnd::DoLayout()
 
 void FleetWnd::AddFleet(int fleet_id)
 {
-    const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+    const Fleet* fleet = GetObject<Fleet>(fleet_id);
     if (!fleet /*|| fleet->Empty()*/)
         return;
 
@@ -2218,7 +2208,7 @@ void FleetWnd::RemoveFleet(int fleet_id)
 
 void FleetWnd::SelectFleet(int fleet_id)
 {
-    if (fleet_id == UniverseObject::INVALID_OBJECT_ID || !(GetUniverse().Objects().Object<Fleet>(fleet_id))) {
+    if (fleet_id == UniverseObject::INVALID_OBJECT_ID || !(GetObject<Fleet>(fleet_id))) {
         m_fleets_lb->DeselectAll();
         FleetSelectionChanged(m_fleets_lb->Selections());
         return;
@@ -2265,7 +2255,7 @@ int FleetWnd::EmpireID() const
 bool FleetWnd::ContainsFleet(int fleet_id) const
 {
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
-        Fleet* fleet = GetUniverse().Objects().Object<Fleet>(FleetInRow(it));
+        Fleet* fleet = GetObject<Fleet>(FleetInRow(it));
         if (fleet && fleet->ID() == fleet_id)
             return true;
     }
@@ -2321,11 +2311,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    Fleet* fleet = GetUniverse().Objects().Object<Fleet>(FleetInRow(it));
-    if (!fleet ||
-        fleet->Owners().size() != 1 ||
-        empire_id != *(fleet->Owners().begin()))
-    {
+    Fleet* fleet = GetObject<Fleet>(FleetInRow(it));
+    if (!fleet || fleet->Owners().size() != 1 || empire_id != *(fleet->Owners().begin())) {
         return;
     }
 
@@ -2427,7 +2414,7 @@ std::string FleetWnd::TitleText() const
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-        if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
+        if (const System* system = GetObject<System>(m_system_id)) {
             std::string sys_name = system->Name();
             if (sys_name.empty())
                 sys_name = UserString("SP_UNKNOWN_SYSTEM");
@@ -2438,7 +2425,7 @@ std::string FleetWnd::TitleText() const
                                   empire->Name());
         }
     } else {
-        if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
+        if (const System* system = GetObject<System>(m_system_id)) {
             std::string sys_name = system->Name();
             if (sys_name.empty())
                 sys_name = UserString("SP_UNKNOWN_SYSTEM");
@@ -2482,7 +2469,7 @@ void FleetWnd::SystemChangedSlot()
 {
     //std::cout << "FleetWnd::SystemChangedSlot" << std::endl;
 
-    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
+    const System* system = GetObject<System>(m_system_id);
     if (!system) {
         Logger().errorStream() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
         return;

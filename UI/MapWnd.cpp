@@ -1723,7 +1723,7 @@ void MapWnd::ShowBuildingType(const std::string& building_type_name)
 
 void MapWnd::CenterOnObject(int id)
 {
-    if (UniverseObject* obj = GetUniverse().Objects().Object(id))
+    if (UniverseObject* obj = GetObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
@@ -1839,7 +1839,7 @@ void MapWnd::SelectPlanet(int planetID)
 
 void MapWnd::SelectFleet(int fleet_id)
 {
-    SelectFleet(GetUniverse().Objects().Object<Fleet>(fleet_id));
+    SelectFleet(GetObject<Fleet>(fleet_id));
 }
 
 void MapWnd::SelectFleet(Fleet* fleet)
@@ -1994,7 +1994,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
 
     // ensure passed fleet exists
-    const Fleet* fleet = GetUniverse().Objects().Object<Fleet>(fleet_id);
+    const Fleet* fleet = GetObject<Fleet>(fleet_id);
     if (!fleet) {
         Logger().errorStream() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -3226,7 +3226,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
         Logger().errorStream() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    const Fleet* first_fleet = GetUniverse().Objects().Object<Fleet>(btn_fleets[0]);
+    const Fleet* first_fleet = GetObject<Fleet>(btn_fleets[0]);
 
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
@@ -4020,7 +4020,7 @@ bool MapWnd::ZoomToHomeSystem()
     int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID();
 
     if (id != UniverseObject::INVALID_OBJECT_ID) {
-        const UniverseObject *object = GetUniverse().Objects().Object(id);
+        const UniverseObject *object = GetObject(id);
         if (!object) return false;
         CenterOnObject(object->SystemID());
         SelectSystem(object->SystemID());

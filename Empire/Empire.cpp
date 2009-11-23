@@ -668,7 +668,7 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
         // get location object for element
         const ProductionQueue::Element& element = *queue_it;
         int location_id = element.location;
-        const UniverseObject* location_obj = GetUniverse().Objects().Object(location_id);
+        const UniverseObject* location_obj = GetObject(location_id);
         if (!location_obj) {
             Logger().errorStream() << "ProductionQueue::Update couldn't get a location object for a production queue element";
             queue_element_groups.push_back(std::set<int>());    // record empty resource sharing system group for this element
@@ -1179,7 +1179,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
         return false;
     }
 
-    UniverseObject* build_location = GetUniverse().Objects().Object(location);
+    UniverseObject* build_location = GetObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_BUILDING) {
@@ -1208,7 +1208,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
         return false;
     }
 
-    UniverseObject* build_location = GetUniverse().Objects().Object(location);
+    UniverseObject* build_location = GetObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1246,11 +1246,13 @@ void Empire::UpdateSystemSupplyRanges()
     m_fleet_supply_system_ranges.clear();
     m_resource_supply_system_ranges.clear();
 
+    const ObjectMap& objects = GetMainObjectMap();
+
     // as of this writing, only planets can distribute supplies to fleets or other planets.  If other objects
     // get the ability to distribute supplies, this should be expanded to them as well
-    std::vector<UniverseObject*> owned_planets = GetUniverse().Objects().FindObjects(OwnedVisitor<Planet>(m_id));
+    std::vector<const UniverseObject*> owned_planets = objects.FindObjects(OwnedVisitor<Planet>(m_id));
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (std::vector<UniverseObject*>::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
+    for (std::vector<const UniverseObject*>::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
         const UniverseObject* obj = *it;
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
@@ -2113,7 +2115,7 @@ void Empire::AddHullType(const std::string& name)
 
 void Empire::AddExploredSystem(int ID)
 {
-    if (const System* system = GetUniverse().Objects().Object<System>(ID))
+    if (const System* system = GetObject<System>(ID))
         m_explored_systems.insert(ID);
     else
         Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;

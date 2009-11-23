@@ -1880,7 +1880,7 @@ void BuildingIndicator::Render()
 
 void BuildingIndicator::Refresh()
 {
-    if (const Building* building = GetUniverse().Objects().Object<Building>(m_building_id)) {
+    if (const Building* building = GetObject<Building>(m_building_id)) {
         ClearBrowseInfoWnd();
 
         if (m_graphic) {
@@ -1934,7 +1934,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    Building* building = GetUniverse().Objects().Object<Building>(m_building_id);
+    Building* building = GetObject<Building>(m_building_id);
     if (!building || !building->OwnedBy(empire_id)) {
         return;
     }
@@ -2221,7 +2221,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     }
     m_production_labels_and_amounts.clear();
 
-    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
+    const System* system = GetObject<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 
@@ -2319,7 +2319,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     }
     m_allocation_labels_and_amounts.clear();
 
-    const System* system = GetUniverse().Objects().Object<System>(m_system_id);
+    const System* system = GetObject<System>(m_system_id);
     if (!system || m_resource_type == INVALID_RESOURCE_TYPE)
         return;
 

@@ -146,7 +146,7 @@ void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAss
         for (unsigned int i = 0; i < assets[e].fleets.size(); i++) {
             Fleet *flt = assets[e].fleets[i];
             for (Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it) {
-                Ship* shp = GetUniverse().Objects().Object<Ship>(*shp_it);
+                Ship* shp = GetObject<Ship>(*shp_it);
 
                 if (shp->IsArmed())
                     cahp.combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));

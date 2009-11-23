@@ -215,7 +215,7 @@ EffectsGroup::~EffectsGroup()
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
-    UniverseObject* source = GetUniverse().Objects().Object(source_id);
+    UniverseObject* source = GetObject(source_id);
     assert(source);
 
     targets.clear();
@@ -246,7 +246,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 {
-    UniverseObject* source = GetUniverse().Objects().Object(source_id);
+    UniverseObject* source = GetObject(source_id);
     if (!source) {
         Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
         return;
@@ -262,7 +262,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 
 void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_index) const
 {
-    UniverseObject* source = GetUniverse().Objects().Object(source_id);
+    UniverseObject* source = GetObject(source_id);
     if (!source) {
         // TODO: Don't necessarily need to abort at this stage... some effects can function without a source object.
         Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
@@ -787,7 +787,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    System* system = GetUniverse().Objects().Object<System>(target->SystemID());
+    System* system = GetObject<System>(target->SystemID());
     if (!system) {
         Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
         return;

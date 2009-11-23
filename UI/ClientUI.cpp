@@ -455,7 +455,7 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (Planet* planet = GetUniverse().Objects().Object<Planet>(id)) {
+    if (Planet* planet = GetObject<Planet>(id)) {
         ZoomToSystem(planet->SystemID());
         return true;
     }
@@ -464,7 +464,7 @@ bool ClientUI::ZoomToPlanet(int id)
 
 bool ClientUI::ZoomToSystem(int id)
 {
-    if (System* system = GetUniverse().Objects().Object<System>(id)) {
+    if (System* system = GetObject<System>(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -473,7 +473,7 @@ bool ClientUI::ZoomToSystem(int id)
 
 bool ClientUI::ZoomToFleet(int id)
 {
-    if (Fleet* fleet = GetUniverse().Objects().Object<Fleet>(id)) {
+    if (Fleet* fleet = GetObject<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -483,7 +483,7 @@ bool ClientUI::ZoomToFleet(int id)
 bool ClientUI::ZoomToShip(int id)
 {
     // this just zooms to the appropriate fleet window, until we create a ship window of some kind
-    if (Ship* ship = GetUniverse().Objects().Object<Ship>(id)) {
+    if (Ship* ship = GetObject<Ship>(id)) {
         ZoomToFleet(ship->FleetID());
         return true;
     }

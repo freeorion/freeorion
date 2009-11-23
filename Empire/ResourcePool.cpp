@@ -41,7 +41,7 @@ double ResourcePool::Production() const {
 }
 
 double ResourcePool::Production(int object_id) const {
-    const UniverseObject* obj = GetUniverse().Objects().Object(object_id);
+    const UniverseObject* obj = GetObject(object_id);
     if (!obj) {
         Logger().errorStream() << "ResourcePool::Production asked to return resource production for a nonexistant object with id " << object_id;
         // consider throwing exception instead...?
@@ -69,7 +69,7 @@ double ResourcePool::Production(int object_id) const {
 double ResourcePool::GroupProduction(int system_id) const
 {
     Logger().debugStream() << "ResourcePool::GroupProdeuction(" << system_id << ")";
-    const UniverseObject* sys = GetUniverse().Objects().Object(system_id);
+    const UniverseObject* sys = GetObject(system_id);
     if (!sys) {
         Logger().errorStream() << "ResourcePool::GroupProduction asked to return resource production for a nonexistant object with id " << system_id;
         // consider throwing exception instead...?
@@ -124,7 +124,7 @@ double ResourcePool::GroupAvailable(int system_id) const
     // system_id isn't the stockpile system, so need to do more work...
 
     // verify system_id is a valid object
-    const UniverseObject* sys = GetUniverse().Objects().Object(system_id);
+    const UniverseObject* sys = GetObject(system_id);
     if (!sys) {
         Logger().errorStream() << "ResourcePool::GroupAvailable asked to return available resource for a nonexistant object with id " << system_id;
         // consider throwing exception instead...?

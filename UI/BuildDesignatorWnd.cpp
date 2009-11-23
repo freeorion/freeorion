@@ -945,7 +945,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    const System* sys = GetUniverse().Objects().Object<System>(system_id);
+    const System* sys = GetObject<System>(system_id);
     if (!sys) {
         Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;

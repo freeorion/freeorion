@@ -136,7 +136,7 @@ namespace {
 
         // get location indicator text
         std::string location_text;
-        if (const UniverseObject* location = GetUniverse().Objects().Object(build.location))
+        if (const UniverseObject* location = GetObject(build.location))
             location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name());
 
 
