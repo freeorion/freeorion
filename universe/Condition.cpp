@@ -1313,11 +1313,11 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
 {
     if (target->Owners().size() != 1)
         return false;
-    Empire* empire = Empires().Lookup(*target->Owners().begin());
-    if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
-        double stockpile = empire->ResourceStockpile(m_stockpile);
-        return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
-    }
+    if (const Empire* empire = Empires().Lookup(*target->Owners().begin()))
+        if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
+            double stockpile = empire->ResourceStockpile(m_stockpile);
+            return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
+        }
     return false;
 }
 
@@ -1345,8 +1345,10 @@ bool Condition::OwnerHasTech::Match(const UniverseObject* source, const Universe
 {
     if (target->Owners().size() != 1)
         return false;
-    Empire* empire = Empires().Lookup(*target->Owners().begin());
-    return empire->TechResearched(m_name);
+    if (const Empire* empire = Empires().Lookup(*target->Owners().begin()))
+        return empire->TechResearched(m_name);
+    else
+        return false;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1712,9 +1714,9 @@ bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const Univ
 {
     const EmpireManager& empires = Empires();
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target));
-        if (empire->HasExploredSystem(target->ID()))
-            return true;
+        if (const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target)))
+            if (empire->HasExploredSystem(target->ID()))
+                return true;
     }
     return false;
 }

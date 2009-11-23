@@ -256,7 +256,7 @@ class AIstate(object):
                 self.removeExplorableSystem(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED, systemID)
                 #print "    has been explored"
                 continue
-            if (not universe.systemsConnected(systemID, startSystemID, empireID)):
+            if (startSystemID == -1 or not universe.systemsConnected(systemID, startSystemID, empireID)):
                 for explorableSystemsType in EnumsAI.getAIExplorableSystemTypes():
                     self.removeExplorableSystem(explorableSystemsType, systemID)
                 #print "    is not connected to system with id: " + str(startSystemID)
