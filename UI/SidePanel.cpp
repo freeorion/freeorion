@@ -392,7 +392,7 @@ class SidePanel::PlanetPanel : public GG::Control
 {
 public:
     /** \name Structors */ //@{
-    PlanetPanel(GG::X w, const Planet &planet, StarType star_type); ///< basic ctor
+    PlanetPanel(GG::X w, int planet_id, StarType star_type); ///< basic ctor
     ~PlanetPanel();
     //@}
 
@@ -423,8 +423,7 @@ private:
 
     void                    ClickColonize();                    ///< called if colonize button is pressed
 
-    Planet*                 GetPlanet();                        ///< returns the planet with ID m_planet_id
-    const Planet*           GetPlanet() const;
+    Planet*                 GetPlanet() const;                  ///< returns the planet with ID m_planet_id
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
@@ -613,28 +612,30 @@ namespace {
     }
 
     Ship*       FindColonyShip(int system_id) {
-        ObjectMap& objects = GetUniverse().Objects();
-
-        const System* system = objects.Object<const System>(system_id);
+        const System* system = GetObject<System>(system_id);
         if (!system) return 0;
 
-        std::vector<const Fleet*> flt_vec = system->FindObjects<Fleet>();
-
+        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
         // check all fleets in this system...
-        for (unsigned int i = 0; i < flt_vec.size(); i++) {
+        for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
+            Fleet* fleet = GetObject<Fleet>(*it);
+            if (!fleet) {
+                Logger().errorStream() << "FindColonyShip couldn't get fleet with id " << *it;
+                continue;
+            }
+
             // reject fleets not owned by this empire
-            if (flt_vec[i]->Owners().find(empire_id) == flt_vec[i]->Owners().end()) continue;
+            if (fleet->Owners().find(empire_id) == fleet->Owners().end()) continue;
 
             // reject fleets that are moving
-            if (!flt_vec[i]->Accept(StationaryFleetVisitor(*flt_vec[i]->Owners().begin()))) continue;
+            if (!fleet->Accept(StationaryFleetVisitor(*fleet->Owners().begin()))) continue;
 
             // check if any of the ship in this fleet is a colony ship
-            for (Fleet::const_iterator it = flt_vec[i]->begin(); it != flt_vec[i]->end(); ++it) {
-                Ship* s = objects.Object<Ship>(*it);
-
+            for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
+                Ship* s = GetObject<Ship>(*it);
                 if (!s) {
                     Logger().errorStream() << "coudln't find ship with id: " << *it;
                     continue;
@@ -669,9 +670,9 @@ namespace {
     static const bool SHOW_ALL_PLANET_PANELS = false;   //!< toggles whether to show population, resource, military and building info panels on planet panels that this player doesn't control
 }
 
-SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star_type) :
+SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) :
     GG::Control(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_planet_id(planet.ID()),
+    m_planet_id(planet_id),
     m_planet_name(0),
     m_env_size(0),
     m_button_colonize(0),
@@ -687,12 +688,18 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
 {
     SetName(UserString("PLANET_PANEL"));
 
+    const Planet* planet = GetPlanet();
+    if (!planet) {
+        Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
+        return;
+    }
+
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
 
     if (GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
-        if (planet.Type() == PT_ASTEROIDS) {
+        if (planet->Type() == PT_ASTEROIDS) {
             std::vector<boost::shared_ptr<GG::Texture> > textures;
-            GetAsteroidTextures(planet.ID(), textures);
+            GetAsteroidTextures(m_planet_id, textures);
             GG::X texture_width = textures[0]->DefaultWidth();
             GG::Y texture_height = textures[0]->DefaultHeight();
             GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - texture_width / 2 + 3), GG::Y0);
@@ -706,19 +713,19 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
             AttachChild(m_planet_graphic);
             m_planet_graphic->Play();
 
-        } else if (planet.Type() < NUM_PLANET_TYPES) {
-            int planet_image_sz = PlanetDiameter(planet.Size());
+        } else if (planet->Type() < NUM_PLANET_TYPES) {
+            int planet_image_sz = PlanetDiameter(planet->Size());
             GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - GG::X(planet_image_sz) / 2 + 3),
                                     GG::Y(MAX_PLANET_DIAMETER / 2 - GG::Y(planet_image_sz) / 2));
 
             const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
-            std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet.Type());
+            std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
             int num_planets_of_type;
-            if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet.Type())->second.size())) {
+            if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
                 // using algorithm from Thomas Wang's 32 bit Mix Function; assumes that
                 // only the lower 16 bits of the system and planet ID's are significant
                 unsigned int hash_value =
-                    (static_cast<unsigned int>(planet.SystemID()) & 0xFFFF) + (static_cast<unsigned int>(planet.ID()) & 0xFFFF);
+                    (static_cast<unsigned int>(m_planet_id) & 0xFFFF) + (static_cast<unsigned int>(m_planet_id) & 0xFFFF);
                 hash_value += ~(hash_value << 15);
                 hash_value ^= hash_value >> 10;
                 hash_value += hash_value << 3;
@@ -726,12 +733,14 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
                 hash_value += ~(hash_value << 11);
                 hash_value ^= hash_value >> 16;
                 m_rotating_planet_graphic =
-                    new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, planet, star_type,
+                    new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y, *planet, star_type,
                                               it->second[hash_value % num_planets_of_type]);
                 AttachChild(m_rotating_planet_graphic);
             }
         }
     }
+
+
 
     // create planet name text
 
@@ -742,22 +751,24 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     bool capitol = false, homeworld = false, has_shipyard = false;
     // need to check all empires for homeworld or capitols
 
-    const ObjectMap& objects = GetUniverse().Objects();
     const EmpireManager& manager = Empires();
-
     for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
         if (capitol && homeworld)
             break;  // don't need to check any more empires if already have both possible true results
         const Empire* empire = empire_it->second;
-        if (empire->HomeworldID() == planet.ID())
+        if (!empire) {
+            Logger().errorStream() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
+            continue;
+        }
+        if (empire->HomeworldID() == m_planet_id)
             homeworld = true;
-        if (empire->CapitolID() == planet.ID())
+        if (empire->CapitolID() == m_planet_id)
             capitol = true;
     }
     // check for shipyard
-    const std::set<int>& buildings = planet.Buildings();
+    const std::set<int>& buildings = planet->Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        const Building* building = objects.Object<Building>(*building_it);
+        const Building* building = GetEmpireKnownObject<Building>(*building_it, HumanClientApp::GetApp()->EmpireID());
         if (!building)
             continue;
         // annoying hard-coded building name here... not sure how better to deal with it
@@ -767,7 +778,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
         }
     }
     // wrap with formatting tags
-    std::string wrapped_planet_name = planet.Name();
+    std::string wrapped_planet_name = planet->Name();
     if (homeworld)
         wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
     if (has_shipyard)
@@ -783,30 +794,30 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
                                             font, ClientUI::TextColor());
     AttachChild(m_planet_name);
 
-    std::string env_size_text = GetPlanetSizeName(planet) + " " + GetPlanetTypeName(planet) + " (" + GetPlanetEnvironmentName(planet) + ")";
+    std::string env_size_text = GetPlanetSizeName(*planet) + " " + GetPlanetTypeName(*planet) + " (" + GetPlanetEnvironmentName(*planet) + ")";
 
     // create info panels and attach signals
     GG::X panel_width = w - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
 
-    m_population_panel = new PopulationPanel(panel_width, planet.ID());
+    m_population_panel = new PopulationPanel(panel_width, m_planet_id);
     AttachChild(m_population_panel);
     GG::Connect(m_population_panel->ExpandCollapseSignal,       &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_resource_panel = new ResourcePanel(panel_width, planet.ID());
+    m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
     GG::Connect(m_resource_panel->PrimaryFocusChangedSignal,    &SidePanel::PlanetPanel::SetPrimaryFocus, this);
     GG::Connect(m_resource_panel->SecondaryFocusChangedSignal,  &SidePanel::PlanetPanel::SetSecondaryFocus, this);
 
-    m_military_panel = new MilitaryPanel(panel_width, planet.ID());
+    m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
     AttachChild(m_military_panel);
     GG::Connect(m_military_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_buildings_panel = new BuildingsPanel(panel_width, 4, planet.ID());
+    m_buildings_panel = new BuildingsPanel(panel_width, 4, m_planet_id);
     AttachChild(m_buildings_panel);
     GG::Connect(m_buildings_panel->ExpandCollapseSignal,        &SidePanel::PlanetPanel::DoLayout, this);
 
-    m_specials_panel = new SpecialsPanel(panel_width, planet.ID());
+    m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
     m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
@@ -830,14 +841,13 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, const Planet &planet, StarType star
     // all the PlanetPanel in the SidePanel
     //if (System* system = plt->SystemID())
     //    GG::Connect(system->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
-    GG::Connect(planet.StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
+    GG::Connect(planet->StateChangedSignal, &SidePanel::PlanetPanel::Refresh, this);
 }
 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
     delete m_button_colonize;
     delete m_env_size;
-
     delete m_population_panel;
     delete m_resource_panel;
     delete m_military_panel;
@@ -845,14 +855,12 @@ SidePanel::PlanetPanel::~PlanetPanel()
     delete m_specials_panel;
 }
 
-Planet* SidePanel::PlanetPanel::GetPlanet()
+Planet* SidePanel::PlanetPanel::GetPlanet() const
 {
-    return GetUniverse().Objects().Object<Planet>(m_planet_id);
-}
-
-const Planet* SidePanel::PlanetPanel::GetPlanet() const
-{
-    return GetUniverse().Objects().Object<const Planet>(m_planet_id);
+    if (Planet* planet = GetObject<Planet>(m_planet_id))
+        return planet;
+    else
+        return GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
 }
 
 void SidePanel::PlanetPanel::DoLayout()
@@ -862,11 +870,15 @@ void SidePanel::PlanetPanel::DoLayout()
     GG::X right = left + Width() - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
     GG::Y y = GG::Y0;
 
-    m_planet_name->MoveTo(GG::Pt(left, y));                 // assumed to always be this Wnd's child
-    y += m_planet_name->Height();                           // no interpanel space needed here, I declare arbitrarily
+    if (m_planet_name) {
+        m_planet_name->MoveTo(GG::Pt(left, y));
+        y += m_planet_name->Height();                           // no interpanel space needed here, I declare arbitrarily
+    }
 
-    m_specials_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_specials_panel->Height())); // assumed to always be this Wnd's child
-    y += m_specials_panel->Height() + EDGE_PAD;
+    if (m_specials_panel) {
+        m_specials_panel->SizeMove(GG::Pt(left, y), GG::Pt(right, y + m_specials_panel->Height())); // assumed to always be this Wnd's child
+        y += m_specials_panel->Height() + EDGE_PAD;
+    }
 
     if (m_env_size && m_env_size->Parent() == this) {
         m_env_size->MoveTo(GG::Pt(left, y));
@@ -914,11 +926,30 @@ void SidePanel::PlanetPanel::Refresh()
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
+        DetachChild(m_planet_name);
+        delete m_planet_name;       m_planet_name = 0;
+
         DetachChild(m_env_size);
+        delete m_env_size;          m_env_size = 0;
+
         DetachChild(m_population_panel);
+        delete m_population_panel;  m_population_panel = 0;
+
         DetachChild(m_resource_panel);
+        delete m_resource_panel;    m_resource_panel = 0;
+
         DetachChild(m_military_panel);
+        delete m_military_panel;    m_military_panel = 0;
+
+        DetachChild(m_buildings_panel);
+        delete m_buildings_panel;   m_buildings_panel = 0;
+
         DetachChild(m_button_colonize);
+        delete m_button_colonize;   m_button_colonize = 0;
+
+        DetachChild(m_specials_panel);
+        delete m_specials_panel;    m_specials_panel = 0;
+
         DoLayout();
         return;
     }
@@ -938,7 +969,7 @@ void SidePanel::PlanetPanel::Refresh()
 
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
-    if (!planet->Owners().empty()) {
+    if (!planet->Owners().empty() && m_planet_name) {
         if (Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()))) {
             m_empire_colour = planet_empire->Color();
             m_planet_name->SetTextColor(planet_empire->Color());
@@ -959,11 +990,14 @@ void SidePanel::PlanetPanel::Refresh()
         // show population, resource and military panels, but hide environement / size indicator that's used only for uncolonized planets
         DetachChild(m_env_size);
         AttachChild(m_population_panel);
-        m_population_panel->Refresh();
+        if (m_population_panel)
+            m_population_panel->Refresh();
         AttachChild(m_resource_panel);
-        m_resource_panel->Refresh();
+        if (m_resource_panel)
+            m_resource_panel->Refresh();
         AttachChild(m_military_panel);
-        m_military_panel->Refresh();
+        if (m_military_panel)
+            m_military_panel->Refresh();
     }
 
 
@@ -972,11 +1006,13 @@ void SidePanel::PlanetPanel::Refresh()
         AttachChild(m_button_colonize);
         std::string max_pop = DoubleToString(planet->GetMeter(METER_POPULATION)->Max(), 2, false);
         std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % max_pop);
-        m_button_colonize->SetText(colonize_text);
+        if (m_button_colonize)
+            m_button_colonize->SetText(colonize_text);
 
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
-        m_button_colonize->SetText(UserString("CANCEL"));
+        if (m_button_colonize)
+            m_button_colonize->SetText(UserString("CANCEL"));
 
     } else {
         DetachChild(m_button_colonize);
@@ -984,8 +1020,10 @@ void SidePanel::PlanetPanel::Refresh()
 
 
     // update panels
-    m_buildings_panel->Refresh();
-    m_specials_panel->Update();
+    if (m_buildings_panel)
+        m_buildings_panel->Refresh();
+    if (m_specials_panel)
+        m_specials_panel->Update();
 
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
 }
@@ -1283,17 +1321,9 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     // remove old panels
     Clear();
 
-    const ObjectMap& objects = GetUniverse().Objects();
-
     // create new panels and connect their signals
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        const Planet* planet = objects.Object<Planet>(*it);
-        if (!planet) {
-            Logger().errorStream() << "PlanetPanelContainer::SetPlanets couldn't get planet with id " << *it;
-            continue;
-        }
-        //std::cout << " ... adding panel for planet " << planet->Name() << std::endl;
-        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), *planet, star_type);
+        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), *it, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         GG::Connect(m_planet_panels.back()->LClickedSignal, &SidePanel::PlanetPanelContainer::PlanetPanelClicked,   this);
@@ -1308,9 +1338,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
-    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
-    }
 }
 
 std::vector<int> SidePanel::PlanetPanelContainer::PlanetIDs() const
@@ -1402,8 +1431,6 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
     m_candidate_ids.clear();
     std::set<PlanetPanel*>   disabled_panels;
 
-    const ObjectMap& objects = GetUniverse().Objects();
-
     if (m_valid_selection_predicate) {
         // if there is a selection predicate, which determines which planet panels
         // can be selected, refresh the candidiates and disable the non-selectables
@@ -1412,9 +1439,9 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
         for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
             PlanetPanel*    panel =     *it;
             int             planet_id = panel->PlanetID();
-            const Planet*   planet =    objects.Object<Planet>(planet_id);
+            const Planet*   planet =    GetObject<Planet>(planet_id);
 
-            if (planet->Accept(*m_valid_selection_predicate)) {
+            if (planet && planet->Accept(*m_valid_selection_predicate)) {
                 m_candidate_ids.insert(planet_id);
                 //std::cout << " ... planet " << planet->ID() << " is a selection candidate" << std::endl;
             } else {
@@ -1425,7 +1452,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates()
 
     // disable and enabled appropriate panels
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        PlanetPanel*    panel =     *it;
+        PlanetPanel* panel = *it;
         if (disabled_panels.find(panel) != disabled_panels.end()) {
             panel->Disable(true);
             //std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
@@ -1588,23 +1615,27 @@ void SidePanel::Refresh()
 
 
     // connect state changed and insertion signals for planets and fleets in system
-    const System* system = GetUniverse().Objects().Object<const System>(s_system_id);
+    const System* system = GetObject<System>(s_system_id);
     if (!system)
+        system = GetEmpireKnownObject<System>(s_system_id, HumanClientApp::GetApp()->EmpireID());
+    if (!system) {
+        Logger().errorStream() << "SidePanel::Refresh couldn't get system with id " << s_system_id;
         return;
-    std::vector<const Planet*> planets = system->FindObjects<Planet>();
-    std::vector<const Fleet*> fleets = system->FindObjects<Fleet>();
+    }
 
-    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)
-        s_fleet_state_change_signals[(*it)->ID()] = GG::Connect((*it)->StateChangedSignal,
-                                                                &SidePanel::FleetStateChanged);
+    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it)
+        if (Planet* planet = GetObject<Planet>(*it))
+            s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal, SidePanel::ResourceCenterChangedSignal));
+
+    std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+    for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
+        if (Fleet* fleet = GetObject<Fleet>(*it))
+            s_fleet_state_change_signals[*it] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
 
     //s_system_connections.insert(GG::Connect(s_system->StateChangedSignal,   &SidePanel::Update));
     s_system_connections.insert(GG::Connect(system->FleetInsertedSignal,    &SidePanel::FleetInserted));
     s_system_connections.insert(GG::Connect(system->FleetRemovedSignal,     &SidePanel::FleetRemoved));
-
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
-        s_system_connections.insert(GG::Connect((*it)->ResourceCenterChangedSignal,
-                                                SidePanel::ResourceCenterChangedSignal));
 }
 
 void SidePanel::RefreshImpl()
@@ -1617,13 +1648,12 @@ void SidePanel::RefreshImpl()
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     // get system object for this sidepanel.  if there isn't one, abort.
     const System* system = objects.Object<const System>(s_system_id);
     if (!system)
         return;
-
 
 
     // populate droplist of system names
@@ -1632,19 +1662,20 @@ void SidePanel::RefreshImpl()
     int system_names_in_droplist = 0;
     for (unsigned int i = 0; i < sys_vec.size(); i++) {
         const System* sys = sys_vec[i];
-        GG::ListBox::Row* row = new SystemRow(sys->ID());
+        int sys_id = sys->ID();
+        GG::ListBox::Row* row = new SystemRow(sys_id);
 
-        if (sys->Name().empty() && sys != system) {
+        if (sys->Name().empty() && sys_id != s_system_id) {
             delete row; // delete rows for systems that aren't known to this client, except the selected system
             continue;
         } else {
-            row->push_back(new OwnerColoredSystemName(sys->ID(), SystemNameFontSize()));
+            row->push_back(new OwnerColoredSystemName(sys_id, SystemNameFontSize()));
         }
 
         GG::DropDownList::iterator latest_it = m_system_name->Insert(row);
         ++system_names_in_droplist;
 
-        if (sys_vec[i] == system) 
+        if (sys_id == s_system_id)
             m_system_name->Select(latest_it);
     }
 
@@ -1660,7 +1691,7 @@ void SidePanel::RefreshImpl()
     boost::shared_ptr<GG::Texture> graphic =
         ClientUI::GetClientUI()->GetModuloTexture(ClientUI::ArtDir() / "stars_sidepanel",
                                                   ClientUI::StarTypeFilePrefixes()[system->GetStarType()],
-                                                  system->ID());
+                                                  s_system_id);
     std::vector<boost::shared_ptr<GG::Texture> > textures;
     textures.push_back(graphic);
 
@@ -1686,8 +1717,18 @@ void SidePanel::RefreshImpl()
 
     // update planet panel container contents (applying just-set selection predicate)
     //std::cout << " ... setting planet panel container planets" << std::endl;
-    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
-    m_planet_panel_container->SetPlanets(planet_ids, system->GetStarType());
+
+    // find all planets in this system.  need to check all known planets, since
+    // the objects this system object reports to contain don't include objects
+    // that aren't visible this turn to this client's player
+    std::vector<int> known_system_planet_ids;
+    std::vector<const Planet*> all_planets = objects.FindObjects<Planet>();
+    for (std::vector<const Planet*>::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
+        const Planet* planet = *it;
+        if (planet->SystemID() == s_system_id)
+            known_system_planet_ids.push_back(planet->ID());
+    }
+    m_planet_panel_container->SetPlanets(known_system_planet_ids, system->GetStarType());
 
 
     // populate system resource summary
@@ -1695,8 +1736,8 @@ void SidePanel::RefreshImpl()
     // get planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        const Planet* planet = objects.Object<Planet>(*it);
+    for (std::vector<int>::const_iterator it = known_system_planet_ids.begin(); it != known_system_planet_ids.end(); ++it) {
+        const Planet* planet = GetObject<Planet>(*it);
         if (planet && planet->WhollyOwnedBy(empire_id))
             owned_planets.push_back(*it);
     }
@@ -1729,8 +1770,6 @@ void SidePanel::RefreshImpl()
         AttachChild(m_system_resource_summary);
         m_system_resource_summary->Update();
     }
-
-
 }
 
 void SidePanel::DoLayout()
@@ -1874,7 +1913,7 @@ void SidePanel::SetSystem(int system_id)
 
     s_system_id = system_id;
 
-    if (GetUniverse().Objects().Object<const System>(s_system_id))
+    if (GetEmpireKnownObject<System>(s_system_id, HumanClientApp::GetApp()->EmpireID()))
         PlaySidePanelOpenSound();
 
     // refresh sidepanels

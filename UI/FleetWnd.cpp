@@ -1972,24 +1972,23 @@ FleetWnd::FleetWnd(int system_id, int empire_id, bool read_only,
 {
     // get fleets for specified system and empire
     // need to know what fleets to put in the Wnd, given the specified system and empire.
-    std::vector<const Fleet*> wnd_fleets;
 
     if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
         // get all fleets in system.
-        std::vector<const Fleet*> all_system_fleets = system->FindObjects<Fleet>();
+        std::vector<int> all_system_fleets = system->FindObjectIDs<Fleet>();
 
         // transfer appropriately owned fleets
-        for (std::vector<const Fleet*>::const_iterator it = all_system_fleets.begin(); it != all_system_fleets.end(); ++it) {
-            const Fleet* wnd_fleet = *it;
-            if (wnd_fleet->OwnedBy(m_empire_id)/* || m_empire_id == ALL_EMPIRES*/)
-                wnd_fleets.push_back(wnd_fleet);
+        for (std::vector<int>::const_iterator it = all_system_fleets.begin(); it != all_system_fleets.end(); ++it) {\
+            int fleet_id = *it;
+            const Fleet* wnd_fleet = GetObject<Fleet>(fleet_id);
+            if (!wnd_fleet) {
+                Logger().errorStream() << "FleetWnd::FleetWnd couldn't get fleet with id " << fleet_id;
+                continue;
+            }
+            if (wnd_fleet->OwnedBy(m_empire_id))
+                m_fleet_ids.insert(fleet_id);
         }
     }
-
-    // convert from Fleet* to int fleet's object id
-    for (std::vector<const Fleet*>::const_iterator it = wnd_fleets.begin(); it != wnd_fleets.end(); ++it)
-        m_fleet_ids.insert((*it)->ID());
-
 
     Init(selected_fleet_id);
 }
@@ -2115,11 +2114,15 @@ void FleetWnd::Refresh()
     if (const System* system = GetUniverse().Objects().Object<System>(m_system_id)) {
         // get fleets to show from system, based on required ownership
         m_fleet_ids.clear();
-        std::vector<const Fleet*> system_fleets = system->FindObjects<Fleet>();
-        for (std::vector<const Fleet*>::const_iterator it = system_fleets.begin(); it != system_fleets.end(); ++it) {
-            const Fleet* fleet = *it;
+        std::vector<int> system_fleets = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::const_iterator it = system_fleets.begin(); it != system_fleets.end(); ++it) {
+            int fleet_id = *it;
+            const Fleet* fleet = GetObject<Fleet>(fleet_id);
+            if (!fleet) {
+                Logger().errorStream() << "FleetWnd::Refresh couldn't get fleet with id " << fleet_id;
+                continue;
+            }
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
-                int fleet_id = fleet->ID();
                 m_fleet_ids.insert(fleet_id);
                 AddFleet(fleet_id);
             }

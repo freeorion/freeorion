@@ -583,6 +583,10 @@ void ServerApp::ProcessTurns()
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
     for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
         Planet* planet = objects.Object<Planet>(it->first);
+        if (!planet) {
+            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << it->first;
+            continue;
+        }
 
         // only one empire?
         if (it->second.size() == 1) {
@@ -590,17 +594,29 @@ void ServerApp::ProcessTurns()
             Empire* empire = empires.Lookup( it->second[0]->EmpireID() );
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
-            const System* system = objects.Object<System>(planet->SystemID());
+            int system_id = planet->SystemID();
+            const System* system = objects.Object<System>(system_id);
+            if (!system) {
+                Logger().errorStream() << "ProcessTurns couldn't get system with ID " << system_id;
+                continue;
+            }
 
-            std::vector<const Fleet*> vec_fleet = system->FindObjects<Fleet>();
             std::set<int> set_empire_with_military;
-            for (unsigned int i = 0; i < vec_fleet.size(); i++)
-                for (Fleet::const_iterator ship_it=vec_fleet[i]->begin(); ship_it != vec_fleet[i]->end(); ++ship_it)
+            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+            for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
+                const Fleet* fleet = GetObject<Fleet>(*it);
+                if (!fleet) {
+                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *it;
+                    continue;
+                }
+
+                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it)
                     if (const Ship* ship = objects.Object<Ship>(*ship_it))
                         if (ship->IsArmed()) {
-                            set_empire_with_military.insert(*vec_fleet[i]->Owners().begin());
+                            set_empire_with_military.insert(*fleet->Owners().begin());
                             break;
                         }
+            }
 
             // set the first empire as winner for now
             int winner = 0;
@@ -716,13 +732,21 @@ void ServerApp::ProcessTurns()
         System* system = *it;
         if (TEST_3D_COMBAT) {
             bool combat_conditions_exist = false;
-            std::vector<Fleet*> fleets = system->FindObjects<Fleet>();
             std::set<int> ids_of_empires_with_combat_fleets_here;
             std::set<int> ids_of_empires_with_fleets_here;
-            for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-                assert((*it)->Owners().size() == 1);
-                int owner = *(*it)->Owners().begin();
-                if ((*it)->HasArmedShips())
+
+            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+            for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
+                Fleet* fleet = GetObject<Fleet>(*fleet_it);
+                if (!fleet) {
+                    Logger().errorStream() << "ProcessTurns couldn't get Fleet with id " << *fleet_it;
+                    continue;
+                }
+
+                assert(fleet->Owners().size() == 1);
+                int owner = *fleet->Owners().begin();
+
+                if (fleet->HasArmedShips())
                     ids_of_empires_with_combat_fleets_here.insert(owner);
                 ids_of_empires_with_fleets_here.insert(owner);
                 if (2 <= ids_of_empires_with_combat_fleets_here.size() ||
@@ -754,14 +778,16 @@ void ServerApp::ProcessTurns()
         } else {
             std::vector<CombatAssets> empire_combat_forces;
 
-            std::vector<Fleet*> flt_vec = system->FindObjects<Fleet>();
-            if (flt_vec.empty())
+            std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
+            if (flt_ids.empty())
                 continue;
 
-            for (std::vector<Fleet*>::iterator flt_it = flt_vec.begin();
-                 flt_it != flt_vec.end();
-                 ++flt_it) {
-                Fleet* flt = *flt_it;
+            for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
+                Fleet* flt = GetObject<Fleet>(*flt_it);
+                if (!flt) {
+                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
+                    continue;
+                }
                 // a fleet should belong only to one empire!?
                 if (1 == flt->Owners().size()) {
                     std::vector<CombatAssets>::iterator ecf_it =
@@ -777,11 +803,13 @@ void ServerApp::ProcessTurns()
                     }
                 }
             }
-            std::vector<Planet*> plt_vec = system->FindObjects<Planet>();
-            for (std::vector<Planet*>::iterator plt_it = plt_vec.begin();
-                 plt_it != plt_vec.end();
-                 ++plt_it) {
-                Planet* plt = *plt_it;
+            std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
+            for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
+                Planet* plt = GetObject<Planet>(*plt_it);
+                if (!plt) {
+                    Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
+                    continue;
+                }
                 // a planet should belong only to one empire!?
                 if (1 == plt->Owners().size()) {
                     std::vector<CombatAssets>::iterator ecf_it =

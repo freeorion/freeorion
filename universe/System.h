@@ -69,8 +69,6 @@ public:
 
     virtual int             SystemID() const;                           ///< returns this->ID()
 
-    virtual std::vector<UniverseObject*>
-                            FindObjects() const;                        ///< returns objects contained within this system
     virtual std::vector<int>
                             FindObjectIDs() const;                      ///< returns ids of objects contained within this system
 
@@ -83,18 +81,6 @@ public:
 
     template <class T>
     std::vector<int>        FindObjectIDsInOrbit(int orbit) const;                      ///< returns the IDs of all the objects of type T in orbit \a orbit
-
-    std::vector<const UniverseObject*>
-                            FindObjects(const UniverseObjectVisitor& visitor) const;    ///< returns all the objects that match \a visitor
-
-    template <class T>
-    std::vector<const T*>   FindObjects() const;                                        ///< returns all the objects of type T
-
-    std::vector<const UniverseObject*>
-                            FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const;      ///< returns all the objects that match \a visitor in orbit \a orbit
-
-    template <class T>
-    std::vector<const T*>   FindObjectsInOrbit(int orbit) const;                        ///< returns all the objects of type T in orbit \a orbit
 
     virtual bool            Contains(int object_id) const;              ///< returns true if object with id \a object_id is in this system
 
@@ -159,18 +145,6 @@ public:
     void                    AddWormhole(int id);            ///< adds a wormhole between this system and the system with ID number \a id  \note Adding a wormhole to a system to which there is already a starlane erases the starlane; you may want to check for a starlane before calling this function.
     bool                    RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
     bool                    RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
-
-    std::vector<UniverseObject*>
-                            FindObjects(const UniverseObjectVisitor& visitor);                      ///< returns all the objects that match \a visitor
-
-    template <class T> std::vector<T*>
-                            FindObjects();                                                          ///< returns all the objects of type T
-
-    std::vector<UniverseObject*>
-                            FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor);    ///< returns all the objects that match \a visitor in orbit \a orbit
-
-    template <class T> std::vector<T*>
-                            FindObjectsInOrbit(int orbit);                                          ///< returns all the objects of type T in orbit \a orbit
 
     virtual void            AddOwner(int id);               ///< adding owner to system objects is a no-op
     virtual void            RemoveOwner(int id);            ///< removing owner from system objects is a no-op
@@ -239,7 +213,7 @@ double StarlaneEntranceRadius();
 template <class T>
 std::vector<int> System::FindObjectIDs() const
 {
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         if (const UniverseObject* obj = objects.Object(it->second))
@@ -252,67 +226,13 @@ std::vector<int> System::FindObjectIDs() const
 template <class T>
 std::vector<int> System::FindObjectIDsInOrbit(int orbit) const
 {
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
         if (const UniverseObject* obj = objects.Object(it->second))
             if (obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>()))
                 retval.push_back(it->second);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<const T*> System::FindObjects() const
-{
-    const ObjectMap& objects = GetUniverse().Objects();
-    std::vector<const T*> retval;
-    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
-            if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-                retval.push_back(t_obj);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<const T*> System::FindObjectsInOrbit(int orbit) const
-{
-    const ObjectMap& objects = GetUniverse().Objects();
-    std::vector<const T*> retval;
-    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
-    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
-            if (const T* t_obj = static_cast<const T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-                retval.push_back(t_obj);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<T*> System::FindObjects()
-{
-    ObjectMap& objects = GetUniverse().Objects();
-    std::vector<T*> retval;
-    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
-            if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-                retval.push_back(t_obj);
-    }
-    return retval;
-}
-
-template <class T>
-std::vector<T*> System::FindObjectsInOrbit(int orbit)
-{
-    ObjectMap& objects = GetUniverse().Objects();
-    std::vector<T*> retval;
-    std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
-    for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second))
-            if (T* t_obj = static_cast<T*>(obj->Accept(UniverseObjectSubclassVisitor<typename boost::remove_const<T>::type>())))
-                retval.push_back(t_obj);
     }
     return retval;
 }

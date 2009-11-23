@@ -1317,9 +1317,13 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 
         // ...and ( contain a friendly fleet *or* not contain a hostile fleet )
         bool blocked = false;
-        std::vector<const Fleet*> fleets = system->FindObjects<Fleet>();
-        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-            const Fleet* fleet = *it;
+        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
+            const Fleet* fleet = GetObject<Fleet>(*it);
+            if (!fleet) {
+                Logger().errorStream() << "Empire::UpdateSupplyUnobstructedSystems couldn't get fleet with id " << *it;
+                continue;
+            }
 
             // check if this empire owns this fleet.
             if (fleet->OwnedBy(m_id)) {

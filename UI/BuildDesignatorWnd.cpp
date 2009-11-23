@@ -951,7 +951,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
         return;
     }
 
-    std::vector<const Planet*> planets = sys->FindObjects<Planet>();
+    std::vector<int> planets = sys->FindObjectIDs<Planet>();
 
     if (planets.empty()) {
         this->SelectPlanet(UniverseObject::INVALID_OBJECT_ID);
@@ -963,10 +963,12 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     int best_planet_id = UniverseObject::INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
-    for (std::vector<const Planet*>::iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        if (!planet)
+    for (std::vector<int>::iterator it = planets.begin(); it != planets.end(); ++it) {
+        const Planet* planet = GetObject<Planet>(*it);
+        if (!planet) {
+            Logger().errorStream() << "BuildDesignatorWnd::SetDefaultPlanet couldn't get planet with id " << *it;
             continue;
+        }
         int planet_id = planet->ID();
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;

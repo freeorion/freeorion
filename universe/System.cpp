@@ -171,21 +171,6 @@ int System::SystemID() const
     return this->ID();
 }
 
-std::vector<UniverseObject*> System::FindObjects() const
-{
-    ObjectMap& objects = GetMainObjectMap();
-    std::vector<UniverseObject*> retval;
-    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        UniverseObject* obj = objects.Object(it->second);
-        if (!obj) {
-            Logger().errorStream() << "System::FindObjects couldn't get a UniverseObject for an object ID in the system";
-            continue;
-        }
-        retval.push_back(obj);
-    }
-    return retval;
-}
-
 std::vector<int> System::FindObjectIDs() const
 {
     const ObjectMap& objects = GetMainObjectMap();
@@ -219,17 +204,6 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
     for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
         if (objects.Object(it->second)->Accept(visitor))
             retval.push_back(it->second);
-    }
-    return retval;
-}
-
-std::vector<const UniverseObject*> System::FindObjects(const UniverseObjectVisitor& visitor) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-    std::vector<const UniverseObject*> retval;
-    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
-            retval.push_back(obj);
     }
     return retval;
 }
@@ -270,18 +244,6 @@ System::const_lane_iterator System::begin_lanes() const
 System::const_lane_iterator System::end_lanes() const
 {
     return m_starlanes_wormholes.end();
-}
-
-std::vector<const UniverseObject*> System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
-{
-    const ObjectMap& objects = GetMainObjectMap();
-    std::vector<const UniverseObject*> retval;
-    std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
-    for (ObjectMultimap::const_iterator it = range.first; it != range.second; ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
 }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
@@ -483,29 +445,6 @@ bool System::RemoveWormhole(int id)
       StateChangedSignal();
    }
    return retval;
-}
-
-std::vector<UniverseObject*> System::FindObjects(const UniverseObjectVisitor& visitor)
-{
-    ObjectMap& objects = GetMainObjectMap();
-    std::vector<UniverseObject*> retval;
-    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
-}
-
-std::vector<UniverseObject*> System::FindObjectsInOrbit(int orbit, const UniverseObjectVisitor& visitor)
-{
-    ObjectMap& objects = GetMainObjectMap();
-    std::vector<UniverseObject*> retval;
-    std::pair<ObjectMultimap::iterator, ObjectMultimap::iterator> range = m_objects.equal_range(orbit);
-    for (ObjectMultimap::iterator it = range.first; it != range.second; ++it) {
-        if (UniverseObject* obj = objects.Object(it->second)->Accept(visitor))
-            retval.push_back(obj);
-    }
-    return retval;
 }
 
 void System::AddOwner(int id)

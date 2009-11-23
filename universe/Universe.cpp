@@ -1955,9 +1955,6 @@ void Universe::InitializeSystemGraph(int for_empire_id)
 
 void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
 {
-    if (!Empires().Lookup(for_empire_id))
-        Logger().errorStream() << "Universe::RebuildEmpireViewSystemGraphs couldn't find empire with id " << for_empire_id;
-
     m_graph_impl->m_empire_system_graph_views.clear();
 
     // if building system graph views for all empires, then each empire's graph
@@ -3976,7 +3973,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         int planet_id, home_orbit; std::string planet_name;
 
         // we can only select a planet if there are planets in this system.
-        if (system->Orbits() >0 && !system->FindObjects<Planet>().empty()) {
+        if (system->Orbits() >0 && !system->FindObjectIDs<Planet>().empty()) {
             std::vector<int> vec_orbits;
             for (int i = 0; i < system->Orbits(); i++)
                 if (system->FindObjectIDsInOrbit<Planet>(i).size() > 0)
@@ -4011,10 +4008,14 @@ void Universe::NamePlanets()
         System* system = *it;
         int num_planets_in_system = 0;
         for (int i = 0; i < system->Orbits(); i++) {
-            std::vector<Planet*> planets = system->FindObjectsInOrbit<Planet>(i);
-            if (!planets.empty()) {
-                assert(planets.size() == 1);
-                Planet* planet = planets[0];
+            std::vector<int> planet_ids = system->FindObjectIDsInOrbit<Planet>(i);
+            if (!planet_ids.empty()) {
+                assert(planet_ids.size() == 1);
+                Planet* planet = GetObject<Planet>(*planet_ids.begin());
+                if (!planet) {
+                    Logger().errorStream() << "Universe::NamePlanet couldn't get planet with id " << *planet_ids.begin();
+                    continue;
+                }
                 if (planet->Type() == PT_ASTEROIDS)
                     planet->Rename(UserString("PL_ASTEROID_BELT"));
                 else

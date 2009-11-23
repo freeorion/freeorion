@@ -441,11 +441,12 @@ void Planet::RemoveOwner(int id)
     System* system = GetObject<System>(this->SystemID());
 
     // check if Empire(id) is owner of at least one other planet in same system
-    std::vector<Planet*> planets = system->FindObjects<Planet>();
+    std::vector<int> planets = system->FindObjectIDs<Planet>();
     int empire_owned_planets_in_this_planet_system = 0;
-    for (std::vector<Planet*>::const_iterator plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
-        if ((*plt_it)->OwnedBy(id))
-            ++empire_owned_planets_in_this_planet_system;
+    for (std::vector<int>::const_iterator plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
+        if (Planet* planet = GetObject<Planet>(*plt_it))
+            if (planet->OwnedBy(id))
+                ++empire_owned_planets_in_this_planet_system;
 
     // if this is the only planet owned by this planet's current owner, removing
     // that owner means the empire owns no planets in this system, so loses

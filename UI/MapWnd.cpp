@@ -1742,10 +1742,12 @@ void MapWnd::ReselectLastSystem()
 void MapWnd::SelectSystem(int system_id)
 {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    const System* system = GetUniverse().Objects().Object<System>(system_id);
+    const System* system = GetObject<System>(system_id);
+    if (!system)
+        system = GetEmpireKnownObject<System>(system_id, HumanClientApp::GetApp()->EmpireID());
     if (!system) {
-        system_id = UniverseObject::INVALID_OBJECT_ID;
         Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
+        system_id = UniverseObject::INVALID_OBJECT_ID;
     }
 
     if (SidePanel::SystemID() != system_id) {
