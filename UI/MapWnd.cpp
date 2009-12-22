@@ -1534,10 +1534,20 @@ void MapWnd::InitStarlaneRenderingBuffers()
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
             std::pair<int, int> lane = UnorderedIntPair(lane_it->first, lane_it->second);
             assert(m_starlane_endpoints[lane].X1 != UniverseObject::INVALID_POSITION);
-            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
-            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
-            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
-            raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
+
+            // coordinates map is oblivious to lane direction, so we need to take care of it here
+            if (lane_it->first == lane.first) { 
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
+            } else {
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
+                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
+            }
+
             raw_starlane_supply_colors.push_back(empire->Color().r);
             raw_starlane_supply_colors.push_back(empire->Color().g);
             raw_starlane_supply_colors.push_back(empire->Color().b);
