@@ -246,6 +246,7 @@ public:
     int                     FleetID() const;
     virtual void            CloseClicked();
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void                    Refresh();              ///< update title to show the current fleet name
     //@}
 
     static const GG::Pt&    LastPosition();         ///< returns the last position of the last FleetWnd that was closed
@@ -265,8 +266,10 @@ private:
 
     FleetDetailPanel* m_fleet_panel;
 
-    static GG::Pt     s_last_position;    ///< the latest position to which any FleetDetailWnd has been moved.
-    static GG::Pt     s_last_size;        ///< the latest size to which any FleetDetailWnd has been resized.
+    static GG::Pt     s_last_position;              ///< the latest position to which any FleetDetailWnd has been moved.
+    static GG::Pt     s_last_size;                  ///< the latest size to which any FleetDetailWnd has been resized.
+
+    boost::signals::connection  m_fleet_connection; ///< needed to keep track of the fleet name
 
     friend class FleetUIManager;
 };
@@ -1862,10 +1865,14 @@ FleetDetailWnd::FleetDetailWnd(int fleet_id, bool read_only, GG::Flags<GG::WndFl
     m_fleet_panel(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
+
     m_fleet_panel = new FleetDetailPanel(GG::X1, GG::Y1, fleet_id, read_only);
     AttachChild(m_fleet_panel);
-    SetName(TitleText());
     EnableChildClipping(false);
+
+    SetName(TitleText());
+    m_fleet_connection = GG::Connect(GetObject<Fleet>(fleet_id)->StateChangedSignal, &FleetDetailWnd::Refresh, this);
+
     DoLayout();
 }
 
@@ -1920,6 +1927,11 @@ std::string FleetDetailWnd::TitleText() const
         return fleet->Name();   // TODO: Should this return fleet->PublicName() depending on ownership...?
     else
         return "";
+}
+
+void FleetDetailWnd::Refresh()
+{
+    SetName(TitleText());
 }
 
 const GG::Pt& FleetDetailWnd::LastPosition()
