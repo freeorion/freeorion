@@ -1189,13 +1189,17 @@ public:
         CUIListBox(x, y, w, h),
         m_highlighted_row_it(end()),
         m_read_only(read_only)
-    {}
+    {
+        InitRowSizes();
+    }
 
     FleetsListBox(bool read_only) :
         CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1),
         m_highlighted_row_it(end()),
         m_read_only(read_only)
-    {}
+    {
+        InitRowSizes();
+    }
 
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
         // default result, possibly to be updated later: reject all drops
@@ -1513,6 +1517,14 @@ private:
         m_highlighted_row_it = end();
     }
 
+    void            InitRowSizes() {
+        // preinitialize listbox/row column widths, because what
+        // ListBox::Insert does on default is not suitable for this case
+        SetNumCols(1);
+        SetColWidth(0, GG::X0);
+        LockColWidths();
+    }
+
     iterator    m_highlighted_row_it;
     const bool  m_read_only;
 };
@@ -1548,6 +1560,12 @@ public:
             return;
 
         const GG::Pt row_size = ListRowSize();
+
+        // preinitialize listbox/row column widths, because what
+        // ListBox::Insert does on default is not suitable for this case
+        SetNumCols(1);
+        SetColWidth(0, GG::X0);
+        LockColWidths();
 
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
