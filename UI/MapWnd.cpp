@@ -3628,6 +3628,10 @@ bool MapWnd::ToggleProduction()
         HideProduction();
     else
         ShowProduction();
+
+    // make info panels in production/map window's side panel update their expand-collapse state
+    m_side_panel->Update();
+
     return true;
 }
 
