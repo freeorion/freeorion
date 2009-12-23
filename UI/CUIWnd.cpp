@@ -299,7 +299,7 @@ void CUIWnd::InitButtons()
         m_minimize_button = new CUI_MinRestoreButton(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y);
         GG::Connect(m_minimize_button->ClickedSignal, &CUIWnd::MinimizeClicked, this);
         AttachChild(m_minimize_button);      
-    }    
+    }
 }
 
 GG::X CUIWnd::MinimizedWidth() const

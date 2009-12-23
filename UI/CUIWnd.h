@@ -90,64 +90,64 @@ public:
     //@}
 
     //! \name Accessors //@{
-    bool Minimized() const {return m_minimized;} //!< returns true if window is minimized
-    virtual GG::Pt ClientUpperLeft() const;
-    virtual GG::Pt ClientLowerRight() const;
-    virtual bool   InWindow(const GG::Pt& pt) const;
+    bool            Minimized() const {return m_minimized;} //!< returns true if window is minimized
+    virtual GG::Pt  ClientUpperLeft() const;
+    virtual GG::Pt  ClientLowerRight() const;
+    virtual bool    InWindow(const GG::Pt& pt) const;
     //@}
 
     //! \name Mutators //@{
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void Render();
-    virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {return LButtonUp(pt, mod_keys);}
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    Render();
+    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {return LButtonUp(pt, mod_keys);}
 
-    void ToggleMinimized() {MinimizeClicked();}
-    void Close()           {CloseClicked();}
+    void            ToggleMinimized() {MinimizeClicked();}
+    void            Close()           {CloseClicked();}
     //@}
 
     //! \name Mutators //@{
-    virtual void CloseClicked();    //!< called when window is closed via the close button
+    virtual void    CloseClicked();                 //!< called when window is closed via the close button
     //@}
 
 protected:
     //! \name Accessors //@{
-    virtual GG::X MinimizedWidth() const;//!< the width of a minimized CUIWnd
-    GG::X LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
-    GG::Y TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
-    GG::X RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
-    GG::Y BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
-    int InnerBorderAngleOffset() const; //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
+    virtual GG::X   MinimizedWidth() const;         //!< the width of a minimized CUIWnd
+    GG::X           LeftBorder() const;             //!< the distance on the left side between the outer edge of the window and the inner border
+    GG::Y           TopBorder() const;              //!< the distance at the top between the outer edge of the window and the inner border
+    GG::X           RightBorder() const;            //!< the distance on the right side between the outer edge of the window and the inner border
+    GG::Y           BottomBorder() const;           //!< the distance at the bottom between the outer edge of the window and the inner border
+    int             InnerBorderAngleOffset() const; //!< the distance from where the lower right corner of the inner border should be to where the angled portion of the inner border meets the right and bottom lines of the border
     //@}
 
     //! \name Mutators //@{
-    virtual void MinimizeClicked(); //!< called when window is minimized or restored via the minimize/restore button
-    void InitButtons();
+    virtual void    MinimizeClicked();              //!< called when window is minimized or restored via the minimize/restore button
+    void            InitButtons();
     //@}
 
-    bool       m_resizable;      //!< true if the window is able to be resized
-    bool       m_closable;       //!< true if the window is able to be closed with a button press
-    bool       m_minimizable;    //!< true if the window is able to be minimized
-    bool       m_minimized;      //!< true if the window is currently minimized
-    GG::Pt     m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
-    GG::Pt     m_original_size;  //!< keeps track of the size of the window before resizing
+    bool                    m_resizable;      //!< true if the window is able to be resized
+    bool                    m_closable;       //!< true if the window is able to be closed with a button press
+    bool                    m_minimizable;    //!< true if the window is able to be minimized
+    bool                    m_minimized;      //!< true if the window is currently minimized
+    GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
+    GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
     
-    CUI_CloseButton*       m_close_button;     //!< the close button
-    CUI_MinRestoreButton*  m_minimize_button;  //!< the minimize/restore button
+    CUI_CloseButton*        m_close_button;     //!< the close button
+    CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
 
-    static const GG::Y BUTTON_TOP_OFFSET;
-    static const GG::X BUTTON_RIGHT_OFFSET;
-    static const GG::X MINIMIZED_WND_WIDTH;
-    static const GG::X BORDER_LEFT;
-    static const GG::Y BORDER_TOP;
-    static const GG::X BORDER_RIGHT;
-    static const GG::Y BORDER_BOTTOM;
-    static const int OUTER_EDGE_ANGLE_OFFSET;
-    static const int INNER_BORDER_ANGLE_OFFSET;
-    static const int RESIZE_HASHMARK1_OFFSET;
-    static const int RESIZE_HASHMARK2_OFFSET;
+    static const GG::Y      BUTTON_TOP_OFFSET;
+    static const GG::X      BUTTON_RIGHT_OFFSET;
+    static const GG::X      MINIMIZED_WND_WIDTH;
+    static const GG::X      BORDER_LEFT;
+    static const GG::Y      BORDER_TOP;
+    static const GG::X      BORDER_RIGHT;
+    static const GG::Y      BORDER_BOTTOM;
+    static const int        OUTER_EDGE_ANGLE_OFFSET;
+    static const int        INNER_BORDER_ANGLE_OFFSET;
+    static const int        RESIZE_HASHMARK1_OFFSET;
+    static const int        RESIZE_HASHMARK2_OFFSET;
 };
 
 

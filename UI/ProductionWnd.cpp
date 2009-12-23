@@ -319,7 +319,11 @@ void ProductionWnd::Refresh()
     if (Empire* empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID()))
         m_empire_connection = GG::Connect(empire->GetProductionQueue().ProductionQueueChangedSignal,
                                           &ProductionWnd::ProductionQueueChangedSlot, this);
-    Update();
+
+    UpdateInfoPanel();
+    UpdateQueue();
+
+    m_build_designator_wnd->Refresh();
 }
 
 void ProductionWnd::Reset()

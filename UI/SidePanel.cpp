@@ -1674,7 +1674,9 @@ void SidePanel::RefreshImpl()
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
-    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+    int app_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(app_empire_id);
 
     // get system object for this sidepanel.  if there isn't one, abort.
     const System* system = objects.Object<const System>(s_system_id);
@@ -1746,13 +1748,19 @@ void SidePanel::RefreshImpl()
 
     // find all planets in this system.  need to check all known planets, since
     // the objects this system object reports to contain don't include objects
-    // that aren't visible this turn to this client's player
+    // that aren't visible this turn to this client's player.  Also need to
+    // make sure that a known object isn't also known to be destroyed, in which
+    // case it shouldn't be shown.
+    const std::set<int>& destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(app_empire_id);
     std::vector<int> known_system_planet_ids;
     std::vector<const Planet*> all_planets = objects.FindObjects<Planet>();
     for (std::vector<const Planet*>::const_iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
         const Planet* planet = *it;
-        if (planet->SystemID() == s_system_id)
-            known_system_planet_ids.push_back(planet->ID());
+        int planet_id = planet->ID();
+        if (planet->SystemID() == s_system_id) {
+            if (destroyed_object_ids.find(planet_id) == destroyed_object_ids.end()) // to be displayed, planet should not be in set of known destroyed objects
+                known_system_planet_ids.push_back(planet_id);
+        }
     }
     m_planet_panel_container->SetPlanets(known_system_planet_ids, system->GetStarType());
 

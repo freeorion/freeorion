@@ -215,10 +215,13 @@ EffectsGroup::~EffectsGroup()
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
-    UniverseObject* source = GetObject(source_id);
-    assert(source);
-
     targets.clear();
+
+    UniverseObject* source = GetObject(source_id);
+    if (!source) {
+        Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
+        return;
+    }
 
     // evaluate the activation condition only on the source object
     Condition::ObjectSet non_targets;
@@ -229,8 +232,10 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
     if (targets.empty())
         return;
 
-    // evaluate the scope condition
+    // remove source object from target set after activation condition check
     targets.clear();
+
+    // evaluate the scope condition
     non_targets = potential_targets;
     m_scope->Eval(source, targets, non_targets);
 }

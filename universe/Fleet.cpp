@@ -881,7 +881,7 @@ void Fleet::MovementPhase()
                 break;
             } else {
                 // fleet will continue past this system this turn.
-                Logger().debugStream() << "... ... moved fleet to system (not inserted)";
+                //Logger().debugStream() << "... ... moved fleet to system (not inserted)";
                 if (!resupply_here) {
                     fuel_consumed += 1.0;
                     //Logger().debugStream() << "... ... consuming 1 unit of fuel to continue moving.  total fuel consumed now: " << fuel_consumed;

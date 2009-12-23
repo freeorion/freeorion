@@ -47,6 +47,10 @@ public:
       * planet */
     void            SelectDefaultPlanet();
 
+    /** Sets BuildSelector's empire ID to empire of this client, and then calls
+      * Update. */
+    void            Refresh();
+
     /** Updates sidepanels and refreshes encyclopedia and build selector. */
     void            Update();
 

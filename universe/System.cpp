@@ -376,8 +376,8 @@ void System::Remove(UniverseObject* obj)
     for (std::list<UniverseObject*>::iterator it = removed_objects.begin(); it != removed_objects.end(); ++it) {
         UniverseObject* cur_obj = *it;
 
-        if (this->ID() != cur_obj->SystemID())
-            Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << cur_obj->SystemID();
+        //if (this->ID() != cur_obj->SystemID())
+        //    Logger().debugStream() << "System::Remove tried to remove an object whose system id was not this system.  Its current system id is: " << cur_obj->SystemID();
 
         for (ObjectMultimap::iterator map_it = m_objects.begin(); map_it != m_objects.end(); ++map_it) {
             if (map_it->second == cur_obj->ID()) {

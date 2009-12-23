@@ -84,6 +84,10 @@ public:
       * future. */
     void    SetBuildLocation(int location_id, bool refresh_list = true);
 
+    /** Sets id of empire (or ALL_EMPIRES) for which to show items in this
+      * BuildSelector. */
+    void    SetEmpireID(int empire_id = ALL_EMPIRES, bool refresh_list = true);
+
     /** Clear and refill list of buildable items, according to current
       * filter settings. */
     void    Refresh();
@@ -142,8 +146,11 @@ private:
     GG::Pt                                  m_original_ul;
 
     int                                     m_build_location;
+    int                                     m_empire_id;
 
     GG::Y                                   m_row_height;
+
+    mutable boost::signals::connection      m_empire_ship_designs_changed_signal;
 
     friend class BuildDesignatorWnd;        // so BuildDesignatorWnd can access buttons
 };
@@ -155,7 +162,8 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
            GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP),
     m_buildable_items(new BuildableItemsListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_build_types(GG::ListBox::RowPtrIteratorLess<GG::ListBox>(m_buildable_items)),
-    m_build_location(UniverseObject::INVALID_OBJECT_ID)
+    m_build_location(UniverseObject::INVALID_OBJECT_ID),
+    m_empire_id(ALL_EMPIRES)
 {
     // create build type toggle buttons (ship, building, all)
     m_build_type_buttons[BT_BUILDING] = new CUIButton(GG::X0, GG::Y0, GG::X1, UserString("PRODUCTION_WND_CATEGORY_BT_BUILDING"));
@@ -322,9 +330,35 @@ void BuildDesignatorWnd::BuildSelector::SetBuildLocation(int location_id, bool r
     }
 }
 
+void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRES*/, bool refresh_list/* = true*/)
+{
+    if (empire_id == m_empire_id)
+        return;
+
+    m_empire_id = empire_id;
+    if (refresh_list) {
+         Refresh();
+    } else {
+        // ensure signal connection set up properly, without actually
+        // repopulating the list, as would be dine in Refresh()
+        m_empire_ship_designs_changed_signal.disconnect();
+        if (const Empire* empire = Empires().Lookup(m_empire_id))
+            m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
+                                                               &BuildDesignatorWnd::BuildSelector::Refresh,
+                                                               this,
+                                                               boost::signals::at_front);
+    }
+}
+
 void BuildDesignatorWnd::BuildSelector::Refresh()
 {
-    //std::cout << "BuildDesignatorWnd::BuildSelector::Refresh()" << std::endl;
+    std::cout << "BuildDesignatorWnd::BuildSelector::Refresh()" << std::endl;
+    m_empire_ship_designs_changed_signal.disconnect();
+    if (const Empire* empire = Empires().Lookup(m_empire_id))
+        m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
+                                                           &BuildDesignatorWnd::BuildSelector::Refresh,
+                                                           this,
+                                                           boost::signals::at_front);
     PopulateList();
 }
 
@@ -404,9 +438,11 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (m_build_types_shown.find(build_type) == m_build_types_shown.end())
         return false;
 
-    bool available = false;
+    const Empire* empire = Empires().Lookup(m_empire_id);
+    if (!empire)
+        return true;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    bool available = false;
     if (build_type == BT_BUILDING)
         available = empire->BuildingTypeAvailable(name);
 
@@ -426,7 +462,10 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 
     bool available = false;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = Empires().Lookup(m_empire_id);
+    if (!empire)
+        return true;
+
     if (build_type == BT_SHIP)
         available = empire->ShipDesignAvailable(design_id);
 
@@ -439,11 +478,7 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
     //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!empire) {
-        // TODO: show all items?  clear list?  not sure what's best to do in this case
-        return;
-    }
+    const Empire* empire = Empires().Lookup(m_empire_id);
 
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
@@ -465,8 +500,9 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
     GG::ListBox::iterator row_to_select = m_buildable_items->end(); // may be set while populating - used to reselect previously selected row after populating
     int i = 0;              // counter that keeps track of how many rows have been added so far
 
+
     // populate list with building types
-    Logger().debugStream() << "Adding Buildings";
+    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
         BuildingTypeManager& manager = GetBuildingTypeManager();
 
@@ -489,10 +525,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->push_back(UserString(name), default_font, ClientUI::TextColor());
 
             // cost / turn, and minimum production turns
-            const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, name);
-            std::string cost_text = DoubleToString(cost_time.first, 3, false);
+            std::string cost_text = "";
+            std::string time_text = "";
+            if (empire) {
+                std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, name);
+                cost_text = DoubleToString(cost_time.first, 3, false);
+                time_text = boost::lexical_cast<std::string>(cost_time.second);
+            }
             row->push_back(cost_text, default_font, ClientUI::TextColor());
-            std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description
@@ -501,7 +541,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
-            if (!empire->BuildableItem(BT_BUILDING, name, m_build_location)) {
+            if (!empire || !empire->BuildableItem(BT_BUILDING, name, m_build_location)) {
                 row->Disable(true);
             } else {
                 row->Disable(false);
@@ -520,11 +560,19 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
         }
     }
     // populate with ship designs
-    Logger().debugStream() << "Adding ship designs";
+    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding ship designs";
     if (m_build_types_shown.find(BT_SHIP) != m_build_types_shown.end()) {
-        Empire::ShipDesignItr end_it = empire->ShipDesignEnd();
-        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != end_it; ++it, ++i) {
-            const int ship_design_id = *it;
+        // get ids of designs to show... for specific empire, or for all empires
+        std::vector<int> design_ids;
+        if (empire)
+            for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it)
+                design_ids.push_back(*it);
+        else
+            for (Universe::ship_design_iterator it = GetUniverse().beginShipDesigns(); it != GetUniverse().endShipDesigns(); ++it)
+                design_ids.push_back(it->first);
+
+        for (std::vector<int>::const_iterator it = design_ids.begin(); it != design_ids.end(); ++it, ++i) {
+            int ship_design_id = *it;
 
             if (!BuildableItemVisible(BT_SHIP, ship_design_id)) continue;
 
@@ -544,10 +592,14 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->push_back(ship_design->Name(), default_font, ClientUI::TextColor());
 
             // cost / turn, and minimum production turns
-            const std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, ship_design_id);
-            std::string cost_text = DoubleToString(cost_time.first, 3, false);
+            std::string cost_text = "";
+            std::string time_text = "";
+            if (empire) {
+                std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, ship_design_id);
+                cost_text = DoubleToString(cost_time.first, 3, false);
+                time_text = boost::lexical_cast<std::string>(cost_time.second);
+            }
             row->push_back(cost_text, default_font, ClientUI::TextColor());
-            std::string time_text = boost::lexical_cast<std::string>(cost_time.second);
             row->push_back(time_text, default_font, ClientUI::TextColor());
 
             // brief description            
@@ -556,7 +608,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             row->push_back(desc_control);
 
             // is item buildable?  If not, disable row
-            if (!empire->BuildableItem(BT_SHIP, ship_design_id, m_build_location)) {
+            if (!empire || !empire->BuildableItem(BT_SHIP, ship_design_id, m_build_location)) {
                 row->Disable(true);
             } else {
                 row->Disable(false);
@@ -718,7 +770,13 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 
     const ObjectMap& objects = GetUniverse().Objects();
 
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "BuildDesignatorWnd::CenterOnBuild couldn't get empire with id " << empire_id;
+        return;
+    }
+
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         int location_id = queue[queue_idx].location;
@@ -733,7 +791,12 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx)
 
 void BuildDesignatorWnd::SetBuild(int queue_idx)
 {
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "BuildDesignatorWnd::SetBuild couldn't get empire with id " << empire_id;
+        return;
+    }
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         BuildType buildType = queue[queue_idx].item.build_type;
@@ -777,6 +840,12 @@ void BuildDesignatorWnd::SelectPlanet(int planet_id)
     m_build_selector->SetBuildLocation(this->BuildLocation());
 }
 
+void BuildDesignatorWnd::Refresh()
+{
+    m_build_selector->SetEmpireID(HumanClientApp::GetApp()->EmpireID(), false);
+    Update();
+}
+
 void BuildDesignatorWnd::Update()
 {
     //std::cout << "BuildDesignatorWnd::Update()" << std::endl;
@@ -792,7 +861,7 @@ void BuildDesignatorWnd::Reset()
     ShowAllTypes(false);            // show all types without populating the list
     HideAvailability(false, false); // hide unavailable items without populating the list
     ShowAvailability(true, false);  // show available items without populating the list
-    m_build_selector->Refresh();    // repopulate the list
+    m_build_selector->Refresh();
     m_enc_detail_panel->UnsetAll();
 }
 
@@ -904,7 +973,7 @@ int BuildDesignatorWnd::BuildLocation() const
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::string& item, int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested item name: " << item << std::endl;
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(build_type, item, BuildLocation()))
         AddNamedBuildToQueueSignal(build_type, item, num_to_build, BuildLocation());
 }
@@ -912,7 +981,7 @@ void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, const std::str
 void BuildDesignatorWnd::BuildItemRequested(BuildType build_type, int design_id, int num_to_build)
 {
     //std::cout << "BuildDesignatorWnd::BuildItemRequested design id: " << design_id << std::endl;
-    Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire && empire->BuildableItem(build_type, design_id, BuildLocation()))
         AddIDedBuildToQueueSignal(build_type, design_id, num_to_build, BuildLocation());
 }

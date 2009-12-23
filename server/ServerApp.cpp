@@ -845,9 +845,15 @@ void ServerApp::ProcessTurns()
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::EMPIRE_PRODUCTION, -1));
     }
 
+
+    Logger().debugStream() << "ServerApp::ProcessTurns effects and meter updates";
+
+
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
+
+    Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
 
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
@@ -863,6 +869,9 @@ void ServerApp::ProcessTurns()
     }
 
 
+    Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
+
+
     // Consume distributed resources to planets and on queues, create new objects for completed production and
     // give techs to empires that have researched them
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -872,6 +881,9 @@ void ServerApp::ProcessTurns()
         empire->CheckTradeSocialProgress();
         empire->CheckGrowthFoodProgress();
     }
+
+
+    Logger().debugStream() << "ServerApp::ProcessTurns post-production effects and meter updates";
 
 
     // re-execute all meter-related effects after production, so that new
