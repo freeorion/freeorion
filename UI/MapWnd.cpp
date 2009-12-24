@@ -1096,8 +1096,6 @@ void MapWnd::InitTurnRendering()
             ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
     }
 
-
-    const ObjectMap& visible_objects = GetUniverse().Objects();
     const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     // adjust size of map window for universe and application size

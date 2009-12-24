@@ -2115,7 +2115,7 @@ void Empire::AddHullType(const std::string& name)
 
 void Empire::AddExploredSystem(int ID)
 {
-    if (const System* system = GetObject<System>(ID))
+    if (GetObject<System>(ID))
         m_explored_systems.insert(ID);
     else
         Logger().errorStream() << "Empire::AddExploredSystem given an invalid system id: " << ID;

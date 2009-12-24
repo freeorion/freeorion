@@ -581,17 +581,18 @@ void ServerApp::ProcessTurns()
     // 2 - if there are more than one empire then
     // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
     // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
-    for (ColonizeOrderMap::iterator it = colonize_order_map.begin(); it != colonize_order_map.end(); ++it) {
-        Planet* planet = objects.Object<Planet>(it->first);
+    for (ColonizeOrderMap::iterator colonize_order_map_it = colonize_order_map.begin(); colonize_order_map_it != colonize_order_map.end(); ++colonize_order_map_it) {
+        Planet* planet = objects.Object<Planet>(colonize_order_map_it->first);
         if (!planet) {
-            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << it->first;
+            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << colonize_order_map_it->first;
             continue;
         }
+        std::vector<boost::shared_ptr<FleetColonizeOrder> >& colonize_orders = colonize_order_map_it->second;
 
         // only one empire?
-        if (it->second.size() == 1) {
-            it->second[0]->ServerExecute();
-            Empire* empire = empires.Lookup( it->second[0]->EmpireID() );
+        if (colonize_orders.size() == 1) {
+            colonize_orders[0]->ServerExecute();
+            Empire* empire = empires.Lookup(colonize_orders[0]->EmpireID());
             empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
         } else {
             int system_id = planet->SystemID();
@@ -621,10 +622,10 @@ void ServerApp::ProcessTurns()
             // set the first empire as winner for now
             int winner = 0;
             // is the current winner armed?
-            bool winner_is_armed = set_empire_with_military.find(it->second[0]->EmpireID()) != set_empire_with_military.end();
-            for (unsigned int i = 1; i < it->second.size(); i++)
+            bool winner_is_armed = set_empire_with_military.find(colonize_orders[0]->EmpireID()) != set_empire_with_military.end();
+            for (unsigned int i = 1; i < colonize_orders.size(); i++)
                 // is this empire armed?
-                if (set_empire_with_military.find(it->second[i]->EmpireID()) != set_empire_with_military.end()) {
+                if (set_empire_with_military.find(colonize_orders[i]->EmpireID()) != set_empire_with_military.end()) {
                     // if this empire is armed and the former winner too, noone can win
                     if (winner_is_armed) {
                         winner = -1; // no winner!!
@@ -638,13 +639,13 @@ void ServerApp::ProcessTurns()
                     if(!winner_is_armed)
                         winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
-            for (int i = 0; i < static_cast<int>(it->second.size()); i++) {
+            for (int i = 0; i < static_cast<int>(colonize_orders.size()); i++) {
                 if (winner == i) {
-                    it->second[i]->ServerExecute();
-                    Empire* empire = empires.Lookup(it->second[i]->EmpireID());
+                    colonize_orders[i]->ServerExecute();
+                    Empire* empire = empires.Lookup(colonize_orders[i]->EmpireID());
                     empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
                 } else {
-                    it->second[i]->Undo();
+                    colonize_orders[i]->Undo();
                 }
             }
         }

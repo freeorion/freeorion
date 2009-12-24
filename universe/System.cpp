@@ -176,7 +176,7 @@ std::vector<int> System::FindObjectIDs() const
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (const UniverseObject* obj = objects.Object(it->second)) {
+        if (objects.Object(it->second)) {
             retval.push_back(it->second);
         } else {
             Logger().errorStream() << "System::FindObjectIDs couldn't get Object with ID " << it->second;
@@ -228,7 +228,9 @@ System::const_orbit_iterator System::end() const
 
 bool System::Contains(int object_id) const
 {
-    const ObjectMap& objects = GetMainObjectMap();
+    // checks if this system object thicks it contains an object with the
+    // indicated ID.  does not check if there exists such an object or whether
+    // that object thinks it is in this system
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         if (it->second == object_id)
             return true;

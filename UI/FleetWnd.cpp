@@ -2133,8 +2133,10 @@ void FleetWnd::Refresh()
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
 
+    int app_empire_id = HumanClientApp::GetApp()->EmpireID();   // may be different from ID of empire whose fleets are being shown in this FleetWnd
+
     // repopulate m_fleet_ids according to FleetWnd settings
-    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    if (GetEmpireKnownObject<System>(m_system_id, app_empire_id)) {
         // get fleets to show from system, based on required ownership
         m_fleet_ids.clear();
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();

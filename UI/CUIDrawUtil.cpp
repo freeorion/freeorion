@@ -44,6 +44,8 @@ namespace {
             x3_ = Value(lr.x);
             y3_ = Value((ul.y + lr.y) / 2.0);
             break;
+        default:
+            Logger().errorStream() << "FindIsoscelesTriangleVertices passed invalid orientation";
         }
     }
 
