@@ -1584,13 +1584,22 @@ public:
                 continue;   // leave false: not modifyable ShipsListBox
 
 
-            const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(it->first);
+            const ShipRow* ship_row = dynamic_cast<const ShipRow*>(it->first);
             if (!ship_row)
                 continue;   // leave false: dropped Wnd not a ShipRow
 
 
             const Ship* ship = ship_row->GetShip();
+            if (!ship) {
+                Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get ship for ship row";
+                continue;
+            }
+
             const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+            if (!fleet) {
+                Logger().errorStream() << "ShipsListBox::DropsAcceptable couldn't get fleet with id " << ship->FleetID();
+                continue;
+            }
 
             if (ship && ValidShipTransfer(ship, fleet))
                 continue;   // leave false: ship transfer not valid
