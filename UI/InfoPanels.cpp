@@ -288,7 +288,7 @@ void PopulationPanel::ExpandCollapse(bool expanded)
 
 void PopulationPanel::DoExpandCollapseLayout()
 {
-    GG::Y icon_height(ClientUI::Pts()*4/3);
+    const GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_popcenter_id]) {
@@ -299,7 +299,7 @@ void PopulationPanel::DoExpandCollapseLayout()
         AttachChild(m_pop_stat);
         AttachChild(m_health_stat);
 
-        Resize(GG::Pt(Width(), icon_height));
+        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
     } else {
         // detach statistic icons
         DetachChild(m_health_stat); DetachChild(m_pop_stat);
@@ -599,8 +599,8 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 }
 
 void ResourcePanel::DoExpandCollapseLayout() {
-    GG::X icon_width(ClientUI::Pts()*4/3);
-    GG::Y icon_height(ClientUI::Pts()*4/3);
+    const GG::X icon_width(ClientUI::Pts()*4/3);
+    const GG::Y icon_height(ClientUI::Pts()*4/3);
 
 
     // initially detach everything (most things?).  Some will be reattached later.
@@ -616,8 +616,6 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_rescenter_id]) {
-        Resize(GG::Pt(Width(), icon_height));
-
         const UniverseObject* obj = GetObject(m_rescenter_id);
         if (!obj)
             obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
@@ -650,6 +648,8 @@ void ResourcePanel::DoExpandCollapseLayout() {
                 n++;
             }
         }
+
+        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
     } else {
         // attach / show focus selector drops
         m_secondary_focus_drop->Show();
@@ -1179,8 +1179,8 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 
 void MilitaryPanel::DoExpandCollapseLayout()
 {
-    GG::X icon_width(ClientUI::Pts()*4/3);
-    GG::Y icon_height(ClientUI::Pts()*4/3);
+    const GG::X icon_width(ClientUI::Pts()*4/3);
+    const GG::Y icon_height(ClientUI::Pts()*4/3);
 
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
@@ -1219,7 +1219,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
             n++;
         }
 
-        Resize(GG::Pt(Width(), icon_height));
+        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
     } else {
         // detach statistic icons
         DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);

@@ -779,7 +779,7 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
 {
     static const std::map<Visibility, int> empty_map;
 
-    EmpireObjectVisibilityTurnMap::const_iterator it = m_empire_object_visibility_turns.find(empire_id);
+    EmpireObjectVisibilityTurnMap::const_iterator empire_it = m_empire_object_visibility_turns.find(empire_id);
     if (empire_it == m_empire_object_visibility_turns.end())
         return empty_map;
 

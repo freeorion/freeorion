@@ -36,6 +36,8 @@ namespace {
             x3_ = Value(ul.x);
             y3_ = Value((ul.y + lr.y) / 2.0);
             break;
+        default:
+            Logger().errorStream() << "FindIsoscelesTriangleVertices passed invalid orientation";
         case SHAPE_RIGHT:
             x1_ = Value(ul.x);
             y1_ = Value(ul.y);
@@ -44,8 +46,6 @@ namespace {
             x3_ = Value(lr.x);
             y3_ = Value((ul.y + lr.y) / 2.0);
             break;
-        default:
-            Logger().errorStream() << "FindIsoscelesTriangleVertices passed invalid orientation";
         }
     }
 
