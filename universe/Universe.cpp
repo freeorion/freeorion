@@ -775,6 +775,22 @@ Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) c
     return vis_map_it->second;
 }
 
+const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const
+{
+    static const std::map<Visibility, int> empty_map;
+
+    EmpireObjectVisibilityTurnMap::const_iterator it = m_empire_object_visibility_turns.find(empire_id);
+    if (empire_it == m_empire_object_visibility_turns.end())
+        return empty_map;
+
+    const ObjectVisibilityTurnMap& obj_vis_turn_map = empire_it->second;
+    ObjectVisibilityTurnMap::const_iterator object_it = obj_vis_turn_map.find(object_id);
+    if (object_it == obj_vis_turn_map.end())
+        return empty_map;
+
+    return object_it->second;
+}
+
 double Universe::LinearDistance(int system1_id, int system2_id) const
 {
     //Logger().debugStream() << "LinearDistance(" << system1_id << ", " << system2_id << ")";
