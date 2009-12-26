@@ -71,6 +71,13 @@ namespace {
         }
     }
 
+    /**
+      * How big we want meter icons with respect to the current UI font size.
+      */
+    GG::Pt MeterIconSize() {
+        return GG::Pt(GG::X(std::max(ClientUI::Pts()*4/3, 16)), GG::Y(std::max(ClientUI::Pts()*4/3, 16)));
+    }
+
     /** Returns how much of specified \a resource_type is being consumed by the
       * empire with id \a empire_id at the location of the specified
       * object \a obj. */
@@ -218,14 +225,11 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
-    GG::X icon_width(ClientUI::Pts()*4/3);
-    GG::Y icon_height(ClientUI::Pts()*4/3);
-
-    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_POPULATION),
+    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_POPULATION),
                                    0, 3, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(w/2, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_HEALTH),
+    m_health_stat = new StatisticIcon(w/2, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false);
     AttachChild(m_health_stat);
 
@@ -288,8 +292,6 @@ void PopulationPanel::ExpandCollapse(bool expanded)
 
 void PopulationPanel::DoExpandCollapseLayout()
 {
-    const GG::Y icon_height(ClientUI::Pts()*4/3);
-
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_popcenter_id]) {
         // detach / hide meter bars and large resource indicators
@@ -299,7 +301,7 @@ void PopulationPanel::DoExpandCollapseLayout()
         AttachChild(m_pop_stat);
         AttachChild(m_health_stat);
 
-        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
+        Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // detach statistic icons
         DetachChild(m_health_stat); DetachChild(m_pop_stat);
@@ -478,8 +480,6 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
 
-    GG::X icon_width(ClientUI::Pts()*4/3);
-    GG::Y icon_height(ClientUI::Pts()*4/3);
     GG::DropDownList::Row* row;
     boost::shared_ptr<GG::Texture> texture;
     GG::StaticGraphic* graphic;
@@ -494,19 +494,19 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     textures.push_back(ClientUI::MeterIcon(METER_RESEARCH));
     textures.push_back(ClientUI::MeterIcon(METER_TRADE));
 
-    m_primary_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, icon_width*4, icon_height*3/2, icon_height*19/2);
+    m_primary_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_primary_focus_drop->Insert(row);
     }
     AttachChild(m_primary_focus_drop);
 
-    m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + icon_width/2, GG::Y0,
-                                                 icon_width*4, icon_height*3/2, icon_height*19/2);
+    m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + MeterIconSize().x/2, GG::Y0,
+                                                 MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
     for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, icon_width*3/2, icon_height*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_secondary_focus_drop->Insert(row);
@@ -521,23 +521,23 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_drop_changed_connections[m_secondary_focus_drop] =    GG::Connect(m_secondary_focus_drop->SelChangedSignal,   &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
 
     // small resource indicators - for use when panel is collapsed
-    m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_FARMING),
+    m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FARMING),
                                        0, 3, false);
     AttachChild(m_farming_stat);
 
-    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_MINING),
+    m_mining_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_MINING),
                                       0, 3, false);
     AttachChild(m_mining_stat);
 
-    m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_INDUSTRY),
+    m_industry_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_INDUSTRY),
                                         0, 3, false);
     AttachChild(m_industry_stat);
 
-    m_research_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_RESEARCH),
+    m_research_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_RESEARCH),
                                         0, 3, false);
     AttachChild(m_research_stat);
 
-    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_TRADE),
+    m_trade_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_TRADE),
                                      0, 3, false);
     AttachChild(m_trade_stat);
 
@@ -599,10 +599,6 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
 }
 
 void ResourcePanel::DoExpandCollapseLayout() {
-    const GG::X icon_width(ClientUI::Pts()*4/3);
-    const GG::Y icon_height(ClientUI::Pts()*4/3);
-
-
     // initially detach everything (most things?).  Some will be reattached later.
     DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
     DetachChild(m_research_stat);   DetachChild(m_trade_stat);
@@ -634,9 +630,9 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // position and reattach icons to be shown
             int n = 0;
             for (std::multimap<double, StatisticIcon*>::iterator it = res_prod_icon_map.end(); it != res_prod_icon_map.begin();) {
-                GG::X x = icon_width*n*7/2;
+                GG::X x = MeterIconSize().x*n*7/2;
 
-                if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
+                if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
                 std::multimap<double, StatisticIcon*>::iterator it2 = --it;
 
@@ -649,7 +645,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
             }
         }
 
-        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
+        Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // attach / show focus selector drops
         m_secondary_focus_drop->Show();
@@ -1004,27 +1000,24 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
 
-    GG::X icon_width(ClientUI::Pts()*4/3);
-    GG::Y icon_height(ClientUI::Pts()*4/3);
-
     // small meter indicators - for use when panel is collapsed
-    m_fleet_supply_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SUPPLY),
+    m_fleet_supply_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_SUPPLY),
                                             0, 3, false);
     AttachChild(m_fleet_supply_stat);
 
-    m_shield_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_SHIELD),
+    m_shield_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_SHIELD),
                                       0, 3, false);
     AttachChild(m_shield_stat);
 
-    m_defense_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DEFENSE),
+    m_defense_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_DEFENSE),
                                        0, 3, false);
     AttachChild(m_defense_stat);
 
-    m_detection_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_DETECTION),
+    m_detection_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_DETECTION),
                                          0, 3, false);
     AttachChild(m_detection_stat);
 
-    m_stealth_stat = new StatisticIcon(GG::X0, GG::Y0, icon_width, icon_height, ClientUI::MeterIcon(METER_STEALTH),
+    m_stealth_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_STEALTH),
                                        0, 3, false);
     AttachChild(m_stealth_stat);
 
@@ -1179,9 +1172,6 @@ void MilitaryPanel::ExpandCollapseButtonPressed()
 
 void MilitaryPanel::DoExpandCollapseLayout()
 {
-    const GG::X icon_width(ClientUI::Pts()*4/3);
-    const GG::Y icon_height(ClientUI::Pts()*4/3);
-
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
 
@@ -1207,9 +1197,9 @@ void MilitaryPanel::DoExpandCollapseLayout()
         // position and reattach icons to be shown
         int n = 0;
         for (std::vector<StatisticIcon*>::iterator it = meter_icons.begin(); it != meter_icons.end(); ++it) {
-            GG::X x = icon_width*n*7/2;
+            GG::X x = MeterIconSize().x*n*7/2;
 
-            if (x > Width() - m_expand_button->Width() - icon_width*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
             StatisticIcon* icon = *it;
             AttachChild(icon);
@@ -1219,7 +1209,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
             n++;
         }
 
-        Resize(GG::Pt(Width(), std::max(icon_height, m_expand_button->Height())));
+        Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // detach statistic icons
         DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);
@@ -1715,12 +1705,9 @@ void BuildingsPanel::DoExpandCollapseLayout()
 {
     int row = 0;
     int column = 0;
-    const GG::X w = Width();    // horizontal space in which to place indicators
     const int padding = 5;      // space around and between adjacent indicators
-    const GG::X effective_width = w - padding * (m_columns + 1);  // padding on either side and between
+    const GG::X effective_width = Width() - padding * (m_columns + 1);  // padding on either side and between
     const int indicator_size = static_cast<int>(Value(effective_width * 1.0 / m_columns));
-    const GG::X icon_width(ClientUI::Pts()*4/3);
-    const GG::Y icon_height(ClientUI::Pts()*4/3);
     GG::Y height;
 
     // update size of panel and position and visibility of widgets
@@ -1729,11 +1716,11 @@ void BuildingsPanel::DoExpandCollapseLayout()
         for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
             BuildingIndicator* ind = *it;
 
-            GG::X x = icon_width * n;
+            const GG::Pt ul = GG::Pt(MeterIconSize().x * n, GG::Y0);
+            const GG::Pt lr = ul + MeterIconSize();
 
-            if (x < (w - m_expand_button->Width() - icon_width)) {
-                ind->MoveTo(GG::Pt(n*icon_width, GG::Y0));
-                ind->Resize(GG::Pt(icon_width, icon_height));
+            if (lr.x < Width() - m_expand_button->Width()) {
+                ind->SizeMove(ul, lr);
                 AttachChild(ind);
             } else {
                 DetachChild(ind);
@@ -1746,12 +1733,10 @@ void BuildingsPanel::DoExpandCollapseLayout()
         for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
             BuildingIndicator* ind = *it;
 
-            GG::X x(padding * (column + 1) + indicator_size * column);
-            GG::Y y(padding * (row + 1) + indicator_size * row);
-            ind->MoveTo(GG::Pt(x, y));
+            const GG::Pt ul = GG::Pt(GG::X(padding * (column + 1) + indicator_size * column), GG::Y(padding * (row + 1) + indicator_size * row));
+            const GG::Pt lr = ul + GG::Pt(GG::X(indicator_size), GG::Y(indicator_size));
 
-            ind->Resize(GG::Pt(GG::X(indicator_size), GG::Y(indicator_size)));
-
+            ind->SizeMove(ul, lr);
             AttachChild(ind);
             ind->Show();
 
@@ -1774,7 +1759,8 @@ void BuildingsPanel::DoExpandCollapseLayout()
     } else {
         AttachChild(m_expand_button);
         m_expand_button->Show();
-        if (height < icon_height) height = icon_height;
+        if (height < MeterIconSize().y)
+            height = MeterIconSize().y;
     }
 
     Resize(GG::Pt(Width(), height));
