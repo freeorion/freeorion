@@ -1739,6 +1739,8 @@ void Universe::UpdateEmpireObjectVisibilities()
             }
         }
     }
+
+    UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 }
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
