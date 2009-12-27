@@ -870,11 +870,21 @@ int ShipDesign::BuildTime() const {
 }
 
 double ShipDesign::StarlaneSpeed() const {
-    return GetHull()->StarlaneSpeed();
+    if (const HullType* hull_type = GetHull()) {
+        return hull_type->StarlaneSpeed();
+    } else {
+        Logger().errorStream() << "ShipDesign::StarlaneSpeed couldn't get HullType (named: " << m_hull << ")";
+        return 0.0;
+    }
 }
 
 double ShipDesign::BattleSpeed() const {
-    return GetHull()->BattleSpeed();
+    if (const HullType* hull_type = GetHull()) {
+        return hull_type->BattleSpeed();
+    } else {
+        Logger().errorStream() << "ShipDesign::BattleSpeed couldn't get HullType (named: " << m_hull << ")";
+        return 0.0;
+    }
 }
 
 const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
