@@ -121,51 +121,49 @@ void StringTable_::Load()
     }
 
     if (well_formed) {
+        // recursively expand keys -- replace [[KEY]] by the text resulting from expanding everything in the definition for KEY
         for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
         {
-            sregex_iterator it(map_it->second.begin(), map_it->second.end(), REFERENCE);
-            sregex_iterator end;
-            std::size_t offset = 0;
-            bool b = false;
-            for (; it != end; ) {
-                b = true;
-                const smatch& match = *it;
-                std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[2]);
-                if (map_lookup_it != m_strings.end()) {
-                    std::string substitution =
-                        '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
-                    map_it->second.replace(match.position() + offset, match.length(), substitution);
-                    offset = match.position() + substitution.length();
-                    it = sregex_iterator(map_it->second.begin() + offset,
-                                         map_it->second.end(),
-                                         REFERENCE);
-                }
-            }
-        }
-        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
-        {
-            sregex_iterator it(map_it->second.begin(), map_it->second.end(), KEYEXPANSION);
-            sregex_iterator end;
-            std::size_t offset = 0;
+            std::size_t position = 0; // position in the definition string, past the already processed part
+            smatch match;
             std::set<std::string> cyclic_reference_check;
-            bool cyclic_reference_error = false;
             cyclic_reference_check.insert(map_it->first);
-            while (it != end && !cyclic_reference_error) {
-                const smatch& match = *it;
+            while (regex_search(map_it->second.begin() + position, map_it->second.end(), match, KEYEXPANSION)) {
+                position += match.position();
                 if (cyclic_reference_check.find(match[1]) == cyclic_reference_check.end()) {
                     cyclic_reference_check.insert(match[1]);
                     std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[1]);
                     if (map_lookup_it != m_strings.end()) {
-                        std::string substitution = map_lookup_it->second;
-                        map_it->second.replace(match.position() + offset, match.length(), substitution);
-                        offset = match.position();
-                        it = sregex_iterator(map_it->second.begin() + offset,
-                                             map_it->second.end(),
-                                             KEYEXPANSION);
+                        const std::string substitution = map_lookup_it->second;
+                        map_it->second.replace(position, match.length(), substitution);
+                        // replace recursively -- do not skip past substitution
+                    } else {
+                        Logger().errorStream() << "Unresolved key expansion: " << match[1] << " in: " << m_filename << ".";
+                        position += match.length();
                     }
                 } else {
-                    cyclic_reference_error = true;
-                    Logger().errorStream() << "While parsing stringtable, expanding key " << match[1] << ": Cyclic referense found. File: '" << m_filename << "'.  Skipping expansion.";
+                    Logger().errorStream() << "Cyclic key expansion: " << match[1] << " in: " << m_filename << ".";
+                    position += match.length();
+                }
+            }
+        }
+
+        // nonrecursively replace references -- convert [[type REF]] to <type REF>string for REF</type>
+        for (std::map<std::string, std::string>::iterator map_it = m_strings.begin(); map_it != m_strings.end(); ++map_it)
+        {
+            std::size_t position = 0; // position in the definition string, past the already processed part
+            smatch match;
+            while (regex_search(map_it->second.begin() + position, map_it->second.end(), match, REFERENCE)) {
+                position += match.position();
+                std::map<std::string, std::string>::iterator map_lookup_it = m_strings.find(match[2]);
+                if (map_lookup_it != m_strings.end()) {
+                    const std::string substitution =
+                        '<' + match[1].str() + ' ' + match[2].str() + '>' + map_lookup_it->second + "</" + match[1].str() + '>';
+                    map_it->second.replace(position, match.length(), substitution);
+                    position += substitution.length();
+                } else {
+                    Logger().errorStream() << "Unresolved reference: " << match[2] << " in: " << m_filename << ".";
+                    position += match.length();
                 }
             }
         }
