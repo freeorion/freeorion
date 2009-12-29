@@ -686,7 +686,7 @@ void Fleet::AddShip(int ship_id)
         return;
     }
 
-    Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
+    //Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
     if (Ship* s = GetObject<Ship>(ship_id)) {
         if (System* system = GetObject<System>(this->SystemID())) {
             system->Insert(s);

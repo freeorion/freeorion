@@ -1304,45 +1304,35 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 {
     m_supply_unobstructed_systems.clear();
 
-    // find "unobstructed" systems that can propegate fleet supply routes
-    const std::vector<System*> all_systems = GetMainObjectMap().FindObjects<System>();
+    // get all fleets, or just fleets visible to this client's empire
+    const std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
 
-    for (std::vector<System*>::const_iterator it = all_systems.begin(); it != all_systems.end(); ++it) {
-        const System* system = *it;
-        int system_id = system->ID();
+    // find systems that contain friendly fleets or objects that can block supply
+    std::set<int> systems_containing_friendly_fleets;
+    std::set<int> systems_containing_obstructing_objects;
+    for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        const Fleet* fleet = *it;
+        int system_id = fleet->SystemID();
+        if (system_id == UniverseObject::INVALID_OBJECT_ID || m_supply_unobstructed_systems.find(system_id) == m_supply_unobstructed_systems.end())
+            continue;   // not in a potential supply unobstructed systema
+        else if (fleet->OwnedBy(m_id))
+            systems_containing_friendly_fleets.insert(system_id);
+        else            // owned by another empire, or has no owners
+            systems_containing_obstructing_objects.insert(system_id);
+    }
 
-        // to be unobstructed, systems must be known to this empire
-        if (known_systems.find(system_id) == known_systems.end())
-            continue;
-
-        //std::cout << "... system " << system->Name() << " is explored" << std::endl;
-
-        // ...and ( contain a friendly fleet *or* not contain a hostile fleet )
-        bool blocked = false;
-        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-        for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
-            const Fleet* fleet = GetObject<Fleet>(*it);
-            if (!fleet) {
-                Logger().errorStream() << "Empire::UpdateSupplyUnobstructedSystems couldn't get fleet with id " << *it;
-                continue;
-            }
-
-            // check if this empire owns this fleet.
-            if (fleet->OwnedBy(m_id)) {
-                // this empire owns this fleet.  the system is unobstructed regardless of what else is here
-                blocked = false;
-                break;
-            } else {
-                // this empire doesn't own this fleet.  the system might be obstructed, but need to check the
-                // rest of the fleets to be sure.  TODO: deal with other affiliations, like neutral empires or
-                // allies of this empire
-                blocked = true;
-            }
-        }
-        if (!blocked) {
-            m_supply_unobstructed_systems.insert(system_id);
-            //std::cout << " ... unobstructed system: " << system_id << std::endl;
-        }
+    // check each potential supplyable system for whether it can propegate
+    // supply.  having no obstructing objects or having a friendly fleet means
+    // it can
+    for (std::set<int>::const_iterator known_systems_it = known_systems.begin(); known_systems_it != known_systems.end(); ++known_systems_it) {
+        int sys_id = *known_systems_it;
+        if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end())
+            m_supply_unobstructed_systems.insert(sys_id);
+        else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end())
+            m_supply_unobstructed_systems.insert(sys_id);
+        // otherwise, system contains no friendly fleets but does contain an
+        // unfriendly fleet, so it is obstructed, so isn't included in the
+        // unobstructed systems set
     }
 }
 
@@ -2313,11 +2303,24 @@ void Empire::CheckProductionProgress()
             m_production_progress[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {
-                Planet* planet = objects.Object<Planet>(m_production_queue[i].location);
-                assert(planet);
+                int planet_id = m_production_queue[i].location;
+                Planet* planet = objects.Object<Planet>(planet_id);
+                if (!planet) {
+                    Logger().errorStream() << "Couldn't get planet with id  " << planet_id << " on which to create building";
+                    continue;
+                }
+
                 Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
+                // start with max stealth to ensure new building won't be
+                // visisble to other empires on first turn if it shouldn't be.
+                // current value will be clamped to max meter value after
+                // effects are applied
+                building->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+
                 int building_id = universe.Insert(building);
+
                 planet->AddBuilding(building_id);
+
                 SitRepEntry* entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
                 AddSitRepEntry(entry);
                 //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
@@ -2334,6 +2337,12 @@ void Empire::CheckProductionProgress()
 
                 // create new fleet with new ship
                 Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
+                // start with max stealth to ensure new fleet won't be visisble
+                // to other empires on first turn if it shouldn't be.  current
+                // value will be clamped to max meter value after effects are
+                // applied
+                fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+
                 int fleet_id = universe.Insert(fleet);
 
                 system->Insert(fleet);
@@ -2341,14 +2350,14 @@ void Empire::CheckProductionProgress()
 
                 // add ship
                 Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id);
-                // start with with maxed meters.  current values will be clamped to max value
-                // after effects are applied to set that max value appropriately
+                // start with with maxed meters.  current values will be
+                // clamped to max value after effects are applied to set that
+                // max value appropriately
                 ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
                 ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
                 ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
                 ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
                 ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
-
 
                 int ship_id = universe.Insert(ship);
 

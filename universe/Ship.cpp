@@ -258,7 +258,7 @@ void Ship::MoveTo(double x, double y)
 
     // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
     if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
-        Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
+        //Logger().debugStream() << "Ship::MoveTo removing " << this->ID() << " from fleet " << fleet->Name();
         fleet->RemoveShip(this->ID());
     }
 }

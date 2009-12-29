@@ -536,14 +536,21 @@ void ServerApp::ProcessTurns()
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
-    Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
-    // Now all orders, then process turns
+    // inform players of impending order execution
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         // broadcast UI message to all players
         for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
             (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
         }
+    }
 
+    Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
+    // execute orders
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        // broadcast UI message to all players
+        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+            (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::PROCESSING_ORDERS, it->first));
+        }
         Empire* empire = empires.Lookup(it->first);
         empire->ClearSitRep();
         OrderSet* order_set = it->second;
@@ -553,6 +560,13 @@ void ServerApp::ProcessTurns()
             order_it->second->Execute();
         }
     }
+
+    // re-execute all meter-related effects after orders, so that new
+    // UniverseObjects created during order executtion (eg. new fleets) will
+    // have effects applied to them this turn, ensuring (eg.) new fleets will
+    // have the appropriate stealth level on the turn they are created.
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+
 
     Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
     // filter FleetColonizeOrder for later processing
@@ -717,6 +731,7 @@ void ServerApp::ProcessTurns()
 
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns combat";
@@ -837,6 +852,7 @@ void ServerApp::ProcessTurns()
 
     // post-combat visibility update
     m_universe.UpdateEmpireObjectVisibilities();
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
     // process production and growth phase
@@ -912,10 +928,6 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // post-growth visibility update
-    m_universe.UpdateEmpireObjectVisibilities();
-
-
     // copy latest updated current meter values to initial current values, and
     // initial current values to previous values, so that clients will have
     // this information based on values after all changes that occured this turn
@@ -949,6 +961,8 @@ void ServerApp::ProcessTurns()
     ++m_current_turn;
 
 
+    // new turn visibility update
+    m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 

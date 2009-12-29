@@ -181,6 +181,7 @@ void NewFleetOrder::ExecuteImpl() const
             return;
         }
         fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
         system->Insert(fleet);

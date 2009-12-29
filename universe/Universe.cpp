@@ -52,15 +52,14 @@ namespace {
     }
 }
 
-
 namespace {
-    const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;  // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
+    const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 }
 
 namespace {
     struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
 
-    const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0; // the factor by which non-starlane travel is slower than starlane travel
+    const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
     {
@@ -1527,6 +1526,8 @@ void Universe::UpdateEmpireObjectVisibilities()
             if (!target) continue;
 
 
+            //Logger().debugStream() << " ... considering stealthy object " << target->Name() << " (" << target->ID() << ")";
+
             //// check if stealthy object is a fleet.  if so, don't bother
             //// setting its visibility now, but later get visibility by
             //// propegating from ships in fleet
@@ -1569,6 +1570,11 @@ void Universe::UpdateEmpireObjectVisibilities()
             if (dist2 <= detect_range * detect_range)
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
 
+
+            if (target_visibility_to_detector <= VIS_NO_VISIBILITY)
+                continue;
+
+
             // Note that owning an object grants FULL visibility in the containing loop
 
 
@@ -1598,13 +1604,19 @@ void Universe::UpdateEmpireObjectVisibilities()
         const Fleet* container_fleet = universe_object_cast<const Fleet*>(container_obj);
 
 
+        //Logger().debugStream() << "Container object " << container_obj->Name() << " (" << container_obj->ID() << ")";
+
         // for each contained object within container
         for (std::vector<int>::iterator contained_obj_it = contained_objects.begin(); contained_obj_it != contained_objects.end(); ++contained_obj_it) {
             int contained_obj_id = *contained_obj_it;
 
+            //Logger().debugStream() << " ... contained object (" << contained_obj_id << ")";
+
             // for each empire with a visibility map
             for (EmpireObjectVisibilityMap::iterator empire_it = m_empire_object_visibility.begin(); empire_it != m_empire_object_visibility.end(); ++empire_it) {
                 ObjectVisibilityMap& vis_map = empire_it->second;
+
+                //Logger().debugStream() << " ... ... empire id " << empire_it->first;
 
                 // find current empire's visibility entry for current container object
                 ObjectVisibilityMap::iterator container_vis_it = vis_map.find(container_obj_id);
@@ -1639,8 +1651,10 @@ void Universe::UpdateEmpireObjectVisibilities()
                     Visibility contained_obj_vis = contained_vis_it->second;
 
                     // no need to propegate if contained object isn't visible to current empire
-                    if (contained_obj_vis == VIS_NO_VISIBILITY)
+                    if (contained_obj_vis <= VIS_NO_VISIBILITY)
                         continue;
+
+                    //Logger().debugStream() << " ... ... contained object vis: " << contained_obj_vis;
 
                     // contained object is at least basically visible.
                     // container should be at least partially visible, but don't
@@ -1651,6 +1665,10 @@ void Universe::UpdateEmpireObjectVisibilities()
 
                     // special case for fleets: grant partial visibility if
                     // visible contained object is partially or better visible
+                    // this way fleet ownership is known to players who can 
+                    // see ships with partial or better visibility (and thus
+                    // know the owner of the ships and thus should know the
+                    // owners of the fleet)
                     if (container_fleet && contained_obj_vis >= VIS_PARTIAL_VISIBILITY && container_vis_it->second < VIS_PARTIAL_VISIBILITY)
                         container_vis_it->second = VIS_PARTIAL_VISIBILITY;
                 }
@@ -1739,12 +1757,12 @@ void Universe::UpdateEmpireObjectVisibilities()
             }
         }
     }
-
-    UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 }
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
 {
+    Logger().debugStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
+
     // assumes m_empire_object_visibility has been updated
 
     //  for each object in universe
@@ -1810,6 +1828,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
                         vis_turn_map[VIS_BASIC_VISIBILITY] = current_turn;
                     }
                 }
+                //Logger().debugStream() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
             } else {
                 Logger().errorStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() found invalid visibility for object with id " << object_id << " by empire with id " << empire_id;
                 continue;
