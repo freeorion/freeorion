@@ -141,7 +141,8 @@ bool ClientNetworking::MessageAvailable() const
 
 ClientNetworking::ServerList ClientNetworking::DiscoverLANServers()
 {
-    assert(!Connected());
+    if (!Connected())
+        return ServerList();
     ServerDiscoverer discoverer(m_io_service);
     discoverer.DiscoverServers();
     return discoverer.Servers();
@@ -211,7 +212,10 @@ void ClientNetworking::DisconnectFromServer()
 
 void ClientNetworking::SendMessage(Message message)
 {
-    assert(Connected());
+    if (!Connected()) {
+        Logger().errorStream() << "ClientNetworking::SendMessage can't send message when not connected";
+        return;
+    }
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ClientNetworking::SendMessage() : "
                                << "sending message " << message;
@@ -220,7 +224,10 @@ void ClientNetworking::SendMessage(Message message)
 
 void ClientNetworking::GetMessage(Message& message)
 {
-    assert(MessageAvailable());
+    if (!MessageAvailable()) {
+        Logger().errorStream() << "ClientNetworking::GetMessage can't get message if none available";
+        return;
+    }
     m_incoming_messages.PopFront(message);
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ClientNetworking::GetMessage() : received message "

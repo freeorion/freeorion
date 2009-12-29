@@ -80,7 +80,7 @@ ServerConnectWnd::ServerConnectWnd() :
     layout->SetMinimumColumnWidth(3, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(0, m_player_name_edit->Height() + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(1, m_host_or_join_radio_group->MinUsableSize().y);
-    layout->SetMinimumRowHeight(2, m_LAN_game_label->Height() + 2 * CONTROL_MARGIN);
+    layout->SetMinimumRowHeight(2, m_LAN_game_label->Height() + (2 * CONTROL_MARGIN));
     layout->SetRowStretch(3, 1.0);
     layout->SetMinimumRowHeight(4, m_find_LAN_servers_bn->Height() + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(5, m_internet_game_label->Height() + CONTROL_MARGIN);
