@@ -201,7 +201,10 @@ private:
 
     void            InitTurnRendering();                        //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
     void            InitSystemRenderingBuffers();               //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
+    void            ClearSystemRenderingBuffers();
     void            InitStarlaneRenderingBuffers();             //!< initializes or refreshes buffers for rendering of starlanes
+    void            ClearStarlaneRenderingBuffers();
+
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
      * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
     LaneEndpoints   StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);

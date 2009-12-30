@@ -1290,34 +1290,8 @@ void MapWnd::InitSystemRenderingBuffers()
         }
     }
 
-
     // clear out all the old buffers
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-         it != m_star_core_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
-    m_star_core_quad_vertices.clear();
-
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-         it != m_star_halo_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
-    m_star_halo_quad_vertices.clear();
-
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
-    m_galaxy_gas_quad_vertices.clear();
-
-    if (m_star_texture_coords.m_name) {
-        glDeleteBuffers(1, &m_star_texture_coords.m_name);
-        m_star_texture_coords.m_name = 0;
-    }
-
+    ClearSystemRenderingBuffers();
 
     // create new buffers
 
@@ -1380,6 +1354,37 @@ void MapWnd::InitSystemRenderingBuffers()
     // cleanup
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers time: " << (timer.elapsed() * 1000.0);
+}
+
+void MapWnd::ClearSystemRenderingBuffers()
+{
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+         it != m_star_core_quad_vertices.end(); ++it)
+    {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_star_core_quad_vertices.clear();
+
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+         it != m_star_halo_quad_vertices.end(); ++it)
+    {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_star_halo_quad_vertices.clear();
+
+    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end(); ++it)
+    {
+        glDeleteBuffers(1, &it->second.m_name);
+    }
+    m_galaxy_gas_quad_vertices.clear();
+
+    if (m_star_texture_coords.m_name) {
+        glDeleteBuffers(1, &m_star_texture_coords.m_name);
+        m_star_texture_coords.m_name = 0;
+    }
+
+
 }
 
 void MapWnd::InitStarlaneRenderingBuffers()
@@ -1557,30 +1562,8 @@ void MapWnd::InitStarlaneRenderingBuffers()
         }
     }
 
-
     // clear old buffers
-    if (m_starlane_vertices.m_name) {
-        glDeleteBuffers(1, &m_starlane_vertices.m_name);
-        m_starlane_vertices.m_name = 0;
-    }
-
-    if (m_starlane_colors.m_name) {
-        glDeleteBuffers(1, &m_starlane_colors.m_name);
-        m_starlane_colors.m_name = 0;
-    }
-
-    if (m_starlane_fleet_supply_vertices.m_name) {
-        glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
-        m_starlane_fleet_supply_vertices.m_name = 0;
-    }
-
-    if (m_starlane_fleet_supply_colors.m_name) {
-        glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
-        m_starlane_fleet_supply_colors.m_name = 0;
-    }
-
-
-
+    ClearStarlaneRenderingBuffers();
 
     // fill new buffers
     if (!raw_starlane_vertices.empty()) {
@@ -1627,6 +1610,33 @@ void MapWnd::InitStarlaneRenderingBuffers()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
+}
+
+void MapWnd::ClearStarlaneRenderingBuffers()
+{
+    if (m_starlane_vertices.m_name) {
+        glDeleteBuffers(1, &m_starlane_vertices.m_name);
+        m_starlane_vertices.m_name = 0;
+    }
+
+    if (m_starlane_colors.m_name) {
+        glDeleteBuffers(1, &m_starlane_colors.m_name);
+        m_starlane_colors.m_name = 0;
+    }
+
+    if (m_starlane_fleet_supply_vertices.m_name) {
+        glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
+        m_starlane_fleet_supply_vertices.m_name = 0;
+    }
+
+    if (m_starlane_fleet_supply_colors.m_name) {
+        glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
+        m_starlane_fleet_supply_colors.m_name = 0;
+    }
+
+
+
+
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)
@@ -1753,7 +1763,7 @@ void MapWnd::SelectSystem(int system_id)
     const System* system = GetObject<System>(system_id);
     if (!system)
         system = GetEmpireKnownObject<System>(system_id, HumanClientApp::GetApp()->EmpireID());
-    if (!system) {
+    if (!system && system_id != UniverseObject::INVALID_OBJECT_ID) {
         Logger().errorStream() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = UniverseObject::INVALID_OBJECT_ID;
     }
@@ -3399,6 +3409,11 @@ void MapWnd::Sanitize()
     //std::cout << "MapWnd::Sanitize()" << std::endl;
     Cleanup();
 
+    SelectSystem(UniverseObject::INVALID_OBJECT_ID);
+
+    ClearSystemRenderingBuffers();
+    ClearStarlaneRenderingBuffers();
+
     const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
     const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
     const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
@@ -3460,6 +3475,10 @@ void MapWnd::Sanitize()
     m_fleet_lines.clear();
 
     m_projected_fleet_lines.clear();
+
+    for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
+        delete it->second;
+    m_system_icons.clear();
 }
 
 bool MapWnd::ReturnToMap()
