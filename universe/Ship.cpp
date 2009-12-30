@@ -55,7 +55,10 @@ Ship::Ship(int empire_id, int design_id) :
     for (std::size_t i = 0; i < part_names.size(); ++i) {
         if (part_names[i] != "") {
             const PartType* part = GetPartType(part_names[i]);
-            assert(part);
+            if (!part) {
+                Logger().errorStream() << "Ship::Ship couldn't get part with name " << part_names[i];
+                continue;
+            }
             if (part->Class() == PC_FIGHTERS) {
                 std::pair<std::size_t, std::size_t>& part_fighters =
                     m_fighters[part_names[i]];

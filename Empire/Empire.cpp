@@ -1313,8 +1313,8 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     for (std::vector<Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
         const Fleet* fleet = *it;
         int system_id = fleet->SystemID();
-        if (system_id == UniverseObject::INVALID_OBJECT_ID || m_supply_unobstructed_systems.find(system_id) == m_supply_unobstructed_systems.end())
-            continue;   // not in a potential supply unobstructed systema
+        if (system_id == UniverseObject::INVALID_OBJECT_ID/* || known_systems.find(system_id) == known_systems.end()*/)
+            continue;   // not in a (potential supply unobstructed) system
         else if (fleet->OwnedBy(m_id))
             systems_containing_friendly_fleets.insert(system_id);
         else            // owned by another empire, or has no owners
