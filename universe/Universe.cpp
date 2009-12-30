@@ -670,10 +670,22 @@ Universe::Universe() :
 
 Universe::~Universe()
 {
-    for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
-        delete it->second;
+    Clear();
 
     delete m_graph_impl;
+}
+
+void Universe::Clear()
+{
+    // empty object maps
+    m_objects.Clear();
+    for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin(); it != m_empire_latest_known_objects.end(); ++it)
+        it->second.Clear();
+    m_empire_latest_known_objects.clear();
+
+    for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
+        delete it->second;
+    m_ship_designs.clear();
 }
 
 const ObjectMap& Universe::Objects() const

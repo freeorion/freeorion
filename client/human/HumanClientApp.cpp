@@ -595,6 +595,11 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     SetEmpireID(-1);
     SetPlayerName("");
     m_ui->GetMapWnd()->Sanitize();
+
+    m_universe.Clear();
+    m_empires.RemoveAllEmpires();
+    m_orders.Reset();
+    m_combat_orders.clear();
 }
 
 void HumanClientApp::UpdateFPSLimit()

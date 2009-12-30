@@ -380,6 +380,9 @@ public:
                                    SpecialsFrequency specials_freq, int players, int ai_players,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
+    /** Clears ObjectMap and  */
+    void            Clear();
+
     /** Determines all effectsgroups' target sets, resets meters and applies
       * universe table adjustments.  Then executes all effects on all objects
       * (meter effects and non-meter effects, including destroying objects).
@@ -735,7 +738,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_last_allocated_design_id);
 
     if (Archive::is_saving::value) {
-        // clean up temporary objects in ObjectMaps
+        // clean up temporary objects in temporary ObjectMaps
         objects.Clear();
         for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin(); it != empire_latest_known_objects.end(); ++it)
             it->second.Clear();

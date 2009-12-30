@@ -11,6 +11,7 @@
 #include "../util/MultiplayerCommon.h"
 
 #include <boost/spirit.hpp>
+#include <boost/algorithm/string.hpp>
 
 int g_indent = 0;
 
@@ -32,13 +33,14 @@ namespace {
     {
         const ObjectMap& objects = GetMainObjectMap();
         while (first != last) {
-            if (*first == "Planet") {
+            std::string property_name = *first;
+            if (boost::iequals(property_name, "Planet")) {
                 if (const Building* b = universe_object_cast<const Building*>(obj)) {
                     obj = objects.Object<Planet>(b->PlanetID());
                 } else {
                     obj = 0;
                 }
-            } else if (*first == "System") {
+            } else if (boost::iequals(property_name, "System")) {
                 if (obj)
                     obj = objects.Object<System>(obj->SystemID());
             }
@@ -189,7 +191,8 @@ namespace ValueRef {
     PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         PlanetSize retval = INVALID_PLANET_SIZE;
-        if (m_property_name.back() == "PlanetSize") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "PlanetSize")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 retval = p->Size();
@@ -203,7 +206,8 @@ namespace ValueRef {
     PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         PlanetType retval = INVALID_PLANET_TYPE;
-        if (m_property_name.back() == "PlanetType") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "PlanetType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 retval = p->Type();
@@ -217,7 +221,8 @@ namespace ValueRef {
     PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
-        if (m_property_name.back() == "PlanetEnvironment") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "PlanetEnvironment")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 retval = p->Environment();
@@ -231,7 +236,8 @@ namespace ValueRef {
     UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
-        if (m_property_name.back() == "ObjectType") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "ObjectType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (universe_object_cast<const Planet*>(object)) {
                 return OBJ_PLANET;
@@ -258,7 +264,8 @@ namespace ValueRef {
     StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         StarType retval = INVALID_STAR_TYPE;
-        if (m_property_name.back() == "StarType") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "StarType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const System* s = universe_object_cast<const System*>(object))
                 retval = s->GetStarType();
@@ -272,11 +279,12 @@ namespace ValueRef {
     FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         FocusType retval = INVALID_FOCUS_TYPE;
-        if (m_property_name.back() == "PrimaryFocus") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "PrimaryFocus")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
                 retval = pc->PrimaryFocus();
-        }else if (m_property_name.back() == "SecondaryFocus") {
+        }else if (boost::iequals(property_name, "SecondaryFocus")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
                 retval = pc->SecondaryFocus();
@@ -290,125 +298,124 @@ namespace ValueRef {
     double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         double retval = 0.0;
-
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-
-        if (m_property_name.back() == "CurrentFarming") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "CurrentFarming")) {
             const Meter* m = object->GetMeter(METER_FARMING);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxFarming") {
+        } else if (boost::iequals(property_name, "MaxFarming")) {
             const Meter* m = object->GetMeter(METER_FARMING);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentIndustry") {
+        } else if (boost::iequals(property_name, "CurrentIndustry")) {
             const Meter* m = object->GetMeter(METER_INDUSTRY);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxIndustry") {
+        } else if (boost::iequals(property_name, "MaxIndustry")) {
             const Meter* m = object->GetMeter(METER_INDUSTRY);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentResearch") {
+        } else if (boost::iequals(property_name, "CurrentResearch")) {
             const Meter* m = object->GetMeter(METER_RESEARCH);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxResearch") {
+        } else if (boost::iequals(property_name, "MaxResearch")) {
             const Meter* m = object->GetMeter(METER_RESEARCH);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentTrade") {
+        } else if (boost::iequals(property_name, "CurrentTrade")) {
             const Meter* m = object->GetMeter(METER_TRADE);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxTrade") {
+        } else if (boost::iequals(property_name, "MaxTrade")) {
             const Meter* m = object->GetMeter(METER_TRADE);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentMining") {
+        } else if (boost::iequals(property_name, "CurrentMining")) {
             const Meter* m = object->GetMeter(METER_MINING);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxMining") {
+        } else if (boost::iequals(property_name, "MaxMining")) {
             const Meter* m = object->GetMeter(METER_MINING);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentConstruction") {
+        } else if (boost::iequals(property_name, "CurrentConstruction")) {
             const Meter* m = object->GetMeter(METER_CONSTRUCTION);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxConstruction") {
+        } else if (boost::iequals(property_name, "MaxConstruction")) {
             const Meter* m = object->GetMeter(METER_CONSTRUCTION);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentHealth") {
+        } else if (boost::iequals(property_name, "CurrentHealth")) {
             const Meter* m = object->GetMeter(METER_HEALTH);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxHealth") {
+        } else if (boost::iequals(property_name, "MaxHealth")) {
             const Meter* m = object->GetMeter(METER_HEALTH);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentPopulation") {
+        } else if (boost::iequals(property_name, "CurrentPopulation")) {
             const Meter* m = object->GetMeter(METER_POPULATION);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxPopulation") {
+        } else if (boost::iequals(property_name, "MaxPopulation")) {
             const Meter* m = object->GetMeter(METER_POPULATION);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "MaxFuel") {
+        } else if (boost::iequals(property_name, "MaxFuel")) {
             const Meter* m = object->GetMeter(METER_FUEL);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentFuel") {
+        } else if (boost::iequals(property_name, "CurrentFuel")) {
             const Meter* m = object->GetMeter(METER_FUEL);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxSupply") {
+        } else if (boost::iequals(property_name, "MaxSupply")) {
             const Meter* m = object->GetMeter(METER_SUPPLY);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentSupply") {
+        } else if (boost::iequals(property_name, "CurrentSupply")) {
             const Meter* m = object->GetMeter(METER_SUPPLY);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxStealth") {
+        } else if (boost::iequals(property_name, "MaxStealth")) {
             const Meter* m = object->GetMeter(METER_STEALTH);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentStealth") {
+        } else if (boost::iequals(property_name, "CurrentStealth")) {
             const Meter* m = object->GetMeter(METER_STEALTH);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxDetection") {
+        } else if (boost::iequals(property_name, "MaxDetection")) {
             const Meter* m = object->GetMeter(METER_DETECTION);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentDetection") {
+        } else if (boost::iequals(property_name, "CurrentDetection")) {
             const Meter* m = object->GetMeter(METER_DETECTION);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxShield") {
+        } else if (boost::iequals(property_name, "MaxShield")) {
             const Meter* m = object->GetMeter(METER_SHIELD);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentShield") {
+        } else if (boost::iequals(property_name, "CurrentShield")) {
             const Meter* m = object->GetMeter(METER_SHIELD);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "MaxDefense") {
+        } else if (boost::iequals(property_name, "MaxDefense")) {
             const Meter* m = object->GetMeter(METER_DEFENSE);
             retval = m ? m->Max() : 0;
-        } else if (m_property_name.back() == "CurrentDefense") {
+        } else if (boost::iequals(property_name, "CurrentDefense")) {
             const Meter* m = object->GetMeter(METER_DEFENSE);
             retval = m ? m->Current() : 0;
-        } else if (m_property_name.back() == "TradeStockpile") {
+        } else if (boost::iequals(property_name, "TradeStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
                 retval = empire->ResourceStockpile(RE_TRADE);
             }
-        } else if (m_property_name.back() == "MineralStockpile") {
+        } else if (boost::iequals(property_name, "MineralStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
                 retval = empire->ResourceStockpile(RE_MINERALS);
             }
-        } else if (m_property_name.back() == "FoodStockpile") {
+        } else if (boost::iequals(property_name, "FoodStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
                 retval = empire->ResourceStockpile(RE_FOOD);
             }
-        } else if (m_property_name.back() == "TradeProduction") {
+        } else if (boost::iequals(property_name, "TradeProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->MeterPoints(METER_TRADE);
             }
-        } else if (m_property_name.back() == "FoodProduction") {
+        } else if (boost::iequals(property_name, "FoodProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->MeterPoints(METER_FARMING);
             }
-        } else if (m_property_name.back() == "MineralProduction") {
+        } else if (boost::iequals(property_name, "MineralProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->MeterPoints(METER_MINING);
             }
-        } else if (m_property_name.back() == "IndustryProduction") {
+        } else if (boost::iequals(property_name, "IndustryProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->MeterPoints(METER_INDUSTRY);
             }
-        } else if (m_property_name.back() == "ResearchProduction") {
+        } else if (boost::iequals(property_name, "ResearchProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->MeterPoints(METER_RESEARCH);
             }
@@ -423,23 +430,22 @@ namespace ValueRef {
     int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const
     {
         int retval = 0;
-
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-
-        if (m_property_name.back() == "Owner") {
+        std::string property_name = m_property_name.back();
+        if (boost::iequals(property_name, "Owner")) {
             if (object->Owners().size() == 1)
                 retval = *object->Owners().begin();
             else
                 retval = -1;
-        } else if (m_property_name.back() == "ID") {
+        } else if (boost::iequals(property_name, "ID")) {
             retval = object->ID();
-        } else if (m_property_name.back() == "CurrentTurn") {
+        } else if (boost::iequals(property_name, "CurrentTurn")) {
             retval = CurrentTurn();
-        } else if (m_property_name.back() == "CreationTurn") {
+        } else if (boost::iequals(property_name, "CreationTurn")) {
             retval = object->CreationTurn();
-        } else if (m_property_name.back() == "Age") {
+        } else if (boost::iequals(property_name, "Age")) {
             retval = object->AgeInTurns();
-        } else if (m_property_name.back() == "CurrentTurn") {
+        } else if (boost::iequals(property_name, "CurrentTurn")) {
             retval = CurrentTurn();
         } else {
             throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type int.");

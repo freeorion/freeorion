@@ -2373,7 +2373,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
 
             std::string new_name = edit_wnd.Result();
 
-            if (new_name != "" && new_name != fleet_name) {
+            if (!new_name.empty() && new_name != fleet_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new RenameOrder(empire_id, fleet->ID(), new_name)));
             }

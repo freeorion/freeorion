@@ -39,29 +39,30 @@ public:
 
     /** \name Mutators */ //@{
     /** Returns the empire whose ID is \a ID, or 0 if none exists. */
-    Empire* Lookup(int ID);
+    Empire*     Lookup(int ID);
 
-    iterator begin();
-    iterator end();
-    //@}
+    iterator    begin();
+    iterator    end();
 
     /** Creates and inserts an empire with the specified properties and returns a pointer to it.  \a planet_ID is the ID
         of the planet which is the empire's homeworld the empire will be created.  This will only set up the data in
         Empire.  It is the caller's responsibility to make sure that universe updates planet ownership. */
-    Empire* CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID);
+    Empire*     CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID);
 
     /** Adds the given empire to the manager. */
-    void InsertEmpire(Empire* empire);
+    void        InsertEmpire(Empire* empire);
 
     /** Removes the given empire from the manager. */
-    void RemoveEmpire(Empire* empire);
+    void        RemoveEmpire(Empire* empire);
 
     /** Removes and deletes all empires from the manager. */
-    void RemoveAllEmpires();
+    void        RemoveAllEmpires();
 
     /** Removes all traces of the empire with the given ID.  and deallocates that empire.  Again, this method does not
        do anything to the universe.  This method returns true if the empire was removed, false if it doesn't exist. */
-    bool EliminateEmpire(int id);
+    bool        EliminateEmpire(int id);
+    //@}
+
 
 private:
     std::map<int, Empire*> m_empire_map;
