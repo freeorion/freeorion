@@ -15,22 +15,22 @@
 
 namespace {
     const UniverseObject*   GetObjectA(const Universe& universe, int id) {
-        return universe.Objects().Object(id);
+        return GetMainObjectMap().Object(id);
     }
     const Fleet*            GetFleet(const Universe& universe, int id) {
-        return universe.Objects().Object<Fleet>(id);
+        return GetMainObjectMap().Object<Fleet>(id);
     }
     const Ship*             GetShip(const Universe& universe, int id) {
-        return universe.Objects().Object<Ship>(id);
+        return GetMainObjectMap().Object<Ship>(id);
     }
     const Planet*           GetPlanet(const Universe& universe, int id) {
-        return universe.Objects().Object<Planet>(id);
+        return GetMainObjectMap().Object<Planet>(id);
     }
     const System*           GetSystem(const Universe& universe, int id) {
-        return universe.Objects().Object<System>(id);
+        return GetMainObjectMap().Object<System>(id);
     }
     const Building*         GetBuilding(const Universe& universe, int id) {
-        return universe.Objects().Object<Building>(id);
+        return GetMainObjectMap().Object<Building>(id);
     }
 
     std::vector<int>        ObjectIDs(const Universe& universe) {

@@ -104,6 +104,10 @@ def assessFleetRole(fleetID):
         shipRoles[shipRole] = 0
 
     fleet = universe.getFleet(fleetID)
+    if not fleet:
+        print "couldn't get fleet with id " + str(fleetID)
+        return AIShipRoleType.SHIP_ROLE_INVALID
+
     # count shipRoles
     for shipID in fleet.shipIDs:
         ship = universe.getShip(shipID)
@@ -196,4 +200,7 @@ def printSystems(systemIDs):
             suppliedSystem = " supplied"
 
         system = universe.getSystem(systemID)
-        print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem
+        if system:
+            print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem
+        else:
+            print "    name:??? id:" + str(systemID) + suppliedSystem

@@ -52,12 +52,14 @@ def identifyShipDesigns():
 
     for fleetID in universe.fleetIDs:
         fleet = universe.getFleet(fleetID)
-
-        for ID in fleet.shipIDs: shipIDs = shipIDs + [ID]
+        if fleet:
+            for ID in fleet.shipIDs: shipIDs = shipIDs + [ID]
+        else:
+            print "couldn't get fleet with id " + str(fleetID)
 
     for shipID in shipIDs:
         ship = universe.getShip(shipID)
-        if ship.design:
+        if ship and ship.design:
             shipRole = FleetUtilsAI.assessShipRole(shipID)
             foAIstate.addShipRole(ship.design.id, shipRole)
             # print str(ship.design.id) + ": " + str(shipRole)
