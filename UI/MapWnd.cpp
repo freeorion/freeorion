@@ -944,6 +944,9 @@ void MapWnd::InitTurn(int turn_number)
     // update effect accounting and meter estimates
     universe.InitMeterEstimatesAndDiscrepancies();
 
+    // if we've just loaded the game there may be some unexecuted orders, we should reapply them now, so they are reflected
+    // in the UI, but do not influence current meters or their discrepancies for this turn
+    HumanClientApp::GetApp()->Orders().ApplyOrders();
 
     // redo meter estimates with unowned planets marked as owned by player, so accurate predictions of planet
     // population is available for currently uncolonized planets
