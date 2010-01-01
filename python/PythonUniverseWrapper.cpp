@@ -14,23 +14,44 @@
 #include <boost/python.hpp>
 
 namespace {
+    void                    DumpObjects(const Universe& universe) {
+        universe.Objects().Dump();
+    }
     const UniverseObject*   GetObjectA(const Universe& universe, int id) {
-        return GetMainObjectMap().Object(id);
+        const UniverseObject* retval = universe.Objects().Object(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object(id);
+        return retval;
     }
     const Fleet*            GetFleet(const Universe& universe, int id) {
-        return GetMainObjectMap().Object<Fleet>(id);
+        const Fleet* retval = universe.Objects().Object<Fleet>(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object<Fleet>(id);
+        return retval;
     }
     const Ship*             GetShip(const Universe& universe, int id) {
-        return GetMainObjectMap().Object<Ship>(id);
+        const Ship* retval = universe.Objects().Object<Ship>(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object<Ship>(id);
+        return retval;
     }
     const Planet*           GetPlanet(const Universe& universe, int id) {
-        return GetMainObjectMap().Object<Planet>(id);
+        const Planet* retval = universe.Objects().Object<Planet>(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object<Planet>(id);
+        return retval;
     }
     const System*           GetSystem(const Universe& universe, int id) {
-        return GetMainObjectMap().Object<System>(id);
+        const System* retval = universe.Objects().Object<System>(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object<System>(id);
+        return retval;
     }
     const Building*         GetBuilding(const Universe& universe, int id) {
-        return GetMainObjectMap().Object<Building>(id);
+        const Building* retval = universe.Objects().Object<Building>(id);
+        if (!retval)
+            retval = GetMainObjectMap().Object<Building>(id);
+        return retval;
     }
 
     std::vector<int>        ObjectIDs(const Universe& universe) {
@@ -40,16 +61,16 @@ namespace {
         return universe.Objects().FindObjectIDs<Fleet>();
     }
     std::vector<int>        SystemIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<System>();
+        return GetMainObjectMap().FindObjectIDs<System>();
     }
     std::vector<int>        PlanetIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<Planet>();
+        return GetMainObjectMap().FindObjectIDs<Planet>();
     }
     std::vector<int>        ShipIDs(const Universe& universe) {
         return universe.Objects().FindObjectIDs<Ship>();
     }
     std::vector<int>        BuildingIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<Building>();
+        return GetMainObjectMap().FindObjectIDs<Building>();
     }
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
@@ -162,6 +183,8 @@ namespace FreeOrionPython {
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
                                                 ))
+
+            .def("dump",                        &DumpObjects)
         ;
 
 

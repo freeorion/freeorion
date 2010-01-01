@@ -106,15 +106,15 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
 
     def("currentTurn",              AIInterface::CurrentTurn);
 
-    def("issueFleetMoveOrder",      AIInterface::IssueFleetMoveOrder);
-    def("issueRenameOrder",         AIInterface::IssueRenameOrder);
-    def("issueScrapOrder",          AIIntScrap);
-    def("issueNewFleetOrder",       AIIntNewFleet);
-    def("issueFleetTransferOrder",  AIInterface::IssueFleetTransferOrder);
-    def("issueColonizeOrder",       AIInterface::IssueFleetColonizeOrder);
-    def("issueChangeFocusOrder",    AIInterface::IssueChangeFocusOrder);
-    def("issueEnqueueTechOrder",    AIInterface::IssueEnqueueTechOrder);
-    def("issueDequeueTechOrder",    AIInterface::IssueDequeueTechOrder);
+    def("issueFleetMoveOrder",                  AIInterface::IssueFleetMoveOrder);
+    def("issueRenameOrder",                     AIInterface::IssueRenameOrder);
+    def("issueScrapOrder",                      AIIntScrap);
+    def("issueNewFleetOrder",                   AIIntNewFleet);
+    def("issueFleetTransferOrder",              AIInterface::IssueFleetTransferOrder);
+    def("issueColonizeOrder",                   AIInterface::IssueFleetColonizeOrder);
+    def("issueChangeFocusOrder",                AIInterface::IssueChangeFocusOrder);
+    def("issueEnqueueTechOrder",                AIInterface::IssueEnqueueTechOrder);
+    def("issueDequeueTechOrder",                AIInterface::IssueDequeueTechOrder);
     def("issueEnqueueBuildingProductionOrder",  AIInterface::IssueEnqueueBuildingProductionOrder);
     def("issueEnqueueShipProductionOrder",      AIInterface::IssueEnqueueShipProductionOrder);
     def("issueRequeueProductionOrder",          AIInterface::IssueRequeueProductionOrder);
