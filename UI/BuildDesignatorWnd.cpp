@@ -1014,7 +1014,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet()
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    const System* sys = GetObject<System>(system_id);
+    const System* sys = GetObject<System>(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
     if (!sys) {
         Logger().errorStream() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;

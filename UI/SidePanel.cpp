@@ -1640,6 +1640,11 @@ void SidePanel::Refresh()
         (*it)->RefreshImpl();
 
 
+    // early exit if no valid system object to get or connect signals to
+    if (s_system_id == UniverseObject::INVALID_OBJECT_ID)
+        return;
+
+
     // connect state changed and insertion signals for planets and fleets in system
     const System* system = GetObject<System>(s_system_id);
     if (!system)

@@ -83,8 +83,10 @@ namespace {
         if (!fleet)
             return retval;
 
-        const System* dest = GetObject<System>(fleet->FinalDestinationID());
-        const System* cur_sys = GetObject<System>(fleet->SystemID());
+        const ObjectMap& objects = GetMainObjectMap();
+
+        const System* dest = objects.Object<System>(fleet->FinalDestinationID());
+        const System* cur_sys = objects.Object<System>(fleet->SystemID());
         if (dest && dest != cur_sys) {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
@@ -2452,10 +2454,12 @@ std::string FleetWnd::TitleText() const
     if (m_fleet_ids.empty())
         return UserString("FW_NO_FLEET");
 
+    const ObjectMap& objects = GetMainObjectMap();
+
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
-        if (const System* system = GetObject<System>(m_system_id)) {
+        if (const System* system = objects.Object<System>(m_system_id)) {
             std::string sys_name = system->Name();
             if (sys_name.empty())
                 sys_name = UserString("SP_UNKNOWN_SYSTEM");
@@ -2466,7 +2470,7 @@ std::string FleetWnd::TitleText() const
                                   empire->Name());
         }
     } else {
-        if (const System* system = GetObject<System>(m_system_id)) {
+        if (const System* system = objects.Object<System>(m_system_id)) {
             std::string sys_name = system->Name();
             if (sys_name.empty())
                 sys_name = UserString("SP_UNKNOWN_SYSTEM");
