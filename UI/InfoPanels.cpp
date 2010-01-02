@@ -71,11 +71,12 @@ namespace {
         }
     }
 
-    /**
-      * How big we want meter icons with respect to the current UI font size.
-      */
+    /** How big we want meter icons with respect to the current UI font size.
+      * Meters should scale along font size, but not below the size for the
+      * default 12 points font. */
     GG::Pt MeterIconSize() {
-        return GG::Pt(GG::X(std::max(ClientUI::Pts()*4/3, 16)), GG::Y(std::max(ClientUI::Pts()*4/3, 16)));
+        const int icon_size = std::max(ClientUI::Pts(), 12) * 4/3;
+        return GG::Pt(GG::X(icon_size), GG::Y(icon_size));
     }
 
     /** Returns how much of specified \a resource_type is being consumed by the

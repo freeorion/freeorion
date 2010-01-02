@@ -54,23 +54,20 @@ namespace {
     }
 
     GG::Y LabelHeight() {
-        return GG::Y(ClientUI::Pts() * 3/2);
+        return GG::Y(ClientUI::Pts()*3/2);
     }
 
-    GG::Y StatIconHeight() {
-        return GG::Y(ClientUI::Pts()*4/3);
-    }
-
-    GG::X StatIconWidth() {
-        return GG::X(Value(StatIconHeight()) * 5/2);
-    }
-
-    GG::X StatIconSpacingWidth() {
-        return StatIconWidth();
+    /**
+     * How big fleet and ship statistics icons should be relative to the current font size.
+     * Icons shouldn't scale below what they are for the default, 12 pt, font size.
+     */
+    GG::Pt StatIconSize() {
+        const int font_size = std::max(ClientUI::Pts(), 12);
+        return GG::Pt(GG::X(font_size*10/3), GG::Y(font_size*4/3));
     }
 
     GG::Y ListRowHeight() {
-        return GG::Y(std::max(ICON_SIZE, Value(LabelHeight() + StatIconHeight()) + PAD));
+        return GG::Y(std::max(ICON_SIZE, Value(LabelHeight() + StatIconSize().y) + PAD));
     }
 
     boost::shared_ptr<GG::Texture> SpeedIcon() {
@@ -392,19 +389,20 @@ void FleetUIManager::CullEmptyWnds() {
 }
 
 void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
-    if (fleet_wnd != m_active_fleet_wnd) {
-        // disconnect old active FleetWnd signal
-        if (m_active_fleet_wnd)
-            m_ative_fleet_wnd_signal.disconnect();
+    if (fleet_wnd == m_active_fleet_wnd)
+        return;
 
-        // set new active FleetWnd
-        m_active_fleet_wnd = fleet_wnd;
+    // disconnect old active FleetWnd signal
+    if (m_active_fleet_wnd)
+        m_ative_fleet_wnd_signal.disconnect();
 
-        // connect new active FleetWnd selection changed signal
-        m_ative_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
+    // set new active FleetWnd
+    m_active_fleet_wnd = fleet_wnd;
 
-        ActiveFleetWndChangedSignal();
-    }
+    // connect new active FleetWnd selection changed signal
+    m_ative_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
+
+    ActiveFleetWndChangedSignal();
 }
 
 bool FleetUIManager::CloseAll() {
@@ -573,7 +571,7 @@ namespace {
                 meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
 
                 for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-                    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
+                    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                             ClientUI::MeterIcon(*it), 0, 0, false);
                     m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
                     AttachChild(icon);
@@ -582,7 +580,7 @@ namespace {
 
 
                 // speed stat icon
-                StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
+                StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                         SpeedIcon(), 0, 0, false);
                 m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
                 AttachChild(icon);
@@ -763,31 +761,28 @@ namespace {
 
         void            DoLayout() {
             if (m_ship_icon) {
-                // position icon in centre of available space
-                int ICON_OFFSET = std::max(0, (Value(Height()) - ICON_SIZE) / 2);
-                GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
-                GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-
+                // position ship icon in the centre of available space
+                const int ICON_OFFSET = std::max(0, (Value(Height()) - ICON_SIZE) / 2);
+                const GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
+                const GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
                 if (m_ship_icon)
                     m_ship_icon->SizeMove(icon_ul, icon_lr);
                 if (m_scrap_indicator)
                     m_scrap_indicator->SizeMove(icon_ul, icon_lr);
             }
 
-
-            GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
-            GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
+            const GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
+            const GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
             m_ship_name_text->SizeMove(name_ul, name_lr);
 
             if (m_design_name_text)
                 m_design_name_text->SizeMove(name_ul, name_lr);
 
-            // set stat icon positions
-            GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
+            // position ship statistic icons one after another horizontally and centered vertically
+            GG::Pt icon_ul = GG::Pt(GG::X(ICON_SIZE + PAD), LabelHeight() + std::max(GG::Y0, (Height() - LabelHeight() - StatIconSize().y) / 2));
             for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                GG::Pt icon_lr = icon_ul + GG::Pt(StatIconWidth(), StatIconHeight());
-                it->second->SizeMove(icon_ul, icon_lr);
-                icon_ul += GG::Pt(StatIconSpacingWidth(), GG::Y0);
+                it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+                icon_ul.x += StatIconSize().x;
             }
         }
 
@@ -917,7 +912,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         // stat icon for fleet fuel
-        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
+        StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                 ClientUI::MeterIcon(METER_FUEL), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(MeterStatString(METER_FUEL), icon));
         icon->SetBrowseModeTime(tooltip_delay);
@@ -925,7 +920,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
         AttachChild(icon);
 
         // stat icon for fleet speed
-        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
+        icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                  SpeedIcon(), 0, 0, false);
         m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
         icon->SetBrowseModeTime(tooltip_delay);
@@ -1126,25 +1121,23 @@ std::string FleetDataPanel::StatTooltip(const std::string& stat_name) const
 void FleetDataPanel::DoLayout()
 {
     if (m_fleet_icon) {
-        // position icon in centre of available space
-        int ICON_OFFSET = std::max(0, (Value(Height()) - ICON_SIZE) / 2);
-        GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
-        GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
-
+        // position fleet icon in centre of available space
+        const int ICON_OFFSET = std::max(0, (Value(Height()) - ICON_SIZE) / 2);
+        const GG::Pt icon_ul = GG::Pt(GG::X(ICON_OFFSET), GG::Y(ICON_OFFSET));
+        const GG::Pt icon_lr = icon_ul + GG::Pt(GG::X(ICON_SIZE), GG::Y(ICON_SIZE));
         m_fleet_icon->SizeMove(icon_ul, icon_lr);
     }
 
-    GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
-    GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
+    const GG::Pt name_ul = GG::Pt(GG::X(ICON_SIZE + PAD), GG::Y0);
+    const GG::Pt name_lr = GG::Pt(Width() - GG::X(PAD),   LabelHeight());
     m_fleet_name_text->SizeMove(name_ul, name_lr);
     m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
-    // set stat icon positions
-    GG::Pt icon_ul(GG::X(ICON_SIZE + PAD), LabelHeight());
+    // position stat icons, centering them vertically if there's more space than required
+    GG::Pt icon_ul = GG::Pt(GG::X(ICON_SIZE + PAD), LabelHeight() + std::max(GG::Y0, (Height() - LabelHeight() - StatIconSize().y) / 2));
     for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-        GG::Pt icon_lr = icon_ul + GG::Pt(StatIconWidth(), StatIconHeight());
-        it->second->SizeMove(icon_ul, icon_lr);
-        icon_ul += GG::Pt(StatIconSpacingWidth(), GG::Y0);
+        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+        icon_ul.x += StatIconSize().x;
     }
 }
 

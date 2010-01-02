@@ -927,6 +927,10 @@ CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, 
 ///////////////////////////////////////
 // class StatisticIcon
 ///////////////////////////////////////
+namespace {
+    const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
+}
+
 StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
@@ -940,13 +944,13 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     if (w >= Value(h)) {
         m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, w - Value(h), GG::Y(std::max(font_space, Value(h))), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        m_text = new GG::TextControl(GG::X(Value(h) + STAT_ICON_PAD), GG::Y0, w - Value(h) - STAT_ICON_PAD, GG::Y(std::max(font_space, Value(h))), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
         // need vertical space for text, but don't want icon to be larger than available horizontal space
-        int icon_height = std::min(Value(w), std::max(Value(h - font_space), 1));
+        int icon_height = std::min(Value(w), std::max(Value(h - font_space - STAT_ICON_PAD), 1));
         int icon_left = Value(w - icon_height)/2;
         m_icon = new GG::StaticGraphic(GG::X(icon_left), GG::Y0, GG::X(icon_height), GG::Y(icon_height), texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X0, GG::Y(icon_height), w, GG::Y(font_space), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
+        m_text = new GG::TextControl(GG::X0, GG::Y(icon_height + STAT_ICON_PAD), w, GG::Y(font_space), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_TOP);
     }
 
     AttachChild(m_icon);
@@ -967,10 +971,10 @@ StatisticIcon::StatisticIcon(GG::X x, GG::Y y, GG::X w, GG::Y h, const boost::sh
     // arrange child controls horizontally if icon is wider than it is high, or vertically otherwise
     if (w >= Value(h)) {
         m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, w - Value(h), std::max(GG::Y(ClientUI::Pts()*3/2), h), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+        m_text = new GG::TextControl(GG::X(Value(h) + STAT_ICON_PAD), GG::Y0, w - Value(h) - STAT_ICON_PAD, std::max(GG::Y(ClientUI::Pts()*3/2), h), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     } else {
         m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture, GG::GRAPHIC_FITGRAPHIC);
-        m_text = new GG::TextControl(GG::X0, GG::Y(Value(w)), w, GG::Y(ClientUI::Pts()*3/2), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
+        m_text = new GG::TextControl(GG::X0, GG::Y(Value(w) + STAT_ICON_PAD), w, GG::Y(ClientUI::Pts()*3/2), "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_BOTTOM);
     }
 
     m_values[0] = value0;
