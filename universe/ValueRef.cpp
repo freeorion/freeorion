@@ -68,7 +68,7 @@ namespace ValueRef {
     template <>
     std::string Constant<int>::Description() const
     {
-        return boost::lexical_cast<std::string>(m_value);
+        return boost::lexical_cast<std::string>(m_value);   // might be nicer to return "DoubleToString(m_value, 3, false);" but this would require building ClientUI.cpp on the Server and AI client ...
     }
 
     template <>

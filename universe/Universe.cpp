@@ -1492,7 +1492,7 @@ namespace {
 
 void Universe::UpdateEmpireObjectVisibilities()
 {
-    Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
+    //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
     m_empire_object_visibility.clear();
 
     // for each detecting object
@@ -1773,7 +1773,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
 {
-    Logger().debugStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
+    //Logger().debugStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()";
 
     // assumes m_empire_object_visibility has been updated
 

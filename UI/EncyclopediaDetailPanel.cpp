@@ -364,7 +364,7 @@ void EncyclopediaDetailPanel::Refresh() {
         m_summary_text->SetColor(color);
 
     m_cost_text->SetText(str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
-        % static_cast<int>(cost + 0.5)
+        % DoubleToString(cost, 3, false)
         % cost_units
         % turns));
 

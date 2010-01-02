@@ -455,16 +455,14 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 bool ClientUI::ZoomToPlanet(int id)
 {
     // this just zooms to the appropriate system, until we create a planet window of some kind
-    if (Planet* planet = GetObject<Planet>(id)) {
-        ZoomToSystem(planet->SystemID());
-        return true;
-    }
+    if (const Planet* planet = GetMainObjectMap().Object<Planet>(id))
+        return ZoomToSystem(planet->SystemID());
     return false;
 }
 
 bool ClientUI::ZoomToSystem(int id)
 {
-    if (System* system = GetObject<System>(id)) {
+    if (const System* system = GetMainObjectMap().Object<System>(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -473,7 +471,7 @@ bool ClientUI::ZoomToSystem(int id)
 
 bool ClientUI::ZoomToFleet(int id)
 {
-    if (Fleet* fleet = GetObject<Fleet>(id)) {
+    if (const Fleet* fleet = GetObject<Fleet>(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -482,12 +480,36 @@ bool ClientUI::ZoomToFleet(int id)
 
 bool ClientUI::ZoomToShip(int id)
 {
-    // this just zooms to the appropriate fleet window, until we create a ship window of some kind
-    if (Ship* ship = GetObject<Ship>(id)) {
-        ZoomToFleet(ship->FleetID());
-        return true;
-    }
+    if (const Ship* ship = GetObject<Ship>(id))
+        return ZoomToFleet(ship->FleetID());
     return false;
+}
+
+bool ClientUI::ZoomToBuilding(int id)
+{
+    if (const Building* building = GetMainObjectMap().Object<Building>(id))
+        return ZoomToPlanet(building->PlanetID());
+    return false;
+}
+
+void ClientUI::ZoomToSystem(const System* system)
+{
+    if (!system)
+        return;
+
+    m_map_wnd->CenterOnObject(system->ID());
+    m_map_wnd->SelectSystem(system->ID());
+}
+
+void ClientUI::ZoomToFleet(const Fleet* fleet)
+{
+    if (!fleet)
+        return;
+
+    m_map_wnd->CenterOnObject(fleet->ID());
+    m_map_wnd->SelectFleet(fleet->ID());
+    if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
+        fleet_wnd->SelectFleet(fleet->ID());
 }
 
 bool ClientUI::ZoomToTech(const std::string& tech_name)
@@ -510,26 +532,6 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 {
     // TODO: Zooming code
     return false;
-}
-
-void ClientUI::ZoomToSystem(System* system)
-{
-    if (!system)
-        return;
-
-    m_map_wnd->CenterOnObject(system->ID());
-    m_map_wnd->SelectSystem(system->ID());
-}
-
-void ClientUI::ZoomToFleet(Fleet* fleet)
-{
-    if (!fleet)
-        return;
-
-    m_map_wnd->CenterOnObject(fleet->ID());
-    m_map_wnd->SelectFleet(fleet->ID());
-    if (FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().WndForFleet(fleet))
-        fleet_wnd->SelectFleet(fleet->ID());
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)

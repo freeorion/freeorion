@@ -53,15 +53,18 @@ public:
 
     void ShowMap();                     //!< Makes the Map Screen visible
 
-    bool ZoomToPlanet(int id);          //!< Zooms to a particular planet on the galaxy map and opens the planet screen for that planet
-    bool ZoomToSystem(int id);          //!< Zooms to a particular system on the galaxy map
-    bool ZoomToFleet(int id);           //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    bool ZoomToShip(int id);            //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool ZoomToPlanet(int id);                  //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
+    bool ZoomToSystem(int id);                  //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
+    bool ZoomToFleet(int id);                   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool ZoomToShip(int id);                    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool ZoomToBuilding(int id);                //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+
+    void ZoomToSystem(const System* system);    //!< Zooms to a particular system on the galaxy map
+    void ZoomToFleet(const Fleet* fleet);       //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+
     bool ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
     bool ZoomToBuildingType(const std::string& building_type_name); //!< Opens the building type screen and presents a description of the given building type
     bool ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia screen and presents the entry for the given item
-    void ZoomToSystem(System* system);  //!< Zooms to a particular system on the galaxy map
-    void ZoomToFleet(Fleet* fleet);     //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
