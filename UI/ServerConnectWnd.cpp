@@ -125,13 +125,13 @@ const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 
 void ServerConnectWnd::Init()
 {
-    Connect(m_host_or_join_radio_group->ButtonChangedSignal, &ServerConnectWnd::HostOrJoinClicked, this);
-    Connect(m_servers_lb->SelChangedSignal, &ServerConnectWnd::ServerSelected, this);
-    Connect(m_find_LAN_servers_bn->ClickedSignal, &ServerConnectWnd::RefreshServerList, this);
-    Connect(m_IP_address_edit->EditedSignal, &ServerConnectWnd::IPAddressEdited, this);
-    Connect(m_player_name_edit->EditedSignal, &ServerConnectWnd::NameEdited, this);
-    Connect(m_ok_bn->ClickedSignal, &ServerConnectWnd::OkClicked, this);
-    Connect(m_cancel_bn->ClickedSignal, &ServerConnectWnd::CancelClicked, this);
+    Connect(m_host_or_join_radio_group->ButtonChangedSignal,    &ServerConnectWnd::HostOrJoinClicked,   this);
+    Connect(m_servers_lb->SelChangedSignal,                     &ServerConnectWnd::ServerSelected,      this);
+    Connect(m_find_LAN_servers_bn->ClickedSignal,               &ServerConnectWnd::RefreshServerList,   this);
+    Connect(m_IP_address_edit->EditedSignal,                    &ServerConnectWnd::IPAddressEdited,     this);
+    Connect(m_player_name_edit->EditedSignal,                   &ServerConnectWnd::NameEdited,          this);
+    Connect(m_ok_bn->ClickedSignal,                             &ServerConnectWnd::OkClicked,           this);
+    Connect(m_cancel_bn->ClickedSignal,                         &ServerConnectWnd::CancelClicked,       this);
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();

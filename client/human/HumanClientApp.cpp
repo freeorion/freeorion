@@ -75,7 +75,7 @@ void SigHandler(int sig)
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const unsigned int SERVER_CONNECT_TIMEOUT = 30000; // in ms
+    const unsigned int SERVER_CONNECT_TIMEOUT = 10000; // in ms
 
     const bool INSTRUMENT_MESSAGE_HANDLING = false;
 

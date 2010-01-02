@@ -160,29 +160,33 @@ bool ClientNetworking::ConnectToServer(
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;
-    for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-        m_socket.close();
-        boost::asio::deadline_timer timer(m_io_service);
-        if (TRACE_EXECUTION)
-            Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to "
-                                   << "connect to server at " << ip_address;
-        m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                &it,
-                                                &timer,
-                                                boost::asio::placeholders::error));
-        timer.expires_from_now(timeout);
-        timer.async_wait(boost::bind(&ClientNetworking::CancelRetries, this));
-        m_cancel_retries = false;
-        m_io_service.run();
-        m_io_service.reset();
-        if (Connected()) {
-            m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+    try {
+        for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+            m_socket.close();
+            boost::asio::deadline_timer timer(m_io_service);
             if (TRACE_EXECUTION)
-                Logger().debugStream() << "ClientNetworking::ConnectToServer : starting "
-                                       << "networking thread";
-            boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
-            break;
+                Logger().debugStream() << "ClientNetworking::ConnectToServer : attempting to "
+                                       << "connect to server at " << ip_address;
+            m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
+                                                    &it,
+                                                    &timer,
+                                                    boost::asio::placeholders::error));
+            timer.expires_from_now(timeout);
+            timer.async_wait(boost::bind(&ClientNetworking::CancelRetries, this));
+            m_cancel_retries = false;
+            m_io_service.run();
+            m_io_service.reset();
+            if (Connected()) {
+                m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+                if (TRACE_EXECUTION)
+                    Logger().debugStream() << "ClientNetworking::ConnectToServer : starting "
+                                           << "networking thread";
+                boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
+                break;
+            }
         }
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "ClientNetworking::ConnectToServer unable to connect to server at " << ip_address << " due to exception: " << e.what();
     }
     return Connected();
 }
