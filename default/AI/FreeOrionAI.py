@@ -28,10 +28,6 @@ def startNewGame():
     foAIstate = AIstate.AIstate()
     print "Initialized foAIstate class"
 
-    splitFleet()
-
-    identifyShipDesigns()
-    identifyFleetsRoles()
 
 def splitFleet():
     "split all fleets"
@@ -111,8 +107,15 @@ def generateOrders():
     empire = fo.getEmpire()
     print "EMPIRE: " + empire.name + " TURN: " + str(fo.currentTurn())
 
+    print " !!! Before splitting fleets"
+    fo.getUniverse().dump()
+
     # turn cleanup
     splitFleet()
+
+    print " !!! After splitting fleets"
+    fo.getUniverse().dump()
+
     identifyShipDesigns()
     identifyFleetsRoles()
     foAIstate.clean(ExplorationAI.getHomeSystemID(), FleetUtilsAI.getEmpireFleetIDs())
