@@ -77,7 +77,7 @@ private:
     std::set<FleetWnd*>         m_fleet_wnds;
     FleetWndMap                 m_fleet_and_detail_wnds;
     FleetWnd*                   m_active_fleet_wnd;
-    boost::signals::connection  m_ative_fleet_wnd_signal;
+    boost::signals::connection  m_active_fleet_wnd_signal;
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
@@ -99,7 +99,8 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void                    SelectFleet(int fleet_id);          ///< selects the indicated fleet, bringing it into the fleet detail window
+    void                    SelectFleet(int fleet_id);                          ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
+    void                    SetSelectedFleets(const std::set<int>& fleet_ids);  ///< deselects any selected fleets, and selects the fleets with the indicated ids
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void                    Refresh();                          ///< regenerates contents
     //@}

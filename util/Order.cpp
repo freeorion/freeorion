@@ -173,8 +173,10 @@ void NewFleetOrder::ExecuteImpl() const
 
     Universe& universe = GetUniverse();
 
+    // create fleet
     Fleet* fleet = 0;
     if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
+        // fleet being created in a system - create at system's location and insert into system after creation
         System* system = GetObject<System>(m_system_id);
         if (!system) {
             Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
@@ -185,11 +187,16 @@ void NewFleetOrder::ExecuteImpl() const
         // an ID is provided to ensure consistancy between server and client universes
         universe.InsertID(fleet, m_new_id);
         system->Insert(fleet);
+
     } else {
+        // fleet being created outside system at specified position.
         fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
         // an ID is provided to ensure consistency between server and client universes
         universe.InsertID(fleet, m_new_id);
     }
+
+    // add ship(s) to fleet
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
         // verify that empire is not trying to take ships from somebody else's fleet
         const Ship* ship = GetObject<Ship>(m_ship_ids[i]);

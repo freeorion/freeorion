@@ -394,13 +394,13 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
 
     // disconnect old active FleetWnd signal
     if (m_active_fleet_wnd)
-        m_ative_fleet_wnd_signal.disconnect();
+        m_active_fleet_wnd_signal.disconnect();
 
     // set new active FleetWnd
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_ative_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
+    m_active_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
 
     ActiveFleetWndChangedSignal();
 }
@@ -1543,11 +1543,7 @@ public:
         m_read_only(read_only)
     {}
 
-    void            SetFleet(int fleet_id) {
-        if (m_fleet_id == fleet_id)
-            return;
-
-        m_fleet_id = fleet_id;
+    void            Refresh() {
         Clear();
 
         const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
@@ -1568,6 +1564,14 @@ public:
             Insert(row);
             row->Resize(row_size);
         }
+    }
+
+    void            SetFleet(int fleet_id) {
+        if (m_fleet_id == fleet_id)
+            return;
+
+        m_fleet_id = fleet_id;
+        Refresh();
     }
 
     virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const {
@@ -1659,7 +1663,7 @@ private:
 ////////////////////////////////////////////////
 // FleetDetailPanel
 ////////////////////////////////////////////////
-/** Used in FleetDetailWnd's and in the lower half of FleetWnd's to show the
+/** Used in FleetDetailWnd and in the lower half of FleetWnd to show the
   * ships in a fleet, and some basic info about the fleet. */
 class FleetDetailPanel : public GG::Wnd {
 public:
@@ -1734,13 +1738,16 @@ void FleetDetailPanel::SetFleet(int fleet_id)
     if (m_fleet_id != old_fleet_id || m_fleet_id == UniverseObject::INVALID_OBJECT_ID)
         m_fleet_connection.disconnect();
 
-    m_ships_lb->SetFleet(fleet_id);
+    if (m_fleet_id == old_fleet_id)
+        m_ships_lb->Refresh();
+    else
+        m_ships_lb->SetFleet(fleet_id);
 
     if (const Fleet* fleet = GetObject<Fleet>(fleet_id)) {
         if (fleet && !fleet->Empty()) {
             // update desintation text and change signal connection
             if (old_fleet_id != fleet_id)
-                m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this);
+                m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals::at_front);
         } else {
             Logger().debugStream() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2131,8 +2138,10 @@ void FleetWnd::Init(int selected_fleet_id)
 
 void FleetWnd::Refresh()
 {
-    // TODO: save selected fleet(s) and reselect after repopulating, if still present?
-    const ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetUniverse().Objects(); // objects visisble to this client's empire
+
+    // save selected fleet(s)
+    std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
 
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
@@ -2140,7 +2149,7 @@ void FleetWnd::Refresh()
     int app_empire_id = HumanClientApp::GetApp()->EmpireID();   // may be different from ID of empire whose fleets are being shown in this FleetWnd
 
     // repopulate m_fleet_ids according to FleetWnd settings
-    if (GetEmpireKnownObject<System>(m_system_id, app_empire_id)) {
+    if (GetMainObjectMap().Object<System>(m_system_id)) {
         // get fleets to show from system, based on required ownership
         m_fleet_ids.clear();
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
@@ -2166,6 +2175,9 @@ void FleetWnd::Refresh()
         }
         m_fleet_ids = validated_fleet_ids;
     }
+
+    // reselect previously-selected fleets
+    this->SetSelectedFleets(initially_selected_fleets);
 }
 
 void FleetWnd::CloseClicked()
@@ -2238,9 +2250,7 @@ void FleetWnd::AddFleet(int fleet_id)
 }
 
 void FleetWnd::RemoveFleet(int fleet_id)
-{
-    
-}
+{}
 
 void FleetWnd::SelectFleet(int fleet_id)
 {
@@ -2260,12 +2270,38 @@ void FleetWnd::SelectFleet(int fleet_id)
 
             FleetSelectionChanged(m_fleets_lb->Selections());
 
-            m_fleet_detail_panel->SetFleet(fleet_id);
             m_fleets_lb->BringRowIntoView(it);
-            SelectedFleetsChangedSignal();
             break;
         }
     }
+}
+
+void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids)
+{
+    m_fleets_lb->DeselectAll();
+
+    // early exit if nothing to select
+    if (fleet_ids.empty()) {
+        FleetSelectionChanged(m_fleets_lb->Selections());
+        return;
+    }
+
+    // loop through fleets, selecting any indicated
+    for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+        FleetRow* row = dynamic_cast<FleetRow*>(*it);
+        if (!row) {
+            Logger().errorStream() << "FleetWnd::SetSelectedFleets couldn't cast a listbow row to FleetRow?";
+            continue;
+        }
+
+        // if this row's fleet should be selected, so so
+        if (fleet_ids.find(row->FleetID()) != fleet_ids.end()) {
+            m_fleets_lb->SelectRow(it);
+            m_fleets_lb->BringRowIntoView(it);  // may cause earlier rows brought into view to be brought out of view... oh well
+        }
+    }
+
+    FleetSelectionChanged(m_fleets_lb->Selections());
 }
 
 void FleetWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -2319,10 +2355,20 @@ std::set<int> FleetWnd::SelectedFleetIDs() const
 
 void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows)
 {
-    // show appropriate fleet in detail panel.
-    // I'm not sure if this is the last-clicked row or some other row. -Geoff
-    int current_fleet_id = FleetInRow(m_fleets_lb->Caret());
-    m_fleet_detail_panel->SetFleet(current_fleet_id);
+    // show appropriate fleet in detail panel.  if one fleet is selected, show
+    // its ships.  if more than one fleet is selected or no fleets are selected
+    // then show no ships.
+    if (rows.size() == 1) {
+        // find selected row and fleet
+        for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
+            if (rows.find(it) != rows.end()) {
+                m_fleet_detail_panel->SetFleet(FleetInRow(it));
+                break;
+            }
+        }
+    } else {
+        m_fleet_detail_panel->SetFleet(UniverseObject::INVALID_OBJECT_ID);
+    }
 
     // mark as selected all FleetDataPanel that are in \a rows and mark as not
     // selected all FleetDataPanel that aren't in \a rows
@@ -2330,13 +2376,21 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows)
         bool select_this_row = (rows.find(it) != rows.end());
 
         GG::ListBox::Row* row = *it;
-        assert(row);
+        if (!row) {
+            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get row";
+            continue;
+        }
         GG::Control* control = (*row)[0];
-        assert(control);
-        FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
-        assert(fleet_panel);
-
-        fleet_panel->Select(select_this_row);
+        if (!control) {
+            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get control from row";
+            continue;
+        }
+        FleetDataPanel* data_panel = dynamic_cast<FleetDataPanel*>(control);
+        if (!data_panel) {
+            Logger().errorStream() << "FleetWnd::FleetSelectionChanged couldn't get FleetDataPanel from control";
+            continue;
+        }
+        data_panel->Select(select_this_row);
     }
 
     ClickedSignal(this);
