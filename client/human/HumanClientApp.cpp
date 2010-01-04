@@ -356,11 +356,20 @@ void HumanClientApp::LoadSinglePlayerGame()
         FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
         dlg.Run();
         if (!dlg.Result().empty()) {
-            if (m_game_started)
+            if (m_game_started) {
                 EndGame();
+                Sleep(1500);    // to make sure old game is cleaned up before attempting to start a new one
+            } else {
+                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
+            }
 
-            if (!GetOptionsDB().Get<bool>("force-external-server"))
+            if (!GetOptionsDB().Get<bool>("force-external-server")) {
+                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
                 StartServer();
+            } else {
+                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
+            }
+
             unsigned int start_time = Ticks();
             while (!Networking().ConnectToLocalHostServer()) {
                 if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
@@ -369,6 +378,8 @@ void HumanClientApp::LoadSinglePlayerGame()
                     return;
                 }
             }
+
+            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() connected to server";
 
             m_connected = true;
             SetPlayerID(Networking::HOST_PLAYER_ID);
@@ -586,6 +597,7 @@ void HumanClientApp::Autosave(bool new_game)
 
 void HumanClientApp::EndGame(bool suppress_FSM_reset)
 {
+    Logger().debugStream() << "HumanClientApp::EndGame";
     if (!suppress_FSM_reset)
         m_fsm->process_event(ResetToIntroMenu());
     m_game_started = false;
