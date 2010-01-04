@@ -17,22 +17,6 @@ SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name) {
     return(sitrep);
 }
 
-SitRepEntry* CreateBaseBuiltSitRep(int system_id, int planet_id) {
-    SitRepEntry* sitrep = new SitRepEntry();
-
-    sitrep->SetType(SitRepEntry::BASE_BUILT);
-
-    XMLElement system_elem(VarText::SYSTEM_ID_TAG);
-    system_elem.SetAttribute("value", boost::lexical_cast<std::string>(system_id));
-    sitrep->GetVariables().AppendChild(system_elem);
-
-    XMLElement planet_elem(VarText::PLANET_ID_TAG);
-    planet_elem.SetAttribute("value", boost::lexical_cast<std::string>(planet_id));
-    sitrep->GetVariables().AppendChild(planet_elem);
-
-    return(sitrep);
-}
-
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id) {
     SitRepEntry* sitrep = new SitRepEntry();
 

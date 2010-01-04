@@ -1974,9 +1974,6 @@ Situation Report
 # Sit Rep Entries  #
 ####################
 
-SITREP_BASE_BUILT
-%planet% has completed a defense base.
-
 SITREP_SHIP_BUILT
 The %ship%, a new ship, has been produced in the %system% system.
 

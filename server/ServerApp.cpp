@@ -939,26 +939,6 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // create sitreps for starved planets
-    std::vector<Planet*> plt_vec = objects.FindObjects<Planet>();
-    for (std::vector<Planet*>::const_iterator it = plt_vec.begin(); it != plt_vec.end(); ++it) {
-        Planet* plt = *it;
-        const std::set<int>& owners = plt->Owners();
-
-        if (!owners.empty() && plt->GetMeter(METER_POPULATION)->Current() <= 0.0) {
-            // add some information to sitrep
-            int empire_id = *owners.begin();
-            Empire* empire = empires.Lookup(empire_id);
-            if (!empire) {
-                Logger().errorStream() << "ServerApp::ProcessTurns couldn't get empire with id " << empire_id;
-                continue;
-            }
-            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(plt->SystemID(), plt->ID()));
-            plt->Reset();
-        }
-    }
-
-
     // loop and free all orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         delete it->second;

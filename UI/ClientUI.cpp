@@ -331,7 +331,6 @@ namespace {
     // should be rendered - this is up to the client UI
     const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
     {
-        "SITREP_BASE_BUILT",
         "SITREP_SHIP_BUILT",
         "SITREP_BUILDING_BUILT",
         "SITREP_TECH_RESEARCHED",

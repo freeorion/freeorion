@@ -32,7 +32,6 @@ public:
         to have the discrepancy here than to bloat the server with data it will not use */
     enum EntryType {
         INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
-        BASE_BUILT,
         SHIP_BUILT,
         BUILDING_BUILT,
         TECH_RESEARCHED,
@@ -67,8 +66,6 @@ private:
 // examples
 
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
-
-SitRepEntry* CreateBaseBuiltSitRep(int system_id, int planet_id);
 
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 

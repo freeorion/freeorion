@@ -602,8 +602,22 @@ void Planet::PopGrowthProductionResearchPhase()
 
     // check for starvation
     if (GetPopMeter()->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
+        // starving.
+
+        // generate starvation sitreps
+        const std::set<int>& owners = this->Owners();
+        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
+            if (Empire* empire = Empires().Lookup(*it))
+                empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->SystemID(), this->ID()));
+            else
+                Logger().errorStream() << "Planet::PopGrowthProductionResearchPhase couldn't get Empire with id " << *it << " to generate sitrep about starved planet";
+        }
+
+        // reset planet to empty and unowned
         Reset();
+
     } else {
+        // not starving.  grow meters
         double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
         GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
         GrowMeter(GetMeter(METER_SHIELD),       current_construction);
