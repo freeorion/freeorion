@@ -219,6 +219,14 @@ namespace {
             return "Building";
         return "UniverseObject";
     }
+
+    GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().x : GG::X0; }
+    GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().x : GG::X0; }
+    GG::Y WndTop(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().y : GG::Y0; }
+    GG::Y WndBottom(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().y : GG::Y0; }
+    bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt) {
+        return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom;  //pt >= ul && pt < lr;
+    }
 }
 
 
@@ -637,31 +645,81 @@ MapWnd::MapWnd() :
     //GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
 
-    // Subscreen / Menu buttons
+    // Subscreen / Menu buttons (placed right to left)
+
+
+    // Menu button
     GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new CUIButton(m_toolbar->LowerRight().x-button_width, GG::Y0, button_width, UserString("MAP_BTN_MENU") );
+    m_btn_menu = new SettableInWindowCUIButton(m_toolbar->LowerRight().x - button_width - GG::X(LAYOUT_MARGIN),
+                                               GG::Y(LAYOUT_MARGIN),
+                                               button_width, UserString("MAP_BTN_MENU") );
     m_toolbar->AttachChild(m_btn_menu);
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
+    // create custom InWindow function for Menu button that extends its
+    // clickable area to the adjacent edges of the toolbar containing it
+    boost::function<bool(const GG::Pt&)> in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_menu), boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_toolbar), boost::bind(&WndBottom, m_btn_menu),
+                    _1);
+    m_btn_menu->SetInWindow(in_window_func);
 
+
+    // Design button
     button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new CUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_DESIGN") );
+    m_btn_design = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width,
+                                                 GG::Y(LAYOUT_MARGIN),
+                                                 button_width, UserString("MAP_BTN_DESIGN") );
     m_toolbar->AttachChild(m_btn_design);
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
+    // custom InWindow that extends up to edge of toolbar, but NOT furhter to
+    // right as was done for Menu button
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
+                    _1);
+    m_btn_design->SetInWindow(in_window_func);
 
+
+    // Production button
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new CUIButton(m_btn_design->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_PRODUCTION") );
+    m_btn_production = new SettableInWindowCUIButton(m_btn_design->UpperLeft().x - LAYOUT_MARGIN-button_width,
+                                                     GG::Y(LAYOUT_MARGIN),
+                                                     button_width, UserString("MAP_BTN_PRODUCTION") );
     m_toolbar->AttachChild(m_btn_production);
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_production),  boost::bind(&WndBottom, m_btn_production),
+                    _1);
+    m_btn_production->SetInWindow(in_window_func);
 
+
+    // Research button
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new CUIButton(m_btn_production->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_RESEARCH") );
+    m_btn_research = new SettableInWindowCUIButton(m_btn_production->UpperLeft().x - LAYOUT_MARGIN - button_width,
+                                                   GG::Y(LAYOUT_MARGIN),
+                                                   button_width, UserString("MAP_BTN_RESEARCH") );
     m_toolbar->AttachChild(m_btn_research);
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_research),  boost::bind(&WndBottom, m_btn_research),
+                    _1);
+    m_btn_research->SetInWindow(in_window_func);
 
+
+    // SitRep button
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new CUIButton(m_btn_research->UpperLeft().x-LAYOUT_MARGIN-button_width, GG::Y0, button_width, UserString("MAP_BTN_SITREP") );
+    m_btn_siterep = new SettableInWindowCUIButton(m_btn_research->UpperLeft().x - LAYOUT_MARGIN-button_width,
+                                                  GG::Y(LAYOUT_MARGIN),
+                                                  button_width, UserString("MAP_BTN_SITREP") );
     m_toolbar->AttachChild(m_btn_siterep);
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_siterep),  boost::bind(&WndBottom, m_btn_siterep),
+                    _1);
+    m_btn_siterep->SetInWindow(in_window_func);
 
 
     // resources
@@ -724,6 +782,10 @@ MapWnd::~MapWnd()
     delete m_production_wnd;
     delete m_design_wnd;
     RemoveAccelerators();
+}
+
+void MapWnd::DoLayout()
+{
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const

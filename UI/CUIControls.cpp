@@ -195,6 +195,33 @@ void CUIButton::MarkSelectedTechCategoryColor(std::string category)
 
 
 ///////////////////////////////////////
+// class SettableInWindowCUIButton
+///////////////////////////////////////
+SettableInWindowCUIButton::SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str,
+                                                     const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
+                                                     GG::Clr color/* = ClientUI::CtrlColor()*/,
+                                                     GG::Clr border/* = ClientUI::CtrlBorderColor()*/,
+                                                     int thick/* = 2*/, 
+                                                     GG::Clr text_color/* = ClientUI::TextColor()*/,
+                                                     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
+    CUIButton(x, y, w, str, font, color, border, thick, text_color, flags)
+{}
+
+bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const
+{
+    if (m_in_window_func)
+        return m_in_window_func(pt);
+    else
+        return CUIButton::InWindow(pt);
+}
+
+void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)> in_window_function)
+{
+    m_in_window_func = in_window_function;
+}
+
+
+///////////////////////////////////////
 // class CUITurnButton
 ///////////////////////////////////////
 CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,

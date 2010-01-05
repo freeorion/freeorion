@@ -4,17 +4,19 @@
 #define _CUIControls_h_
 
 #include "ClientUI.h"
-#include <GG/Button.h>
 #include "CUIDrawUtil.h"
+#include <GG/Button.h>
 #include <GG/DropDownList.h>
 #include <GG/Edit.h>
-#include <GG/dialogs/FileDlg.h>
 #include <GG/Menu.h>
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
 #include <GG/Slider.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
+#include <GG/dialogs/FileDlg.h>
+
+#include <boost/function.hpp>
 
 #include "LinkText.h"
 
@@ -23,7 +25,6 @@
 //! the visual theme the project requires.  Implementation may
 //! depend on graphics and design team specifications.  They extend
 //! GG controls.
-
 
 /** a FreeOrion Button control */
 class CUIButton : public GG::Button
@@ -64,6 +65,28 @@ private:
     GG::Clr m_border_color;
     int     m_border_thick;
 };
+
+class SettableInWindowCUIButton : public CUIButton
+{
+public:
+    /** \name Structors */ //@{
+    SettableInWindowCUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font = boost::shared_ptr<GG::Font>(), 
+                              GG::Clr color = ClientUI::CtrlColor(), GG::Clr border = ClientUI::CtrlBorderColor(), int thick = 1, 
+                              GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+    //@}
+
+    /** \name Accessors */ //@{
+    virtual bool    InWindow(const GG::Pt& pt) const;
+    //@}
+
+    /** \name Mutators */ //@{
+    void            SetInWindow(boost::function<bool(const GG::Pt&)> in_window_function);
+    //@}
+
+private:
+    boost::function<bool(const GG::Pt&)>    m_in_window_func;
+};
+
 
 /** a FreeOrion next-turn button control */
 class CUITurnButton : public CUIButton

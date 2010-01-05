@@ -10,6 +10,7 @@
 #include "FleetButton.h"
 
 class CUIButton;
+class SettableInWindowCUIButton;
 class CUIEdit;
 class CUITurnButton;
 class FleetWnd;
@@ -97,18 +98,20 @@ public:
     //!@}
 
     //! \name Mutators //!@{
-    virtual void   Render();
-    virtual void   LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void   MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    Render();
+    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
-    void           InitTurn(int turn_number);                       //!< called at the start of each turn
-    void           RestoreFromSaveData(const SaveGameUIData& data); //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
-    void           ShowSystemNames();                               //!< enables the system name text
-    void           HideSystemNames();                               //!< disables the system name text
+    void            DoLayout();
+
+    void            InitTurn(int turn_number);                          //!< called at the start of each turn
+    void            RestoreFromSaveData(const SaveGameUIData& data);    //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
+    void            ShowSystemNames();                                  //!< enables the system name text
+    void            HideSystemNames();                                  //!< disables the system name text
 
     mutable SystemLeftClickedSignalType     SystemLeftClickedSignal;
     mutable SystemRightClickedSignalType    SystemRightClickedSignal;
@@ -364,7 +367,7 @@ private:
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
-    CUIButton                   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
+    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
     GG::Slider*                 m_zoom_slider;      //!< allows user to set zoom level

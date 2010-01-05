@@ -63,10 +63,9 @@ namespace {
         return GG::Y(ClientUI::Pts()*3/2);
     }
 
-    /**
-     * How big fleet and ship statistics icons should be relative to the current font size.
-     * Icons shouldn't scale below what they are for the default, 12 pt, font size.
-     */
+    /** How big fleet and ship statistics icons should be relative to the
+      * current font size.  Icons shouldn't scale below what they are for the
+      * default, 12 pt, font size. */
     GG::Pt StatIconSize() {
         const int font_size = std::max(ClientUI::Pts(), 12);
         return GG::Pt(GG::X(font_size*10/3), GG::Y(font_size*4/3));
