@@ -306,20 +306,35 @@ void ServerNetworking::SendMessage(const Message& message,
 void ServerNetworking::SendMessage(const Message& message)
 {
     established_iterator it = GetPlayer(message.ReceivingPlayer());
-    assert(it != established_end());
-    assert((*it)->ID() == message.ReceivingPlayer());
+    if (it == established_end()) {
+        Logger().errorStream() << "ServerNetworking::SendMessage couldn't find player with id " << id << " to disconnect.  aborting";
+        return;
+    }
+    PlayerConnectionPtr player = *it;
+    if (player->ID() != message.ReceivingPlayer()) {
+        Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << id << ")";
+        return;
+    }
+
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
                                << message;
-    (*it)->SendMessage(message);
+    player->SendMessage(message);
 }
 
 void ServerNetworking::Disconnect(int id)
 {
     established_iterator it = GetPlayer(id);
-    assert(it != established_end());
-    assert((*it)->ID() == id);
-    Disconnect(*it);
+    if (it == established_end()) {
+        Logger().errorStream() << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
+        return;
+    }
+    PlayerConnectionPtr player = *it;
+    if (player->ID() != id) {
+        Logger().errorStream() << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->ID() << ") to what was requrested (" << id << ")";
+        return;
+    }
+    Disconnect(player);
 }
 
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)

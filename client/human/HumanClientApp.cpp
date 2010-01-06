@@ -609,7 +609,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     m_ui->GetMapWnd()->Sanitize();
 
     m_universe.Clear();
-    m_empires.RemoveAllEmpires();
+    m_empires.Clear();
     m_orders.Reset();
     m_combat_orders.clear();
 }

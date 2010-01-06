@@ -581,7 +581,7 @@ boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
     ExtractMessageData(message, *setup_data);
 
     if (player_connection->Host() && !setup_data->m_new_game) {
-        Empires().RemoveAllEmpires();
+        Empires().Clear();
         player_connection->SendMessage(HostSPAckMessage(player_connection->ID()));
         player_connection->SendMessage(JoinAckMessage(player_connection->ID()));
         server.m_single_player_game = true;

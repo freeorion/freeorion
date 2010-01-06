@@ -70,40 +70,46 @@ struct ResearchQueue
     //@}
 
     /** \name Accessors */ //@{
-    bool InQueue(const Tech* tech) const; ///< Returns true iff \a tech is in this queue.
-    int ProjectsInProgress() const;       ///< Returns the number of research projects currently (perhaps partially) funded.
-    double TotalRPsSpent() const;         ///< Returns the number of RPs currently spent on the projects in this queue.
+    bool            InQueue(const Tech* tech) const;    ///< Returns true iff \a tech is in this queue.
+    int             ProjectsInProgress() const;         ///< Returns the number of research projects currently (perhaps partially) funded.
+    double          TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
 
     // STL container-like interface
-    bool empty() const;
-    unsigned int size() const;
-    const_iterator begin() const;
-    const_iterator end() const;
-    const_iterator find(const Tech* tech) const;
-    const Element& operator[](int i) const;
+    bool            empty() const;
+    unsigned int    size() const;
+    const_iterator  begin() const;
+    const_iterator  end() const;
+    const_iterator  find(const Tech* tech) const;
+    const Element&  operator[](int i) const;
 
-    /** Returns an iterator to the underfunded research project, or end() if none exists. */
-    const_iterator UnderfundedProject() const;
+    /** Returns an iterator to the underfunded research project, or end() if
+      * none exists. */
+    const_iterator  UnderfundedProject() const;
     //@}
 
     /** \name Mutators */ //@{
-    /** Recalculates the RPs spent on and number of turns left for each project in the queue.  Also
-        determines the number of projects in prgress, and the total number of RPs spent on the projects
-        in the queue.  \note A precondition of this function that \a RPs must be greater than some
-        epsilon > 0; see the implementation for the actual value used for epsilon. */
-    void Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress);
+    /** Recalculates the RPs spent on and number of turns left for each project
+      * in the queue.  Also determines the number of projects in prgress, and
+      * the total number of RPs spent on the projects in the queue.  \note A
+      * precondition of this function that \a RPs must be greater than some
+      * epsilon > 0; see the implementation for the actual value used for
+      * epsilon. */
+    void            Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress);
 
     // STL container-like interface
-    void push_back(const Tech* tech);
-    void insert(iterator it, const Tech* tech);
-    void erase(iterator it);
+    void            push_back(const Tech* tech);
+    void            insert(iterator it, const Tech* tech);
+    void            erase(iterator it);
 
-    iterator begin();
-    iterator end();
-    iterator find(const Tech* tech);
+    iterator        begin();
+    iterator        end();
+    iterator        find(const Tech* tech);
 
-    /** Returns an iterator to the underfunded research project, or end() if none exists. */
-    iterator UnderfundedProject();
+    void            clear();
+
+    /** Returns an iterator to the underfunded research project, or end() if
+      * none exists. */
+    iterator        UnderfundedProject();
 
     mutable ResearchQueueChangedSignalType ResearchQueueChangedSignal;
     //@}
@@ -189,15 +195,15 @@ struct ProductionQueue
 
 
     // STL container-like interface
-    bool empty() const;
-    unsigned int size() const;
-    const_iterator begin() const;
-    const_iterator end() const;
-    const_iterator find(int i) const;
-    const Element& operator[](int i) const;
+    bool                            empty() const;
+    unsigned int                    size() const;
+    const_iterator                  begin() const;
+    const_iterator                  end() const;
+    const_iterator                  find(int i) const;
+    const Element&                  operator[](int i) const;
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    const_iterator UnderfundedProject(const Empire* empire) const;
+    const_iterator                  UnderfundedProject(const Empire* empire) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -206,22 +212,25 @@ struct ProductionQueue
       * in each resource-sharing group of systems.  Does not actually "spend" the PP; a later call to
       * empire->CheckProductionProgress() will actually spend PP, remove items from queue and create them
       * in the universe. */
-    void Update(Empire* empire, const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools,
-                const std::vector<double>& production_status);
+    void                            Update(Empire* empire, const std::map<ResourceType,
+                                           boost::shared_ptr<ResourcePool> >& resource_pools,
+                                           const std::vector<double>& production_status);
 
     // STL container-like interface
-    void push_back(const Element& element);
-    void insert(iterator it, const Element& element);
-    void erase(int i);
-    iterator erase(iterator it);
+    void                            push_back(const Element& element);
+    void                            insert(iterator it, const Element& element);
+    void                            erase(int i);
+    iterator                        erase(iterator it);
 
-    iterator begin();
-    iterator end();
-    iterator find(int i);
-    Element& operator[](int i);
+    iterator                        begin();
+    iterator                        end();
+    iterator                        find(int i);
+    Element&                        operator[](int i);
+
+    void                            clear();
 
     /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    iterator UnderfundedProject(const Empire* empire);
+    iterator                        UnderfundedProject(const Empire* empire);
 
     mutable ProductionQueueChangedSignalType ProductionQueueChangedSignal;
     //@}
@@ -353,14 +362,14 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                    SetCapitolID(int id);                           ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
+    void                    SetCapitolID(int id);                   ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
 
     /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
       * it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
       * is placed at the end of the queue. If \a tech is already available, no action is taken. */
     void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
-    void                    RemoveTechFromQueue(const Tech* tech);          ///< Removes \a tech from the research queue, if it is in the research queue already.
+    void                    RemoveTechFromQueue(const Tech* tech);  ///< Removes \a tech from the research queue, if it is in the research queue already.
 
     /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
         queue.size() <= pos, the build is placed at the end of the queue. */
@@ -393,6 +402,8 @@ public:
     int                     AddShipDesign(ShipDesign* ship_design);         ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is UniverseObject::INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
     std::string             NewShipName();                                  ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
+
+    void                    EliminationCleanup();                           ///< Cleans up empire after it is eliminated.  Queues are cleared, capitol is reset, and other state info not relevant to an eliminated empire is cleared
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership

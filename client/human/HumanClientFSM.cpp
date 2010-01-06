@@ -334,7 +334,7 @@ boost::statechart::result PlayingGame::react(const PlayerEliminated& msg)
     ExtractMessageData(msg.m_message, empire_id, empire_name);
     Client().EmpireEliminatedSignal(empire_id);
     // TODO: replace this with something better
-    ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString("EMPIRE_DEFEATED")) % empire_name));
+    //ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString("EMPIRE_DEFEATED")) % empire_name));
     return discard_event();
 }
 

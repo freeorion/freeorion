@@ -333,6 +333,8 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
     // Determine initial supply distribution and exchanging and resource pools for empires
     EmpireManager& empires = Empires();
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        if (empires.Eliminated(it->first))
+            continue;   // skip eliminated empires
         Empire* empire = it->second;
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
@@ -413,6 +415,8 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // restore in-turn state data potentially lost during serialization..
     m_universe.ApplyMeterEffectsAndUpdateMeters();
     for (EmpireManager::iterator it = Empires().begin(); it != Empires().end(); ++it) {
+        if (Empires().Eliminated(it->first))
+            continue;   // skip eliminated empires
         Empire* empire = it->second;
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
@@ -875,6 +879,8 @@ void ServerApp::ProcessTurns()
 
     // Determine how much of each resource is available, and determine how to distribute it to planets or on queues
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
+        if (empires.Eliminated(it->first))
+            continue;   // skip eliminated empires
         Empire* empire = it->second;
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propegate fleet and resource (same for both)
@@ -892,6 +898,8 @@ void ServerApp::ProcessTurns()
     // Consume distributed resources to planets and on queues, create new objects for completed production and
     // give techs to empires that have researched them
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        if (empires.Eliminated(it->first))
+            continue;   // skip eliminated empires
         Empire* empire = empires.Lookup(it->first);
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
@@ -957,23 +965,29 @@ void ServerApp::ProcessTurns()
     // compile map of PlayerInfo for each player, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        players[(*it)->ID()] = PlayerInfo((*it)->PlayerName(),
-                                          GetPlayerEmpire((*it)->ID())->EmpireID(),
-                                          m_ai_IDs.find((*it)->ID()) != m_ai_IDs.end(),
-                                          (*it)->Host());
+        PlayerConnectionPtr player = *it;
+        players[player->ID()] = PlayerInfo(player->PlayerName(),
+                                          GetPlayerEmpire(player->ID())->EmpireID(),
+                                          m_ai_IDs.find(player->ID()) != m_ai_IDs.end(),
+                                          player->Host());
     }
 
 
     // check for eliminated empires and players
-    std::map<int, int> eliminations; // map from player id to empire id of eliminated players
+    std::map<int, int> eliminations; // map from player id to empire id of eliminated players, for empires eliminated this turn
     for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-        Empire* empire = it->second;
+        int empire_id = it->first;
+        if (empires.Eliminated(empire_id))
+            continue;   // don't double-eliminate an empire
+        Logger().debugStream() << "empire " << empire_id << " not yet eliminated";
+
+        const Empire* empire = it->second;
         if (!EmpireEliminated(empire, m_universe))
             continue;
+        Logger().debugStream() << " ... but IS eliminated this turn";
 
-        int elim_empire_id = it->first;
-        int elim_player_id = GetEmpirePlayerID(elim_empire_id);
-        eliminations[elim_player_id] = elim_empire_id;
+        int elim_player_id = GetEmpirePlayerID(empire_id);
+        eliminations[elim_player_id] = empire_id;
     }
 
 

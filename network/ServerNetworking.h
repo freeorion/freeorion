@@ -34,12 +34,10 @@ private:
     { bool operator()(const PlayerConnectionPtr& player_connection) const; };
 
 public:
-    typedef std::set<PlayerConnectionPtr>::iterator iterator;
-    typedef std::set<PlayerConnectionPtr>::const_iterator const_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>
-    established_iterator;
-    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>
-    const_established_iterator;
+    typedef std::set<PlayerConnectionPtr>::iterator                                         iterator;
+    typedef std::set<PlayerConnectionPtr>::const_iterator                                   const_iterator;
+    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::iterator>          established_iterator;
+    typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
     /** \name Structors */ //@{
     /** Basic ctor. */

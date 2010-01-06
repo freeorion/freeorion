@@ -8,20 +8,20 @@
 
 EmpireManager::~EmpireManager()
 {
-    RemoveAllEmpires();
+    Clear();
 }
 
 const EmpireManager& EmpireManager::operator=(EmpireManager& rhs)
 {
-    RemoveAllEmpires();
+    Clear();
     m_empire_map = rhs.m_empire_map;
     rhs.m_empire_map.clear();
     return *this;
 }
 
-const Empire* EmpireManager::Lookup(int ID) const
+const Empire* EmpireManager::Lookup(int id) const
 {
-    const_iterator it = m_empire_map.find(ID);
+    const_iterator it = m_empire_map.find(id);
     return it == m_empire_map.end() ? 0 : it->second;
 }
 
@@ -35,9 +35,14 @@ EmpireManager::const_iterator EmpireManager::end() const
     return m_empire_map.end();
 }
 
-Empire* EmpireManager::Lookup(int ID)
+bool EmpireManager::Eliminated(int id) const
 {
-    iterator it = m_empire_map.find(ID);
+    return m_eliminated_empires.find(id) != m_eliminated_empires.end();
+}
+
+Empire* EmpireManager::Lookup(int id)
+{
+    iterator it = m_empire_map.find(id);
     return it == end() ? 0 : it->second;
 }
 
@@ -49,6 +54,16 @@ EmpireManager::iterator EmpireManager::begin()
 EmpireManager::iterator EmpireManager::end()
 {
     return m_empire_map.end();
+}
+
+void EmpireManager::EliminateEmpire(int id)
+{
+    if (Empire* emp = Lookup(id)) {
+        emp->EliminationCleanup();
+        m_eliminated_empires.insert(id);
+    } else {
+        Logger().errorStream() << "Tried to eliminate nonexistant empire with ID " << id;
+    }
 }
 
 Empire* EmpireManager::CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID)
@@ -77,24 +92,11 @@ void EmpireManager::InsertEmpire(Empire* empire)
     }
 }
 
-void EmpireManager::RemoveEmpire(Empire* empire)
-{
-    if (empire)
-        m_empire_map.erase(empire->EmpireID());
-}
-
-void EmpireManager::RemoveAllEmpires()
+void EmpireManager::Clear()
 {
     for (EmpireManager::iterator it = begin(); it != end(); ++it) {
         delete it->second;
     }
     m_empire_map.clear();
-}
-
-bool EmpireManager::EliminateEmpire(int id)
-{
-    Empire* emp = Lookup(id);
-    RemoveEmpire(emp);
-    delete emp;
-    return emp;
+    m_eliminated_empires.clear();
 }

@@ -456,6 +456,14 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject()
     return end();
 }
 
+void ResearchQueue::clear()
+{
+    m_queue.clear();
+    m_projects_in_progress = 0;
+    m_total_RPs_spent = 0;
+    ResearchQueueChangedSignal();
+}
+
 /////////////////////////////////////
 // ProductionQueue::ProductionItem //
 /////////////////////////////////////
@@ -896,6 +904,14 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject(const Empire* empi
     return end();
 }
 
+void ProductionQueue::clear()
+{
+    m_queue.clear();
+    m_projects_in_progress = 0;
+    m_system_group_allocated_pp.clear();
+    ProductionQueueChangedSignal();
+}
+
 
 ////////////
 // Empire //
@@ -1238,6 +1254,40 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
 int Empire::NumSitRepEntries() const
 {
     return m_sitrep_entries.size();
+}
+
+void Empire::EliminationCleanup()
+{
+    // some Empire data not cleared when eliminating since it might be useful
+    // to remember later, and having it doesn't hurt anything (as opposed to
+    // the production queue that might actually cause some problems if left
+    // uncleared after elimination
+
+    m_capitol_id = UniverseObject::INVALID_OBJECT_ID;
+    // m_techs
+    m_research_queue.clear();
+    m_research_progress.clear();
+    m_production_queue.clear();
+    m_production_progress.clear();
+    // m_available_building_types;
+    // m_available_part_types;
+    // m_available_hull_types;
+    // m_explored_systems;
+    // m_ship_designs;
+    m_sitrep_entries.clear();
+    for (std::map<ResourceType, boost::shared_ptr<ResourcePool> >::iterator it = m_resource_pools.begin(); it != m_resource_pools.end(); ++it)
+        it->second->SetResourceCenters(std::vector<ResourceCenter*>());
+    m_population_pool.SetPopCenters(std::vector<PopCenter*>());
+    m_maintenance_total_cost = 0;
+    // m_ship_names_used;
+    m_fleet_supplyable_system_ids.clear();
+    m_fleet_supply_starlane_traversals.clear();
+    m_fleet_supply_system_ranges.clear();
+    m_resource_supply_groups.clear();
+    m_resource_supply_starlane_traversals.clear();
+    m_resource_supply_obstructed_starlane_traversals.clear();
+    m_resource_supply_system_ranges.clear();
+    m_supply_unobstructed_systems.clear();
 }
 
 void Empire::UpdateSystemSupplyRanges()
