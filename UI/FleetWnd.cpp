@@ -27,12 +27,15 @@
 #include <boost/cast.hpp>
 
 namespace {
-    const GG::X         DATA_PANEL_ICON_SPACE = GG::X(38); // width reserved for ship or fleet icon in data panels
-    const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4);    // padding on the left and right of fleet/ship description
-    const GG::Y         DATA_PANEL_MIN_HEIGHT = GG::Y(38); // minimum height of a ship or fleet row, excluding border and padding
+    const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38)); 
+                                                           // area reserved for ship or fleet icon in data panels 
+                                                           // (actual height can be bigger if the row expands due to font size)
     const GG::Flags<GG::GraphicStyle>
                         DATA_PANEL_ICON_STYLE = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
                                                            // how should ship and fleet icons be scaled and/or positioned in the reserved space
+    const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4);    // padding on the left and right of fleet/ship description
+    const int           DATA_PANEL_BORDER = 1;             // how thick should the border around ship or fleet panel be
+
 
     const int           PAD = 4;
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
@@ -72,7 +75,7 @@ namespace {
     }
 
     GG::Y ListRowHeight() {
-        return std::max(DATA_PANEL_MIN_HEIGHT, LabelHeight() + StatIconSize().y) + PAD;
+        return std::max(DATA_PANEL_ICON_SPACE.y, LabelHeight() + StatIconSize().y) + 2*DATA_PANEL_BORDER + PAD;
     }
 
     boost::shared_ptr<GG::Texture> SpeedIcon() {
@@ -545,7 +548,6 @@ namespace {
 
             EnableChildClipping();
 
-
             // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
             std::string ship_name = "";
             if (ship)
@@ -607,10 +609,23 @@ namespace {
             m_fleet_connection.disconnect();
         }
 
+        /** Excludes border from the client area. */
+        virtual GG::Pt ClientUpperLeft() const
+        {
+            return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));
+        }
+
+        /** Excludes border from the client area. */
+        virtual GG::Pt ClientLowerRight() const
+        {
+            return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
+        }
+
+        /** Renders black panel background, border with color depending on the current state and a background for the ship's name text. */
         virtual void    Render() {
             // main background position and colour
             const GG::Clr& background_colour = ClientUI::WndColor();
-            GG::Pt ul = UpperLeft(), lr = LowerRight();
+            const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
 
             // title background colour and position
             const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
@@ -618,12 +633,12 @@ namespace {
             GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
             if (Disabled())
                 border_colour = DisabledColor(border_colour);
-            GG::Pt text_ul = ul + GG::Pt(DATA_PANEL_ICON_SPACE, GG::Y0);
-            GG::Pt text_lr = ul + GG::Pt(Width(),               LabelHeight());
+            const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
+            const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
 
             // render
-            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, 1);  // background and border
-            GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO, 0);   // title background box
+            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
+            GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
         }
 
         void            Select(bool b) {
@@ -671,12 +686,12 @@ namespace {
             else
                 icon = ClientUI::ShipIcon(UniverseObject::INVALID_OBJECT_ID);  // default icon
 
-            m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE, Height(), icon, DATA_PANEL_ICON_STYLE);
+            m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DATA_PANEL_ICON_STYLE);
             AttachChild(m_ship_icon);
 
             if (ship->OrderedScrapped()) {
                 boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE, Height(), scrap_texture, DATA_PANEL_ICON_STYLE);
+                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), scrap_texture, DATA_PANEL_ICON_STYLE);
                 AttachChild(m_scrap_indicator);
             }
         }
@@ -721,7 +736,6 @@ namespace {
 
 
             // update stat icon values and browse wnds
-            GG::Pt icon_ul(DATA_PANEL_ICON_SPACE + GG::X(PAD), LabelHeight());
             for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
                 //std::cout << "setting ship stat " << it->first << " to value: " << StatValue(it->first) << std::endl;
                 it->second->SetValue(StatValue(it->first));
@@ -761,21 +775,22 @@ namespace {
 
         void            DoLayout() {
             // resize ship and scrap indicator icons, they can fit and position themselves in the space provided
+            // client height should never be less than the height of the space resereved for the icon
             if (m_ship_icon)
-                m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE, Height()));
+                m_ship_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
             if (m_scrap_indicator)
-                m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE, Height()));
+                m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
             // position ship name text at the top to the right of icons
-            const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE + DATA_PANEL_TEXT_PAD, GG::Y0);
-            const GG::Pt name_lr = GG::Pt(Width() - DATA_PANEL_TEXT_PAD,               LabelHeight());
+            const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
+            const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
             m_ship_name_text->SizeMove(name_ul, name_lr);
 
             if (m_design_name_text)
                 m_design_name_text->SizeMove(name_ul, name_lr);
 
             // position ship statistic icons one after another horizontally and centered vertically
-            GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (Height() - LabelHeight() - StatIconSize().y) / 2));
+            GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
             for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
                 it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
                 icon_ul.x += StatIconSize().x;
@@ -840,6 +855,9 @@ public:
     FleetDataPanel(GG::X w, GG::Y h, int fleet_id, int empire = ALL_EMPIRES,
                    int system_id = UniverseObject::INVALID_OBJECT_ID,
                    double x = UniverseObject::INVALID_POSITION, double y = UniverseObject::INVALID_POSITION);
+
+    virtual GG::Pt      ClientUpperLeft() const;  ///< upper left plus border insets
+    virtual GG::Pt      ClientLowerRight() const; ///< lower right minus border insets
 
     virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last, const GG::Pt& pt) const;
 
@@ -930,6 +948,16 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
     Refresh();
 }
 
+GG::Pt FleetDataPanel::ClientUpperLeft() const
+{
+    return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));
+}
+
+GG::Pt FleetDataPanel::ClientLowerRight() const
+{
+    return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
+}
+
 bool FleetDataPanel::Selected() const
 {
     return m_selected;
@@ -939,7 +967,7 @@ void FleetDataPanel::Render()
 {
     // main background position and colour
     const GG::Clr& background_colour = ClientUI::WndColor();
-    const GG::Pt ul = UpperLeft(), lr = LowerRight();
+    const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
 
     // title background colour and position
     const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
@@ -947,12 +975,12 @@ void FleetDataPanel::Render()
     GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
     if (Disabled())
         border_colour = DisabledColor(border_colour);
-    const GG::Pt text_ul = ul + GG::Pt(DATA_PANEL_ICON_SPACE, GG::Y0);
-    const GG::Pt text_lr = ul + GG::Pt(Width(),               LabelHeight());
+    const GG::Pt text_ul = cul + GG::Pt(DATA_PANEL_ICON_SPACE.x, GG::Y0);
+    const GG::Pt text_lr = cul + GG::Pt(ClientWidth(),           LabelHeight());
 
     // render
-    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, 1);  // background and border
-    GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO, 0);   // title background box
+    GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
+    GG::FlatRectangle(text_ul,  text_lr,    border_colour,      GG::CLR_ZERO,  0);                  // title background box
 }
 
 void FleetDataPanel::DragDropEnter(const GG::Pt& pt, const std::map<GG::Wnd*, GG::Pt>& drag_drop_wnds, GG::Flags<GG::ModKey> mod_keys)
@@ -1077,7 +1105,7 @@ void FleetDataPanel::Refresh()
         icons.push_back(size_icon);
         styles.push_back(DATA_PANEL_ICON_STYLE);
 
-        m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE, Height(), icons, styles);
+        m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icons, styles);
         AttachChild(m_fleet_icon);
 
         // set stat icon values
@@ -1120,17 +1148,17 @@ void FleetDataPanel::DoLayout()
 {
     if (m_fleet_icon) {
         // fleet icon will scale and position itself in the provided space
-        m_fleet_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE, Height()));
+        m_fleet_icon->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
     }
 
     // position fleet name and destination texts
-    const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE + DATA_PANEL_TEXT_PAD, GG::Y0);
-    const GG::Pt name_lr = GG::Pt(Width() - DATA_PANEL_TEXT_PAD,               LabelHeight());
+    const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
+    const GG::Pt name_lr = GG::Pt(ClientWidth() - DATA_PANEL_TEXT_PAD,           LabelHeight());
     m_fleet_name_text->SizeMove(name_ul, name_lr);
     m_fleet_destination_text->SizeMove(name_ul, name_lr);
 
     // position stat icons, centering them vertically if there's more space than required
-    GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (Height() - LabelHeight() - StatIconSize().y) / 2));
+    GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
     for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
         it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
