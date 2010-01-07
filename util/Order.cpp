@@ -552,7 +552,7 @@ void FleetColonizeOrder::ExecuteImpl() const
     // This leaves the ship in existence, and in its starting system, but not in any fleet;
     // this situation will be resolved by either ServerExecute() or UndoImpl().
     if (fleet->NumShips() == 1) {
-        universe.Destroy(fleet->ID());
+        universe.Destroy(m_colony_fleet_id);
     } else {
         fleet->RemoveShip(m_ship);
     }
@@ -603,6 +603,8 @@ bool FleetColonizeOrder::UndoImpl() const
             Logger().errorStream() << "FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID";
             return false;
         }
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+
         universe.InsertID(fleet, new_fleet_id);
         fleet->AddShip(ship->ID());
         system->Insert(fleet);

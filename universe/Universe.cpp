@@ -1501,8 +1501,6 @@ void Universe::UpdateEmpireObjectVisibilities()
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;
 
-        //Logger().debugStream() << "Detector object: " << detector->Name();
-
         int detector_id = detector->ID();
 
 
@@ -1520,6 +1518,8 @@ void Universe::UpdateEmpireObjectVisibilities()
         if (!detection_meter) continue;
         double detection = detection_meter->Current();
 
+
+        //Logger().debugStream() << "Detector object: " << detector->Name() << " (" << detector->ID() << ") detection: " << detection;
 
         // position of detector
         double xd = detector->X();
@@ -1553,6 +1553,7 @@ void Universe::UpdateEmpireObjectVisibilities()
             if (stealth_meter)
                 stealth = stealth_meter->Current();
 
+            //Logger().debugStream() << " ... ... target stealth: " << stealth;
 
             Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
 
