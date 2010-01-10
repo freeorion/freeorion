@@ -307,12 +307,12 @@ void ServerNetworking::SendMessage(const Message& message)
 {
     established_iterator it = GetPlayer(message.ReceivingPlayer());
     if (it == established_end()) {
-        Logger().errorStream() << "ServerNetworking::SendMessage couldn't find player with id " << id << " to disconnect.  aborting";
+        Logger().errorStream() << "ServerNetworking::SendMessage couldn't find player with id " << message.ReceivingPlayer() << " to disconnect.  aborting";
         return;
     }
     PlayerConnectionPtr player = *it;
     if (player->ID() != message.ReceivingPlayer()) {
-        Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << id << ")";
+        Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
         return;
     }
 
