@@ -7,6 +7,9 @@
 
 #include <cstdlib>
 
+#ifdef __FreeBSD__
+#include <sys/sysctl.h>
+#endif
 
 namespace fs = boost::filesystem;
 
@@ -132,6 +135,7 @@ const fs::path GetBinDir()
 
 #elif defined(FREEORION_LINUX)
 #include "binreloc.h"
+#include <unistd.h>
 
 void InitBinDir(const std::string& argv0);
 
@@ -155,7 +159,7 @@ void InitDirs(const std::string& argv0) {
     if (!exists(p)) {
         fs::create_directories(p);
     }
-    
+
     p /= "save";
     if (!exists(p)) {
         fs::create_directories(p);
@@ -195,13 +199,49 @@ const fs::path GetBinDir() {
 void InitBinDir(const std::string& argv0) {
     bool problem = false;
     try {
-        fs::path binary_file = fs::system_complete(fs::path(argv0));
-        bin_dir = binary_file.branch_path();
+        // get this executable's path by following link
+        const size_t BUF_SIZE = 2048;
+        char buf[BUF_SIZE] = {0};
+
+#ifdef __FreeBSD__
+        int mib[4];
+        mib[0] = CTL_KERN;
+        mib[1] = KERN_PROC;
+        mib[2] = KERN_PROC_PATHNAME;
+        mib[3] = -1;
+        size_t buf_size = sizeof(buf);
+        sysctl(mib, 4, buf, &buf_size, 0, 0);
+#else
+        size_t exe_path_size = readlink("/proc/self/exe", buf, BUF_SIZE);
+        if (exe_path_size == static_cast<size_t>(-1)) {
+            problem = true;
+
+        } else {
+            if (exe_path_size >= BUF_SIZE || exe_path_size < 0)
+                exe_path_size = BUF_SIZE - 1;   // ensure buffer isn't accessed out of range
+            buf[exe_path_size] = 0;             // null terminate c-string
+        }
+#endif
+
+        if (!problem) {
+            buf[BUF_SIZE - 1] = 0;              // to be safe, else initializing an std::string with a non-null-terminated string could read invalid data outside the buffer range
+            std::string path_text(buf);
+
+            fs::path binary_file = fs::system_complete(fs::path(path_text));
+            bin_dir = binary_file.branch_path();
+
+            // check that a "freeorion" file (hopefully the freeorion binary) exists in the found directory
+            fs::path p(bin_dir);
+            p /= "freeorion";
+            if (!exists(p))
+                problem = true;
+        }
+
     } catch (fs::filesystem_error err) {
         problem = true;
     }
 
-    if (problem || !exists(bin_dir)) {
+    if (problem) {
         // failed trying to parse the call path, so try hard-coded standard location...
         char* dir_name = br_find_bin_dir("/usr/local/bin");
         fs::path p(dir_name);
