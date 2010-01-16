@@ -740,118 +740,11 @@ void ServerApp::ProcessTurns()
 
     Logger().debugStream() << "ServerApp::ProcessTurns combat";
     // check for combats, and resolve them.
-    for (ServerNetworking::const_established_iterator player_it =
-             m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
-    std::vector<System*> sys_vec = objects.FindObjects<System>();
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-        if (TEST_3D_COMBAT) {
-            bool combat_conditions_exist = false;
-            std::set<int> ids_of_empires_with_combat_fleets_here;
-            std::set<int> ids_of_empires_with_fleets_here;
-
-            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-            for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
-                Fleet* fleet = GetObject<Fleet>(*fleet_it);
-                if (!fleet) {
-                    Logger().errorStream() << "ProcessTurns couldn't get Fleet with id " << *fleet_it;
-                    continue;
-                }
-
-                assert(fleet->Owners().size() == 1);
-                int owner = *fleet->Owners().begin();
-
-                if (fleet->HasArmedShips())
-                    ids_of_empires_with_combat_fleets_here.insert(owner);
-                ids_of_empires_with_fleets_here.insert(owner);
-                if (2 <= ids_of_empires_with_combat_fleets_here.size() ||
-                    ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
-                    // TODO: Determine whether the empires are enemies.
-                    combat_conditions_exist = true;
-                    break;
-                }
-            }
-            if (!combat_conditions_exist) {
-                // TODO: Find base and planetary defenses that can harm the
-                // fleets here.
-            }
-            if (!combat_conditions_exist) {
-                // TODO: Find space monsters.
-            }
-            if (combat_conditions_exist
-                // TODO: This second part of this condition is for prototyping only.
-                && ids_of_empires_with_fleets_here.find(GetEmpirePlayerID(Networking::HOST_PLAYER_ID)) !=
-                ids_of_empires_with_fleets_here.end()) {
-                // TODO: Include the empire ID's of empires with base and
-                // planetary defenses found above.
-                m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
-                while (m_current_combat) {
-                    m_io_service.run_one();
-                    m_networking.HandleNextEvent();
-                }
-            }
-        } else {
-            std::vector<CombatAssets> empire_combat_forces;
-
-            std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
-            if (flt_ids.empty())
-                continue;
-
-            for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
-                Fleet* flt = GetObject<Fleet>(*flt_it);
-                if (!flt) {
-                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
-                    continue;
-                }
-                // a fleet should belong only to one empire!?
-                if (1 == flt->Owners().size()) {
-                    std::vector<CombatAssets>::iterator ecf_it =
-                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                                  CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
-
-                    if (ecf_it == empire_combat_forces.end()) {
-                        CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
-                        ca.fleets.push_back(flt);
-                        empire_combat_forces.push_back(ca);
-                    } else {
-                        (*ecf_it).fleets.push_back(flt);
-                    }
-                }
-            }
-            std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
-            for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
-                Planet* plt = GetObject<Planet>(*plt_it);
-                if (!plt) {
-                    Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
-                    continue;
-                }
-                // a planet should belong only to one empire!?
-                if (1 == plt->Owners().size()) {
-                    std::vector<CombatAssets>::iterator ecf_it =
-                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                                  CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
-
-                    if (ecf_it == empire_combat_forces.end()) {
-                        CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
-                        ca.planets.push_back(plt);
-                        empire_combat_forces.push_back(ca);
-                    } else {
-                        (*ecf_it).planets.push_back(plt);
-                    }
-                }
-            }
-
-            if (empire_combat_forces.size() > 1) {
-                CombatSystem combat_system;
-                combat_system.ResolveCombat(system->ID(), empire_combat_forces);
-            }
-        }
-    }
+    ProcessCombats();
 
 
     // post-combat visibility update
@@ -1125,5 +1018,118 @@ void ServerApp::ProcessTurns()
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
         (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
+    }
+}
+
+void ServerApp::ProcessCombats()
+{
+    EmpireManager& empires = Empires();
+    ObjectMap& objects = m_universe.Objects();
+
+    // for each system, find if a combat will occur in it, and if so, run the combat
+    std::vector<System*> sys_vec = objects.FindObjects<System>();
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+        if (TEST_3D_COMBAT) {
+            bool combat_conditions_exist = false;
+            std::set<int> ids_of_empires_with_combat_fleets_here;
+            std::set<int> ids_of_empires_with_fleets_here;
+
+            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+            for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
+                Fleet* fleet = GetObject<Fleet>(*fleet_it);
+                if (!fleet) {
+                    Logger().errorStream() << "ProcessTurns couldn't get Fleet with id " << *fleet_it;
+                    continue;
+                }
+
+                assert(fleet->Owners().size() == 1);
+                int owner = *fleet->Owners().begin();
+
+                if (fleet->HasArmedShips())
+                    ids_of_empires_with_combat_fleets_here.insert(owner);
+                ids_of_empires_with_fleets_here.insert(owner);
+                if (2 <= ids_of_empires_with_combat_fleets_here.size() ||
+                    ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
+                    // TODO: Determine whether the empires are enemies.
+                    combat_conditions_exist = true;
+                    break;
+                }
+            }
+            if (!combat_conditions_exist) {
+                // TODO: Find base and planetary defenses that can harm the
+                // fleets here.
+            }
+            if (!combat_conditions_exist) {
+                // TODO: Find space monsters.
+            }
+            if (combat_conditions_exist
+                // TODO: This second part of this condition is for prototyping only.
+                && ids_of_empires_with_fleets_here.find(GetEmpirePlayerID(Networking::HOST_PLAYER_ID)) !=
+                ids_of_empires_with_fleets_here.end()) {
+                // TODO: Include the empire ID's of empires with base and
+                // planetary defenses found above.
+                m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
+                while (m_current_combat) {
+                    m_io_service.run_one();
+                    m_networking.HandleNextEvent();
+                }
+            }
+        } else {
+            std::vector<CombatAssets> empire_combat_forces;
+
+            std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
+            if (flt_ids.empty())
+                continue;
+
+            for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
+                Fleet* flt = GetObject<Fleet>(*flt_it);
+                if (!flt) {
+                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
+                    continue;
+                }
+                // a fleet should belong only to one empire!?
+                if (1 == flt->Owners().size()) {
+                    std::vector<CombatAssets>::iterator ecf_it =
+                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                                  CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
+
+                    if (ecf_it == empire_combat_forces.end()) {
+                        CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
+                        ca.fleets.push_back(flt);
+                        empire_combat_forces.push_back(ca);
+                    } else {
+                        (*ecf_it).fleets.push_back(flt);
+                    }
+                }
+            }
+            std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
+            for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
+                Planet* plt = GetObject<Planet>(*plt_it);
+                if (!plt) {
+                    Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
+                    continue;
+                }
+                // a planet should belong only to one empire!?
+                if (1 == plt->Owners().size()) {
+                    std::vector<CombatAssets>::iterator ecf_it =
+                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                                  CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
+
+                    if (ecf_it == empire_combat_forces.end()) {
+                        CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
+                        ca.planets.push_back(plt);
+                        empire_combat_forces.push_back(ca);
+                    } else {
+                        (*ecf_it).planets.push_back(plt);
+                    }
+                }
+            }
+
+            if (empire_combat_forces.size() > 1) {
+                CombatSystem combat_system;
+                combat_system.ResolveCombat(system->ID(), empire_combat_forces);
+            }
+        }
     }
 }
