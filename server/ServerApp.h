@@ -22,6 +22,7 @@ class Message;
 class OrderSet;
 struct PlayerSetupData;
 struct SaveGameUIData;
+struct CombatInfo;
 
 /** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
     PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
@@ -63,8 +64,6 @@ private:
 class ServerApp
 {
 public:
-    struct CombatInfo;
-
     /** \name Structors */ //@{
     ServerApp();
     ~ServerApp();

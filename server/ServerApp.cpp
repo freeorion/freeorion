@@ -73,22 +73,6 @@ ServerSaveGameData::ServerSaveGameData(const int& current_turn, const std::map<i
     m_victors(victors)
 {}
 
-
-////////////////////////////////////////////////
-// ServerApp::CombatInfo
-////////////////////////////////////////////////
-
-/** Contains information about the state of a combat before or after the combat
-  * occurs. */
-struct ServerApp::CombatInfo
-{
-    int                         system_id;              ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
-    std::set<int>               empire_ids;             ///< IDs of empires involved in combat
-    ObjectMap                   objects;                ///< actual state of objects relevant to combat
-    std::map<int, ObjectMap>    empire_known_objects;   ///< each empire's latest known state of objects relevant to combat 
-};
-
-
 ////////////////////////////////////////////////
 // ServerApp
 ////////////////////////////////////////////////
@@ -576,6 +560,138 @@ namespace {
                 retval.insert(empire_id);
         }
     }
+
+    void GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(std::set<int>& ids_of_empires_with_fleets_here,
+                                                       std::set<int>& ids_of_empires_with_combat_fleets_here,
+                                                       int system_id)
+    {
+        ids_of_empires_with_fleets_here.clear();
+        ids_of_empires_with_combat_fleets_here.clear();
+
+        const System* system = GetObject<System>(system_id);
+        if (!system)
+            return;
+
+        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
+            const Fleet* fleet = GetObject<Fleet>(*fleet_it);
+            if (!fleet) {
+                Logger().errorStream() << "GetEmpireIDsWithFleetsAndCombatFleetsAtSystem couldn't get Fleet with id " << *fleet_it;
+                continue;
+            }
+
+            const std::set<int>& owners = fleet->Owners();
+
+            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
+                ids_of_empires_with_fleets_here.insert(*it);
+
+            if (fleet->HasArmedShips())
+                for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
+                    ids_of_empires_with_combat_fleets_here.insert(*it);
+        }
+    }
+
+    void GetEmpireIDsWithPlanetsAtSystem(std::set<int>& ids_of_empires_with_planets_here, int system_id) {
+        ids_of_empires_with_planets_here.clear();
+
+        const System* system = GetObject<System>(system_id);
+        if (!system)
+            return;
+
+        std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+        for (std::vector<int>::const_iterator planet_it = planet_ids.begin(); planet_it != planet_ids.end(); ++planet_it) {
+            const Planet* planet = GetObject<Planet>(*planet_it);
+            if (!planet) {
+                Logger().errorStream() << "GetEmpireIDsWithPlanetsAtSystem couldn't get Planet with id " << *planet_it;
+                continue;
+            }
+
+            const std::set<int>& owners = planet->Owners();
+
+            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
+                ids_of_empires_with_planets_here.insert(*it);
+        }
+    }
+
+
+    /** Returns true iff there is an appropriate combination of objects in the
+      * system with id \a system_id for a combat to occur. */
+    bool CombatConditionsInSystem(int system_id) {
+
+        std::set<int> ids_of_empires_with_combat_fleets_here;
+        std::set<int> ids_of_empires_with_fleets_here;
+        GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(ids_of_empires_with_fleets_here, ids_of_empires_with_combat_fleets_here, system_id);
+
+        // combat can occur if more than one empire has a combat fleet in system
+        if (ids_of_empires_with_combat_fleets_here.size() > 1)
+            return true;
+
+        // combat can occur if one empire has a combat fleet and another empire
+        // has any fleet
+        if (!ids_of_empires_with_combat_fleets_here.empty() && ids_of_empires_with_fleets_here.size() > ids_of_empires_with_combat_fleets_here.size())
+            return true;
+
+
+        std::set<int> ids_of_empires_with_planets_here;
+        GetEmpireIDsWithPlanetsAtSystem(ids_of_empires_with_planets_here, system_id);
+
+
+        // combat can also occur if there is at least one fleet and one
+        // other empire's planetary defenses that can harm the fleets
+        if (!ids_of_empires_with_combat_fleets_here.empty() && !ids_of_empires_with_planets_here.empty()) {
+
+            for (std::set<int>::const_iterator planet_owner_it = ids_of_empires_with_planets_here.begin();
+                 planet_owner_it != ids_of_empires_with_planets_here.end();
+                 ++planet_owner_it)
+            {
+                int planet_owner_id = *planet_owner_it;
+
+                // find a combat fleet owned by a different empire
+                for (std::set<int>::const_iterator combat_fleet_owner_it = ids_of_empires_with_combat_fleets_here.begin();
+                     combat_fleet_owner_it != ids_of_empires_with_combat_fleets_here.end();
+                     ++combat_fleet_owner_it)
+                {
+                    int combat_fleet_owner_id = *combat_fleet_owner_it;
+                    if (combat_fleet_owner_id != planet_owner_id)
+                        return true;
+                }
+            }
+        }
+
+
+        // combat can also occur if there are space monsters and at least
+        // one empire's fleets or planets
+        // TODO: Find space monsters.
+
+        return false;   // no possible conditions for combat were found
+    }
+
+    /** Clears and refills \a system_combat_info with CombatInfo structs for
+      * every system where a combat should occur this turn. */
+    void AssembleSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
+        ObjectMap& objects = GetUniverse().Objects();
+
+        system_combat_info.clear();
+
+        // for each system, find if a combat will occur in it, and if so, assemble
+        // necessary information about that combat in system_combat_info
+        std::vector<int> sys_ids = objects.FindObjectIDs<System>();
+
+        for (std::vector<int>::const_iterator it = sys_ids.begin(); it != sys_ids.end(); ++it) {
+            int sys_id = *it;
+            if (!CombatConditionsInSystem(sys_id))
+                continue;
+
+            // assemble CombatInfo for this system
+            CombatInfo& info = system_combat_info[sys_id];    // start with default initizliaed CombatInfo
+
+            info.system_id = sys_id;
+            //info.empire_ids = ...
+            //info.objects = ...
+            // for empires, get latest known objects...
+            //      info.empire_known_objects[empire_id] = ...
+        }
+    }
 }
 
 void ServerApp::PreCombatProcessTurns()
@@ -804,79 +920,21 @@ void ServerApp::ProcessCombats()
     }
 
 
+    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
+    AssembleSystemCombatInfo(system_combat_info);
+
+
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(m_networking, m_ai_IDs);
 
 
-    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
+    // TODO: inform players of locations of controllable combats, and get
+    // players to specify which should be controlled and which should be
+    // auto-resolved
 
-
-    // for each system, find if a combat will occur in it, and if so, assemble
-    // necessary information about that combat in system_combat_info
-    std::vector<System*> sys_vec = objects.FindObjects<System>();
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-        bool combat_conditions_exist = false;
-
-        std::set<int> ids_of_empires_with_combat_fleets_here;
-        std::set<int> ids_of_empires_with_fleets_here;
-
-        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-        for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
-            const Fleet* fleet = GetObject<Fleet>(*fleet_it);
-            if (!fleet) {
-                Logger().errorStream() << "ProcessCombats couldn't get Fleet with id " << *fleet_it;
-                continue;
-            }
-
-            int owner = ALL_EMPIRES;
-            if (fleet->Owners().size() == 1)
-                owner = *fleet->Owners().begin();
-            if (owner == ALL_EMPIRES)
-                continue;
-
-            ids_of_empires_with_fleets_here.insert(owner);
-
-            if (fleet->HasArmedShips())
-                ids_of_empires_with_combat_fleets_here.insert(owner);
-        }
-
-        // combat can occur if least two different empires to have fleets at
-        // this system, and at least one of those to be combat fleets
-        if (2 <= ids_of_empires_with_combat_fleets_here.size() || ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
-            // TODO: Determine whether the empires are enemies.
-            combat_conditions_exist = true;
-        }
-
-        // combat can also occur if there is at least one fleet and one
-        // other empire's planetary defenses that can harm the fleets
-        if (!combat_conditions_exist) {
-            // TODO: Find base and planetary defenses that can harm the fleets here.
-        }
-
-        // combat can also occur if there are space monsters and at least
-        // one empire's fleets
-        if (!combat_conditions_exist) {
-            // TODO: Find space monsters.
-        }
-
-        if (!combat_conditions_exist)
-            continue;   // no combat here
-
-
-        // assemble CombatInfo for this system
-        CombatInfo& info = system_combat_info[system->ID()];    // start with default initizliaed CombatInfo
-
-        info.system_id = system->ID();
-        info.empire_ids = ids_of_empires_with_fleets_here;
-        //info.objects = ...
-        // for empires, get latest known objects...
-        //      info.empire_known_objects[empire_id] = ...
-    }
 
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
-
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
         CombatInfo& combat_info = it->second;
         int system_id = it->first;
@@ -903,18 +961,12 @@ void ServerApp::ProcessCombats()
         }
 
 
-        // Are testing 3D Combat, and there is at least one human involved in
-        // this battle...
+        // Testing 3D combat is enabled, and there is at least one human
+        // involved in this battle...
 
-        // TEMP ... until there IS a combat system to use
+        // TEMP ... until there is a interactive combat system to use
         AutoResolveCombat(combat_info);
         // END TEMP
-
-        //m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
-        //while (m_current_combat) {
-        //    m_io_service.run_one();
-        //    m_networking.HandleNextEvent();
-        //}
     }
 
     m_fsm.post_event(CombatComplete());   // TODO: post one of these for each completed combat, not for all combats being complete

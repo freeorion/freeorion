@@ -24,6 +24,21 @@
 #include <map>
 
 
+////////////////////////////////////////////////
+// CombatInfo
+////////////////////////////////////////////////
+CombatInfo::CombatInfo() :
+    system_id(UniverseObject::INVALID_OBJECT_ID)
+{}
+
+CombatInfo::~CombatInfo() {
+    objects.Clear();
+    for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
+        it->second.Clear();
+    empire_known_objects.clear();
+}
+
+
 
 bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
 {
@@ -32,15 +47,6 @@ bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
 
 namespace
 {
-    void SendMessageToAllPlayers(Message::MessageType msg_type, const XMLDoc& doc)
-    {
-        std::ostringstream stream;
-        doc.WriteDoc(stream);
-        for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it) {
-            (*it)->SendMessage(Message(msg_type, -1, (*it)->ID(), stream.str()));
-        }
-    }
-
     struct CombatAssetsHitPoints
     {
         Empire* owner;
