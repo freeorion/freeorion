@@ -73,6 +73,22 @@ ServerSaveGameData::ServerSaveGameData(const int& current_turn, const std::map<i
     m_victors(victors)
 {}
 
+
+////////////////////////////////////////////////
+// ServerApp::CombatInfo
+////////////////////////////////////////////////
+
+/** Contains information about the state of a combat before or after the combat
+  * occurs. */
+struct ServerApp::CombatInfo
+{
+    int                         system_id;              ///< ID of system where combat is occurring (could be INVALID_OBJECT_ID ?)
+    std::set<int>               empire_ids;             ///< IDs of empires involved in combat
+    ObjectMap                   objects;                ///< actual state of objects relevant to combat
+    std::map<int, ObjectMap>    empire_known_objects;   ///< each empire's latest known state of objects relevant to combat 
+};
+
+
 ////////////////////////////////////////////////
 // ServerApp
 ////////////////////////////////////////////////
@@ -523,7 +539,7 @@ bool ServerApp::AllOrdersReceived()
 }
 
 namespace {
-    /** returns true if \a empire has been eliminated by the applicable
+    /** Returns true if \a empire has been eliminated by the applicable
       * definition of elimination.  As of this writing, elimination means
       * having no ships and no fleets. */
     bool EmpireEliminated(const Empire* empire, const Universe& universe) {
@@ -533,9 +549,36 @@ namespace {
         return (universe.Objects().FindObjects(OwnedVisitor<Planet>(empire_id)).empty() &&    // no planets
                 universe.Objects().FindObjects(OwnedVisitor<Fleet>(empire_id)).empty());      // no fleets
     }
+
+    /** Compiles and return set of ids of empires that are controlled by a
+      * human player.*/
+    std::set<int> HumanControlledEmpires(const ServerNetworking& net, const std::set<int>& ai_ids) {
+        std::set<int> retval;
+
+        const ServerApp* server_app = ServerApp::GetApp();
+        if (!server_app)
+            return retval;
+
+        for (ServerNetworking::const_established_iterator it = net.established_begin(); it != net.established_end(); ++it) {
+            PlayerConnectionPtr player = *it;
+            int player_id = player->ID();
+
+            int empire_id = ALL_EMPIRES;
+            const Empire* empire = server_app->GetPlayerEmpire(player_id);
+            if (empire)
+                empire_id = empire->EmpireID();
+            else
+                continue;
+
+            bool is_human = (ai_ids.find(player_id) == ai_ids.end());
+
+            if (is_human)
+                retval.insert(empire_id);
+        }
+    }
 }
 
-void ServerApp::ProcessTurns()
+void ServerApp::PreCombatProcessTurns()
 {
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
@@ -592,6 +635,13 @@ void ServerApp::ProcessTurns()
             }
         }
     }
+
+
+    // clean up orders, which are no longer needed
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        delete it->second;
+    }
+    m_turn_sequence.clear();
 
 
     // colonization apply be the following rules
@@ -738,14 +788,206 @@ void ServerApp::ProcessTurns()
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns combat";
+    m_fsm.post_event(StartProcessingCombats());
+}
+
+void ServerApp::ProcessCombats()
+{
+    EmpireManager& empires = Empires();
+    ObjectMap& objects = m_universe.Objects();
+
+
+    Logger().debugStream() << "ServerApp::ProcessCombats";
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::COMBAT, -1));
     }
 
-    ProcessCombats();
 
+    std::set<int> human_controlled_empire_ids = HumanControlledEmpires(m_networking, m_ai_IDs);
+
+
+    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
+
+
+    // for each system, find if a combat will occur in it, and if so, assemble
+    // necessary information about that combat in system_combat_info
+    std::vector<System*> sys_vec = objects.FindObjects<System>();
+    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
+        System* system = *it;
+        bool combat_conditions_exist = false;
+
+        std::set<int> ids_of_empires_with_combat_fleets_here;
+        std::set<int> ids_of_empires_with_fleets_here;
+
+        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
+        for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
+            const Fleet* fleet = GetObject<Fleet>(*fleet_it);
+            if (!fleet) {
+                Logger().errorStream() << "ProcessCombats couldn't get Fleet with id " << *fleet_it;
+                continue;
+            }
+
+            int owner = ALL_EMPIRES;
+            if (fleet->Owners().size() == 1)
+                owner = *fleet->Owners().begin();
+            if (owner == ALL_EMPIRES)
+                continue;
+
+            ids_of_empires_with_fleets_here.insert(owner);
+
+            if (fleet->HasArmedShips())
+                ids_of_empires_with_combat_fleets_here.insert(owner);
+        }
+
+        // combat can occur if least two different empires to have fleets at
+        // this system, and at least one of those to be combat fleets
+        if (2 <= ids_of_empires_with_combat_fleets_here.size() || ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
+            // TODO: Determine whether the empires are enemies.
+            combat_conditions_exist = true;
+        }
+
+        // combat can also occur if there is at least one fleet and one
+        // other empire's planetary defenses that can harm the fleets
+        if (!combat_conditions_exist) {
+            // TODO: Find base and planetary defenses that can harm the fleets here.
+        }
+
+        // combat can also occur if there are space monsters and at least
+        // one empire's fleets
+        if (!combat_conditions_exist) {
+            // TODO: Find space monsters.
+        }
+
+        if (!combat_conditions_exist)
+            continue;   // no combat here
+
+
+        // assemble CombatInfo for this system
+        CombatInfo& info = system_combat_info[system->ID()];    // start with default initizliaed CombatInfo
+
+        info.system_id = system->ID();
+        info.empire_ids = ids_of_empires_with_fleets_here;
+        //info.objects = ...
+        // for empires, get latest known objects...
+        //      info.empire_known_objects[empire_id] = ...
+    }
+
+
+    // loop through assembled combat infos, handling each combat to update the
+    // various systems' CombatInfo structs
+
+    for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
+        CombatInfo& combat_info = it->second;
+        int system_id = it->first;
+
+        if (!TEST_3D_COMBAT) {
+            AutoResolveCombat(combat_info);
+            continue;
+        }
+
+        std::set<int>& empire_ids = combat_info.empire_ids;
+
+        // find which human players are involved in this battle
+        std::set<int> human_empires_involved;
+        for (std::set<int>::const_iterator empires_with_fleets_it = empire_ids.begin(); empires_with_fleets_it != empire_ids.end(); ++empires_with_fleets_it) {
+            int empire_id = *empires_with_fleets_it;
+            if (human_controlled_empire_ids.find(empire_id) != human_controlled_empire_ids.end())
+                human_empires_involved.insert(empire_id);
+        }
+
+        // if no human players are involved, resolve battle automatically
+        if (human_empires_involved.empty()) {
+            AutoResolveCombat(combat_info);
+            continue;
+        }
+
+
+        // Are testing 3D Combat, and there is at least one human involved in
+        // this battle...
+
+        // TEMP ... until there IS a combat system to use
+        AutoResolveCombat(combat_info);
+        // END TEMP
+
+        //m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
+        //while (m_current_combat) {
+        //    m_io_service.run_one();
+        //    m_networking.HandleNextEvent();
+        //}
+    }
+
+    m_fsm.post_event(CombatComplete());   // TODO: post one of these for each completed combat, not for all combats being complete
+}
+
+void ServerApp::AutoResolveCombat(CombatInfo& combat_info)
+{
+    EmpireManager& empires = Empires();
+
+    // TEMP...
+    System* system = GetObject<System>(combat_info.system_id);
+
+
+    std::vector<CombatAssets> empire_combat_forces;
+
+    std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
+    if (flt_ids.empty())
+        return;
+
+    for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
+        Fleet* flt = GetObject<Fleet>(*flt_it);
+        if (!flt) {
+            Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
+            continue;
+        }
+        // a fleet should belong only to one empire!?
+        if (1 == flt->Owners().size()) {
+            std::vector<CombatAssets>::iterator ecf_it =
+                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                          CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
+
+            if (ecf_it == empire_combat_forces.end()) {
+                CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
+                ca.fleets.push_back(flt);
+                empire_combat_forces.push_back(ca);
+            } else {
+                (*ecf_it).fleets.push_back(flt);
+            }
+        }
+    }
+    std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
+    for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
+        Planet* plt = GetObject<Planet>(*plt_it);
+        if (!plt) {
+            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
+            continue;
+        }
+        // a planet should belong only to one empire!?
+        if (1 == plt->Owners().size()) {
+            std::vector<CombatAssets>::iterator ecf_it =
+                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                          CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
+
+            if (ecf_it == empire_combat_forces.end()) {
+                CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
+                ca.planets.push_back(plt);
+                empire_combat_forces.push_back(ca);
+            } else {
+                (*ecf_it).planets.push_back(plt);
+            }
+        }
+    }
+
+    if (empire_combat_forces.size() > 1) {
+        CombatSystem combat_system;
+        combat_system.ResolveCombat(system->ID(), empire_combat_forces);
+    }
+}
+
+void ServerApp::PostCombatProcessTurns()
+{
+    EmpireManager& empires = Empires();
+    ObjectMap& objects = m_universe.Objects();
 
     // post-combat visibility update
     m_universe.UpdateEmpireObjectVisibilities();
@@ -790,10 +1032,10 @@ void ServerApp::ProcessTurns()
 
     // Consume distributed resources to planets and on queues, create new objects for completed production and
     // give techs to empires that have researched them
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+    for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
         if (empires.Eliminated(it->first))
             continue;   // skip eliminated empires
-        Empire* empire = empires.Lookup(it->first);
+        Empire* empire = it->second;
         empire->CheckResearchProgress();
         empire->CheckProductionProgress();
         empire->CheckTradeSocialProgress();
@@ -840,13 +1082,8 @@ void ServerApp::ProcessTurns()
     }
 
 
-    // loop and free all orders
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        delete it->second;
-        it->second = 0;
-    }
-
-
+    // update current turn number so that following visibility updates and info
+    // sent to players will have updated turn associated with them
     ++m_current_turn;
 
 
@@ -855,7 +1092,18 @@ void ServerApp::ProcessTurns()
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
-    // compile map of PlayerInfo for each player, indexed by player ID
+
+    CheckForEmpireEliminationOrVictory();
+
+
+
+    // indicate that the clients are waiting for their new Universes
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::DOWNLOADING, -1));
+    }
+
+
+    // compile map of PlayerInfo, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         PlayerConnectionPtr player = *it;
@@ -865,6 +1113,20 @@ void ServerApp::ProcessTurns()
                                           player->Host());
     }
 
+    // send new-turn updates to all players
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
+        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
+    }
+
+
+    m_fsm.post_event(FinishedProcessingTurn()); // move to WaitingForTurnEnd state
+}
+
+void ServerApp::CheckForEmpireEliminationOrVictory()
+{
+    EmpireManager& empires = Empires();
+    ObjectMap& objects = m_universe.Objects();
 
     // check for eliminated empires and players
     std::map<int, int> eliminations; // map from player id to empire id of eliminated players, for empires eliminated this turn
@@ -962,174 +1224,53 @@ void ServerApp::ProcessTurns()
     }
 
 
-    if (!eliminations.empty()) {
-        Sleep(1000); // time for elimination messages to propegate
+    if (eliminations.empty())
+        return;
 
-        // inform all players of eliminations
-        for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-            int elim_player_id = it->first;
-            int elim_empire_id = it->second;
-            Empire* empire = empires.Lookup(elim_empire_id);
-            if (!empire) {
-                Logger().errorStream() << "Trying to eliminate a missing empire!";
-                continue;
-            }
-            const std::string& elim_empire_name = empire->Name();
 
-            // notify all players of disconnection, and end game of eliminated player
-            for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-                boost::shared_ptr<PlayerConnection> pc = *player_it;
-                int recipient_player_id = pc->ID();
-                if (recipient_player_id == elim_player_id) {
-                    pc->SendMessage(EndGameMessage(recipient_player_id, Message::YOU_ARE_ELIMINATED));
-                    m_ai_clients.erase(pc->PlayerName());   // done now so that PlayerConnection doesn't need to be re-retreived when dumping connections
-                } else {
-                    pc->SendMessage(PlayerEliminatedMessage(recipient_player_id, elim_empire_id, elim_empire_name));    // PlayerEliminatedMessage takes the eliminated empire id, not the eliminated player id, for unknown reasons, as of this writing
-                    if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-                        recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_name));
-                }
-            }
+    Sleep(1000); // time for elimination messages to propegate
+
+
+    // inform all players of eliminations
+    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+        int elim_player_id = it->first;
+        int elim_empire_id = it->second;
+        Empire* empire = empires.Lookup(elim_empire_id);
+        if (!empire) {
+            Logger().errorStream() << "Trying to eliminate a missing empire!";
+            continue;
         }
+        const std::string& elim_empire_name = empire->Name();
 
-        // dump connections to eliminated players, and remove server-side empire data
-        for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
-            int elim_empire_id = it->second;
-            // remove eliminated empire's ownership of UniverseObjects
-            std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
-            for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
-                (*obj_it)->RemoveOwner(elim_empire_id);
-
-            m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
-            m_eliminated_players.insert(it->first);
-            m_networking.Disconnect(it->first);
-            m_ai_IDs.erase(it->first);
-
-            empires.EliminateEmpire(it->second);
-            RemoveEmpireTurn(it->second);
+        // notify all players of disconnection, and end game of eliminated player
+        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+            boost::shared_ptr<PlayerConnection> pc = *player_it;
+            int recipient_player_id = pc->ID();
+            if (recipient_player_id == elim_player_id) {
+                pc->SendMessage(EndGameMessage(recipient_player_id, Message::YOU_ARE_ELIMINATED));
+                m_ai_clients.erase(pc->PlayerName());   // done now so that PlayerConnection doesn't need to be re-retreived when dumping connections
+            } else {
+                pc->SendMessage(PlayerEliminatedMessage(recipient_player_id, elim_empire_id, elim_empire_name));    // PlayerEliminatedMessage takes the eliminated empire id, not the eliminated player id, for unknown reasons, as of this writing
+                if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
+                    recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_name));
+            }
         }
     }
 
-    // indicate that the clients are waiting for their new Universes
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->ID(), Message::DOWNLOADING, -1));
-    }
+    // dump connections to eliminated players, and remove server-side empire data
+    for (std::map<int, int>::iterator it = eliminations.begin(); it != eliminations.end(); ++it) {
+        int elim_empire_id = it->second;
+        // remove eliminated empire's ownership of UniverseObjects
+        std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
+        for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
+            (*obj_it)->RemoveOwner(elim_empire_id);
 
-    // send new-turn updates to all players
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
-        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
-    }
-}
+        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
+        m_eliminated_players.insert(it->first);
+        m_networking.Disconnect(it->first);
+        m_ai_IDs.erase(it->first);
 
-void ServerApp::ProcessCombats()
-{
-    EmpireManager& empires = Empires();
-    ObjectMap& objects = m_universe.Objects();
-
-    // for each system, find if a combat will occur in it, and if so, run the combat
-    std::vector<System*> sys_vec = objects.FindObjects<System>();
-    for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
-        System* system = *it;
-        if (TEST_3D_COMBAT) {
-            bool combat_conditions_exist = false;
-            std::set<int> ids_of_empires_with_combat_fleets_here;
-            std::set<int> ids_of_empires_with_fleets_here;
-
-            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-            for (std::vector<int>::const_iterator fleet_it = fleet_ids.begin(); fleet_it != fleet_ids.end(); ++fleet_it) {
-                Fleet* fleet = GetObject<Fleet>(*fleet_it);
-                if (!fleet) {
-                    Logger().errorStream() << "ProcessTurns couldn't get Fleet with id " << *fleet_it;
-                    continue;
-                }
-
-                assert(fleet->Owners().size() == 1);
-                int owner = *fleet->Owners().begin();
-
-                if (fleet->HasArmedShips())
-                    ids_of_empires_with_combat_fleets_here.insert(owner);
-                ids_of_empires_with_fleets_here.insert(owner);
-                if (2 <= ids_of_empires_with_combat_fleets_here.size() ||
-                    ids_of_empires_with_combat_fleets_here.size() < ids_of_empires_with_fleets_here.size()) {
-                    // TODO: Determine whether the empires are enemies.
-                    combat_conditions_exist = true;
-                    break;
-                }
-            }
-            if (!combat_conditions_exist) {
-                // TODO: Find base and planetary defenses that can harm the
-                // fleets here.
-            }
-            if (!combat_conditions_exist) {
-                // TODO: Find space monsters.
-            }
-            if (combat_conditions_exist
-                // TODO: This second part of this condition is for prototyping only.
-                && ids_of_empires_with_fleets_here.find(GetEmpirePlayerID(Networking::HOST_PLAYER_ID)) !=
-                ids_of_empires_with_fleets_here.end()) {
-                // TODO: Include the empire ID's of empires with base and
-                // planetary defenses found above.
-                m_fsm.process_event(ResolveCombat(system, ids_of_empires_with_fleets_here));
-                while (m_current_combat) {
-                    m_io_service.run_one();
-                    m_networking.HandleNextEvent();
-                }
-            }
-        } else {
-            std::vector<CombatAssets> empire_combat_forces;
-
-            std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
-            if (flt_ids.empty())
-                continue;
-
-            for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
-                Fleet* flt = GetObject<Fleet>(*flt_it);
-                if (!flt) {
-                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
-                    continue;
-                }
-                // a fleet should belong only to one empire!?
-                if (1 == flt->Owners().size()) {
-                    std::vector<CombatAssets>::iterator ecf_it =
-                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                                  CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
-
-                    if (ecf_it == empire_combat_forces.end()) {
-                        CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
-                        ca.fleets.push_back(flt);
-                        empire_combat_forces.push_back(ca);
-                    } else {
-                        (*ecf_it).fleets.push_back(flt);
-                    }
-                }
-            }
-            std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
-            for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
-                Planet* plt = GetObject<Planet>(*plt_it);
-                if (!plt) {
-                    Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
-                    continue;
-                }
-                // a planet should belong only to one empire!?
-                if (1 == plt->Owners().size()) {
-                    std::vector<CombatAssets>::iterator ecf_it =
-                        std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                                  CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
-
-                    if (ecf_it == empire_combat_forces.end()) {
-                        CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
-                        ca.planets.push_back(plt);
-                        empire_combat_forces.push_back(ca);
-                    } else {
-                        (*ecf_it).planets.push_back(plt);
-                    }
-                }
-            }
-
-            if (empire_combat_forces.size() > 1) {
-                CombatSystem combat_system;
-                combat_system.ResolveCombat(system->ID(), empire_combat_forces);
-            }
-        }
+        empires.EliminateEmpire(it->second);
+        RemoveEmpireTurn(it->second);
     }
 }

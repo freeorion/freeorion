@@ -25,7 +25,7 @@
 
 
 
-bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const  
+bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
 {
     return owner && ca.owner && (owner->EmpireID() == ca.owner->EmpireID());
 }
@@ -122,7 +122,7 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 }
 #endif
 
-void CombatSystem::ResolveCombat(const int system_id,const std::vector<CombatAssets> &assets)
+void CombatSystem::ResolveCombat(int system_id,const std::vector<CombatAssets> &assets)
 {
 #ifdef DEBUG_COMBAT
     log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";

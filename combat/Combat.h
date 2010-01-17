@@ -6,8 +6,8 @@
 #include <string>
 
 namespace GG {
-  class TextControl;
-  class StaticGraphic;
+    class TextControl;
+    class StaticGraphic;
 }
 class XMLElement;
 
@@ -16,7 +16,7 @@ class XMLElement;
 //! Generated in CombatSystem.cpp and used by CombatWnd.cpp
 struct CombatUpdateMessage
 {
-  public:
+public:
     CombatUpdateMessage();
     ~CombatUpdateMessage();
 
@@ -30,7 +30,7 @@ struct CombatUpdateMessage
         ~EmpireCombatInfo();
         EmpireCombatInfo(const XMLElement&);
 
-        XMLElement XMLEncode() const;
+        XMLElement  XMLEncode() const;
 
         std::string empire;
         int         combat_ships;
@@ -49,8 +49,8 @@ struct CombatUpdateMessage
         int         planets_defenseless;
     };
 
-    std::string m_system; //! system were the combat take place
-    std::vector<EmpireCombatInfo> m_opponents; //! empires which are involved into combat
+    std::string                     m_system;       //! system were the combat take place
+    std::vector<EmpireCombatInfo>   m_opponents;    //! empires which are involved into combat
 };
 
 #endif // _Combat_h_

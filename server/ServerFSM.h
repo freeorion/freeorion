@@ -34,25 +34,13 @@ typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 struct Disconnection : boost::statechart::event<Disconnection>
 {
     Disconnection(PlayerConnectionPtr& player_connection);
-
     PlayerConnectionPtr& m_player_connection;
 };
 
-struct CheckStartConditions : boost::statechart::event<CheckStartConditions>
-{};
-
-struct ResolveCombat : boost::statechart::event<ResolveCombat>
-{
-    ResolveCombat(System* system, std::set<int>& empire_ids);
-
-    System* const m_system;
-    std::set<int> m_empire_ids;
-};
-
-// TODO: For prototyping only.
-struct CombatComplete : boost::statechart::event<CombatComplete>
-{};
-
+struct CheckStartConditions : boost::statechart::event<CheckStartConditions>            {};
+struct StartProcessingCombats : boost::statechart::event<StartProcessingCombats>        {};
+struct FinishedProcessingTurn : boost::statechart::event<FinishedProcessingTurn>        {};
+struct CombatComplete : boost::statechart::event<CombatComplete>                        {};
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -106,11 +94,16 @@ struct PlayingGame;
 
 // Substates of PlayingGame
 struct WaitingForTurnEnd;
+struct ProcessingTurn;
 
 // Substates of WaitingForTurnEnd
 struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
-struct ResolvingCombat;
+
+// Substates of ProcessingTurn
+struct PreCombatTurnProcessing;
+struct ResolvingCombats;
+struct PostCombatTurnProcessing;
 
 
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
@@ -190,8 +183,8 @@ struct MPLobby : boost::statechart::state<MPLobby, ServerFSM>
 };
 
 
-/** The server state in which a new single-player game has been initiated, and the server is waiting for all players to
-    join. */
+/** The server state in which a new single-player game has been initiated, and
+  * the server is waiting for all players to join. */
 struct WaitingForSPGameJoiners : boost::statechart::state<WaitingForSPGameJoiners, ServerFSM>
 {
     typedef boost::statechart::state<WaitingForSPGameJoiners, ServerFSM> Base;
@@ -218,8 +211,8 @@ struct WaitingForSPGameJoiners : boost::statechart::state<WaitingForSPGameJoiner
 };
 
 
-/** The server state in which a multiplayer game has been initiated, and the server is waiting for all players to
-    join. */
+/** The server state in which a multiplayer game has been initiated, and the
+  * server is waiting for all players to join. */
 struct WaitingForMPGameJoiners : boost::statechart::state<WaitingForMPGameJoiners, ServerFSM>
 {
     typedef boost::statechart::state<WaitingForMPGameJoiners, ServerFSM> Base;
@@ -244,24 +237,29 @@ struct WaitingForMPGameJoiners : boost::statechart::state<WaitingForMPGameJoiner
 };
 
 
-/** The server state in which a game has been starts, and is actually being played. */
+/** The server state in which a game has been started, and is actually being
+  * played. */
 struct PlayingGame : boost::statechart::simple_state<PlayingGame, ServerFSM, WaitingForTurnEnd>
 {
     typedef boost::statechart::simple_state<PlayingGame, ServerFSM, WaitingForTurnEnd> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>
+        boost::statechart::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
+        boost::statechart::custom_reaction<PlayerChat>
     > reactions;
 
     PlayingGame();
     ~PlayingGame();
 
+    boost::statechart::result react(const PlayerChat& msg);
+
     SERVER_ACCESSOR
 };
 
 
-/** The substate of PlayingGame in which players are playing their turns and the server is waiting for all players to
-    finish their moves, after which the server will process the turn. */
+/** The substate of PlayingGame in which players are playing their turns and
+  * the server is waiting for all players to finish their moves, after which
+  * the server will process the turn. */
 struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle>
 {
     typedef boost::statechart::simple_state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle> Base;
@@ -270,8 +268,7 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
         boost::statechart::custom_reaction<HostSPGame>,
         boost::statechart::custom_reaction<TurnOrders>,
         boost::statechart::custom_reaction<RequestObjectID>,
-        boost::statechart::custom_reaction<RequestDesignID>,
-        boost::statechart::custom_reaction<PlayerChat>
+        boost::statechart::custom_reaction<RequestDesignID>
     > reactions;
 
     WaitingForTurnEnd();
@@ -281,11 +278,8 @@ struct WaitingForTurnEnd : boost::statechart::simple_state<WaitingForTurnEnd, Pl
     boost::statechart::result react(const TurnOrders& msg);
     boost::statechart::result react(const RequestObjectID& msg);
     boost::statechart::result react(const RequestDesignID& msg);
-    boost::statechart::result react(const PlayerChat& msg);
 
     std::string m_save_filename;
-    System* m_combat_system;
-    std::set<int> m_combat_empire_ids;
 
     SERVER_ACCESSOR
 };
@@ -297,22 +291,21 @@ struct WaitingForTurnEndIdle : boost::statechart::simple_state<WaitingForTurnEnd
     typedef boost::statechart::simple_state<WaitingForTurnEndIdle, WaitingForTurnEnd> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<ResolveCombat>,
         boost::statechart::custom_reaction<SaveGameRequest>
     > reactions;
 
     WaitingForTurnEndIdle();
     ~WaitingForTurnEndIdle();
 
-    boost::statechart::result react(const ResolveCombat& r);
     boost::statechart::result react(const SaveGameRequest& msg);
 
     SERVER_ACCESSOR
 };
 
 
-/** The substate of WaitingForTurnEnd in which a player has initiated a save and the server is waiting for all
-    players to send their save data, after which the server will actually preform the save. */
+/** The substate of WaitingForTurnEnd in which a player has initiated a save
+  * and the server is waiting for all players to send their save data, after
+  * which the server will actually preform the save. */
 struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, WaitingForTurnEnd>
 {
     typedef boost::statechart::state<WaitingForSaveData, WaitingForTurnEnd> Base;
@@ -337,20 +330,85 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
     SERVER_ACCESSOR
 };
 
-struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTurnEnd>
+
+/** The substate of PlayingGame in which the server has received turn orders
+  * from players and is determining what happens between turns.  This includes
+  * executing orders, resolving combat, various steps in determining what
+  * happens before and after combats occur, and updating players on changes in
+  * the Universe. */
+struct ProcessingTurn : boost::statechart::simple_state<ProcessingTurn, PlayingGame, PreCombatTurnProcessing>
 {
-    typedef boost::statechart::state<ResolvingCombat, WaitingForTurnEnd> Base;
+    typedef boost::statechart::simple_state<ProcessingTurn, PlayingGame, PreCombatTurnProcessing> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<CombatComplete>,
-        boost::statechart::custom_reaction<CombatTurnOrders>
+        boost::statechart::deferral<SaveGameRequest>,
+        boost::statechart::deferral<TurnOrders>
     > reactions;
 
-    ResolvingCombat(my_context c);
-    ~ResolvingCombat();
+    ProcessingTurn();
+    ~ProcessingTurn();
 
-    boost::statechart::result react(const CombatComplete& msg);
+    SERVER_ACCESSOR
+};
+
+
+/** The substate of ProcessingTurn in which the server is executing turn
+  * orders and moving ships before combat. */
+struct PreCombatTurnProcessing: boost::statechart::state<PreCombatTurnProcessing, ProcessingTurn>
+{
+    typedef boost::statechart::state<PreCombatTurnProcessing, ProcessingTurn> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<StartProcessingCombats>
+    > reactions;
+
+    PreCombatTurnProcessing(my_context c);
+    ~PreCombatTurnProcessing();
+
+    boost::statechart::result react(const StartProcessingCombats& u);
+
+    SERVER_ACCESSOR
+};
+
+
+/** The substate of ProcessingTurn in which the server is determining the
+  * outcome of combats, which may include running an interactive combat
+  * simulation, or determining the outcome of less-important combats with
+  * a non-graphical combat simulation. */
+struct ResolvingCombats: boost::statechart::state<ResolvingCombats, ProcessingTurn>
+{
+    typedef boost::statechart::state<ResolvingCombats, ProcessingTurn> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<CombatTurnOrders>,
+        boost::statechart::custom_reaction<CombatComplete>
+    > reactions;
+
+    ResolvingCombats(my_context c);
+    ~ResolvingCombats();
+
     boost::statechart::result react(const CombatTurnOrders& msg);
+    boost::statechart::result react(const CombatComplete& cc);
+
+    SERVER_ACCESSOR
+};
+
+
+/** The substate of ProcessingTurn in which the server is handling post-combat
+  * turn processing and updating players with gamestate updates for the new
+  * turn. */
+struct PostCombatTurnProcessing: boost::statechart::state<PostCombatTurnProcessing, ProcessingTurn>
+{
+    typedef boost::statechart::state<PostCombatTurnProcessing, ProcessingTurn> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<FinishedProcessingTurn>
+    > reactions;
+
+    PostCombatTurnProcessing(my_context c);
+    ~PostCombatTurnProcessing();
+
+    boost::statechart::result react(const FinishedProcessingTurn& u);
 
     SERVER_ACCESSOR
 };

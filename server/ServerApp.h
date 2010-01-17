@@ -63,19 +63,29 @@ private:
 class ServerApp
 {
 public:
+    struct CombatInfo;
+
     /** \name Structors */ //@{
     ServerApp();
     ~ServerApp();
     //@}
 
     /** \name Accessors */ //@{
-    int                  CurrentTurn() const {return m_current_turn;}   ///< returns current turn of the server
+    int                 CurrentTurn() const {return m_current_turn;}   ///< returns current turn of the server
+
+    /** Returns the object for the empire that that the player with
+      * ID \a player_id is playing */
+    Empire*             GetPlayerEmpire(int player_id) const;
+
+    /** Returns the player ID for the player playing the empire with
+      * ID \a empire_id */
+    int                 GetEmpirePlayerID(int empire_id) const;
     //@}
 
     /** \name Mutators */ //@{
-    void                 operator()();              ///< external interface to Run()
-    void                 Exit(int code);            ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
-    log4cpp::Category&   Logger();                  ///< returns the debug logging object for the app
+    void                operator()();               ///< external interface to Run()
+    void                Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
+    log4cpp::Category&  Logger();                   ///< returns the debug logging object for the app
 
     /** creates an AI client child process for each element of \a AIs*/
     void                CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::set<std::string>& expected_ai_player_names);
@@ -98,9 +108,25 @@ public:
       * orders for the given turn */
     bool                AllOrdersReceived();
 
-    /** Processes all empires in the manager in the order that they are added.
-      * Will delete all OrderSets assigned.*/
-    void                ProcessTurns();
+    /** Executes player orders, does colonization, does ordered scrapping, does
+      * fleet movements, and updates visibility before combats are handled. */
+    void                PreCombatProcessTurns();
+
+    /** Determines which combats will occur, handles running the combats and
+      * updating the universe after the results are available. */
+    void                ProcessCombats();
+
+    /** Determines resource and supply distribution pathes and connections,
+      * updates research, production, trade spending and food distribution,
+      * does population growth, updates current turn number, checks for
+      * eliminated or victorious empires / players, sends new turn updates. */
+    void                PostCombatProcessTurns();
+
+    /** Determines if any empires are eliminated (for the first time this turn,
+      * skipping any which were also eliminated previously) and if any empires
+      * are victorious.  Informs players of victories or eliminations, and
+      * disconnects eliminated players. */
+    void                CheckForEmpireEliminationOrVictory();
 
     /** Intializes game universe, sends out initial game state to clients, and
       * signals clients to start first turn */
@@ -132,69 +158,61 @@ private:
     const ServerApp& operator=(const ServerApp&); // disabled
     ServerApp(const ServerApp&); // disabled
 
-    void                        Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
+    void                Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
-    void                        NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq,
-                                            PlanetDensity planet_density, SpecialsFrequency specials_freq,
-                                            const std::map<int, PlayerSetupData>& player_setup_data);
-    void                        LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                             const std::map<int, int>& player_id_to_save_game_data_index,
-                                             std::set<int>& unused_save_game_data,
-                                             boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+    void                NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq,
+                                    PlanetDensity planet_density, SpecialsFrequency specials_freq,
+                                    const std::map<int, PlayerSetupData>& player_setup_data);
+    void                LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                                     const std::map<int, int>& player_id_to_save_game_data_index,
+                                     std::set<int>& unused_save_game_data,
+                                     boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
-    void                        CleanupAIs();   ///< cleans up AI processes
-
-    /** Determines which combats will occur, handles running the combats and
-      * updating the universe after the results are available. */
-    void                        ProcessCombats();
+    void                CleanupAIs();   ///< cleans up AI processes
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
-    void                        HandleMessage(Message msg, PlayerConnectionPtr player_connection);
+    void                HandleMessage(Message msg, PlayerConnectionPtr player_connection);
 
     /** When Messages arrive from connections that are not established players,
       * they arrive via a call to this function*/
-    void                        HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection);
+    void                HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection);
 
     /** Called by ServerNetworking when a player's TCP connection is closed*/
-    void                        PlayerDisconnected(PlayerConnectionPtr player_connection);
+    void                PlayerDisconnected(PlayerConnectionPtr player_connection);
 
-    /** Returns the object for the empire that that the player with
-      * ID \a player_id is playing */
-    Empire*                     GetPlayerEmpire(int player_id) const;
+    /** Determines result of a combat without human or AI player input.  Input
+      * \a combat_info contains the combat initial conditions, and is updated
+      * to output the results. */
+    void                AutoResolveCombat(CombatInfo& combat_info);
 
-    /** Returns the player ID for the player playing the empire with
-      * ID \a empire_id */
-    int                         GetEmpirePlayerID(int empire_id) const;
+    boost::asio::io_service         m_io_service;
 
+    Universe                        m_universe;
+    EmpireManager                   m_empires;
+    CombatData*                     m_current_combat;
+    ServerNetworking                m_networking;
 
-    boost::asio::io_service                 m_io_service;
+    log4cpp::Category&              m_log_category;         ///< reference to the log4cpp object used to log events to file
 
-    Universe                                m_universe;
-    EmpireManager                           m_empires;
-    CombatData*                             m_current_combat;
-    ServerNetworking                        m_networking;
+    ServerFSM                       m_fsm;
 
-    log4cpp::Category&                      m_log_category;         ///< reference to the log4cpp object used to log events to file
+    int                             m_current_turn;         ///< current turn number
 
-    ServerFSM                               m_fsm;
+    std::map<std::string, Process>  m_ai_clients;           ///< AI client child processes
+    std::set<int>                   m_ai_IDs;               ///< player IDs of AI clients
 
-    int                                     m_current_turn;         ///< current turn number
-
-    std::map<std::string, Process>          m_ai_clients;           ///< AI client child processes
-    std::set<int>                           m_ai_IDs;               ///< player IDs of AI clients
-
-    bool                                    m_single_player_game;   ///< true when the game being played is single-player
+    bool                            m_single_player_game;   ///< true when the game being played is single-player
 
     /** Turn sequence map is used for turn processing. Each empire is added at
       * the start of a game or reload and then the map maintains OrderSets for
       * that turn. */
-    std::map<int, OrderSet*>                m_turn_sequence;
+    std::map<int, OrderSet*>        m_turn_sequence;
 
     std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
     std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated
 
-    static ServerApp*                       s_app;
+    static ServerApp*               s_app;
 
     // Give FSM and its states direct access.  We are using the FSM code as a control-flow mechanism; it is all
     // notionally part of this class.
