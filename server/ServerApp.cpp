@@ -559,6 +559,8 @@ namespace {
             if (is_human)
                 retval.insert(empire_id);
         }
+
+        return retval;
     }
 
     void GetEmpireIDsWithFleetsAndCombatFleetsAtSystem(std::set<int>& ids_of_empires_with_fleets_here,
@@ -909,10 +911,6 @@ void ServerApp::PreCombatProcessTurns()
 
 void ServerApp::ProcessCombats()
 {
-    EmpireManager& empires = Empires();
-    ObjectMap& objects = m_universe.Objects();
-
-
     Logger().debugStream() << "ServerApp::ProcessCombats";
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
@@ -937,7 +935,6 @@ void ServerApp::ProcessCombats()
     // various systems' CombatInfo structs
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
         CombatInfo& combat_info = it->second;
-        int system_id = it->first;
 
         if (!TEST_3D_COMBAT) {
             AutoResolveCombat(combat_info);

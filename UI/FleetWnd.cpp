@@ -2170,8 +2170,6 @@ void FleetWnd::Refresh()
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
 
-    int app_empire_id = HumanClientApp::GetApp()->EmpireID();   // may be different from ID of empire whose fleets are being shown in this FleetWnd
-
     // repopulate m_fleet_ids according to FleetWnd settings
     if (GetMainObjectMap().Object<System>(m_system_id)) {
         // get fleets to show from system, based on required ownership
