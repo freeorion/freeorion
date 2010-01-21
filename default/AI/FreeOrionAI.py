@@ -102,19 +102,11 @@ def handleChatMessage(senderID, messageText):
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
-
-    print ""
     empire = fo.getEmpire()
     print "EMPIRE: " + empire.name + " TURN: " + str(fo.currentTurn())
 
-    print " !!! Before splitting fleets"
-    fo.getUniverse().dump()
-
     # turn cleanup
     splitFleet()
-
-    print " !!! After splitting fleets"
-    fo.getUniverse().dump()
 
     identifyShipDesigns()
     identifyFleetsRoles()

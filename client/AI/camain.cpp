@@ -2,7 +2,6 @@
 
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
-#include <fstream>
 
 int main(int argc, char* argv[])
 {
@@ -10,31 +9,28 @@ int main(int argc, char* argv[])
 
     try {
         GetOptionsDB().SetFromCommandLine(argc, argv);
+
         AIClientApp g_app(argc, argv);
-        g_app(); // run app (intialization and main process loop)
+
+        Logger().debugStream() << "AIClientApp and logging initialized.  Running app.";
+
+        g_app();
+
     } catch (const std::invalid_argument& e) {
-        std::ofstream stream((argv[1] + std::string("error.txt")).c_str());
-        stream << "main() caught exception(std::invalid_arg): " << e.what();
-        GetOptionsDB().GetUsage(stream);
-        stream.close();
+        Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
         return 1;
     } catch (const std::runtime_error& e) {
-        std::ofstream stream((argv[1] + std::string("error.txt")).c_str());
-        stream << "main() caught exception(std::runtime_error): " << e.what();
-        GetOptionsDB().GetUsage(stream);
-        stream.close();
+        Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
         return 1;
     } catch (const std::exception& e) {
-        std::ofstream stream((argv[1] + std::string("error.txt")).c_str());
-        stream << "main() caught exception(std::exception): " << e.what();
-        GetOptionsDB().GetUsage(stream);
-        stream.close();
+        Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
         return 1;
     } catch (...) {
-        std::ofstream stream((argv[1] + std::string("error.txt")).c_str());
-        stream << "main() caught unknown exception\n";
-        GetOptionsDB().GetUsage(stream);
-        stream.close();
+        Logger().errorStream() << "main() caught unknown exception.";
+        std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
 

@@ -168,6 +168,7 @@ static dict         s_main_namespace = dict();
 static object       s_ai_module = object();
 static PythonAI*    s_ai = 0;
 PythonAI::PythonAI() {
+    Logger().debugStream() << "PythonAI::PythonAI()";
     // in order to expose a getter for it to Python, s_save_state_string must be static, and not a member
     // variable of class PythonAI, because the exposing is done outside the PythonAI class and there is no
     // access to a pointer to PythonAI
@@ -176,17 +177,22 @@ PythonAI::PythonAI() {
 
     s_ai = this;
 
-    Py_Initialize();    // initializes Python interpreter, allowing Python functions to be called from C++
+    try {
+        Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
 
-    initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
-    initfreeOrionAIInterface();     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
+        initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
+        initfreeOrionAIInterface();     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
+    } catch (...) {
+        Logger().errorStream() << "Unable to initialize Python interpreter.";
+        return;
+    }
 
     try {
         // get main namespace, needed to run other interpreted code
         object main_module = import("__main__");
         s_main_namespace = extract<dict>(main_module.attr("__dict__"));
     } catch (error_already_set err) {
-        Logger().errorStream() << "Unable to initialize Python interpreter.";
+        Logger().errorStream() << "Unable to set up main namespace in Python.";
         return;
     }
 

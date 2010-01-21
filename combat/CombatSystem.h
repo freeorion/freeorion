@@ -17,30 +17,8 @@ struct CombatInfo
     std::map<int, ObjectMap>    empire_known_objects;   ///< each empire's latest known state of objects relevant to combat 
 };
 
-
-struct CombatAssetsOwner
-{
-    CombatAssetsOwner(Empire* o) : owner(o) {}
-    bool operator==(const CombatAssetsOwner &ca) const;
-    Empire* owner;
-};
-
-struct CombatAssets : public CombatAssetsOwner
-{
-    CombatAssets(Empire* o) : CombatAssetsOwner(o) {}
-    std::vector<Fleet*>     fleets;
-    std::vector<Planet*>    planets;
-};
-
-class CombatSystem
-{
-public:
-    /** Resolves a battle in the given system, taking into account
-      * fleets and defensive bases.  Ships and fleets will either
-      * be destroyed, or will retreat, as per the v0.2 requirements doc.
-      * Systems may change hands as well.  */
-    void ResolveCombat(int system_id, const std::vector<CombatAssets> &assets);
-};
+/** Resolves a battle. */
+void ResolveCombat(CombatInfo& combat_info);
 
 #endif // _CombatSystem_h_
 

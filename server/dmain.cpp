@@ -3,8 +3,6 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 
-#include <iostream>
-
 int main(int argc, char* argv[])
 {
     InitDirs(argv[0]);
@@ -16,25 +14,28 @@ int main(int argc, char* argv[])
             GetOptionsDB().GetUsage(std::cerr);
             return 0;
         }
+
+        ServerApp g_app;
+        g_app(); // run app (intialization and main process loop)
+
     } catch (const std::invalid_argument& e) {
-        std::cerr << "main() caught exception(std::invalid_arg): " << e.what();
-        GetOptionsDB().GetUsage(std::cerr);
+        Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
         return 1;
     } catch (const std::runtime_error& e) {
-        std::cerr << "main() caught exception(std::runtime_error): " << e.what();
-        GetOptionsDB().GetUsage(std::cerr);
+        Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();
+        std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
         return 1;
     } catch (const std::exception& e) {
-        std::cerr << "main() caught exception(std::exception): " << e.what();
-        GetOptionsDB().GetUsage(std::cerr);
+        Logger().errorStream() << "main() caught exception(std::exception): " << e.what();
+        std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
         return 1;
     } catch (...) {
-        std::cerr << "main() caught unknown exception.";
+        Logger().errorStream() << "main() caught unknown exception.";
+        std::cerr << "main() caught unknown exception." << std::endl;
         return 1;
     }
 
-    ServerApp g_app;
-    g_app(); // run app (intialization and main process loop)
     return 0;
 }
 

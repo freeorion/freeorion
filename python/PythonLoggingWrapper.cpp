@@ -49,7 +49,7 @@ namespace {
 namespace FreeOrionPython {
     using boost::python::def;
     void WrapLogger() {
-        def("log",                    LogText);
-        def("error",                  ErrorText);
+        def("log",      LogText);
+        def("error",    ErrorText);
     }
 }

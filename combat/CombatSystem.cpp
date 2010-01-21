@@ -24,6 +24,24 @@
 #include <map>
 
 
+struct CombatAssetsOwner
+{
+    CombatAssetsOwner(Empire* o) : owner(o) {}
+    bool operator==(const CombatAssetsOwner &ca) const;
+    Empire* owner;
+};
+
+struct CombatAssets : public CombatAssetsOwner
+{
+    CombatAssets(Empire* o) : CombatAssetsOwner(o) {}
+    std::vector<Fleet*>     fleets;
+    std::vector<Planet*>    planets;
+};
+
+
+void ResolveCombat(int system_id, const std::vector<CombatAssets> &assets);
+
+
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
@@ -128,7 +146,68 @@ static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
 }
 #endif
 
-void CombatSystem::ResolveCombat(int system_id,const std::vector<CombatAssets> &assets)
+
+void ResolveCombat(CombatInfo& combat_info)
+{
+    EmpireManager& empires = Empires();
+
+    System* system = GetObject<System>(combat_info.system_id);
+
+    std::vector<CombatAssets> empire_combat_forces;
+
+    std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
+    if (flt_ids.empty())
+        return;
+
+    for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
+        Fleet* flt = GetObject<Fleet>(*flt_it);
+        if (!flt) {
+            Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
+            continue;
+        }
+        // a fleet should belong only to one empire!?
+        if (1 == flt->Owners().size()) {
+            std::vector<CombatAssets>::iterator ecf_it =
+                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                          CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
+
+            if (ecf_it == empire_combat_forces.end()) {
+                CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
+                ca.fleets.push_back(flt);
+                empire_combat_forces.push_back(ca);
+            } else {
+                (*ecf_it).fleets.push_back(flt);
+            }
+        }
+    }
+    std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
+    for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
+        Planet* plt = GetObject<Planet>(*plt_it);
+        if (!plt) {
+            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
+            continue;
+        }
+        // a planet should belong only to one empire!?
+        if (1 == plt->Owners().size()) {
+            std::vector<CombatAssets>::iterator ecf_it =
+                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
+                          CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
+
+            if (ecf_it == empire_combat_forces.end()) {
+                CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
+                ca.planets.push_back(plt);
+                empire_combat_forces.push_back(ca);
+            } else {
+                (*ecf_it).planets.push_back(plt);
+            }
+        }
+    }
+
+    if (empire_combat_forces.size() > 1)
+        ResolveCombat(system->ID(), empire_combat_forces);
+}
+
+void ResolveCombat(int system_id,const std::vector<CombatAssets> &assets)
 {
 #ifdef DEBUG_COMBAT
     log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";

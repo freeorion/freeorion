@@ -166,10 +166,6 @@ namespace FreeOrionPython {
             .def("systemHasStarlane",           &Universe::SystemHasVisibleStarlanes)
             .def("systemsConnected",            &Universe::SystemsConnected)
 
-            // put as part of universe class so one doesn't need a UniverseObject object in python to access these
-            .def_readonly("invalidObjectID",    &UniverseObject::INVALID_OBJECT_ID)
-            .def_readonly("invalidObjectAge",   &UniverseObject::INVALID_OBJECT_AGE)
-
             .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
 
             .def("leastJumpsPath",              make_function(

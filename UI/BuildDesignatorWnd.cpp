@@ -352,7 +352,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh()
 {
-    std::cout << "BuildDesignatorWnd::BuildSelector::Refresh()" << std::endl;
+    Logger().debugStream() << "BuildDesignatorWnd::BuildSelector::Refresh()";
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = Empires().Lookup(m_empire_id))
         m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
