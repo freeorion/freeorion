@@ -21,24 +21,24 @@ endif ()
 
 find_path(
     GIGI_INCLUDE_DIR
-    NAMES gvc.h
-    PATHS ${GIGI_INCLUDE_DIRS}
+    NAMES GG/GUI.h
+    HINTS ${GIGI_INCLUDE_DIRS}
 )
 
 find_library(
     GIGI_GIGI_LIBRARY
-    NAMES GiGi 
-    PATHS ${GIGI_LIBRARY_DIRS}
+    NAMES GiGi
+    HINTS ${GIGI_LIBRARY_DIRS}
 )
 find_library(
     GIGI_GIGISDL_LIBRARY
-    NAMES GiGiSDL 
-    PATHS ${GIGI_LIBRARY_DIRS}
+    NAMES GiGiSDL
+    HINTS ${GIGI_LIBRARY_DIRS}
 )
 find_library(
     GIGI_GIGIOGRE_LIBRARY
-    NAMES GiGiOgre 
-    PATHS ${GIGI_LIBRARY_DIRS}
+    NAMES GiGiOgre
+    HINTS ${GIGI_LIBRARY_DIRS}
 )
 
 if (GIGI_INCLUDE_DIR AND
