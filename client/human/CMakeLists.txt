@@ -13,22 +13,17 @@ message("-- Configuring freeorion")
 #    message(FATAL_ERROR "Boost libraries not found.")
 #endif ()
 
-find_package(GiGi)
-if (GIGI_FOUND)
-    include_directories(${GIGI_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "GiGi library not found.")
+if (WIN32)
+   find_package(OpenGL)
+   if (OPENGL_FOUND)
+       if (NOT OPENGL_GLU_FOUND)
+           message(FATAL_ERROR "OpenGL GLU library not found.")
+       endif ()
+       include_directories(${OPENGL_INCLUDE_DIR})
+   else ()
+       message(FATAL_ERROR "OpenGL library not found.")
+   endif ()
 endif ()
-
-#find_package(OpenGL)
-#if (OPENGL_FOUND)
-#    if (NOT OPENGL_GLU_FOUND)
-#        message(FATAL_ERROR "OpenGL GLU library not found.")
-#    endif ()
-#    include_directories(${OPENGL_INCLUDE_DIR})
-#else ()
-#    message(FATAL_ERROR "OpenGL library not found.")
-#endif ()
 
 #find_package(Freetype)
 #if (FREETYPE_FOUND)
@@ -249,7 +244,6 @@ add_definitions(-DFREEORION_BUILD_HUMAN -DGL_GLEXT_PROTOTYPES)
 
 set(THIS_EXE_LINK_LIBS
 #    freeorion_lib
-    ${Boost_LIBRARIES}
     ${GIGI_GIGI_LIBRARY}
     ${GIGI_GIGIOGRE_LIBRARY}
     ${OPENAL_LIBRARY}
@@ -263,4 +257,27 @@ set(THIS_EXE_LINK_LIBS
     ${GRAPHVIZ_GVC_LIBRARY}
 )
 
+if (WIN32)
+    link_directories(${BOOST_LIBRARYDIR})
+    set(THIS_EXE_LINK_LIBS
+        ${THIS_EXE_LINK_LIBS}
+        ${ZLIB_LIBRARY}
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+        ${GRAPHVIZ_WIN32_LIBRARIES}
+	glew32.lib
+    )
+else ()
+    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
+endif ()
+
 executable_all_variants(freeorion)
+
+if (WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+    set_target_properties(freeorion
+        PROPERTIES
+        COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
+        LINK_FLAGS /NODEFAULTLIB:LIBCMT
+    )
+endif ()

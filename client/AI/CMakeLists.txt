@@ -120,6 +120,22 @@ endif ()
 
 add_definitions(-DFREEORION_BUILD_AI)
 
-set(THIS_EXE_LINK_LIBS ${Boost_LIBRARIES} ${PYTHON_LIBRARIES}) # freeorion_lib
+set(THIS_EXE_LINK_LIBS ${PYTHON_LIBRARIES}) # freeorion_lib
+
+if (WIN32)
+    link_directories(${BOOST_LIBRARYDIR})
+    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${GIGI_GIGI_LIBRARY} ${ZLIB_LIBRARY})
+else ()
+    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
+endif ()
 
 executable_all_variants(freeorionca)
+
+if (WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+    set_target_properties(freeorionca
+        PROPERTIES
+        COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
+        LINK_FLAGS /NODEFAULTLIB:LIBCMT
+    )
+endif ()

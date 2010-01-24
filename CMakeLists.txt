@@ -74,6 +74,13 @@ else ()
     message(FATAL_ERROR "ZLib library not found.")
 endif ()
 
+find_package(GiGi)
+if (GIGI_FOUND)
+    include_directories(${GIGI_INCLUDE_DIR})
+else ()
+    message(FATAL_ERROR "GiGi library not found.")
+endif ()
+
 find_package(Subversion)
 set(svn_revision_number ???)
 if (Subversion_FOUND)

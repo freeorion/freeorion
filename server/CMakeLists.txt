@@ -100,6 +100,20 @@ endif ()
 
 add_definitions(-DFREEORION_BUILD_SERVER)
 
-set(THIS_EXE_LINK_LIBS ${Boost_LIBRARIES} z)
+if (WIN32)
+    link_directories(${BOOST_LIBRARYDIR})
+    set(THIS_EXE_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${ZLIB_LIBRARY})
+else ()
+    set(THIS_EXE_LINK_LIBS ${Boost_LIBRARIES} ${ZLIB_LIBRARY})
+endif ()
 
 executable_all_variants(freeoriond)
+
+if (WIN32)
+    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+    set_target_properties(freeoriond
+        PROPERTIES
+        COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
+        LINK_FLAGS /NODEFAULTLIB:LIBCMT
+    )
+endif ()
