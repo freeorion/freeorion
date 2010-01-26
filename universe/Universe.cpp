@@ -354,13 +354,24 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id)
             UniverseObject* clone = copy_from_object->Clone(ALL_EMPIRES);   // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
             this->Insert(object_id, clone);
         }
-    }}
+    }
+}
 
 ObjectMap* ObjectMap::Clone(int empire_id) const
 {
     ObjectMap* retval = new ObjectMap();
     retval->Copy(*this, empire_id);
     return retval;
+}
+
+int ObjectMap::NumObjects() const
+{
+    return static_cast<int>(m_objects.size());
+}
+
+bool ObjectMap::Empty() const
+{
+    return m_objects.empty();
 }
 
 const UniverseObject* ObjectMap::Object(int id) const
@@ -481,12 +492,10 @@ void ObjectMap::Delete(int id)
 
 void ObjectMap::Clear()
 {
-    std::cout << "ObjectMap::Clear() initial size of objects: " << m_objects.size() << std::endl;
     for (iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         delete it->second;
     m_objects.clear();
     m_const_objects.clear();
-    std::cout << "ObjectMap::Clear() final size of objects: " << m_objects.size() << std::endl;
 }
 
 void ObjectMap::CopyObjectsToConstObjects()
@@ -1850,23 +1859,39 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
     }
 }
 
-void Universe::Destroy(int id)
+void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
+{
+    if (object_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called with INVALID_OBJECT_ID";
+        return;
+    }
+
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "SetEmpireKnowledgeOfDestroyedObject called for invalid empire id: " << empire_id;
+    }
+    m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
+}
+
+void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/)
 {
     // remove object from any containing UniverseObject
-    UniverseObject* obj = m_objects.Object(id);
+    UniverseObject* obj = m_objects.Object(object_id);
     if (!obj) {
-        Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << id;
+        Logger().errorStream() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
     }
     //Logger().debugStream() << "Destroying object : " << id << " : " << obj->Name();
 
-    // record empires that know this object has been destroyed
-    for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
-        int empire_id = emp_it->first;
-        if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
-            m_empire_known_destroyed_object_ids[empire_id].insert(id);
+    if (update_destroyed_object_knowers) {
+        // record empires that know this object has been destroyed
+        for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
+            int empire_id = emp_it->first;
+            if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
+                m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 
-            // TODO: Update m_empire_latest_known_objects somehow?
+                // TODO: Update m_empire_latest_known_objects somehow?
+            }
         }
     }
 
@@ -1878,16 +1903,16 @@ void Universe::Destroy(int id)
 
     // remove from existing objects set and insert into destroyed objects set
     UniverseObjectDeleteSignal(obj);
-    delete m_objects.Remove(id);
+    delete m_objects.Remove(object_id);
 }
 
-bool Universe::Delete(int id)
+bool Universe::Delete(int object_id)
 {
     // find object amongst existing objects and delete directly, without storing any info
     // about the previous object (as is done for destroying an object)
-    UniverseObject* obj = m_objects.Object(id);
+    UniverseObject* obj = m_objects.Object(object_id);
     if (!obj) {
-        Logger().errorStream() << "Tried to delete a nonexistant object with id: " << id;
+        Logger().errorStream() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
     }
 
@@ -1896,14 +1921,16 @@ bool Universe::Delete(int id)
     obj->MoveTo(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
 
     // remove from existing objects set
-    delete m_objects.Remove(id);
+    delete m_objects.Remove(object_id);
+
+    // TODO: Should this not also remove the object from the latest known objects and known destroyed objects for each empire?
 
     return true;
 }
 
-void Universe::EffectDestroy(int id)
+void Universe::EffectDestroy(int object_id)
 {
-    m_marked_destroyed.insert(id);
+    m_marked_destroyed.insert(object_id);
 }
 
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
@@ -4193,6 +4220,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                 Logger().errorStream() << "unable to create new fleet!";
                 break;
             }
+            fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
             Insert(fleet);
             home_system->Insert(fleet);
 
@@ -4218,6 +4246,12 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                         Logger().errorStream() << "unable to create new ship!";
                         break;
                     }
+                    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
+                    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
+                    ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
+                    ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+                    ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+
                     ship->Rename(empire->NewShipName());
                     int ship_id = Insert(ship);
 
