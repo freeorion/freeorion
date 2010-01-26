@@ -264,7 +264,8 @@ if (WIN32)
         ${ZLIB_LIBRARY}
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
-        ${GRAPHVIZ_WIN32_LIBRARIES}
+        circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib libexpat.lib neatogen.lib
+        pack.lib pathplan.lib plugin.lib twopigen.lib jpeg.lib png.lib
 	glew32.lib
     )
 else ()
