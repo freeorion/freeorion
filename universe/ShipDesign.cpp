@@ -429,13 +429,15 @@ PartType::PartType(
     }
 
     if (m_class == PC_SHIELD)
-        m_effects.push_back(IncreaseMax(METER_SHIELD, "MaxShield", boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMax(METER_SHIELD,       "MaxShield",    boost::get<double>(m_stats)));
     else if (m_class == PC_DETECTION)
-        m_effects.push_back(IncreaseMax(METER_DETECTION, "MaxDetection", boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMax(METER_DETECTION,    "MaxDetection", boost::get<double>(m_stats)));
     else if (m_class == PC_STEALTH)
-        m_effects.push_back(IncreaseMax(METER_STEALTH, "MaxStealth", boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMax(METER_STEALTH,      "MaxStealth",   boost::get<double>(m_stats)));
     else if (m_class == PC_FUEL)
-        m_effects.push_back(IncreaseMax(METER_FUEL, "MaxFuel", boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMax(METER_FUEL,         "MaxFuel",      boost::get<double>(m_stats)));
+    else if (m_class == PC_ARMOUR)
+        m_effects.push_back(IncreaseMax(METER_HEALTH,       "MaxHealth",    boost::get<double>(m_stats)));
 
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);

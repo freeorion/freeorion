@@ -18,30 +18,6 @@
 #include "../server/ServerApp.h"
 #include "../network/Message.h"
 
-#include "Combat.h"
-
-#include <time.h>
-#include <map>
-
-
-struct CombatAssetsOwner
-{
-    CombatAssetsOwner(Empire* o) : owner(o) {}
-    bool operator==(const CombatAssetsOwner &ca) const;
-    Empire* owner;
-};
-
-struct CombatAssets : public CombatAssetsOwner
-{
-    CombatAssets(Empire* o) : CombatAssetsOwner(o) {}
-    std::vector<Fleet*>     fleets;
-    std::vector<Planet*>    planets;
-};
-
-
-void ResolveCombat(int system_id, const std::vector<CombatAssets> &assets);
-
-
 ////////////////////////////////////////////////
 // CombatInfo
 ////////////////////////////////////////////////
@@ -49,352 +25,299 @@ CombatInfo::CombatInfo() :
     system_id(UniverseObject::INVALID_OBJECT_ID)
 {}
 
-CombatInfo::~CombatInfo() {
+CombatInfo::CombatInfo(int system_id_) :
+system_id(system_id_)
+{
+    const Universe& universe = GetUniverse();
+    const ObjectMap& universe_objects = universe.Objects();
+
+    const System* system = universe_objects.Object<System>(system_id);
+    if (!system) {
+        Logger().errorStream() << "CombatInfo constructed with invalid system id: " << system_id;
+        return;
+    }
+
+    // find ships and their owners in system
+    std::vector<const Ship*> ships = universe_objects.FindObjects<Ship>();
+    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = *it;
+        int ship_id = ship->ID();
+
+        // add owners to empires that have assets in this battle
+        const std::set<int>& owners = ship->Owners();
+        for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
+            empire_ids.insert(*owner_it);
+
+        // add copy of ship to full / complete copy of objects in system
+        Ship* copy = ship->Clone();
+        objects.Insert(ship_id, copy);
+    }
+
+    // find planets and their owners in system
+    std::vector<const Planet*> planets = universe_objects.FindObjects<Planet>();
+    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        const Planet* planet = *it;
+        int planet_id = planet->ID();
+
+        // add owners to empires that have assets in this battle
+        const std::set<int>& owners = planet->Owners();
+        for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
+            empire_ids.insert(*owner_it);
+
+        // add copy of ship to full / complete copy of objects in system
+        Planet* copy = planet->Clone();
+        objects.Insert(planet_id, copy);
+    }
+
+    // TODO: should buildings be considered separately?
+
+    // now that all participants in the battle have been found, loop through
+    // ships and planets again to assemble each participant empire's latest
+    // known information about all objects in this battle
+    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
+        const Ship* ship = *it;
+        int ship_id = ship->ID();
+
+        for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+            int empire_id = *empire_it;
+            if (universe.GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+                Ship* visibility_limited_copy = ship->Clone(empire_id);
+                empire_known_objects[empire_id].Insert(ship_id, visibility_limited_copy);
+            }
+        }
+    }
+    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+        const Planet* planet = *it;
+        int planet_id = planet->ID();
+
+        for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+            int empire_id = *empire_it;
+            if (universe.GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
+                Planet* visibility_limited_copy = planet->Clone(empire_id);
+                empire_known_objects[empire_id].Insert(planet_id, visibility_limited_copy);
+            }
+        }
+    }
+
+    // after battle is simulated, any changes to latest known or actual objects
+    // will be copied back to the main Universe's ObjectMap and the Universe's
+    // empire latest known objects ObjectMap
+}
+
+void CombatInfo::Clear() {
+    system_id = UniverseObject::INVALID_OBJECT_ID;
+    empire_ids.clear();
     objects.Clear();
     for (std::map<int, ObjectMap>::iterator it = empire_known_objects.begin(); it != empire_known_objects.end(); ++it)
         it->second.Clear();
-    empire_known_objects.clear();
+    destroyed_object_ids.clear();
+    destroyed_object_knowers.clear();
 }
 
 
+////////////////////////////////////////////////
+// ResolveCombat
+////////////////////////////////////////////////
+namespace {
+    void Attack(Ship* attacker, Ship* target) {
+        if (!attacker || ! target) return;
 
-bool CombatAssetsOwner::operator==(const CombatAssetsOwner &ca) const
-{
-    return owner && ca.owner && (owner->EmpireID() == ca.owner->EmpireID());
-}
+        const ShipDesign* attacker_design = attacker->Design();
+        if (!attacker_design)
+            return;
+        double damage = attacker_design->Attack();
 
-namespace
-{
-    struct CombatAssetsHitPoints
-    {
-        Empire* owner;
+        if (damage <= 0.0)
+            return;
 
-        int CountArmedAssets() {return combat_ships.size();}
-        int CountAssets() {return combat_ships.size()+non_combat_ships.size()+planets.size();}
-
-        std::vector<std::pair<Ship  *,unsigned int> > combat_ships;
-        std::vector<std::pair<Ship  *,unsigned int> > non_combat_ships;
-        std::vector<std::pair<Planet*,unsigned int> > planets;
-
-        std::vector<Ship  *> destroyed_ships;
-        std::vector<Ship  *> retreated_ships;
-        std::vector<Planet*> defenseless_planets;
-    };
-}
-
-static void RemoveShip(int nID)
-{
-    Ship* shp = GetObject<Ship>(nID);
-    if (shp) {
-        System* sys = GetObject<System>(shp->SystemID());
-        if (sys)
-            sys->Remove(shp->ID());
-
-        Fleet* flt = GetObject<Fleet>(shp->FleetID());
-        if (flt) {
-            flt->RemoveShip(shp->ID());
-            if (flt->Empty()) {
-                if (sys = GetObject<System>(flt->SystemID()))
-                    sys->Remove(flt->ID());
-                GetUniverse().Destroy(flt->ID());
-            }
+        Meter* target_shield = target->GetMeter(METER_SHIELD);
+        Meter* target_health = target->GetMeter(METER_HEALTH);
+        if (!target_shield || ! target_health) {
+            Logger().errorStream() << "couldn't get target health or shield meter";
+            return;
         }
-        GetUniverse().Destroy(shp->ID());
+
+        // damage shields, limited by shield current value and damage amount.
+        // remaining damage, if any, above shield current value goes to health
+        double shield_damage = std::min(target_shield->Current(), damage);
+        double health_damage = 0.0;
+        if (shield_damage >= target_shield->Current())
+            health_damage = std::min(target_health->Current(), damage - shield_damage);
+
+        if (shield_damage >= 0) {
+            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        }
+        if (health_damage >= 0) {
+            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        }
+    }
+
+    void Attack(Ship* attacker, Planet* target) {
+        if (!attacker || ! target) return;
+
+        const ShipDesign* attacker_design = attacker->Design();
+        if (!attacker_design)
+            return;
+        double damage = attacker_design->Attack();
+
+        if (damage <= 0.0)
+            return;
+
+        Meter* target_shield = target->GetMeter(METER_SHIELD);
+        Meter* target_health = target->GetMeter(METER_HEALTH);
+        if (!target_shield || ! target_health) {
+            Logger().errorStream() << "couldn't get target health or shield meter";
+            return;
+        }
+
+        // damage shields, limited by shield current value and damage amount.
+        // remaining damage, if any, above shield current value goes to health
+        double shield_damage = std::min(target_shield->Current(), damage);
+        double health_damage = 0.0;
+        if (shield_damage >= target_shield->Current())
+            health_damage = std::min(target_health->Current(), damage - shield_damage);
+
+        if (shield_damage >= 0) {
+            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+        if (health_damage >= 0) {
+            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        }
+    }
+
+    void Attack(Planet* attacker, Ship* target) {
+        if (!attacker || ! target) return;
+
+        double damage = attacker->GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
+
+        if (damage <= 0.0)
+            return;
+
+        Meter* target_shield = target->GetMeter(METER_SHIELD);
+        Meter* target_health = target->GetMeter(METER_HEALTH);
+        if (!target_shield || ! target_health) {
+            Logger().errorStream() << "couldn't get target health or shield meter";
+            return;
+        }
+
+        // damage shields, limited by shield current value and damage amount.
+        // remaining damage, if any, above shield current value goes to health
+        double shield_damage = std::min(target_shield->Current(), damage);
+        double health_damage = 0.0;
+        if (shield_damage >= target_shield->Current())
+            health_damage = std::min(target_health->Current(), damage - shield_damage);
+
+        if (shield_damage >= 0) {
+            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        }
+        if (health_damage >= 0) {
+            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
+            Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
+        }
+    }
+
+    void Attack(Planet* attacker, Planet* target) {
+        // intentionally left empty
     }
 }
 
-#ifdef DEBUG_COMBAT
-static void Debugout(std::vector<CombatAssetsHitPoints> &empire_combat_forces)
-{
-    unsigned int hit_points;
-    std::string debug;
-
-    debug = "\ncurrent forces\n";
-
-    for (unsigned int i = 0; i < empire_combat_forces.size(); i++) {
-        debug+= "  " + empire_combat_forces[i].owner->Name() + " "
-            +" ships (cmb,non cmb,destr,retr): (";
-
-        hit_points = 0;
-        for(unsigned int j = 0; j < empire_combat_forces[i].combat_ships.size(); j++)
-            hit_points+=empire_combat_forces[i].combat_ships[j].second;
-
-        debug += "#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].combat_ships.size()) 
-              + ":" + boost::lexical_cast<std::string,int>(hit_points);
-
-        hit_points = 0;
-        for (unsigned int j = 0; j < empire_combat_forces[i].non_combat_ships.size(); j++)
-            hit_points += empire_combat_forces[i].non_combat_ships[j].second;
-
-        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].non_combat_ships.size())
-              +":" + boost::lexical_cast<std::string,int>(hit_points);
-
-        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].destroyed_ships.size());
-        debug += ",#" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].retreated_ships.size()) + ")";
-
-        hit_points = 0;
-        for(unsigned int j = 0; j < empire_combat_forces[i].planets.size(); j++)
-            hit_points += empire_combat_forces[i].planets[j].second;
-
-        debug += "; planets : #" + boost::lexical_cast<std::string,int>(empire_combat_forces[i].planets.size()) 
-              +":" + boost::lexical_cast<std::string,int>(hit_points);
-
-        debug += "\n";
-    }
-
-    Logger().debugStream() << debug;
-}
-#endif
-
-
-void ResolveCombat(CombatInfo& combat_info)
-{
-    EmpireManager& empires = Empires();
+void ResolveCombat(CombatInfo& combat_info) {
+    if (combat_info.objects.Empty())
+        return;
 
     System* system = GetObject<System>(combat_info.system_id);
+    if (!system) {
+        Logger().errorStream() << "ResolveCombat couldn't get system with id " << combat_info.system_id;
+    }
 
-    std::vector<CombatAssets> empire_combat_forces;
 
-    std::vector<int> flt_ids = system->FindObjectIDs<Fleet>();
-    if (flt_ids.empty())
-        return;
+    // reasonably unpredictable, but reproducible random seeding
+    const UniverseObject* first_object = combat_info.objects.begin()->second;
+    int seed = first_object->ID();
+    Seed(seed);
 
-    for (std::vector<int>::iterator flt_it = flt_ids.begin(); flt_it != flt_ids.end(); ++flt_it) {
-        Fleet* flt = GetObject<Fleet>(*flt_it);
-        if (!flt) {
-            Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *flt_it;
+    std::vector<UniverseObject*> all_combat_objects = combat_info.objects.FindObjects<UniverseObject>();
+    SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_objects.size() - 1);  // to pick an object from the vector
+
+
+    const int NUM_COMBAT_ROUNDS = 100;
+    for (int round = 1; round <= NUM_COMBAT_ROUNDS; ++round) {
+        Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
+
+        // select attacking object in battle
+        int attacker_index = object_num_dist();
+
+        // check if object is already destroyed.  if so, skip this round
+        if (combat_info.destroyed_object_ids.find(attacker_index) != combat_info.destroyed_object_ids.end())
+            continue;
+
+
+        // TODO:: ensure target object is only selected from objects not owned by attacker object's owner
+
+
+        // select target object
+        int target_index = object_num_dist();
+
+        // check if object is already destroyed.  if so, skip this round
+        if (combat_info.destroyed_object_ids.find(target_index) != combat_info.destroyed_object_ids.end())
+            continue;
+
+        // get objects
+        UniverseObject* attacker = 0;
+        UniverseObject* target = 0;
+        try {
+            attacker = all_combat_objects.at(attacker_index);
+            target = all_combat_objects.at(target_index);
+        } catch (std::out_of_range) {
+            Logger().errorStream() << "tried to get out of range combat object?! index " << attacker_index << " or " << target_index;
             continue;
         }
-        // a fleet should belong only to one empire!?
-        if (1 == flt->Owners().size()) {
-            std::vector<CombatAssets>::iterator ecf_it =
-                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                          CombatAssetsOwner(empires.Lookup(*flt->Owners().begin())));
 
-            if (ecf_it == empire_combat_forces.end()) {
-                CombatAssets ca(empires.Lookup(*flt->Owners().begin()));
-                ca.fleets.push_back(flt);
-                empire_combat_forces.push_back(ca);
-            } else {
-                (*ecf_it).fleets.push_back(flt);
+        // check ownership... avoid friendly fire.  Can be removed if above TODO re: ownership is fixed
+        const std::set<int>& attacker_owners = attacker->Owners();
+        const std::set<int>& target_owners = target->Owners();
+        bool abort = false;
+        for (std::set<int>::const_iterator it = attacker_owners.begin(); it != attacker_owners.end(); ++it) {
+            if (target_owners.find(*it) != target_owners.end()) {
+                abort = true;
+                break;
             }
         }
-    }
-    std::vector<int> plt_ids = system->FindObjectIDs<Planet>();
-    for (std::vector<int>::iterator plt_it = plt_ids.begin(); plt_it != plt_ids.end(); ++plt_it) {
-        Planet* plt = GetObject<Planet>(*plt_it);
-        if (!plt) {
-            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << *plt_it;
-            continue;
-        }
-        // a planet should belong only to one empire!?
-        if (1 == plt->Owners().size()) {
-            std::vector<CombatAssets>::iterator ecf_it =
-                std::find(empire_combat_forces.begin(), empire_combat_forces.end(),
-                          CombatAssetsOwner(empires.Lookup(*plt->Owners().begin())));
+        if (abort)
+            continue;   // attacker and target had one of the same owners.  skip this combination to avoid friendly fire.
 
-            if (ecf_it == empire_combat_forces.end()) {
-                CombatAssets ca(empires.Lookup(*plt->Owners().begin()));
-                ca.planets.push_back(plt);
-                empire_combat_forces.push_back(ca);
-            } else {
-                (*ecf_it).planets.push_back(plt);
+        // hand-written double dispatch?!
+        if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
+            if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
+                Attack(attack_ship, target_ship);
+            } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
+                Attack(attack_ship, target_planet);
+            }
+        } else if (Planet* attack_planet = universe_object_cast<Planet*>(attacker)) {
+            if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
+                Attack(attack_planet, target_ship);
+            } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
+                Attack(attack_planet, target_planet);
             }
         }
-    }
 
-    if (empire_combat_forces.size() > 1)
-        ResolveCombat(system->ID(), empire_combat_forces);
-}
 
-void ResolveCombat(int system_id,const std::vector<CombatAssets> &assets)
-{
-#ifdef DEBUG_COMBAT
-    log4cpp::Category::getRoot().debugStream() << "COMBAT resolution!";
-#endif
-    const double base_chance_to_retreat = 0.25;
+        // check for destruction
+        if (target->GetMeter(METER_HEALTH)->Current() <= 0.0) {
+            int target_id = target->ID();
 
-#ifdef FREEORION_RELEASE
-    ClockSeed();
-#endif
-    SmallIntDistType small_int_dist = SmallIntDist(0,10000);
-
-    std::vector<CombatAssetsHitPoints> empire_combat_forces;
-
-    // index to empire_combat_forces
-    std::vector<int> combat_assets;
-
-    for (unsigned int e = 0; e < assets.size(); e++) {
-        CombatAssetsHitPoints cahp;
-        cahp.owner = assets[e].owner;
-
-        for (unsigned int i = 0; i < assets[e].fleets.size(); i++) {
-            Fleet *flt = assets[e].fleets[i];
-            for (Fleet::iterator shp_it = flt->begin(); shp_it != flt->end(); ++shp_it) {
-                Ship* shp = GetObject<Ship>(*shp_it);
-
-                if (shp->IsArmed())
-                    cahp.combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
-                else
-                    cahp.non_combat_ships.push_back(std::make_pair(shp, static_cast<unsigned int>(shp->Design()->Defense())));
+            // object id destroyed
+            combat_info.destroyed_object_ids.insert(target_id);
+            // all empires in battle know object was destroyed
+            for (std::set<int>::const_iterator it = combat_info.empire_ids.begin(); it != combat_info.empire_ids.end(); ++it) {
+                int empire_id = *it;
+                combat_info.destroyed_object_knowers[empire_id].insert(target_id);
             }
         }
-        for (unsigned int i = 0; i < assets[e].planets.size(); i++) {
-            Planet* plt = assets[e].planets[i];
-            cahp.defenseless_planets.push_back(plt);
-        }
-
-        empire_combat_forces.push_back(cahp);
-        if (cahp.CountAssets() > 0)
-            combat_assets.push_back(empire_combat_forces.size() - 1);
-    }
-
-    // if only non combat forces meet, no battle take place
-    unsigned int e;
-    for (e = 0; e < combat_assets.size(); e++)
-        if (empire_combat_forces[combat_assets[e]].combat_ships.size() > 0)
-            break;
-    if (e >= combat_assets.size())
-        return;
-
-    while (combat_assets.size() > 1) {
-        // give all non combat shpis a base chance to retreat
-        for (unsigned int e = 0; e < combat_assets.size(); e++)
-            for (unsigned int i = 0; i < empire_combat_forces[combat_assets[e]].non_combat_ships.size(); i++)
-                if ((small_int_dist() % 100) <= (int)(base_chance_to_retreat*100.0)) {
-                    empire_combat_forces[combat_assets[e]].retreated_ships .push_back(empire_combat_forces[combat_assets[e]].non_combat_ships[i].first);
-                    empire_combat_forces[combat_assets[e]].non_combat_ships.erase    (empire_combat_forces[combat_assets[e]].non_combat_ships.begin()+i);
-                    i--;
-                }
-
-        // are there any armed combat forces left?
-        int count_armed_combat_forces = combat_assets.size();
-        for (unsigned int i=0;i<combat_assets.size();i++)
-            if (empire_combat_forces[combat_assets[i]].CountArmedAssets() == 0)
-                count_armed_combat_forces--;
-
-        if (count_armed_combat_forces == 0)
-            break;
-
-#ifdef DEBUG_COMBAT
-        Debugout(empire_combat_forces);
-#endif
-        std::vector<unsigned int> damage_done;
-        damage_done.resize(empire_combat_forces.size());
-
-        // calc damage each empire combat force causes
-        for (unsigned int e = 0; e < empire_combat_forces.size(); e++) {
-            for (unsigned int i = 0; i < empire_combat_forces[e].combat_ships.size(); i++) {
-                Ship* shp = empire_combat_forces[e].combat_ships[i].first;
-
-                damage_done[e] += small_int_dist() % (static_cast<int>(shp->Design()->Attack()) + 1);
-            }
-
-#ifdef DEBUG_COMBAT
-            log4cpp::Category::getRoot().debugStream() 
-                << "Damage done by " << empire_combat_forces[e].owner->Name() << " " << damage_done[e];
-#endif
-        }
-
-        // apply damage each empire combat force has done
-        for (int e = 0; e < static_cast<int>(damage_done.size()); e++)
-            while (damage_done[e] > 0) { // any damage?
-                // all or all other forces destroyed!!
-                if ((combat_assets.size() == 0) ||((combat_assets.size() == 1) && (e == combat_assets[0])))
-                    break;
-
-                // calc damage target assets at random, but don't shoot at yourself (+1)
-                int target_combat_assets = combat_assets.size()==1?0:small_int_dist()%(combat_assets.size()-1);
-                if(combat_assets[target_combat_assets] == e)
-                    target_combat_assets++;
-
-                int target_empire_index = combat_assets[target_combat_assets];
-
-                // first  - damage to planet defence bases
-                for (unsigned int i = 0; damage_done[e] > 0 && i<empire_combat_forces[target_empire_index].planets.size(); i++) {
-                    unsigned int defence_points_left = empire_combat_forces[target_empire_index].planets[i].second;
-
-                    if (damage_done[e]>=defence_points_left) {
-                        empire_combat_forces[target_empire_index].defenseless_planets.push_back(empire_combat_forces[target_empire_index].planets[i].first);
-                        empire_combat_forces[target_empire_index].planets.erase(empire_combat_forces[target_empire_index].planets.begin()+i);
-                        damage_done[e]-=defence_points_left;
-                    } else {
-                        empire_combat_forces[target_empire_index].planets[i].second -= damage_done[e];
-                        damage_done[e] = 0;
-                    }
-                }
-
-                // second - damage to armed ships
-                for (unsigned int i = 0; damage_done[e] > 0 && i < empire_combat_forces[target_empire_index].combat_ships.size(); i++) {
-                    unsigned int defence_points_left = empire_combat_forces[target_empire_index].combat_ships[i].second;
-
-                    if(damage_done[e]>=defence_points_left) {
-                        empire_combat_forces[target_empire_index].destroyed_ships.push_back(empire_combat_forces[target_empire_index].combat_ships[i].first);
-                        empire_combat_forces[target_empire_index].combat_ships.erase(empire_combat_forces[target_empire_index].combat_ships.begin()+i);
-                        damage_done[e]-=defence_points_left;
-                        i--;
-                    } else {
-                        empire_combat_forces[target_empire_index].combat_ships[i].second -= damage_done[e];
-                        damage_done[e] = 0;
-                    }
-                }
-
-                // third  - damage to unarmed ships
-                for (unsigned int i = 0; damage_done[e] > 0 && i < empire_combat_forces[target_empire_index].non_combat_ships.size(); i++) {
-                    unsigned int defence_points_left = empire_combat_forces[target_empire_index].non_combat_ships[i].second;
-
-                    if (damage_done[e]>=defence_points_left) {
-                        empire_combat_forces[target_empire_index].destroyed_ships.push_back(empire_combat_forces[target_empire_index].non_combat_ships[i].first);
-                        empire_combat_forces[target_empire_index].non_combat_ships.erase(empire_combat_forces[target_empire_index].non_combat_ships.begin()+i);
-                        damage_done[e]-=defence_points_left;
-                    } else {
-                        empire_combat_forces[target_empire_index].non_combat_ships[i].second -= damage_done[e];
-                        damage_done[e] = 0;
-                    }
-                }
-                for (unsigned int i=0; i < combat_assets.size(); i++) {
-                    if (empire_combat_forces[combat_assets[i]].CountAssets() == 0) {
-                        combat_assets.erase(combat_assets.begin()+ i);
-                        i--;
-                    }
-                }
-            }
-    }
-
-#ifdef DEBUG_COMBAT
-    Debugout(empire_combat_forces);
-#endif
-    // evaluation
-    // victor: the empire which is the sole survivor and still has armed forces
-    int victor = combat_assets.size() == 1 && empire_combat_forces[combat_assets[0]].CountArmedAssets() > 0
-        ?combat_assets[0]:-1;
-
-    for(int e=0;e<static_cast<int>(empire_combat_forces.size());e++)
-    {
-        // conquer planets if there is a victor
-        if(victor!=-1 && victor!=e)
-        {
-            for(unsigned int i=0; i<empire_combat_forces[e].defenseless_planets.size(); i++)
-                empire_combat_forces[e].defenseless_planets[i]->Conquer(empire_combat_forces[victor].owner->EmpireID());
-
-            // shouldn't occur - only if defense bases are ignored
-            for(unsigned int i=0; i<empire_combat_forces[e].planets.size(); i++)
-                empire_combat_forces[e].planets[i].first->Conquer(empire_combat_forces[victor].owner->EmpireID());
-        }
-
-        // all retreating ships are destroyed
-        if(victor!=-1 && victor!=e && empire_combat_forces[e].retreated_ships.size()>0)
-        {
-            for(unsigned int i=0; i<empire_combat_forces[e].retreated_ships.size(); i++)
-                empire_combat_forces[e].destroyed_ships.push_back(empire_combat_forces[e].retreated_ships[i]);
-            empire_combat_forces[e].retreated_ships.clear();
-        }
-
-        //remove destroyed ships
-        for(unsigned int i=0; i<empire_combat_forces[e].destroyed_ships.size(); i++)
-            RemoveShip(empire_combat_forces[e].destroyed_ships[i]->ID());
-
-        // add some information to sitreport
-        empire_combat_forces[e].owner->AddSitRepEntry(CreateCombatSitRep(empire_combat_forces[e].owner->EmpireID(),victor==-1?-1:empire_combat_forces[victor].owner->EmpireID(),system_id));
     }
 }

@@ -608,7 +608,7 @@ void Planet::PopGrowthProductionResearchPhase()
         const std::set<int>& owners = this->Owners();
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
             if (Empire* empire = Empires().Lookup(*it))
-                empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->SystemID(), this->ID()));
+                empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
             else
                 Logger().errorStream() << "Planet::PopGrowthProductionResearchPhase couldn't get Empire with id " << *it << " to generate sitrep about starved planet";
         }

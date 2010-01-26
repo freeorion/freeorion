@@ -57,6 +57,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    /** Returns number of objects in this ObjectMap */
+    int                                 NumObjects() const;
+
+    /** Returns true if this ObjectMap contains no objects */
+    bool                                Empty() const;
+
     /** Returns a pointer to the universe object with ID number \a id, or 0 if
       * none exists */
     const UniverseObject*               Object(int id) const;
@@ -380,7 +386,8 @@ public:
                                    SpecialsFrequency specials_freq, int players, int ai_players,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
-    /** Clears ObjectMap and  */
+    /** Clears main ObjectMap, empires' latest known objects map, and
+      * ShipDesign map. */
     void            Clear();
 
     /** Determines all effectsgroups' target sets, resets meters and applies
@@ -437,23 +444,30 @@ public:
       * routes based on visibility. */
     void            RebuildEmpireViewSystemGraphs(int for_empire_id = ALL_EMPIRES);
 
-    /** Removes the object with ID number \a id from the universe's map of
-      * existing objects and places it into the map of destroyed objects.
-      * removes the object from any containing UniverseObjects, though leaves
-      * the object's own records of what contained it intact, so that
-      * this information may be retained for later reference */
-    void            Destroy(int id);
+    /** Adds the object ID \a object_id to the set of object ids for the empire
+      * with id \a empire_id that the empire knows have been destroyed. */
+    void            SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
+
+    /** Removes the object with ID number \a object_id from the universe's map
+      * of existing objects, and adds the object's id to the set of destroyed
+      * object ids.  If \a update_destroyed_object_knowers is true, empires
+      * that currently have visibility of the object have its id added to
+      * their set of objects' ids that are known to have been destroyed.  Older
+      * or limited versions of objects remain in empires latest known objects
+      * ObjectMap, regardless of whether the empire knows the object is
+      * destroyed. */
+    void            Destroy(int object_id, bool update_destroyed_object_knowers = true);
 
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
-    void            EffectDestroy(int id);
+    void            EffectDestroy(int object_id);
 
-    /** Permanently deletes object with ID number \a id.  no information about
-      * this object is retained in the Universe.  Can be performed on objects
-      * whether or not the have been destroyed.  Returns true if such an object
-      * was found, false otherwise. */
-    bool            Delete(int id);
+    /** Permanently deletes object with ID number \a object_id.  no
+      * information about this object is retained in the Universe.  Can be
+      * performed on objects whether or not the have been destroyed.  Returns
+      * true if such an object was found, false otherwise. */
+    bool            Delete(int object_id);
 
     /** Cleans up internal storage of now-invalidated empire ID. */
     void            HandleEmpireElimination(int empire_id);

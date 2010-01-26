@@ -16,9 +16,8 @@
 
 
 ////////////////////////////////////////////
-//   CONSTRUCTION/DESTRUCTION
+//   About
 ////////////////////////////////////////////
-
 About::About():
     CUIWnd(UserString("ABOUT_WINDOW_TITLE"), GG::X(80), GG::Y(130), GG::X(600), GG::Y(500),
            GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL),
@@ -45,8 +44,7 @@ About::About():
     boost::filesystem::ifstream fin(GetRootDataDir() / "default" / "COPYING");    // this is not GetResourceDir() / "COPYING" because if a mod or scenario is loaded that changes the settings directory, the copyright notice should be unchanged
     if (!fin.is_open()) return;
     std::string temp_str;
-    while (!fin.eof())
-    {
+    while (!fin.eof()) {
         std::getline(fin, temp_str, '\n');
         m_license_str.append(temp_str);
         m_license_str.append("\n"); // To ensure new lines are read
@@ -64,13 +62,7 @@ void About::Init()
 }
 
 About::~About()
-{
-
-}
-
-///////////////////////////////////////////////
-//   MUTATORS
-///////////////////////////////////////////////
+{}
 
 void About::Render()
 {
@@ -79,19 +71,10 @@ void About::Render()
 
 void About::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
-    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) // Same behaviour as if "done" was pressed
-    {
-      OnDone();
+    if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE)) {
+        OnDone();
     }
 }
-
-///////////////////////////////////////////////
-//   ACCESSORS
-///////////////////////////////////////////////
-
-///////////////////////////////////////////////
-//   EVENT HANDLERS
-///////////////////////////////////////////////
 
 void About::OnDone()
 {

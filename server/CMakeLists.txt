@@ -6,7 +6,6 @@ project(freeoriond)
 message("-- Configuring freeoriond")
 
 set(THIS_EXE_SOURCES
-    ../combat/Combat.cpp
     ../combat/CombatOrder.cpp
     ../combat/OpenSteer/AsteroidBeltObstacle.cpp
     ../combat/OpenSteer/CombatFighter.cpp

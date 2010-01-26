@@ -35,9 +35,8 @@ public:
         SHIP_BUILT,
         BUILDING_BUILT,
         TECH_RESEARCHED,
-        COMBAT_SYSTEM_WON,
-        COMBAT_SYSTEM_LOST,
-        COMBAT_SYSTEM_NO_VICTOR,
+        COMBAT_SYSTEM,
+        PLANET_CAPTURED,
         PLANET_LOST_STARVED_TO_DEATH,
         PLANET_COLONIZED,
         FLEET_ARRIVED_AT_DESTINATION,
@@ -50,8 +49,8 @@ public:
     SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
     //@}
 
-    void SetType(EntryType type) { m_type = type; }
-    EntryType GetType() { return m_type; }
+    void        SetType(EntryType type) { m_type = type; }
+    EntryType   GetType() { return m_type; }
 
 private:
     EntryType                  m_type; ///< the type of SitRep this is
@@ -71,11 +70,13 @@ SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 
 SitRepEntry* CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
 
-SitRepEntry* CreateCombatSitRep(int empire_id, int victor_id, int system_id);
+SitRepEntry* CreateCombatSitRep(int system_id);
 
-SitRepEntry* CreatePlanetStarvedToDeathSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, const std::string& empire_name);
 
-SitRepEntry* CreatePlanetColonizedSitRep(int system_id, int planet_id);
+SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
+
+SitRepEntry* CreatePlanetColonizedSitRep(int planet_id);
 
 SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
 

@@ -668,30 +668,105 @@ namespace {
         return false;   // no possible conditions for combat were found
     }
 
+    /** Cleans up CombatInfo within \a system_combat_info. */
+    void CleanupSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
+        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it)
+            it->second.Clear();
+        system_combat_info.clear();
+    }
+
     /** Clears and refills \a system_combat_info with CombatInfo structs for
       * every system where a combat should occur this turn. */
     void AssembleSystemCombatInfo(std::map<int, CombatInfo>& system_combat_info) {
-        ObjectMap& objects = GetUniverse().Objects();
-
-        system_combat_info.clear();
+        CleanupSystemCombatInfo(system_combat_info);
 
         // for each system, find if a combat will occur in it, and if so, assemble
         // necessary information about that combat in system_combat_info
-        std::vector<int> sys_ids = objects.FindObjectIDs<System>();
+        std::vector<int> sys_ids = GetUniverse().Objects().FindObjectIDs<System>();
 
         for (std::vector<int>::const_iterator it = sys_ids.begin(); it != sys_ids.end(); ++it) {
             int sys_id = *it;
-            if (!CombatConditionsInSystem(sys_id))
-                continue;
+            if (CombatConditionsInSystem(sys_id))
+                system_combat_info.insert(std::make_pair(sys_id, CombatInfo(sys_id)));
+        }
+    }
 
-            // assemble CombatInfo for this system
-            CombatInfo& info = system_combat_info[sys_id];    // start with default initizliaed CombatInfo
+    /** Takes contents of CombatInfo struct and puts it into the universe.
+      * Used to store results of combat in main universe. */
+    void DisseminateSystemCombatInfo(const std::map<int, CombatInfo>& system_combat_info) {
+        Universe& universe = GetUniverse();
 
-            info.system_id = sys_id;
-            //info.empire_ids = ...
-            //info.objects = ...
-            // for empires, get latest known objects...
-            //      info.empire_known_objects[empire_id] = ...
+        // loop through resolved combat infos, updating actual main universe
+        // with changes from combat
+        for (std::map<int, CombatInfo>::const_iterator it = system_combat_info.begin();
+             it != system_combat_info.end();
+             ++it)
+        {
+            const CombatInfo& combat_info = it->second;
+
+            // copy actual state of objects in combat after it was resolved
+            universe.Objects().Copy(combat_info.objects);
+
+
+            // copy empires' latest known state of objects in combat after it was resolved
+            for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
+                 empire_it != combat_info.empire_known_objects.end();
+                 ++empire_it)
+            {
+                const ObjectMap& combat_known_objects = empire_it->second;
+                int empire_id = it->first;
+                ObjectMap& actual_known_objects = universe.EmpireKnownObjects(empire_id);
+                actual_known_objects.Copy(combat_known_objects);
+            };
+
+
+            // destroy in main universe objects that were destroyed in combat
+            for (std::set<int>::const_iterator destroyed_it = combat_info.destroyed_object_ids.begin();
+                 destroyed_it != combat_info.destroyed_object_ids.end();
+                 ++destroyed_it)
+            {
+                int destroyed_object_id = *destroyed_it;
+                universe.Destroy(destroyed_object_id, true);
+            }
+
+
+            // update which empires know objects are destroyed.  this may
+            // duplicate the destroyed object knowledge that is set when the
+            // object is destroyed with Universe::Destroy, but there may also
+            // be empires in this battle that otherwise couldn't see the object
+            // as determined for galaxy map purposes, but which do know it has
+            // been destroyed from having observed it during the battle.
+            for (std::map<int, std::set<int> >::const_iterator empire_it = combat_info.destroyed_object_knowers.begin();
+                 empire_it != combat_info.destroyed_object_knowers.end();
+                 ++empire_it)
+            {
+                int empire_id = empire_it->first;
+                const std::set<int>& object_ids = empire_it->second;
+
+                for (std::set<int>::const_iterator object_it = object_ids.begin(); object_it != object_ids.end(); ++object_it) {
+                    int object_id = *object_it;
+                    universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
+                }
+            }
+        }
+    }
+
+    /** Creates sitreps for all empires involved in a combat. */
+    void CreateCombatSitReps(const std::map<int, CombatInfo>& system_combat_info) {
+        for (std::map<int, CombatInfo>::const_iterator it = system_combat_info.begin();
+             it != system_combat_info.end();
+             ++it)
+        {
+            const CombatInfo& combat_info = it->second;
+            const std::set<int>& empire_ids = combat_info.empire_ids;
+            for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+                Empire* empire = Empires().Lookup(*empire_it);
+                if (!empire) {
+                    Logger().errorStream() << "CreateCombatSitReps couldn't get empire with id " << *empire_it;
+                    continue;
+                }
+                empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id));
+            }
         }
     }
 }
@@ -779,7 +854,7 @@ void ServerApp::PreCombatProcessTurns()
         if (colonize_orders.size() == 1) {
             colonize_orders[0]->ServerExecute();
             Empire* empire = empires.Lookup(colonize_orders[0]->EmpireID());
-            empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+            empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->ID()));
         } else {
             int system_id = planet->SystemID();
             const System* system = objects.Object<System>(system_id);
@@ -829,7 +904,7 @@ void ServerApp::PreCombatProcessTurns()
                 if (winner == i) {
                     colonize_orders[i]->ServerExecute();
                     Empire* empire = empires.Lookup(colonize_orders[i]->EmpireID());
-                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->SystemID(), planet->ID()));
+                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->ID()));
                 } else {
                     colonize_orders[i]->Undo();
                 }
@@ -965,6 +1040,14 @@ void ServerApp::ProcessCombats()
         AutoResolveCombat(combat_info);
         // END TEMP
     }
+
+
+    DisseminateSystemCombatInfo(system_combat_info);
+
+    CreateCombatSitReps(system_combat_info);
+
+    CleanupSystemCombatInfo(system_combat_info);
+
 
     m_fsm.post_event(CombatComplete());   // TODO: post one of these for each completed combat, not for all combats being complete
 }
@@ -1255,7 +1338,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
         for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
             (*obj_it)->RemoveOwner(elim_empire_id);
 
-        m_log_category.debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
+        Logger().debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
         m_eliminated_players.insert(it->first);
         m_networking.Disconnect(it->first);
         m_ai_IDs.erase(it->first);

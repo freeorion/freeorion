@@ -78,6 +78,7 @@ namespace {
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
         Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), owner_empire_id);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
 
         universe.InsertID(fleet, new_fleet_id);
         system->Insert(fleet);
@@ -108,6 +109,7 @@ namespace {
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
         Fleet* fleet = new Fleet(fleet_name, x, y, owner_empire_id);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
 
         universe.InsertID(fleet, new_fleet_id);
 
@@ -831,6 +833,11 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
     ship->Rename(empire->NewShipName());
+    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
+    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
+    ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
+    ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+    ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
 
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);

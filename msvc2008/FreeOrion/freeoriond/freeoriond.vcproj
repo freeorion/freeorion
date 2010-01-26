@@ -110,14 +110,6 @@
 			Name="combat"
 			>
 			<File
-				RelativePath="..\..\..\combat\Combat.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\combat\Combat.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\combat\CombatOrder.cpp"
 				>
 			</File>

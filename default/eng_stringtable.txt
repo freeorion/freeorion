@@ -1975,7 +1975,7 @@ Situation Report
 ####################
 
 SITREP_SHIP_BUILT
-The %ship%, a new ship, has been produced in the %system% system.
+The ship %ship% has been produced in %system%.
 
 SITREP_BUILDING_BUILT
 %building% has been produced on %planet%.
@@ -1983,23 +1983,20 @@ SITREP_BUILDING_BUILT
 SITREP_TECH_RESEARCHED
 %tech% has been researched.
 
-SITREP_COMBAT_SYSTEM_WON
-A combat has taken place in %system%. We were victorious!
+SITREP_COMBAT_SYSTEM
+A battle occured in %system%.
 
-SITREP_COMBAT_SYSTEM_LOST
-A combat has taken place in %system%. We were defeated!
-
-SITREP_COMBAT_SYSTEM_NO_VICTOR
-A combat has taken place in %system%. The encounter was inconclusive.
+SITREP_PLANET_CAPTURED
+%planet% was captured by %empire%.
 
 SITREP_PLANET_LOST_STARVED_TO_DEATH
-The entire population of %planet% has starved to death. The planet is lost!
+The population of %planet% was lost to famine.
 
 SITREP_PLANET_COLONIZED
-%planet% has been colonized in the %system% system.
+%planet% has been colonized.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
-%fleet% has arrived at the %system% system and awaits further orders.
+%fleet% has arrived at %system%.
 
 SITREP_EMPIRE_ELIMINATED
 The %empire% empire has been eliminated.
