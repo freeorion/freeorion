@@ -312,3 +312,24 @@ endmacro ()
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
+
+########################################
+# Copy build results in Win32 SDK      #
+########################################
+if (WIN32)
+    # Copy GG DLLs and FreeOrion executables to FreeOrion directory
+    get_target_property(freeorion_loc freeorion LOCATION)
+    get_target_property(freeoriond_loc freeoriond LOCATION)
+    get_target_property(freeorionca_loc freeorionca LOCATION)
+    add_custom_target(
+        COPY_BINARIES
+	ALL
+        ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGi.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGi.dll
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGiOgre.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGiOgre.dll
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_HOME_DIRECTORY}/../bin/GiGiOgrePlugin_OIS.dll ${CMAKE_HOME_DIRECTORY}/../FreeOrion/GiGiOgrePlugin_OIS.dll
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeorion_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeorion.exe
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeorionca_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeorionca.exe
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different ${freeoriond_loc} ${CMAKE_HOME_DIRECTORY}/../FreeOrion/freeoriond.exe
+	DEPENDS freeorion freeoriond freeorionca
+    )
+endif ()

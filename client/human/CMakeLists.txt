@@ -5,14 +5,6 @@ project(freeorion)
 
 message("-- Configuring freeorion")
 
-#list(APPEND MINIMUM_BOOST_COMPONENTS iostreams)
-#find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENTS})
-#if (Boost_FOUND)
-#    include_directories(${Boost_INCLUDE_DIRS})
-#else ()
-#    message(FATAL_ERROR "Boost libraries not found.")
-#endif ()
-
 if (WIN32)
    find_package(OpenGL)
    if (OPENGL_FOUND)
@@ -24,13 +16,6 @@ if (WIN32)
        message(FATAL_ERROR "OpenGL library not found.")
    endif ()
 endif ()
-
-#find_package(Freetype)
-#if (FREETYPE_FOUND)
-#    include_directories(${FREETYPE_INCLUDE_DIRS})
-#else ()
-#    message(FATAL_ERROR "Freetype library not found.")
-#endif ()
 
 find_package(OpenAL)
 if (OPENAL_FOUND)
@@ -53,14 +38,6 @@ if (OGRE_FOUND)
 else ()
     message(FATAL_ERROR "Ogre library not found.")
 endif ()
-
-#find_package(OIS)
-#if (OIS_FOUND)
-#    include_directories(${OIS_INCLUDE_DIR})
-#    link_directories(${OIS_LIB_DIR})
-#else ()
-#    message(FATAL_ERROR "OIS library not found.")
-#endif ()
 
 find_package(Ogg)
 if (OGG_FOUND)
@@ -90,17 +67,6 @@ if (GRAPHVIZ_FOUND)
 else ()
     message(FATAL_ERROR "Graphviz library not found.")
 endif ()
-
-# TODO: Are these necessary to link against as well?
-#circogen
-#common
-#dotgen
-#fdpgen
-#gd
-#neatogen
-#pack
-#plugin
-#twopigen
 
 set(THIS_EXE_SOURCES
     ../../combat/CombatOrder.cpp
