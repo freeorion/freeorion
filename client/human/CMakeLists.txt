@@ -233,6 +233,7 @@ if (WIN32)
         pack.lib pathplan.lib plugin.lib twopigen.lib jpeg.lib png.lib
 	glew32.lib
     )
+    set(THIS_EXE_SOURCES ${THIS_EXE_SOURCES} ${CMAKE_BINARY_DIR}/win32_resources.rc)
 else ()
     set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
 endif ()

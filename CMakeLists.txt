@@ -314,10 +314,14 @@ add_subdirectory(client/AI)
 add_subdirectory(client/human)
 
 ########################################
-# Copy build results in Win32 SDK      #
+# Win32 SDK-only steps                 #
 ########################################
 if (WIN32)
-    # Copy GG DLLs and FreeOrion executables to FreeOrion directory
+    # Add icon resource file to freeorion.exe
+    if (NOT EXISTS ${CMAKE_BINARY_DIR}/win32_resources.rc)
+        file(WRITE ${CMAKE_BINARY_DIR}/win32_resources.rc "IDI_ICON ICON \"${CMAKE_SOURCE_DIR}/client/human/HumanClient.ico\"")
+    endif ()
+
     get_target_property(freeorion_loc freeorion LOCATION)
     get_target_property(freeoriond_loc freeoriond LOCATION)
     get_target_property(freeorionca_loc freeorionca LOCATION)
