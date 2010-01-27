@@ -38,10 +38,14 @@ system_id(system_id_)
     }
 
     // find ships and their owners in system
-    std::vector<const Ship*> ships = universe_objects.FindObjects<Ship>();
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
-        int ship_id = ship->ID();
+    std::vector<int> ship_ids = system->FindObjectIDs<Ship>();
+    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
+        int ship_id = *it;
+        const Ship* ship = GetObject<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
+            continue;
+        }
 
         // add owners to empires that have assets in this battle
         const std::set<int>& owners = ship->Owners();
@@ -54,10 +58,14 @@ system_id(system_id_)
     }
 
     // find planets and their owners in system
-    std::vector<const Planet*> planets = universe_objects.FindObjects<Planet>();
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        int planet_id = planet->ID();
+    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
+    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
+        int planet_id = *it;
+        const Planet* planet = GetObject<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
+            continue;
+        }
 
         // add owners to empires that have assets in this battle
         const std::set<int>& owners = planet->Owners();
@@ -74,9 +82,13 @@ system_id(system_id_)
     // now that all participants in the battle have been found, loop through
     // ships and planets again to assemble each participant empire's latest
     // known information about all objects in this battle
-    for (std::vector<const Ship*>::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        const Ship* ship = *it;
-        int ship_id = ship->ID();
+    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
+        int ship_id = *it;
+        const Ship* ship = GetObject<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get ship with id " << ship_id << " in system " << system->Name() << " (" << system_id << ")";
+            continue;
+        }
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
@@ -86,9 +98,13 @@ system_id(system_id_)
             }
         }
     }
-    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        const Planet* planet = *it;
-        int planet_id = planet->ID();
+    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
+        int planet_id = *it;
+        const Planet* planet = GetObject<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "CombatInfo::CombatInfo couldn't get planet with id " << planet_id << " in system " << system->Name() << " (" << system_id << ")";
+            continue;
+        }
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
@@ -119,7 +135,7 @@ void CombatInfo::Clear() {
 // ResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    void Attack(Ship* attacker, Ship* target) {
+    void AttackShipShip(Ship* attacker, Ship* target) {
         if (!attacker || ! target) return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -154,7 +170,7 @@ namespace {
         }
     }
 
-    void Attack(Ship* attacker, Planet* target) {
+    void AttackShipPlanet(Ship* attacker, Planet* target) {
         if (!attacker || ! target) return;
 
         const ShipDesign* attacker_design = attacker->Design();
@@ -189,7 +205,7 @@ namespace {
         }
     }
 
-    void Attack(Planet* attacker, Ship* target) {
+    void AttackPlanetShip(Planet* attacker, Ship* target) {
         if (!attacker || ! target) return;
 
         double damage = attacker->GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
@@ -221,7 +237,7 @@ namespace {
         }
     }
 
-    void Attack(Planet* attacker, Planet* target) {
+    void AttackPlanetPlanet(Planet* attacker, Planet* target) {
         // intentionally left empty
     }
 }
@@ -236,9 +252,9 @@ void ResolveCombat(CombatInfo& combat_info) {
     }
 
 
-    // reasonably unpredictable, but reproducible random seeding
+    // reasonably unpredictable but reproducible random seeding
     const UniverseObject* first_object = combat_info.objects.begin()->second;
-    int seed = first_object->ID();
+    int seed = first_object->ID() + CurrentTurn();
     Seed(seed);
 
     std::vector<UniverseObject*> all_combat_objects = combat_info.objects.FindObjects<UniverseObject>();
@@ -291,18 +307,18 @@ void ResolveCombat(CombatInfo& combat_info) {
         if (abort)
             continue;   // attacker and target had one of the same owners.  skip this combination to avoid friendly fire.
 
-        // hand-written double dispatch?!
+        // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
             if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                Attack(attack_ship, target_ship);
+                AttackShipShip(attack_ship, target_ship);
             } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                Attack(attack_ship, target_planet);
+                AttackShipPlanet(attack_ship, target_planet);
             }
         } else if (Planet* attack_planet = universe_object_cast<Planet*>(attacker)) {
             if (Ship* target_ship = universe_object_cast<Ship*>(target)) {
-                Attack(attack_planet, target_ship);
+                AttackPlanetShip(attack_planet, target_ship);
             } else if (Planet* target_planet = universe_object_cast<Planet*>(target)) {
-                Attack(attack_planet, target_planet);
+                AttackPlanetPlanet(attack_planet, target_planet);
             }
         }
 

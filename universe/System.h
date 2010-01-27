@@ -69,8 +69,7 @@ public:
 
     virtual int             SystemID() const;                           ///< returns this->ID()
 
-    virtual std::vector<int>
-                            FindObjectIDs() const;                      ///< returns ids of objects contained within this system
+    virtual std::vector<int>FindObjectIDs() const;                      ///< returns ids of objects contained within this system
 
     std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;  ///< returns the IDs of all the objects that match \a visitor
 
