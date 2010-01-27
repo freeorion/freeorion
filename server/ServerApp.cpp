@@ -720,13 +720,15 @@ namespace {
             };
 
 
-            // destroy in main universe objects that were destroyed in combat
+            // destroy in main universe objects that were destroyed in combat,
+            // and any associated objects that should now logically also be
+            // destroyed
             for (std::set<int>::const_iterator destroyed_it = combat_info.destroyed_object_ids.begin();
                  destroyed_it != combat_info.destroyed_object_ids.end();
                  ++destroyed_it)
             {
                 int destroyed_object_id = *destroyed_it;
-                universe.Destroy(destroyed_object_id, true);
+                universe.RecursiveDestroy(destroyed_object_id);
             }
 
 

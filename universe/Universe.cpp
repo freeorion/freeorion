@@ -1390,7 +1390,7 @@ void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
     }
 
     for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
-        DestroyImpl(*it);
+        RecursiveDestroy(*it);
     }
 }
 
@@ -2079,29 +2079,31 @@ void Universe::InhibitUniverseObjectSignals(bool inhibit)
     s_inhibit_universe_object_signals = inhibit;
 }
 
-void Universe::DestroyImpl(int id)
+void Universe::RecursiveDestroy(int object_id)
 {
-    UniverseObject* obj = m_objects.Object(id);
-    if (!obj)
+    UniverseObject* obj = m_objects.Object(object_id);
+    if (!obj) {
+        Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return;
+    }
     if (Ship* ship = universe_object_cast<Ship*>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
         Fleet* fleet = GetObject<Fleet>(ship->FleetID());
-        Destroy(id);
+        Destroy(object_id);
         if (fleet && fleet->Empty())
             Destroy(fleet->ID());
     } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
         for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it)
             Destroy(*it);
-        Destroy(id);
+        Destroy(object_id);
     } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
         for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it)
             Destroy(*it);
-        Destroy(id);
+        Destroy(object_id);
     } else if (universe_object_cast<System*>(obj)) {
         // unsupported: do nothing
     } else {
-        Delete(id);
+        Delete(object_id);
     }
 }
 

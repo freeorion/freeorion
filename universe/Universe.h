@@ -458,6 +458,12 @@ public:
       * destroyed. */
     void            Destroy(int object_id, bool update_destroyed_object_knowers = true);
 
+    /** Destroys object with ID \a object_id, and destroys any associted
+      * objects, such as contained buildings of planets, contained anything of
+      * systems, or fleets if their last ship has id \a object_id and the fleet
+      * is thus empty. */
+    void            RecursiveDestroy(int object_id);
+
     /** Used by the Destroy effect to mark an object for destruction later
       * during turn processing. (objects can't be destroyed immediately as
       * other effects might depend on their existence) */
@@ -579,8 +585,6 @@ private:
     /** Will create empire objects, assign them homeworlds, setup the homeworld
       * population, industry, and starting fleets. */
     void    GenerateEmpires(int players, std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
-
-    void    DestroyImpl(int id);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
