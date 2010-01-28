@@ -6,6 +6,8 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 ########################################
 # Configuration                        #
 ########################################
+project(FreeOrion)
+
 set(FREEORION_VERSION 0.3.13)
 set(FREEORION_RELEASE false)
 
@@ -293,6 +295,14 @@ macro (executable_variant EXENAME)
       target_link_libraries(${VARIANT_EXENAME} "${dependency}")
     endforeach (dependency)
   endif ()
+
+  string(TOUPPER COMPONENT_${PROJECT_NAME} EXE_COMPONENT)
+  install(
+    TARGETS ${VARIANT_EXENAME}
+    RUNTIME DESTINATION . COMPONENT ${EXE_COMPONENT}
+    LIBRARY DESTINATION . COMPONENT ${EXE_COMPONENT}
+    ARCHIVE DESTINATION . COMPONENT ${EXE_COMPONENT}
+  )
 endmacro ()
 
 macro (executable_all_variants EXENAME)
@@ -337,3 +347,144 @@ if (WIN32)
 	DEPENDS freeorion freeoriond freeorionca
     )
 endif ()
+
+########################################
+# Install Target                       #
+########################################
+install(
+    DIRECTORY default
+    DESTINATION default
+    COMPONENT COMPONENT_FREEORION_DATA
+    PATTERN ".svn" EXCLUDE
+    PATTERN "*~" EXCLUDE
+)
+
+install(
+    FILES
+    GiGi.dll
+    GiGiOgre.dll
+    GiGiOgrePlugin_OIS.dll
+    OIS.dll
+    OgreMain.dll
+    OpenAL32.dll
+    Plugin_OctreeSceneManager.dll
+    Plugin_CgProgramManager.dll
+    Plugin_ParticleFX.dll
+    RenderSystem_GL.dll
+    alut.dll
+    cg.dll
+    boost_date_time-vc90-mt-1_36.dll
+    boost_filesystem-vc90-mt-1_36.dll
+    boost_iostreams-vc90-mt-1_36.dll
+    boost_python-vc90-mt-1_36.dll
+    boost_regex-vc90-mt-1_36.dll
+    boost_serialization-vc90-mt-1_36.dll
+    boost_signals-vc90-mt-1_36.dll
+    boost_system-vc90-mt-1_36.dll
+    boost_thread-vc90-mt-1_36.dll
+    glew32.dll
+    jpeg.dll
+    libexpat.dll
+    libogg.dll
+    libpng13.dll
+    libvorbis.dll
+    libvorbisfile.dll
+    python26.dll
+    wrap_oal.dll
+    z.dll
+    zlib1.dll
+    OISInput.cfg
+    ogre_plugins.cfg
+    DESTINATION .
+    COMPONENT COMPONENT_FREEORION_RUNTIME_DEPS
+)
+
+########################################
+# Packaging                            #
+########################################
+set(BUILD_PACKAGING
+    false
+    CACHE BOOL
+    "Whether to build installer/binary package. (This is the executable installer on Win32, and an RPM/DEB/tarball on Linux."
+)
+
+set(CPACK_PACKAGE_VERSION ${FREEORION_VERSION})
+set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
+set(CPACK_PACKAGE_CONTACT http://freeorion.org/forum)
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.")
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_HOME_DIRECTORY}/default/COPYING)
+if (BUILD_PACKAGING)
+    set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
+    set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
+    string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
+endif ()
+
+# RPM-specific settings
+set(CPACK_RPM_PACKAGE_LICENSE LGPL)
+set(CPACK_RPM_PACKAGE_REQUIRES)
+# TODO
+
+# Deb-specific settings
+set(CPACK_DEBIAN_PACKAGE_SECTION games)
+# TODO
+
+if (UNIX)
+    set(CPACK_GENERATOR "TGZ;TBZ2")
+    find_program(RPMBUILD rpmbuild)
+    if (RPMBUILD)
+        list(APPEND CPACK_GENERATOR RPM)
+    endif ()
+    set(RPMBUILD ${RPMBUILD} CACHE INTERNAL "")
+    find_program(DPKG dpkg)
+    if (DPKG)
+        list(APPEND CPACK_GENERATOR DEB)
+    endif ()
+    set(DPKG ${DPKG} CACHE INTERNAL "")
+    set(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
+elseif (WIN32)
+    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_SOURCE_GENERATOR "ZIP")
+endif ()
+
+include(CPack)
+
+cpack_add_component(
+    COMPONENT_FREEORION_DATA
+    DISPLAY_NAME FreeOrion Data
+    DESCRIPTION ""
+    HIDDEN
+    REQUIRED
+)
+
+cpack_add_component(
+    COMPONENT_FREEORION_RUNTIME_DEPS
+    DISPLAY_NAME FreeOrion Runtime Dependencies
+    DESCRIPTION ""
+    HIDDEN
+    REQUIRED
+)
+
+cpack_add_component(
+    COMPONENT_FREEORION
+    DISPLAY_NAME FreeOrion Client
+    DESCRIPTION ""
+    HIDDEN
+    REQUIRED
+)
+
+cpack_add_component(
+    COMPONENT_FREEORIOND
+    DISPLAY_NAME FreeOrion Server
+    DESCRIPTION ""
+    HIDDEN
+    REQUIRED
+)
+
+cpack_add_component(
+    COMPONENT_FREEORIONCA
+    DISPLAY_NAME FreeOrion AI
+    DESCRIPTION ""
+    HIDDEN
+    REQUIRED
+)
