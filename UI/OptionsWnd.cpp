@@ -152,16 +152,18 @@ namespace {
     {
         SetOptionFunctor(const std::string& option_name, CUIEdit* edit = 0, OptionsWnd::StringValidator string_validator = 0) :
             m_option_name(option_name), m_edit(edit), m_string_validator(string_validator)
-            { assert(bool(m_edit) == bool(m_string_validator)); }
+        { assert(bool(m_edit) == bool(m_string_validator)); }
         void operator()(const std::string& str)
-            {
-                if (m_string_validator && !m_string_validator(str)) {
+        {
+            if (m_string_validator && !m_string_validator(str)) {
+                if (m_edit)
                     m_edit->SetTextColor(GG::CLR_RED);
-                } else {
+            } else {
+                if (m_edit)
                     m_edit->SetTextColor(ClientUI::TextColor());
-                    GetOptionsDB().Set<std::string>(m_option_name, str);
-                }
+                GetOptionsDB().Set<std::string>(m_option_name, str);
             }
+        }
         const std::string m_option_name;
         CUIEdit* m_edit;
         OptionsWnd::StringValidator m_string_validator;
