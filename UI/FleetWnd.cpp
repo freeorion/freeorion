@@ -30,9 +30,12 @@ namespace {
     const GG::Pt        DATA_PANEL_ICON_SPACE = GG::Pt(GG::X(38), GG::Y(38)); 
                                                            // area reserved for ship or fleet icon in data panels 
                                                            // (actual height can be bigger if the row expands due to font size)
-    const GG::Flags<GG::GraphicStyle>
-                        DATA_PANEL_ICON_STYLE = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
+
+    //const GG::Flags<GG::GraphicStyle>
+    //                    DATA_PANEL_ICON_STYLE = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
                                                            // how should ship and fleet icons be scaled and/or positioned in the reserved space
+                                                           // commented out because this line caused crashes on Mac OSX
+
     const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4);    // padding on the left and right of fleet/ship description
     const int           DATA_PANEL_BORDER = 1;             // how thick should the border around ship or fleet panel be
 
@@ -686,12 +689,12 @@ namespace {
             else
                 icon = ClientUI::ShipIcon(UniverseObject::INVALID_OBJECT_ID);  // default icon
 
-            m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, DATA_PANEL_ICON_STYLE);
+            m_ship_icon = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icon, GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_ship_icon);
 
             if (ship->OrderedScrapped()) {
                 boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
-                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), scrap_texture, DATA_PANEL_ICON_STYLE);
+                m_scrap_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), scrap_texture, GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                 AttachChild(m_scrap_indicator);
             }
         }
@@ -1099,11 +1102,11 @@ void FleetDataPanel::Refresh()
 
         boost::shared_ptr<GG::Texture> head_icon = FleetHeadIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
         icons.push_back(head_icon);
-        styles.push_back(DATA_PANEL_ICON_STYLE);
+        styles.push_back(GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
         icons.push_back(size_icon);
-        styles.push_back(DATA_PANEL_ICON_STYLE);
+        styles.push_back(GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
         m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icons, styles);
         AttachChild(m_fleet_icon);
