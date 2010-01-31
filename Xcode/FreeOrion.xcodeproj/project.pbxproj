@@ -190,7 +190,6 @@
 		471032D00CEF6DEC00A7DF2B /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471033860CEF721B00A7DF2B /* PythonAI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA00CEF562700A7DF2B /* PythonAI.cpp */; };
 		4710338A0CEF723900A7DF2B /* AIInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F9E0CEF562700A7DF2B /* AIInterface.cpp */; };
-		47103BEC0CF04E5900A7DF2B /* Combat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6B0A98A3F900DA9C21 /* Combat.cpp */; };
 		47103BED0CF04E5900A7DF2B /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1C0A98A3F900DA9C21 /* DataTable.cpp */; };
 		47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D230A98A3F900DA9C21 /* GZStream.cpp */; };
@@ -3331,7 +3330,6 @@
 				34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */,
 				34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */,
 				34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */,
-				47103BEC0CF04E5900A7DF2B /* Combat.cpp in Sources */,
 				47103BED0CF04E5900A7DF2B /* CombatSystem.cpp in Sources */,
 				47103BF00CF04E5900A7DF2B /* DataTable.cpp in Sources */,
 				47103BF10CF04E5900A7DF2B /* GZStream.cpp in Sources */,
@@ -3691,6 +3689,7 @@
 					FREEORION_MACOSX,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3719,6 +3718,7 @@
 					"$(SRCROOT)/dep/local/lib/bullet",
 					"$(SRCROOT)/dep/local/lib/graphviz",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=default",
