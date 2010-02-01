@@ -1252,8 +1252,6 @@
 		471D5C630A98A3F900DA9C21 /* HumanClient.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = HumanClient.ico; sourceTree = "<group>"; };
 		471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HumanClientApp.cpp; sourceTree = "<group>"; };
 		471D5C650A98A3F900DA9C21 /* HumanClientApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HumanClientApp.h; sourceTree = "<group>"; };
-		471D5C6B0A98A3F900DA9C21 /* Combat.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Combat.cpp; sourceTree = "<group>"; };
-		471D5C6C0A98A3F900DA9C21 /* Combat.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Combat.h; sourceTree = "<group>"; };
 		471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CombatSystem.cpp; sourceTree = "<group>"; };
 		471D5C6E0A98A3F900DA9C21 /* CombatSystem.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CombatSystem.h; sourceTree = "<group>"; };
 		471D5C730A98A3F900DA9C21 /* DoxyFile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DoxyFile; sourceTree = "<group>"; };
@@ -1446,7 +1444,6 @@
 		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		47F266830CF1B87C003860F4 /* build_config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_config.py; sourceTree = "<group>"; };
 		47F266840CF1B87C003860F4 /* build_support.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_support.py; sourceTree = "<group>"; };
-		47F266870CF1B87C003860F4 /* Makefile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		47F266880CF1B87C003860F4 /* RELEASE-NOTES-V03.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "RELEASE-NOTES-V03.txt"; sourceTree = "<group>"; };
 		47F266890CF1B87C003860F4 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		47F2668A0CF1B87C003860F4 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
@@ -2658,7 +2655,6 @@
 			children = (
 				47F266830CF1B87C003860F4 /* build_config.py */,
 				47F266840CF1B87C003860F4 /* build_support.py */,
-				47F266870CF1B87C003860F4 /* Makefile */,
 				47F266880CF1B87C003860F4 /* RELEASE-NOTES-V03.txt */,
 				47F266890CF1B87C003860F4 /* SConscript */,
 				47F2668A0CF1B87C003860F4 /* SConstruct */,
@@ -2757,8 +2753,6 @@
 				3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */,
 				3402E2330F5A300600DF6FE7 /* CombatOrder.h */,
 				34972B580F49CB100015C864 /* OpenSteer */,
-				471D5C6B0A98A3F900DA9C21 /* Combat.cpp */,
-				471D5C6C0A98A3F900DA9C21 /* Combat.h */,
 				471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */,
 				471D5C6E0A98A3F900DA9C21 /* CombatSystem.h */,
 			);
