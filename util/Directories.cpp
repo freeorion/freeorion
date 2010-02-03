@@ -23,6 +23,7 @@ namespace {
 #include <iostream>
 #include <sys/param.h>
 #include <CoreFoundation/CoreFoundation.h>
+#include <mach-o/dyld.h>
 
 /* sets up the directories in the following way:
    localdir: ~/Library/FreeOrion
@@ -51,51 +52,35 @@ void InitDirs(const std::string& argv0)
     fs::path bundle_path;
     fs::path app_path;
 
-    CFBundleRef bundle =    CFBundleGetMainBundle();
+    CFBundleRef bundle = CFBundleGetMainBundle();
     char bundle_dir[MAXPATHLEN];
-    CFURLRef    bundleurl   =   CFBundleCopyBundleURL(bundle);
-    CFURLGetFileSystemRepresentation(bundleurl, true, reinterpret_cast<UInt8*>(bundle_dir), MAXPATHLEN);
-
-    bundle_path                =   fs::path(bundle_dir);
-    fs::path::iterator appiter =   std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
-    if (appiter == bundle_path.end()) { // uncomfortable case. search
-#ifndef FREEORION_BUILD_RELEASE
-        fs::directory_iterator dir_end;
-        // search for Resource directories && executables
-        bool foundexec = false,
-             foundresources = false;
-        for (fs::directory_iterator diter(bundle_path); diter != dir_end; ++diter) {
-            if ((*diter).filename() == "Executables")
-                foundexec = true;
-            else if ((*diter).filename() == "Resources")
-                foundresources = true;
-        }
-        // if nothing found. assume that we are in the Executables directory which may be the case during debugging
-        if (!(foundexec && foundresources)) {
-            // in this case we are either the server or the ai client
-            fs::path::iterator  appiter =   std::find(bundle_path.begin(), bundle_path.end(), "Executables");
-            if (appiter != bundle_path.end()) {
-                for (fs::path::iterator piter  = bundle_path.begin(); piter != appiter; ++piter)
-                    app_path /= *piter;
-
-                foundresources = foundexec = true;
-            }
-        }
-
-        if (!(foundexec && foundresources))
-#endif
-        {
-            std::cerr << "Error: Do not call executable from outside of the applications bundle!" << std::endl;
+    
+    if (bundle) {
+        CFURLRef bundleurl = CFBundleCopyBundleURL(bundle);
+        CFURLGetFileSystemRepresentation(bundleurl, true, reinterpret_cast<UInt8*>(bundle_dir), MAXPATHLEN);
+    } else {
+        // executable is not the main binary in application bundle (i.e. Server or AI)
+        uint32_t size = sizeof(bundle_dir);
+        if (_NSGetExecutablePath(bundle_dir, &size) != 0) {
+            std::cerr << "_NSGetExecutablePath() failed: buffer too small; need size " << size << std::endl;
             exit(-1);
         }
-        app_path = bundle_path;
+    }
+    
+    bundle_path = fs::path(bundle_dir);
+
+    // search bundle_path for a directory named "FreeOrion.app", exiting if not found, else constructing a path to application bundle contents
+    fs::path::iterator appiter =   std::find(bundle_path.begin(), bundle_path.end(), "FreeOrion.app");
+    if (appiter == bundle_path.end()) {
+        std::cerr << "Error: Application bundle must be named 'FreeOrion.app' and executables must not be called from outside of it." << std::endl;
+        exit(-1);
     } else {
         for (fs::path::iterator piter = bundle_path.begin(); piter != appiter; ++piter) {
             app_path /= *piter;
         }
         app_path /= "FreeOrion.app/Contents";
     }
-
+    
     s_root_data_dir =   app_path / "Resources";
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
