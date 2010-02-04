@@ -85,7 +85,7 @@ namespace {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.saves",            "OPTIONS_DB_AUTOSAVE_SAVES",            10,     RangedValidator<int>(1, 50));
+        //db.Add("autosave.saves",            "OPTIONS_DB_AUTOSAVE_SAVES",            10,     RangedValidator<int>(1, 50));
         db.Add("music-volume",              "OPTIONS_DB_MUSIC_VOLUME",              255,    RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -98,7 +98,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::Camera* camera,
                                Ogre::Viewport* viewport) :
     ClientApp(),
-    OgreGUI(window, (GetRootDataDir() / "OISInput.cfg").string()),
+    OgreGUI(window, (GetBinDir() / "OISInput.cfg").string()),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),

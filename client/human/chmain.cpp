@@ -170,7 +170,7 @@ int mainSetupAndRunOgre()
         log_manager = new LogManager();
         log_manager->createLog((GetUserDir() / "ogre.log").string(), true, false);
 
-        root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
+        root = new Root((GetBinDir() / "ogre_plugins.cfg").string());
 
 #if defined(OGRE_STATIC_LIB)
         cg_plugin = new Ogre::CgPlugin;

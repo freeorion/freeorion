@@ -134,6 +134,10 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
             GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
             std::vector<GG::Font::LineData> lines;
             GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
+            if (lines.empty()) {
+                Logger().errorStream() << "OwnerColoredSystemName got empty lines for name: \"" << wrapped_system_name << "\"";
+                return;
+            }
             unsigned int first_char_pos = 0;
             unsigned int last_char_pos = 0;
             GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end

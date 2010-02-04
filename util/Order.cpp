@@ -448,6 +448,8 @@ void FleetColonizeOrder::ServerExecute() const
     const std::vector<std::string>& parts = design->Parts();
     for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
         const std::string& part_name = *it;
+        if (part_name.empty())
+            continue;
         const PartType* part_type = GetPartType(part_name);
         if (!part_type) {
             Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship part type: " << part_name;

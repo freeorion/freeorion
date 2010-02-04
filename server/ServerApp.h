@@ -101,6 +101,9 @@ public:
       * will be freed when all processing is done for the turn */
     void                SetEmpireTurnOrders(int empire_id, OrderSet* order_set);
 
+    /** Sets all empire turn orders to an empty set. */
+    void                ClearEmpireTurnOrders();
+
     /** Determines if all empired have submitted their orders for this turn It
       * will loop the turn squence vector and check for a set order_set. A
       * order_set of 0 indicates that the empire has not yet submitted their

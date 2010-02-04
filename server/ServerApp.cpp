@@ -511,14 +511,25 @@ void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
     m_turn_sequence[empire_id] = order_set;
 }
 
+void ServerApp::ClearEmpireTurnOrders()
+{
+    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
+        if (it->second) {
+            delete it->second;
+            it->second = 0;
+        }
+    }
+}
+
 bool ServerApp::AllOrdersReceived()
 {
     Logger().debugStream() << "ServerApp::AllOrdersReceived()";
+
     // Loop through to find empire ID and check for valid orders pointer
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         if (!it->second)
             return false;
-    } 
+    }
     return true;
 }
 
@@ -833,10 +844,7 @@ void ServerApp::PreCombatProcessTurns()
 
 
     // clean up orders, which are no longer needed
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        delete it->second;
-    }
-    m_turn_sequence.clear();
+    ClearEmpireTurnOrders();
 
 
     // colonization apply be the following rules

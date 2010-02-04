@@ -612,11 +612,18 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
     ExtractMessageData(message, *order_set);
 
     // check order validity -- all orders must originate from this empire in order to be considered valid
-    Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
-    assert(empire);
+    int player_id = message.SendingPlayer();
+    Empire* empire = server.GetPlayerEmpire(player_id);
+    if (!empire) {
+        Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
+        return discard_event();
+    }
     for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
         OrderPtr order = it->second;
-        assert(order);
+        if (!order) {
+            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
+            continue;
+        }
         if (empire->EmpireID() != order->EmpireID()) {
             throw std::runtime_error(
                 "WaitingForTurnEnd.TurnOrders : Player \"" + empire->PlayerName() +
@@ -629,7 +636,7 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
 
     if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
 
-    server.SetEmpireTurnOrders(server.GetPlayerEmpire(message.SendingPlayer())->EmpireID(), order_set);
+    server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
 
     if (server.AllOrdersReceived()) {
         if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
