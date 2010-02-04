@@ -37,6 +37,11 @@ system_id(system_id_)
         return;
     }
 
+    // add copy of system to full / complete objects in combat
+    System* copy_system = system->Clone();
+    objects.Insert(system_id, copy_system);
+
+
     // find ships and their owners in system
     std::vector<int> ship_ids = system->FindObjectIDs<Ship>();
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
@@ -80,8 +85,16 @@ system_id(system_id_)
     // TODO: should buildings be considered separately?
 
     // now that all participants in the battle have been found, loop through
-    // ships and planets again to assemble each participant empire's latest
+    // objects again to assemble each participant empire's latest
     // known information about all objects in this battle
+
+    // system
+    for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+        int empire_id = *empire_it;
+        System* visibility_limited_copy = system->Clone(empire_id);
+        empire_known_objects[empire_id].Insert(system_id, visibility_limited_copy);
+    }
+    // ships
     for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
         int ship_id = *it;
         const Ship* ship = GetObject<Ship>(ship_id);
@@ -98,6 +111,7 @@ system_id(system_id_)
             }
         }
     }
+    // planets
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
         int planet_id = *it;
         const Planet* planet = GetObject<Planet>(planet_id);
@@ -257,55 +271,110 @@ void ResolveCombat(CombatInfo& combat_info) {
     int seed = first_object->ID() + CurrentTurn();
     Seed(seed);
 
-    std::vector<UniverseObject*> all_combat_objects = combat_info.objects.FindObjects<UniverseObject>();
-    SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_objects.size() - 1);  // to pick an object from the vector
+    std::vector<int> all_combat_object_IDs = combat_info.objects.FindObjectIDs<UniverseObject>();
+    SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object from the vector
 
 
-    const int NUM_COMBAT_ROUNDS = 100;
+    // map from empire to set of IDs of objects that empire's objects
+    // could target.  presently valid targets are objects not owned by
+    // the empire, that are not systems or fleets
+    std::map<int, std::vector<int> > empire_valid_targets;
+    for (std::vector<int>::const_iterator object_it = all_combat_object_IDs.begin(); object_it != all_combat_object_IDs.end(); ++object_it) {
+        int object_id = *object_it;
+        const UniverseObject* obj = combat_info.objects.Object(object_id);
+        if (universe_object_cast<const System*>(obj))
+            continue;
+        if (universe_object_cast<const Fleet*>(obj))
+            continue;
+
+        const std::set<int>& owners = obj->Owners();
+
+        for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin(); empire_it != combat_info.empire_ids.end(); ++empire_it) {
+            int empire_id = *empire_it;
+            if (owners.find(empire_id) == owners.end())
+                empire_valid_targets[empire_id].push_back(object_id);
+        }
+    }
+
+    // Each combat "round" a randomly-selected object in the battle attacks
+    // something, if it is able to do so.  The number of rounds scales with the
+    // number of objects, so the total actions per object is the same for
+    // battles, roughly independent of number of objects in the battle
+    const int NUM_COMBAT_ROUNDS = 20*all_combat_object_IDs.size();
+
     for (int round = 1; round <= NUM_COMBAT_ROUNDS; ++round) {
         Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
 
         // select attacking object in battle
         int attacker_index = object_num_dist();
+        int attacker_id = all_combat_object_IDs.at(attacker_index);
 
         // check if object is already destroyed.  if so, skip this round
-        if (combat_info.destroyed_object_ids.find(attacker_index) != combat_info.destroyed_object_ids.end())
+        if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end()) {
+            Logger().debugStream() << "skipping destroyed object as attack object";
             continue;
+        }
+
+        UniverseObject* attacker = combat_info.objects.Object(attacker_id);
+        if (!attacker) {
+            Logger().errorStream() << "ResolveCombat couldn't get object with id " << attacker_id;
+            continue;
+        }
+
+        // fleets and the system can't attack
+        if (universe_object_cast<const System*>(attacker)) {
+            Logger().debugStream() << "skipping system as attack object";
+            continue;
+        }
+        if (universe_object_cast<const Fleet*>(attacker)) {
+            Logger().debugStream() << "skipping fleet as attack object";
+            continue;
+        }
+        // TODO: skip buildings?
 
 
-        // TODO:: ensure target object is only selected from objects not owned by attacker object's owner
+        // select object from valid targets for this object's owner.  assuming
+        // this object has only one onwer.
+        const std::set<int>& owners = attacker->Owners();
+        if (owners.empty()) {
+            Logger().debugStream() << "skipping unowned attacker object: " << attacker->Name() << "(" << attacker->ID() << ")";
+            continue;
+        }
 
+        // get attacker owner id
+        int attacker_owner_id = *owners.begin();
+
+        // get valid targets set for attacker owner
+        std::map<int, std::vector<int> >::iterator target_vec_it = empire_valid_targets.find(attacker_owner_id);
+        if (target_vec_it == empire_valid_targets.end()) {
+            Logger().debugStream() << "couldn't find target set for owner with id: " << attacker_owner_id;
+            continue;
+        }
+        const std::vector<int>& valid_target_ids = target_vec_it->second;
+
+
+        Logger().debugStream() << "Attacker: " << attacker->Name() << "(" << attacker->ID() << ")";
+
+        SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object from the vector
 
         // select target object
-        int target_index = object_num_dist();
+        int target_index = target_id_num_dist();
+        int target_id = valid_target_ids.at(target_index);
 
         // check if object is already destroyed.  if so, skip this round
-        if (combat_info.destroyed_object_ids.find(target_index) != combat_info.destroyed_object_ids.end())
-            continue;
-
-        // get objects
-        UniverseObject* attacker = 0;
-        UniverseObject* target = 0;
-        try {
-            attacker = all_combat_objects.at(attacker_index);
-            target = all_combat_objects.at(target_index);
-        } catch (std::out_of_range) {
-            Logger().errorStream() << "tried to get out of range combat object?! index " << attacker_index << " or " << target_index;
+        if (combat_info.destroyed_object_ids.find(target_id) != combat_info.destroyed_object_ids.end()) {
+            Logger().debugStream() << "skipping already destroyed object with id " << target_id;
             continue;
         }
 
-        // check ownership... avoid friendly fire.  Can be removed if above TODO re: ownership is fixed
-        const std::set<int>& attacker_owners = attacker->Owners();
-        const std::set<int>& target_owners = target->Owners();
-        bool abort = false;
-        for (std::set<int>::const_iterator it = attacker_owners.begin(); it != attacker_owners.end(); ++it) {
-            if (target_owners.find(*it) != target_owners.end()) {
-                abort = true;
-                break;
-            }
+
+        UniverseObject* target = combat_info.objects.Object(target_id);
+        if (!target) {
+            Logger().errorStream() << "ResolveCombat couldn't get object with id " << target_id;
+            continue;
         }
-        if (abort)
-            continue;   // attacker and target had one of the same owners.  skip this combination to avoid friendly fire.
+
+        Logger().debugStream() << "Target: " << target->Name() << "(" << target->ID() << ")";
 
         // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
@@ -325,8 +394,6 @@ void ResolveCombat(CombatInfo& combat_info) {
 
         // check for destruction
         if (target->GetMeter(METER_HEALTH)->Current() <= 0.0) {
-            int target_id = target->ID();
-
             // object id destroyed
             combat_info.destroyed_object_ids.insert(target_id);
             // all empires in battle know object was destroyed
