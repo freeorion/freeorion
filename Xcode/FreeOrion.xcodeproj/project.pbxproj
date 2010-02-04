@@ -18,7 +18,7 @@
 		3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */; };
 		3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */; };
 		3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */; };
-		3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
+		3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
 		3402E2690F5A31B700DF6FE7 /* default in Resources */ = {isa = PBXBuildFile; fileRef = 479036420B04CA23001FEF7B /* default */; };
 		3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */ = {isa = PBXBuildFile; fileRef = 471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */; };
 		3402E5360F5A339900DF6FE7 /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */; };
@@ -39,8 +39,8 @@
 		3402EB6F0F5A348B00DF6FE7 /* libBulletCollision.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C410F4A002F0015C864 /* libBulletCollision.dylib */; };
 		3402EB700F5A348B00DF6FE7 /* libBulletDynamics.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C420F4A002F0015C864 /* libBulletDynamics.dylib */; };
 		3402EB710F5A348B00DF6FE7 /* libLinearMath.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34972C430F4A002F0015C864 /* libLinearMath.dylib */; };
-		3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server & AI */ = {isa = PBXBuildFile; fileRef = 471D5D440A98A46000DA9C21 /* freeoriond */; };
-		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server & AI */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
+		3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471D5D440A98A46000DA9C21 /* freeoriond */; };
+		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
 		3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 3402F0FE0F5A36A400DF6FE7 /* Cg.framework */; };
 		340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D14AA0F6483700026044A /* libpython2.5.a */; };
 		3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */; };
@@ -71,7 +71,7 @@
 		34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34972C430F4A002F0015C864 /* libLinearMath.dylib */; };
 		34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */; };
-		34ACA00E0FFED9A100500F40 /* OISInput.cfg in Resources */ = {isa = PBXBuildFile; fileRef = 471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */; };
+		34ACA00E0FFED9A100500F40 /* OISInput.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */; };
 		34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA37F0FFFAB4900500F40 /* AppKit.framework */; };
 		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
 		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
@@ -443,16 +443,18 @@
 			name = "Copy Shared Libraries";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		3402EB750F5A34FC00DF6FE7 /* Copy Server & AI */ = {
+		3402EB750F5A34FC00DF6FE7 /* Copy Server, AI, Config */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}/Contents/Executables";
 			dstSubfolderSpec = 0;
 			files = (
-				3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server & AI */,
-				3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server & AI */,
+				34ACA00E0FFED9A100500F40 /* OISInput.cfg in Copy Server, AI, Config */,
+				3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Copy Server, AI, Config */,
+				3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server, AI, Config */,
+				3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */,
 			);
-			name = "Copy Server & AI";
+			name = "Copy Server, AI, Config";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -3142,7 +3144,7 @@
 				3402E3DA0F5A31FA00DF6FE7 /* Copy Frameworks */,
 				3402E53C0F5A33E300DF6FE7 /* Copy Client */,
 				3402EB620F5A345D00DF6FE7 /* Copy Shared Libraries */,
-				3402EB750F5A34FC00DF6FE7 /* Copy Server & AI */,
+				3402EB750F5A34FC00DF6FE7 /* Copy Server, AI, Config */,
 			);
 			buildRules = (
 			);
@@ -3303,8 +3305,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				34ACA00E0FFED9A100500F40 /* OISInput.cfg in Resources */,
-				3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				3402E2690F5A31B700DF6FE7 /* default in Resources */,
 				34ACA40D0FFFABE600500F40 /* main.xib in Resources */,
