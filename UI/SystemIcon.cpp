@@ -131,27 +131,46 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
             AttachChild(m_subcontrols.back());
             width += m_subcontrols.back()->Width();
         } else {
-            GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-            std::vector<GG::Font::LineData> lines;
-            GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
-            if (lines.empty()) {
-                Logger().errorStream() << "OwnerColoredSystemName got empty lines for name: \"" << wrapped_system_name << "\"";
-                return;
-            }
-            unsigned int first_char_pos = 0;
-            unsigned int last_char_pos = 0;
-            GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
-            int owner_idx = 1;
-            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-                while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
-                    ++last_char_pos;
-                }
-                m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
-                                                            font, Empires().Lookup(*it)->Color()));
-                AttachChild(m_subcontrols.back());
-                first_char_pos = last_char_pos;
-                width += m_subcontrols.back()->Width();
-            }
+            // alternative backup code for system name colour:  when more than
+            // one empire owns system, use unowned system name colour
+            GG::Clr text_color = ClientUI::SystemNameTextColor();
+            GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
+            m_subcontrols.push_back(text);
+            AttachChild(m_subcontrols.back());
+            width += m_subcontrols.back()->Width();
+
+            // the following is commented out because it doesn't interact well
+            // with formatting tags surrounding systen name text.  I think the
+            // problem arises when text like "<u>Aegir</u>" is the system name
+            // as in this case, the number of displayed characters is different
+            // from the number of actual characters in the raw name text.  This
+            // might be causing problems with the last_char_pos < wrapped_system_name.size
+            // check, as the last_char_pos counts starting at the A character
+            // and should only range from 0 to 4, but the raw system name text
+            // is 12 characters long with the formatting tags, leading out out
+            // of array bounds errors.
+
+            //GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
+            //std::vector<GG::Font::LineData> lines;
+            //GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
+            //if (lines.empty()) {
+            //    Logger().errorStream() << "OwnerColoredSystemName got empty lines for name: \"" << wrapped_system_name << "\"";
+            //    return;
+            //}
+            //unsigned int first_char_pos = 0;
+            //unsigned int last_char_pos = 0;
+            //GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
+            //int owner_idx = 1;
+            //for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
+            //    while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
+            //        ++last_char_pos;
+            //    }
+            //    m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
+            //                                                font, Empires().Lookup(*it)->Color()));
+            //    AttachChild(m_subcontrols.back());
+            //    first_char_pos = last_char_pos;
+            //    width += m_subcontrols.back()->Width();
+            //}
         }
         Resize(GG::Pt(width, m_subcontrols[0]->Height()));
     }
