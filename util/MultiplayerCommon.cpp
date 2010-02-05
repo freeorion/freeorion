@@ -193,10 +193,9 @@ const std::string& Language()
     return GetStringTable().Language();
 }
 
-const std::string& SinglePlayerName()
+std::string SinglePlayerName()
 {
-    static const std::string RETVAL("Happy_Player");
-    return RETVAL;
+    return GetOptionsDB().Get<std::string>("GameSetup.player-name");
 }
 
 #ifndef FREEORION_WIN32

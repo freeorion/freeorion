@@ -44,8 +44,8 @@ std::string RomanNumber(unsigned int n);
 /** Returns the language of the StringTable currently in use */
 const std::string& Language();
 
-/** Returns the canonical name of the only human player in a single player game. */
-const std::string& SinglePlayerName();
+/** Returns the name of the human player in a single player game. */
+std::string SinglePlayerName();
 
 #ifndef FREEORION_WIN32
 /** Puts the calling thread to sleep for \a ms milliseconds. */

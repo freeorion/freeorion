@@ -21,22 +21,23 @@ namespace {
     const GG::Y PANEL_CONTROL_SPACING(33);
     const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 6);
     const GG::X GAL_SETUP_WND_WD(645);
-    const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 4) + GAL_SETUP_PANEL_HT);
+    const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 5) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
     const int MAX_AI_PLAYERS = 12;
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",               60,                                 RangedValidator<int>(10, 500));
-        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",        SPIRAL_3,                           RangedValidator<Shape>(SPIRAL_2, RING));
-        db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",          AGE_MATURE,                         RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
-        db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",      PD_AVERAGE,                         RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
-        db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",  LANES_MANY,                         RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
-        db.Add("GameSetup.specials-frequency",  "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY",  SPECIALS_COMMON,                    RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
-        db.Add("GameSetup.empire-name",         "OPTIONS_DB_GAMESETUP_EMPIRE_NAME",         std::string("Human Empire")/*UserString("DEFAULT_EMPIRE_NAME")*/,  Validator<std::string>());
-        db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",        0,                                  RangedValidator<int>(0, 100));
-        db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",      3,                                  RangedValidator<int>(0, MAX_AI_PLAYERS));
+        db.Add("GameSetup.stars",               "OPTIONS_DB_GAMESETUP_STARS",               60,                 RangedValidator<int>(10, 500));
+        db.Add("GameSetup.galaxy-shape",        "OPTIONS_DB_GAMESETUP_GALAXY_SHAPE",        SPIRAL_3,           RangedValidator<Shape>(SPIRAL_2, RING));
+        db.Add("GameSetup.galaxy-age",          "OPTIONS_DB_GAMESETUP_GALAXY_AGE",          AGE_MATURE,         RangedValidator<Age>(AGE_YOUNG, AGE_ANCIENT));
+        db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",      PD_AVERAGE,         RangedValidator<PlanetDensity>(PD_LOW, PD_HIGH));
+        db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",  LANES_MANY,         RangedValidator<StarlaneFrequency>(ALLOW_NO_STARLANES ? LANES_NONE : LANES_FEW, LANES_VERY_MANY));
+        db.Add("GameSetup.specials-frequency",  "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY",  SPECIALS_COMMON,    RangedValidator<SpecialsFrequency>(SPECIALS_NONE, SPECIALS_COMMON));
+        db.Add("GameSetup.empire-name",         "OPTIONS_DB_GAMESETUP_EMPIRE_NAME",         std::string(""),    Validator<std::string>());
+        db.Add("GameSetup.player-name",         "OPTIONS_DB_GAMESETUP_PLAYER_NAME",         std::string(""),    Validator<std::string>());
+        db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",        0,                  RangedValidator<int>(0, 100));
+        db.Add("GameSetup.ai-players",          "OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS",      3,                  RangedValidator<int>(0, MAX_AI_PLAYERS));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -296,6 +297,8 @@ GalaxySetupWnd::GalaxySetupWnd() :
            GG::INTERACTIVE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),
+    m_player_name_label(0),
+    m_player_name_edit(0),
     m_empire_name_label(0),
     m_empire_name_edit(0),
     m_empire_color_label(0),
@@ -315,12 +318,28 @@ GalaxySetupWnd::GalaxySetupWnd() :
 
     const GG::X LABELS_WIDTH = (GalaxySetupPanel::DEFAULT_WIDTH - 5) / 2;
 
-    // empire name
     ypos = m_galaxy_setup_panel->LowerRight().y;
+
+    // player name
+    m_player_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLAYER_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
+    std::string player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
+    if (player_name.empty())
+        player_name = UserString("DEFAULT_PLAYER_NAME");
+    m_player_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, player_name);
+    m_player_name_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_player_name_label->Height()) / 2));
+    m_player_name_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_player_name_edit->Height()) / 2));
+
+    // empire name
+    ypos += PANEL_CONTROL_SPACING;
     m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
+    std::string empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+    if (empire_name.empty())
+        empire_name = UserString("DEFAULT_EMPIRE_NAME");
+    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, empire_name);
     m_empire_name_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
@@ -393,6 +412,7 @@ void GalaxySetupWnd::Init()
     AttachSignalChildren();
 
     GG::Connect(m_galaxy_setup_panel->ImageChangedSignal, &GalaxySetupWnd::PreviewImageChanged, this);
+    GG::Connect(m_player_name_edit->EditedSignal, &GalaxySetupWnd::PlayerNameChanged, this);
     GG::Connect(m_empire_name_edit->EditedSignal, &GalaxySetupWnd::EmpireNameChanged, this);
     GG::Connect(m_ok->ClickedSignal, &GalaxySetupWnd::OkClicked, this);
     GG::Connect(m_cancel->ClickedSignal, &GalaxySetupWnd::CancelClicked, this);
@@ -403,6 +423,8 @@ void GalaxySetupWnd::Init()
 void GalaxySetupWnd::AttachSignalChildren()
 {
     AttachChild(m_galaxy_setup_panel);
+    AttachChild(m_player_name_label);
+    AttachChild(m_player_name_edit);
     AttachChild(m_empire_name_label);
     AttachChild(m_empire_name_edit);
     AttachChild(m_empire_color_label);
@@ -417,6 +439,8 @@ void GalaxySetupWnd::AttachSignalChildren()
 void GalaxySetupWnd::DetachSignalChildren()
 {
     DetachChild(m_galaxy_setup_panel);
+    DetachChild(m_player_name_label);
+    DetachChild(m_player_name_edit);
     DetachChild(m_empire_name_label);
     DetachChild(m_empire_name_edit);
     DetachChild(m_empire_color_label);
@@ -443,6 +467,11 @@ void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
     m_ok->Disable(name.empty());
 }
 
+void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
+{
+    m_ok->Disable(name.empty());
+}
+
 void GalaxySetupWnd::OkClicked()
 {
     // record selected galaxy setup options as new defaults
@@ -452,6 +481,7 @@ void GalaxySetupWnd::OkClicked()
     GetOptionsDB().Set("GameSetup.starlane-frequency",  m_galaxy_setup_panel->GetStarlaneFrequency());
     GetOptionsDB().Set("GameSetup.planet-density",      m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
+    GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
     GetOptionsDB().Set("GameSetup.ai-players",          m_number_ais_spin->Value());

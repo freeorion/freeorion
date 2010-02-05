@@ -33,8 +33,8 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("multiplayersetup.player-name",  "OPTIONS_DB_MP_PLAYER_NAME",    std::string("Human_Player")/*UserString("DEFAULT_PLAYER_NAME")*/,  Validator<std::string>());
-        db.Add("multiplayersetup.host-address", "OPTIONS_DB_MP_HOST_ADDRESS",   std::string("localhost"),           Validator<std::string>());
+        db.Add("multiplayersetup.player-name",  "OPTIONS_DB_MP_PLAYER_NAME",    std::string(""),            Validator<std::string>());
+        db.Add("multiplayersetup.host-address", "OPTIONS_DB_MP_HOST_ADDRESS",   std::string("localhost"),   Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -57,7 +57,10 @@ ServerConnectWnd::ServerConnectWnd() :
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::TextControl* player_name_label = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("PLAYER_NAME_LABEL"), font, ClientUI::TextColor(), GG::FORMAT_LEFT);
-    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>("multiplayersetup.player-name"));
+    std::string player_name = GetOptionsDB().Get<std::string>("multiplayersetup.player-name");
+    if (player_name.empty())
+        player_name = UserString("DEFAULT_PLAYER_NAME");
+    m_player_name_edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, player_name);
     m_host_or_join_radio_group = new GG::RadioButtonGroup(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::VERTICAL);
     m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("HOST_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));
     m_host_or_join_radio_group->AddButton(new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("JOIN_GAME_BN"), GG::FORMAT_LEFT, GG::SBSTYLE_3D_RADIO));

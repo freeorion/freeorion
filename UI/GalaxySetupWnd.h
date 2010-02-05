@@ -116,12 +116,15 @@ private:
     void DetachSignalChildren();
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void EmpireNameChanged(const std::string& name);
+    void PlayerNameChanged(const std::string& name);
     void OkClicked();
     void CancelClicked();
 
     bool m_ended_with_ok;    //!< indicates whether or not we ended the dialog with OK or not
 
     GalaxySetupPanel*     m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
+    GG::TextControl*      m_player_name_label;
+    CUIEdit*              m_player_name_edit;
     GG::TextControl*      m_empire_name_label;
     CUIEdit*              m_empire_name_edit;
     GG::TextControl*      m_empire_color_label;

@@ -91,12 +91,6 @@ Bomber
 INTERCEPTOR
 Interceptor
 
-SHIP
-Ship
-
-FLEET
-Fleet
-
 DEFAULT_EMPIRE_NAME
 Terran Imperium
 
@@ -543,6 +537,9 @@ The frequency of specials appearing in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 The name used in the game for your empire.
 
+OPTIONS_DB_GAMESETUP_PLAYER_NAME
+The name used in the game to represent the player.
+
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 The color used in the game for your empire.
 
@@ -788,6 +785,9 @@ Galaxy Setup
 #Strings
 GSETUP_GRAPHICS_FILES
 Graphics Files
+
+GSETUP_PLAYER_NAME
+Player Name
 
 GSETUP_EMPIRE_NAME
 Empire Name
