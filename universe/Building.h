@@ -25,8 +25,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** returns the BuildingType object for this building, specific to the owning empire (or the default version if there
-        is other than exactly one owner) */
+    virtual const std::string&
+                            TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+
+    /** returns the BuildingType object for this building, specific to the
+      * owning empire (or the default version if there is other than exactly
+      * one owner) */
     const BuildingType*     GetBuildingType() const;
 
     const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
@@ -59,8 +63,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** A specification for a building of a certain type.  Each building type must have a \a unique name string, 
-    by which it can be looked up using GetBuildingType(). */
+/** A specification for a building of a certain type.  Each building type must
+  * have a \a unique name string, by which it can be looked up using
+  * GetBuildingType(). */
 class BuildingType
 {
 public:
@@ -131,7 +136,8 @@ public:
     /** iterator to the last + 1th building type */
     iterator                    end() const;
 
-    /** returns the instance of this singleton class; you should use the free function GetBuildingTypeManager() instead */
+    /** returns the instance of this singleton class; you should use the free
+      * function GetBuildingTypeManager() instead */
     static BuildingTypeManager& GetBuildingTypeManager();
     //@}
 

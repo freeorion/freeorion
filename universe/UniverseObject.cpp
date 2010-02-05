@@ -163,6 +163,11 @@ const std::set<std::string>& UniverseObject::Specials() const
     return m_specials;
 }
 
+const std::string& UniverseObject::TypeName() const
+{
+    return UserString("UNIVERSEOBJECT");
+}
+
 std::vector<int> UniverseObject::FindObjectIDs() const
 {
     return std::vector<int>();

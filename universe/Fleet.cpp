@@ -128,6 +128,11 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
     }
 }
 
+const std::string& Fleet::TypeName() const
+{
+    return UserString("FLEET");
+}
+
 Fleet::const_iterator Fleet::begin() const
 {
     return m_ships.begin();

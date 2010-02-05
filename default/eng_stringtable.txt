@@ -103,6 +103,24 @@ Terran Imperium
 DEFAULT_PLAYER_NAME
 Human_Player
 
+UNIVERSEOBJECT
+Generic Object
+
+SYSTEM
+System
+
+FLEET
+Fleet
+
+SHIP
+Ship
+
+PLANET
+Planet
+
+BUILDING
+Building
+
 ###########################
 # Predefined Ship Designs #
 ###########################

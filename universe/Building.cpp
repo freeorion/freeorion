@@ -107,6 +107,11 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id)
     }
 }
 
+const std::string& Building::TypeName() const
+{
+    return UserString("BUILDING");
+}
+
 const BuildingType* Building::GetBuildingType() const
 {
     return ::GetBuildingType(m_building_type);

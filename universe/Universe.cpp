@@ -35,23 +35,6 @@
 #include <cmath>
 #include <stdexcept>
 
-/* temp */
-namespace {
-    std::string GetTypeName(const UniverseObject* obj) {
-        if (universe_object_cast<const Fleet*>(obj))
-            return "Fleet";
-        if (universe_object_cast<const Ship*>(obj))
-            return "Ship";
-        if (universe_object_cast<const Planet*>(obj))
-            return "Planet";
-        if (universe_object_cast<const System*>(obj))
-            return "System";
-        if (universe_object_cast<const Building*>(obj))
-            return "Building";
-        return "UniverseObject";
-    }
-}
-
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 }
@@ -513,7 +496,7 @@ void ObjectMap::Dump() const
         const System* system = Object<System>(obj->SystemID());
 
         Logger().debugStream() << obj->ID() << ": "
-                               << GetTypeName(obj) << "  "
+                               << obj->TypeName() << "  "
                                << obj->Name()
                                << (system ? ("  at: " + system->Name()) : "");
 
@@ -2009,7 +1992,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
                     double x_dist = system2->X() - system1->X();
                     double y_dist = system2->Y() - system1->Y();
                     edge_weight_map[add_edge_result.first] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
-                    std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
+                    //std::cout << "edge_weight_map " << system1_id << " to " << lane_dest_id << ": " << edge_weight_map[add_edge_result.first] << std::endl;
                 }
             }
         }
@@ -2195,17 +2178,17 @@ void Universe::GetEmpireKnownObjectsToSerialize(EmpireObjectMap& empire_latest_k
 
         //Logger().debugStream() << "empire " << encoding_empire << " latest known map initial: ";
         //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
-        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
+        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
 
         empire_latest_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
 
         //Logger().debugStream() << "empire " << encoding_empire << " latest known map after copying: ";
         //for (ObjectMap::const_iterator oit = map.const_begin(); oit != map.const_end(); ++oit)
-        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
+        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
 
         //Logger().debugStream() << "empire_latest_known_objects[" << encoding_empire << "] after copying: ";
         //for (ObjectMap::const_iterator oit = empire_latest_known_objects[encoding_empire].const_begin(); oit != empire_latest_known_objects[encoding_empire].const_end(); ++oit)
-        //    Logger().debugStream() << GetTypeName(oit->second) << "(" << oit->second->ID() << ")";
+        //    Logger().debugStream() << oit->second->TypeName() << "(" << oit->second->ID() << ")";
     }
 }
 

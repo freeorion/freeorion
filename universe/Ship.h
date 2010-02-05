@@ -25,6 +25,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
+
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const;   ///< returns the design id of the ship
     int                         FleetID() const;    ///< returns the ID of the fleet the ship is residing in

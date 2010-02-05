@@ -28,7 +28,6 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/Building.h"   // TEMP: For GetTypeName
 #include "../Empire/Empire.h"
 #include "../network/Message.h"
 #include "../client/human/HumanClientApp.h"
@@ -204,21 +203,6 @@ namespace {
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
     double move_line_animation_shift = 0.0;    // in pixels
-
-    /* temp */
-    std::string GetTypeName(const UniverseObject* obj) {
-        if (universe_object_cast<const Fleet*>(obj))
-            return "Fleet";
-        if (universe_object_cast<const Ship*>(obj))
-            return "Ship";
-        if (universe_object_cast<const Planet*>(obj))
-            return "Planet";
-        if (universe_object_cast<const System*>(obj))
-            return "System";
-        if (universe_object_cast<const Building*>(obj))
-            return "Building";
-        return "UniverseObject";
-    }
 
     GG::X WndLeft(const GG::Wnd* wnd) { return wnd ? wnd->UpperLeft().x : GG::X0; }
     GG::X WndRight(const GG::Wnd* wnd) { return wnd ? wnd->LowerRight().x : GG::X0; }
@@ -954,7 +938,7 @@ void MapWnd::InitTurn(int turn_number)
     std::cout << "Visible UniverseObjects: " << std::endl;
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         const UniverseObject* obj = it->second;
-        std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
+        std::cout << obj->ID() << ": " << obj->TypeName() << "  " << obj->Name();
 
         if (const System* system = objects.Object<System>(obj->SystemID()))
             std::cout << "  at: " << system->Name();
@@ -977,7 +961,7 @@ void MapWnd::InitTurn(int turn_number)
     std::cout << "Latest Known UniverseObjects: " << std::endl;
     for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
         const UniverseObject* obj = it->second;
-        std::cout << obj->ID() << ": " << GetTypeName(obj) << "  " << obj->Name();
+        std::cout << obj->ID() << ": " << obj->TypeName() << "  " << obj->Name();
 
         if (const System* system = known_objects.Object<System>(obj->SystemID()))
             std::cout << "  at: " << system->Name();

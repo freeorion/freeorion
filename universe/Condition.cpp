@@ -29,20 +29,6 @@ namespace {
         }
         return retval;
     }
-
-    std::string GetTypeName(const UniverseObject* obj) {
-        if (universe_object_cast<const Fleet*>(obj))
-            return "Fleet";
-        if (universe_object_cast<const Ship*>(obj))
-            return "Ship";
-        if (universe_object_cast<const Planet*>(obj))
-            return "Planet";
-        if (universe_object_cast<const System*>(obj))
-            return "System";
-        if (universe_object_cast<const Building*>(obj))
-            return "Building";
-        return "UniverseObject";
-    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -1445,7 +1431,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
     //std::cout << "WithinDistance::Eval: objects meeting operand condition: " << m_condition->Dump() << std::endl;
     //for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it)
-    //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+    //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
     //std::cout << std::endl;
 
 
@@ -1786,12 +1772,12 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 {
         //std::cout << "And::Eval: input targets:" << std::endl;
         //for (ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
-        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
         //std::cout << "And::Eval: input non_targets:" << std::endl;
         //for (ObjectSet::const_iterator it = non_targets.begin(); it != non_targets.end(); ++it)
-        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
     if (search_domain == NON_TARGETS) {
@@ -1803,7 +1789,7 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 
         //std::cout << "And::Eval: non_target input objects meeting first condition: " << m_operands[0]->Dump() << std::endl;
         //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
-        //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+        //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
         // move items that don't pass one of the other conditions back to non_targets
@@ -1813,7 +1799,7 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 
             //std::cout << "And::Eval: non_target input objects also meeting " << i + 1 <<"th condition: " << m_operands[i]->Dump() << std::endl;
             //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
-            //    std::cout << "... " << GetTypeName(*it) << " " << (*it)->Name() << std::endl;
+            //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
             //std::cout << std::endl;
         }
 

@@ -75,8 +75,10 @@ public:
     const std::set<std::string>&
                             Specials() const;                   ///< returns the set of names of the Specials attached to this object
 
-    virtual std::vector<int>
-                            FindObjectIDs() const;              ///< returns ids of objects contained within this object
+    virtual const std::string&
+                            TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+
+    virtual std::vector<int>FindObjectIDs() const;              ///< returns ids of objects contained within this object
 
     virtual bool            Contains(int object_id) const;                  ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
     virtual bool            ContainedBy(int object_id) const;               ///< returns true if there is an object with id \a object_id that contains this UniverseObject

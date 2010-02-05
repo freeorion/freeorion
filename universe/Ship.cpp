@@ -116,6 +116,11 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
     }
 }
 
+const std::string& Ship::TypeName() const
+{
+    return UserString("SHIP");
+}
+
 const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);
 }

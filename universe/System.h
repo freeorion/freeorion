@@ -59,6 +59,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual const std::string&
+                            TypeName() const;                           ///< returns user-readable string indicating the type of UniverseObject this is
+
     StarType                GetStarType() const;                        ///< returns the type of star for this system
     int                     Orbits() const;                             ///< returns the number of orbits in this system
 

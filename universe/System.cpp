@@ -120,6 +120,11 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
     }
 }
 
+const std::string& System::TypeName() const
+{
+    return UserString("SYSTEM");
+}
+
 StarType System::GetStarType() const
 {
     return m_star;

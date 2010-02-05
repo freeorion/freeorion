@@ -170,6 +170,11 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
     }
 }
 
+const std::string& Planet::TypeName() const
+{
+    return UserString("PLANET");
+}
+
 void Planet::Init() {
     InsertMeter(METER_SUPPLY, Meter());
     InsertMeter(METER_SHIELD, Meter());
