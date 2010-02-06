@@ -399,6 +399,14 @@ std::vector<int> ObjectMap::FindObjectIDs(const UniverseObjectVisitor& visitor) 
     return retval;
 }
 
+std::vector<int> ObjectMap::FindObjectIDs() const
+{
+    std::vector<int> retval;
+    for (const_iterator it = m_const_objects.begin(); it != m_const_objects.end(); ++it)
+        retval.push_back(it->first);
+    return retval;
+}
+
 ObjectMap::iterator ObjectMap::begin()
 {
     return m_objects.begin();
@@ -1207,7 +1215,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
     targets_causes_map.clear();
 
-    std::vector<int> all_objects = m_objects.FindObjectIDs<UniverseObject>();
+    std::vector<int> all_objects = m_objects.FindObjectIDs();
     GetEffectsAndTargets(targets_causes_map, all_objects);
 }
 

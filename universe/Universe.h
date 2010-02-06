@@ -104,6 +104,9 @@ public:
     template <class T>
     std::vector<int>                    FindObjectIDs() const;
 
+    /** Returns the IDs of all objects in this ObjectMap */
+    std::vector<int>                    FindObjectIDs() const;
+
     /** iterators */
     iterator                            begin();
     iterator                            end();

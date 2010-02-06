@@ -1001,12 +1001,24 @@ void MapWnd::InitTurn(int turn_number)
 
     boost::timer timer;
     const std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
-    // get ids of systems known to this empire.
+    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire->EmpireID());
+
+    // get ids of not-destroyed systems known to this empire.
     std::set<int> this_client_known_systems;
     std::vector<int> all_system_ids = known_objects.FindObjectIDs<System>();
-    std::copy(all_system_ids.begin(), all_system_ids.end(), std::inserter(this_client_known_systems, this_client_known_systems.end()));
+    for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it)
+        if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
+            this_client_known_systems.insert(*it);
 
-    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
+    // get ids of all not-destroyed objects known to this empire.
+    std::set<int> this_client_known_objects;
+    std::vector<int> all_object_ids = known_objects.FindObjectIDs();
+    for (std::vector<int>::const_iterator it = all_object_ids.begin(); it != all_object_ids.end(); ++it)
+        if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
+            this_client_known_objects.insert(*it);
+
+    Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems and visible objects time: " << (timer.elapsed() * 1000.0);
+
 
 
     timer.restart();
@@ -1019,7 +1031,7 @@ void MapWnd::InitTurn(int turn_number)
         // doesn't know what systems the other player has actually explored
         empire2->UpdateSupplyUnobstructedSystems(this_client_known_systems);
 
-        empire2->UpdateSystemSupplyRanges();
+        empire2->UpdateSystemSupplyRanges(this_client_known_objects);
 
         // similarly, use this client's player's known starlanes to propegate all empires' supply
         empire2->UpdateFleetSupply(this_client_known_starlanes);

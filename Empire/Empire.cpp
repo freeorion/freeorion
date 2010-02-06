@@ -1290,7 +1290,7 @@ void Empire::EliminationCleanup()
     m_supply_unobstructed_systems.clear();
 }
 
-void Empire::UpdateSystemSupplyRanges()
+void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects)
 {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_fleet_supply_system_ranges.clear();
@@ -1300,7 +1300,13 @@ void Empire::UpdateSystemSupplyRanges()
 
     // as of this writing, only planets can distribute supplies to fleets or other planets.  If other objects
     // get the ability to distribute supplies, this should be expanded to them as well
-    std::vector<const UniverseObject*> owned_planets = objects.FindObjects(OwnedVisitor<Planet>(m_id));
+    std::vector<const UniverseObject*> owned_planets;
+    for (std::set<int>::const_iterator it = known_objects.begin(); it != known_objects.end(); ++it) {
+        if (const Planet* planet = objects.Object<Planet>(*it))
+            if (planet->OwnedBy(this->EmpireID()))
+                owned_planets.push_back(planet);
+    }
+
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
     for (std::vector<const UniverseObject*>::const_iterator it = owned_planets.begin(); it != owned_planets.end(); ++it) {
         const UniverseObject* obj = *it;
@@ -1339,14 +1345,38 @@ void Empire::UpdateSystemSupplyRanges()
     }
 }
 
+void Empire::UpdateSystemSupplyRanges()
+{
+    const Universe& universe = GetUniverse();
+    const ObjectMap& empire_known_objects = universe.EmpireKnownObjects(this->EmpireID());
+
+    // get ids of objects partially or better visible to this empire.
+    std::vector<int> known_objects_vec = empire_known_objects.FindObjectIDs();
+    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+
+    std::set<int> known_objects_set;
+
+    // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
+    for (std::vector<int>::const_iterator it = known_objects_vec.begin(); it != known_objects_vec.end(); ++it)
+        if (known_destroyed_objects.find(*it) == known_destroyed_objects.end())
+            known_objects_set.insert(*it);
+    UpdateSystemSupplyRanges(known_objects_set);
+}
+
 void Empire::UpdateSupplyUnobstructedSystems() {
     Universe& universe = GetUniverse();
 
     // get ids of systems partially or better visible to this empire.
     // TODO: make a UniverseObjectVisitor for objects visible to an empire at a specified visibility or greater
     std::vector<int> known_systems_vec = universe.EmpireKnownObjects(this->EmpireID()).FindObjectIDs<System>();
+    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+
     std::set<int> known_systems_set;
-    std::copy(known_systems_vec.begin(), known_systems_vec.end(), std::inserter(known_systems_set, known_systems_set.end()));
+
+    // exclude systems known to have been destroyed (or rather, include ones that aren't known to be destroyed)
+    for (std::vector<int>::const_iterator it = known_systems_vec.begin(); it != known_systems_vec.end(); ++it)
+        if (known_destroyed_objects.find(*it) == known_destroyed_objects.end())
+            known_systems_set.insert(*it);
     UpdateSupplyUnobstructedSystems(known_systems_set);
 }
 
@@ -1786,14 +1816,23 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const
     // compile starlanes leading into or out of each system
     std::map<int, std::set<int> > retval;
 
-    std::vector<const System*> systems = GetUniverse().EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
+    const Universe& universe = GetUniverse();
+
+    const std::set<int>& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this->EmpireID());
+    std::vector<const System*> systems = universe.EmpireKnownObjects(this->EmpireID()).FindObjects<const System>();
+
     for (std::vector<const System*>::const_iterator it = systems.begin(); it != systems.end(); ++it) {
         const System* system = *it;
         int start_id = system->ID();
+
+        // exclude lanes starting at systems known to be destroyed
+        if (known_destroyed_objects.find(start_id) != known_destroyed_objects.end())
+            continue;
+
         System::StarlaneMap lanes = system->StarlanesWormholes();
         for (System::StarlaneMap::const_iterator lane_it = lanes.begin(); lane_it != lanes.end(); ++lane_it) {
-            if (lane_it->second)
-                continue;   // is a wormhole, not a starlane
+            if (lane_it->second || known_destroyed_objects.find(lane_it->second) != known_destroyed_objects.end())
+                continue;   // is a wormhole, not a starlane, or is connected to a known destroyed system
             int end_id = lane_it->first;
             retval[start_id].insert(end_id);
             retval[end_id].insert(start_id);

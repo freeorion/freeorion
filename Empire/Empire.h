@@ -423,6 +423,7 @@ public:
     void                    RemoveHullType(const std::string& name);        ///< Removes the given HullType from the empire's list
     void                    RemoveShipDesign(int ship_design_id);           ///< Removes the ShipDesign with the given id from the empire's set
 
+    void                    UpdateSystemSupplyRanges(const std::set<int>& known_objects);           ///< Calculates ranges that systems can send fleet and resource supplies, using the specified st of \a known_objects as the source for supply-producing objects and systems through which it can be propegated
     void                    UpdateSystemSupplyRanges();                     ///< Calculates ranges that systems can send fleet and resource supplies.
     void                    UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems);    ///< Calculates systems that can propegate supply (fleet or resource) using the specified set of \a known_systems
     void                    UpdateSupplyUnobstructedSystems();              ///< Calculates systems that can propegate supply using this empire's own / internal list of explored systems

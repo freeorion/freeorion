@@ -271,7 +271,7 @@ void ResolveCombat(CombatInfo& combat_info) {
     int seed = first_object->ID() + CurrentTurn();
     Seed(seed);
 
-    std::vector<int> all_combat_object_IDs = combat_info.objects.FindObjectIDs<UniverseObject>();
+    std::vector<int> all_combat_object_IDs = combat_info.objects.FindObjectIDs();
     SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object from the vector
 
 

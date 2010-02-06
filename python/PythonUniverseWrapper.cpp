@@ -55,7 +55,7 @@ namespace {
     }
 
     std::vector<int>        ObjectIDs(const Universe& universe) {
-        return universe.Objects().FindObjectIDs<UniverseObject>();
+        return universe.Objects().FindObjectIDs();
     }
     std::vector<int>        FleetIDs(const Universe& universe) {
         return universe.Objects().FindObjectIDs<Fleet>();
