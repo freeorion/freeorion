@@ -416,12 +416,38 @@ set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_HOME_DIRECTORY}/default/COPYING)
 if (BUILD_PACKAGING)
     set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
     set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
-    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CPACK_SYSTEM_NAME}")
+    if (WIN32)
+        set(PACKAGE_FILE_SYSTEM_NAME win32)
+    else ()
+        set(PACKAGE_FILE_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
+    endif ()
+    set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${PACKAGE_FILE_SYSTEM_NAME}")
     string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
+    set(CPACK_MONOLITHIC_INSTALL ON)
 endif ()
 
+# NSIS-specific settings
+set(CPACK_NSIS_COMPRESSOR bzip2)
+set(CPACK_NSIS_URL_INFO_ABOUT http://freeorion.org)
+string(REPLACE "/" "\\\\" cmake_home_directory_with_native_windows_path_separators ${CMAKE_HOME_DIRECTORY})
+set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
+    File \\\"${cmake_home_directory_with_native_windows_path_separators}\\\\..\\\\vcredist_x86.exe\\\"
+    ExecWait \\\"$INSTDIR\\\\vcredist_x86.exe /q\\\"
+    CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\FreeOrion.lnk\\\" \\\"$INSTDIR\\\\freeorion.exe\\\" \\\"--fullscreen 1\\\"
+    CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\FreeOrion windowed.lnk\\\" \\\"$INSTDIR\\\\freeorion.exe\\\"
+    CreateShortCut \\\"$DESKTOP\\\\FreeOrion.lnk\\\" \\\"$INSTDIR\\\\freeorion.exe\\\" \\\"--fullscreen 1\\\"
+    WriteIniStr \\\"$INSTDIR\\\\freeorion.url\\\" \\\"InternetShortcut\\\" \\\"URL\\\" \\\"http://freeorion.org\\\"
+    CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Website.lnk\\\" \\\"$INSTDIR\\\\freeorion.url\\\""
+)
+set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
+    Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\Website.lnk\\\"
+    Delete \\\"$DESKTOP\\\\FreeOrion.lnk\\\"
+    Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\FreeOrion.lnk\\\"
+    Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\FreeOrion windowed.lnk\\\""
+)
+
 # RPM-specific settings
-set(CPACK_RPM_PACKAGE_LICENSE LGPL)
+set(CPACK_RPM_PACKAGE_LICENSE GPL)
 set(CPACK_RPM_PACKAGE_REQUIRES)
 # TODO
 
