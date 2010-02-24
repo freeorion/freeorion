@@ -425,45 +425,47 @@ else ()
         PATTERN "*~" EXCLUDE
     )
 
-    install(
-        FILES
-        GiGi.dll
-        GiGiOgre.dll
-        GiGiOgrePlugin_OIS.dll
-        OIS.dll
-        OgreMain.dll
-        OpenAL32.dll
-        Plugin_OctreeSceneManager.dll
-        Plugin_CgProgramManager.dll
-        Plugin_ParticleFX.dll
-        RenderSystem_GL.dll
-        alut.dll
-        cg.dll
-        boost_date_time-vc90-mt-1_36.dll
-        boost_filesystem-vc90-mt-1_36.dll
-        boost_iostreams-vc90-mt-1_36.dll
-        boost_python-vc90-mt-1_36.dll
-        boost_regex-vc90-mt-1_36.dll
-        boost_serialization-vc90-mt-1_36.dll
-        boost_signals-vc90-mt-1_36.dll
-        boost_system-vc90-mt-1_36.dll
-        boost_thread-vc90-mt-1_36.dll
-        glew32.dll
-        jpeg.dll
-        libexpat.dll
-        libogg.dll
-        libpng13.dll
-        libvorbis.dll
-        libvorbisfile.dll
-        python26.dll
-        wrap_oal.dll
-        z.dll
-        zlib1.dll
-        OISInput.cfg
-        ogre_plugins.cfg
-        DESTINATION .
-        COMPONENT COMPONENT_FREEORION_RUNTIME_DEPS
-    )
+    if (WIN32)
+        install(
+            FILES
+            GiGi.dll
+            GiGiOgre.dll
+            GiGiOgrePlugin_OIS.dll
+            OIS.dll
+            OgreMain.dll
+            OpenAL32.dll
+            Plugin_OctreeSceneManager.dll
+            Plugin_CgProgramManager.dll
+            Plugin_ParticleFX.dll
+            RenderSystem_GL.dll
+            alut.dll
+            cg.dll
+            boost_date_time-vc90-mt-1_36.dll
+            boost_filesystem-vc90-mt-1_36.dll
+            boost_iostreams-vc90-mt-1_36.dll
+            boost_python-vc90-mt-1_36.dll
+            boost_regex-vc90-mt-1_36.dll
+            boost_serialization-vc90-mt-1_36.dll
+            boost_signals-vc90-mt-1_36.dll
+            boost_system-vc90-mt-1_36.dll
+            boost_thread-vc90-mt-1_36.dll
+            glew32.dll
+            jpeg.dll
+            libexpat.dll
+            libogg.dll
+            libpng13.dll
+            libvorbis.dll
+            libvorbisfile.dll
+            python26.dll
+            wrap_oal.dll
+            z.dll
+            zlib1.dll
+            OISInput.cfg
+            ogre_plugins.cfg
+            DESTINATION .
+            COMPONENT COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
+        )
+    endif ()
 endif ()
 
 if (BUILD_SDK)
@@ -652,13 +654,15 @@ if (BUILD_SDK)
         REQUIRED
     )
 else ()
-    cpack_add_component(
-        COMPONENT_FREEORION_RUNTIME_DEPS
-        DISPLAY_NAME FreeOrion Runtime Dependencies
-        DESCRIPTION ""
-        HIDDEN
-        REQUIRED
-    )
+    if (WIN32)
+        cpack_add_component(
+            COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
+            DISPLAY_NAME FreeOrion Win32 Runtime Dependencies
+            DESCRIPTION ""
+            HIDDEN
+            REQUIRED
+        )
+    endif ()
 
     cpack_add_component(
         COMPONENT_FREEORION_DATA
