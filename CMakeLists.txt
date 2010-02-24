@@ -478,6 +478,9 @@ set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
 set(CPACK_PACKAGE_CONTACT http://freeorion.org/forum)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.")
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_HOME_DIRECTORY}/default/COPYING)
+if (BUILD_SDK)
+    set(CPACK_RESOURCE_FILE_README ${CMAKE_HOME_DIRECTORY}/../README.txt)
+endif ()
 if (BUILD_PACKAGING)
     set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
     if (WIN32)
@@ -543,13 +546,16 @@ if (BUILD_SDK)
 
         CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\FreeOrion SDK.lnk\\\" \\\"$INSTDIR\\\"
         WriteIniStr \\\"$INSTDIR\\\\freeorion.url\\\" \\\"InternetShortcut\\\" \\\"URL\\\" \\\"http://freeorion.org\\\"
+        CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\README.lnk\\\" \\\"$INSTDIR\\\\README.txt\\\"
         CreateShortCut \\\"$SMPROGRAMS\\\\$STARTMENU_FOLDER\\\\Website.lnk\\\" \\\"$INSTDIR\\\\freeorion.url\\\"
         File \\\"${cmake_home_directory_with_native_windows_path_separators}\\\\..\\\\cmake-2.8.0-win32-x86.exe\\\"
         ExecWait \\\"$INSTDIR\\\\cmake-2.8.0-win32-x86.exe\\\""
     )
     set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "
         Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\FreeOrion SDK.lnk\\\"
-        Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\Website.lnk\\\""
+        Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\README.lnk\\\"
+        Delete \\\"$SMPROGRAMS\\\\$START_MENU\\\\Website.lnk\\\"
+        RMDir /r /REBOOTOK $INSTDIR"
     )
 else ()
     set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "
