@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 42;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -21,7 +21,7 @@
 		3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
 		3402E2690F5A31B700DF6FE7 /* default in Resources */ = {isa = PBXBuildFile; fileRef = 479036420B04CA23001FEF7B /* default */; };
 		3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */ = {isa = PBXBuildFile; fileRef = 471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */; };
-		3402E5360F5A339900DF6FE7 /* Vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */; };
+		3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
 		3402E5370F5A339900DF6FE7 /* Ogg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
 		3402E5380F5A339900DF6FE7 /* SDL.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65810A98BA7200DA9C21 /* SDL.framework */; };
 		3402E5390F5A339900DF6FE7 /* Ogre.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
@@ -31,7 +31,6 @@
 		3402EB650F5A348B00DF6FE7 /* libILU.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 471D654F0A98B7F800DA9C21 /* libILU.dylib */; };
 		3402EB680F5A348B00DF6FE7 /* libpng.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34CA5AF70F4DDF690002B5DB /* libpng.dylib */; };
 		3402EB690F5A348B00DF6FE7 /* libgvplugin_dot_layout.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 349036F70F41FE870045D32F /* libgvplugin_dot_layout.dylib */; };
-		3402EB6A0F5A348B00DF6FE7 /* libgvc_builtins.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
 		3402EB6B0F5A348B00DF6FE7 /* libcdt.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 474A95330A9A5093007F8CD7 /* libcdt.dylib */; };
 		3402EB6C0F5A348B00DF6FE7 /* libgraph.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 4746ADA50A9BBC32003D2DFC /* libgraph.dylib */; };
 		3402EB6D0F5A348B00DF6FE7 /* libpathplan.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */; };
@@ -42,7 +41,7 @@
 		3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471D5D440A98A46000DA9C21 /* freeoriond */; };
 		3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471FEFD70A9A629800C36AA3 /* freeorionca */; };
 		3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 3402F0FE0F5A36A400DF6FE7 /* Cg.framework */; };
-		340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D14AA0F6483700026044A /* libpython2.5.a */; };
+		340D891E1135BC9A00B7C7AE /* libpython2.6.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 340D891D1135BC9A00B7C7AE /* libpython2.6.a */; };
 		3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */; };
 		343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6330F3F513700782AD3 /* UnicodeCharsets.cpp */; };
 		343EC6630F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC65D0F3F5C7C00782AD3 /* EncyclopediaDetailPanel.cpp */; };
@@ -53,12 +52,13 @@
 		343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6750F3F61D000782AD3 /* PythonEnumWrapper.cpp */; };
 		343EC67C0F3F61D000782AD3 /* PythonLoggingWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6760F3F61D000782AD3 /* PythonLoggingWrapper.cpp */; };
 		343EC67D0F3F61D000782AD3 /* PythonUniverseWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 343EC6780F3F61D000782AD3 /* PythonUniverseWrapper.cpp */; };
+		345716B311361D2100597A54 /* libgvc_builtins.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
+		345716DC11361D6C00597A54 /* libgvc_builtins.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
 		346367250F3FB07500DAEAF7 /* libIL.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654E0A98B7F800DA9C21 /* libIL.dylib */; };
 		346D87EF0FC5F6080095593E /* ShaderProgram.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87ED0FC5F6080095593E /* ShaderProgram.cpp */; };
 		346D88140FC6196D0095593E /* AsteroidBeltObstacle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */; };
 		346D88150FC6196D0095593E /* CombatObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E90FC5F5B00095593E /* CombatObject.cpp */; };
 		346D88160FC6196D0095593E /* Missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87EB0FC5F5B00095593E /* Missile.cpp */; };
-		349036EB0F41F74F0045D32F /* libgvc_builtins.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34636CE60F40DA6800DAEAF7 /* libgvc_builtins.dylib */; };
 		349036EC0F41F74F0045D32F /* libcdt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 474A95330A9A5093007F8CD7 /* libcdt.dylib */; };
 		349036ED0F41F74F0045D32F /* libgraph.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA50A9BBC32003D2DFC /* libgraph.dylib */; };
 		349036EF0F41F74F0045D32F /* libpathplan.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */; };
@@ -76,7 +76,6 @@
 		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
 		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
 		34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 346BCA5F0FF6E6A200582E3D /* Cocoa.framework */; };
-		34ACA40D0FFFABE600500F40 /* main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 34ACA40C0FFFABE600500F40 /* main.xib */; };
 		34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
 		34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 341395C90F549BE0008FF42C /* CoreFoundation.framework */; };
 		34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 47AD8A180AA609980089CE8D /* Carbon.framework */; };
@@ -143,6 +142,11 @@
 		34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */; };
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
+		34DD943A11360C0000265AF9 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 34DD943911360BFA00265AF9 /* main.nib */; };
+		34DD944711360CDD00265AF9 /* Plugin_CgProgramManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */; };
+		34DD944811360CDD00265AF9 /* Plugin_OctreeSceneManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */; };
+		34DD944911360CDD00265AF9 /* Plugin_ParticleFX.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944411360CBE00265AF9 /* Plugin_ParticleFX.dylib */; };
+		34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
@@ -184,7 +188,7 @@
 		471031380CEF617C00A7DF2B /* ClientFSMEvents.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F890CEF55F700A7DF2B /* ClientFSMEvents.cpp */; };
 		471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */; };
 		4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471032380CEF6A7600A7DF2B /* Ogg.framework */; };
-		471032460CEF6A8B00A7DF2B /* Vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */; };
+		471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
 		471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA80CEF565700A7DF2B /* ServerNetworking.cpp */; };
 		471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030470CEF569200A7DF2B /* ServerFSM.cpp */; };
 		471032D00CEF6DEC00A7DF2B /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
@@ -267,7 +271,6 @@
 		471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650C0A98B4C100DA9C21 /* OpenAL.framework */; };
 		471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D650D0A98B4C100DA9C21 /* OpenGL.framework */; };
 		471D65150A98B4E100DA9C21 /* libSDLmain.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65140A98B4E100DA9C21 /* libSDLmain.a */; };
-		471D65520A98B7F800DA9C21 /* libfreetype.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654D0A98B7F800DA9C21 /* libfreetype.a */; };
 		471D65540A98B7F800DA9C21 /* libILU.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D654F0A98B7F800DA9C21 /* libILU.dylib */; };
 		471D65560A98B7F800DA9C21 /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
 		471D65820A98BA7200DA9C21 /* SDL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65810A98BA7200DA9C21 /* SDL.framework */; };
@@ -400,7 +403,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				3402F10B0F5A36C600DF6FE7 /* Cg.framework in Copy Frameworks */,
-				3402E5360F5A339900DF6FE7 /* Vorbis.framework in Copy Frameworks */,
+				3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */,
 				3402E5370F5A339900DF6FE7 /* Ogg.framework in Copy Frameworks */,
 				3402E5380F5A339900DF6FE7 /* SDL.framework in Copy Frameworks */,
 				3402E5390F5A339900DF6FE7 /* Ogre.framework in Copy Frameworks */,
@@ -431,7 +434,7 @@
 				3402EB650F5A348B00DF6FE7 /* libILU.dylib in Copy Shared Libraries */,
 				3402EB680F5A348B00DF6FE7 /* libpng.dylib in Copy Shared Libraries */,
 				3402EB690F5A348B00DF6FE7 /* libgvplugin_dot_layout.dylib in Copy Shared Libraries */,
-				3402EB6A0F5A348B00DF6FE7 /* libgvc_builtins.dylib in Copy Shared Libraries */,
+				345716DC11361D6C00597A54 /* libgvc_builtins.dylib in Copy Shared Libraries */,
 				3402EB6B0F5A348B00DF6FE7 /* libcdt.dylib in Copy Shared Libraries */,
 				3402EB6C0F5A348B00DF6FE7 /* libgraph.dylib in Copy Shared Libraries */,
 				3402EB6D0F5A348B00DF6FE7 /* libpathplan.dylib in Copy Shared Libraries */,
@@ -455,6 +458,20 @@
 				3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */,
 			);
 			name = "Copy Server, AI, Config";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		34DD943D11360C5700265AF9 /* Copy Ogre Plugins */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}/Contents/Plugins";
+			dstSubfolderSpec = 0;
+			files = (
+				34DD944711360CDD00265AF9 /* Plugin_CgProgramManager.dylib in Copy Ogre Plugins */,
+				34DD944811360CDD00265AF9 /* Plugin_OctreeSceneManager.dylib in Copy Ogre Plugins */,
+				34DD944911360CDD00265AF9 /* Plugin_ParticleFX.dylib in Copy Ogre Plugins */,
+				34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */,
+			);
+			name = "Copy Ogre Plugins";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -486,7 +503,7 @@
 		3402E24C0F5A30D600DF6FE7 /* WindBatchPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WindBatchPage.h; sourceTree = "<group>"; };
 		3402E25D0F5A317400DF6FE7 /* FreeOrion.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FreeOrion.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3402F0FE0F5A36A400DF6FE7 /* Cg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cg.framework; path = dep/Frameworks/Cg.framework; sourceTree = "<group>"; };
-		340D14AA0F6483700026044A /* libpython2.5.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.5.a; path = dep/lib/libpython2.5.a; sourceTree = SOURCE_ROOT; };
+		340D891D1135BC9A00B7C7AE /* libpython2.6.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libpython2.6.a; path = dep/lib/libpython2.6.a; sourceTree = SOURCE_ROOT; };
 		341395C90F549BE0008FF42C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatSetupWnd.cpp; sourceTree = "<group>"; };
 		3415B09F10851BB200009F19 /* CombatSetupWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatSetupWnd.h; sourceTree = "<group>"; };
@@ -543,7 +560,6 @@
 		34972C410F4A002F0015C864 /* libBulletCollision.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletCollision.dylib; path = dep/local/lib/libBulletCollision.dylib; sourceTree = "<group>"; };
 		34972C420F4A002F0015C864 /* libBulletDynamics.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletDynamics.dylib; path = dep/local/lib/libBulletDynamics.dylib; sourceTree = "<group>"; };
 		34972C430F4A002F0015C864 /* libLinearMath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.dylib; path = dep/local/lib/libLinearMath.dylib; sourceTree = "<group>"; };
-		34A1E2DA0F75CB540019466D /* libltdl.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libltdl.dylib; path = dep/lib/libltdl.dylib; sourceTree = "<group>"; };
 		34A1E2DD0F75CB540019466D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = dep/lib/libz.dylib; sourceTree = "<group>"; };
 		34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
 		34A97FE60FC978C600620707 /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
@@ -657,7 +673,7 @@
 		34ACA37F0FFFAB4900500F40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		34ACA3800FFFAB4900500F40 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		34ACA3810FFFAB4900500F40 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
+		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.xib; path = main.xib; sourceTree = "<group>"; };
 		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
 		34ACA4C00FFFD2DB00500F40 /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
 		34ACA4C50FFFD50100500F40 /* chmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chmain.h; sourceTree = "<group>"; };
@@ -1081,6 +1097,14 @@
 		34CA5AF70F4DDF690002B5DB /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = dep/local/lib/libpng.dylib; sourceTree = "<group>"; };
 		34CA5CA60F4E18680002B5DB /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOIS.a; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		34DD943911360BFA00265AF9 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file; path = main.nib; sourceTree = "<group>"; };
+		34DD944011360CBE00265AF9 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
+		34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_CgProgramManager.dylib; sourceTree = "<group>"; };
+		34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeSceneManager.dylib; sourceTree = "<group>"; };
+		34DD944311360CBE00265AF9 /* Plugin_OctreeZone.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeZone.dylib; sourceTree = "<group>"; };
+		34DD944411360CBE00265AF9 /* Plugin_ParticleFX.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_ParticleFX.dylib; sourceTree = "<group>"; };
+		34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
+		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
 		471023390CEF3AAB00A7DF2B /* build_config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_config.py; sourceTree = "<group>"; };
 		4710233A0CEF3AAB00A7DF2B /* build_support.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_support.py; sourceTree = "<group>"; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
@@ -1240,7 +1264,7 @@
 		4710311E0CEF60AA00A7DF2B /* InfoPanels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InfoPanels.h; sourceTree = "<group>"; };
 		471032080CEF625900A7DF2B /* Version.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Version.cpp; sourceTree = "<group>"; };
 		471032380CEF6A7600A7DF2B /* Ogg.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogg.framework; path = dep/Frameworks/Ogg.framework; sourceTree = "<group>"; };
-		4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Vorbis.framework; path = dep/Frameworks/Vorbis.framework; sourceTree = "<group>"; };
+		4710323F0CEF6A8B00A7DF2B /* vorbis.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = vorbis.framework; path = dep/Frameworks/vorbis.framework; sourceTree = "<group>"; };
 		471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = FreeOrion.icns; sourceTree = "<group>"; };
 		47103BE20CF04D8800A7DF2B /* libCommon.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libCommon.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		471D5A300A988D5700DA9C21 /* libGG.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libGG.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -1423,7 +1447,7 @@
 		471D65570A98B84500DA9C21 /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = dep/local/lib/libjpeg.dylib; sourceTree = "<group>"; };
 		471D65810A98BA7200DA9C21 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = dep/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		471FEFD70A9A629800C36AA3 /* freeorionca */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeorionca; sourceTree = BUILT_PRODUCTS_DIR; };
-		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
 		4746ADA50A9BBC32003D2DFC /* libgraph.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgraph.dylib; path = dep/local/lib/libgraph.dylib; sourceTree = "<group>"; };
 		4746ADA60A9BBC32003D2DFC /* libgvc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgvc.dylib; path = dep/local/lib/libgvc.dylib; sourceTree = "<group>"; };
 		4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpathplan.dylib; path = dep/local/lib/libpathplan.dylib; sourceTree = "<group>"; };
@@ -1487,7 +1511,7 @@
 				471FEFD00A9A629800C36AA3 /* libGG.a in Frameworks */,
 				471FEFD20A9A629800C36AA3 /* liblog4cpp.a in Frameworks */,
 				34B9FA5D0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
-				340D14AB0F6483700026044A /* libpython2.5.a in Frameworks */,
+				340D891E1135BC9A00B7C7AE /* libpython2.6.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1495,6 +1519,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				345716B311361D2100597A54 /* libgvc_builtins.dylib in Frameworks */,
 				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
 				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
 				34B9F9BD0F645684005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
@@ -1508,7 +1533,6 @@
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
 				34972C450F4A00650015C864 /* libBulletDynamics.dylib in Frameworks */,
 				34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */,
-				349036EB0F41F74F0045D32F /* libgvc_builtins.dylib in Frameworks */,
 				349036F80F41FE8D0045D32F /* libgvplugin_dot_layout.dylib in Frameworks */,
 				349036EC0F41F74F0045D32F /* libcdt.dylib in Frameworks */,
 				349036ED0F41F74F0045D32F /* libgraph.dylib in Frameworks */,
@@ -1519,14 +1543,13 @@
 				478417700CF0581A00BE4710 /* libCommon.a in Frameworks */,
 				471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */,
 				471D65150A98B4E100DA9C21 /* libSDLmain.a in Frameworks */,
-				471D65520A98B7F800DA9C21 /* libfreetype.a in Frameworks */,
 				471D650E0A98B4C100DA9C21 /* OpenAL.framework in Frameworks */,
 				471D650F0A98B4C100DA9C21 /* OpenGL.framework in Frameworks */,
 				471D65540A98B7F800DA9C21 /* libILU.dylib in Frameworks */,
 				471D65560A98B7F800DA9C21 /* liblog4cpp.a in Frameworks */,
 				471D65820A98BA7200DA9C21 /* SDL.framework in Frameworks */,
 				4710323E0CEF6A7700A7DF2B /* Ogg.framework in Frameworks */,
-				471032460CEF6A8B00A7DF2B /* Vorbis.framework in Frameworks */,
+				471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */,
 				47B60E670CF0819300318761 /* libjpeg.dylib in Frameworks */,
 				34CA5AF80F4DDF690002B5DB /* libpng.dylib in Frameworks */,
 				34B9FA5F0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
@@ -1672,7 +1695,6 @@
 			isa = PBXGroup;
 			children = (
 				34BA5BA00F8AA95C00B74FE5 /* libexpat.1.dylib */,
-				34A1E2DA0F75CB540019466D /* libltdl.dylib */,
 				34A1E2DD0F75CB540019466D /* libz.dylib */,
 			);
 			name = usrlib;
@@ -1836,6 +1858,7 @@
 		34B9EBEF0F5E208F005BF6A4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				34DD943911360BFA00265AF9 /* main.nib */,
 				3484E98E0F59A04D0083041E /* ogre_plugins.cfg */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
 				479036420B04CA23001FEF7B /* default */,
@@ -2388,6 +2411,21 @@
 				34BAB26D0FC5D08C00EF792E /* window_server.cpp */,
 			);
 			path = sources;
+			sourceTree = "<group>";
+		};
+		34DD943F11360CBE00265AF9 /* ogre_plugins */ = {
+			isa = PBXGroup;
+			children = (
+				34DD944011360CBE00265AF9 /* Plugin_BSPSceneManager.dylib */,
+				34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */,
+				34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */,
+				34DD944311360CBE00265AF9 /* Plugin_OctreeZone.dylib */,
+				34DD944411360CBE00265AF9 /* Plugin_ParticleFX.dylib */,
+				34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */,
+				34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */,
+			);
+			name = ogre_plugins;
+			path = dep/ogre_plugins;
 			sourceTree = "<group>";
 		};
 		471023380CEF3AAB00A7DF2B /* GG */ = {
@@ -3043,7 +3081,7 @@
 		47960BAE0A9CBF1D00D0C556 /* Static Libraries */ = {
 			isa = PBXGroup;
 			children = (
-				340D14AA0F6483700026044A /* libpython2.5.a */,
+				340D891D1135BC9A00B7C7AE /* libpython2.6.a */,
 				34CA5CA60F4E18680002B5DB /* libOIS.a */,
 				471D65510A98B7F800DA9C21 /* liblog4cpp.a */,
 				471D654D0A98B7F800DA9C21 /* libfreetype.a */,
@@ -3067,6 +3105,7 @@
 		47960BB00A9CBF4400D0C556 /* Dynamic Libraries */ = {
 			isa = PBXGroup;
 			children = (
+				34DD943F11360CBE00265AF9 /* ogre_plugins */,
 				34ACA37F0FFFAB4900500F40 /* AppKit.framework */,
 				34ACA3800FFFAB4900500F40 /* CoreData.framework */,
 				34ACA3810FFFAB4900500F40 /* Foundation.framework */,
@@ -3078,7 +3117,7 @@
 				471D650C0A98B4C100DA9C21 /* OpenAL.framework */,
 				47AD8A180AA609980089CE8D /* Carbon.framework */,
 				346BCA5F0FF6E6A200582E3D /* Cocoa.framework */,
-				4710323F0CEF6A8B00A7DF2B /* Vorbis.framework */,
+				4710323F0CEF6A8B00A7DF2B /* vorbis.framework */,
 				471032380CEF6A7600A7DF2B /* Ogg.framework */,
 				471D65810A98BA7200DA9C21 /* SDL.framework */,
 				349724D70F49C9220015C864 /* Ogre.framework */,
@@ -3145,6 +3184,7 @@
 				3402E53C0F5A33E300DF6FE7 /* Copy Client */,
 				3402EB620F5A345D00DF6FE7 /* Copy Shared Libraries */,
 				3402EB750F5A34FC00DF6FE7 /* Copy Server, AI, Config */,
+				34DD943D11360C5700265AF9 /* Copy Ogre Plugins */,
 			);
 			buildRules = (
 			);
@@ -3305,9 +3345,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34DD943A11360C0000265AF9 /* main.nib in Resources */,
 				3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */,
 				3402E2690F5A31B700DF6FE7 /* default in Resources */,
-				34ACA40D0FFFABE600500F40 /* main.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3641,8 +3681,9 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/Frameworks\"",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/Frameworks\\\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -3663,10 +3704,17 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/dep/local/lib/graphviz",
-					"\"$(SRCROOT)/dep/local/lib\"",
-					"\"$(SRCROOT)/dep/local/lib/bullet\"",
-					"\"$(SRCROOT)/dep/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/local/lib/bullet\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\\\"$(SRCROOT)/dep/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3681,13 +3729,14 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
+					__MACOSX__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = 4.0;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/System/Library/Frameworks/Python.framework/Versions/2.5/Headers,
+					"${SOURCE_ROOT}/dep/local/include/python",
 					"$(SOURCE_ROOT)/dep/local/include/graphviz",
 					"$(SOURCE_ROOT)/dep/local/include/bullet",
 					"$(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers",
@@ -3696,21 +3745,10 @@
 					"$(SOURCE_ROOT)/../network",
 					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					/System/Library/Frameworks/Python.framework/Versions/2.5/Headers,
-					"$(SOURCE_ROOT)/dep/local/include/graphviz",
-					"$(SOURCE_ROOT)/dep/local/include/bullet",
-					"$(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers",
-					"$(SOURCE_ROOT)/dep/local/include",
-					"$(SOURCE_ROOT)/../GG",
-					"$(SOURCE_ROOT)/../network",
-					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "/System/Library/Frameworks/Python.framework/Versions/2.5/Headers $(SOURCE_ROOT)/dep/local/include/graphviz $(SOURCE_ROOT)/dep/local/include/bullet $(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers $(SOURCE_ROOT)/dep/local/include $(SOURCE_ROOT)/../GG $(SOURCE_ROOT)/../network $(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
-					"$(SRCROOT)/dep/local/lib/bullet",
-					"$(SRCROOT)/dep/local/lib/graphviz",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -3719,7 +3757,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				SDKROOT = macosx10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -3775,12 +3813,13 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					OGRE_GUI_GLX,
 					FREEORION_MACOSX,
+					__MACOSX__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					/System/Library/Frameworks/Python.framework/Versions/2.5/Headers,
+					"${SOURCE_ROOT}/dep/local/include/python",
 					"$(SOURCE_ROOT)/dep/local/include/graphviz",
 					"$(SOURCE_ROOT)/dep/local/include/bullet",
 					"$(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers",
@@ -3789,21 +3828,10 @@
 					"$(SOURCE_ROOT)/../network",
 					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = (
-					/System/Library/Frameworks/Python.framework/Versions/2.5/Headers,
-					"$(SOURCE_ROOT)/dep/local/include/graphviz",
-					"$(SOURCE_ROOT)/dep/local/include/bullet",
-					"$(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers",
-					"$(SOURCE_ROOT)/dep/local/include",
-					"$(SOURCE_ROOT)/../GG",
-					"$(SOURCE_ROOT)/../network",
-					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
-				);
+				"HEADER_SEARCH_PATHS[arch=*]" = "/System/Library/Frameworks/Python.framework/Versions/2.5/Headers $(SOURCE_ROOT)/dep/local/include/graphviz $(SOURCE_ROOT)/dep/local/include/bullet $(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers $(SOURCE_ROOT)/dep/local/include $(SOURCE_ROOT)/../GG $(SOURCE_ROOT)/../network $(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
-					"$(SRCROOT)/dep/local/lib/bullet",
-					"$(SRCROOT)/dep/local/lib/graphviz",
 				);
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -3811,7 +3839,7 @@
 				);
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
-				SDKROOT = macosx10.4;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
@@ -3904,8 +3932,9 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/Frameworks\"",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/Frameworks\\\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
@@ -3926,10 +3955,17 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/dep/local/lib/graphviz",
-					"\"$(SRCROOT)/dep/local/lib\"",
-					"\"$(SRCROOT)/dep/local/lib/bullet\"",
-					"\"$(SRCROOT)/dep/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/local/lib/bullet\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\\\"$(SRCROOT)/dep/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3954,8 +3990,9 @@
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/local/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
@@ -3981,9 +4018,13 @@
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/local/lib\"",
-					"\"$(SRCROOT)/dep/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/lib\"";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = freeorionca;
@@ -4052,8 +4093,9 @@
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/local/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
@@ -4079,9 +4121,13 @@
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"\"$(SRCROOT)/dep/local/lib\"",
-					"\"$(SRCROOT)/dep/lib\"",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/lib\\\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/lib\"";
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				PRODUCT_NAME = freeorionca;
