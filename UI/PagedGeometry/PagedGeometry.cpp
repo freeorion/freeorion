@@ -371,7 +371,7 @@ float PagedGeometry::getCustomParam(string entity, string paramName, float defau
 
 float PagedGeometry::getCustomParam(string paramName, float defaultParamValue) const
 {
-	map<string, float>::const_iterator it;
+	std::map<string, float>::const_iterator it;
 	it = customParam.find(paramName);
 	if (it != customParam.end()) {
 		float x = it->second;
