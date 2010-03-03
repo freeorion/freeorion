@@ -233,9 +233,11 @@ void CUIWnd::Render()
         GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
     }
 
+    GG::BeginScissorClipping(ul, lr);
     glColor(ClientUI::TextColor());
     boost::shared_ptr<GG::Font> font = ClientUI::GetTitleFont();
     font->RenderText(GG::Pt(ul.x + BORDER_LEFT, ul.y), Name());
+    GG::EndScissorClipping();
 }
 
 void CUIWnd::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
