@@ -84,10 +84,10 @@ public:
     virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_bRender=false;}
 
 private:
-    XMLElement m_credits;
-    int m_cx,m_cy,m_cw,m_ch,m_co;
-    int m_start_time;
-    int m_bRender,m_bFadeIn;
+    XMLElement  m_credits;
+    int         m_cx, m_cy, m_cw, m_ch, m_co;
+    int         m_start_time;
+    int         m_bRender, m_bFadeIn;
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
@@ -99,14 +99,14 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &cred
 
 void CreditsWnd::Render()
 {
-    if(!m_bRender)
+    if (!m_bRender)
         return;
 
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     boost::shared_ptr<GG::Font> font=ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
     GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
 
-    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0, 0.0, 0.0, 0.5), GG::CLR_ZERO,0);
     glColor(GG::CLR_WHITE);
 
     GG::Y offset(m_co);
@@ -118,18 +118,18 @@ void CreditsWnd::Render()
     if (m_bFadeIn)
     {
         double fade_in = (GG::GUI::GetGUI()->Ticks() - m_start_time)/2000.0;
-        if(fade_in>1.0)
-            m_bFadeIn=false;
+        if (fade_in > 1.0)
+            m_bFadeIn = false;
         else
             transparency = static_cast<int>(255*fade_in);
     }
 
-    glColor(GG::Clr(transparency,transparency,transparency,255));
+    glColor(GG::Clr(transparency, transparency, transparency, 255));
 
-    GG::BeginScissorClipping(GG::Pt(ul.x+m_cx, ul.y+m_cy), GG::Pt(ul.x+m_cx+m_cw, ul.y+m_cy+m_ch));
+    GG::BeginScissorClipping(GG::Pt(ul.x + m_cx, ul.y + m_cy), GG::Pt(ul.x + m_cx + m_cw, ul.y + m_cy + m_ch));
 
     std::string credit;
-    for (int i = 0; i < m_credits.NumChildren();i++) {
+    for (int i = 0; i < m_credits.NumChildren(); i++) {
         if (!m_credits.Child(i).Tag().compare("GROUP")) {
             XMLElement group = m_credits.Child(i);
             for (int j = 0; j<group.NumChildren();j++) {
@@ -148,10 +148,14 @@ void CreditsWnd::Render()
                         credit += person.Attribute("task");
                         credit += "</rgba>";
                     }
-                    font->RenderText(GG::Pt(ul.x+m_cx,ul.y+m_cy+offset),
-                                     GG::Pt(ul.x+m_cx+m_cw,ul.y+m_cy+m_ch),
-                                     credit, format, 0);
-                    offset += font->TextExtent(credit, format).y+2;
+
+                    if (-20 < offset && m_ch > offset) {   // don't bother rendering text that couldn't be seen due to being above or below the screen
+                        font->RenderText(GG::Pt(ul.x + m_cx,        ul.y + m_cy + offset),
+                                         GG::Pt(ul.x + m_cx + m_cw, ul.y + m_cy + m_ch),
+                                         credit, format, 0);
+                    }
+
+                    offset += font->TextExtent(credit, format).y + 2;
                 }
             }
             offset += font->Lineskip() + 2;
