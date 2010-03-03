@@ -470,7 +470,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     // expand / collapse button at top right    
     m_expand_button = new GG::Button(w - 16, GG::Y0, GG::X(16), GG::Y(16), "", ClientUI::GetFont(), GG::CLR_WHITE, GG::CLR_ZERO, GG::ONTOP | GG::INTERACTIVE);

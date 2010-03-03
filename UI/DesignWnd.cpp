@@ -469,7 +469,7 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
     m_parts_list(0)
 {
     //TempUISoundDisabler sound_disabler;     // should be redundant with disabler in DesignWnd::DesignWnd.  uncomment if this is not the case
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     m_parts_list = new PartsListBox(GG::X0, GG::Y0, GG::X(10), GG::Y(10));
     AttachChild(m_parts_list);
@@ -1631,7 +1631,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     m_confirm_button(0),
     m_clear_button(0)
 {
-    EnableChildClipping();
+    SetChildClippingMode(ClipToClient);
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
@@ -1935,7 +1935,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_main_panel(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     GG::X base_selector_width(300);
     GG::X most_panels_left = base_selector_width;

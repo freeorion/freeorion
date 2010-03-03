@@ -25,7 +25,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_sitreps_lb);
-    EnableChildClipping(false);
+    SetChildClippingMode(DontClip);
 
     Hide();
 }

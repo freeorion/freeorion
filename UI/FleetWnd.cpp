@@ -547,7 +547,7 @@ namespace {
         {
             const Ship* ship = GetObject<Ship>(m_ship_id);
 
-            EnableChildClipping();
+            SetChildClippingMode(ClipToClient);
 
             // ship name text.  blank if no ship.  TODO: if no ship show "No Ship" or somesuch?
             std::string ship_name = "";
@@ -823,7 +823,7 @@ namespace {
             m_ship_id(ship_id)
         {
             SetName("ShipRow");
-            EnableChildClipping();
+            SetChildClippingMode(ClipToClient);
             if (GetObject<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
             push_back(new ShipDataPanel(w, h, m_ship_id));
@@ -913,7 +913,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id,
 {
     const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
 
-    EnableChildClipping();
+    SetChildClippingMode(ClipToClient);
 
     m_fleet_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X1, LabelHeight(), "", ClientUI::GetFont(),
                                             ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
@@ -1179,7 +1179,7 @@ namespace {
             m_fleet_id(fleet_id)
         {
             SetName("FleetRow");
-            EnableChildClipping();
+            SetChildClippingMode(ClipToClient);
             push_back(new FleetDataPanel(w, h, m_fleet_id));
         }
 
@@ -1724,7 +1724,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool read_onl
     m_ships_lb(0)
 {
     SetName("FleetDetailPanel");
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     m_ships_lb = new ShipsListBox(0, read_only);
     AttachChild(m_ships_lb);
@@ -1922,7 +1922,7 @@ FleetDetailWnd::FleetDetailWnd(int fleet_id, bool read_only, GG::Flags<GG::WndFl
 
     m_fleet_panel = new FleetDetailPanel(GG::X1, GG::Y1, fleet_id, read_only);
     AttachChild(m_fleet_panel);
-    EnableChildClipping(false);
+    SetChildClippingMode(DontClip);
 
     SetName(TitleText());
     m_fleet_connection = GG::Connect(GetObject<Fleet>(fleet_id)->StateChangedSignal, &FleetDetailWnd::Refresh, this);
@@ -2061,7 +2061,6 @@ FleetWnd::~FleetWnd()
 
 void FleetWnd::Init(int selected_fleet_id)
 {
-    EnableChildClipping();
     SetMinSize(GG::Pt(CUIWnd::MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                 ListRowHeight() + 2*GG::Y(PAD)));
 
@@ -2185,7 +2184,6 @@ void FleetWnd::Refresh()
                 AddFleet(fleet->ID());
             }
         }
-
     } else {
         // check all fleets whose IDs are already in m_fleet_ids, removing any that no longer exist.
         std::set<int> validated_fleet_ids;

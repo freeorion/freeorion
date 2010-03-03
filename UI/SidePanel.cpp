@@ -1301,7 +1301,7 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     m_vscroll(new CUIScroll(Width()-14,GG::Y0,GG::X(14),Height(),GG::VERTICAL))
 {
     SetName("PlanetPanelContainer");
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
     GG::Connect(m_vscroll->ScrolledSignal, &SidePanel::PlanetPanelContainer::VScroll, this);
 }
 

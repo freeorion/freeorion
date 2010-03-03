@@ -204,7 +204,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     AttachChild(m_queue_lb);
     AttachChild(m_tech_tree_wnd);
 
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 }
 
 ResearchWnd::~ResearchWnd()

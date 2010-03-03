@@ -313,7 +313,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(GG::X x, GG::Y y, GG::X w) :
     m_tree_view_button->MarkNotSelected();
     AttachChild(m_tree_view_button);
 
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
     DoButtonLayout();
     Resize(GG::Pt(Width(), MinSize().y));
 }
@@ -711,7 +711,7 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
     m_tech(tech),
     m_selected(false)
 {
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire->TechResearched(m_tech->Name())) {
         SetColor(ClientUI::KnownTechFillColor());
@@ -958,7 +958,7 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
 
 
     // constrain long text that would otherwise overflow planel boundaries
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
 
     // set text box text
@@ -1107,7 +1107,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_zoom_in_button(0),
     m_zoom_out_button(0)
 {
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     m_scale = 1.0 / ZOOM_STEP_SIZE; // because fully zoomed in is too close
 

@@ -60,7 +60,7 @@ namespace {
                 if (!m_ship)
                     throw std::invalid_argument("ShipDataPanel::ShipDataPanel() : Attempted to construct a ShipDataPanel from a null ship pointer.");
 
-                EnableChildClipping();
+                SetChildClippingMode(ClipToClient);
 
                 m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
                                                        m_ship->Name(), ClientUI::GetFont(),
@@ -234,7 +234,7 @@ namespace {
             m_ship(ship)
             {
                 SetName("ShipRow");
-                EnableChildClipping();
+                SetChildClippingMode(ClipToClient);
                 push_back(new ShipDataPanel(w, h, m_ship));
             }
 

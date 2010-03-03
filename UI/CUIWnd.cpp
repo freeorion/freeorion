@@ -146,7 +146,7 @@ CUIWnd::CUIWnd(const std::string& t, GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Fla
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(CUIWnd::MinimizedWidth(), BORDER_TOP + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
     InitButtons();
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClientAndWindowSeparately);
 }
 
 CUIWnd::~CUIWnd()
@@ -292,13 +292,15 @@ void CUIWnd::InitButtons()
         m_close_button = new CUI_CloseButton(button_ul.x, button_ul.y);
         GG::Connect(m_close_button->ClickedSignal, &CUIWnd::CloseClicked, this);
         AttachChild(m_close_button);
+        m_close_button->NonClientChild(true);
     }
 
     // create the minimize button
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton(button_ul.x - (m_close_button ? BUTTON_RIGHT_OFFSET : GG::X0), button_ul.y);
         GG::Connect(m_minimize_button->ClickedSignal, &CUIWnd::MinimizeClicked, this);
-        AttachChild(m_minimize_button);      
+        AttachChild(m_minimize_button);
+        m_minimize_button->NonClientChild(true);
     }
 }
 

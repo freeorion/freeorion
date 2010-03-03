@@ -231,7 +231,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd = new BuildDesignatorWnd(buid_designator_wnd_size.x, buid_designator_wnd_size.y);
     m_build_designator_wnd->MoveTo(GG::Pt(m_production_info_panel->Width(), GG::Y0));
 
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 
     GG::Connect(m_build_designator_wnd->AddNamedBuildToQueueSignal,     &ProductionWnd::AddBuildToQueueSlot, this);
     GG::Connect(m_build_designator_wnd->AddIDedBuildToQueueSignal,      &ProductionWnd::AddBuildToQueueSlot, this);

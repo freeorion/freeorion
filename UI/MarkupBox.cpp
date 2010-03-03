@@ -289,7 +289,7 @@ MarkupBox::MarkupSurface::MarkupSurface(GG::X x, GG::Y y, GG::X w, GG::Y h, cons
     m_controls()
 {
     SetText(str);
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 }
 
 MarkupBox::MarkupSurface::MarkupSurface() :
@@ -297,7 +297,7 @@ MarkupBox::MarkupSurface::MarkupSurface() :
     GG::Control(),
     m_controls()
 {
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
 }
 
 MarkupBox::MarkupSurface::~MarkupSurface() {
@@ -417,7 +417,7 @@ MarkupBox::MarkupBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& str,
     RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0 + EDGE_PAD, GG::Y0 + EDGE_PAD, w - 2*EDGE_PAD, h - 2*EDGE_PAD, str);
     AttachChild(m_surface);
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
     Refresh();
     AdjustScrolls();
     VScrolled(0, 0, 0, 0);
@@ -432,7 +432,7 @@ MarkupBox::MarkupBox() :
     RegisterMarkupTags();
     m_surface = new MarkupSurface(GG::X0, GG::Y0, GG::X0, GG::Y0, "");
     AttachChild(m_surface);
-    EnableChildClipping(true);
+    SetChildClippingMode(ClipToClient);
     Refresh();
     VScrolled(0, 0, 0, 0);
     // shouldn't need to adjust scrolls since text is empty
