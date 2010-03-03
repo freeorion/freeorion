@@ -162,27 +162,31 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
 
 std::string RomanNumber(unsigned int n)
 {
-    static const char N[] = "IVXLCDM??";
-    std::string retval;
-    int e = 3;
-    int mod = 1000;
-    for (; 0 <= e; e--, mod /= 10) {
-        unsigned int m = (n / mod) % 10;
-        if (m % 5 == 4) {
-            retval += N[e << 1];
-            ++m;
-            if (m == 10) {
-                retval += N[(e << 1) + 2];
-                continue;
-            }
-        }
-        if (m >= 5) {
-            retval += N[(e << 1) + 1];
-            m -= 5;
-        }
-        while (m) {
-            retval += N[e << 1];
-            --m;
+    //letter pattern (N) and the associated values (V)
+    static const std::string  N[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    static const unsigned int V[] = {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
+    unsigned int remainder = n; //remainder of the number to be written
+    int i = 0;                  //pattern index
+    std::string retval = "";;
+    if (n == 0) return "";      //the romans didn't know there is a zero, read a book about history of the zero if you want to know more
+                                //Roman numbers are written using patterns, you chosse the highest pattern lower that the number
+                                //write it down, and substract it's value until you reach zero.
+
+    // safety check to avoid very long loops
+    if (n > 10000)
+        return "!";
+
+    //we start with the highest pattern and reduce the size every time it doesn't fit
+    while (remainder > 0) {
+        //check if number is larger than the actual pattern value
+        if (remainder >= V[i]) {
+            //write pattern down
+            retval += N[i];
+            //reduce number
+            remainder -= V[i];
+        } else {
+            //we need the next pattern
+            i++;
         }
     }
     return retval;
