@@ -494,8 +494,10 @@ void Planet::Conquer(int conquerer)
 {
     m_just_conquered = true;
     Empire* empire = Empires().Lookup(conquerer);
-    if (!empire)
-        throw std::invalid_argument("Planet::Conquer: attempted to conquer a planet with an invalid conquerer.");
+    if (!empire) {
+        Logger().errorStream() << "Planet::Conquer: attempted to conquer a planet with an invalid conquerer with id: " << conquerer;
+        return;
+    }
 
     // deal with things on production queue located at this planet
     empire->ConquerBuildsAtLocation(ID());

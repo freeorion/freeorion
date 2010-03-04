@@ -114,14 +114,22 @@ int ClientApp::GetNewObjectID()
 {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_player_id), msg);
-    return boost::lexical_cast<int>(msg.Text());
+    std::string text = msg.Text();
+    if (text.empty()) {
+        throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
+    }
+    return boost::lexical_cast<int>(text);
 }
 
 int ClientApp::GetNewDesignID()
 {
     Message msg;
     m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_player_id), msg);
-    return boost::lexical_cast<int>(msg.Text());
+    std::string text = msg.Text();
+    if (text.empty()) {
+        throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
+    }
+    return boost::lexical_cast<int>(text);
 }
 
 ClientApp* ClientApp::GetApp()

@@ -354,8 +354,6 @@ namespace AIInterface {
         }
 
         int new_fleet_id = ClientApp::GetApp()->GetNewObjectID();
-        if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) 
-            throw std::runtime_error("Couldn't get new object ID when transferring ship to new fleet");
 
         AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
