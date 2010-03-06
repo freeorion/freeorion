@@ -146,7 +146,7 @@ void CombatInfo::Clear() {
 
 
 ////////////////////////////////////////////////
-// ResolveCombat
+// AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
     void AttackShipShip(Ship* attacker, Ship* target) {
@@ -256,13 +256,13 @@ namespace {
     }
 }
 
-void ResolveCombat(CombatInfo& combat_info) {
+void AutoResolveCombat(CombatInfo& combat_info) {
     if (combat_info.objects.Empty())
         return;
 
     System* system = GetObject<System>(combat_info.system_id);
     if (!system) {
-        Logger().errorStream() << "ResolveCombat couldn't get system with id " << combat_info.system_id;
+        Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     }
 
 
@@ -317,7 +317,7 @@ void ResolveCombat(CombatInfo& combat_info) {
 
         UniverseObject* attacker = combat_info.objects.Object(attacker_id);
         if (!attacker) {
-            Logger().errorStream() << "ResolveCombat couldn't get object with id " << attacker_id;
+            Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << attacker_id;
             continue;
         }
 
@@ -370,7 +370,7 @@ void ResolveCombat(CombatInfo& combat_info) {
 
         UniverseObject* target = combat_info.objects.Object(target_id);
         if (!target) {
-            Logger().errorStream() << "ResolveCombat couldn't get object with id " << target_id;
+            Logger().errorStream() << "AutoResolveCombat couldn't get object with id " << target_id;
             continue;
         }
 

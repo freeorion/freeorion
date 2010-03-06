@@ -38,8 +38,17 @@ struct Disconnection : boost::statechart::event<Disconnection>
 };
 
 struct CheckStartConditions : boost::statechart::event<CheckStartConditions>            {};
-struct StartProcessingCombats : boost::statechart::event<StartProcessingCombats>        {};
-struct FinishedProcessingTurn : boost::statechart::event<FinishedProcessingTurn>        {};
+struct ProcessTurn : boost::statechart::event<ProcessTurn>                              {};
+
+struct ResolveCombat : boost::statechart::event<ResolveCombat>
+{
+    ResolveCombat(System* system, std::set<int>& empire_ids);
+
+    System* const m_system;
+    std::set<int> m_empire_ids;
+};
+
+// TODO: For prototyping only.
 struct CombatComplete : boost::statechart::event<CombatComplete>                        {};
 
 //  Message events
@@ -101,9 +110,8 @@ struct WaitingForTurnEndIdle;
 struct WaitingForSaveData;
 
 // Substates of ProcessingTurn
-struct PreCombatTurnProcessing;
-struct ResolvingCombats;
-struct PostCombatTurnProcessing;
+struct ProcessingTurnIdle;
+struct ResolvingCombat;
 
 
 #define SERVER_ACCESSOR private: ServerApp& Server() { return context<ServerFSM>().Server(); }
@@ -336,11 +344,12 @@ struct WaitingForSaveData : boost::statechart::state<WaitingForSaveData, Waiting
   * executing orders, resolving combat, various steps in determining what
   * happens before and after combats occur, and updating players on changes in
   * the Universe. */
-struct ProcessingTurn : boost::statechart::simple_state<ProcessingTurn, PlayingGame, PreCombatTurnProcessing>
+struct ProcessingTurn : boost::statechart::simple_state<ProcessingTurn, PlayingGame, ProcessingTurnIdle>
 {
-    typedef boost::statechart::simple_state<ProcessingTurn, PlayingGame, PreCombatTurnProcessing> Base;
+    typedef boost::statechart::simple_state<ProcessingTurn, PlayingGame, ProcessingTurnIdle> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<ProcessTurn>,
         boost::statechart::deferral<SaveGameRequest>,
         boost::statechart::deferral<TurnOrders>
     > reactions;
@@ -348,67 +357,48 @@ struct ProcessingTurn : boost::statechart::simple_state<ProcessingTurn, PlayingG
     ProcessingTurn();
     ~ProcessingTurn();
 
-    SERVER_ACCESSOR
-};
+    boost::statechart::result react(const ProcessTurn& u);
 
-
-/** The substate of ProcessingTurn in which the server is executing turn
-  * orders and moving ships before combat. */
-struct PreCombatTurnProcessing: boost::statechart::state<PreCombatTurnProcessing, ProcessingTurn>
-{
-    typedef boost::statechart::state<PreCombatTurnProcessing, ProcessingTurn> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<StartProcessingCombats>
-    > reactions;
-
-    PreCombatTurnProcessing(my_context c);
-    ~PreCombatTurnProcessing();
-
-    boost::statechart::result react(const StartProcessingCombats& u);
+    System* m_combat_system;
+    std::set<int> m_combat_empire_ids;
 
     SERVER_ACCESSOR
 };
 
 
-/** The substate of ProcessingTurn in which the server is determining the
-  * outcome of combats, which may include running an interactive combat
-  * simulation, or determining the outcome of less-important combats with
-  * a non-graphical combat simulation. */
-struct ResolvingCombats: boost::statechart::state<ResolvingCombats, ProcessingTurn>
+/** The default substate of ProcessingTurn. */
+struct ProcessingTurnIdle : boost::statechart::simple_state<ProcessingTurnIdle, ProcessingTurn>
 {
-    typedef boost::statechart::state<ResolvingCombats, ProcessingTurn> Base;
+    typedef boost::statechart::simple_state<ProcessingTurnIdle, ProcessingTurn> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<CombatTurnOrders>,
-        boost::statechart::custom_reaction<CombatComplete>
+        boost::statechart::custom_reaction<ResolveCombat>
     > reactions;
 
-    ResolvingCombats(my_context c);
-    ~ResolvingCombats();
+    ProcessingTurnIdle();
+    ~ProcessingTurnIdle();
 
+    boost::statechart::result react(const ResolveCombat& u);
+
+    SERVER_ACCESSOR
+};
+
+
+/** The substate of ProcessingTurn in which a single combat is resolved. */
+struct ResolvingCombat : boost::statechart::state<ResolvingCombat, ProcessingTurn>
+{
+    typedef boost::statechart::state<ResolvingCombat, ProcessingTurn> Base;
+
+    typedef boost::mpl::list<
+        boost::statechart::custom_reaction<CombatComplete>,
+        boost::statechart::custom_reaction<CombatTurnOrders>
+    > reactions;
+
+    ResolvingCombat(my_context c);
+    ~ResolvingCombat();
+
+    boost::statechart::result react(const CombatComplete& msg);
     boost::statechart::result react(const CombatTurnOrders& msg);
-    boost::statechart::result react(const CombatComplete& cc);
-
-    SERVER_ACCESSOR
-};
-
-
-/** The substate of ProcessingTurn in which the server is handling post-combat
-  * turn processing and updating players with gamestate updates for the new
-  * turn. */
-struct PostCombatTurnProcessing: boost::statechart::state<PostCombatTurnProcessing, ProcessingTurn>
-{
-    typedef boost::statechart::state<PostCombatTurnProcessing, ProcessingTurn> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<FinishedProcessingTurn>
-    > reactions;
-
-    PostCombatTurnProcessing(my_context c);
-    ~PostCombatTurnProcessing();
-
-    boost::statechart::result react(const FinishedProcessingTurn& u);
 
     SERVER_ACCESSOR
 };

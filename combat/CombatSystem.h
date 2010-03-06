@@ -25,8 +25,7 @@ struct CombatInfo
     std::map<int, std::set<int> >   destroyed_object_knowers;   ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
 };
 
-/** Resolves a battle. */
-void ResolveCombat(CombatInfo& combat_info);
+/** Auto-resolves a battle. */
+void AutoResolveCombat(CombatInfo& combat_info);
 
 #endif // _CombatSystem_h_
-

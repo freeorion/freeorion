@@ -1,6 +1,7 @@
 #include "ServerApp.h"
 
 #include "SaveLoad.h"
+#include "ServerFSM.h"
 #include "../combat/CombatSystem.h"
 #include "../network/Message.h"
 #include "../universe/Building.h"
@@ -35,14 +36,6 @@ namespace fs = boost::filesystem;
 
 namespace {
     const bool TEST_3D_COMBAT = false;
-
-    void PopulateCombatUniverse(const System& system, std::map<int, UniverseObject*>& combat_universe)
-    {
-        for (System::const_orbit_iterator it = system.begin(); it != system.end(); ++it) {
-            int object_id = it->second;
-            combat_universe[object_id] = GetMainObjectMap().Object(object_id);
-        }
-    }
 }
 
 
@@ -86,7 +79,7 @@ ServerApp::ServerApp() :
                  boost::bind(&ServerApp::HandleMessage, this, _1, _2),
                  boost::bind(&ServerApp::PlayerDisconnected, this, _1)),
     m_log_category(log4cpp::Category::getRoot()),
-    m_fsm(*this),
+    m_fsm(new ServerFSM(*this)),
     m_current_turn(INVALID_GAME_TURN),
     m_single_player_game(false)
 {
@@ -110,11 +103,14 @@ ServerApp::ServerApp() :
     m_log_category.setAdditivity(true);   // ...but allow the addition of others later
     m_log_category.setPriority(log4cpp::Priority::DEBUG);
 
-    m_fsm.initiate();
+    m_fsm->initiate();
 }
 
 ServerApp::~ServerApp()
-{ log4cpp::Category::shutdown(); }
+{
+    log4cpp::Category::shutdown();
+    delete m_fsm;
+}
 
 void ServerApp::operator()()
 { Run(); }
@@ -210,22 +206,22 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME:          m_fsm.process_event(HostSPGame(msg, player_connection)); break;
-    case Message::START_MP_GAME:         m_fsm.process_event(StartMPGame(msg, player_connection)); break;
-    case Message::LOBBY_UPDATE:          m_fsm.process_event(LobbyUpdate(msg, player_connection)); break;
-    case Message::LOBBY_CHAT:            m_fsm.process_event(LobbyChat(msg, player_connection)); break;
-    case Message::LOBBY_HOST_ABORT:      m_fsm.process_event(LobbyHostAbort(msg, player_connection)); break;
-    case Message::LOBBY_EXIT:            m_fsm.process_event(LobbyNonHostExit(msg, player_connection)); break;
-    case Message::SAVE_GAME:             m_fsm.process_event(SaveGameRequest(msg, player_connection)); break;
-    case Message::TURN_ORDERS:           m_fsm.process_event(TurnOrders(msg, player_connection)); break;
-    case Message::COMBAT_TURN_ORDERS:    m_fsm.process_event(CombatTurnOrders(msg, player_connection)); break;
-    case Message::CLIENT_SAVE_DATA:      m_fsm.process_event(ClientSaveData(msg, player_connection)); break;
-    case Message::HUMAN_PLAYER_CHAT:     m_fsm.process_event(PlayerChat(msg, player_connection)); break;
-    case Message::REQUEST_NEW_OBJECT_ID: m_fsm.process_event(RequestObjectID(msg, player_connection)); break;
-    case Message::REQUEST_NEW_DESIGN_ID: m_fsm.process_event(RequestDesignID(msg, player_connection)); break;
+    case Message::HOST_SP_GAME:          m_fsm->process_event(HostSPGame(msg, player_connection)); break;
+    case Message::START_MP_GAME:         m_fsm->process_event(StartMPGame(msg, player_connection)); break;
+    case Message::LOBBY_UPDATE:          m_fsm->process_event(LobbyUpdate(msg, player_connection)); break;
+    case Message::LOBBY_CHAT:            m_fsm->process_event(LobbyChat(msg, player_connection)); break;
+    case Message::LOBBY_HOST_ABORT:      m_fsm->process_event(LobbyHostAbort(msg, player_connection)); break;
+    case Message::LOBBY_EXIT:            m_fsm->process_event(LobbyNonHostExit(msg, player_connection)); break;
+    case Message::SAVE_GAME:             m_fsm->process_event(SaveGameRequest(msg, player_connection)); break;
+    case Message::TURN_ORDERS:           m_fsm->process_event(TurnOrders(msg, player_connection)); break;
+    case Message::COMBAT_TURN_ORDERS:    m_fsm->process_event(CombatTurnOrders(msg, player_connection)); break;
+    case Message::CLIENT_SAVE_DATA:      m_fsm->process_event(ClientSaveData(msg, player_connection)); break;
+    case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg, player_connection)); break;
+    case Message::REQUEST_NEW_OBJECT_ID: m_fsm->process_event(RequestObjectID(msg, player_connection)); break;
+    case Message::REQUEST_NEW_DESIGN_ID: m_fsm->process_event(RequestDesignID(msg, player_connection)); break;
 
     // TODO: For prototyping only.
-    case Message::COMBAT_END:            m_fsm.process_event(CombatComplete()); break;
+    case Message::COMBAT_END:            m_fsm->process_event(CombatComplete()); break;
 
 #ifndef FREEORION_RELEASE
     case Message::DEBUG:                 break;
@@ -240,9 +236,9 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
 void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection)
 {
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME: m_fsm.process_event(HostSPGame(msg, player_connection)); break;
-    case Message::HOST_MP_GAME: m_fsm.process_event(HostMPGame(msg, player_connection)); break;
-    case Message::JOIN_GAME:    m_fsm.process_event(JoinGame(msg, player_connection)); break;
+    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection)); break;
+    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection)); break;
+    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection)); break;
 #ifndef FREEORION_RELEASE
     case Message::DEBUG:                 break;
 #endif
@@ -255,7 +251,7 @@ void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_c
 }
 
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
-{ m_fsm.process_event(Disconnection(player_connection)); }
+{ m_fsm->process_event(Disconnection(player_connection)); }
 
 void ServerApp::NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data)
 {
@@ -989,9 +985,6 @@ void ServerApp::PreCombatProcessTurns()
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
-
-
-    m_fsm.post_event(StartProcessingCombats());
 }
 
 void ServerApp::ProcessCombats()
@@ -1021,6 +1014,8 @@ void ServerApp::ProcessCombats()
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
         CombatInfo& combat_info = it->second;
 
+        // TODO: Remove this up-front check when the 3D combat system is in
+        // place
         if (!TEST_3D_COMBAT) {
             AutoResolveCombat(combat_info);
             continue;
@@ -1042,15 +1037,20 @@ void ServerApp::ProcessCombats()
             continue;
         }
 
-
-        // Testing 3D combat is enabled, and there is at least one human
-        // involved in this battle...
-
-        // TEMP ... until there is a interactive combat system to use
-        AutoResolveCombat(combat_info);
-        // END TEMP
+        // TODO: Until there is a fully-implemented interactive combat system
+        // to use, we autoresolve anyway, unless we're testing the
+        // in-development 3D system.
+        if (TEST_3D_COMBAT) {
+            m_fsm->process_event(
+                ResolveCombat(GetObject<System>(combat_info.system_id), combat_info.empire_ids));
+            while (m_current_combat) {
+                m_io_service.run_one();
+                m_networking.HandleNextEvent();
+            }
+        } else {
+            AutoResolveCombat(combat_info);
+        }
     }
-
 
     DisseminateSystemCombatInfo(system_combat_info);
 
@@ -1058,13 +1058,6 @@ void ServerApp::ProcessCombats()
 
     CleanupSystemCombatInfo(system_combat_info);
 
-
-    m_fsm.post_event(CombatComplete());   // TODO: post one of these for each completed combat, not for all combats being complete
-}
-
-void ServerApp::AutoResolveCombat(CombatInfo& combat_info)
-{
-    ResolveCombat(combat_info);
 }
 
 void ServerApp::PostCombatProcessTurns()
@@ -1201,9 +1194,6 @@ void ServerApp::PostCombatProcessTurns()
         int empire_id = GetPlayerEmpire((*player_it)->ID())->EmpireID();
         (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->ID(), empire_id, m_current_turn, m_empires, m_universe, players));
     }
-
-
-    m_fsm.post_event(FinishedProcessingTurn()); // move to WaitingForTurnEnd state
 }
 
 void ServerApp::CheckForEmpireEliminationOrVictory()

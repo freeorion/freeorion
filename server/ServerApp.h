@@ -2,7 +2,6 @@
 #ifndef _ServerApp_h_
 #define _ServerApp_h_
 
-#include "ServerFSM.h"
 #include "../util/AppInterface.h"
 #include "../util/Process.h"
 #include "../Empire/EmpireManager.h"
@@ -18,11 +17,12 @@
 namespace log4cpp {
     class Category;
 }
+struct CombatInfo;
 class Message;
 class OrderSet;
 struct PlayerSetupData;
 struct SaveGameUIData;
-struct CombatInfo;
+struct ServerFSM;
 
 /** contains the data that must be saved for a single player.  Note that the m_empire member is not deallocated by
     PlayerSaveGameData.  Users of PlayerSaveGameData are resposible for managing its lifetime. */
@@ -183,11 +183,6 @@ private:
     /** Called by ServerNetworking when a player's TCP connection is closed*/
     void                PlayerDisconnected(PlayerConnectionPtr player_connection);
 
-    /** Determines result of a combat without human or AI player input.  Input
-      * \a combat_info contains the combat initial conditions, and is updated
-      * to output the results. */
-    void                AutoResolveCombat(CombatInfo& combat_info);
-
     boost::asio::io_service         m_io_service;
 
     Universe                        m_universe;
@@ -197,7 +192,7 @@ private:
 
     log4cpp::Category&              m_log_category;         ///< reference to the log4cpp object used to log events to file
 
-    ServerFSM                       m_fsm;
+    ServerFSM*                      m_fsm;
 
     int                             m_current_turn;         ///< current turn number
 
