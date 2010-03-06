@@ -66,10 +66,10 @@ ServerFSM::ServerFSM(ServerApp &server) :
     m_server(server)
 {}
 
-void ServerFSM::unconsumed_event(const boost::statechart::event_base &event)
+void ServerFSM::unconsumed_event(const sc::event_base &event)
 {
     std::string most_derived_message_type_str = "[ERROR: Unknown Event]";
-    const boost::statechart::event_base* event_ptr = &event;
+    const sc::event_base* event_ptr = &event;
     if (dynamic_cast<const Disconnection*>(event_ptr))
         most_derived_message_type_str = "Disconnection";
 #define MESSAGE_EVENT_CASE(r, data, name)                               \
@@ -127,14 +127,14 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 ////////////////////////////////////////////////////////////
 // Idle
 ////////////////////////////////////////////////////////////
-Idle::Idle() :
-    Base()
+Idle::Idle(my_context c) :
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle"; }
 
 Idle::~Idle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~Idle"; }
 
-boost::statechart::result Idle::react(const HostMPGame& msg)
+sc::result Idle::react(const HostMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostMPGame";
     ServerApp& server = Server();
@@ -150,7 +150,7 @@ boost::statechart::result Idle::react(const HostMPGame& msg)
     return transit<MPLobby>();
 }
 
-boost::statechart::result Idle::react(const HostSPGame& msg)
+sc::result Idle::react(const HostSPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle.HostSPGame";
     ServerApp& server = Server();
@@ -174,7 +174,7 @@ boost::statechart::result Idle::react(const HostSPGame& msg)
 // MPLobby
 ////////////////////////////////////////////////////////////
 MPLobby::MPLobby(my_context c) :
-    Base(c),
+    my_base(c),
     m_lobby_data(new MultiplayerLobbyData(true)),
     m_server_save_game_data(new ServerSaveGameData())
 {
@@ -192,7 +192,7 @@ MPLobby::MPLobby(my_context c) :
 MPLobby::~MPLobby()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~MPLobby"; }
 
-boost::statechart::result MPLobby::react(const Disconnection& d)
+sc::result MPLobby::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.Disconnection";
     ServerApp& server = Server();
@@ -226,7 +226,7 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const JoinGame& msg)
+sc::result MPLobby::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = Server();
@@ -248,7 +248,7 @@ boost::statechart::result MPLobby::react(const JoinGame& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
+sc::result MPLobby::react(const LobbyUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
@@ -288,7 +288,7 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyChat& msg)
+sc::result MPLobby::react(const LobbyChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyChat";
     ServerApp& server = Server();
@@ -306,7 +306,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
+sc::result MPLobby::react(const LobbyHostAbort& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyHostAbort";
     ServerApp& server = Server();
@@ -329,7 +329,7 @@ boost::statechart::result MPLobby::react(const LobbyHostAbort& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
+sc::result MPLobby::react(const LobbyNonHostExit& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyNonHostExit";
     ServerApp& server = Server();
@@ -344,7 +344,7 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const StartMPGame& msg)
+sc::result MPLobby::react(const StartMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = Server();
@@ -389,7 +389,7 @@ boost::statechart::result MPLobby::react(const StartMPGame& msg)
 // WaitingForSPGameJoiners
 ////////////////////////////////////////////////////////////
 WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
-    Base(c),
+    my_base(c),
     m_setup_data(context<ServerFSM>().m_setup_data),
     m_server_save_game_data(new ServerSaveGameData()),
     m_num_expected_players(0)
@@ -419,7 +419,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 WaitingForSPGameJoiners::~WaitingForSPGameJoiners()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSPGameJoiners"; }
 
-boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
+sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.JoinGame";
     ServerApp& server = Server();
@@ -457,7 +457,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const JoinGame& msg)
     return discard_event();
 }
 
-boost::statechart::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
+sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
@@ -479,7 +479,7 @@ boost::statechart::result WaitingForSPGameJoiners::react(const CheckStartConditi
 // WaitingForMPGameJoiners
 ////////////////////////////////////////////////////////////
 WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
-    Base(c),
+    my_base(c),
     m_lobby_data(context<ServerFSM>().m_lobby_data),
     m_player_save_game_data(context<ServerFSM>().m_player_save_game_data),
     m_server_save_game_data(context<ServerFSM>().m_server_save_game_data),
@@ -509,7 +509,7 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForMPGameJoiners"; }
 
-boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
+sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.JoinGame";
     ServerApp& server = Server();
@@ -551,14 +551,14 @@ boost::statechart::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 ////////////////////////////////////////////////////////////
 // PlayingGame
 ////////////////////////////////////////////////////////////
-PlayingGame::PlayingGame() :
-    Base()
+PlayingGame::PlayingGame(my_context c) :
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame"; }
 
 PlayingGame::~PlayingGame()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~PlayingGame"; }
 
-boost::statechart::result PlayingGame::react(const PlayerChat& msg)
+sc::result PlayingGame::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
@@ -572,14 +572,14 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
-WaitingForTurnEnd::WaitingForTurnEnd() :
-    Base()
+WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd"; }
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
 
-boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
+sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.HostSPGame";
     ServerApp& server = Server();
@@ -613,7 +613,7 @@ boost::statechart::result WaitingForTurnEnd::react(const HostSPGame& msg)
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
+sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
     ServerApp& server = Server();
@@ -658,14 +658,14 @@ boost::statechart::result WaitingForTurnEnd::react(const TurnOrders& msg)
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnEnd::react(const RequestObjectID& msg)
+sc::result WaitingForTurnEnd::react(const RequestObjectID& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
     Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
-boost::statechart::result WaitingForTurnEnd::react(const RequestDesignID& msg)
+sc::result WaitingForTurnEnd::react(const RequestDesignID& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
     Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
@@ -676,14 +676,14 @@ boost::statechart::result WaitingForTurnEnd::react(const RequestDesignID& msg)
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEndIdle
 ////////////////////////////////////////////////////////////
-WaitingForTurnEndIdle::WaitingForTurnEndIdle() :
-    Base()
+WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle"; }
 
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
 
-boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.SaveGameRequest";
     ServerApp& server = Server();
@@ -706,7 +706,7 @@ boost::statechart::result WaitingForTurnEndIdle::react(const SaveGameRequest& ms
 // WaitingForSaveData
 ////////////////////////////////////////////////////////////
 WaitingForSaveData::WaitingForSaveData(my_context c) :
-    Base(c)
+    my_base(c)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
 
@@ -720,7 +720,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
 WaitingForSaveData::~WaitingForSaveData()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForSaveData"; }
 
-boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
+sc::result WaitingForSaveData::react(const ClientSaveData& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData.ClientSaveData";
     ServerApp& server = Server();
@@ -766,8 +766,8 @@ boost::statechart::result WaitingForSaveData::react(const ClientSaveData& msg)
 ////////////////////////////////////////////////////////////
 // ProcessingTurn
 ////////////////////////////////////////////////////////////
-ProcessingTurn::ProcessingTurn() :
-    Base(),
+ProcessingTurn::ProcessingTurn(my_context c) :
+    my_base(c),
     m_combat_system(0),
     m_combat_empire_ids()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurn"; }
@@ -775,7 +775,7 @@ ProcessingTurn::ProcessingTurn() :
 ProcessingTurn::~ProcessingTurn()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurn"; }
 
-boost::statechart::result ProcessingTurn::react(const ProcessTurn& u)
+sc::result ProcessingTurn::react(const ProcessTurn& u)
 {
     ServerApp& server = Server();
     server.PreCombatProcessTurns();
@@ -788,14 +788,14 @@ boost::statechart::result ProcessingTurn::react(const ProcessTurn& u)
 ////////////////////////////////////////////////////////////
 // ProcessingTurnIdle
 ////////////////////////////////////////////////////////////
-ProcessingTurnIdle::ProcessingTurnIdle() :
-    Base()
+ProcessingTurnIdle::ProcessingTurnIdle(my_context c) :
+    my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurnIdle"; }
 
 ProcessingTurnIdle::~ProcessingTurnIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~ProcessingTurnIdle"; }
 
-boost::statechart::result ProcessingTurnIdle::react(const ResolveCombat& u)
+sc::result ProcessingTurnIdle::react(const ResolveCombat& u)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ProcessingTurnIdle.ResolveCombat";
 
@@ -810,7 +810,7 @@ boost::statechart::result ProcessingTurnIdle::react(const ResolveCombat& u)
 // ResolvingCombat
 ////////////////////////////////////////////////////////////
 ResolvingCombat::ResolvingCombat(my_context c) :
-    Base(c)
+    my_base(c)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat";
 
@@ -845,7 +845,7 @@ ResolvingCombat::~ResolvingCombat()
     context<ProcessingTurn>().m_combat_empire_ids.clear();
 }
 
-boost::statechart::result ResolvingCombat::react(const CombatTurnOrders& msg)
+sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatTurnOrders";
 
@@ -886,7 +886,7 @@ boost::statechart::result ResolvingCombat::react(const CombatTurnOrders& msg)
     return discard_event();
 }
 
-boost::statechart::result ResolvingCombat::react(const CombatComplete& cc)
+sc::result ResolvingCombat::react(const CombatComplete& cc)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatComplete";
     ServerApp& server = Server();
