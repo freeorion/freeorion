@@ -31,6 +31,7 @@
 
 namespace {
     const std::string MESSAGE_SCOPE_PREFIX = "Message::";
+    const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
     std::string StripMessageScoping(const std::string& str)
     {
         return boost::algorithm::starts_with(str, MESSAGE_SCOPE_PREFIX) ?
@@ -420,7 +421,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders)
 
 Message RequestNewObjectIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, "");
+    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, DUMMY_EMPTY_MESSAGE);
 }
 
 Message DispatchObjectIDMessage(int player_id, int new_id)
@@ -431,7 +432,7 @@ Message DispatchObjectIDMessage(int player_id, int new_id)
 
 Message RequestNewDesignIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, "", true);
+    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, DUMMY_EMPTY_MESSAGE, true);
 }
 
 Message DispatchDesignIDMessage(int player_id, int new_id)
@@ -447,7 +448,7 @@ Message HostSaveGameMessage(int sender, const std::string& filename)
 
 Message ServerSaveGameMessage(int receiver, bool synchronous_response)
 {
-    return Message(Message::SAVE_GAME, -1, receiver, "", synchronous_response);
+    return Message(Message::SAVE_GAME, -1, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
 }
 
 Message GlobalChatMessage(int sender, const std::string& msg)
@@ -534,27 +535,27 @@ Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data
 
 Message LobbyHostAbortMessage(int sender)
 {
-    return Message(Message::LOBBY_HOST_ABORT, sender, -1, "");
+    return Message(Message::LOBBY_HOST_ABORT, sender, -1, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerLobbyHostAbortMessage(int receiver)
 {
-    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, "");
+    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, DUMMY_EMPTY_MESSAGE);
 }
 
 Message LobbyExitMessage(int sender)
 {
-    return Message(Message::LOBBY_EXIT, sender, -1, "");
+    return Message(Message::LOBBY_EXIT, sender, -1, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerLobbyExitMessage(int sender, int receiver)
 {
-    return Message(Message::LOBBY_EXIT, sender, receiver, "");
+    return Message(Message::LOBBY_EXIT, sender, receiver, DUMMY_EMPTY_MESSAGE);
 }
 
 Message StartMPGameMessage(int player_id)
 {
-    return Message(Message::START_MP_GAME, player_id, -1, "");
+    return Message(Message::START_MP_GAME, player_id, -1, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerCombatStartMessage(int receiver, int empire_id, const CombatData& combat_data)
@@ -580,7 +581,7 @@ Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData&
 }
 
 Message ServerCombatEndMessage(int receiver)
-{ return Message(Message::COMBAT_END, -1, receiver, ""); }
+{ return Message(Message::COMBAT_END, -1, receiver, DUMMY_EMPTY_MESSAGE); }
 
 Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 {
