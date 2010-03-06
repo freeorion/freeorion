@@ -36,5 +36,3 @@ material ship {
         }
     }
 }
-
-material ship_being_placed : ship {}

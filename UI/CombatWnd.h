@@ -29,9 +29,11 @@ namespace GG {
 }
 
 class CombatData;
-class CombatSetupWnd; // TODO: Remove this; it is only here for prototyping.
-class System;
+class CombatSetupWnd;
 class FPSIndicator;
+class System;
+class Ship;
+class ShipDesign;
 class UniverseObject;
 
 class bt32BitAxisSweep3;
@@ -128,8 +130,11 @@ private:
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
-    void AddShip(const CombatShipPtr& combat_ship);
-    void RemoveShip(const CombatShipPtr& combat_ship);
+    const Ogre::MaterialPtr& GetShipMaterial(const ShipDesign& ship_design);
+    void AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
+                     const Ogre::MaterialPtr& material);
+    void AddCombatShip(const CombatShipPtr& combat_ship);
+    void RemoveCombatShip(const CombatShipPtr& combat_ship);
 
     // Keyboard accelerator handlers, etc.  See MapWnd for implementation
     // notes.
@@ -237,6 +242,9 @@ private:
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
 
-bool isVisible(const Ogre::SceneNode& node);
+bool IsVisible(const Ogre::SceneNode& node);
+Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship);
+Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
+                               const Ogre::MaterialPtr& material);
 
 #endif

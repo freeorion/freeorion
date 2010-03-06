@@ -260,20 +260,29 @@ namespace {
 
 }
 
-CombatSetupWnd::CombatSetupWnd(std::vector<Fleet*> fleets,
-                               CombatWnd* combat_wnd,
-                               Ogre::SceneManager* scene_manager,
-                               boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
-                               intersect_mouse_with_ecliptic,
-                               GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
+CombatSetupWnd::CombatSetupWnd(
+    std::vector<Fleet*> fleets,
+    CombatWnd* combat_wnd,
+    Ogre::SceneManager* scene_manager,
+    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
+    intersect_mouse_with_ecliptic,
+    boost::function<const Ogre::MaterialPtr& (const ShipDesign&)>
+    get_ship_material,
+    boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
+    add_ship_node_to_combat_wnd,
+    GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
     m_scene_manager(scene_manager),
-    m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic)
+    m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic),
+    m_get_ship_material(get_ship_material),
+    m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd)
 {
+    m_listbox->SetStyle(m_listbox->Style() | GG::LIST_SINGLESEL);
+
     AttachChild(m_listbox);
     GridLayout();
 
@@ -293,6 +302,11 @@ CombatSetupWnd::CombatSetupWnd(std::vector<Fleet*> fleets,
     combat_wnd->InstallEventFilter(this);
 }
 
+CombatSetupWnd::~CombatSetupWnd()
+{
+    // TODO: clean up nodes maintained during initial placement
+}
+
 GG::Pt CombatSetupWnd::ListRowSize() const
 { return GG::Pt(m_listbox->Width() - ClientUI::ScrollWidth() - 5, ListRowHeight()); }
 
@@ -307,19 +321,12 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         retval = true;
     } else if (event.Type() == GG::WndEvent::LClick) {
         Ogre::SceneNode* placement_node = 0;
-        if ((placement_node = PlaceableShipNode()) && isVisible(*placement_node)) {
-#if 0
-            CombatShipPtr combat_ship(new CombatShip(m_combat_setup_wnd->PlaceableShip(),
-                                                     ToOgre(placement_node->getPosition()),
-                                                     ToOgre(placement_node->direction()),
-                                                     m_pathing_engine));
-            ShipPlaced(combat_ship);
-#endif
-            EndCurrentShipPlacement();
+        if ((placement_node = PlaceableShipNode()) && IsVisible(*placement_node)) {
+            PlaceCurrentShip();
             retval = true;
         }
     } else if (event.Type() == GG::WndEvent::RClick) {
-        EndCurrentShipPlacement();
+        CancelCurrentShipPlacement();
         retval = true;
     } else if (event.Type() == GG::WndEvent::MouseEnter) {
         HandleMouseMoves(event.Point());
@@ -365,40 +372,48 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
     if (ship != m_selected_placeable_ship) {
         m_selected_placeable_ship = ship;
         if (m_placeable_ship_node) {
-            m_placeable_ship_node->detachAllObjects();
-        } else if (m_selected_placeable_ship) {
-            m_placeable_ship_node =
-                m_scene_manager->getRootSceneNode()->createChildSceneNode("placed_ship_node");
+            m_placeable_ship_node->setVisible(false);
+            m_placeable_ship_node = 0;
         }
-
         if (m_selected_placeable_ship) {
-            Ogre::MaterialPtr material =
-                Ogre::MaterialManager::getSingleton().getByName("ship_being_placed");
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
-                setTextureName(ship->Design()->Model() + "_Color.png");
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
-                setTextureName(ship->Design()->Model() + "_Glow.png");
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
-                setTextureName(ship->Design()->Model() + "_Normal.png");
-            material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
-                setTextureName(ship->Design()->Model() + "_Specular.png");
-            std::string mesh_name = ship->Design()->Model() + ".mesh";
-            Ogre::Entity*& entity = m_placeable_ship_entities[mesh_name];
-            if (!entity) {
-                entity = m_scene_manager->createEntity("placement_" + mesh_name, mesh_name);
-                entity->setCastShadows(true);
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-                entity->setMaterialName("ship_being_placed");
-            }
-            m_placeable_ship_node->attachObject(entity);
+            Ogre::SceneNode*& node = m_ship_nodes[ship->ID()];
+            if (!node)
+                node = CreateShipSceneNode(m_scene_manager, *ship);;
+            const Ogre::MaterialPtr& material = m_get_ship_material(*ship->Design());
+            Ogre::Entity*& entity = m_ship_entities[ship->ID()];
+            entity = CreateShipEntity(m_scene_manager, *ship, material);
+            node->attachObject(entity);
+            m_placeable_ship_node = node;
         }
     }
 }
 
-void CombatSetupWnd::EndCurrentShipPlacement()
+void CombatSetupWnd::CancelCurrentShipPlacement()
 {
     m_selected_placeable_ship = 0;
-    if (m_placeable_ship_node)
+    if (m_placeable_ship_node) {
         m_placeable_ship_node->setVisible(false);
+        m_placeable_ship_node = 0;
+    }
     m_listbox->DeselectAll();
+}
+
+void CombatSetupWnd::PlaceCurrentShip()
+{
+    assert(m_selected_placeable_ship);
+    assert(m_placeable_ship_node);
+
+    m_add_ship_node_to_combat_wnd(m_selected_placeable_ship->ID(),
+                                  m_placeable_ship_node,
+                                  m_ship_entities[m_selected_placeable_ship->ID()],
+                                  m_get_ship_material(*m_selected_placeable_ship->Design()));
+
+    const CUIListBox::SelectionSet& selections = m_listbox->Selections();
+    assert(selections.size() == 1u);
+    m_listbox->Erase(*selections.begin());
+
+    m_ship_entities.erase(m_selected_placeable_ship->ID());
+    m_ship_nodes.erase(m_selected_placeable_ship->ID());
+    m_selected_placeable_ship = 0;
+    m_placeable_ship_node = 0;
 }

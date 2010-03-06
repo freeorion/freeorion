@@ -292,6 +292,7 @@ namespace {
     // TODO: For prototyping only.
     void DoneButtonClicked()
     {
+        // TODO: send a message to the server indicating the combat setup is complete
         HumanClientApp::GetApp()->Networking().SendMessage(
             Message(Message::COMBAT_END,
                     HumanClientApp::GetApp()->PlayerID(),
@@ -437,6 +438,12 @@ namespace {
             paged_geometry->setPageLoader(paged_geometry_loader);
         }
     }
+
+    std::string ShipIDString(const Ship& ship)
+    { return "ship_" + boost::lexical_cast<std::string>(ship.ID()) + "_"; }
+
+    std::string ShipMeshName(const Ship& ship)
+    { return ship.Design()->Model() + ".mesh"; }
 
     void AddOptions(OptionsDB& db)
     {
@@ -1179,7 +1186,9 @@ void CombatWnd::InitCombat(CombatData& combat_data)
     }
     m_combat_setup_wnd =
         new CombatSetupWnd(fleets, this, m_scene_manager,
-                           boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1));
+                           boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1),
+                           boost::bind(&CombatWnd::GetShipMaterial, this, _1),
+                           boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4));
     AttachChild(m_combat_setup_wnd);
 }
 
@@ -1477,7 +1486,7 @@ void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
 }
 
 void CombatWnd::ShipPlaced(const CombatShipPtr &ship)
-{ AddShip(ship); }
+{ AddCombatShip(ship); }
 
 void CombatWnd::ShipFired(const CombatShipPtr &ship,
                           const CombatObjectPtr &target,
@@ -1487,7 +1496,7 @@ void CombatWnd::ShipFired(const CombatShipPtr &ship,
 }
 
 void CombatWnd::ShipDestroyed(const CombatShipPtr &ship)
-{ RemoveShip(ship); }
+{ RemoveCombatShip(ship); }
 
 void CombatWnd::ShipEnteredStarlane(const CombatShipPtr &ship)
 {
@@ -1835,43 +1844,29 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 void CombatWnd::DeselectAll()
 { m_current_selections.clear(); }
 
-void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
+const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_design)
 {
-    const Ship& ship = combat_ship->GetShip();
-    std::string mesh_name = ship.Design()->Model() + ".mesh";
-    std::string ship_id_str = "ship_" + boost::lexical_cast<std::string>(ship.ID()) + "_";
-
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    std::string modified_material_name = "ship material " + ship.Design()->Model();
+    std::string modified_material_name = "ship material " + ship_design.Model();
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
         modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
-            setTextureName(ship.Design()->Model() + "_Color.png");
+            setTextureName(ship_design.Model() + "_Color.png");
         modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
-            setTextureName(ship.Design()->Model() + "_Glow.png");
+            setTextureName(ship_design.Model() + "_Glow.png");
         modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
-            setTextureName(ship.Design()->Model() + "_Normal.png");
+            setTextureName(ship_design.Model() + "_Normal.png");
         modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
-            setTextureName(ship.Design()->Model() + "_Specular.png");
+            setTextureName(ship_design.Model() + "_Specular.png");
     }
+    return modified_material;
+}
 
-    Ogre::Entity* entity = m_scene_manager->createEntity(ship_id_str + mesh_name, mesh_name);
-    entity->setCastShadows(true);
-    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
-    entity->setMaterialName(modified_material_name);
-
-    Ogre::SceneNode* node =
-        m_scene_manager->getRootSceneNode()->createChildSceneNode(ship_id_str + mesh_name + "_node");
-    node->attachObject(entity);
-    node->setUserAny(Ogre::Any(combat_ship));
-
-    node->setPosition(ToOgre(combat_ship->position()));
-    node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
-                                          ToOgre(combat_ship->forward()),
-                                          ToOgre(combat_ship->up())));
-
+void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
+                            const Ogre::MaterialPtr& material)
+{
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;
@@ -1893,11 +1888,29 @@ void CombatWnd::AddShip(const CombatShipPtr& combat_ship)
     m_collision_world->addCollisionObject(collision_object);
     collision_object->setUserPointer(static_cast<Ogre::MovableObject*>(entity));
 
-    m_ship_assets[ship.ID()] =
-        ShipData(node, modified_material, collision_mesh, collision_shape, collision_object);
+    m_ship_assets[ship_id] =
+        ShipData(node, material, collision_mesh, collision_shape, collision_object);
 }
 
-void CombatWnd::RemoveShip(const CombatShipPtr& combat_ship)
+void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
+{
+    const Ship& ship = combat_ship->GetShip();
+    std::string mesh_name = ship.Design()->Model() + ".mesh";
+
+    const Ogre::MaterialPtr& material = GetShipMaterial(*ship.Design());
+    Ogre::Entity* entity = CreateShipEntity(m_scene_manager, ship, material);
+    Ogre::SceneNode* node = CreateShipSceneNode(m_scene_manager, ship);
+    node->attachObject(entity);
+    node->setUserAny(Ogre::Any(combat_ship));
+
+    node->setPosition(ToOgre(combat_ship->position()));
+    node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
+                                          ToOgre(combat_ship->forward()),
+                                          ToOgre(combat_ship->up())));
+    AddShipNode(ship.ID(), node, entity, material);
+}
+
+void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship)
 {
     ShipData& ship_data = m_ship_assets[combat_ship->GetShip().ID()];
     m_scene_manager->destroySceneNode(ship_data.m_node);
@@ -2108,7 +2121,7 @@ void CombatWnd::ChatMessageSentSlot()
 ////////////////////////////////////////
 // Free function(s)
 ////////////////////////////////////////
-bool isVisible(const Ogre::SceneNode& node)
+bool IsVisible(const Ogre::SceneNode& node)
 {
     bool retval = true;
     Ogre::SceneNode::ConstObjectIterator iterator = node.getAttachedObjectIterator();
@@ -2116,4 +2129,21 @@ bool isVisible(const Ogre::SceneNode& node)
         retval &= iterator.getNext()->isVisible();
     }
     return retval;
+}
+
+Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship)
+{
+    return scene_manager->getRootSceneNode()->createChildSceneNode(
+        ShipIDString(ship) + ShipMeshName(ship) + "_node");
+}
+
+Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
+                               const Ogre::MaterialPtr& material)
+{
+    std::string mesh_name = ShipMeshName(ship);
+    Ogre::Entity* entity = scene_manager->createEntity(ShipIDString(ship) + mesh_name, mesh_name);
+    entity->setCastShadows(true);
+    entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+    entity->setMaterialName(material->getName());
+    return entity;
 }
