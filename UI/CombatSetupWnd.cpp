@@ -316,8 +316,8 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
             ShipPlaced(combat_ship);
 #endif
             EndCurrentShipPlacement();
+            retval = true;
         }
-        retval = true;
     } else if (event.Type() == GG::WndEvent::RClick) {
         EndCurrentShipPlacement();
         retval = true;
