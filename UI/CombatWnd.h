@@ -20,8 +20,13 @@ namespace Ogre {
     class RaySceneQuery;
     class SceneManager;
     class SceneNode;
+    class Vector3;
     class Viewport;
     class PlaneBoundedVolumeListSceneQuery;
+}
+
+namespace OpenSteer {
+    class Vec3;
 }
 
 namespace GG {
@@ -246,5 +251,6 @@ bool IsVisible(const Ogre::SceneNode& node);
 Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship);
 Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
                                const Ogre::MaterialPtr& material);
+OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);
 
 #endif

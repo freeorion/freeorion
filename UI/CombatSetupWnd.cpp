@@ -275,6 +275,7 @@ CombatSetupWnd::CombatSetupWnd(
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
+    m_setup_finished_waiting_for_server(false),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_done_button(new CUIButton(GG::X0, GG::Y1, GG::X1, UserString("DONE"))),
     m_selected_placeable_ship(0),
@@ -322,6 +323,10 @@ GG::Pt CombatSetupWnd::ListRowSize() const
 
 bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 {
+    // Turn off all event handling to lock down CombatWnd.
+    if (m_setup_finished_waiting_for_server)
+        return true;
+
     bool retval = false;
     if (event.Type() == GG::WndEvent::LButtonDown) {
         if (PlaceableShipNode())
@@ -422,6 +427,12 @@ void CombatSetupWnd::PlaceCurrentShip()
     assert(selections.size() == 1u);
     m_listbox->Erase(*selections.begin());
 
+    Ogre::Vector3 axes[3];
+    m_placeable_ship_node->getOrientation().ToAxes(axes);
+    m_placement_orders.push_back(CombatOrder(m_selected_placeable_ship->ID(),
+                                             ToOpenSteer(m_placeable_ship_node->getPosition()),
+                                             ToOpenSteer(axes[1])));
+
     m_ship_entities.erase(m_selected_placeable_ship->ID());
     m_ship_nodes.erase(m_selected_placeable_ship->ID());
     m_selected_placeable_ship = 0;
@@ -432,6 +443,14 @@ void CombatSetupWnd::PlaceCurrentShip()
 
 void CombatSetupWnd::DoneButtonClicked()
 {
-    // TODO: send a message to the server indicating the combat setup is complete
-    std::cerr << "Sending message to server.\n";
+#if 0 // TODO
+    HumanClientApp::GetApp()->Networking().SendMessage(
+        CombatTurnOrdersMessage(
+            HumanClientApp::GetApp()->PlayerID(),
+            m_placement_orders));
+#endif
+
+    m_setup_finished_waiting_for_server = true;
+    m_done_button->Disable(true);
+    Hide();
 }

@@ -193,9 +193,6 @@ namespace {
     OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
     { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
 
-    OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
-    { return OpenSteer::Vec3(vec.x, vec.y, vec.z); }
-
     struct RayIntersectionHit
     {
         RayIntersectionHit() : m_object(0) {}
@@ -2149,3 +2146,6 @@ Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& sh
     entity->setMaterialName(material->getName());
     return entity;
 }
+
+OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
+{ return OpenSteer::Vec3(vec.x, vec.y, vec.z); }

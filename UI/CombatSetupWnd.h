@@ -4,6 +4,7 @@
 
 #include "CUIControls.h"
 #include "CUIWnd.h"
+#include "../combat/CombatOrder.h"
 
 
 namespace Ogre {
@@ -50,6 +51,9 @@ private:
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
     void DoneButtonClicked();
+
+    CombatOrderSet m_placement_orders;
+    bool m_setup_finished_waiting_for_server;
 
     CUIListBox* m_listbox;
     CUIButton* m_done_button;
