@@ -41,6 +41,12 @@ const boost::filesystem::path GetBinDir();
 /** Returns the full path to the configfile. */
 const boost::filesystem::path GetConfigPath();
 
+#ifdef FREEORION_MACOSX
+/** This function returns the Python home directory from where it is embedded
+  * within the Mac OS X application bundle */
+const boost::filesystem::path GetPythonHome();
+#endif
+
 /** Returns the path to \a to, as it appears from \a from. */
 boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to);
 

@@ -29,12 +29,15 @@ namespace {
    localdir: ~/Library/FreeOrion
    globaldir: FreeOrion.app/Contents/Resources
    bindir:  FreeOrion.app/Contents/Executables
-   configpath: ~/Library/FreeOrion/config.xml */
+   configpath: ~/Library/FreeOrion/config.xml
+   pythonhome: FreeOrion.app/Contents/Frameworks/Python.framework/Versions/Current
+*/
 namespace {
     fs::path   s_user_dir;
     fs::path   s_root_data_dir;
     fs::path   s_bin_dir;
     fs::path   s_config_path;
+    fs::path   s_python_home;
 }
 
 void InitBinDir(const std::string& argv0);
@@ -85,6 +88,7 @@ void InitDirs(const std::string& argv0)
     s_user_dir      =   fs::path(getenv("HOME")) / "Library" / "Application Support" / "FreeOrion";
     s_bin_dir       =   app_path / "Executables";
     s_config_path   =   s_user_dir / "config.xml";
+    s_python_home   =   app_path / "Frameworks" / "Python.framework" / "Versions" / "Current";
 
     fs::path p = s_user_dir;
     if (!exists(p))
@@ -116,6 +120,13 @@ const fs::path GetBinDir()
     if (!g_initialized)
         InitDirs("");
     return s_bin_dir;
+}
+
+const fs::path GetPythonHome()
+{
+    if (!g_initialized)
+        InitDirs("");
+    return s_python_home;
 }
 
 #elif defined(FREEORION_LINUX)

@@ -178,6 +178,12 @@ PythonAI::PythonAI() {
     s_ai = this;
 
     try {
+#ifdef FREEORION_MACOSX
+#include <sys/param.h>
+        char python_home[MAXPATHLEN];
+        strcpy(python_home, GetPythonHome().string().c_str());
+        Py_SetPythonHome(python_home);
+#endif
         Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
 
         initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
@@ -186,6 +192,10 @@ PythonAI::PythonAI() {
         Logger().errorStream() << "Unable to initialize Python interpreter.";
         return;
     }
+
+    Logger().debugStream() << "Python version: " << Py_GetVersion();
+    Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
+    Logger().debugStream() << "Python module search path: " << Py_GetPath();
 
     try {
         // get main namespace, needed to run other interpreted code
