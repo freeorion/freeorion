@@ -290,9 +290,8 @@ namespace {
     }
 
     // TODO: For prototyping only.
-    void DoneButtonClicked()
+    void EndCombatButtonClicked()
     {
-        // TODO: send a message to the server indicating the combat setup is complete
         HumanClientApp::GetApp()->Networking().SendMessage(
             Message(Message::COMBAT_END,
                     HumanClientApp::GetApp()->PlayerID(),
@@ -763,11 +762,10 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     AttachChild(m_fps_text);
 
-    //////////////////////////////////////////////////////////////////
-    // NOTE: Below is temporary code for combat system prototyping! //
-    //////////////////////////////////////////////////////////////////
-
     if (GetOptionsDB().Get<bool>("tech-demo")) {
+        //////////////////////////////////////////////////////////////////
+        // NOTE: This is temporary code for combat system prototyping!  //
+        //////////////////////////////////////////////////////////////////
         int system_id = 0;
         StarType star_type = STAR_BLUE;
         std::vector<int> planet_ids(10);
@@ -903,14 +901,18 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
         InitCombat(*combat_data);
     } else {
-        GG::X width(50);
+        // TODO: For prototyping only.
+        GG::X width(150);
         CUIButton* done_button =
-            new CUIButton((GG::GUI::GetGUI()->AppWidth() - width) / 2,
-                          GG::GUI::GetGUI()->AppHeight() - GG::Y(20),
+            new CUIButton(GG::GUI::GetGUI()->AppWidth() - width - GG::X(5),
+                          GG::GUI::GetGUI()->AppHeight() - GG::Y(25),
                           width,
-                          "Done");
-        GG::Connect(done_button->ClickedSignal, &DoneButtonClicked);
+                          "End Combat");
+        GG::Connect(done_button->ClickedSignal, &EndCombatButtonClicked);
         AttachChild(done_button);
+
+        // TODO: Add permanent (i.e. not just for prototyping) button for
+        // combat auto-resolution.
     }
 }
 

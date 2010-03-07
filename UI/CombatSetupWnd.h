@@ -49,8 +49,10 @@ private:
     void PlaceableShipSelected(Ship* ship);
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
+    void DoneButtonClicked();
 
     CUIListBox* m_listbox;
+    CUIButton* m_done_button;
     Ship* m_selected_placeable_ship;
     Ogre::SceneNode* m_placeable_ship_node;
     std::map<int, Ogre::Entity*> m_ship_entities;

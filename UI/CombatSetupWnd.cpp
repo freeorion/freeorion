@@ -5,10 +5,12 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
+#include <GG/Layout.h>
 
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
@@ -274,6 +276,7 @@ CombatSetupWnd::CombatSetupWnd(
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
+    m_done_button(new CUIButton(GG::X0, GG::Y1, GG::X1, UserString("DONE"))),
     m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
     m_scene_manager(scene_manager),
@@ -282,9 +285,16 @@ CombatSetupWnd::CombatSetupWnd(
     m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd)
 {
     m_listbox->SetStyle(m_listbox->Style() | GG::LIST_SINGLESEL);
+    Connect(m_done_button->ClickedSignal, &CombatSetupWnd::DoneButtonClicked, this);
+    m_done_button->Disable(true);
+    GG::Y original_button_height = m_done_button->Height();
 
     AttachChild(m_listbox);
-    GridLayout();
+    AttachChild(m_done_button);
+    VerticalLayout();
+    GetLayout()->SetRowStretch(0, Value(Height() - original_button_height));
+    GetLayout()->SetRowStretch(1, Value(original_button_height));
+    GetLayout()->SetCellMargin(2);
 
     ObjectMap& objects = GetUniverse().Objects();
     const GG::Pt row_size = ListRowSize();
@@ -416,4 +426,12 @@ void CombatSetupWnd::PlaceCurrentShip()
     m_ship_nodes.erase(m_selected_placeable_ship->ID());
     m_selected_placeable_ship = 0;
     m_placeable_ship_node = 0;
+
+    m_done_button->Disable(!m_listbox->Empty());
+}
+
+void CombatSetupWnd::DoneButtonClicked()
+{
+    // TODO: send a message to the server indicating the combat setup is complete
+    std::cerr << "Sending message to server.\n";
 }
