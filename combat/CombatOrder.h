@@ -159,7 +159,8 @@ public:
     enum OrderType
     {
         SHIP_ORDER,
-        FIGHTER_ORDER
+        FIGHTER_ORDER,
+        SETUP_PLACEMENT_ORDER
         // TODO: Bases and planetary defenses will probably need to be
         // represented differently.
     };
@@ -167,6 +168,7 @@ public:
     /** \name Structors */ //@{
     CombatOrder(int id, const ShipMission& ship_mission);
     CombatOrder(int id, const FighterMission& fighter_mission);
+    CombatOrder(int id, const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction);
     //@}
 
     /** \name Accessors */ //@{
@@ -174,6 +176,7 @@ public:
     int ID() const;
     const ShipMission& GetShipMission() const;
     const FighterMission& GetFighterMission() const;
+    const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& GetPositionAndDirection() const;
     //@}
 
 private:
@@ -183,14 +186,21 @@ private:
     int m_id;
     ShipMission m_ship_mission;
     FighterMission m_fighter_mission;
+    std::pair<OpenSteer::Vec3, OpenSteer::Vec3> m_position_and_direction;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version)
         {
-            ar  & BOOST_SERIALIZATION_NVP(m_order_type)
-                & BOOST_SERIALIZATION_NVP(m_ship_mission)
-                & BOOST_SERIALIZATION_NVP(m_fighter_mission);
+            ar & BOOST_SERIALIZATION_NVP(m_order_type);
+            switch (m_order_type) {
+            case SHIP_ORDER:
+                ar & BOOST_SERIALIZATION_NVP(m_ship_mission); break;
+            case FIGHTER_ORDER:
+                ar & BOOST_SERIALIZATION_NVP(m_fighter_mission); break;
+            case SETUP_PLACEMENT_ORDER:
+                ar & BOOST_SERIALIZATION_NVP(m_position_and_direction); break;
+            }
         }
 };
 

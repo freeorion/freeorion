@@ -99,6 +99,12 @@ CombatOrder::CombatOrder(int id, const FighterMission& fighter_mission) :
     m_fighter_mission(fighter_mission)
 {}
 
+CombatOrder::CombatOrder(int id, const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction) :
+    m_order_type(SETUP_PLACEMENT_ORDER),
+    m_id(id),
+    m_position_and_direction(position, direction)
+{}
+
 CombatOrder::OrderType CombatOrder::Type() const
 { return m_order_type; }
 
@@ -115,4 +121,10 @@ const FighterMission& CombatOrder::GetFighterMission() const
 {
     assert(m_order_type == FIGHTER_ORDER);
     return m_fighter_mission;
+}
+
+const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& CombatOrder::GetPositionAndDirection() const
+{
+    assert(m_order_type == SETUP_PLACEMENT_ORDER);
+    return m_position_and_direction;
 }
