@@ -289,7 +289,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id, const CombatData& 
 /** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
 Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
 
-/** creates a COMBAT_START message.  This message should only be sent by the server.*/
+/** creates a COMBAT_END message.  This message should only be sent by the server.*/
 Message ServerCombatEndMessage(int receiver);
 
 /** creates a COMBAT_TURN_ORDERS message.*/
