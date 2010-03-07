@@ -14,6 +14,7 @@
 #include "../util/Serialize.h"
 #include "../util/Version.h"
 
+#include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
@@ -80,91 +81,136 @@ class CreditsWnd : public GG::Wnd
 public:
     CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
 
-    virtual void Render();
-    virtual void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {m_bRender=false;}
+    virtual void    Render();
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) { StopRendering(); }
 
 private:
-    XMLElement  m_credits;
-    int         m_cx, m_cy, m_cw, m_ch, m_co;
-    int         m_start_time;
-    int         m_bRender, m_bFadeIn;
+    void            DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
+    void            StopRendering();
+
+    XMLElement                  m_credits;
+    int                         m_cx, m_cy, m_cw, m_ch, m_co;
+    int                         m_start_time;
+    int                         m_bRender;
+    int                         m_displayListID;
+    int                         m_creditsHeight;
+    boost::shared_ptr<GG::Font> m_font;
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
-    GG::Wnd(x, y, w, h,GG::INTERACTIVE),m_credits(credits),m_cx(cx),m_cy(cy),m_cw(cw),m_ch(ch),m_co(co),
+    GG::Wnd(x, y, w, h, GG::INTERACTIVE),
+    m_credits(credits),
+    m_cx(cx),
+    m_cy(cy),
+    m_cw(cw),
+    m_ch(ch),
+    m_co(co),
     m_start_time(GG::GUI::GetGUI()->Ticks()),
-    m_bRender(true),
-    m_bFadeIn(true)
-{}
+    m_bRender(true),m_displayListID(0),
+    m_creditsHeight(0)
+{
+    m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
+}
+
+void CreditsWnd::StopRendering() {
+    m_bRender = false;
+    glDeleteLists(m_displayListID, 1);
+    m_displayListID = 0;
+}
+
+void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency)
+{
+    GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
+
+    //offset starts with 0, credits are place by transforming the viewport
+    GG::Y offset(0);
+
+    //start color is white (name), this color is valid outside the rgba tags
+    glColor(GG::Clr(transparency, transparency, transparency, 255));
+
+    std::string credit;
+    for(int i = 0; i<m_credits.NumChildren();i++) {
+        if(0==m_credits.Child(i).Tag().compare("GROUP"))
+        {
+            XMLElement group = m_credits.Child(i);
+            for(int j = 0; j<group.NumChildren();j++) {
+                if(0==group.Child(j).Tag().compare("PERSON"))
+                {
+                    XMLElement person = group.Child(j);
+                    credit = "";
+                    if(person.ContainsAttribute("name"))
+                        credit+=person.Attribute("name");
+                    if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
+                    {
+                        credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
+                        credit+=person.Attribute("nick");
+                        credit+=")</rgba>";
+                    }
+                    if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
+                    {
+                        credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
+                        credit+=person.Attribute("task");
+                        credit+="</rgba>";
+                    }
+                    m_font->RenderText(GG::Pt(x1, y1+offset),
+                        GG::Pt(x2,y2),
+                        credit, format, 0);
+                    offset+=m_font->TextExtent(credit, format).y+2;
+                }
+            }
+            offset+=m_font->Lineskip()+2;
+        }
+    }
+    //store complete height for self destruction
+    m_creditsHeight = Value(offset);
+}
 
 void CreditsWnd::Render()
 {
-    if (!m_bRender)
+    if(!m_bRender)
         return;
-
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    boost::shared_ptr<GG::Font> font=ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
-    GG::Flags<GG::TextFormat> format = GG::FORMAT_CENTER | GG::FORMAT_TOP;
+    if (m_displayListID == 0) {
+        // compile credits
+        m_displayListID = glGenLists(1);
+        glNewList(m_displayListID, GL_COMPILE);
+        DrawCredits(ul.x+m_cx, ul.y+m_cy, ul.x+m_cx+m_cw, ul.y+m_cy+m_ch, 255);
+        glEndList();
+    }
+    //time passed
+    int passedTicks = GG::GUI::GetGUI()->Ticks() - m_start_time;
 
-    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0, 0.0, 0.0, 0.5), GG::CLR_ZERO,0);
-    glColor(GG::CLR_WHITE);
+    //draw background
+    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
 
-    GG::Y offset(m_co);
+    glPushAttrib(GL_ALL_ATTRIB_BITS ); // ***SAVE***
+    glPushMatrix();                    // attributes and transformation matrix
 
-    offset -= static_cast<int>((GG::GUI::GetGUI()->Ticks() - m_start_time)/40);
+    // define clip area
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(Value(ul.x+m_cx), Value(GG::GUI::GetGUI()->AppHeight()- lr.y), m_cw, m_ch);
 
-    int transparency = 255;
-
-    if (m_bFadeIn)
-    {
-        double fade_in = (GG::GUI::GetGUI()->Ticks() - m_start_time)/2000.0;
-        if (fade_in > 1.0)
-            m_bFadeIn = false;
-        else
-            transparency = static_cast<int>(255*fade_in);
+    // move credits
+    glTranslatef(
+        0,
+        m_co + passedTicks / -40.0,
+        0
+        );
+    if (m_displayListID != 0) {
+        // draw credits using prepared display list
+        // !!! in order for the display list to be valid, the font object (m_font) may not be destroyed !!!
+        glCallList(m_displayListID);
+    } else {
+        // draw credits directly
+        DrawCredits(ul.x+m_cx, ul.y+m_cy, ul.x+m_cx+m_cw, ul.y+m_cy+m_ch, 255);
     }
 
-    glColor(GG::Clr(transparency, transparency, transparency, 255));
+    glPopMatrix();              // ***RESTORE***             
+    glPopAttrib();              // attributes and transformation matrix
 
-    GG::BeginScissorClipping(GG::Pt(ul.x + m_cx, ul.y + m_cy), GG::Pt(ul.x + m_cx + m_cw, ul.y + m_cy + m_ch));
-
-    std::string credit;
-    for (int i = 0; i < m_credits.NumChildren(); i++) {
-        if (!m_credits.Child(i).Tag().compare("GROUP")) {
-            XMLElement group = m_credits.Child(i);
-            for (int j = 0; j<group.NumChildren();j++) {
-                if (!group.Child(j).Tag().compare("PERSON")) {
-                    XMLElement person = group.Child(j);
-                    credit = "";
-                    if (person.ContainsAttribute("name"))
-                        credit += person.Attribute("name");
-                    if (person.ContainsAttribute("nick") && person.Attribute("nick").length() > 0) {
-                        credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) + ">(";
-                        credit += person.Attribute("nick");
-                        credit += ")</rgba>";
-                    }
-                    if (person.ContainsAttribute("task") && person.Attribute("task").length() > 0) {
-                        credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) + ">";
-                        credit += person.Attribute("task");
-                        credit += "</rgba>";
-                    }
-
-                    if (-20 < offset && m_ch > offset) {   // don't bother rendering text that couldn't be seen due to being above or below the screen
-                        font->RenderText(GG::Pt(ul.x + m_cx,        ul.y + m_cy + offset),
-                                         GG::Pt(ul.x + m_cx + m_cw, ul.y + m_cy + m_ch),
-                                         credit, format, 0);
-                    }
-
-                    offset += font->TextExtent(credit, format).y + 2;
-                }
-            }
-            offset += font->Lineskip() + 2;
-        }
-    }
-    GG::EndScissorClipping();
-    if (offset < 0) {
-        m_co = 0;
-        m_start_time = GG::GUI::GetGUI()->Ticks() + m_ch*40;
+    //check if we are done
+    if (m_creditsHeight + m_ch < m_co + passedTicks / 40.0) {
+        StopRendering();
     }
 }
 
