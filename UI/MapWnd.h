@@ -189,7 +189,7 @@ private:
 
     void            Zoom(int delta);                            //!< changes the zoom level of the main map by zoom step size to the power of \a delta (adds delta to the current zoom exponent)
     void            ZoomSlid(int pos, int low, int high);
-    void            SetZoom(double steps_in);                   //!< sets zoom level of the main map to zoom step size to the power of \a steps_in
+    void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
 
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected

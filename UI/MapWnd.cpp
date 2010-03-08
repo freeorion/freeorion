@@ -614,19 +614,18 @@ MapWnd::MapWnd() :
     m_scale_line = new MapScaleLine(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
                                     SCALE_LINE_MAX_WIDTH, SCALE_LINE_HEIGHT);
     m_toolbar->AttachChild(m_scale_line);
-    GG::Connect(this->ZoomedSignal, &MapScaleLine::Update, m_scale_line);
     m_scale_line->Update(ZoomFactor());
 
 
     // Zoom slider
-    //const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
-    //          ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
-    //m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
-    //                              GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-    //                              ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
-    ////m_zoom_slider->SizeSlider(ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX);
-    //m_toolbar->AttachChild(m_zoom_slider);
-    //GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
+    const int ZOOM_SLIDER_MIN = static_cast<int>(ZOOM_IN_MIN_STEPS),
+              ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
+    m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
+                                  GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
+                                  ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
+    m_zoom_slider->SlideTo(m_zoom_steps_in);
+    m_toolbar->AttachChild(m_zoom_slider);
+    GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
 
     // Subscreen / Menu buttons (placed right to left)
@@ -2566,10 +2565,10 @@ void MapWnd::Zoom(int delta)
 
     // increment zoom steps in by delta steps
     double new_zoom_steps_in = m_zoom_steps_in + static_cast<double>(delta);
-    SetZoom(new_zoom_steps_in);
+    SetZoom(new_zoom_steps_in, true);
 }
 
-void MapWnd::SetZoom(double steps_in)
+void MapWnd::SetZoom(double steps_in, bool update_slide)
 {
     // impose range limits on zoom steps
     double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
@@ -2633,12 +2632,17 @@ void MapWnd::SetZoom(double steps_in)
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 
+    if (m_scale_line)
+        m_scale_line->Update(ZoomFactor());
+    if (update_slide&& m_zoom_slider)
+        m_zoom_slider->SlideTo(m_zoom_steps_in);
+
     ZoomedSignal(ZoomFactor());
 }
 
 void MapWnd::ZoomSlid(int pos, int low, int high)
 {
-    SetZoom(static_cast<double>(pos));
+    SetZoom(static_cast<double>(pos), false);
 }
 
 void MapWnd::RenderStarfields()
