@@ -80,6 +80,7 @@ class CreditsWnd : public GG::Wnd
 {
 public:
     CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
+    ~CreditsWnd();
 
     virtual void    Render();
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) { StopRendering(); }
@@ -112,10 +113,18 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &cred
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 }
 
+CreditsWnd::~CreditsWnd() {
+   if(m_displayListID != 0) {
+      glDeleteLists(m_displayListID, 1);
+   }
+}
+
 void CreditsWnd::StopRendering() {
-    m_bRender = false;
-    glDeleteLists(m_displayListID, 1);
-    m_displayListID = 0;
+    m_bRender=false;
+    if(m_displayListID != 0) {
+        glDeleteLists(m_displayListID, 1);
+        m_displayListID = 0;
+    }
 }
 
 void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency)
