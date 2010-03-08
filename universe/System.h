@@ -150,6 +150,7 @@ public:
 
     virtual void            AddOwner(int id);               ///< adding owner to system objects is a no-op
     virtual void            RemoveOwner(int id);            ///< removing owner from system objects is a no-op
+    void                    UpdateOwnership();
 
     virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
 
@@ -170,8 +171,6 @@ private:
     /** returns the subset of m_objects that is visible to empire with id
       * \a empire_id */
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;
-
-    void                    UpdateOwnership();
 
     StarType        m_star;
     int             m_orbits;

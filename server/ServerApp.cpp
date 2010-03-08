@@ -757,6 +757,12 @@ namespace {
                     universe.SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 }
             }
+
+
+            // update system ownership after combat.  may be necessary if the
+            // combat caused planets to change ownership.
+            if (System* system = GetObject<System>(combat_info.system_id))
+                system->UpdateOwnership();
         }
     }
 

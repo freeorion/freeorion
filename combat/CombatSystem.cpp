@@ -175,11 +175,11 @@ namespace {
             health_damage = std::min(target_health->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            target_shield->AdjustCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
         if (health_damage >= 0) {
-            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
+            target_health->AdjustCurrent(-health_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
     }
@@ -197,25 +197,26 @@ namespace {
 
         Meter* target_shield = target->GetMeter(METER_SHIELD);
         Meter* target_health = target->GetMeter(METER_HEALTH);
-        if (!target_shield || ! target_health) {
-            Logger().errorStream() << "couldn't get target health or shield meter";
+        Meter* target_construction = target->GetMeter(METER_CONSTRUCTION);
+        if (!target_shield || ! target_health || !target_construction) {
+            Logger().errorStream() << "couldn't get target health, shield, or construction meter";
             return;
         }
 
         // damage shields, limited by shield current value and damage amount.
-        // remaining damage, if any, above shield current value goes to health
+        // remaining damage, if any, above shield current value goes to construction
         double shield_damage = std::min(target_shield->Current(), damage);
-        double health_damage = 0.0;
+        double construction_damage = 0.0;
         if (shield_damage >= target_shield->Current())
-            health_damage = std::min(target_health->Current(), damage - shield_damage);
+            construction_damage = std::min(target_construction->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            target_shield->AdjustCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
-        if (health_damage >= 0) {
-            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
-            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Planet " << target->Name() << " (" << target->ID() << ")";
+        if (construction_damage >= 0) {
+            target_construction->AdjustCurrent(-construction_damage);
+            Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
     }
 
@@ -242,11 +243,11 @@ namespace {
             health_damage = std::min(target_health->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target->GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+            target_shield->AdjustCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
         if (health_damage >= 0) {
-            target->GetMeter(METER_HEALTH)->AdjustCurrent(-health_damage);
+            target_health->AdjustCurrent(-health_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
     }
@@ -392,14 +393,23 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         }
 
 
-        // check for destruction
-        if (target->GetMeter(METER_HEALTH)->Current() <= 0.0) {
-            // object id destroyed
-            combat_info.destroyed_object_ids.insert(target_id);
-            // all empires in battle know object was destroyed
-            for (std::set<int>::const_iterator it = combat_info.empire_ids.begin(); it != combat_info.empire_ids.end(); ++it) {
-                int empire_id = *it;
-                combat_info.destroyed_object_knowers[empire_id].insert(target_id);
+        // check for destruction of ships
+        if (universe_object_cast<Ship*>(target)) {
+            if (target->GetMeter(METER_HEALTH)->Current() <= 0.0) {
+                // object id destroyed
+                combat_info.destroyed_object_ids.insert(target_id);
+                // all empires in battle know object was destroyed
+                for (std::set<int>::const_iterator it = combat_info.empire_ids.begin(); it != combat_info.empire_ids.end(); ++it) {
+                    int empire_id = *it;
+                    combat_info.destroyed_object_knowers[empire_id].insert(target_id);
+                }
+            }
+        // and capture of planets
+        } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
+            if (target->GetMeter(METER_CONSTRUCTION)->Current() <= 0.0) {
+                const std::set<int>& attacker_owners = attacker->Owners();
+                if (attacker_owners.size() == 1)
+                    planet->Conquer(*attacker_owners.begin());
             }
         }
     }
