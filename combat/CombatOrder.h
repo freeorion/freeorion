@@ -166,6 +166,7 @@ public:
     };
 
     /** \name Structors */ //@{
+    CombatOrder();
     CombatOrder(int id, const ShipMission& ship_mission);
     CombatOrder(int id, const FighterMission& fighter_mission);
     CombatOrder(int id, const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction);
@@ -180,8 +181,6 @@ public:
     //@}
 
 private:
-    CombatOrder();
-
     OrderType m_order_type;
     int m_id;
     ShipMission m_ship_mission;

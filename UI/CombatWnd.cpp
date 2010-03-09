@@ -630,6 +630,7 @@ CombatWnd::ShipData::ShipData(Ogre::SceneNode* node,
     m_bt_object(bt_object)
 {}
 
+
 ////////////////////////////////////////////////////////////
 // CombatWnd
 ////////////////////////////////////////////////////////////
@@ -1187,7 +1188,9 @@ void CombatWnd::InitCombat(CombatData& combat_data)
         new CombatSetupWnd(fleets, this, m_scene_manager,
                            boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1),
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
-                           boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4));
+                           boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),
+                           boost::bind(&CombatWnd::GetObjectUnderPt, this, _1),
+                           boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2));
     AttachChild(m_combat_setup_wnd);
 }
 
@@ -1889,6 +1892,16 @@ void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* en
 
     m_ship_assets[ship_id] =
         ShipData(node, material, collision_mesh, collision_shape, collision_object);
+}
+
+void CombatWnd::RepositionShipNode(int ship_id, const Ogre::Vector3& position)
+{
+    assert(m_ship_assets.find(ship_id) != m_ship_assets.end());
+    ShipData& ship_data = m_ship_assets[ship_id];
+    ship_data.m_node->setPosition(position);
+    ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
+    m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+    m_collision_world->addCollisionObject(ship_data.m_bt_object);
 }
 
 void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)

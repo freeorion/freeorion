@@ -11,6 +11,7 @@ namespace Ogre {
     class Entity;
     class Material;
     class MaterialPtr;
+    class MovableObject;
     class SceneManager;
     class SceneNode;
     class Vector3;
@@ -34,6 +35,10 @@ public:
                    get_ship_material,
                    boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
                    add_ship_node_to_combat_wnd,
+                   boost::function<Ogre::MovableObject* (const GG::Pt&)>
+                   get_object_under_pt,
+                   boost::function<void (int, const Ogre::Vector3&)>
+                   reposition_ship_node,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE);
     ~CombatSetupWnd();
 
@@ -45,15 +50,18 @@ protected:
 private:
     Ogre::SceneNode* PlaceableShipNode() const;
     void HandleMouseMoves(const GG::Pt& pt);
-
+    void CreateCombatOrder(int ship_id, Ogre::SceneNode* node);
     void PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels);
     void PlaceableShipSelected(Ship* ship);
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
     void DoneButtonClicked();
 
-    CombatOrderSet m_placement_orders;
+    std::map<int, CombatOrder> m_placement_orders;
     bool m_setup_finished_waiting_for_server;
+    bool m_dragging_placed_ship;
+    GG::Pt m_button_press_on_placed_ship;
+    Ogre::SceneNode* m_button_press_placed_ship_node;
 
     CUIListBox* m_listbox;
     CUIButton* m_done_button;
@@ -69,6 +77,10 @@ private:
     m_get_ship_material;
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     m_add_ship_node_to_combat_wnd;
+    boost::function<Ogre::MovableObject* (const GG::Pt&)>
+    m_get_object_under_pt;
+    boost::function<void (int, const Ogre::Vector3&)>
+    m_reposition_ship_node;
 };
 
 #endif // _CombatSetupWnd_h_

@@ -25,6 +25,8 @@ namespace {
     // If they continue to be used without modification, move them into a
     // common location.
 
+    const GG::Pt        INVALID_PRESS_POS(-GG::X1, -GG::Y1);
+
     const int           ICON_SIZE = 38;
     const int           PAD = 4;
 
@@ -272,10 +274,17 @@ CombatSetupWnd::CombatSetupWnd(
     get_ship_material,
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     add_ship_node_to_combat_wnd,
+    boost::function<Ogre::MovableObject* (const GG::Pt&)>
+    get_object_under_pt,
+    boost::function<void (int, const Ogre::Vector3&)>
+    reposition_ship_node,
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
     m_setup_finished_waiting_for_server(false),
+    m_dragging_placed_ship(false),
+    m_button_press_on_placed_ship(INVALID_PRESS_POS),
+    m_button_press_placed_ship_node(0),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_done_button(new CUIButton(GG::X0, GG::Y1, GG::X1, UserString("DONE"))),
     m_selected_placeable_ship(0),
@@ -283,7 +292,9 @@ CombatSetupWnd::CombatSetupWnd(
     m_scene_manager(scene_manager),
     m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic),
     m_get_ship_material(get_ship_material),
-    m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd)
+    m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd),
+    m_get_object_under_pt(get_object_under_pt),
+    m_reposition_ship_node(reposition_ship_node)
 {
     m_listbox->SetStyle(m_listbox->Style() | GG::LIST_SINGLESEL);
     Connect(m_done_button->ClickedSignal, &CombatSetupWnd::DoneButtonClicked, this);
@@ -329,17 +340,44 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
     bool retval = false;
     if (event.Type() == GG::WndEvent::LButtonDown) {
-        if (PlaceableShipNode())
+        if (PlaceableShipNode()) {
             retval = true;
+        } else if (Ogre::MovableObject* movable_object = m_get_object_under_pt(event.Point())) {
+            m_button_press_placed_ship_node = movable_object->getParentSceneNode();
+            assert(m_button_press_placed_ship_node);
+            m_button_press_on_placed_ship = event.Point();
+            retval = true;
+        }
+        m_dragging_placed_ship = false;
     } else if (event.Type() == GG::WndEvent::LDrag) {
         HandleMouseMoves(event.Point());
+        if (m_button_press_placed_ship_node) {
+            if (!m_dragging_placed_ship) {
+                const int DRAG_THRESHOLD = 5;
+                GG::Pt delta = event.Point() - m_button_press_on_placed_ship;
+                if (DRAG_THRESHOLD < std::abs(Value(delta.x)) + std::abs(Value(delta.y)))
+                    m_dragging_placed_ship = true;
+            }
+            if (m_dragging_placed_ship) {
+                std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
+                if (intersection.first) {
+                    const int* ship_id = Ogre::any_cast<int>(&m_button_press_placed_ship_node->getUserAny());
+                    assert(ship_id);
+                    m_reposition_ship_node(*ship_id, intersection.second);
+                    CreateCombatOrder(*ship_id, m_button_press_placed_ship_node);
+                }
+            }
+        }
         retval = true;
+    } else if (event.Type() == GG::WndEvent::LButtonUp) {
+        m_button_press_placed_ship_node = 0;
     } else if (event.Type() == GG::WndEvent::LClick) {
         Ogre::SceneNode* placement_node = 0;
         if ((placement_node = PlaceableShipNode()) && IsVisible(*placement_node)) {
             PlaceCurrentShip();
             retval = true;
         }
+        m_button_press_placed_ship_node = 0;
     } else if (event.Type() == GG::WndEvent::RClick) {
         CancelCurrentShipPlacement();
         retval = true;
@@ -370,6 +408,15 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
     }
 }
 
+void CombatSetupWnd::CreateCombatOrder(int ship_id, Ogre::SceneNode* node)
+{
+    Ogre::Vector3 axes[3];
+    node->getOrientation().ToAxes(axes);
+    m_placement_orders[ship_id] = CombatOrder(ship_id,
+                                              ToOpenSteer(node->getPosition()),
+                                              ToOpenSteer(axes[1]));
+}
+
 void CombatSetupWnd::PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels)
 {
     assert(sels.size() <= 1u);
@@ -392,8 +439,10 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
         }
         if (m_selected_placeable_ship) {
             Ogre::SceneNode*& node = m_ship_nodes[ship->ID()];
-            if (!node)
-                node = CreateShipSceneNode(m_scene_manager, *ship);;
+            if (!node) {
+                node = CreateShipSceneNode(m_scene_manager, *ship);
+                node->setUserAny(Ogre::Any(ship->ID()));
+            }
             const Ogre::MaterialPtr& material = m_get_ship_material(*ship->Design());
             Ogre::Entity*& entity = m_ship_entities[ship->ID()];
             entity = CreateShipEntity(m_scene_manager, *ship, material);
@@ -418,23 +467,22 @@ void CombatSetupWnd::PlaceCurrentShip()
     assert(m_selected_placeable_ship);
     assert(m_placeable_ship_node);
 
-    m_add_ship_node_to_combat_wnd(m_selected_placeable_ship->ID(),
+    int ship_id = m_selected_placeable_ship->ID();
+
+    m_add_ship_node_to_combat_wnd(ship_id,
                                   m_placeable_ship_node,
-                                  m_ship_entities[m_selected_placeable_ship->ID()],
+                                  m_ship_entities[ship_id],
                                   m_get_ship_material(*m_selected_placeable_ship->Design()));
 
     const CUIListBox::SelectionSet& selections = m_listbox->Selections();
     assert(selections.size() == 1u);
     m_listbox->Erase(*selections.begin());
 
-    Ogre::Vector3 axes[3];
-    m_placeable_ship_node->getOrientation().ToAxes(axes);
-    m_placement_orders.push_back(CombatOrder(m_selected_placeable_ship->ID(),
-                                             ToOpenSteer(m_placeable_ship_node->getPosition()),
-                                             ToOpenSteer(axes[1])));
+    assert(m_placement_orders.find(ship_id) == m_placement_orders.end());
+    CreateCombatOrder(ship_id, m_placeable_ship_node);
 
-    m_ship_entities.erase(m_selected_placeable_ship->ID());
-    m_ship_nodes.erase(m_selected_placeable_ship->ID());
+    m_ship_entities.erase(ship_id);
+    m_ship_nodes.erase(ship_id);
     m_selected_placeable_ship = 0;
     m_placeable_ship_node = 0;
 
@@ -444,10 +492,16 @@ void CombatSetupWnd::PlaceCurrentShip()
 void CombatSetupWnd::DoneButtonClicked()
 {
 #if 0 // TODO
+    CombatOrderSet orders;
+    for (std::map<int, CombatOrder>::iterator it = m_placement_orders.begin();
+         it != m_placement_orders.end();
+         ++it) {
+        orders.push_back(it->second);
+    }
     HumanClientApp::GetApp()->Networking().SendMessage(
         CombatTurnOrdersMessage(
             HumanClientApp::GetApp()->PlayerID(),
-            m_placement_orders));
+            orders));
 #endif
 
     m_setup_finished_waiting_for_server = true;
