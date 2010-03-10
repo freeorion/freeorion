@@ -285,6 +285,7 @@ CombatSetupWnd::CombatSetupWnd(
     m_dragging_placed_ship(false),
     m_button_press_on_placed_ship(INVALID_PRESS_POS),
     m_button_press_placed_ship_node(0),
+    m_mouse_dragged(false),
     m_listbox(new CUIListBox(GG::X0, GG::Y0, GG::X1, GG::Y1)),
     m_done_button(new CUIButton(GG::X0, GG::Y1, GG::X1, UserString("DONE"))),
     m_selected_placeable_ship(0),
@@ -349,6 +350,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
             retval = true;
         }
         m_dragging_placed_ship = false;
+        m_mouse_dragged = false;
     } else if (event.Type() == GG::WndEvent::LDrag) {
         HandleMouseMoves(event.Point());
         if (m_button_press_placed_ship_node) {
@@ -369,12 +371,16 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
             }
         }
         retval = true;
+        m_mouse_dragged = true;
     } else if (event.Type() == GG::WndEvent::LButtonUp) {
         m_button_press_placed_ship_node = 0;
+        m_mouse_dragged = false;
     } else if (event.Type() == GG::WndEvent::LClick) {
         Ogre::SceneNode* placement_node = 0;
         if ((placement_node = PlaceableShipNode()) && IsVisible(*placement_node)) {
             PlaceCurrentShip();
+            retval = true;
+        } else if (m_mouse_dragged) {
             retval = true;
         }
         m_button_press_placed_ship_node = 0;

@@ -62,6 +62,7 @@ private:
     bool m_dragging_placed_ship;
     GG::Pt m_button_press_on_placed_ship;
     Ogre::SceneNode* m_button_press_placed_ship_node;
+    bool m_mouse_dragged;
 
     CUIListBox* m_listbox;
     CUIButton* m_done_button;
