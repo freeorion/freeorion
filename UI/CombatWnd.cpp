@@ -441,6 +441,13 @@ namespace {
     std::string ShipMeshName(const Ship& ship)
     { return ship.Design()->Model() + ".mesh"; }
 
+    bool CloseTo(const GG::Pt& p1, const GG::Pt& p2)
+    {
+        const int EPSILON = 5;
+        int delta = std::abs(Value(p1.x - p2.x)) + std::abs(Value(p1.y - p2.y));
+        return delta < EPSILON;
+    }
+
     void AddOptions(OptionsDB& db)
     {
         db.AddFlag("tech-demo",             "OPTIONS_DB_TECH_DEMO",                 false);
@@ -649,6 +656,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_pitch(0.0),
     m_roll(0.0),
     m_last_pos(),
+    m_last_click_pos(),
     m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
     m_selection_drag_stop(INVALID_SELECTION_DRAG_POS),
     m_mouse_dragged(false),
@@ -1401,11 +1409,14 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             DeselectAll();
         }
     }
+    m_last_click_pos = pt;
 }
 
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_mouse_dragged && !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
+    if (!m_mouse_dragged &&
+        CloseTo(pt, m_last_click_pos) &&
+        !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
         if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
             Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
             assert(clicked_scene_node);
@@ -1416,6 +1427,7 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                 LookAt(intersection.second);
         }
     }
+    m_last_click_pos = GG::Pt();
 }
 
 void CombatWnd::MButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
