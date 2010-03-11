@@ -344,10 +344,13 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         if (PlaceableShipNode()) {
             retval = true;
         } else if (Ogre::MovableObject* movable_object = m_get_object_under_pt(event.Point())) {
-            m_button_press_placed_ship_node = movable_object->getParentSceneNode();
-            assert(m_button_press_placed_ship_node);
-            m_button_press_on_placed_ship = event.Point();
-            retval = true;
+            Ogre::SceneNode* node = movable_object->getParentSceneNode();
+            if (Ogre::any_cast<Ship*>(&node->getUserAny())) {
+                m_button_press_placed_ship_node = node;
+                assert(m_button_press_placed_ship_node);
+                m_button_press_on_placed_ship = event.Point();
+                retval = true;
+            }
         }
         m_dragging_placed_ship = false;
         m_mouse_dragged = false;
@@ -363,10 +366,11 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
             if (m_dragging_placed_ship) {
                 std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
                 if (intersection.first) {
-                    const int* ship_id = Ogre::any_cast<int>(&m_button_press_placed_ship_node->getUserAny());
-                    assert(ship_id);
-                    m_reposition_ship_node(*ship_id, intersection.second);
-                    CreateCombatOrder(*ship_id, m_button_press_placed_ship_node);
+                    const Ship* const * ship =
+                        Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
+                    assert(ship);
+                    m_reposition_ship_node((*ship)->ID(), intersection.second);
+                    CreateCombatOrder((*ship)->ID(), m_button_press_placed_ship_node);
                 }
             }
         }
@@ -447,7 +451,7 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
             Ogre::SceneNode*& node = m_ship_nodes[ship->ID()];
             if (!node) {
                 node = CreateShipSceneNode(m_scene_manager, *ship);
-                node->setUserAny(Ogre::Any(ship->ID()));
+                node->setUserAny(Ogre::Any(ship));
             }
             const Ogre::MaterialPtr& material = m_get_ship_material(*ship->Design());
             Ogre::Entity*& entity = m_ship_entities[ship->ID()];
