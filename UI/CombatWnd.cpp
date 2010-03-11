@@ -1414,18 +1414,20 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_mouse_dragged &&
-        CloseTo(pt, m_last_click_pos) &&
-        !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
-        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
-            Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
-            assert(clicked_scene_node);
-            LookAt(clicked_scene_node);
-        } else {
-            std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
-            if (intersection.first)
-                LookAt(intersection.second);
+    if (CloseTo(pt, m_last_click_pos)) {
+        if (!m_mouse_dragged && !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
+            if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+                Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
+                assert(clicked_scene_node);
+                LookAt(clicked_scene_node);
+            } else {
+                std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+                if (intersection.first)
+                    LookAt(intersection.second);
+            }
         }
+    } else {
+        LClick(pt, mod_keys);
     }
     m_last_click_pos = GG::Pt();
 }
