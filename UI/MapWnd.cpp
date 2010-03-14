@@ -92,7 +92,7 @@ namespace {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          "OPTIONS_DB_GALAXY_MAP_SCALE_LINE",             true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-zoom-slider",    "OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER",            true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-zoom-slider",    "OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER",            false,      Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,       Validator<bool>());
@@ -101,7 +101,9 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE",        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
-        db.Add("UI.show-detection-range",           "OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE",        true,       Validator<bool>());
+        db.Add("UI.show-detection-range",           "OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE",        false,      Validator<bool>());
+        db.Add("UI.detection-range-stealth-threshold","OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD",  0,      RangedStepValidator<int>(1, 0, 100));
+        db.Add("UI.show-stealth-threshold-slider",  "OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER",       false,  Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      "OPTIONS_DB_UI_SYSTEM_FOG_SPACING",             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
@@ -536,8 +538,9 @@ MapWnd::MapWnd() :
     m_btn_design(0),
     m_btn_menu(0),
     m_FPS(0),
+    m_scale_line(0),
     m_zoom_slider(0),
-    m_scale_line(0)
+    m_stealth_threshold_slider(0)
 {
     SetName("MapWnd");
 
@@ -625,10 +628,20 @@ MapWnd::MapWnd() :
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
     m_zoom_slider->SlideTo(m_zoom_steps_in);
-    RefreshSliders();
     GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
-    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"), &MapWnd::RefreshSliders, this);
+    // stealth threshold slider
+    m_stealth_threshold_slider = new CUISlider(m_zoom_slider->UpperLeft().x + GG::X(ClientUI::ScrollWidth()*3), m_zoom_slider->UpperLeft().y,
+                                  GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
+                                  0, 100, GG::VERTICAL);
+    m_stealth_threshold_slider->SlideTo(GetOptionsDB().Get<int>("UI.detection-range-stealth-threshold"));
+
+
+    RefreshSliders();
+    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
+    GG::Connect(m_stealth_threshold_slider->SlidSignal, &MapWnd::StealthSlid,   this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-stealth-threshold-slider"), &MapWnd::RefreshSliders, this);
 
 
     // Subscreen / Menu buttons (placed right to left)
@@ -2528,13 +2541,18 @@ void MapWnd::RefreshFleetSignals()
 
 void MapWnd::RefreshSliders()
 {
-    if (!m_zoom_slider || !m_toolbar)
-        return;
-
-    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
-        m_toolbar->AttachChild(m_zoom_slider);
-    else
-        m_toolbar->DetachChild(m_zoom_slider);
+    if (m_zoom_slider && m_toolbar) {
+        if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
+            m_toolbar->AttachChild(m_zoom_slider);
+        else
+            m_toolbar->DetachChild(m_zoom_slider);
+    }
+    if (m_stealth_threshold_slider && m_toolbar) {
+        if (GetOptionsDB().Get<bool>("UI.show-stealth-threshold-slider"))
+            m_toolbar->AttachChild(m_stealth_threshold_slider);
+        else
+            m_toolbar->DetachChild(m_stealth_threshold_slider);
+    }
 }
 
 int MapWnd::SystemIconSize() const
@@ -2648,7 +2666,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
 
     if (m_scale_line)
         m_scale_line->Update(ZoomFactor());
-    if (update_slide&& m_zoom_slider)
+    if (update_slide && m_zoom_slider)
         m_zoom_slider->SlideTo(m_zoom_steps_in);
 
     ZoomedSignal(ZoomFactor());
@@ -2657,6 +2675,11 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
 void MapWnd::ZoomSlid(int pos, int low, int high)
 {
     SetZoom(static_cast<double>(pos), false);
+}
+
+void MapWnd::StealthSlid(int pos, int low, int high)
+{
+    GetOptionsDB().Set("UI.detection-range-stealth-threshold", pos);
 }
 
 void MapWnd::RenderStarfields()
@@ -3076,6 +3099,8 @@ void MapWnd::RenderVisibilityRadii() {
     if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
         return;
 
+    const int STEALTH_THRESHOLD = GetOptionsDB().Get<int>("UI.detection-range-stealth-threshold");    // how much to deduct from detection to compensate for potential target stealth, and also the minimum detection to consider showing
+
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(client_empire_id);
@@ -3093,7 +3118,9 @@ void MapWnd::RenderVisibilityRadii() {
         if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
             double X = obj->X();
             double Y = obj->Y();
-            double D = detection_meter->Current();
+            double D = detection_meter->Current() - STEALTH_THRESHOLD;
+            if (D <= 0.0)
+                continue;   // skip objects that don't contribute detection (at the current stealth threshold)
             const std::set<int>& owners = obj->Owners();
             for (std::set<int>::const_iterator empire_it = owners.begin(); empire_it != owners.end(); ++empire_it) {
                 // find this empires entry for this location, if any

@@ -760,6 +760,7 @@ void OptionsWnd::Init()
     BoolOption("UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
     BoolOption("UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
     BoolOption("UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
+    BoolOption("UI.show-stealth-threshold-slider",      UserString("OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER"));
     EndSection();
     EndPage();
 

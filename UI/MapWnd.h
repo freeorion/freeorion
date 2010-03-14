@@ -191,6 +191,8 @@ private:
     void            ZoomSlid(int pos, int low, int high);
     void            SetZoom(double steps_in, bool update_slide);//!< sets zoom level of the main map to zoom step size to the power of \a steps_in and updates zoom slider position if \a update_slide is true
 
+    void            StealthSlid(int pos, int low, int high);
+
     void            RefreshFleetButtons();                      //!< removes old / existing and creates new fleet buttons
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
     void            FleetAddedOrRemoved(Fleet& fleet);
@@ -372,8 +374,10 @@ private:
     SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
-    GG::Slider*                 m_zoom_slider;      //!< allows user to set zoom level
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance
+    GG::Slider*                 m_zoom_slider;      //!< allows user to set zoom level
+
+    GG::Slider*                 m_stealth_threshold_slider; //!< allows user to set threshold of stealth detectable at distance for detection range displays
 };
 
 

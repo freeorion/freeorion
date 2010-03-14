@@ -250,7 +250,7 @@ OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Show scale line for universe distance on galaxy map.
 
 OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
-Show zoom slider on galaxy map.
+Toggles whether to show the zoom slider on galaxy map.
 
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
@@ -278,6 +278,12 @@ Sets how fast to render dots for fleet supply lines.
 
 OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE
 Toggles whether to show circles around objects to indicate their detection range on the galaxy map.
+
+OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
+Sets the target object stealth level at which to show detection range on the galaxy map.
+
+OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
+Toggles whether to show the stealth threshold slider on the galaxy map.
 
 OPTIONS_DB_FORCE_EXTERNAL_SERVER
 Force the client not to start a server, even when hosting a game on localhost, playing single player, etc.
@@ -1096,6 +1102,12 @@ Galaxy distance scale line
 
 OPTIONS_GALAXY_MAP_ZOOM_SLIDER
 Galaxy map zoom slider
+
+OPTIONS_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD
+Galaxy map detection range displayed stealth threshold
+
+OPTIONS_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER
+Galaxy map stealth threshold slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
