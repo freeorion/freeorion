@@ -202,6 +202,8 @@ private:
 
     void            RefreshFleetSignals();                      //!< disconnects and reconnects all fleet change signals
 
+    void            RefreshSliders();                           //!< shows or hides sliders on map
+
     void            InitTurnRendering();                        //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
     void            InitSystemRenderingBuffers();               //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
     void            ClearSystemRenderingBuffers();

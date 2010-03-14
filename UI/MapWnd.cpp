@@ -92,6 +92,7 @@ namespace {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          "OPTIONS_DB_GALAXY_MAP_SCALE_LINE",             true,       Validator<bool>());
+        db.Add("UI.show-galaxy-map-zoom-slider",    "OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER",            true,       Validator<bool>());
         db.Add("UI.optimized-system-rendering",     "OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING",        true,       Validator<bool>());
         db.Add("UI.starlane-thickness",             "OPTIONS_DB_STARLANE_THICKNESS",                2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.resource-starlane-colouring",    "OPTIONS_DB_RESOURCE_STARLANE_COLOURING",       true,       Validator<bool>());
@@ -624,8 +625,10 @@ MapWnd::MapWnd() :
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
     m_zoom_slider->SlideTo(m_zoom_steps_in);
-    m_toolbar->AttachChild(m_zoom_slider);
+    RefreshSliders();
     GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
+
+    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"), &MapWnd::RefreshSliders, this);
 
 
     // Subscreen / Menu buttons (placed right to left)
@@ -2521,6 +2524,17 @@ void MapWnd::RefreshFleetSignals()
         const Fleet *fleet = *it;
         m_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
     }
+}
+
+void MapWnd::RefreshSliders()
+{
+    if (!m_zoom_slider || !m_toolbar)
+        return;
+
+    if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
+        m_toolbar->AttachChild(m_zoom_slider);
+    else
+        m_toolbar->DetachChild(m_zoom_slider);
 }
 
 int MapWnd::SystemIconSize() const

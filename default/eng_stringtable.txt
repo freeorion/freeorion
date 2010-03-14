@@ -249,6 +249,9 @@ Render starfields around systems. May slow rendering on older systems.
 OPTIONS_DB_GALAXY_MAP_SCALE_LINE
 Show scale line for universe distance on galaxy map.
 
+OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER
+Show zoom slider on galaxy map.
+
 OPTIONS_DB_OPTIMIZED_SYSTEM_RENDERING
 Use fancy optimized OpenGL 1.5 rendering for systems on galaxy map.  May crash on older graphics hardware.
 
@@ -1090,6 +1093,9 @@ Galaxy map starfields rendering
 
 OPTIONS_GALAXY_MAP_SCALE_LINE
 Galaxy distance scale line
+
+OPTIONS_GALAXY_MAP_ZOOM_SLIDER
+Galaxy map zoom slider
 
 OPTIONS_GALAXY_MAP_DETECTION_RANGE
 Detection range circles
