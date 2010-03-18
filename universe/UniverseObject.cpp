@@ -328,7 +328,8 @@ void UniverseObject::RemoveOwner(int id)
 
 void UniverseObject::ClearOwners()
 {
-    for (std::set<int>::iterator it = m_owners.begin(); it != m_owners.end(); ++it)
+    const std::set<int> initial_owners = m_owners;
+    for (std::set<int>::const_iterator it = initial_owners.begin(); it != initial_owners.end(); ++it)
         RemoveOwner(*it);
 }
 
