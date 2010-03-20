@@ -3,7 +3,8 @@ http://freeorion.psitronic.de/
 This is a mainly statically linked version of FreeOrion for
 (i386) GNU/Linux. You won't need to compile any sources.
 
-Download the "latest.tar.gz", to receive the latest version.
+Download the "latest.tar.gz", to receive the latest version or
+try the nightly builds in "download/nightly".
 
 A discussion can be followed here:
 http://www.freeorion.org/forum/viewtopic.php?t=1792
@@ -40,12 +41,20 @@ http://www.freeorion.org/forum/viewforum.php?f=25
 
 2. Problems?  
 ============
-Any problem should be reportet here:
+Any problem according this static release should be reportet here:
 http://www.freeorion.org/forum/viewtopic.php?t=1792
+Please do report gameplay errors in other forum parts!
 
 Or join IRC:
 Server:  irc.freenode.net
 Channel: #freeorion
+
+Debugging:
+To run freeorion in gdb, you can execute the wrapper script
+with parameter --gdb. It sets env vars and runs gdb.
+You may also download the debugging symbols for nightly
+builds on http://freeorion.psitronic.de/download/nightly/ .
+
 
 
 3. Sources
@@ -58,6 +67,8 @@ can be found in the subdirectory "src" here.
 
 Linux installer scripts can be found in subdirectory 
 loki_setup inside the FreeOrion svn dir.
+
+
 
 4. Licensing
 ============

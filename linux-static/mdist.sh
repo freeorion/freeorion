@@ -35,20 +35,28 @@ fi
 
 
 OUTDIR=/tmp/
+
+
 if [ ! -e $SVNREV ]; then
     FILENAME=${FO_PREFIX}_rev${SVNREV}_i386_static.tar$GZIP_EXT
+    FILENAME_DBG=${FO_PREFIX}_rev${SVNREV}_debugsymbols.tar$GZIP_EXT
 else
     FILENAME=${FO_PREFIX}_i386_static.tar$GZIP_EXT
+    FILENAME_DBG=${FO_PREFIX}_debugsymbols.tar$GZIP_EXT
 fi
 OUT=${OUTDIR}/${FILENAME}
+OUT_DBG=${OUTDIR}/${FILENAME_DBG}
 
 # Copy Data
 (
     cd $TARGET_ROOT/..
-    strip --strip-all $TARGET_BIN/freeorion*
+    # Strip the binary and put the debug strings into separate file (-o)
+    # /tmp/freeorion_rev${SVNREV}.symbols
+    # strip --keep-file-symbols --strip-all $TARGET_BIN/freeorion*
+    # Stripping is done in copying
     
-    
-    echo "SVN-Revision: ${SVNREV}. Output: ${OUT}"
+    echo "SVN-Revision: ${SVNREV}."
+    echo "Output: ${OUT}"
 
     export GZIP="--best --verbose"
 
@@ -56,6 +64,16 @@ OUT=${OUTDIR}/${FILENAME}
         --create $TAR_GZIP_PARAM \
         --file $OUT \
         freeorion
+
+
+    # Pack debugging symbols
+    echo "Output: ${OUT_DBG}"
+    tar --create $TAR_GZIP_PARAM \
+	--file $OUT_DBG \
+	-C freeorion-debug \
+	application
+
+
 )
 
 
@@ -68,7 +86,7 @@ OUT=${OUTDIR}/${FILENAME}
 	NIGHTLY=/home/wwwroot/freeorion.psitronic.de/download/nightly
     
 	if [ -e $NIGHTLY ]; then
-	    cp $FILENAME $NIGHTLY
+	    cp -v $FILENAME $FILENAME_DBG  $NIGHTLY
 	fi
     fi
 

@@ -1,12 +1,55 @@
 #!/bin/sh
 #
-# This is a wrapper-script for starting FreeOrion on
-# x86 Linux Systems.
-# 
-#
 # written by Markus Sinner, http://psitronic.de
+#
+# Nightly builds on.
+# http://freeorion.psitronic.de/download/nightly/
+#
+# This is a wrapper-script for starting FreeOrion on
+# ix86 (and maybe x64) Linux Systems.
+# This script will CD into application and set some
+# enviroment variables.
+
+# ---- commandline PARAMETERS and ENVIROMENT variables -----
+# This script supports parameters, that will be evaluated
+# BEFORE freeorion binary is called and will be removed, 
+# because the binary won't support them.
+# Currently only one parameter at a time is supported!
+# Parameters other than these will be appended as command
+# line parameters to the call of the freeorion binary.
+#
+# --strace
+#   This starts freeorion using the "strace" utility. 
+#   Generates a strace logifle /tmp/freeorion.trace.
+#   Make sure it is installed on your system!
+# --gdb
+#   Runs freeorion in a gdb instance, passes the original
+#   parameters through the --args parameter of gdb
+#
+#
+# ENVIROMENT variables
+# This script supports some enviroment variables. To set them
+# either use the followin command BEFORE you execute this script.
+#    export XXXX="value"
+# This permanently set the variable in you current shell script.
+# Or you prepend the options when running this script, like this:
+#    PARAM1="hello" PARAM2="yo man" ./freeorion
+#
+# Supportet are:
+#   FO_TRACE=
+#      Use this to prepend something to calling freorion.
+#      This variables also is used internally, when --gdb or --trace
+#      appear on the command line.
+#   FO_GDB_ARGS=
+#      If you use --gbd, you should uses this env to add GDB parameters.
+#      Make sure you end this list of parameters with --args, otherwise
+#      gdb won't start. Example: FO_GDB_ARGS="-q -s fo.symbols --args"
+#   LD_LIBRARY_PATH=
+#      This is a well known env and will be honored by this script.
+#
 
 
+# ---------- STARTS HERE ---------------
 # Change into application directory
 # If this is a symlink, then we
 # need to change into the dir of symlink-target.
@@ -18,6 +61,7 @@ else
   ME=$0
 fi
 
+# This is important! Script won't work outside its installation dir
 ROOT=`dirname ${ME}`/application
 cd ${ROOT}
 echo -n "CWD: "
@@ -25,6 +69,8 @@ pwd
 
 
 
+# Check for python. If freeorionca binary is missing it, use
+# the shipped version.
 if ldd freeorionca | grep "libpython.*not found"; then
     echo "python2.5 missing. Using shipped version."
     PYTHON_USE_SHIPPED=1
@@ -46,16 +92,52 @@ if [ "$PYTHON_USE_SHIPPED" = "1" ]; then
     export LD_PRELOAD=${PYTHONHOME}/libutil.so.1:${PYTHONHOME}/libpython2.5.so
 fi
 
-if [ "$1" = "--strace" ]; then
-    TRACEFILE=/tmp/freeorion.trace
-    echo "Tracing to ${TRACEFILE}"
-    STRACE="strace -f -o ${TRACEFILE}"
+
+# Command line Parameter --gdb forces running in gdb
+# Setting FO_TRACE to gdb results in other settings, see
+# below
+if [ "$1" = "--gdb" ]; then
+    FO_TRACE="gdb"
+
+    # Don't forget to remove the param
     shift
-else
-    STRACE=
 fi
 
+if [ "$1" = "--strace" ]; then
+    TRACEFILE=/tmp/freeorion.trace
+    echo
+    echo "Tracing to ${TRACEFILE}"
+    echo
+    FO_TRACE="strace -f -o ${TRACEFILE}"
+
+    # Don't forget to remove the param
+    shift
+fi
+
+
+
+# Add a parameter FO_GDB_ARGS to support gdb
+# Or warn the user, if he changed FO_GDB_ARGS and has
+# forgotten to end it with --args
+if [ "$FO_TRACE" = "gdb" ]; then
+    if [ "$FO_GDB_ARGS" = "" ]; then
+	FO_GDB_ARGS="--args"
+    else
+	echo "****************************************************"
+	echo "** NOTE         NOTE         NOTE         NOTE    **"
+	echo "Running FO in gdb"
+	echo "If you use FO_GDB_ARGS on your command line, make"
+	echo "sure that you END this variabble with --args."
+	echo "Otherwise gdb will not start."
+	echo
+	echo "Type 'start' when the gdb instance has loaded!"
+	echo	
+    fi
+fi
+
+
+# Support loading libs from application/lib
 export LD_LIBRARY_PATH=./lib:${LD_LIBRARY_PATH}
 
 # Call with settings-dir to avoid conflicting installations
-${STRACE} ./freeorion --resource-dir ./default $@
+${FO_TRACE} ${FO_GDB_ARGS} ./freeorion  --resource-dir ./default $@

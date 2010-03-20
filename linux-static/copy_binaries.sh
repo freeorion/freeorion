@@ -1,4 +1,6 @@
 #!/bin/sh
+
+# go into script dir (normally ./liux-static/)
 cd `dirname $0`
 . ./mdist.config.sh
 
@@ -7,8 +9,13 @@ cd ..
 
 # FreeorionD and FreeorionCA need to be named without -static
 for F in freeorion freeoriond freeorionca; do
+    # Strip the exes
+    # see "man objcopy" in section  --only-keep-debug
+    
     #cp -va ${F}-static $TARGET_BIN/$F
-    strip --strip-all -v -o $TARGET_BIN/$F ${F}-static
+    objcopy --only-keep-debug -v ${F}-static $TARGET_DBG/${F}.dbg 
+    objcopy --strip-all -v ${F}-static $TARGET_BIN/$F
+    objcopy --add-gnu-debuglink=$TARGET_DBG/${F}.dbg $TARGET_BIN/$F
 done
 
 
