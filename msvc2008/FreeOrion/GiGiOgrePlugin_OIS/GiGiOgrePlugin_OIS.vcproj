@@ -40,7 +40,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../../../../include/;&quot;../../../../Boost/include/boost-1_36&quot;;../../../GG/;../../include;../../../../include/OGRE;../../../../include/OGRE/OIS"
+				AdditionalIncludeDirectories="../../../../include/;../../../../Boost/include/boost_1_42;../../../GG/;../../include;../../../../include/OGRE;../../../../include/OIS"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GiGiOgrePlugin_OIS_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
 				IgnoreStandardIncludePath="false"
 				StringPooling="false"

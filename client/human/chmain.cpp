@@ -183,25 +183,10 @@ int mainSetupAndRunOgre()
         root->installPlugin(gl_plugin);
 #endif
 
-#ifdef FREEORION_MACOSX
+
         RenderSystem* selected_render_system = root->getRenderSystemByName("OpenGL Rendering Subsystem");
         if (selected_render_system == 0)
             throw std::runtime_error("Failed to find an Ogre GL render system.");
-#else
-        RenderSystemList* renderers_list = root->getAvailableRenderers();
-        bool failed = true;
-        RenderSystem* selected_render_system = 0;
-        for (unsigned int i = 0; i < renderers_list->size(); ++i) {
-            selected_render_system = renderers_list->at(i);
-            String name = selected_render_system->getName();
-            if (name.compare("OpenGL Rendering Subsystem") == 0) {
-                failed = false;
-                break;
-            }
-        }
-        if (failed)
-            throw std::runtime_error("Failed to find an Ogre GL render system.");
-#endif
 
         root->setRenderSystem(selected_render_system);
 

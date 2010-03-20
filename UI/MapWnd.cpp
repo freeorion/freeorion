@@ -1519,10 +1519,10 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
 
                 // add vertices for this full-length starlane
-                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].X1);
-                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].Y1);
-                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].X2);
-                raw_starlane_vertices.push_back(m_starlane_endpoints[lane].Y2);
+                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].X1));
+                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].Y1));
+                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].X2));
+                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].Y2));
 
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
@@ -2694,8 +2694,8 @@ void MapWnd::RenderStarfields()
     glMatrixMode(GL_TEXTURE);
 
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = 1.0 / Value(m_backgrounds[i]->Width());
-        float texture_coords_per_pixel_y = 1.0 / Value(m_backgrounds[i]->Height());
+        float texture_coords_per_pixel_x = static_cast<float>(1.0 / Value(m_backgrounds[i]->Width()));
+        float texture_coords_per_pixel_y = static_cast<float>(1.0 / Value(m_backgrounds[i]->Height()));
         glScalef(Value(texture_coords_per_pixel_x * Width()),
                  Value(texture_coords_per_pixel_y * Height()),
                  1.0);
@@ -2819,7 +2819,7 @@ void MapWnd::RenderSystems()
 
     if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         fog_scanlines = true;
-        fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
+        fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
     }
 
     if (fog_scanlines || circles) {
@@ -3072,8 +3072,8 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         else
             glColor(clr);
 
-        GG::Pt ul = marker_centre - GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
-        GG::Pt lr = marker_centre + GG::Pt(GG::X(MARKER_HALF_SIZE), GG::Y(MARKER_HALF_SIZE));
+        GG::Pt ul = marker_centre - GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
+        GG::Pt lr = marker_centre + GG::Pt(GG::X(static_cast<int>(MARKER_HALF_SIZE)), GG::Y(static_cast<int>(MARKER_HALF_SIZE)));
 
         glDisable(GL_TEXTURE_2D);
         CircleArc(ul, lr, 0.0, TWO_PI, true);
@@ -3148,8 +3148,8 @@ void MapWnd::RenderVisibilityRadii() {
             if (radius < 20.0)
                 continue;
 
-            GG::Pt ul = circle_centre - GG::Pt(GG::X(radius), GG::Y(radius));
-            GG::Pt lr = circle_centre + GG::Pt(GG::X(radius), GG::Y(radius));
+            GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
+            GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
 
             circles[circle_colour].push_back(std::make_pair(ul, lr));
         }

@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				EnableIntrinsicFunctions="false"
-				AdditionalIncludeDirectories="../../../../include/;../../../GG/;../../../../include/OGRE;&quot;../../../../Boost/include/boost-1_36&quot;"
+				AdditionalIncludeDirectories="../../../../include/;../../../GG/;../../../../include/OGRE;../../../../Boost/include/boost_1_42"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;_WINDLL;GiGiOgre_EXPORTS;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS;BOOST_ALL_DYN_LINK"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"

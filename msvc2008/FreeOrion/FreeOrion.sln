@@ -2,13 +2,20 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeorion", "freeorion\freeorion.vcproj", "{DB6FF1B0-5485-4DB9-8390-88CE29C22261}"
 	ProjectSection(ProjectDependencies) = postProject
+		{28EF8C66-4DEB-43A2-9987-1066A98B44BF} = {28EF8C66-4DEB-43A2-9987-1066A98B44BF}
 		{9EE326E7-AB6C-4BDA-95C4-96ECAFCA4EC5} = {9EE326E7-AB6C-4BDA-95C4-96ECAFCA4EC5}
 		{AF4274F4-4139-4877-BE34-71E73B513914} = {AF4274F4-4139-4877-BE34-71E73B513914}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeoriond", "freeoriond\freeoriond.vcproj", "{BA9529CC-B803-4763-B803-2B374D4ECD43}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF4274F4-4139-4877-BE34-71E73B513914} = {AF4274F4-4139-4877-BE34-71E73B513914}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "freeorionca", "freeorionca\freeorionca.vcproj", "{4B69AB88-9DA9-41AB-B6D6-CACFE5F3DAD9}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AF4274F4-4139-4877-BE34-71E73B513914} = {AF4274F4-4139-4877-BE34-71E73B513914}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GiGiOgrePlugin_OIS", "GiGiOgrePlugin_OIS\GiGiOgrePlugin_OIS.vcproj", "{28EF8C66-4DEB-43A2-9987-1066A98B44BF}"
 	ProjectSection(ProjectDependencies) = postProject

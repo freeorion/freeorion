@@ -18,7 +18,7 @@
 #endif
 
 #include <vector>
-
+#include <map>
 
 class Empire;
 class EmpireManager;
