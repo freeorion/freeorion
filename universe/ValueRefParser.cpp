@@ -226,7 +226,9 @@ namespace {
             str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
             | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("value")
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))];
     }
 
     template <>
@@ -238,7 +240,9 @@ namespace {
             | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
             | str_p("currentturn")
-            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("value")
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))];
     }
 
     template <>
@@ -255,6 +259,8 @@ namespace {
             | str_p("target") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
             [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
             | str_p("currentturn")
-            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))];
+            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
+            | str_p("value")
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))];
     }
 }

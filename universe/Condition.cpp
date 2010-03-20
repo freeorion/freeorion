@@ -89,8 +89,8 @@ Condition::Number::~Number()
 
 std::string Condition::Number::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
     std::string description_str = "DESC_NUMBER";
     if (negated)
         description_str += "_NOT";
@@ -122,8 +122,8 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_targets.size();
-    int low = m_low->Eval(source, source);
-    int high = m_high->Eval(source, source);
+    int low = m_low->Eval(source, source, boost::any());
+    int high = m_high->Eval(source, source, boost::any());
     bool in_range = (low <= matched && matched < high);
 
     // transfer objects to or from target set, according to whether number of matches was within
@@ -154,8 +154,8 @@ Condition::Turn::~Turn()
 
 std::string Condition::Turn::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
     std::string description_str = "DESC_TURN";
     if (negated)
         description_str += "_NOT";
@@ -171,8 +171,8 @@ std::string Condition::Turn::Dump() const
 
 bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double low = std::max(0, m_low->Eval(source, target));
-    double high = std::min(m_high->Eval(source, target), IMPOSSIBLY_LARGE_TURN);
+    double low = std::max(0, m_low->Eval(source, target, boost::any()));
+    double high = std::min(m_high->Eval(source, target, boost::any()), IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
 
     return (low <= turn && turn < high);
@@ -253,7 +253,7 @@ std::string Condition::NumberOf::Dump() const
 void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
                                SearchDomain search_domain/* = NON_TARGETS*/) const
 {
-    int number = m_number->Eval(source, source);
+    int number = m_number->Eval(source, source, boost::any());
 
     if (search_domain == NON_TARGETS) {
         // find items in non_targets set that match the test condition
@@ -328,7 +328,7 @@ Condition::EmpireAffiliation::~EmpireAffiliation()
 
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     if (m_affiliation == AFFIL_SELF) {
         std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION_SELF";
         if (negated)
@@ -360,7 +360,7 @@ std::string Condition::EmpireAffiliation::Dump() const
 
 bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    int empire_id = m_empire_id->Eval(source, target);
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
 
     switch (m_affiliation) {
     case AFFIL_SELF:
@@ -485,7 +485,7 @@ Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
 
 std::string Condition::Type::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
     std::string description_str = "DESC_TYPE";
     if (negated)
         description_str += "_NOT";
@@ -496,7 +496,7 @@ std::string Condition::Type::Dump() const
 {
     std::string retval = DumpIndent();
     if (dynamic_cast<const ValueRef::Constant<UniverseObjectType>*>(m_type)) {
-        switch (m_type->Eval(0, 0)) {
+        switch (m_type->Eval(0, 0, boost::any())) {
         case OBJ_BUILDING:    retval += "Building\n"; break;
         case OBJ_SHIP:        retval += "Ship\n"; break;
         case OBJ_FLEET:       retval += "Fleet\n"; break;
@@ -514,7 +514,7 @@ std::string Condition::Type::Dump() const
 
 bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    switch (m_type->Eval(source, target)) {
+    switch (m_type->Eval(source, target, boost::any())) {
     case OBJ_BUILDING:
         return universe_object_cast<const ::Building*>(target);
         break;
@@ -767,7 +767,7 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0))) : m_types[i]->Description();
+        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0, boost::any()))) : m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
         } else if (i == m_types.size() - 2) {
@@ -807,7 +807,7 @@ bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseOb
     }
     if (planet) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(source, target) == planet->Type())
+            if (m_types[i]->Eval(source, target, boost::any()) == planet->Type())
                 return true;
         }
     }
@@ -832,7 +832,7 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_sizes[i]) ? UserString(lexical_cast<std::string>(m_sizes[i]->Eval(0, 0))) : m_sizes[i]->Description();
+        values_str += ValueRef::ConstantExpr(m_sizes[i]) ? UserString(lexical_cast<std::string>(m_sizes[i]->Eval(0, 0, boost::any()))) : m_sizes[i]->Description();
         if (2 <= m_sizes.size() && i < m_sizes.size() - 2) {
             values_str += ", ";
         } else if (i == m_sizes.size() - 2) {
@@ -872,7 +872,7 @@ bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseOb
     }
     if (planet) {
         for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-            if (m_sizes[i]->Eval(source, target) == planet->Size())
+            if (m_sizes[i]->Eval(source, target, boost::any()) == planet->Size())
                 return true;
         }
     }
@@ -897,7 +897,7 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_environments[i]) ? UserString(lexical_cast<std::string>(m_environments[i]->Eval(0, 0))) : m_environments[i]->Description();
+        values_str += ValueRef::ConstantExpr(m_environments[i]) ? UserString(lexical_cast<std::string>(m_environments[i]->Eval(0, 0, boost::any()))) : m_environments[i]->Description();
         if (2 <= m_environments.size() && i < m_environments.size() - 2) {
             values_str += ", ";
         } else if (i == m_environments.size() - 2) {
@@ -937,7 +937,7 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
     }
     if (planet) {
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(source, target) == planet->Environment())
+            if (m_environments[i]->Eval(source, target, boost::any()) == planet->Environment())
                 return true;
         }
     }
@@ -963,7 +963,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_foci.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_foci[i]) ? UserString(lexical_cast<std::string>(m_foci[i]->Eval(0, 0))) : m_foci[i]->Description();
+        values_str += ValueRef::ConstantExpr(m_foci[i]) ? UserString(lexical_cast<std::string>(m_foci[i]->Eval(0, 0, boost::any()))) : m_foci[i]->Description();
         if (2 <= m_foci.size() && i < m_foci.size() - 2) {
             values_str += ", ";
         } else if (i == m_foci.size() - 2) {
@@ -1009,7 +1009,7 @@ bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObj
     }
     if (prod_center) {
         for (unsigned int i = 0; i < m_foci.size(); ++i) {
-            if (m_foci[i]->Eval(source, target) == (m_primary ? prod_center->PrimaryFocus() : prod_center->SecondaryFocus()))
+            if (m_foci[i]->Eval(source, target, boost::any()) == (m_primary ? prod_center->PrimaryFocus() : prod_center->SecondaryFocus()))
                 return true;
         }
     }
@@ -1034,7 +1034,7 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
 {
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0))) : m_types[i]->Description();
+        values_str += ValueRef::ConstantExpr(m_types[i]) ? UserString(lexical_cast<std::string>(m_types[i]->Eval(0, 0, boost::any()))) : m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
         } else if (i == m_types.size() - 2) {
@@ -1070,7 +1070,7 @@ bool Condition::StarType::Match(const UniverseObject* source, const UniverseObje
     const System* system = objects.Object<System>(target->SystemID());
     if (system || (system = universe_object_cast<const System*>(target))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(source, target) == system->GetStarType())
+            if (m_types[i]->Eval(source, target, boost::any()) == system->GetStarType())
                 return true;
         }
     }
@@ -1123,8 +1123,8 @@ Condition::DesignHasPart::~DesignHasPart()
 
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
     std::string description_str = "DESC_DESIGN_HAS_PART";
     if (negated)
         description_str += "_NOT";
@@ -1147,8 +1147,8 @@ bool Condition::DesignHasPart::Match(const UniverseObject* source, const Univers
             for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
                 if (*it == m_name)
                     ++count;
-            int low = m_low->Eval(source, target);      // number matched can depend on some property of target object!
-            int high = m_high->Eval(source, target);
+            int low = m_low->Eval(source, target, boost::any());      // number matched can depend on some property of target object!
+            int high = m_high->Eval(source, target, boost::any());
             return (low <= count && count < high);
         }
     }
@@ -1174,7 +1174,7 @@ std::string Condition::Chance::Description(bool negated/* = false*/) const
         std::string description_str = "DESC_CHANCE_PERCENTAGE";
         if (negated)
             description_str += "_NOT";
-        return str(FlexibleFormat(UserString(description_str)) % lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(0, 0), 1.0)) * 100));
+        return str(FlexibleFormat(UserString(description_str)) % lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(0, 0, boost::any()), 1.0)) * 100));
     } else {
         std::string description_str = "DESC_CHANCE";
         if (negated)
@@ -1190,7 +1190,7 @@ std::string Condition::Chance::Dump() const
 
 bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double chance = std::max(0.0, std::min(m_chance->Eval(source, target), 1.0));
+    double chance = std::max(0.0, std::min(m_chance->Eval(source, target, boost::any()), 1.0));
     return RandZeroToOne() <= chance;
 }
 
@@ -1212,8 +1212,8 @@ Condition::MeterValue::~MeterValue()
 
 std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
     std::string description_str = m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT";
     if (negated)
         description_str += "_NOT";
@@ -1243,8 +1243,8 @@ std::string Condition::MeterValue::Dump() const
 
 bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double low = std::max(Meter::METER_MIN, m_low->Eval(source, target));
-    double high = std::min(m_high->Eval(source, target), Meter::METER_MAX);
+    double low = std::max(Meter::METER_MIN, m_low->Eval(source, target, boost::any()));
+    double high = std::min(m_high->Eval(source, target, boost::any()), Meter::METER_MAX);
     if (const Meter* meter = target->GetMeter(m_meter)) {
         double value = m_max_meter ? meter->Max() : meter->Current();
         return low <= value && value < high;
@@ -1269,8 +1269,8 @@ Condition::EmpireStockpileValue::~EmpireStockpileValue()
 
 std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0)) : m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0)) : m_high->Description();
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
     std::string description_str = "DESC_EMPIRE_STOCKPILE_VALUE";
     if (negated)
         description_str += "_NOT";
@@ -1302,7 +1302,7 @@ bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const 
     if (const Empire* empire = Empires().Lookup(*target->Owners().begin()))
         if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
             double stockpile = empire->ResourceStockpile(m_stockpile);
-            return (m_low->Eval(source, target) <= stockpile && stockpile <= m_high->Eval(source, target));
+            return (m_low->Eval(source, target, boost::any()) <= stockpile && stockpile <= m_high->Eval(source, target, boost::any()));
         }
     return false;
 }
@@ -1354,7 +1354,7 @@ Condition::VisibleToEmpire::~VisibleToEmpire()
 std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const
 {
     if (m_empire_ids.size() == 1) {
-        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0))->Name() : m_empire_ids[0]->Description();
+        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0, boost::any()))->Name() : m_empire_ids[0]->Description();
         std::string description_str = "DESC_VISIBLE_TO_SINGLE_EMPIRE";
         if (negated)
             description_str += "_NOT";
@@ -1362,7 +1362,7 @@ std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) co
     } else {
         std::string values_str;
         for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0))->Name() : m_empire_ids[i]->Description();
+            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0, boost::any()))->Name() : m_empire_ids[i]->Description();
             if (2 <= m_empire_ids.size() && i < m_empire_ids.size() - 2) {
                 values_str += ", ";
             } else if (i == m_empire_ids.size() - 2) {
@@ -1397,7 +1397,7 @@ bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const Unive
 {
     bool retval = false;
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target)) != VIS_NO_VISIBILITY)
+        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target, boost::any())) != VIS_NO_VISIBILITY)
             return true;
     }
     return retval;
@@ -1495,7 +1495,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
 std::string Condition::WithinDistance::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_distance) ? lexical_cast<std::string>(m_distance->Eval(0, 0)) : m_distance->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_distance) ? lexical_cast<std::string>(m_distance->Eval(0, 0, boost::any())) : m_distance->Description();
     std::string description_str = "DESC_WITHIN_DISTANCE";
     if (negated)
         description_str += "_NOT";
@@ -1515,7 +1515,7 @@ std::string Condition::WithinDistance::Dump() const
 
 bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double dist = m_distance->Eval(source, target);
+    double dist = m_distance->Eval(source, target, boost::any());
     double distance_squared = dist * dist;
     double delta_x = source->X() - target->X();
     double delta_y = source->Y() - target->Y();
@@ -1566,7 +1566,7 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
 
 std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? lexical_cast<std::string>(m_jumps->Eval(0, 0)) : m_jumps->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? lexical_cast<std::string>(m_jumps->Eval(0, 0, boost::any())) : m_jumps->Description();
     std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
     if (negated)
         description_str += "_NOT";
@@ -1587,7 +1587,7 @@ std::string Condition::WithinStarlaneJumps::Dump() const
 bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    int jump_limit = m_jumps->Eval(source, target);
+    int jump_limit = m_jumps->Eval(source, target, boost::any());
     if (jump_limit == 0) { // special case, since ShortestPath() doesn't expect the start point to be the end point
         double delta_x = source->X() - target->X();
         double delta_y = source->Y() - target->Y();
@@ -1657,7 +1657,7 @@ Condition::ExploredByEmpire::~ExploredByEmpire()
 std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const
 {
     if (m_empire_ids.size() == 1) {
-        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0))->Name() : m_empire_ids[0]->Description();
+        std::string value_str = ValueRef::ConstantExpr(m_empire_ids[0]) ? Empires().Lookup(m_empire_ids[0]->Eval(0, 0, boost::any()))->Name() : m_empire_ids[0]->Description();
         std::string description_str = "DESC_EXPLORED_BY_SINGLE_EMPIRE";
         if (negated)
             description_str += "_NOT";
@@ -1665,7 +1665,7 @@ std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) c
     } else {
         std::string values_str;
         for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0))->Name() : m_empire_ids[i]->Description();
+            values_str += ValueRef::ConstantExpr(m_empire_ids[i]) ? Empires().Lookup(m_empire_ids[i]->Eval(0, 0, boost::any()))->Name() : m_empire_ids[i]->Description();
             if (2 <= m_empire_ids.size() && i < m_empire_ids.size() - 2) {
                 values_str += ", ";
             } else if (i == m_empire_ids.size() - 2) {
@@ -1700,7 +1700,7 @@ bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const Univ
 {
     const EmpireManager& empires = Empires();
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target)))
+        if (const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target, boost::any())))
             if (empire->HasExploredSystem(target->ID()))
                 return true;
     }

@@ -187,11 +187,29 @@ namespace ValueRef {
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
+
+#define IF_CURRENT_VALUE_ELSE(T)                                        \
+    if (boost::iequals(property_name, "Value")) {                       \
+        if (current_value.empty())                                      \
+            throw std::runtime_error(                                   \
+                "Variable<" #T ">::Eval(): Value could not be evaluated, " \
+                "because no current value was provided.");              \
+        try {                                                           \
+            retval = boost::any_cast<T>(current_value);                 \
+        } catch (const boost::bad_any_cast&) {                          \
+            throw std::runtime_error(                                   \
+                "Variable<" #T ">::Eval(): Value could not be evaluated, " \
+                "because the provided current value is not an " #T "."); \
+        }                                                               \
+    } else
+
     template <>
-    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                          const boost::any& current_value) const
     {
         PlanetSize retval = INVALID_PLANET_SIZE;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(PlanetSize)
         if (boost::iequals(property_name, "PlanetSize")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
@@ -203,10 +221,12 @@ namespace ValueRef {
     }
 
     template <>
-    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                          const boost::any& current_value) const
     {
         PlanetType retval = INVALID_PLANET_TYPE;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(PlanetType)
         if (boost::iequals(property_name, "PlanetType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
@@ -218,10 +238,12 @@ namespace ValueRef {
     }
 
     template <>
-    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                                        const boost::any& current_value) const
     {
         PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(PlanetEnvironment)
         if (boost::iequals(property_name, "PlanetEnvironment")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
@@ -233,10 +255,12 @@ namespace ValueRef {
     }
 
     template <>
-    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                                          const boost::any& current_value) const
     {
         UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(UniverseObjectType)
         if (boost::iequals(property_name, "ObjectType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (universe_object_cast<const Planet*>(object)) {
@@ -261,10 +285,12 @@ namespace ValueRef {
     }
 
     template <>
-    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                      const boost::any& current_value) const
     {
         StarType retval = INVALID_STAR_TYPE;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(StarType)
         if (boost::iequals(property_name, "StarType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const System* s = universe_object_cast<const System*>(object))
@@ -276,15 +302,17 @@ namespace ValueRef {
     }
 
     template <>
-    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                        const boost::any& current_value) const
     {
         FocusType retval = INVALID_FOCUS_TYPE;
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(FocusType)
         if (boost::iequals(property_name, "PrimaryFocus")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
                 retval = pc->PrimaryFocus();
-        }else if (boost::iequals(property_name, "SecondaryFocus")) {
+        } else if (boost::iequals(property_name, "SecondaryFocus")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
                 retval = pc->SecondaryFocus();
@@ -295,11 +323,13 @@ namespace ValueRef {
     }
 
     template <>
-    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                  const boost::any& current_value) const
     {
         double retval = 0.0;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(double)
         if (boost::iequals(property_name, "CurrentFarming")) {
             const Meter* m = object->GetMeter(METER_FARMING);
             retval = m ? m->Current() : 0;
@@ -427,11 +457,13 @@ namespace ValueRef {
     }
 
     template <>
-    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const
+    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target,
+                            const boost::any& current_value) const
     {
         int retval = 0;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(int)
         if (boost::iequals(property_name, "Owner")) {
             if (object->Owners().size() == 1)
                 retval = *object->Owners().begin();
@@ -453,6 +485,8 @@ namespace ValueRef {
 
         return retval;
     }
+
+#undef IF_CURRENT_VALUE_ELSE
 }
 
 std::string DumpIndent()

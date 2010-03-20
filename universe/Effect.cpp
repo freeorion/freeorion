@@ -403,7 +403,7 @@ SetMeter::~SetMeter()
 void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Meter* m = target->GetMeter(m_meter)) {
-        double val = m_value->Eval(source, target);
+        double val = m_value->Eval(source, target, m_max ? m->Max() : m->Current());
         //Logger().debugStream() << "Setting " << (m_max ? "max " : "current ") << boost::lexical_cast<std::string>(m_meter) << " meter from "
         //                       << (m_max ? m->Max() : m->Current()) << " to " << val;
         m_max ? m->SetMax(val) : m->SetCurrent(val);
@@ -473,14 +473,15 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
     if (source->Owners().size() != 1)
         return;
 
-    double value = m_value->Eval(source, target);
-    if (Empire* empire = Empires().Lookup(*source->Owners().begin()))
+    if (Empire* empire = Empires().Lookup(*source->Owners().begin())) {
+        double value = m_value->Eval(source, target, empire->ResourceStockpile(m_stockpile));
         empire->SetResourceStockpile(m_stockpile, value);
+    }
 }
 
 std::string SetEmpireStockpile::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0)) : m_value->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) : m_value->Description();
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
 }
 
@@ -540,7 +541,7 @@ SetPlanetType::~SetPlanetType()
 void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = universe_object_cast<Planet*>(target)) {
-        PlanetType type = m_type->Eval(source, target);
+        PlanetType type = m_type->Eval(source, target, p->Type());
         p->SetType(type);
         if (type == PT_ASTEROIDS)
             p->SetSize(SZ_ASTEROIDS);
@@ -555,7 +556,7 @@ void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string SetPlanetType::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
     return str(FlexibleFormat(UserString("DESC_SET_PLANET_TYPE")) % value_str);
 }
 
@@ -580,7 +581,7 @@ SetPlanetSize::~SetPlanetSize()
 void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Planet* p = universe_object_cast<Planet*>(target)) {
-        PlanetSize size = m_size->Eval(source, target);
+        PlanetSize size = m_size->Eval(source, target, p->Size());
         p->SetSize(size);
         if (size == SZ_ASTEROIDS)
             p->SetType(PT_ASTEROIDS);
@@ -593,7 +594,7 @@ void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string SetPlanetSize::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0, boost::any()))) : m_size->Description();
     return str(FlexibleFormat(UserString("DESC_SET_PLANET_SIZE")) % value_str);
 }
 
@@ -617,14 +618,14 @@ AddOwner::~AddOwner()
 
 void AddOwner::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    int empire_id = m_empire_id->Eval(source, target);
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
     assert(Empires().Lookup(empire_id));
     target->AddOwner(empire_id);
 }
 
 std::string AddOwner::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_ADD_OWNER")) % value_str);
 }
 
@@ -648,7 +649,7 @@ RemoveOwner::~RemoveOwner()
 
 void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    int empire_id = m_empire_id->Eval(source, target);
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
     const Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
@@ -659,7 +660,7 @@ void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) 
 
 std::string RemoveOwner::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_REMOVE_OWNER")) % value_str);
 }
 
@@ -691,8 +692,8 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
         return;
     }
 
-    PlanetSize size = m_size->Eval(source, target);
-    PlanetType type = m_type->Eval(source, target);
+    PlanetSize size = m_size->Eval(source, target, boost::any());
+    PlanetType type = m_type->Eval(source, target, boost::any());
     if (size == INVALID_PLANET_SIZE || type == INVALID_PLANET_TYPE) {
         Logger().errorStream() << "CreatePlanet::Execute got invalid size or type of planet to create...";
         return;
@@ -716,8 +717,8 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
 
 std::string CreatePlanet::Description() const
 {
-    std::string type_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
-    std::string size_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0))) : m_size->Description();
+    std::string type_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
+    std::string size_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0, boost::any()))) : m_size->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
                % type_str
@@ -811,7 +812,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    int empire_id = m_empire_id->Eval(source, target);
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
@@ -848,7 +849,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
 
 std::string CreateShip::Description() const
 {
-    std::string owner_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    std::string owner_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
                % UserString(m_design_name)
                % owner_str);
@@ -943,13 +944,13 @@ SetStarType::~SetStarType()
 void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (System* s = universe_object_cast<System*>(target)) {
-        s->SetStarType(m_type->Eval(source, target));
+        s->SetStarType(m_type->Eval(source, target, s->GetStarType()));
     }
 }
 
 std::string SetStarType::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0))) : m_type->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
     return str(FlexibleFormat(UserString("DESC_SET_STAR_TYPE")) % value_str);
 }
 
@@ -1156,7 +1157,7 @@ SetTechAvailability::~SetTechAvailability()
 
 void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    Empire* empire = Empires().Lookup(m_empire_id->Eval(source, target));
+    Empire* empire = Empires().Lookup(m_empire_id->Eval(source, target, boost::any()));
     if (!empire) return;
 
     const Tech* tech = GetTech(m_tech_name);
@@ -1184,7 +1185,7 @@ void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* 
 std::string SetTechAvailability::Description() const
 {
     std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0))->Name() : m_empire_id->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     return str(FlexibleFormat(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
                % affected
                % empire_str);

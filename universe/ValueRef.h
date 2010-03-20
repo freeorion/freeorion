@@ -43,7 +43,13 @@ template <class T>
 struct ValueRef::ValueRefBase
 {
     virtual ~ValueRefBase() {} ///< virtual dtor
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target) const = 0; ///< evaluates the expression tree and return the results
+
+    /** Evaluates the expression tree and return the results; \a current_value
+        is used to fill in any instances of the "CurrentValue" variable that
+        exist in the tree. */
+    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
+                   const boost::any& current_value) const = 0;
+
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
 
@@ -61,7 +67,8 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 
     T Value() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
+                   const boost::any& current_value) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -84,7 +91,8 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     bool SourceRef() const;
     const std::vector<std::string>& PropertyName() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
+                   const boost::any& current_value) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -108,7 +116,8 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
     ~StaticCast();
 
-    virtual double Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual double Eval(const UniverseObject* source, const UniverseObject* target,
+                   const boost::any& current_value) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -133,7 +142,8 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     const ValueRefBase<T>* LHS() const;
     const ValueRefBase<T>* RHS() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target) const;
+    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
+                   const boost::any& current_value) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -176,7 +186,8 @@ T ValueRef::Constant<T>::Value() const
 }
 
 template <class T>
-T ValueRef::Constant<T>::Eval(const UniverseObject* source, const UniverseObject* target) const
+T ValueRef::Constant<T>::Eval(const UniverseObject* source, const UniverseObject* target,
+                              const boost::any& current_value) const
 {
     return m_value;
 }
@@ -280,28 +291,36 @@ std::string ValueRef::Variable<T>::Dump() const
 
 namespace ValueRef {
     template <>
-    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                          const boost::any& current_value) const;
 
     template <>
-    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                          const boost::any& current_value) const;
 
     template <>
-    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                                        const boost::any& current_value) const;
 
     template <>
-    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                                          const boost::any& current_value) const;
 
     template <>
-    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                      const boost::any& current_value) const;
 
     template <>
-    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                        const boost::any& current_value) const;
 
     template <>
-    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                  const boost::any& current_value) const;
 
     template <>
-    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target) const;
+    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target,
+                            const boost::any& current_value) const;
 }
 
 template <class T>
@@ -327,9 +346,10 @@ ValueRef::StaticCast<FromType, ToType>::~StaticCast()
 { delete m_value_ref; }
 
 template <class FromType, class ToType>
-double ValueRef::StaticCast<FromType, ToType>::Eval(const UniverseObject* source, const UniverseObject* target) const
+double ValueRef::StaticCast<FromType, ToType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                                    const boost::any& current_value) const
 {
-    return static_cast<ToType>(m_value_ref->Eval(source, target));
+    return static_cast<ToType>(m_value_ref->Eval(source, target, current_value));
 }
 
 template <class FromType, class ToType>
@@ -395,23 +415,28 @@ const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::RHS() const
 }
 
 template <class T>
-T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObject* target) const
+T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObject* target,
+                               const boost::any& current_value) const
 {
     switch (m_op_type) {
         case PLUS:
-            return T(m_operand1->Eval(source, target) + m_operand2->Eval(source, target));
+            return T(m_operand1->Eval(source, target, current_value) +
+                     m_operand2->Eval(source, target, current_value));
             break;
         case MINUS:
-            return T(m_operand1->Eval(source, target) - m_operand2->Eval(source, target));
+            return T(m_operand1->Eval(source, target, current_value) -
+                     m_operand2->Eval(source, target, current_value));
             break;
         case TIMES:
-            return T(m_operand1->Eval(source, target) * m_operand2->Eval(source, target));
+            return T(m_operand1->Eval(source, target, current_value) *
+                     m_operand2->Eval(source, target, current_value));
             break;
         case DIVIDES:
-            return T(m_operand1->Eval(source, target) / m_operand2->Eval(source, target));
+            return T(m_operand1->Eval(source, target, current_value) /
+                     m_operand2->Eval(source, target, current_value));
             break;
         case NEGATE:
-            return T(-m_operand1->Eval(source, target));
+            return T(-m_operand1->Eval(source, target, current_value));
             break;
         default:
             throw std::runtime_error("ValueRef evaluated with an unknown OpType.");
