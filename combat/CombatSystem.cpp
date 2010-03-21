@@ -406,10 +406,15 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             }
         // and capture of planets
         } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
+            if (planet->Unowned())
+                continue;
             if (target->GetMeter(METER_CONSTRUCTION)->Current() <= 0.0) {
                 const std::set<int>& attacker_owners = attacker->Owners();
-                if (attacker_owners.size() == 1)
-                    planet->Conquer(*attacker_owners.begin());
+                if (attacker_owners.size() == 1) {
+                    int attacker_owner = *attacker_owners.begin();
+                    if (!planet->OwnedBy(attacker_owner))
+                        planet->Conquer(attacker_owner);
+                }
             }
         }
     }
