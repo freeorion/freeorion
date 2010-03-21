@@ -34,7 +34,7 @@ using std::vector;
 // Order
 /////////////////////////////////////////////////////
 Order::Order() :
-    m_empire(-1),
+    m_empire(ALL_EMPIRES),
     m_executed(false)
 {}
 
@@ -132,31 +132,10 @@ NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const in
     m_fleet_name(fleet_name),
     m_system_id(system_id),
     m_new_id( new_id ),
-    m_position(std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION)),
     m_ship_ids(ship_ids)
 {
 #if DEBUG_CREATE_FLEET_ORDER
     std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, int ship_id) : \n" << std::endl 
-              << "    m_empire=" << EmpireID() << std::endl
-              << "    m_fleet_name=" << m_fleet_name << std::endl
-              << "    m_system_id=" << m_system_id << std::endl
-              << "    m_position=(" << m_position.first << " " << m_position.second << ")" << std::endl
-              << "    m_new_id=" << m_new_id << std::endl
-              << "    m_ship_ids.size()=" << m_ship_ids.size() << std::endl
-              << std::endl;
-#endif
-}
-
-NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids) :
-    Order(empire),
-    m_fleet_name(fleet_name),
-    m_system_id(-1),
-    m_new_id(new_id),
-    m_position(std::make_pair(x, y)),
-    m_ship_ids(ship_ids)
-{
-#if DEBUG_CREATE_FLEET_ORDER
-    std::cerr << "NewFleetOrder(int empire, const std::string& fleet_name,  const int new_id, double x, double y, int ship_id : " << std::endl
               << "    m_empire=" << EmpireID() << std::endl
               << "    m_fleet_name=" << m_fleet_name << std::endl
               << "    m_system_id=" << m_system_id << std::endl
@@ -173,28 +152,24 @@ void NewFleetOrder::ExecuteImpl() const
 
     Universe& universe = GetUniverse();
 
-    // create fleet
-    Fleet* fleet = 0;
-    if (m_system_id != UniverseObject::INVALID_OBJECT_ID) {
-        // fleet being created in a system - create at system's location and insert into system after creation
-        System* system = GetObject<System>(m_system_id);
-        if (!system) {
-            Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
-            return;
-        }
-        fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
-        // an ID is provided to ensure consistancy between server and client universes
-        universe.InsertID(fleet, m_new_id);
-        system->Insert(fleet);
-
-    } else {
-        // fleet being created outside system at specified position.
-        fleet = new Fleet(m_fleet_name, m_position.first, m_position.second, EmpireID());
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
-        // an ID is provided to ensure consistency between server and client universes
-        universe.InsertID(fleet, m_new_id);
+    if (m_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "Empire attempted to create a new fleet outside a system";
+        return;
     }
+    System* system = GetObject<System>(m_system_id);
+    if (!system) {
+        Logger().errorStream() << "Empire attempted to create a new fleet in a nonexistant system";
+        return;
+    }
+
+
+    // create fleet
+    Fleet* fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
+    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+    // an ID is provided to ensure consistancy between server and client universes
+    universe.InsertID(fleet, m_new_id);
+    system->Insert(fleet);
+
 
     // add ship(s) to fleet
     for (unsigned int i = 0; i < m_ship_ids.size(); ++i) {
@@ -953,11 +928,14 @@ void ScrapOrder::ExecuteImpl() const
     int empire_id = EmpireID();
 
     if (Ship* ship = GetObject<Ship>(m_object_id)) {
-        if (ship->OwnedBy(empire_id))
+        if (ship->SystemID() != UniverseObject::INVALID_OBJECT_ID && ship->OwnedBy(empire_id))
             ship->SetOrderedScrapped(true);
     } else if (Building* building = GetObject<Building>(m_object_id)) {
-        if (building->OwnedBy(empire_id))
-            building->SetOrderedScrapped(true);
+        int planet_id = building->PlanetID();
+        if (const Planet* planet = GetObject<Planet>(planet_id)) {
+            if (building->OwnedBy(empire_id) && planet->OwnedBy(empire_id))
+                building->SetOrderedScrapped(true);
+        }
     }
 }
 

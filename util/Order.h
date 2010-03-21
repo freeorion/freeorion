@@ -117,13 +117,11 @@ public:
     /** \name Structors */ //@{
     NewFleetOrder();
     explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, int system_id, const std::vector<int>& ship_ids);
-    explicit NewFleetOrder(int empire, const std::string& fleet_name, const int new_id, double x, double y, const std::vector<int>& ship_ids);
     //@}
 
     /** \name Accessors */ //@{
     const std::string&        FleetName() const    {return m_fleet_name;} ///< returns the name of the new fleet
     int                       SystemID() const     {return m_system_id;}  ///< returns the system the new fleet will be placed into (may be INVALID_OBJECT_ID if a position is specified)
-    std::pair<double, double> Position() const     {return m_position;}   ///< returns the position of the new fleet (may be (INVALID_POSITION, INVALID_POSITION) if in a system)
     int                       NewID() const        {return m_new_id;}     ///< returns the ID for this fleet 
     const std::vector<int>&   ShipIDs() const      {return m_ship_ids;}   ///< returns the IDa for the ships used to start this fleet
     //@}
@@ -134,16 +132,14 @@ private:
      *    None.
      *
      *  Postconditions:
-     *    - a new fleet will exist either in system m_system_id or at position m_position,
-     *          and will belong to the creating empire.
-     *
+     *    - a new fleet will exist either in system m_system_id,
+     *      and will belong to the creating empire.
      */
     virtual void ExecuteImpl() const;
 
     std::string               m_fleet_name;
     int                       m_system_id;
     int                       m_new_id;
-    std::pair<double, double> m_position;
     std::vector<int>          m_ship_ids;
 
     friend class boost::serialization::access;
@@ -546,7 +542,6 @@ void NewFleetOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_fleet_name)
         & BOOST_SERIALIZATION_NVP(m_system_id)
         & BOOST_SERIALIZATION_NVP(m_new_id)
-        & BOOST_SERIALIZATION_NVP(m_position)
         & BOOST_SERIALIZATION_NVP(m_ship_ids);
 }
 
