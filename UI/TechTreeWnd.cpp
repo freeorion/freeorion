@@ -2146,7 +2146,7 @@ void TechTreeWnd::Update(const Tech* tech)
 
 void TechTreeWnd::Clear()
 {
-    m_tech_navigator->SetTech(0);    
+    m_tech_navigator->SetTech(0);
     m_enc_detail_panel->UnsetAll();
     m_layout_panel->Clear();
 }
@@ -2335,6 +2335,11 @@ void TechTreeWnd::CenterOnTech(const Tech* tech)
     m_layout_panel->CenterOnTech(tech);
 }
 
+void TechTreeWnd::SetEncyclopediaTech(const Tech* tech)
+{
+    m_enc_detail_panel->SetItem(tech);
+}
+
 void TechTreeWnd::TechBrowsedSlot(const Tech* tech)
 {
     TechBrowsedSignal(tech);
@@ -2343,7 +2348,7 @@ void TechTreeWnd::TechBrowsedSlot(const Tech* tech)
 void TechTreeWnd::TechClickedSlot(const Tech* tech)
 {
     m_tech_navigator->SetTech(tech);
-    m_enc_detail_panel->SetItem(tech);
+    SetEncyclopediaTech(tech);
     TechSelectedSignal(tech);
 }
 

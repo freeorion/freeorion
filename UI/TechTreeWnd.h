@@ -56,6 +56,7 @@ public:
     void                    ShowListView();
 
     void                    CenterOnTech(const Tech* tech);
+    void                    SetEncyclopediaTech(const Tech* tech);
     //@}
 
     static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;

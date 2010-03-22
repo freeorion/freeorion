@@ -338,7 +338,13 @@ void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
 {
-    m_tech_tree_wnd->CenterOnTech(boost::polymorphic_downcast<QueueRow*>(*it)->tech);
+    const Tech* tech = boost::polymorphic_downcast<QueueRow*>(*it)->tech;
+    if (!tech) {
+        Logger().errorStream() << "ResearchWnd::QueueItemClickedSlot couldn't get tech from clicked row";
+        return;
+    }
+    m_tech_tree_wnd->CenterOnTech(tech);
+    m_tech_tree_wnd->SetEncyclopediaTech(tech);
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
