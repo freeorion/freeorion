@@ -533,9 +533,6 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
 
 void OptionsWnd::ResolutionOption()
 {
-    // Retrieve (and if necessary generate) the fullscreen resolutions.
-    std::vector<std::string> resolutions;
-
     boost::shared_ptr<const RangedValidator<int> > width_validator =
         boost::dynamic_pointer_cast<const RangedValidator<int> >(
             GetOptionsDB().GetValidator("app-width"));
@@ -549,29 +546,43 @@ void OptionsWnd::ResolutionOption()
         boost::dynamic_pointer_cast<const RangedValidator<int> >(
             GetOptionsDB().GetValidator("app-height-windowed"));
 
-    std::string current_resolution_string;
-    int current_resolution_index = -1;
-
     Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
     if (!render_system) {
         Logger().errorStream() << "OptionsWnd::ResolutionOption couldn't get render system!";
         return;
     }
 
-    Ogre::ConfigOptionMap& current_renderer_options = render_system->getConfigOptions();
-    Ogre::ConfigOptionMap::iterator end_it = current_renderer_options.end();
-    for (Ogre::ConfigOptionMap::iterator it = current_renderer_options.begin(); it != end_it; ++it) {
-        if (it->first == "Video Mode") {
-            current_resolution_string = it->second.currentValue;
-            for (unsigned int i = 0; i < it->second.possibleValues.size(); ++i) {
-                resolutions.push_back(it->second.possibleValues[i]);
-                if (resolutions.back().substr(0, current_resolution_string.size()) == current_resolution_string)
-                    current_resolution_index = resolutions.size() - 1;
-                if (resolutions.back().find_first_of("@") == std::string::npos)
-                    resolutions.back() += " @ 32";
-            }
+
+    // compile list of resolutions available on this system
+    std::vector<std::string> resolutions;
+    Ogre::ConfigOptionMap& renderer_options = render_system->getConfigOptions();
+
+    for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
+        // only concerned with video mode options
+        if (it->first != "Video Mode")
+            continue;
+
+        for (unsigned int i = 0; i < it->second.possibleValues.size(); ++i) {
+            resolutions.push_back(it->second.possibleValues[i]);
+            if (resolutions.back().find_first_of("@") == std::string::npos)
+                resolutions.back() += " @ 32";
         }
-    } 
+    }
+
+
+    // find text representation of current fullscreen resolution selection
+    int colour_depth = GetOptionsDB().Get<int>("color-depth");
+    int width = GetOptionsDB().Get<int>("app-width");
+    int height = GetOptionsDB().Get<int>("app-height");
+    std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2% @ %3%") % width % height % colour_depth);
+
+    // find which index in list, if any, represents current fullscreen resolution selection
+    int current_resolution_index = -1, loop_res_index = 0;
+    for (std::vector<std::string>::const_iterator res_it = resolutions.begin(); res_it != resolutions.end(); ++res_it, ++loop_res_index) {
+        if (*res_it == current_video_mode_str)
+            current_resolution_index = loop_res_index;
+    }
+
 
     // create controls
     const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
@@ -610,8 +621,8 @@ void OptionsWnd::ResolutionOption()
         drop_list->Insert(video_mode_row);
     }
 
-    if (drop_list->NumRows() >= 1)
-        drop_list->Select(0);
+    if (drop_list->NumRows() >= 1 && current_resolution_index != -1)
+        drop_list->Select(current_resolution_index);
 
 
     // customizable windowed width and height
