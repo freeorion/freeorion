@@ -190,12 +190,23 @@ int mainSetupAndRunOgre()
 
         root->setRenderSystem(selected_render_system);
 
-        selected_render_system->setConfigOption("Full Screen", GetOptionsDB().Get<bool>("fullscreen") ? "Yes" : "No");
+        int colour_depth = GetOptionsDB().Get<int>("color-depth");
+        bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+        int width = 1, height = 1;
+        if (fullscreen) {
+            width = GetOptionsDB().Get<int>("app-width");
+            height = GetOptionsDB().Get<int>("app-height");
+        } else {
+            width = GetOptionsDB().Get<int>("app-width-windowed");
+            height = GetOptionsDB().Get<int>("app-height-windowed");
+        }
+
+        selected_render_system->setConfigOption("Full Screen", fullscreen ? "Yes" : "No");
         std::string video_mode_str =
             boost::io::str(boost::format("%1% x %2% @ %3%-bit colour") %
-                           GetOptionsDB().Get<int>("app-width") %
-                           GetOptionsDB().Get<int>("app-height") %
-                           GetOptionsDB().Get<int>("color-depth"));
+                           width %
+                           height %
+                           colour_depth);
         selected_render_system->setConfigOption("Video Mode", video_mode_str);
 
         RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());

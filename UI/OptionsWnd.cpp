@@ -184,56 +184,29 @@ namespace {
 
     struct ResolutionDropListIndexSetOptionFunctor
     {
-        ResolutionDropListIndexSetOptionFunctor(CUIDropDownList* drop_list, CUISpin<int>* width_spin, CUISpin<int>* height_spin, CUISpin<int>* color_depth_spin, CUIStateButton* fullscreen_button) :
-            m_drop_list(drop_list), m_width_spin(width_spin), m_height_spin(height_spin), m_color_depth_spin(color_depth_spin), m_fullscreen_button(fullscreen_button)
-            {
-                const GG::ListBox::Row* row = *m_drop_list->CurrentItem();
-                if (row && row->Name() != UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
-                    m_width_spin->Disable(true);
-                    m_height_spin->Disable(true);
-                    m_color_depth_spin->Disable(true);
-                    if (m_fullscreen_button)
-                        m_fullscreen_button->Disable(true);
-                }
-            }
+        ResolutionDropListIndexSetOptionFunctor(CUIDropDownList* drop_list) :
+            m_drop_list(drop_list)
+        {}
+
         void operator()(GG::ListBox::iterator it)
-            {
-                const GG::ListBox::Row* row = *it;
-                assert(row);
-                if (row->Name() == UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION")) {
-                    m_width_spin->Disable(false);
-                    m_height_spin->Disable(false);
-                    m_color_depth_spin->Disable(false);
-                    if (m_fullscreen_button)
-                        m_fullscreen_button->Disable(false);
-                    GetOptionsDB().Set<int>("app-width", m_width_spin->Value());
-                    GetOptionsDB().Set<int>("app-height", m_height_spin->Value());
-                    GetOptionsDB().Set<int>("color-depth", m_color_depth_spin->Value());
-                    if (m_fullscreen_button)
-                        GetOptionsDB().Set<bool>("fullscreen", m_fullscreen_button->Checked());
-                } else {
-                    int w, h, bpp;
-                    using namespace boost::spirit;
-                    rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
-                    parse(row->Name().c_str(), resolution_p);
-                    GetOptionsDB().Set<int>("app-width", w);
-                    GetOptionsDB().Set<int>("app-height", h);
-                    GetOptionsDB().Set<int>("color-depth", bpp);
-                    if (m_fullscreen_button)
-                        GetOptionsDB().Set<bool>("fullscreen", true);
-                    m_width_spin->Disable(true);
-                    m_height_spin->Disable(true);
-                    m_color_depth_spin->Disable(true);
-                    if (m_fullscreen_button)
-                        m_fullscreen_button->Disable(true);
-                }
+        {
+            const GG::ListBox::Row* row = *it;
+            if (!row) {
+                Logger().errorStream() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
+                return;
             }
+            int w, h, bpp;
+            using namespace boost::spirit;
+            rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
+            parse(row->Name().c_str(), resolution_p);
+            GetOptionsDB().Set<int>("app-width", w);
+            GetOptionsDB().Set<int>("app-height", h);
+            GetOptionsDB().Set<int>("color-depth", bpp);
+        }
+
         CUIDropDownList* m_drop_list;
-        CUISpin<int>* m_width_spin;
-        CUISpin<int>* m_height_spin;
-        CUISpin<int>* m_color_depth_spin;
-        CUIStateButton* m_fullscreen_button;
     };
+
     struct LimitFPSSetOptionFunctor
     {
         LimitFPSSetOptionFunctor(CUISpin<double>* max_fps_spin) :
@@ -562,12 +535,29 @@ void OptionsWnd::ResolutionOption()
 {
     // Retrieve (and if necessary generate) the fullscreen resolutions.
     std::vector<std::string> resolutions;
-    boost::shared_ptr<const RangedValidator<int> > width_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-width"));
-    boost::shared_ptr<const RangedValidator<int> > height_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("app-height"));
+
+    boost::shared_ptr<const RangedValidator<int> > width_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-width"));
+    boost::shared_ptr<const RangedValidator<int> > height_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-height"));
+    boost::shared_ptr<const RangedValidator<int> > windowed_width_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-width-windowed"));
+    boost::shared_ptr<const RangedValidator<int> > windowed_height_validator =
+        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+            GetOptionsDB().GetValidator("app-height-windowed"));
+
     std::string current_resolution_string;
     int current_resolution_index = -1;
+
     Ogre::RenderSystem* render_system = Ogre::Root::getSingleton().getRenderSystem();
-    assert(render_system);
+    if (!render_system) {
+        Logger().errorStream() << "OptionsWnd::ResolutionOption couldn't get render system!";
+        return;
+    }
+
     Ogre::ConfigOptionMap& current_renderer_options = render_system->getConfigOptions();
     Ogre::ConfigOptionMap::iterator end_it = current_renderer_options.end();
     for (Ogre::ConfigOptionMap::iterator it = current_renderer_options.begin(); it != end_it; ++it) {
@@ -584,44 +574,65 @@ void OptionsWnd::ResolutionOption()
     } 
 
     // create controls
-    GG::ListBox::Row* row = new GG::ListBox::Row();
     const GG::Y DROPLIST_HEIGHT = GG::Y(ClientUI::Pts() + 4);
     const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 10;
-    GG::TextControl* drop_list_text_control = new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
-    CUIDropDownList* drop_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
+
+
+    // drop list and label
+    GG::TextControl* drop_list_label =
+        new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE"), ClientUI::GetFont(),
+                            ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
+
+    CUIDropDownList* drop_list =
+        new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
-    layout->Add(drop_list_text_control, 0, 0);
-    layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
-    row->Resize(GG::Pt(ROW_WIDTH, drop_list_text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
-    m_current_option_list->Insert(row);
     drop_list->SetStyle(GG::LIST_NOSORT);
-    GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
-    font_row->SetName(UserString("OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION"));
-    drop_list->Insert(font_row);
-    for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
-        font_row = new CUISimpleDropDownListRow(*it);
-        font_row->SetName(*it);
-        drop_list->Insert(font_row);
-    }
-    if (current_resolution_index != -1 && GetOptionsDB().Get<bool>("fullscreen"))
-        drop_list->Select(current_resolution_index + 1);
-    else
-        drop_list->Select(0);
     drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
-    drop_list_text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    drop_list_text_control->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
-    CUISpin<int>* width_spin = IntOption("app-width", UserString("OPTIONS_APP_WIDTH"));
-    CUISpin<int>* height_spin = IntOption("app-height", UserString("OPTIONS_APP_HEIGHT"));
-    CUISpin<int>* color_depth_spin = IntOption("color-depth", UserString("OPTIONS_COLOR_DEPTH"));
+    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
+    layout->Add(drop_list_label, 0, 0);
+    layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
+
+    GG::ListBox::Row* row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, drop_list_label->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
+
+    m_current_option_list->Insert(row);
+
+
+    // selectable rows in video modes list box...
+    for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
+        GG::ListBox::Row* video_mode_row = new CUISimpleDropDownListRow(*it);
+        video_mode_row->SetName(*it);
+        drop_list->Insert(video_mode_row);
+    }
+
+    if (drop_list->NumRows() >= 1)
+        drop_list->Select(0);
+
+
+    // customizable windowed width and height
+    GG::TextControl* windowed_spinner_label =
+        new GG::TextControl(GG::X0, GG::Y0, UserString("OPTIONS_VIDEO_MODE_WINDOWED"), ClientUI::GetFont(),
+                            ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
+    windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    windowed_spinner_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION"));
+
+    row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, windowed_spinner_label->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), windowed_spinner_label, m_indentation_level));
+    m_current_option_list->Insert(row);
+
+    CUISpin<int>* windowed_width_spin = IntOption("app-width-windowed", UserString("OPTIONS_APP_WIDTH_WINDOWED"));
+    CUISpin<int>* windowed_height_spin = IntOption("app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
+
+
+    // fps
     BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
-    CUIStateButton* fullscreen_button = 0;
-#ifndef FREEORION_WIN32
-    fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
-#endif
+
     CUIStateButton* limit_FPS_button = BoolOption("limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     CUISpin<double>* max_fps_spin = DoubleOption("max-fps", UserString("OPTIONS_MAX_FPS"));
     GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
@@ -629,7 +640,7 @@ void OptionsWnd::ResolutionOption()
     limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
     GG::Connect(drop_list->SelChangedSignal,
-                ResolutionDropListIndexSetOptionFunctor(drop_list, width_spin, height_spin, color_depth_spin, fullscreen_button));
+                ResolutionDropListIndexSetOptionFunctor(drop_list));
 }
 
 void OptionsWnd::Init()

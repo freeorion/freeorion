@@ -298,10 +298,16 @@ OPTIONS_DB_UI_MAIN_MENU_Y
 Position of the center of the intro screen main menu, as a portion of the application's total height.
 
 OPTIONS_DB_APP_WIDTH
-Sets horizontal app resolution.
+Sets horizontal app resolution in fullscreen mode.
 
 OPTIONS_DB_APP_HEIGHT
-Sets vertical app resolution.
+Sets vertical app resolution in fullscreen mode.
+
+OPTIONS_DB_APP_WIDTH_WINDOWED
+Sets horizontal app resolution in windowed mode.
+
+OPTIONS_DB_APP_HEIGHT_WINDOWED
+Sets vertical app resolution in windowed mode.
 
 OPTIONS_DB_COLOR_DEPTH
 Sets screen color depth, in bits per pixel.
@@ -996,25 +1002,25 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
 
 OPTIONS_VIDEO_MODE
-Video Mode  (restart for changes to take effect)
+Full-Screen Video Mode  (restart in full-screen to take effect)
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
-Sets screen resolution and bits per pixel in one step; set this to "Custom" to set width, height, and bits per pixel individually.
+Sets bits per pixel and full-screen resolution.
 
-OPTIONS_VIDEO_MODE_LIST_CUSTOM_OPTION
-Custom
+OPTIONS_VIDEO_MODE_WINDOWED
+Windowed Video Mode  (restart windowed to take effect)
+
+OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
+Sets width and height of window in windowed mode.  Windowed bits per pixel uses full-screen mode setting.
 
 OPTIONS_VIDEO_SETTINGS
 Video Settings
 
-OPTIONS_APP_WIDTH
-Width
+OPTIONS_APP_WIDTH_WINDOWED
+Windowed Width
 
-OPTIONS_APP_HEIGHT
-Height
-
-OPTIONS_COLOR_DEPTH
-Color bit-depth
+OPTIONS_APP_HEIGHT_WINDOWED
+Windowed Height
 
 OPTIONS_FULLSCREEN
 Fullscreen

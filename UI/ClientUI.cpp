@@ -345,12 +345,15 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db)
     {
-        db.Add("app-width",         "OPTIONS_DB_APP_WIDTH",     1024,   RangedValidator<int>(800, 2560));
-        db.Add("app-height",        "OPTIONS_DB_APP_HEIGHT",    768,    RangedValidator<int>(600, 1600));
-        db.Add('c', "color-depth",  "OPTIONS_DB_COLOR_DEPTH",   32,     RangedStepValidator<int>(8, 16, 32));
-        db.Add("show-fps",          "OPTIONS_DB_SHOW_FPS",      false);
-        db.Add("limit-fps",         "OPTIONS_DB_LIMIT_FPS",     true);
-        db.Add("max-fps",           "OPTIONS_DB_MAX_FPS",       60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
+        db.Add("app-width",             "OPTIONS_DB_APP_WIDTH",             1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height",            "OPTIONS_DB_APP_HEIGHT",            768,    RangedValidator<int>(600, 1600));
+        db.Add("app-width-windowed",    "OPTIONS_DB_APP_WIDTH_WINDOWED",    1024,   RangedValidator<int>(800, 2560));
+        db.Add("app-height-windowed",   "OPTIONS_DB_APP_HEIGHT_WINDOWED",   768,    RangedValidator<int>(600, 1600));
+
+        db.Add('c', "color-depth",      "OPTIONS_DB_COLOR_DEPTH",           32,     RangedStepValidator<int>(8, 16, 32));
+        db.Add("show-fps",              "OPTIONS_DB_SHOW_FPS",              false);
+        db.Add("limit-fps",             "OPTIONS_DB_LIMIT_FPS",             true);
+        db.Add("max-fps",               "OPTIONS_DB_MAX_FPS",               60.0,   RangedStepValidator<double>(1.0, 10.0, 200.0));
 
         // sound
         db.Add("UI.sound.enabled",                              "OPTIONS_DB_UI_SOUND_ENABLED",                  true,                   Validator<bool>());
