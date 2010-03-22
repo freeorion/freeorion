@@ -240,7 +240,35 @@ sc::result MPLobby::react(const JoinGame& msg)
     PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
     player_setup_data.m_player_id = player_id;
     player_setup_data.m_player_name = player_name;
-    player_setup_data.m_empire_color = EmpireColors().at(0);
+
+    // find unused empire colour
+    //Logger().debugStream() << "finding colours for empire of player " << player_name;
+    const std::vector<GG::Clr>& empire_colours = EmpireColors();
+    GG::Clr empire_colour = empire_colours.at(0); // default
+    for (std::vector<GG::Clr>::const_iterator it = empire_colours.begin(); it != empire_colours.end(); ++it) {
+        const GG::Clr& possible_colour = *it;
+        //Logger().debugStream() << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
+
+        // check if any other player / empire is using this colour
+        bool colour_is_new = true;
+        for (std::map<int, PlayerSetupData>::const_iterator player_it = m_lobby_data->m_players.begin(); player_it != m_lobby_data->m_players.end(); ++player_it) {
+            const GG::Clr& player_colour = player_it->second.m_empire_color;
+            if (player_colour == possible_colour) {
+                colour_is_new = false;
+                break;
+            }
+        }
+
+        // use colour and exit loop if no other empire is using the colour
+        if (colour_is_new) {
+            empire_colour = possible_colour;
+            break;
+        }
+
+        //Logger().debugStream() << " ... colour already used.";
+    }
+    player_setup_data.m_empire_color = empire_colour;
+
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
     }
