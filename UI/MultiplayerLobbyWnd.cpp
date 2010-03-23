@@ -147,7 +147,6 @@ namespace {
     GG::Pt              g_preview_ul;
     const GG::Pt        PREVIEW_SZ(GG::X(248), GG::Y(186));
     const int           PREVIEW_MARGIN = 3;
-
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(
@@ -164,6 +163,9 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     m_galaxy_setup_panel(0),
     m_saved_games_list(0),
     m_preview_image(0),
+    m_players_lb_player_name_column_label(0),
+    m_players_lb_empire_name_column_label(0),
+    m_players_lb_empire_colour_column_label(0),
     m_players_lb(0),
     m_start_game_bn(0),
     m_cancel_bn(0),
@@ -200,6 +202,25 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
 
     x = CHAT_WIDTH + CONTROL_MARGIN;
     GG::Y y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
+    const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
+
+    m_players_lb_player_name_column_label = new GG::TextControl(x, y, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+                                                                UserString("MULTIPLAYER_PLAYER_LIST_NAMES"),
+                                                                ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    x += EMPIRE_NAME_WIDTH + CONTROL_MARGIN;
+
+    m_players_lb_empire_name_column_label = new GG::TextControl(x, y, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+                                                                UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"),
+                                                                ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
+    x += EMPIRE_NAME_WIDTH;
+
+    m_players_lb_empire_colour_column_label = new GG::TextControl(x, y, ClientWidth() - x - CONTROL_MARGIN, TEXT_HEIGHT,
+                                                                  UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"),
+                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+
+    y += TEXT_HEIGHT + CONTROL_MARGIN;
+    x = CHAT_WIDTH + CONTROL_MARGIN;
+
     m_players_lb = new CUIListBox(x, y, ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->UpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
 
@@ -212,7 +233,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
                                        ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     m_start_conditions_text = new GG::TextControl(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN,
-                                                  m_cancel_bn->UpperLeft().x - x, GG::Y(ClientUI::Pts()*3/2),
+                                                  m_cancel_bn->UpperLeft().x - x, TEXT_HEIGHT,
                                                   UserString("MULTIPLAYER_GAME_START_CONDITIONS"),
                                                   ClientUI::GetFont(),
                                                   ClientUI::TextColor(), GG::FORMAT_LEFT);
@@ -223,6 +244,9 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_saved_games_list);
     AttachChild(m_preview_image);
+    AttachChild(m_players_lb_player_name_column_label);
+    AttachChild(m_players_lb_empire_name_column_label);
+    AttachChild(m_players_lb_empire_colour_column_label);
     AttachChild(m_players_lb);
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);

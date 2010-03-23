@@ -186,6 +186,7 @@ MPLobby::MPLobby(my_context c) :
     player_setup_data.m_player_id = player_id;
     player_setup_data.m_player_name = player_connection->PlayerName();
     player_setup_data.m_empire_color = EmpireColors().at(0);
+    player_setup_data.m_empire_name = player_setup_data.m_player_name;
     server.m_networking.SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
 }
 
@@ -268,6 +269,9 @@ sc::result MPLobby::react(const JoinGame& msg)
         //Logger().debugStream() << " ... colour already used.";
     }
     player_setup_data.m_empire_color = empire_colour;
+
+    // find unused empire name
+    player_setup_data.m_empire_name = player_name;
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->ID(), *m_lobby_data));
