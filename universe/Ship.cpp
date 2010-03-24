@@ -46,10 +46,12 @@ Ship::Ship(int empire_id, int design_id) :
 
     UniverseObject::Init();
 
-    InsertMeter(METER_FUEL,         Meter());
-    InsertMeter(METER_SHIELD,       Meter());
-    InsertMeter(METER_DETECTION,    Meter());
-    InsertMeter(METER_HEALTH,       Meter());
+    InsertMeter(METER_FUEL,           Meter());
+    InsertMeter(METER_SHIELD,         Meter());
+    InsertMeter(METER_DETECTION,      Meter());
+    InsertMeter(METER_HEALTH,         Meter());
+    InsertMeter(METER_BATTLE_SPEED,   Meter());
+    InsertMeter(METER_STARLANE_SPEED, Meter());
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
@@ -59,16 +61,47 @@ Ship::Ship(int empire_id, int design_id) :
                 Logger().errorStream() << "Ship::Ship couldn't get part with name " << part_names[i];
                 continue;
             }
-            if (part->Class() == PC_FIGHTERS) {
-                std::pair<std::size_t, std::size_t>& part_fighters =
-                    m_fighters[part_names[i]];
-                ++part_fighters.first;
-                part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
-            } else if (part->Class() == PC_MISSILES) {
+
+            switch (part->Class()) {
+            case PC_SHORT_RANGE:
+            case PC_POINT_DEFENSE: {
+                m_part_meters[std::make_pair(METER_DAMAGE, part->Name())];
+                m_part_meters[std::make_pair(METER_ROF, part->Name())];
+                m_part_meters[std::make_pair(METER_RANGE, part->Name())];
+                break;
+            }
+            case PC_MISSILES: {
                 std::pair<std::size_t, std::size_t>& part_missiles =
                     m_missiles[part_names[i]];
                 ++part_missiles.first;
                 part_missiles.second += boost::get<LRStats>(part->Stats()).m_capacity;
+                m_part_meters[std::make_pair(METER_DAMAGE, part->Name())];
+                m_part_meters[std::make_pair(METER_ROF, part->Name())];
+                m_part_meters[std::make_pair(METER_RANGE, part->Name())];
+                m_part_meters[std::make_pair(METER_SPEED, part->Name())];
+                m_part_meters[std::make_pair(METER_STEALTH, part->Name())];
+                m_part_meters[std::make_pair(METER_HEALTH, part->Name())];
+                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                break;
+            }
+            case PC_FIGHTERS: {
+                std::pair<std::size_t, std::size_t>& part_fighters =
+                    m_fighters[part_names[i]];
+                ++part_fighters.first;
+                part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
+                m_part_meters[std::make_pair(METER_ANTI_SHIP_DAMAGE, part->Name())];
+                m_part_meters[std::make_pair(METER_ANTI_FIGHTER_DAMAGE, part->Name())];
+                m_part_meters[std::make_pair(METER_LAUNCH_RATE, part->Name())];
+                m_part_meters[std::make_pair(METER_FIGHTER_WEAPON_RANGE, part->Name())];
+                m_part_meters[std::make_pair(METER_SPEED, part->Name())];
+                m_part_meters[std::make_pair(METER_STEALTH, part->Name())];
+                m_part_meters[std::make_pair(METER_HEALTH, part->Name())];
+                m_part_meters[std::make_pair(METER_DETECTION, part->Name())];
+                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                break;
+            }
+            default:
+                break;
             }
         }
     }
@@ -108,9 +141,15 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
             this->m_design_id =             copied_ship->m_design_id;
             this->m_fighters =              copied_ship->m_fighters;
             this->m_missiles =              copied_ship->m_missiles;
+            for (PartMeters::const_iterator it = copied_ship->m_part_meters.begin();
+                 it != copied_ship->m_part_meters.end();
+                 ++it) {
+                this->m_part_meters[it->first];
+            }
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =  copied_ship->m_ordered_scrapped;
+                this->m_part_meters =       copied_ship->m_part_meters;
             }
         }
     }
@@ -211,6 +250,12 @@ double Ship::ProjectedCurrentMeter(MeterType type) const {
     }
 }
 
+bool Ship::OrderedScrapped() const
+{ return m_ordered_scrapped; }
+
+const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
+{ return const_cast<const Ship*>(this)->GetMeter(type, part_name); }
+
 void Ship::SetFleetID(int fleet_id)
 {
     m_fleet_id = fleet_id;
@@ -277,4 +322,28 @@ void Ship::SetOrderedScrapped(bool b)
     if (b == initial_status) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
+}
+
+Meter* Ship::GetMeter(MeterType type, const std::string& part_name)
+{
+    Meter* retval = 0;
+    PartMeters::iterator it = m_part_meters.find(std::make_pair(type, part_name));
+    if (it != m_part_meters.end())
+        retval = &it->second;
+    return retval;
+}
+
+void Ship::CustomResetMaxMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+{
+    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
+        if (meter_type == INVALID_METER_TYPE || it->first.first == meter_type)
+            it->second.ResetMax();
+    }
+}
+
+void Ship::CustomClampMeters()
+{
+    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
+        it->second.Clamp();
+    }
 }

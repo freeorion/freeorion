@@ -44,7 +44,11 @@ public:
 
     virtual double              ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
-    bool                        OrderedScrapped() const {return m_ordered_scrapped;}
+    bool                        OrderedScrapped() const;
+
+    const Meter*                GetMeter(MeterType type, const std::string& part_name) const; ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+
+    using UniverseObject::GetMeter;
     //@}
 
     /** \name Mutators */ //@{
@@ -61,14 +65,22 @@ public:
     virtual void                MoveTo(double x, double y);
 
     void                        SetOrderedScrapped(bool b = true);              ///< flags ship for scrapping
+
+    Meter*                      GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
 
 private:
+    typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
+
+    virtual void CustomResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void CustomClampMeters();
+
     int             m_design_id;
     int             m_fleet_id;
     bool            m_ordered_scrapped;
     ConsumablesMap  m_fighters;
     ConsumablesMap  m_missiles;
+    PartMeters      m_part_meters;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -84,7 +96,8 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_fleet_id)
         & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
         & BOOST_SERIALIZATION_NVP(m_fighters)
-        & BOOST_SERIALIZATION_NVP(m_missiles);
+        & BOOST_SERIALIZATION_NVP(m_missiles)
+        & BOOST_SERIALIZATION_NVP(m_part_meters);
 }
 
 #endif // _Ship_h_

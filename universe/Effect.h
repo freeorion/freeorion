@@ -22,6 +22,7 @@ namespace Effect {
     class EffectsGroup;
     class EffectBase;
     class SetMeter;
+    class SetShipPartMeter;
     class SetEmpireStockpile;
     class SetEmpireCapitol;
     class SetPlanetType;
@@ -130,6 +131,53 @@ private:
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_value;
     bool                                  m_max;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Sets the indicated meter on all ship parts in the indicated subset.  This
+    has no effect on non-Ship targets.  If slot_type is specified, only the
+    indicated (internal or external) parts are affected. */
+class Effect::SetShipPartMeter : public Effect::EffectBase
+{
+public:
+    /** Affects the \a meter_type meters that belong to all parts of class \a
+        part_class.  \a part_class must specify a class of parts for which
+        there is a ship meter (i.e. specifying PC_FUEL would be illegal). */
+    SetShipPartMeter(MeterType meter_type,
+                     ShipPartClass part_class,
+                     const ValueRef::ValueRefBase<double>* value,
+                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+
+    /** Affects the \a meter_type meters that belong to all PC_FIGHTERS parts
+        of type \a fighter_type. */
+    SetShipPartMeter(MeterType meter_type,
+                     CombatFighterType fighter_type,
+                     const ValueRef::ValueRefBase<double>* value,
+                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+
+    /** Affects the \a meter_type meters that belong to all parts named \a
+        part_name. */
+    SetShipPartMeter(MeterType meter_type,
+                     const std::string& part_name,
+                     const ValueRef::ValueRefBase<double>* value,
+                     ShipSlotType slot_type = INVALID_SHIP_SLOT_TYPE);
+
+    virtual ~SetShipPartMeter();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    ShipPartClass                         m_part_class;
+    CombatFighterType                     m_fighter_type;
+    std::string                           m_part_name;
+    ShipSlotType                          m_slot_type;
+    MeterType                             m_meter;
+    const ValueRef::ValueRefBase<double>* m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -465,6 +513,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
 // template implementations
 template <class Archive>
 void Effect::EffectsGroup::serialize(Archive& ar, const unsigned int version)
@@ -487,6 +536,18 @@ void Effect::SetMeter::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_value)
         & BOOST_SERIALIZATION_NVP(m_max);
+}
+
+template <class Archive>
+void Effect::SetShipPartMeter::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_part_class)
+        & BOOST_SERIALIZATION_NVP(m_fighter_type)
+        & BOOST_SERIALIZATION_NVP(m_part_name)
+        & BOOST_SERIALIZATION_NVP(m_slot_type)
+        & BOOST_SERIALIZATION_NVP(m_meter)
+        & BOOST_SERIALIZATION_NVP(m_value);
 }
 
 template <class Archive>

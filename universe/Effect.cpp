@@ -58,9 +58,9 @@ namespace {
     }
 
     /** Creates a new fleet at \a system and inserts \a ship into it.  Used
-      * when a ship has been moved by the MoveTo effect separately from the
-      * fleet that previously held it.  Also used by CreateShip effect to give
-      * the new ship a fleet.  All ships need to be within fleets. */
+     * when a ship has been moved by the MoveTo effect separately from the
+     * fleet that previously held it.  Also used by CreateShip effect to give
+     * the new ship a fleet.  All ships need to be within fleets. */
     Fleet* CreateNewFleet(System* system, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!system || !ship)
@@ -89,9 +89,9 @@ namespace {
     }
 
     /** creates a new fleet at a specified \a x and \a y location within the
-      * Universe, and and inserts \a ship into it.  Used when a ship has been
-      * moved by the MoveTo effect separately from the fleet that previously
-      * held it.  All ships need to be within fleets. */
+     * Universe, and and inserts \a ship into it.  Used when a ship has been
+     * moved by the MoveTo effect separately from the fleet that previously
+     * held it.  All ships need to be within fleets. */
     Fleet* CreateNewFleet(double x, double y, Ship* ship) {
         Universe& universe = GetUniverse();
         if (!ship)
@@ -130,9 +130,9 @@ namespace {
     }
 
     /** Resets the previous and next systems of \a fleet and recalcultes /
-      * resets the fleet's move route.  Used after a fleet has been moved with
-      * the MoveTo effect, as its previous route was assigned based on its
-      * previous location, and may not be valid for its new location. */
+     * resets the fleet's move route.  Used after a fleet has been moved with
+     * the MoveTo effect, as its previous route was assigned based on its
+     * previous location, and may not be valid for its new location. */
     void UpdateFleetRoute(Fleet* fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
             Logger().errorStream() << "UpdateFleetRoute passed a null fleet pointer";
@@ -191,6 +191,32 @@ namespace {
         int owner2 = *owners2.begin();
 
         return owner1 == owner2;
+    }
+
+    bool PartMatchesEffect(const PartType& part,
+                           ShipPartClass part_class,
+                           CombatFighterType fighter_type,
+                           const std::string& part_name,
+                           ShipSlotType slot_type)
+    {
+        if (slot_type != INVALID_SHIP_SLOT_TYPE && !part.CanMountInSlotType(slot_type))
+            return false;
+
+        if (part_name != "")
+            return part_name == part.Name();
+
+        switch (part.Class()) {
+        case PC_SHORT_RANGE:
+        case PC_MISSILES:
+        case PC_POINT_DEFENSE:
+            return part.Class() == part_class;
+        case PC_FIGHTERS:
+            return boost::get<FighterStats>(part.Stats()).m_type == fighter_type;
+        default:
+            break;
+        }
+
+        return false;
     }
 }
 
@@ -451,6 +477,78 @@ std::string SetMeter::Dump() const
     default: retval += "?"; break;
     }
     retval += " value = " + m_value->Dump() + "\n";
+    return retval;
+}
+
+
+///////////////////////////////////////////////////////////
+// SetShipPartMeter                                      //
+///////////////////////////////////////////////////////////
+SetShipPartMeter::SetShipPartMeter(MeterType meter,
+                                   ShipPartClass part_class,
+                                   const ValueRef::ValueRefBase<double>* value,
+                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+    m_part_class(part_class),
+    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
+    m_part_name(),
+    m_slot_type(slot_type),
+    m_meter(meter),
+    m_value(value)
+{ assert(m_part_class != PC_FIGHTERS); }
+
+SetShipPartMeter::SetShipPartMeter(MeterType meter,
+                                   CombatFighterType fighter_type,
+                                   const ValueRef::ValueRefBase<double>* value,
+                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+    m_part_class(INVALID_SHIP_PART_CLASS),
+    m_fighter_type(fighter_type),
+    m_part_name(),
+    m_slot_type(slot_type),
+    m_meter(meter),
+    m_value(value)
+{}
+
+SetShipPartMeter::SetShipPartMeter(MeterType meter,
+                                   const std::string& part_name,
+                                   const ValueRef::ValueRefBase<double>* value,
+                                   ShipSlotType slot_type/* = INVALID_SHIP_SLOT_TYPE*/) :
+    m_part_class(INVALID_SHIP_PART_CLASS),
+    m_fighter_type(INVALID_COMBAT_FIGHTER_TYPE),
+    m_part_name(part_name),
+    m_slot_type(slot_type),
+    m_meter(meter),
+    m_value(value)
+{}
+
+SetShipPartMeter::~SetShipPartMeter()
+{ delete m_value; }
+
+void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    if (Ship* ship = universe_object_cast<Ship*>(target)) {
+        for (std::size_t i = 0; i < ship->Design()->Parts().size(); ++i) {
+            if (Meter* meter = ship->GetMeter(m_meter, m_part_name)) {
+                const PartType* part = GetPartType(ship->Design()->Parts()[i]);
+                if (PartMatchesEffect(*part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
+                    double val = m_value->Eval(source, target, meter->Max());
+                    meter->SetMax(val);
+                    meter->SetCurrent(val);
+                }
+            }
+        }
+    }
+}
+
+std::string SetShipPartMeter::Description() const
+{
+    // TODO
+    return "";
+}
+
+std::string SetShipPartMeter::Dump() const
+{
+    std::string retval = DumpIndent() + "SetShipPartMeter";
+    // TODO
     return retval;
 }
 

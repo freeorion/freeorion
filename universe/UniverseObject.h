@@ -178,6 +178,12 @@ protected:
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
+    /** any actions that should be performed at the end of ResetMaxMeters() goes here */
+    virtual void CustomResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE) {}
+
+    /** any actions that should be performed at the end of ClampMeters() goes here */
+    virtual void CustomClampMeters() {}
+
     int                         m_id;
     std::string                 m_name;
     double                      m_x;

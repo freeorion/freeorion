@@ -1408,50 +1408,54 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
         }
 
 
-        // execute only the SetMeter effects in the EffectsGroup
+        // execute only the SetMeter and SetShipPartMeter effects in the EffectsGroup
         const std::vector<Effect::EffectBase*>& effects = effects_group->EffectsList();
         for (unsigned int i = 0; i < effects.size(); ++i) {
             const Effect::SetMeter* meter_effect = dynamic_cast<Effect::SetMeter*>(effects[i]);
-            if (!meter_effect) continue;
+            if (!meter_effect && !dynamic_cast<Effect::SetShipPartMeter*>(effects[i]))
+                continue;
 
             // determine meter to be altered by this effect
-            MeterType meter_type = meter_effect->GetMeterType();
+            MeterType meter_type = INVALID_METER_TYPE;
 
+            if (meter_effect) {
+                meter_type = meter_effect->GetMeterType();
 
-            // record pre-effect meter values
-            for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                UniverseObject* target = *target_it;
-                const Meter* meter = target->GetMeter(meter_type);
-                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+                // record pre-effect meter values
+                for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                    UniverseObject* target = *target_it;
+                    const Meter* meter = target->GetMeter(meter_type);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-                // accounting info for this effect on this meter
-                EffectAccountingInfo info;
-                info.cause_type =           targets_and_cause.effect_cause.cause_type;
-                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
-                info.source_id =            sourced_effects_group.source_object_id;
-                info.running_meter_total =  meter->Max();
+                    // accounting info for this effect on this meter
+                    EffectAccountingInfo info;
+                    info.cause_type =           targets_and_cause.effect_cause.cause_type;
+                    info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+                    info.source_id =            sourced_effects_group.source_object_id;
+                    info.running_meter_total =  meter->Max();
 
-                // add accounting for this effect to end of vector
-                m_effect_accounting_map[target->ID()][meter_type].push_back(info);
+                    // add accounting for this effect to end of vector
+                    m_effect_accounting_map[target->ID()][meter_type].push_back(info);
+                }
             }
-
 
             // apply meter-altering effect to targets
             effects_group->Execute(sourced_effects_group.source_object_id, targets, i);
 
+            if (meter_effect) {
+                // find change in meter due to effect: equal to post-meter minus pre-meter value
+                for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                    UniverseObject* target = *target_it;
+                    const Meter* meter = target->GetMeter(meter_type);
+                    if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
 
-            // find change in meter due to effect: equal to post-meter minus pre-meter value
-            for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
-                UniverseObject* target = *target_it;
-                const Meter* meter = target->GetMeter(meter_type);
-                if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
+                    // retreive info for this effect
+                    EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
 
-                // retreive info for this effect
-                EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
-
-                // update accounting info with meter change and new total
-                info.meter_change = meter->Max() - info.running_meter_total;
-                info.running_meter_total = meter->Max();
+                    // update accounting info with meter change and new total
+                    info.meter_change = meter->Max() - info.running_meter_total;
+                    info.running_meter_total = meter->Max();
+                }
             }
         }
 

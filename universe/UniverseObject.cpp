@@ -363,6 +363,7 @@ void UniverseObject::ResetMaxMeters(MeterType meter_type)
         else
             Logger().errorStream() << "UniverseObject::ResetMaxMeters called with MeterType this object does not have";
     }
+    CustomResetMaxMeters(meter_type);
 }
 
 void UniverseObject::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
@@ -372,6 +373,7 @@ void UniverseObject::ClampMeters()
 {
     for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         it->second.Clamp();
+    CustomClampMeters();
 }
 
 void UniverseObject::PopGrowthProductionResearchPhase()
@@ -395,4 +397,3 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
     }
     return retval;
 }
-

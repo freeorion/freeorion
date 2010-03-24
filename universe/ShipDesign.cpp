@@ -91,7 +91,7 @@ namespace {
     }
 
     boost::shared_ptr<const Effect::EffectsGroup>
-    IncreaseMax(MeterType meter_type, const std::string& meter_name, double increase)
+    IncreaseMeterMax(MeterType meter_type, double increase)
     {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
@@ -100,12 +100,30 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(false, meter_name),
+                new ValueRef::Variable<double>(false, "Value"),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
             new Effect::EffectsGroup(
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr, true))));
+    }
+
+    boost::shared_ptr<const Effect::EffectsGroup>
+    IncreaseCurrentAndMax(MeterType meter_type, const std::string& part_name, double increase)
+    {
+        typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
+        typedef std::vector<Effect::EffectBase*> Effects;
+        Condition::Self* scope = new Condition::Self;
+        Condition::Self* activation = new Condition::Self;
+        ValueRef::ValueRefBase<double>* vr =
+            new ValueRef::Operation<double>(
+                ValueRef::PLUS,
+                new ValueRef::Variable<double>(false, "Value"),
+                new ValueRef::Constant<double>(increase)
+            );
+        return EffectsGroupPtr(
+            new Effect::EffectsGroup(
+                scope, activation, Effects(1, new Effect::SetShipPartMeter(meter_type, part_name, vr)), part_name));
     }
 
     struct DescriptionVisitor : public boost::static_visitor<>
@@ -428,16 +446,57 @@ PartType::PartType(
         break;
     }
 
-    if (m_class == PC_SHIELD)
-        m_effects.push_back(IncreaseMax(METER_SHIELD,       "MaxShield",    boost::get<double>(m_stats)));
-    else if (m_class == PC_DETECTION)
-        m_effects.push_back(IncreaseMax(METER_DETECTION,    "MaxDetection", boost::get<double>(m_stats)));
-    else if (m_class == PC_STEALTH)
-        m_effects.push_back(IncreaseMax(METER_STEALTH,      "MaxStealth",   boost::get<double>(m_stats)));
-    else if (m_class == PC_FUEL)
-        m_effects.push_back(IncreaseMax(METER_FUEL,         "MaxFuel",      boost::get<double>(m_stats)));
-    else if (m_class == PC_ARMOUR)
-        m_effects.push_back(IncreaseMax(METER_HEALTH,       "MaxHealth",    boost::get<double>(m_stats)));
+    switch (m_class) {
+    case PC_SHORT_RANGE:
+    case PC_POINT_DEFENSE: {
+        const DirectFireStats& stats = boost::get<DirectFireStats>(m_stats);
+        m_effects.push_back(IncreaseCurrentAndMax(METER_DAMAGE, m_name, stats.m_damage));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_ROF, m_name, stats.m_ROF));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_RANGE, m_name, stats.m_range));
+        break;
+    }
+    case PC_MISSILES: {
+        const LRStats& stats = boost::get<LRStats>(m_stats);
+        m_effects.push_back(IncreaseCurrentAndMax(METER_DAMAGE, m_name, stats.m_damage));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_ROF, m_name, stats.m_ROF));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_RANGE, m_name, stats.m_range));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_SPEED, m_name, stats.m_speed));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_STEALTH, m_name, stats.m_stealth));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_HEALTH, m_name, stats.m_health));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_CAPACITY, m_name, stats.m_capacity));
+        break;
+    }
+    case PC_FIGHTERS: {
+        const FighterStats& stats = boost::get<FighterStats>(m_stats);
+        m_effects.push_back(IncreaseCurrentAndMax(METER_ANTI_SHIP_DAMAGE, m_name, stats.m_anti_ship_damage));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_ANTI_FIGHTER_DAMAGE, m_name, stats.m_anti_fighter_damage));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_LAUNCH_RATE, m_name, stats.m_launch_rate));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_FIGHTER_WEAPON_RANGE, m_name, stats.m_fighter_weapon_range));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_SPEED, m_name, stats.m_speed));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_STEALTH, m_name, stats.m_stealth));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_HEALTH, m_name, stats.m_health));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_DETECTION, m_name, stats.m_detection));
+        m_effects.push_back(IncreaseCurrentAndMax(METER_CAPACITY, m_name, stats.m_capacity));
+        break;
+    }
+    case PC_SHIELD:
+        m_effects.push_back(IncreaseMeterMax(METER_SHIELD,    boost::get<double>(m_stats)));
+        break;
+    case PC_DETECTION:
+        m_effects.push_back(IncreaseMeterMax(METER_DETECTION, boost::get<double>(m_stats)));
+        break;
+    case PC_STEALTH:
+        m_effects.push_back(IncreaseMeterMax(METER_STEALTH,   boost::get<double>(m_stats)));
+        break;
+    case PC_FUEL:
+        m_effects.push_back(IncreaseMeterMax(METER_FUEL,      boost::get<double>(m_stats)));
+        break;
+    case PC_ARMOUR:
+        m_effects.push_back(IncreaseMeterMax(METER_HEALTH,    boost::get<double>(m_stats)));
+        break;
+    default:
+        break;
+    }
 
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);
@@ -569,9 +628,11 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMax(METER_FUEL,     "MaxFuel",      m_fuel));
-    m_effects.push_back(IncreaseMax(METER_STEALTH,  "MaxStealth",   m_stealth));
-    m_effects.push_back(IncreaseMax(METER_HEALTH,   "MaxHealth",    m_health));
+    m_effects.push_back(IncreaseMeterMax(METER_FUEL,           m_fuel));
+    m_effects.push_back(IncreaseMeterMax(METER_STEALTH,        m_stealth));
+    m_effects.push_back(IncreaseMeterMax(METER_HEALTH,         m_health));
+    m_effects.push_back(IncreaseMeterMax(METER_BATTLE_SPEED,   m_battle_speed));
+    m_effects.push_back(IncreaseMeterMax(METER_STARLANE_SPEED, m_starlane_speed));
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);
 }
@@ -598,9 +659,11 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMax(METER_FUEL,     "MaxFuel",      m_fuel));
-    m_effects.push_back(IncreaseMax(METER_STEALTH,  "MaxStealth",   m_stealth));
-    m_effects.push_back(IncreaseMax(METER_HEALTH,   "MaxHealth",    m_health));
+    m_effects.push_back(IncreaseMeterMax(METER_FUEL,           m_fuel));
+    m_effects.push_back(IncreaseMeterMax(METER_STEALTH,        m_stealth));
+    m_effects.push_back(IncreaseMeterMax(METER_HEALTH,         m_health));
+    m_effects.push_back(IncreaseMeterMax(METER_BATTLE_SPEED,   m_battle_speed));
+    m_effects.push_back(IncreaseMeterMax(METER_STARLANE_SPEED, m_starlane_speed));
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);
 }
