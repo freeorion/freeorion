@@ -817,7 +817,7 @@ void ServerApp::PreCombatProcessTurns()
     }
 
     // re-execute all meter-related effects after orders, so that new
-    // UniverseObjects created during order executtion (eg. new fleets) will
+    // UniverseObjects created during order execution (eg. new fleets) will
     // have effects applied to them this turn, ensuring (eg.) new fleets will
     // have the appropriate stealth level on the turn they are created.
     m_universe.ApplyMeterEffectsAndUpdateMeters();
