@@ -551,13 +551,13 @@ private:
 
     /** Executes all effects.  Does not store effect accounting information.
       * For use on server when processing turns. */
-    void    ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map);
+    void    ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map);
 
     /** Executes only meter-altering effects; ignores other effects..  Stores
       * effect accounting information in \a targets_causes_map.  Can be used
       * on server or on clients to determine meter values after effects are
       * applied */
-    void    ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map);
+    void    ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the

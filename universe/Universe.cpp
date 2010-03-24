@@ -1343,7 +1343,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     }
 }
 
-void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
+void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
 {
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
@@ -1385,7 +1385,7 @@ void Universe::ExecuteEffects(EffectsTargetsCausesMap& targets_causes_map)
     }
 }
 
-void Universe::ExecuteMeterEffects(EffectsTargetsCausesMap& targets_causes_map)
+void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map)
 {
     //Logger().debugStream() << "Universe::ExecuteMeterEffects";
     std::map<std::string, Condition::ObjectSet> executed_nonstacking_effects;
