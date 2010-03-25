@@ -454,10 +454,10 @@ double Fleet::Fuel() const
         return 0.0;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    const ObjectMap& objects = GetMainObjectMap();
     double fuel = Meter::METER_MAX;
+    bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = objects.Object<Ship>(*ship_it);
+        const Ship* ship = GetObject<Ship>(*ship_it);
         if (!ship) {
             Logger().errorStream() << "Fleet::Fuel couldn't get ship with id " << *ship_it;
             continue;
@@ -467,7 +467,13 @@ double Fleet::Fuel() const
             Logger().errorStream() << "Fleet::Fuel skipping ship with no fuel meter";
             continue;
         }
-        fuel = std::min(fuel, meter->Current());
+        if(!ship->OrderedScrapped()) {
+            fuel = std::min(fuel, meter->Current());
+            is_fleet_scrapped = false;
+        } 
+    }
+    if(is_fleet_scrapped) {
+        fuel = 0.0;
     }
     return fuel;
 }
@@ -479,10 +485,10 @@ double Fleet::MaxFuel() const
 
     // determine the maximum amount of fuel that can be stored by the ship in the fleet that
     // can store the least amount of fuel
-    const ObjectMap& objects = GetMainObjectMap();
     double max_fuel = Meter::METER_MAX;
+    bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
-        const Ship* ship = objects.Object<Ship>(*ship_it);
+        const Ship* ship = GetObject<Ship>(*ship_it);
         if (!ship) {
             Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
             continue;
@@ -492,7 +498,13 @@ double Fleet::MaxFuel() const
             Logger().errorStream() << "Fleet::MaxFuel skipping ship with no fuel meter";
             continue;
         }
-        max_fuel = std::min(max_fuel, meter->Max());
+        if(!ship->OrderedScrapped()) {
+            max_fuel = std::min(max_fuel, meter->Current());
+            is_fleet_scrapped = false;
+        }
+    }
+    if(is_fleet_scrapped) {
+        max_fuel = 0.0;
     }
     return max_fuel;
 }
@@ -1077,13 +1089,21 @@ void Fleet::CalculateRoute() const
 
 void Fleet::RecalculateFleetSpeed()
 {
-    const ObjectMap& objects = GetMainObjectMap();
     if (!(m_ships.empty())) {
+        bool isFleetScrapped = true;
         m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
         for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-            if (const Ship* ship = objects.Object<Ship>(*it))
-                if (ship->Speed() < m_speed)
-                    m_speed = ship->Speed();
+            if (const Ship* ship = GetObject<Ship>(*it)) {
+                if(!ship->OrderedScrapped()) {
+                    if (ship->Speed() < m_speed) { 
+                        m_speed = ship->Speed();
+                    }
+                    isFleetScrapped = false;
+                }
+            }
+        }
+        if(isFleetScrapped) {
+            m_speed = 0.0;
         }
     } else {
         m_speed = 0.0;

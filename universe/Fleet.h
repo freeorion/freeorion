@@ -101,6 +101,7 @@ public:
     virtual void            MovementPhase();
     virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
     virtual void            PopGrowthProductionResearchPhase();
+    void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
     //@}
 
     /* returns a name for a fleet based on the specified \a ship_ids */
@@ -109,10 +110,9 @@ public:
     static const int            ETA_NEVER;                                  ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
     static const int            ETA_UNKNOWN;                                ///< returned when ETA can't be determined
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
-
+    
 private:
     void                    CalculateRoute() const;                         ///< sets m_travel_route and m_travel_distance to their proper values based on the other member data
-    void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 
     ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id

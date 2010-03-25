@@ -322,6 +322,10 @@ void Ship::SetOrderedScrapped(bool b)
     if (b == initial_status) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
+    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+        fleet->RecalculateFleetSpeed();
+        fleet->StateChangedSignal();
+    }
 }
 
 Meter* Ship::GetMeter(MeterType type, const std::string& part_name)

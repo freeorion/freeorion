@@ -21,7 +21,7 @@
       <PERSON name="Karl Chen"                nick="quarl"            task="Programming"/>
       <PERSON name="Eliot Eshelman"           nick="igrok"            task="Programming"/>
       <PERSON name="stride"                   nick=""                 task="Programming"/>
-      <PERSON name="Ondrej Riha"              nick="OndrejR"          task="Programming"/>
+      <PERSON name="Anonymous"                nick=""                 task="Programming"/>
       <PERSON name="Francesco Marass"         nick="francys"          task="Programming"/>
       <PERSON name="Martin Wuttke"            nick="The Silent One"   task="Programming, German Translation, Graphics"/>
       <PERSON name="Markus Sinner"            nick="kroddn"           task="Programming, German Translation"/>
@@ -29,6 +29,7 @@
       <PERSON name="Bernard Helyer"           nick="bhelyer"          task="Programming"/>
       <PERSON name="Wojtek Ruszczewski"       nick="wrwrwr"           task="Programming"/>
       <PERSON name="Peter Schneider"          nick="Lathanda"         task="Programming"/>
+      <PERSON name="Dominic Tancredi"         nick="neuro"            task="Programming"/>
     </GROUP>
     <GROUP name ="GAMEDESIGN">
       <PERSON name="Samuel Knowlton"          nick="Aquitaine"        task="Game Design"/>
