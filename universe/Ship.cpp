@@ -254,7 +254,7 @@ bool Ship::OrderedScrapped() const
 { return m_ordered_scrapped; }
 
 const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
-{ return const_cast<const Ship*>(this)->GetMeter(type, part_name); }
+{ return const_cast<Ship*>(this)->GetMeter(type, part_name); }
 
 void Ship::SetFleetID(int fleet_id)
 {
