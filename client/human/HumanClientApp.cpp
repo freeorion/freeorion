@@ -195,6 +195,8 @@ void HumanClientApp::StartServer()
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
     args.push_back("--log-level");
     args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+    if (GetOptionsDB().Get<bool>("test-3d-combat"))
+        args.push_back("--test-3d-combat");
     m_server_process = Process(SERVER_CLIENT_EXE, args);
 }
 

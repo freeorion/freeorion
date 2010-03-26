@@ -34,10 +34,6 @@
 
 namespace fs = boost::filesystem;
 
-namespace {
-    const bool TEST_3D_COMBAT = false;
-}
-
 
 ////////////////////////////////////////////////
 // PlayerSaveGameData
@@ -1022,7 +1018,7 @@ void ServerApp::ProcessCombats()
 
         // TODO: Remove this up-front check when the 3D combat system is in
         // place
-        if (!TEST_3D_COMBAT) {
+        if (!GetOptionsDB().Get<bool>("test-3d-combat")) {
             AutoResolveCombat(combat_info);
             continue;
         }
@@ -1046,7 +1042,7 @@ void ServerApp::ProcessCombats()
         // TODO: Until there is a fully-implemented interactive combat system
         // to use, we autoresolve anyway, unless we're testing the
         // in-development 3D system.
-        if (TEST_3D_COMBAT) {
+        if (GetOptionsDB().Get<bool>("test-3d-combat")) {
             m_fsm->process_event(
                 ResolveCombat(GetObject<System>(combat_info.system_id), combat_info.empire_ids));
             while (m_current_combat) {
