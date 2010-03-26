@@ -103,6 +103,7 @@ private:
     CombatFighter();
     CombatFighter(CombatObjectPtr base, int empire_id, PathingEngine& pathing_engine);
 
+    void Init(const PartType& part);
     void DamageImpl(double d);
     void SetFormation(const CombatFighterFormationPtr& formation);
     void PushMission(const FighterMission& mission);
@@ -137,10 +138,9 @@ private:
     unsigned int m_last_fired_turn;
     unsigned int m_turn;
 
-    PathingEngine* m_pathing_engine;
+    FighterStats m_stats;
 
-    // not serialized
-    mutable const FighterStats* m_stats;
+    PathingEngine* m_pathing_engine;
 
     // TODO: Temporary only!
     bool m_instrument;
@@ -172,6 +172,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_last_queue_update_turn)
                 & BOOST_SERIALIZATION_NVP(m_last_fired_turn)
                 & BOOST_SERIALIZATION_NVP(m_turn)
+                & BOOST_SERIALIZATION_NVP(m_stats)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine);
         }
 };

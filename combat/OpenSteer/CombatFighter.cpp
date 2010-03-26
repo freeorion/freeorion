@@ -161,8 +161,7 @@ CombatFighter::CombatFighter() :
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(0),
-    m_stats(0)
+    m_pathing_engine(0)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
@@ -183,8 +182,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(&pathing_engine),
-    m_stats(0)
+    m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
 {}
@@ -205,11 +203,10 @@ CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int emp
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
-    m_pathing_engine(&pathing_engine),
-    m_stats(0)
+    m_pathing_engine(&pathing_engine)
     ,m_instrument(false)
     ,m_last_mission(FighterMission::NONE)
-{}
+{ Init(part); }
 
 CombatFighter::~CombatFighter()
 {
@@ -256,11 +253,7 @@ int CombatFighter::ID() const
 { return m_id; }
 
 const FighterStats& CombatFighter::Stats() const
-{
-    if (!m_stats)
-        m_stats = &boost::get<FighterStats>(GetPartType(m_part_name)->Stats());
-    return *m_stats;
-}
+{ return m_stats; }
 
 const std::string& CombatFighter::PartName() const
 { return m_part_name; }
@@ -393,6 +386,23 @@ void CombatFighter::TurnStarted(unsigned int number)
 
 void CombatFighter::SignalDestroyed()
 { Listener().FighterDestroyed(shared_from_this()); }
+
+void CombatFighter::Init(const PartType& part)
+{
+    CombatObjectPtr b = m_base.lock();
+    assert(boost::dynamic_pointer_cast<CombatShip>(b));
+    const Ship& base = boost::static_pointer_cast<CombatShip>(b)->GetShip();
+    m_stats.m_type = boost::get<FighterStats>(part.Stats()).m_type;
+    m_stats.m_anti_ship_damage = base.GetMeter(METER_ANTI_SHIP_DAMAGE, m_part_name)->Max();
+    m_stats.m_anti_fighter_damage = base.GetMeter(METER_ANTI_FIGHTER_DAMAGE, m_part_name)->Max();
+    m_stats.m_launch_rate = base.GetMeter(METER_LAUNCH_RATE, m_part_name)->Max();
+    m_stats.m_fighter_weapon_range = base.GetMeter(METER_FIGHTER_WEAPON_RANGE, m_part_name)->Max();
+    m_stats.m_speed = base.GetMeter(METER_SPEED, m_part_name)->Max();
+    m_stats.m_stealth = base.GetMeter(METER_STEALTH, m_part_name)->Max();
+    m_stats.m_health = base.GetMeter(METER_HEALTH, m_part_name)->Max();
+    m_stats.m_detection = base.GetMeter(METER_DETECTION, m_part_name)->Max();
+    m_stats.m_capacity = base.GetMeter(METER_CAPACITY, m_part_name)->Max();
+}
 
 void CombatFighter::DamageImpl(double d)
 { m_health = std::max(0.0, m_health - d); }

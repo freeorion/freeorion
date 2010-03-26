@@ -29,15 +29,21 @@ namespace {
     template <class Stats>
     struct CopyStats
     {
-        CopyStats(double health_factor) : m_health_factor(health_factor) {}
+        CopyStats(const Ship& ship, double health_factor) :
+            m_ship(ship),
+            m_health_factor(health_factor)
+            {}
         CombatShip::DirectWeapon operator()(const std::pair<double, const PartType*>& elem)
             {
-                const Stats& stats = boost::get<Stats>(elem.second->Stats());
+                const std::string name = elem.second->Name();
                 return CombatShip::DirectWeapon(
-                    elem.second->Name(),
-                    stats.m_range,
-                    stats.m_damage * stats.m_ROF * m_health_factor);
+                    name,
+                    m_ship.GetMeter(METER_RANGE, name)->Max(),
+                    m_ship.GetMeter(METER_DAMAGE, name)->Max() *
+                    m_ship.GetMeter(METER_ROF, name)->Max() *
+                    m_health_factor);
             }
+        const Ship& m_ship;
         const double m_health_factor;
     };
 
@@ -169,12 +175,12 @@ void CombatShip::LaunchFighters()
          ++it) {
         const PartType* part = GetPartType(it->first);
         assert(part && part->Class() == PC_FIGHTERS);
-        const FighterStats& stats = boost::get<FighterStats>(part->Stats());
 
         std::vector<CombatFighterPtr>& fighters_vec = it->second.second;
         std::size_t num_fighters = fighters_vec.size();
+        double launch_rate = m_ship->GetMeter(METER_LAUNCH_RATE, part->Name())->Max();
         std::size_t launch_size =
-            std::min<std::size_t>(num_fighters, stats.m_launch_rate * it->second.first);
+            std::min<std::size_t>(num_fighters, launch_rate * it->second.first);
 
         std::size_t formation_size =
             std::min(CombatFighter::FORMATION_SIZE, launch_size);
@@ -311,10 +317,10 @@ void CombatShip::TurnStarted(unsigned int number)
         m_unfired_PD_weapons.clear();
         std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
                        m_unfired_SR_weapons.begin(),
-                       CopyStats<DirectFireStats>(FractionalHealth()));
+                       CopyStats<DirectFireStats>(*m_ship, FractionalHealth()));
         std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
                        std::back_inserter(m_unfired_PD_weapons),
-                       CopyStats<DirectFireStats>(FractionalHealth()));
+                       CopyStats<DirectFireStats>(*m_ship, FractionalHealth()));
     }
 }
 
@@ -377,17 +383,29 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         const PartType* part = GetPartType(part_names[i]);
         assert(part);
         if (part->Class() == PC_POINT_DEFENSE) {
-            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
-            m_raw_PD_strength += stats.m_damage * stats.m_ROF * stats.m_range;
-            PD_minus_non_PD += stats.m_damage;
+            const std::string& part_name = part->Name();
+            double damage = m_ship->GetMeter(METER_DAMAGE, part_name)->Max();
+            m_raw_PD_strength +=
+                damage *
+                m_ship->GetMeter(METER_ROF, part_name)->Max() *
+                m_ship->GetMeter(METER_RANGE, part_name)->Max();
+            PD_minus_non_PD += damage;
         } else if (part->Class() == PC_SHORT_RANGE) {
-            const DirectFireStats& stats = boost::get<DirectFireStats>(part->Stats());
-            m_raw_SR_strength += stats.m_damage * stats.m_ROF * stats.m_range;
-            PD_minus_non_PD -= stats.m_damage;
+            const std::string& part_name = part->Name();
+            double damage = m_ship->GetMeter(METER_DAMAGE, part_name)->Max();
+            m_raw_SR_strength +=
+                damage *
+                m_ship->GetMeter(METER_ROF, part_name)->Max() *
+                m_ship->GetMeter(METER_RANGE, part_name)->Max();
+            PD_minus_non_PD -= damage;
         } else if (part->Class() == PC_MISSILES) {
-            const LRStats& stats = boost::get<LRStats>(part->Stats());
-            m_raw_LR_strength += stats.m_damage * stats.m_ROF * stats.m_range;
-            PD_minus_non_PD -= stats.m_damage;
+            const std::string& part_name = part->Name();
+            double damage = m_ship->GetMeter(METER_DAMAGE, part_name)->Max();
+            m_raw_LR_strength +=
+                damage *
+                m_ship->GetMeter(METER_ROF, part_name)->Max() *
+                m_ship->GetMeter(METER_RANGE, part_name)->Max();
+            PD_minus_non_PD -= damage;
         }
     }
     m_is_PD_ship = 0.0 < PD_minus_non_PD;
@@ -722,14 +740,14 @@ void CombatShip::FireAt(CombatObjectPtr target)
             if (range_squared < weapon_range_squared) {
                 OpenSteer::Vec3 direction = (target->position() - position()).normalize();
                 MissilePtr missile(
-                    new Missile(m_empire_id, *it->second, target,
+                    new Missile(*m_ship, *it->second, target,
                                 position(), direction, *m_pathing_engine));
                 m_pathing_engine->AddObject(missile);
                 m_ship->RemoveMissiles(it->second->Name(), 1);
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
-                    boost::get<LRStats>(it->second->Stats()).m_ROF * health_factor;
+                    m_ship->GetMeter(METER_ROF, it->second->Name())->Max() * health_factor;
                 Listener().MissileLaunched(missile);
             }
         }

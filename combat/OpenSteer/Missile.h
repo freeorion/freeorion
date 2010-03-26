@@ -10,12 +10,14 @@
 #include <boost/enable_shared_from_this.hpp>
 
 
+class Ship;
+
 class Missile :
     public CombatObject,
     public boost::enable_shared_from_this<Missile>
 {
 public:
-    Missile(int empire_id, const PartType& part, CombatObjectPtr target,
+    Missile(const Ship& launcher, const PartType& part, CombatObjectPtr target,
             const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
             PathingEngine& pathing_engine);
     ~Missile();
@@ -41,7 +43,9 @@ public:
 private:
     Missile();
 
-    void Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction);
+    void Init(const Ship& launcher,
+              const OpenSteer::Vec3& position_,
+              const OpenSteer::Vec3& direction);
     OpenSteer::Vec3 Steer();
 
     ProximityDBToken* m_proximity_token;
@@ -51,10 +55,8 @@ private:
     OpenSteer::Vec3 m_destination; // Only the X and Y values should be nonzero.
     CombatObjectWeakPtr m_target;
     double m_health;
+    LRStats m_stats;
     PathingEngine* m_pathing_engine;
-
-    // not serialized
-    mutable const LRStats* m_stats;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -67,6 +69,7 @@ private:
                 & BOOST_SERIALIZATION_NVP(m_destination)
                 & BOOST_SERIALIZATION_NVP(m_target)
                 & BOOST_SERIALIZATION_NVP(m_health)
+                & BOOST_SERIALIZATION_NVP(m_stats)
                 & BOOST_SERIALIZATION_NVP(m_pathing_engine);
         }
 };

@@ -20,33 +20,27 @@ Missile::Missile() :
     m_destination(),
     m_target(),
     m_health(0.0),
-    m_pathing_engine(),
-    m_stats(0)
+    m_pathing_engine()
 {}
 
-Missile::Missile(int empire_id, const PartType& part, CombatObjectPtr target,
+Missile::Missile(const Ship& launcher, const PartType& part, CombatObjectPtr target,
                  const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
                  PathingEngine& pathing_engine) :
     m_proximity_token(0),
-    m_empire_id(empire_id),
+    m_empire_id(),
     m_part_name(part.Name()),
     m_last_steer(),
     m_destination(target->position()),
     m_target(target),
-    m_health(Stats().m_health),
-    m_pathing_engine(&pathing_engine),
-    m_stats(0)
-{ Init(position, direction); }
+    m_health(),
+    m_pathing_engine(&pathing_engine)
+{ Init(launcher, position, direction); }
 
 Missile::~Missile()
 { delete m_proximity_token; }
 
 const LRStats& Missile::Stats() const
-{
-    if (!m_stats)
-        m_stats = &boost::get<LRStats>(GetPartType(m_part_name)->Stats());
-    return *m_stats;
-}
+{ return m_stats; }
 
 const std::string& Missile::PartName() const
 { return m_part_name; }
@@ -120,8 +114,23 @@ void Missile::TurnStarted(unsigned int number)
 void Missile::SignalDestroyed()
 { Listener().MissileRemoved(shared_from_this()); }
 
-void Missile::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& direction)
+void Missile::Init(const Ship& launcher,
+                   const OpenSteer::Vec3& position_,
+                   const OpenSteer::Vec3& direction)
 {
+    assert(launcher.Owners().size() == 1u);
+    m_empire_id = *launcher.Owners().begin();
+
+    m_stats.m_damage = launcher.GetMeter(METER_DAMAGE, m_part_name)->Max();
+    m_stats.m_ROF = launcher.GetMeter(METER_ROF, m_part_name)->Max();
+    m_stats.m_range = launcher.GetMeter(METER_RANGE, m_part_name)->Max();
+    m_stats.m_speed = launcher.GetMeter(METER_SPEED, m_part_name)->Max();
+    m_stats.m_stealth = launcher.GetMeter(METER_STEALTH, m_part_name)->Max();
+    m_stats.m_health = launcher.GetMeter(METER_HEALTH, m_part_name)->Max();
+    m_stats.m_capacity = launcher.GetMeter(METER_CAPACITY, m_part_name)->Max();
+
+    m_health = m_stats.m_health;
+
     m_proximity_token =
         m_pathing_engine->GetProximityDB().Insert(
             this, MISSILE_FLAG, EmpireFlag(m_empire_id));
