@@ -637,10 +637,6 @@ void OptionsWnd::ResolutionOption()
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), windowed_spinner_label, m_indentation_level));
     m_current_option_list->Insert(row);
 
-    CUISpin<int>* windowed_width_spin = IntOption("app-width-windowed", UserString("OPTIONS_APP_WIDTH_WINDOWED"));
-    CUISpin<int>* windowed_height_spin = IntOption("app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
-
-
     // fps
     BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
 
