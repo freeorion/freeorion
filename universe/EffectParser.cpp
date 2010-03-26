@@ -28,6 +28,17 @@ namespace {
             member4 max_meter;
         };
 
+        struct SetShipPartMeterClosure : boost::spirit::closure<SetShipPartMeterClosure, Effect::EffectBase*, MeterType, ShipPartClass, CombatFighterType, std::string, ValueRef::ValueRefBase<double>*, ShipSlotType>
+        {
+            member1 this_;
+            member2 meter;
+            member3 part_class;
+            member4 fighter_type;
+            member5 part_name;
+            member6 value;
+            member7 slot_type;
+        };
+
         struct SetOwnerStockpileClosure : boost::spirit::closure<SetOwnerStockpileClosure, Effect::EffectBase*, ResourceType, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
@@ -101,6 +112,7 @@ namespace {
         };
 
         typedef rule<Scanner, SetMeterClosure::context_t>               SetMeterRule;
+        typedef rule<Scanner, SetShipPartMeterClosure::context_t>       SetShipPartMeterRule;
         typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
@@ -114,6 +126,7 @@ namespace {
         typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
 
         SetMeterRule            set_meter;
+        SetShipPartMeterRule    set_ship_part_meter;
         SetOwnerStockpileRule   set_owner_stockpile;
         Rule                    set_owner_capitol;
         SetPlanetTypeRule       set_planet_type;
@@ -137,8 +150,12 @@ namespace {
         ParamLabel              empire_label;
         ParamLabel              name_label;
         ParamLabel              design_name_label;
+        ParamLabel              part_name_label;
         ParamLabel              destination_label;
         ParamLabel              reason_label;
+        ParamLabel              fighter_type_label;
+        ParamLabel              slot_type_label;
+        ParamLabel              part_class_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -148,8 +165,12 @@ namespace {
         empire_label("empire"),
         name_label("name"),
         design_name_label("designname"),
+        part_name_label("partname"),
         destination_label("destination"),
-        reason_label("reason")
+        reason_label("reason"),
+        fighter_type_label("fightertype"),
+        slot_type_label("slottype"),
+        part_class_label("partclass")
     {
         set_meter =
             ((str_p("setmax")[set_meter.max_meter = val(true)]
@@ -170,6 +191,45 @@ namespace {
                  | str_p("defense")[set_meter.meter = val(METER_DEFENSE)])
              >> value_label >> double_expr_p[set_meter.value = arg1])
             [set_meter.this_ = new_<Effect::SetMeter>(set_meter.meter, set_meter.value, set_meter.max_meter)];
+
+        set_ship_part_meter =
+            str_p("set")[set_ship_part_meter.slot_type = val(INVALID_SHIP_SLOT_TYPE)]
+            >> (str_p("damage")[set_ship_part_meter.meter = val(METER_DAMAGE)]
+                | str_p("rof")[set_ship_part_meter.meter = val(METER_ROF)]
+                | str_p("range")[set_ship_part_meter.meter = val(METER_RANGE)]
+                | str_p("speed")[set_ship_part_meter.meter = val(METER_SPEED)]
+                | str_p("capacity")[set_ship_part_meter.meter = val(METER_CAPACITY)]
+                | str_p("antishipdamage")[set_ship_part_meter.meter = val(METER_ANTI_SHIP_DAMAGE)]
+                | str_p("antifighterdamage")[set_ship_part_meter.meter = val(METER_ANTI_FIGHTER_DAMAGE)]
+                | str_p("launchrate")[set_ship_part_meter.meter = val(METER_LAUNCH_RATE)]
+                | str_p("fighterweaponrange")[set_ship_part_meter.meter = val(METER_FIGHTER_WEAPON_RANGE)]
+                | str_p("stealth")[set_ship_part_meter.meter = val(METER_STEALTH)]
+                | str_p("health")[set_ship_part_meter.meter = val(METER_HEALTH)]
+                | str_p("detection")[set_ship_part_meter.meter = val(METER_DETECTION)])
+            >> (((part_class_label >> part_class_p[set_ship_part_meter.part_class = arg1]
+                  >> value_label >> double_expr_p[set_ship_part_meter.value = arg1]
+                  >> slot_type_label >> slot_type_p[set_ship_part_meter.slot_type = arg1])
+                 [set_ship_part_meter.this_ =
+                  new_<Effect::SetShipPartMeter>(set_ship_part_meter.meter,
+                                                 set_ship_part_meter.part_class,
+                                                 set_ship_part_meter.value,
+                                                 set_ship_part_meter.slot_type)])
+                | ((fighter_type_label >> combat_fighter_type_p[set_ship_part_meter.fighter_type = arg1]
+                    >> value_label >> double_expr_p[set_ship_part_meter.value = arg1]
+                    >> slot_type_label >> slot_type_p[set_ship_part_meter.slot_type = arg1])
+                   [set_ship_part_meter.this_ =
+                    new_<Effect::SetShipPartMeter>(set_ship_part_meter.meter,
+                                                   set_ship_part_meter.fighter_type,
+                                                   set_ship_part_meter.value,
+                                                   set_ship_part_meter.slot_type)])
+                | ((part_name_label >> name_p[set_ship_part_meter.part_name = arg1]
+                    >> value_label >> double_expr_p[set_ship_part_meter.value = arg1]
+                    >> slot_type_label >> slot_type_p[set_ship_part_meter.slot_type = arg1])
+                   [set_ship_part_meter.this_ =
+                    new_<Effect::SetShipPartMeter>(set_ship_part_meter.meter,
+                                                   set_ship_part_meter.part_name,
+                                                   set_ship_part_meter.value,
+                                                   set_ship_part_meter.slot_type)]));
 
         set_owner_stockpile =
             ((str_p("setownerfoodstockpile")[set_owner_stockpile.stockpile_type = val(RE_FOOD)]
@@ -258,6 +318,7 @@ namespace {
 
         effect_p =
               set_meter[effect_p.this_ = arg1]
+            | set_ship_part_meter[effect_p.this_ = arg1]
             | set_owner_stockpile[effect_p.this_ = arg1]
             | set_owner_capitol[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]
