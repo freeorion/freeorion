@@ -52,8 +52,8 @@
 #include <btBulletCollisionCommon.h>
 
 #include <GG/GUI.h>
-#include "../GG/src/GIL/image.hpp"
-#include "../GG/src/GIL/extension/io/png_dynamic_io.hpp"
+#include "boost/gil/image.hpp"
+#include "boost/gil/extension/io/png_dynamic_io.hpp"
 
 #include <boost/cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
