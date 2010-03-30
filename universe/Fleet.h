@@ -77,6 +77,9 @@ public:
       * systems in the fleet's route. */
     bool                                UnknownRoute() const;
 
+    /** Returns true iff this fleet arrived at its current System this turn. */
+    bool                                ArrivedThisTurn() const;
+
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
@@ -134,6 +137,8 @@ private:
     mutable std::list<int>      m_travel_route;
     mutable double              m_travel_distance;
 
+    bool                        m_arrived_this_turn;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -153,7 +158,8 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_prev_system)
         & BOOST_SERIALIZATION_NVP(m_next_system)
         & BOOST_SERIALIZATION_NVP(m_travel_route)
-        & BOOST_SERIALIZATION_NVP(m_travel_distance);
+        & BOOST_SERIALIZATION_NVP(m_travel_distance)
+        & BOOST_SERIALIZATION_NVP(m_arrived_this_turn);
 }
 
 #endif // _Fleet_h_

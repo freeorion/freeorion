@@ -51,7 +51,8 @@ Fleet::Fleet() :
     m_speed(0.0),
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
-    m_travel_distance(0.0)
+    m_travel_distance(0.0),
+    m_arrived_this_turn(false)
 {}
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
@@ -60,7 +61,8 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_speed(0.0),
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
-    m_travel_distance(0.0)
+    m_travel_distance(0.0),
+    m_arrived_this_turn(false)
 {
     UniverseObject::Init();
     AddOwner(owner);
@@ -590,6 +592,9 @@ bool Fleet::UnknownRoute() const
     return m_travel_route.size() == 1 && m_travel_route.front() == UniverseObject::INVALID_OBJECT_ID;
 }
 
+bool Fleet::ArrivedThisTurn() const
+{ return m_arrived_this_turn; }
+
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Fleet* const>(this));
@@ -798,6 +803,8 @@ void Fleet::MovementPhase()
 {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
+    m_arrived_this_turn = false;
+
     // find if any of owners of fleet can resupply ships at the location of this fleet
     if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
         // resupply all ships
@@ -808,6 +815,7 @@ void Fleet::MovementPhase()
 
 
     System* current_system = GetObject<System>(SystemID());
+    System* const initial_system = current_system;
     std::list<MovePathNode> move_path = this->MovePath();
     std::list<MovePathNode>::const_iterator it = move_path.begin();
     std::list<MovePathNode>::const_iterator next_it = it;
@@ -936,6 +944,7 @@ void Fleet::MovementPhase()
     } else {
         // no more systems on path
         m_moving_to = m_next_system = m_prev_system = UniverseObject::INVALID_OBJECT_ID;
+        m_arrived_this_turn = current_system != initial_system;
     }
 
 

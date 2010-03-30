@@ -963,8 +963,6 @@ void ServerApp::PreCombatProcessTurns()
         if (!fleet)
             continue;
 
-        int eta = fleet->ETA().first;   // store now so it can be remembered after movement phase...
-
         fleet->MovementPhase();
 
         // TODO: Do movement incrementally, and if the moving fleet encounters
@@ -972,8 +970,8 @@ void ServerApp::PreCombatProcessTurns()
         // must be resolved as a combat.
 
         // SitRep for fleets having arrived at destinations, to all owners of those fleets
-        if (eta == 1) {
-            std::set<int> owners_set = fleet->Owners();
+        if (fleet->ArrivedThisTurn()) {
+            const std::set<int>& owners_set = fleet->Owners();
             for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
                 if (Empire* empire = empires.Lookup(*owners_it))
                     empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
