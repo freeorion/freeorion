@@ -454,11 +454,11 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
             if (!node) {
                 node = CreateShipSceneNode(m_scene_manager, *ship);
                 node->setUserAny(Ogre::Any(ship));
+                const Ogre::MaterialPtr& material = m_get_ship_material(*ship->Design());
+                Ogre::Entity*& entity = m_ship_entities[ship->ID()];
+                entity = CreateShipEntity(m_scene_manager, *ship, material);
+                node->attachObject(entity);
             }
-            const Ogre::MaterialPtr& material = m_get_ship_material(*ship->Design());
-            Ogre::Entity*& entity = m_ship_entities[ship->ID()];
-            entity = CreateShipEntity(m_scene_manager, *ship, material);
-            node->attachObject(entity);
             m_placeable_ship_node = node;
         }
     }
