@@ -75,16 +75,17 @@ namespace {
             double rads = StarlaneEntranceOrbitalPosition(it->first, system->ID());
             double x = StarlaneEntranceOrbitalRadius() * std::cos(rads);
             double y = StarlaneEntranceOrbitalRadius() * std::sin(rads);
-            std::map<int, std::set<int> >::const_iterator it = empires_by_starlane.find(it->first);
-            assert(it != empires_by_starlane.end());
-            if (it->second.size() == 1u) {
+            std::map<int, std::set<int> >::const_iterator starlane_it =
+                empires_by_starlane.find(it->first);
+            assert(starlane_it != empires_by_starlane.end());
+            if (starlane_it->second.size() == 1u) {
                 setup_group.m_regions.push_back(
                     CombatSetupRegion(x, y, StarlaneEntranceRadialAxis(), StarlaneEntranceTangentAxis()));
             } else {
-                std::size_t empires = it->second.size();
-                assert(it->second.find(owner) != it->second.end());
+                std::size_t empires = starlane_it->second.size();
+                assert(starlane_it->second.find(owner) != starlane_it->second.end());
                 std::size_t position_among_empires =
-                    std::distance(it->second.begin(), it->second.find(owner));
+                    std::distance(starlane_it->second.begin(), starlane_it->second.find(owner));
                 const double SLICE_SIZE = 1.0 / empires;
                 const double START = position_among_empires * SLICE_SIZE;
                 setup_group.m_regions.push_back(
