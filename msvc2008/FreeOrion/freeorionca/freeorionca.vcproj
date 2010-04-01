@@ -181,6 +181,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\util\Math.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\util\Math.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\util\MultiplayerCommon.cpp"
 				>
 			</File>
