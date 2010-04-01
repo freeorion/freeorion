@@ -80,6 +80,10 @@ public:
     /** Returns true iff this fleet arrived at its current System this turn. */
     bool                                ArrivedThisTurn() const;
 
+    /** Returns the ID of the starlane that this fleet arrived on.  The value
+        returned is undefined if ArrivedThisTurn() does not return true. */
+    int                                 ArrivalStarlane() const;
+
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
@@ -138,6 +142,7 @@ private:
     mutable double              m_travel_distance;
 
     bool                        m_arrived_this_turn;
+    int                         m_arrival_starlane;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -159,7 +164,8 @@ void Fleet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_next_system)
         & BOOST_SERIALIZATION_NVP(m_travel_route)
         & BOOST_SERIALIZATION_NVP(m_travel_distance)
-        & BOOST_SERIALIZATION_NVP(m_arrived_this_turn);
+        & BOOST_SERIALIZATION_NVP(m_arrived_this_turn)
+        & BOOST_SERIALIZATION_NVP(m_arrival_starlane);
 }
 
 #endif // _Fleet_h_

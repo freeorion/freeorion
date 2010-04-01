@@ -52,7 +52,8 @@ Fleet::Fleet() :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0),
-    m_arrived_this_turn(false)
+    m_arrived_this_turn(false),
+    m_arrival_starlane(INVALID_OBJECT_ID)
 {}
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
@@ -62,7 +63,8 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_prev_system(INVALID_OBJECT_ID),
     m_next_system(INVALID_OBJECT_ID),
     m_travel_distance(0.0),
-    m_arrived_this_turn(false)
+    m_arrived_this_turn(false),
+    m_arrival_starlane(INVALID_OBJECT_ID)
 {
     UniverseObject::Init();
     AddOwner(owner);
@@ -595,6 +597,9 @@ bool Fleet::UnknownRoute() const
 bool Fleet::ArrivedThisTurn() const
 { return m_arrived_this_turn; }
 
+int Fleet::ArrivalStarlane() const
+{ return m_arrival_starlane; }
+
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
 {
     return visitor.Visit(const_cast<Fleet* const>(this));
@@ -804,6 +809,9 @@ void Fleet::MovementPhase()
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
     m_arrived_this_turn = false;
+    m_arrival_starlane = UniverseObject::INVALID_OBJECT_ID;
+
+    int prev_prev_system = m_prev_system;
 
     // find if any of owners of fleet can resupply ships at the location of this fleet
     if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
@@ -881,9 +889,8 @@ void Fleet::MovementPhase()
                 if (Empire* empire = Empires().Lookup(*owners_it))
                     empire->AddExploredSystem(it->object_id);
 
-
+            prev_prev_system = m_prev_system;
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
-
 
             bool resupply_here = FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(system->ID(), this->Owners());
 
@@ -943,8 +950,9 @@ void Fleet::MovementPhase()
 
     } else {
         // no more systems on path
-        m_moving_to = m_next_system = m_prev_system = UniverseObject::INVALID_OBJECT_ID;
         m_arrived_this_turn = current_system != initial_system;
+        m_arrival_starlane = prev_prev_system;
+        m_moving_to = m_next_system = m_prev_system = UniverseObject::INVALID_OBJECT_ID;
     }
 
 
