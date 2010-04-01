@@ -50,6 +50,7 @@ set(THIS_EXE_SOURCES
     ../universe/ValueRefParser.cpp
     ../util/DataTable.cpp
     ../util/GZStream.cpp
+    ../util/Math.cpp
     ../util/MultiplayerCommon.cpp
     ../util/OptionsDB.cpp
     ../util/Order.cpp

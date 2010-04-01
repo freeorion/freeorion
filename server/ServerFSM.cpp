@@ -848,8 +848,9 @@ ResolvingCombat::ResolvingCombat(my_context c) :
 
     ServerApp& server = Server();
 
+    std::map<int, std::vector<CombatSetupGroup> > setup_groups;
     server.m_current_combat =
-        new CombatData(context<ProcessingTurn>().m_combat_system);
+        new CombatData(context<ProcessingTurn>().m_combat_system, setup_groups);
     context<ProcessingTurn>().m_combat_system = 0;
 
     for (ServerNetworking::const_established_iterator it =
@@ -861,11 +862,13 @@ ResolvingCombat::ResolvingCombat(my_context c) :
         if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
             context<ProcessingTurn>().m_combat_empire_ids.end())
         {
+            assert(!setup_groups[empire_id].empty());
             (*it)->SendMessage(
                 ServerCombatStartMessage(
                     player_id,
                     empire_id,
-                    *server.m_current_combat));
+                    *server.m_current_combat,
+                    setup_groups[empire_id]));
         }
     }
 }

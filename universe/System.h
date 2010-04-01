@@ -186,28 +186,36 @@ private:
 // Tactical combat system geometry free functions:
 
 /** Returns the radius, in tactical combat units, of a system.  Note that the
-  * tactical combat map is square. */
+    tactical combat map is square. */
 double SystemRadius();
 
 /** Returns the radius, in tactical combat units, of the star at the center of
-  * a system. */
+    a system. */
 double StarRadius();
 
 /** Returns the radius, in tactical combat units, of orbit \a orbit of a
-  * system.  \a orbit must be < 10. */
+    system.  \a orbit must be < 10. */
 double OrbitalRadius(unsigned int orbit);
 
 /** Returns the orbital radius, in tactical combat units, of starlane entrance
-  * points out of a system.  */
+    ellipses out of a system. */
 double StarlaneEntranceOrbitalRadius();
 
-/** Returns the angular position, in radians, of a starlane entrance point out
-  * of the system with id \a from_system.  */
+/** Returns the angular position, in radians, of a starlane entrance ellipses
+    out of the system with id \a from_system. */
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system);
 
-/** Returns the radius, in tactical combat units, of starlane entrance points
-  * out of a system.  */
-double StarlaneEntranceRadius();
+/** Returns the radius, in tactical combat units, of the star-aligned axes of
+    starlane entrance ellipses out of a system. */
+double StarlaneEntranceRadialAxis();
+
+/** Returns the radius, in tactical combat units, of the non-star-aligned axes
+    starlane entrance ellipses out of a system. */
+double StarlaneEntranceTangentAxis();
+
+/** Returns true iff tactical combat point <i>(x, y)</i> falls inside the
+    indicated starlane ellipse. */
+bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system);
 
 
 // template implementations

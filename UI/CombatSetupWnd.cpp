@@ -266,6 +266,7 @@ namespace {
 
 CombatSetupWnd::CombatSetupWnd(
     std::vector<Fleet*> fleets,
+    const std::vector<CombatSetupGroup>& setup_groups,
     CombatWnd* combat_wnd,
     Ogre::SceneManager* scene_manager,
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
@@ -281,6 +282,7 @@ CombatSetupWnd::CombatSetupWnd(
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(300), SETUP_WND_HEIGHT, flags),
+    m_setup_groups(setup_groups),
     m_setup_finished_waiting_for_server(false),
     m_dragging_placed_ship(false),
     m_button_press_on_placed_ship(INVALID_PRESS_POS),

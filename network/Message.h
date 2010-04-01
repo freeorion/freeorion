@@ -12,8 +12,9 @@
 #include <map>
 #include <vector>
 
-class CombatData;
+struct CombatData;
 class CombatOrder;
+struct CombatSetupGroup;
 class EmpireManager;
 class Message;
 struct MultiplayerLobbyData;
@@ -165,15 +166,20 @@ Message HostMPGameMessage(const std::string& host_player_name);
 Message JoinGameMessage(const std::string& player_name);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes data
     loaded from a saved game. */
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players, const OrderSet& orders, const SaveGameUIData* ui_data);
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players,
+                         const OrderSet& orders, const SaveGameUIData* ui_data);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes
     state string loaded from a saved game. */
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players, const OrderSet& orders, const std::string* save_state_string);
+Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players,
+                         const OrderSet& orders, const std::string* save_state_string);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -194,7 +200,8 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders);
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message. */
-Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
+Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
+                          const Universe& universe, const std::map<int, PlayerInfo>& players);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -205,13 +212,15 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::str
 /** creates a CLIENT_SAVE_DATA message, without UI data and without a state string. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders);
 
-/** creates an REQUEST_NEW_OBJECT_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
+/** creates an REQUEST_NEW_OBJECT_ID message. This message is a synchronous
+    message, when sent it will wait for a reply form the server */
 Message RequestNewObjectIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a client who is waiting for a new object ID */
 Message DispatchObjectIDMessage(int player_id, int new_id);
 
-/** creates an REQUEST_NEW_DESIGN_ID  message. This message is a synchronous message, when sent it will wait for a reply form the server */
+/** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
+    message, when sent it will wait for a reply form the server */
 Message RequestNewDesignIDMessage(int sender);
 
 /** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a client who is waiting for a new design ID */
@@ -220,7 +229,8 @@ Message DispatchDesignIDMessage(int player_id, int new_id);
 /** creates a SAVE_GAME request message.  This message should only be sent by the host player.*/
 Message HostSaveGameMessage(int sender, const std::string& filename);
 
-/** creates a SAVE_GAME data request message.  This message should only be sent by the server to get game data from a client.*/
+/** creates a SAVE_GAME data request message.  This message should only be
+    sent by the server to get game data from a client.*/
 Message ServerSaveGameMessage(int receiver, bool synchronous_response);
 
 /** creates a CHAT_MSG, which is sent to the server, and then from the server to all players, including the 
@@ -236,7 +246,8 @@ Message SingleRecipientChatMessage(int sender, int receiver, const std::string& 
     \a winner_empire_ids and \a winner_empire_names should contain the names and ids of all empires that have
     won; this will contain only a single empire if it has won alone, but could contain multiple empires if
     an allied victory has occured.  This message should only be sent by the server.*/
-Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat, const std::string& reason_string, int empire_id);
+Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat, const std::string& reason_string,
+                             int empire_id);
 
 /** creates a PLAYER_ELIMINATED message, which is sent to all clients when a client is eliminated from play.
     This message should only be sent by the server.*/
@@ -284,7 +295,9 @@ Message ServerLobbyExitMessage(int sender, int receiver);
 Message StartMPGameMessage(int player_id);
 
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
-Message ServerCombatStartMessage(int receiver, int empire_id, const CombatData& combat_data);
+Message ServerCombatStartMessage(int receiver, int empire_id,
+                                 const CombatData& combat_data,
+                                 const std::vector<CombatSetupGroup>& setup_groups);
 
 /** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
 Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
@@ -302,13 +315,18 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
-void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& orders, bool& loaded_game_data, bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available, std::string& save_state_string);
+void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
+                        EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& orders,
+                        bool& loaded_game_data, bool& ui_data_available, SaveGameUIData& ui_data,
+                        bool& save_state_string_available, std::string& save_state_string);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players);
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe,
+                        std::map<int, PlayerInfo>& players);
 
-void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available, SaveGameUIData& ui_data, bool& save_state_string_available, std::string& save_state_string);
+void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available, SaveGameUIData& ui_data,
+                        bool& save_state_string_available, std::string& save_state_string);
 
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id);
 
@@ -318,7 +336,10 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
 
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
-void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string, int& empire_id);
+void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string,
+                        int& empire_id);
+
+void ExtractMessageData(const Message& msg, CombatData& combat_data, std::vector<CombatSetupGroup>& setup_groups);
 
 void ExtractMessageData(const Message& msg, CombatData& combat_data);
 

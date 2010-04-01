@@ -617,14 +617,7 @@ void CombatShip::UpdateMissionQueue()
         for (System::const_lane_iterator it = system->begin_lanes();
              it != system->end_lanes();
              ++it) {
-            double rads = StarlaneEntranceOrbitalPosition(system->ID(), it->first);
-            double radius = StarlaneEntranceOrbitalRadius();
-            OpenSteer::Vec3 starlane_position(radius * std::cos(rads),
-                                              radius * std::sin(rads),
-                                              0.0);
-            double entrance_radius_squared =
-                StarlaneEntranceRadius() * StarlaneEntranceRadius();
-            if ((starlane_position - position()).lengthSquared() < entrance_radius_squared) {
+            if (PointInStarlaneEllipse(position().x, position().y, system->ID(), it->first)) {
                 m_enter_starlane_start_turn = m_turn;
                 break;
             }

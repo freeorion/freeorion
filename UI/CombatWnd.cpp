@@ -905,7 +905,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 #endif
         }
 
-        InitCombat(*combat_data);
+        std::vector<CombatSetupGroup> setup_groups;
+        InitCombat(*combat_data, setup_groups);
     } else {
         // TODO: For prototyping only.
         GG::X width(150);
@@ -955,7 +956,7 @@ CombatWnd::~CombatWnd()
     RemoveAccelerators();
 }
 
-void CombatWnd::InitCombat(CombatData& combat_data)
+void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups)
 {
     m_combat_data = &combat_data;
 
@@ -1193,7 +1194,7 @@ void CombatWnd::InitCombat(CombatData& combat_data)
         }
     }
     m_combat_setup_wnd =
-        new CombatSetupWnd(fleets, this, m_scene_manager,
+        new CombatSetupWnd(fleets, setup_groups, this, m_scene_manager,
                            boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1),
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),

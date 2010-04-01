@@ -17,16 +17,18 @@ namespace Ogre {
     class Vector3;
 }
 
+struct CombatSetupGroup;
+class CombatWnd;
 class Fleet;
 class Ship;
 class ShipDesign;
-class CombatWnd;
 
 class CombatSetupWnd :
     public CUIWnd
 {
 public:
     CombatSetupWnd(std::vector<Fleet*> fleets,
+                   const std::vector<CombatSetupGroup>& setup_groups,
                    CombatWnd* combat_wnd,
                    Ogre::SceneManager* scene_manager,
                    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt&)>
@@ -57,6 +59,7 @@ private:
     void PlaceCurrentShip();
     void DoneButtonClicked();
 
+    std::vector<CombatSetupGroup> m_setup_groups;
     std::map<int, CombatOrder> m_placement_orders;
     bool m_setup_finished_waiting_for_server;
     bool m_dragging_placed_ship;

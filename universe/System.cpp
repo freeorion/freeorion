@@ -6,6 +6,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
 #include "Predicates.h"
 
@@ -656,8 +657,11 @@ double OrbitalRadius(unsigned int orbit)
 double StarlaneEntranceOrbitalRadius()
 { return 1000.0 + 25.0; }
 
-double StarlaneEntranceRadius()
+double StarlaneEntranceRadialAxis()
 { return 20.0; }
+
+double StarlaneEntranceTangentAxis()
+{ return 40.0; }
 
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
 {
@@ -669,4 +673,15 @@ double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
         return 0.0;
     }
     return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
+}
+
+bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system)
+{
+    double rads = StarlaneEntranceOrbitalPosition(from_system, to_system);
+    double ellipse_x = StarlaneEntranceOrbitalRadius() * std::cos(rads);
+    double ellipse_y = StarlaneEntranceOrbitalRadius() * std::sin(rads);
+    return PointInEllipse(x, y,
+                          ellipse_x, ellipse_y,
+                          StarlaneEntranceRadialAxis(), StarlaneEntranceTangentAxis(),
+                          rads);
 }

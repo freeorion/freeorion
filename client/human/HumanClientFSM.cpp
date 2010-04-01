@@ -560,8 +560,9 @@ ResolvingCombat::~ResolvingCombat()
 boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
-    ExtractMessageData(msg.m_message, *m_combat_data);
-    m_combat_wnd->InitCombat(*m_combat_data);
+    std::vector<CombatSetupGroup> setup_groups;
+    ExtractMessageData(msg.m_message, *m_combat_data, setup_groups);
+    m_combat_wnd->InitCombat(*m_combat_data, setup_groups);
     return discard_event();
 }
 

@@ -34,6 +34,7 @@ namespace GG {
 }
 
 class CombatData;
+struct CombatSetupGroup;
 class CombatSetupWnd;
 class FPSIndicator;
 class System;
@@ -66,7 +67,7 @@ public:
                Ogre::Viewport* viewport);
     virtual ~CombatWnd();
 
-    void InitCombat(CombatData& combat_data);
+    void InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups);
     void HandlePlayerChatMessage(const std::string& msg);
 
     virtual void Render();

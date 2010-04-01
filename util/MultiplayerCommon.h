@@ -188,12 +188,14 @@ struct PlayerInfo
     void serialize(Archive& ar, const unsigned int version);
 };
 
+struct CombatSetupGroup;
+
 /** The state of combat (units, planets, their health, etc.) at the start of a
     round of combat. */
 struct CombatData
 {
     CombatData();
-    CombatData(System* system);
+    CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups);
 
     unsigned int m_combat_turn_number;
     System* m_system;
@@ -206,6 +208,52 @@ struct CombatData
     template<class Archive>
     void load(Archive & ar, const unsigned int version);
     BOOST_SERIALIZATION_SPLIT_MEMBER()
+};
+
+/** Regions in which the user is allowed or disallowed to place ships during
+    combat setup. */
+struct CombatSetupRegion
+{
+    /** The types of setup-regions. */
+    enum Type {
+        RING,           ///< A ring concentric with the System.
+        ELLIPSE,        ///< An ellipse.
+        PARTIAL_ELLIPSE ///< An angular portion of an ellipse.
+    };
+
+    CombatSetupRegion();
+    CombatSetupRegion(float radius_begin, float radius_end);
+    CombatSetupRegion(float centroid_x, float centroid_y, float radius);
+    CombatSetupRegion(float centroid_x, float centroid_y, float radial_axis, float tangent_axis);
+    CombatSetupRegion(float centroid_x, float centroid_y, float radial_axis, float tangent_axis,
+                      float theta_begin, float theta_end);
+
+    Type m_type;          ///< The type/shape of the region.
+    float m_radius_begin; ///< The start radius of a ring.
+    float m_radius_end;   ///< The end radius of a ring.
+    float m_centroid[2];  ///< The (x, y) position of the ellipse centroid.
+    float m_radial_axis;  ///< The length of the radial axis; the radial axis always points to the star.
+    float m_tangent_axis; ///< The length of the tangent axis (perpendicular to the radial axis).
+    float m_theta_begin;  ///< The start of the angular region of the ellipse.
+    float m_theta_end;    ///< The end of the angular region of the ellipse.
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** A group of ships and a description of where they may be placed. */
+struct CombatSetupGroup
+{
+    CombatSetupGroup();
+
+    std::set<int> m_ships;                    ///< The ships in this group.
+    std::vector<CombatSetupRegion> m_regions; ///< The regions the ships are/are not allowed in.
+    bool m_allow;                             ///< Whether the regions are allow-regions or deny-regions.
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -298,6 +346,27 @@ void CombatData::load(Archive & ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_system);
     Deserialize(ar, m_combat_universe);
     Deserialize(ar, m_pathing_engine);
+}
+
+template <class Archive>
+void CombatSetupRegion::serialize(Archive & ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_radius_begin)
+        & BOOST_SERIALIZATION_NVP(m_radius_end)
+        & BOOST_SERIALIZATION_NVP(m_centroid)
+        & BOOST_SERIALIZATION_NVP(m_radial_axis)
+        & BOOST_SERIALIZATION_NVP(m_tangent_axis)
+        & BOOST_SERIALIZATION_NVP(m_theta_begin)
+        & BOOST_SERIALIZATION_NVP(m_theta_end);
+}
+
+template <class Archive>
+void CombatSetupGroup::serialize(Archive & ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_ships)
+        & BOOST_SERIALIZATION_NVP(m_regions)
+        & BOOST_SERIALIZATION_NVP(m_allow);
 }
 
 #endif // _MultiplayerCommon_h_
