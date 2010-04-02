@@ -25,6 +25,11 @@ StringTable_::StringTable_(const std::string& filename):
 StringTable_::~StringTable_()
 {}
 
+bool StringTable_::StringExists(std::string index) const
+{
+    return m_strings.find(index) != m_strings.end();
+}
+
 const std::string& StringTable_::operator[] (std::string index) const
 {
     static std::string error_retval;

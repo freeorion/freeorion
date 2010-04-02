@@ -41,6 +41,12 @@ namespace {
         return *string_table;
     }
 
+    const StringTable_& GetDefaultStringTable() {
+        static std::auto_ptr<StringTable_> default_string_table(
+            new StringTable_((GetResourceDir() / GetOptionsDB().GetDefault<std::string>("stringtable-filename")).file_string()));
+        return *default_string_table;
+    }
+
     std::string ClrToString(GG::Clr clr) {
         unsigned int r = static_cast<int>(clr.r);
         unsigned int g = static_cast<int>(clr.g);
@@ -252,7 +258,11 @@ int PriorityValue(const std::string& name)
 
 const std::string& UserString(const std::string& str)
 {
-    return GetStringTable().String(str);
+    const StringTable_& string_table = GetStringTable();
+    if (string_table.StringExists(str))
+        return GetStringTable().String(str);
+    else
+        return GetDefaultStringTable().String(str);
 }
 
 boost::format FlexibleFormat(const std::string &string_to_format) {
