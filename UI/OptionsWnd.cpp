@@ -836,7 +836,6 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_PAGE_AUTOSAVE"));
     BoolOption("autosave.single-player",            UserString("OPTIONS_SINGLEPLAYER"));
     BoolOption("autosave.multiplayer",              UserString("OPTIONS_MULTIPLAYER"));
-    //IntOption("autosave.saves",                     UserString("OPTIONS_AUTOSAVE_TO_KEEP"));
     IntOption("autosave.turns",                     UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
     EndPage();
 

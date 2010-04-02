@@ -298,11 +298,6 @@ const std::string& Language()
     return GetStringTable().Language();
 }
 
-std::string SinglePlayerName()
-{
-    return GetOptionsDB().Get<std::string>("GameSetup.player-name");
-}
-
 #ifndef FREEORION_WIN32
 void Sleep(int ms)
 {

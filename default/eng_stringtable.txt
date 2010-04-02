@@ -588,9 +588,6 @@ If true, autosaves will occur during multiplayer games.
 OPTIONS_DB_AUTOSAVE_TURNS
 Sets the number of turns that should elapse between autosaves.
 
-OPTIONS_DB_AUTOSAVE_SAVES
-Sets the number of autosaved games that should be kept.
-
 OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
 

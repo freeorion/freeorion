@@ -85,11 +85,52 @@ namespace {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
-        //db.Add("autosave.saves",            "OPTIONS_DB_AUTOSAVE_SAVES",            10,     RangedValidator<int>(1, 50));
         db.Add("music-volume",              "OPTIONS_DB_MUSIC_VOLUME",              255,    RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
+    /* Sets the value of options that need language-dependent default values.*/
+    void SetStringtableDependentOptionDefaults() {
+        if (GetOptionsDB().Get<std::string>("GameSetup.empire-name").empty())
+            GetOptionsDB().Set("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
+
+        if (GetOptionsDB().Get<std::string>("GameSetup.player-name").empty())
+            GetOptionsDB().Set("GameSetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
+
+        if (GetOptionsDB().Get<std::string>("multiplayersetup.player-name").empty())
+            GetOptionsDB().Set("multiplayersetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
+    }
+
+    void CheckGLVersion() {
+        // only execute once
+        if (GetOptionsDB().Get<bool>("checked-gl-version"))
+            return;
+        GetOptionsDB().Set<bool>("checked-gl-version", true);
+
+
+        // get OpenGL version string and parse to get version number
+        const GLubyte* gl_version = glGetString(GL_VERSION);
+        std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
+        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
+
+        float version_number = 0.0;
+        std::istringstream iss(gl_version_string);
+        iss >> version_number;
+        version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
+
+        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+
+        // if GL version is too low, set various map rendering options to
+        // disabled, so as to prevent crashes when running on systems that
+        // don't support these GL features.  these options are added to the
+        // DB in MapWnd.cpp's AddOptions and all default to true.
+        if (version_number < 2.0) {
+            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
+            GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
+            GetOptionsDB().Set<bool>("UI.optimized-system-rendering",   false);
+            GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
+        }
+    }
 }
 
 HumanClientApp::HumanClientApp(Ogre::Root* root,
@@ -164,6 +205,9 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     GLenum error = glewInit();
     assert(error == GLEW_OK);
 #endif
+
+    SetStringtableDependentOptionDefaults();
+    CheckGLVersion();
 
     m_fsm->initiate();
 }
@@ -280,7 +324,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                 setup_data.m_AIs = galaxy_wnd.NumberAIs();
             }
             setup_data.m_new_game = true;
-            setup_data.m_host_player_name = SinglePlayerName();
+            setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }
@@ -385,13 +429,13 @@ void HumanClientApp::LoadSinglePlayerGame()
 
             m_connected = true;
             SetPlayerID(Networking::HOST_PLAYER_ID);
-            SetEmpireID(-1);
-            SetPlayerName(SinglePlayerName());
+            SetEmpireID(ALL_EMPIRES);
+            SetPlayerName(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
             SinglePlayerSetupData setup_data;
             setup_data.m_new_game = false;
             setup_data.m_filename = *dlg.Result().begin();
-            setup_data.m_host_player_name = SinglePlayerName();
+            setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
         }
@@ -533,9 +577,10 @@ void HumanClientApp::StartGame()
 
 void HumanClientApp::Autosave(bool new_game)
 {
-    if (((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player")) || 
+    if (((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player")) ||
          (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))) &&
-        (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0) {
+        (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0)
+    {
         const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
         std::string empire_name = Empires().Lookup(EmpireID())->Name();
         std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
@@ -548,50 +593,20 @@ void HumanClientApp::Autosave(bool new_game)
 
         std::string save_filename;
         if (m_single_player_game) {
-            save_filename = boost::io::str(boost::format("AS_%s_%04d.sav") % empire_name % CurrentTurn());
+            save_filename = boost::io::str(boost::format("FreeOrion_%s_%04d.sav") % empire_name % CurrentTurn());
         } else {
             std::string::size_type first_good_player_char = PlayerName().find_first_of(legal_chars);
             if (first_good_player_char == std::string::npos) {
-                save_filename = boost::io::str(boost::format("AS_%s_%04d.mps") % empire_name % CurrentTurn());
+                save_filename = boost::io::str(boost::format("FreeOrion_%s_%04d.mps") % empire_name % CurrentTurn());
             } else {
                 std::string::size_type first_bad_player_char = PlayerName().find_first_not_of(legal_chars, first_good_player_char);
                 std::string player_name = PlayerName().substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-                save_filename = boost::io::str(boost::format("AS_%s_%s_%04d.mps") % player_name % empire_name % CurrentTurn());
+                save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d.mps") % player_name % empire_name % CurrentTurn());
             }
         }
 
         namespace fs = boost::filesystem;
         fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
-
-        //std::set<std::string> similar_save_files;
-        //std::set<std::string> old_save_files;
-        //std::string extension = m_single_player_game ? ".sav" : ".mps";
-        //fs::directory_iterator end_it;
-        //for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-        //    if (!fs::is_directory(*it)) {
-        //        std::string filename = it->filename();
-        //        if (!new_game &&
-        //            filename.find(extension) == filename.size() - extension.size() && 
-        //            filename.find(save_filename.substr(0, save_filename.size() - 7)) == 0) {
-        //            similar_save_files.insert(filename);
-        //        } else if (filename.find("AS_") == 0) {
-        //            // this simple condition means that at the beginning of an autosave run, we'll clear out all old autosave files,
-        //            // even if they don't match the current empire name, or if they are MP vs. SP games, or whatever
-        //            old_save_files.insert(filename);
-        //        }
-        //    }
-        //}
-
-        //for (std::set<std::string>::iterator it = old_save_files.begin(); it != old_save_files.end(); ++it) {
-        //    fs::remove(save_dir / *it);
-        //}
-
-        //unsigned int max_autosaves = GetOptionsDB().Get<int>("autosave.saves");
-        //std::set<std::string>::reverse_iterator rit = similar_save_files.rbegin();
-        //std::advance(rit, std::min(similar_save_files.size(), (size_t)(max_autosaves - 1)));
-        //for (; rit != similar_save_files.rend(); ++rit) {
-        //    fs::remove(save_dir / *rit);
-        //}
 
         SaveGame((save_dir / save_filename).file_string());
     }

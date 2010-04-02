@@ -324,10 +324,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_player_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_PLAYER_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
-    std::string player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
-    if (player_name.empty())
-        player_name = UserString("DEFAULT_PLAYER_NAME");
-    m_player_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, player_name);
+    m_player_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.player-name"));
     m_player_name_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_player_name_label->Height()) / 2));
     m_player_name_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_player_name_edit->Height()) / 2));
 
@@ -336,10 +333,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_empire_name_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_NAME"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
-    std::string empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
-    if (empire_name.empty())
-        empire_name = UserString("DEFAULT_EMPIRE_NAME");
-    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, empire_name);
+    m_empire_name_edit = new CUIEdit(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos, LABELS_WIDTH, GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
     m_empire_name_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
