@@ -25,9 +25,9 @@
 // static member(s)
 AIClientApp*  AIClientApp::s_app = 0;
 
-AIClientApp::AIClientApp(int argc, char* argv[]) : 
+AIClientApp::AIClientApp(int argc, char* argv[]) :
     m_AI(0),
-    m_system(0)
+    m_player_name("")
 {
     if (s_app)
         throw std::runtime_error("Attempted to construct a second instance of singleton class AIClientApp");
@@ -40,9 +40,9 @@ AIClientApp::AIClientApp(int argc, char* argv[]) :
     }
 
     // read command line args
-    SetPlayerName(argv[1]);
 
-    const std::string AICLIENT_LOG_FILENAME((GetUserDir() / (PlayerName() + ".log")).file_string());
+    m_player_name = argv[1];
+    const std::string AICLIENT_LOG_FILENAME((GetUserDir() / (m_player_name + ".log")).file_string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(AICLIENT_LOG_FILENAME.c_str());
@@ -88,9 +88,16 @@ void AIClientApp::Run()
     // connect
     const int MAX_TRIES = 10;
     int tries = 0;
-    bool connected = false;
-    while (tries < MAX_TRIES && !connected) {
+    volatile bool connected = false;
+    while (tries < MAX_TRIES) {
+        Logger().debugStream() << "Attempting to contact server";
         connected = Networking().ConnectToLocalHostServer();
+        if (!connected) {
+            std::cerr << "FreeOrion AI client server contact attempt " << tries + 1 << " failed." << std::endl;
+            Logger().errorStream() << "Server contact attempt " << tries + 1 << " failed";
+        } else {
+            break;
+        }
         ++tries;
     }
     if (!connected) {
@@ -196,12 +203,6 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::COMBAT_END:
-        delete m_system;
-        for (std::map<int, UniverseObject*>::iterator it = m_combat_universe.begin();
-             it != m_combat_universe.end();
-             ++it) {
-            delete it->second;
-        }
         // TODO: If we grabbed any other resources on COMBAT_START, release them here.
         break;
 

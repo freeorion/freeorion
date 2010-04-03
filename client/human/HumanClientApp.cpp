@@ -248,16 +248,14 @@ void HumanClientApp::FreeServer()
 {
     m_server_process.Free();
     SetPlayerID(-1);
-    SetEmpireID(-1);
-    SetPlayerName("");
+    SetEmpireID(ALL_EMPIRES);
 }
 
 void HumanClientApp::KillServer()
 {
     m_server_process.Kill();
     SetPlayerID(-1);
-    SetEmpireID(-1);
-    SetPlayerName("");
+    SetEmpireID(ALL_EMPIRES);
 }
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart)
@@ -430,7 +428,6 @@ void HumanClientApp::LoadSinglePlayerGame()
             m_connected = true;
             SetPlayerID(Networking::HOST_PLAYER_ID);
             SetEmpireID(ALL_EMPIRES);
-            SetPlayerName(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
             SinglePlayerSetupData setup_data;
             setup_data.m_new_game = false;
@@ -582,6 +579,8 @@ void HumanClientApp::Autosave(bool new_game)
         (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0)
     {
         const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+
+        // get empire name, filtered for filename acceptability
         std::string empire_name = Empires().Lookup(EmpireID())->Name();
         std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
         if (first_good_empire_char == std::string::npos) {
@@ -591,19 +590,24 @@ void HumanClientApp::Autosave(bool new_game)
             empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
         }
 
-        std::string save_filename;
-        if (m_single_player_game) {
-            save_filename = boost::io::str(boost::format("FreeOrion_%s_%04d.sav") % empire_name % CurrentTurn());
+        // get player name, also filtered
+        std::string player_name = Empires().Lookup(EmpireID())->PlayerName();
+        std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
+        if (first_good_player_char == std::string::npos) {
+            player_name = "";
         } else {
-            std::string::size_type first_good_player_char = PlayerName().find_first_of(legal_chars);
-            if (first_good_player_char == std::string::npos) {
-                save_filename = boost::io::str(boost::format("FreeOrion_%s_%04d.mps") % empire_name % CurrentTurn());
-            } else {
-                std::string::size_type first_bad_player_char = PlayerName().find_first_not_of(legal_chars, first_good_player_char);
-                std::string player_name = PlayerName().substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-                save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d.mps") % player_name % empire_name % CurrentTurn());
-            }
+            std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
+            player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
         }
+
+        // select filename extension
+        std::string extension;
+        if (m_single_player_game)
+            extension = "sav";
+        else
+            extension = "mps";
+
+        std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d.%s") % player_name % empire_name % CurrentTurn() % extension);
 
         namespace fs = boost::filesystem;
         fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
@@ -622,7 +626,6 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     m_server_process.RequestTermination();
     SetPlayerID(-1);
     SetEmpireID(-1);
-    SetPlayerName("");
     m_ui->GetMapWnd()->Sanitize();
 
     m_universe.Clear();

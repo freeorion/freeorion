@@ -30,9 +30,6 @@ ClientApp::ClientApp() :
 ClientApp::~ClientApp()
 {}
 
-const std::string& ClientApp::PlayerName() const
-{ return m_player_name; }
-
 int ClientApp::PlayerID() const
 { return m_player_id; }
 
@@ -134,9 +131,6 @@ int ClientApp::GetNewDesignID()
 
 ClientApp* ClientApp::GetApp()
 { return s_app; }
-
-void ClientApp::SetPlayerName(const std::string& name)
-{ m_player_name = name; }
 
 void ClientApp::SetPlayerID(int id)
 { m_player_id = id; }

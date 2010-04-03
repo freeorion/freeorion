@@ -16,7 +16,7 @@ int main(int argc, char* argv[])
         }
 
         ServerApp g_app;
-        g_app(); // run app (intialization and main process loop)
+        g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
 
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();

@@ -275,6 +275,14 @@ void PythonAI::GenerateOrders() {
     Logger().debugStream() << "PythonAI::GenerateOrders order generating time: " << (order_timer.elapsed() * 1000.0);
 }
 
+void PythonAI::GenerateCombatSetupOrders(const CombatData& combat_data) {
+    AIBase::GenerateCombatSetupOrders(combat_data);
+}
+
+void PythonAI::GenerateCombatOrders(const CombatData& combat_data) {
+    AIBase::GenerateCombatOrders(combat_data);
+}
+
 void PythonAI::HandleChatMessage(int sender_id, const std::string& msg) {
     try {
         // call Python function that responds or ignores a chat message

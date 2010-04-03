@@ -24,9 +24,8 @@ public:
     ClientApp();
     virtual ~ClientApp();
     //@}
-   
+
     /** \name Accessors */ //@{   
-    const std::string&      PlayerName() const;       ///< returns the player name of this client
     int                     PlayerID() const;         ///< returns the player ID of this client
     int                     EmpireID() const;         ///< returns the empire ID of this client
     int                     CurrentTurn() const;      ///< returns the current game turn
@@ -72,7 +71,6 @@ public:
 
 protected:
     /** \name Mutators */ //@{
-    void SetPlayerName(const std::string& name);        ///< sets the player name of this client
     void SetPlayerID(int id);                           ///< sets the player ID of this client
     void SetEmpireID(int id);                           ///< sets the empire ID of this client
     void SetCurrentTurn(int turn);                      ///< sets the current game turn
@@ -85,7 +83,6 @@ protected:
     OrderSet                  m_orders;
     CombatOrderSet            m_combat_orders;
     ClientNetworking          m_networking;
-    std::string               m_player_name;
     int                       m_player_id;
     int                       m_empire_id;
     int                       m_current_turn;
