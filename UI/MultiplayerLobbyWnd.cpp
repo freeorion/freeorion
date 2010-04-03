@@ -6,6 +6,8 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Serialize.h"
 
+#include <GG/Layout.h>
+
 #if defined(_MSC_VER)
   // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
   // in boost/cstdint.h when compiling under windows
@@ -29,6 +31,7 @@
 
 namespace {
     const GG::Y PLAYER_ROW_HEIGHT(22);
+    const GG::Y ROW_HEIGHT_PAD(6);
     const GG::X EMPIRE_NAME_WIDTH(170);
 
     struct PlayerRow : GG::ListBox::Row
@@ -44,16 +47,25 @@ namespace {
 
     struct NewGamePlayerRow : PlayerRow
     {
-        NewGamePlayerRow(const PlayerSetupData& player_data, bool disabled) : 
+        NewGamePlayerRow(const PlayerSetupData& player_data, bool disabled) :
             PlayerRow(player_data)
         {
-            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
+            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
+
+            // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+
+            // empire name editable text
             CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
+
+            // empire colour selector
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
+
+            // empty text for spacing consistency with LoadGamePlayerRow
+            push_back("", ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
             if (disabled) {
                 edit->Disable();
@@ -79,15 +91,18 @@ namespace {
 
     struct LoadGamePlayerRow : PlayerRow
     {
-        LoadGamePlayerRow(const PlayerSetupData& player_data, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool host, bool disabled) : 
+        LoadGamePlayerRow(const PlayerSetupData& player_data, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool host, bool disabled) :
             PlayerRow(player_data),
             m_empire_list(0),
             m_save_game_empire_data(save_game_empire_data)
         {
-            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + 6));
+            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
+
+            // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
-            m_empire_list =
-                new CUIDropDownList(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
+
+            // droplist to select empire
+            m_empire_list = new CUIDropDownList(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
@@ -104,9 +119,13 @@ namespace {
                 }
             }
             push_back(m_empire_list);
+
+            // empire colour selector (disabled, so acts as colour indicator)
             m_color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(m_color_selector);
+
+            // original empire player name from saved game
             push_back(save_game_empire_it != m_save_game_empire_data.end() ? save_game_empire_it->second.m_player_name : "",
                       ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
@@ -166,6 +185,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     m_players_lb_player_name_column_label(0),
     m_players_lb_empire_name_column_label(0),
     m_players_lb_empire_colour_column_label(0),
+    m_players_lb_empire_original_name_label(0),
     m_players_lb(0),
     m_start_game_bn(0),
     m_cancel_bn(0),
@@ -204,19 +224,30 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     GG::Y y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
-    m_players_lb_player_name_column_label = new GG::TextControl(x, y, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+    m_players_lb_player_name_column_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
                                                                 UserString("MULTIPLAYER_PLAYER_LIST_NAMES"),
                                                                 ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-    x += EMPIRE_NAME_WIDTH + CONTROL_MARGIN;
 
-    m_players_lb_empire_name_column_label = new GG::TextControl(x, y, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+    m_players_lb_empire_name_column_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
                                                                 UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"),
                                                                 ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
-    x += EMPIRE_NAME_WIDTH;
 
-    m_players_lb_empire_colour_column_label = new GG::TextControl(x, y, ClientWidth() - x - CONTROL_MARGIN, TEXT_HEIGHT,
+    m_players_lb_empire_colour_column_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
                                                                   UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"),
                                                                   ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+
+    m_players_lb_empire_original_name_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+                                                                  UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
+                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+
+    GG::Layout* layout = new GG::Layout(x, y, ClientWidth() - CONTROL_MARGIN - x, TEXT_HEIGHT, 1, 4);
+    layout->SetMinimumRowHeight(0, TEXT_HEIGHT);
+    layout->Add(m_players_lb_player_name_column_label, 0, 0);
+    layout->Add(m_players_lb_empire_name_column_label, 0, 1);
+    layout->Add(m_players_lb_empire_colour_column_label, 0, 2);
+    layout->Add(m_players_lb_empire_original_name_label, 0, 3);
+    AttachChild(layout);
+    m_players_lb_empire_original_name_label->Hide();
 
     y += TEXT_HEIGHT + CONTROL_MARGIN;
     x = CHAT_WIDTH + CONTROL_MARGIN;
@@ -244,9 +275,6 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(
     AttachChild(m_galaxy_setup_panel);
     AttachChild(m_saved_games_list);
     AttachChild(m_preview_image);
-    AttachChild(m_players_lb_player_name_column_label);
-    AttachChild(m_players_lb_empire_name_column_label);
-    AttachChild(m_players_lb_empire_colour_column_label);
     AttachChild(m_players_lb);
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);
@@ -428,13 +456,14 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
         }
     }
 
+    m_players_lb->SetNumCols(4);
+    m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
+    m_players_lb->SetColAlignment(3, GG::ALIGN_RIGHT);
+
     if (m_lobby_data.m_new_game) {
-        m_players_lb->SetNumCols(3);
-        m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
+        m_players_lb_empire_original_name_label->Hide();
     } else {
-        m_players_lb->SetNumCols(4);
-        m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
-        m_players_lb->SetColAlignment(3, GG::ALIGN_RIGHT);
+        m_players_lb_empire_original_name_label->Show();
     }
 
     if (m_host)
