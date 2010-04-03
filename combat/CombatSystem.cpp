@@ -261,7 +261,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     if (combat_info.objects.Empty())
         return;
 
-    System* system = GetObject<System>(combat_info.system_id);
+    const System* system = combat_info.objects.Object<System>(combat_info.system_id);
     if (!system) {
         Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     }
