@@ -26,7 +26,7 @@ CombatInfo::CombatInfo() :
 {}
 
 CombatInfo::CombatInfo(int system_id_) :
-system_id(system_id_)
+    system_id(system_id_)
 {
     const Universe& universe = GetUniverse();
     const ObjectMap& universe_objects = universe.Objects();
@@ -150,6 +150,70 @@ const System* CombatInfo::GetSystem() const {
 
 System* CombatInfo::GetSystem() {
     return this->objects.Object<System>(this->system_id);
+}
+
+void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_empire_ids = this->empire_ids;
+        return;
+    }
+    // TODO: include only empires that the encoding empire knows are present in the system / battle
+    filtered_empire_ids = this->empire_ids; // for now, include all empires involved in battle
+}
+
+void CombatInfo::GetObjectsToSerialize(ObjectMap& filtered_objects, int encoding_empire) const {
+    if (&filtered_objects == &this->objects)
+        return;
+
+    filtered_objects.Clear();
+
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_objects = this->objects;
+        return;
+    }
+    // TODO: include only objects that the encoding empire has visibility of
+    //       using the combat visibility system.
+    filtered_objects = this->objects;       // for now, include all objects in battle / system
+}
+
+void CombatInfo::GetEmpireKnownObjectsToSerialize(std::map<int, ObjectMap>& filtered_empire_known_objects, int encoding_empire) const {
+    if (&filtered_empire_known_objects == &this->empire_known_objects)
+        return;
+
+    for (std::map<int, ObjectMap>::iterator it = filtered_empire_known_objects.begin(); it != filtered_empire_known_objects.end(); ++it)
+        it->second.Clear();
+    filtered_empire_known_objects.clear();
+
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_empire_known_objects = this->empire_known_objects;
+        return;
+    }
+
+    // include only latest known objects for the encoding empire
+    std::map<int, ObjectMap>::const_iterator it = this->empire_known_objects.find(encoding_empire);
+    if (it != this->empire_known_objects.end()) {
+        const ObjectMap& map = it->second;
+        filtered_empire_known_objects[encoding_empire].Copy(map, ALL_EMPIRES);
+    }
+}
+
+void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroyed_objects, int encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_destroyed_objects = this->destroyed_object_ids;
+        return;
+    }
+    // TODO: decide if some filtering is needed for destroyed objects... it may not be.
+    filtered_destroyed_objects = this->destroyed_object_ids;
+}
+
+void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >& filtered_destroyed_object_knowers, int encoding_empire) const {
+    if (encoding_empire == ALL_EMPIRES) {
+        filtered_destroyed_object_knowers = this->destroyed_object_knowers;
+        return;
+    }
+    // TODO: decide if some filtering is needed for which empires know about which
+    // other empires know which objects have been destroyed during the battle.
+    filtered_destroyed_object_knowers = this->destroyed_object_knowers;
 }
 
 ////////////////////////////////////////////////
