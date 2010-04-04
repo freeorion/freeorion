@@ -45,10 +45,9 @@ namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/3.0);
     const double    ZOOM_IN_MAX_STEPS = 9.0;
     const double    ZOOM_IN_MIN_STEPS = -4.0;   // negative zoom steps indicates zooming out
-    const int       ZOOM_TOTAL_STEPS = ZOOM_IN_MAX_STEPS + 1 + ZOOM_IN_MIN_STEPS;
+    const int       ZOOM_TOTAL_STEPS = static_cast<const int>(ZOOM_IN_MAX_STEPS + 1.0 + ZOOM_IN_MIN_STEPS);
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
-    const GG::X     END_TURN_BTN_WIDTH(60);
     const GG::X     SITREP_PANEL_WIDTH(400);
     const GG::Y     SITREP_PANEL_HEIGHT(300);
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
@@ -600,13 +599,18 @@ MapWnd::MapWnd() :
     m_design_wnd->Hide();
 
 
-    // turn button
-    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), END_TURN_BTN_WIDTH, "");
-    m_toolbar->AttachChild(m_turn_update);
-    GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
-
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X BUTTON_TOTAL_MARGIN(8);
+
+
+    // turn button
+    // determine size from the text that will go into the button, using a test year string
+    std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
+    GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + BUTTON_TOTAL_MARGIN;
+    // create button using determined width
+    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), button_width, turn_button_longest_reasonable_text);
+    m_toolbar->AttachChild(m_turn_update);
+    GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
 
     // FPS indicator
@@ -648,7 +652,7 @@ MapWnd::MapWnd() :
 
 
     // Menu button
-    GG::X button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
+    button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
     m_btn_menu = new SettableInWindowCUIButton(m_toolbar->LowerRight().x - button_width - GG::X(LAYOUT_MARGIN),
                                                GG::Y(LAYOUT_MARGIN),
                                                button_width, UserString("MAP_BTN_MENU") );
@@ -3214,6 +3218,12 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
     GG::Y app_height = GG::GUI::GetGUI()->AppHeight();
     GG::X map_margin_width(app_width / 2.0);
 
+    //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
+    //          << " to_x: " << Value(move_to_pt.x) << " to_y: " << Value(move_to_pt.y) << std::endl;;
+
+    // restrict map positions to prevent map from being dragged too far off screen.
+    // add extra padding to restrictions when universe to be shown is larger than
+    // the screen area in which to show it.
     if (app_width - map_margin_width < contents_width || Value(app_height) - map_margin_width < contents_width) {
         if (map_margin_width < move_to_pt.x)
             move_to_pt.x = map_margin_width;
@@ -3222,7 +3232,7 @@ void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
         if (map_margin_width < Value(move_to_pt.y))
             move_to_pt.y = GG::Y(Value(map_margin_width));
         if (Value(move_to_pt.y) + contents_width < Value(app_height) - map_margin_width)
-            move_to_pt.y = app_height - Value(map_margin_width - contents_width);
+            move_to_pt.y = app_height - Value(map_margin_width) - Value(contents_width);
     } else {
         if (move_to_pt.x < 0)
             move_to_pt.x = GG::X0;
