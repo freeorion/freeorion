@@ -703,24 +703,39 @@ namespace {
 
         // loop through resolved combat infos, updating actual main universe
         // with changes from combat
-        for (std::map<int, CombatInfo>::const_iterator it = system_combat_info.begin();
-             it != system_combat_info.end();
-             ++it)
+        for (std::map<int, CombatInfo>::const_iterator system_it = system_combat_info.begin();
+             system_it != system_combat_info.end();
+             ++system_it)
         {
-            const CombatInfo& combat_info = it->second;
+            const CombatInfo& combat_info = system_it->second;
+
+            //// DEBUG
+            //const System* combat_system = combat_info.GetSystem();
+            //Logger().debugStream() << "DisseminateSystemCombatInfo for combat at " << (combat_system ? combat_system->Name() : "(No System)");
+            //Logger().debugStream() << "objects:";
+            //combat_info.objects.Dump();
+            //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin(); eko_it != combat_info.empire_known_objects.end(); ++eko_it) {
+            //    Logger().debugStream() << "known objects for empire " << eko_it->first;
+            //    eko_it->second.Dump();
+            //}
+            //// END DEBUG
+
 
             // copy actual state of objects in combat after it was resolved
             universe.Objects().Copy(combat_info.objects);
 
 
             // copy empires' latest known state of objects in combat after it was resolved
-            for (std::map<int, ObjectMap>::const_iterator empire_it = combat_info.empire_known_objects.begin();
-                 empire_it != combat_info.empire_known_objects.end();
-                 ++empire_it)
+            for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin();
+                 eko_it != combat_info.empire_known_objects.end();
+                 ++eko_it)
             {
-                const ObjectMap& combat_known_objects = empire_it->second;
-                int empire_id = it->first;
+                const ObjectMap& combat_known_objects = eko_it->second;
+                int empire_id = eko_it->first;
                 ObjectMap& actual_known_objects = universe.EmpireKnownObjects(empire_id);
+
+                //Logger().debugStream() << "copying known objects from combat to main gamestate for empire " << empire_id;
+
                 actual_known_objects.Copy(combat_known_objects);
             };
 
@@ -728,11 +743,11 @@ namespace {
             // destroy in main universe objects that were destroyed in combat,
             // and any associated objects that should now logically also be
             // destroyed
-            for (std::set<int>::const_iterator destroyed_it = combat_info.destroyed_object_ids.begin();
-                 destroyed_it != combat_info.destroyed_object_ids.end();
-                 ++destroyed_it)
+            for (std::set<int>::const_iterator do_it = combat_info.destroyed_object_ids.begin();
+                 do_it != combat_info.destroyed_object_ids.end();
+                 ++do_it)
             {
-                int destroyed_object_id = *destroyed_it;
+                int destroyed_object_id = *do_it;
                 universe.RecursiveDestroy(destroyed_object_id);
             }
 
@@ -743,12 +758,12 @@ namespace {
             // be empires in this battle that otherwise couldn't see the object
             // as determined for galaxy map purposes, but which do know it has
             // been destroyed from having observed it during the battle.
-            for (std::map<int, std::set<int> >::const_iterator empire_it = combat_info.destroyed_object_knowers.begin();
-                 empire_it != combat_info.destroyed_object_knowers.end();
-                 ++empire_it)
+            for (std::map<int, std::set<int> >::const_iterator dok_it = combat_info.destroyed_object_knowers.begin();
+                 dok_it != combat_info.destroyed_object_knowers.end();
+                 ++dok_it)
             {
-                int empire_id = empire_it->first;
-                const std::set<int>& object_ids = empire_it->second;
+                int empire_id = dok_it->first;
+                const std::set<int>& object_ids = dok_it->second;
 
                 for (std::set<int>::const_iterator object_it = object_ids.begin(); object_it != object_ids.end(); ++object_it) {
                     int object_id = *object_it;
@@ -1015,6 +1030,17 @@ void ServerApp::ProcessCombats()
     // various systems' CombatInfo structs
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
         CombatInfo& combat_info = it->second;
+
+        //// DEBUG
+        //const System* combat_system = combat_info.GetSystem();
+        //Logger().debugStream() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
+        //Logger().debugStream() << "objects:";
+        //combat_info.objects.Dump();
+        //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin(); eko_it != combat_info.empire_known_objects.end(); ++eko_it) {
+        //    Logger().debugStream() << "known objects for empire " << eko_it->first;
+        //    eko_it->second.Dump();
+        //}
+        //// END DEBUG
 
         // TODO: Remove this up-front check when the 3D combat system is in
         // place

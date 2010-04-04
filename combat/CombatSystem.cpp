@@ -144,6 +144,13 @@ void CombatInfo::Clear() {
     destroyed_object_knowers.clear();
 }
 
+const System* CombatInfo::GetSystem() const {
+    return this->objects.Object<System>(this->system_id);
+}
+
+System* CombatInfo::GetSystem() {
+    return this->objects.Object<System>(this->system_id);
+}
 
 ////////////////////////////////////////////////
 // AutoResolveCombat
