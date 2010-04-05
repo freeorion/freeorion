@@ -110,11 +110,13 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
             this->m_moving_to =             copied_fleet->m_moving_to;
             this->m_travel_route =          copied_fleet->m_travel_route;
             this->m_travel_distance =       copied_fleet->m_travel_distance;
+            this->m_arrived_this_turn =     copied_fleet->m_arrived_this_turn;
+            this->m_arrival_starlane =      copied_fleet->m_arrival_starlane;
 
         } else {
             int             moving_to =         copied_fleet->m_next_system;
             std::list<int>  travel_route;
-            double          travel_distance =   copied_fleet->m_travel_distance;;
+            double          travel_distance =   copied_fleet->m_travel_distance;
 
             const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
