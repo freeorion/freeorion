@@ -338,7 +338,7 @@ BuildingTypeManager::BuildingTypeManager()
         return;
     }
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),

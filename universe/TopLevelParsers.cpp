@@ -8,7 +8,7 @@
 #include "Condition.h"
 #include "ShipDesign.h"
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
@@ -23,9 +23,9 @@ rule<Scanner, HullClosure::context_t>           hull_p;
 rule<Scanner, ShipDesignClosure::context_t>     ship_design_p;
 rule<Scanner, FleetPlanClosure::context_t>      fleet_plan_p;
 
-struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect::EffectsGroup*,
-                                                    Condition::ConditionBase*, Condition::ConditionBase*,
-                                                    std::string, std::vector<Effect::EffectBase*> >
+struct EffectsGroupClosure : boost::spirit::classic::closure<EffectsGroupClosure, Effect::EffectsGroup*,
+                                                             Condition::ConditionBase*, Condition::ConditionBase*,
+                                                             std::string, std::vector<Effect::EffectBase*> >
 {
     member1 this_;
     member2 scope;
@@ -34,12 +34,12 @@ struct EffectsGroupClosure : boost::spirit::closure<EffectsGroupClosure, Effect:
     member5 effects;
 };
 
-struct EffectsGroupVecClosure : boost::spirit::closure<EffectsGroupVecClosure, std::vector<boost::shared_ptr<const Effect::EffectsGroup> > >
+struct EffectsGroupVecClosure : boost::spirit::classic::closure<EffectsGroupVecClosure, std::vector<boost::shared_ptr<const Effect::EffectsGroup> > >
 {
     member1 this_;
 };
 
-struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlotType, double, double>
+struct SlotClosure : boost::spirit::classic::closure<SlotClosure, HullType::Slot, ShipSlotType, double, double>
 {
     member1 this_;
     member2 slot_type;
@@ -47,12 +47,12 @@ struct SlotClosure : boost::spirit::closure<SlotClosure, HullType::Slot, ShipSlo
     member4 y;
 };
 
-struct SlotVecClosure : boost::spirit::closure<SlotVecClosure, std::vector<HullType::Slot> >
+struct SlotVecClosure : boost::spirit::classic::closure<SlotVecClosure, std::vector<HullType::Slot> >
 {
     member1 this_;
 };
 
-struct ShipSlotTypeVecClosure : boost::spirit::closure<ShipSlotTypeVecClosure, std::vector<ShipSlotType> >
+struct ShipSlotTypeVecClosure : boost::spirit::classic::closure<ShipSlotTypeVecClosure, std::vector<ShipSlotType> >
 {
     member1 this_;
 };

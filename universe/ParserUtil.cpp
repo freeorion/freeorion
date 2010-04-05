@@ -7,7 +7,7 @@
 #include <cstring>
 
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 const Skip skip_p;

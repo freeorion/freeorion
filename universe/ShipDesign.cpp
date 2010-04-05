@@ -244,7 +244,7 @@ PartTypeManager::PartTypeManager() {
         return;
     }
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
@@ -765,7 +765,7 @@ HullTypeManager::HullTypeManager() {
         return;
     }
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),
@@ -1299,7 +1299,7 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
         return;
     }
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     using namespace phoenix;
     parse_info<const char*> result =
         parse(input.c_str(),

@@ -8,7 +8,7 @@
 #include <stdexcept>
 #include <string>
 
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -206,9 +206,9 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
         os << std::string(description_column - 1, ' ');
 
         std::vector<std::string> tokenized_strings;
-        using boost::spirit::anychar_p;
-        using boost::spirit::rule;
-        using boost::spirit::space_p;
+        using boost::spirit::classic::anychar_p;
+        using boost::spirit::classic::rule;
+        using boost::spirit::classic::space_p;
         rule<> tokenizer = +(*space_p >> (+(anychar_p - space_p))[PushBack(tokenized_strings)]);
         parse(UserString(it->second.description).c_str(), tokenizer);
         int curr_column = description_column;

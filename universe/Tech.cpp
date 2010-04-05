@@ -430,7 +430,7 @@ TechManager::TechManager()
         return;
     }
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     using namespace phoenix;
 
     std::set<std::string> categories_seen_in_techs;

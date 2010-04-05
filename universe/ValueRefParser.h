@@ -11,14 +11,14 @@ template <class T>
 struct ValueRefRule
 {
     typedef ValueRef::ValueRefBase<T> RefBase;
-    struct Closure : boost::spirit::closure<Closure, RefBase*, RefBase*, RefBase*>
+    struct Closure : boost::spirit::classic::closure<Closure, RefBase*, RefBase*, RefBase*>
     {
-        typedef boost::spirit::closure<Closure, RefBase*, RefBase*, RefBase*> BaseClass;
+        typedef boost::spirit::classic::closure<Closure, RefBase*, RefBase*, RefBase*> BaseClass;
         typename BaseClass::member1 this_;
         typename BaseClass::member2 operand1;
         typename BaseClass::member3 operand2;
     };
-    typedef boost::spirit::rule<Scanner, typename Closure::context_t> type;
+    typedef boost::spirit::classic::rule<Scanner, typename Closure::context_t> type;
 };
 
 typedef ValueRefRule<int>::type IntValueRefRule;

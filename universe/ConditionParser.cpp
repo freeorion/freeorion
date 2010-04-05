@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 extern rule<Scanner, ConditionClosure::context_t> condition1_p;

@@ -34,7 +34,7 @@
 #include <log4cpp/PatternLayout.hh>
 #include <log4cpp/FileAppender.hh>
 
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -661,7 +661,7 @@ std::ostream& operator<<(std::ostream& os, const StreamableColor& clr)
 
 std::istream& operator>>(std::istream& is, StreamableColor& clr)
 {
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     rule<> color_p =
         ch_p('(') >> *space_p >>
         int_p[assign(clr.r)] >> *space_p >> ',' >> *space_p >>

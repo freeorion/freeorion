@@ -4,7 +4,7 @@
 #include "ValueRefParser.h"
 #include "Condition.h"
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 extern ParamLabel low_label;
@@ -32,21 +32,21 @@ namespace {
         ConditionParser2Definition();
 
     private:
-        struct WithinDistanceClosure : boost::spirit::closure<WithinDistanceClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>
+        struct WithinDistanceClosure : boost::spirit::classic::closure<WithinDistanceClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 distance;
             member3 condition;
         };
 
-        struct WithinStarlaneJumpsClosure : boost::spirit::closure<WithinStarlaneJumpsClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct WithinStarlaneJumpsClosure : boost::spirit::classic::closure<WithinStarlaneJumpsClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 jumps;
             member3 condition;
         };
 
-        struct NumberClosure : boost::spirit::closure<NumberClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct NumberClosure : boost::spirit::classic::closure<NumberClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 high;
@@ -54,39 +54,39 @@ namespace {
             member4 condition;
         };
 
-        struct TurnClosure : boost::spirit::closure<TurnClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
+        struct TurnClosure : boost::spirit::classic::closure<TurnClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
             member2 high;
             member3 low;
         };
 
-        struct NumberOfClosure : boost::spirit::closure<NumberOfClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct NumberOfClosure : boost::spirit::classic::closure<NumberOfClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 number;
             member3 condition;
         };
 
-        struct NameParamClosure : boost::spirit::closure<NameParamClosure, Condition::ConditionBase*, std::string>
+        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Condition::ConditionBase*, std::string>
         {
             member1 this_;
             member2 name;
         };
 
-        struct ConditionParamClosure : boost::spirit::closure<ConditionParamClosure, Condition::ConditionBase*, Condition::ConditionBase*>
+        struct ConditionParamClosure : boost::spirit::classic::closure<ConditionParamClosure, Condition::ConditionBase*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 condition;
         };
 
-        struct StarTypeClosure : boost::spirit::closure<StarTypeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::StarType>*> >
+        struct StarTypeClosure : boost::spirit::classic::closure<StarTypeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::StarType>*> >
         {
             member1 this_;
             member2 types;
         };
 
-        struct DesignHasPartClosure : boost::spirit::closure<DesignHasPartClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, std::string>
+        struct DesignHasPartClosure : boost::spirit::classic::closure<DesignHasPartClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, std::string>
         {
             member1 this_;
             member2 high;
@@ -94,13 +94,13 @@ namespace {
             member4 name;
         };
 
-        struct RandomClosure : boost::spirit::closure<RandomClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
+        struct RandomClosure : boost::spirit::classic::closure<RandomClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 probability;
         };
 
-        struct StockpileClosure : boost::spirit::closure<StockpileClosure, Condition::ConditionBase*, ResourceType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
+        struct StockpileClosure : boost::spirit::classic::closure<StockpileClosure, Condition::ConditionBase*, ResourceType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
@@ -108,7 +108,7 @@ namespace {
             member4 high;
         };
 
-        struct VisibleToEmpireClosure : boost::spirit::closure<VisibleToEmpireClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase<int>*> >
+        struct VisibleToEmpireClosure : boost::spirit::classic::closure<VisibleToEmpireClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase<int>*> >
         {
             member1 this_;
             member2 empires;

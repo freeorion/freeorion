@@ -4,17 +4,17 @@
 
 #include "Parser.h"
 
-struct ParamLabel : public boost::spirit::grammar<ParamLabel>
+struct ParamLabel : public boost::spirit::classic::grammar<ParamLabel>
 {
     ParamLabel(const std::string& param_name) : m_param_name(param_name) {}
     template <typename ScannerT>
     struct definition
     {
         definition(ParamLabel const& self) {
-            r = !(boost::spirit::str_p(self.m_param_name.c_str()) >> '=');
+            r = !(boost::spirit::classic::str_p(self.m_param_name.c_str()) >> '=');
         }
-        boost::spirit::rule<ScannerT> r;
-        boost::spirit::rule<ScannerT> const& start() const {return r;}
+        boost::spirit::classic::rule<ScannerT> r;
+        boost::spirit::classic::rule<ScannerT> const& start() const {return r;}
     };
     const std::string m_param_name;
 };
@@ -38,25 +38,25 @@ struct insert_impl
 };
 extern const phoenix::function<insert_impl> insert_;
 
-extern boost::spirit::rule<Scanner, NameClosure::context_t>     name_p;
-extern boost::spirit::rule<Scanner, NameClosure::context_t>     file_name_p;
-extern boost::spirit::rule<Scanner, ColourClosure::context_t>   colour_p;
+extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     name_p;
+extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     file_name_p;
+extern boost::spirit::classic::rule<Scanner, ColourClosure::context_t>   colour_p;
 
-extern boost::spirit::symbols<bool>                     true_false_p;
+extern boost::spirit::classic::symbols<bool>                     true_false_p;
 
-extern boost::spirit::symbols<PlanetSize>               planet_size_p;
-extern boost::spirit::symbols<PlanetType>               planet_type_p;
-extern boost::spirit::symbols<PlanetEnvironment>        planet_environment_type_p;
-extern boost::spirit::symbols<UniverseObjectType>       universe_object_type_p;
-extern boost::spirit::symbols<StarType>                 star_type_p;
-extern boost::spirit::symbols<FocusType>                focus_type_p;
-extern boost::spirit::symbols<EmpireAffiliationType>    affiliation_type_p;
-extern boost::spirit::symbols<UnlockableItemType>       unlockable_item_type_p;
-extern boost::spirit::symbols<TechType>                 tech_type_p;
-extern boost::spirit::symbols<CombatFighterType>        combat_fighter_type_p;
-extern boost::spirit::symbols<ShipPartClass>            part_class_p;
-extern boost::spirit::symbols<ShipSlotType>             slot_type_p;
+extern boost::spirit::classic::symbols<PlanetSize>               planet_size_p;
+extern boost::spirit::classic::symbols<PlanetType>               planet_type_p;
+extern boost::spirit::classic::symbols<PlanetEnvironment>        planet_environment_type_p;
+extern boost::spirit::classic::symbols<UniverseObjectType>       universe_object_type_p;
+extern boost::spirit::classic::symbols<StarType>                 star_type_p;
+extern boost::spirit::classic::symbols<FocusType>                focus_type_p;
+extern boost::spirit::classic::symbols<EmpireAffiliationType>    affiliation_type_p;
+extern boost::spirit::classic::symbols<UnlockableItemType>       unlockable_item_type_p;
+extern boost::spirit::classic::symbols<TechType>                 tech_type_p;
+extern boost::spirit::classic::symbols<CombatFighterType>        combat_fighter_type_p;
+extern boost::spirit::classic::symbols<ShipPartClass>            part_class_p;
+extern boost::spirit::classic::symbols<ShipSlotType>             slot_type_p;
 
-void ReportError(const char* input, const boost::spirit::parse_info<const char*>& result);
+void ReportError(const char* input, const boost::spirit::classic::parse_info<const char*>& result);
 
 #endif // _ParserUtil_h_

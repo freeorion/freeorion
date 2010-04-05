@@ -4,7 +4,7 @@
 #include "ValueRefParser.h"
 #include "ValueRef.h"
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 IntValueRefRule                 int_expr_p;

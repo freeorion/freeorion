@@ -6,7 +6,7 @@
 #include "Effect.h"
 #include "Condition.h"
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 using namespace phoenix;
 
 rule<Scanner, EffectClosure::context_t> effect_p;
@@ -20,7 +20,7 @@ namespace {
         EffectParserDefinition();
 
     private:
-        struct SetMeterClosure : boost::spirit::closure<SetMeterClosure, Effect::EffectBase*, MeterType, ValueRef::ValueRefBase<double>*, bool>
+        struct SetMeterClosure : boost::spirit::classic::closure<SetMeterClosure, Effect::EffectBase*, MeterType, ValueRef::ValueRefBase<double>*, bool>
         {
             member1 this_;
             member2 meter;
@@ -28,7 +28,7 @@ namespace {
             member4 max_meter;
         };
 
-        struct SetShipPartMeterClosure : boost::spirit::closure<SetShipPartMeterClosure, Effect::EffectBase*, MeterType, ShipPartClass, CombatFighterType, std::string, ValueRef::ValueRefBase<double>*, ShipSlotType>
+        struct SetShipPartMeterClosure : boost::spirit::classic::closure<SetShipPartMeterClosure, Effect::EffectBase*, MeterType, ShipPartClass, CombatFighterType, std::string, ValueRef::ValueRefBase<double>*, ShipSlotType>
         {
             member1 this_;
             member2 meter;
@@ -39,71 +39,71 @@ namespace {
             member7 slot_type;
         };
 
-        struct SetOwnerStockpileClosure : boost::spirit::closure<SetOwnerStockpileClosure, Effect::EffectBase*, ResourceType, ValueRef::ValueRefBase<double>*>
+        struct SetOwnerStockpileClosure : boost::spirit::classic::closure<SetOwnerStockpileClosure, Effect::EffectBase*, ResourceType, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
             member3 value;
         };
 
-        struct SetPlanetTypeClosure : boost::spirit::closure<SetPlanetTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*>
+        struct SetPlanetTypeClosure : boost::spirit::classic::closure<SetPlanetTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct SetPlanetSizeClosure : boost::spirit::closure<SetPlanetSizeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetSize>*>
+        struct SetPlanetSizeClosure : boost::spirit::classic::closure<SetPlanetSizeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetSize>*>
         {
             member1 this_;
             member2 size;
         };
 
-        struct EmpireParamClosure : boost::spirit::closure<EmpireParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
+        struct EmpireParamClosure : boost::spirit::classic::closure<EmpireParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
             member2 empire;
         };
 
-        struct NameParamClosure : boost::spirit::closure<NameParamClosure, Effect::EffectBase*, std::string>
+        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
             member2 name;
         };
 
-        struct ConditionParamClosure : boost::spirit::closure<ConditionParamClosure, Effect::EffectBase*, Condition::ConditionBase*>
+        struct ConditionParamClosure : boost::spirit::classic::closure<ConditionParamClosure, Effect::EffectBase*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 condition;
         };
 
-        struct SetStarTypeClosure : boost::spirit::closure<SetStarTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*>
+        struct SetStarTypeClosure : boost::spirit::classic::closure<SetStarTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct CreatePlanetClosure : boost::spirit::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*,
-                                                            ValueRef::ValueRefBase< ::PlanetSize>*>
+        struct CreatePlanetClosure : boost::spirit::classic::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*,
+                                                                     ValueRef::ValueRefBase< ::PlanetSize>*>
         {
             member1 this_;
             member2 type;
             member3 size;
         };
 
-        struct CreateBuildingClosure : boost::spirit::closure<CreateBuildingClosure, Effect::EffectBase*, std::string>
+        struct CreateBuildingClosure : boost::spirit::classic::closure<CreateBuildingClosure, Effect::EffectBase*, std::string>
         {
             member1 this_;
             member2 type;
         };
 
-        struct CreateShipClosure : boost::spirit::closure<CreateShipClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
+        struct CreateShipClosure : boost::spirit::classic::closure<CreateShipClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
             member2 design_name;
             member3 empire;
         };
 
-        struct SetTechAvailabilityClosure : boost::spirit::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
+        struct SetTechAvailabilityClosure : boost::spirit::classic::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
         {
             member1 this_;
             member2 name;
@@ -317,7 +317,7 @@ namespace {
             [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(set_tech_availability.name, new_<ValueRef::Variable<int> >(false, "Owner"), set_tech_availability.available, set_tech_availability.include_tech)];
 
         effect_p =
-              set_meter[effect_p.this_ = arg1]
+            set_meter[effect_p.this_ = arg1]
             | set_ship_part_meter[effect_p.this_ = arg1]
             | set_owner_stockpile[effect_p.this_ = arg1]
             | set_owner_capitol[effect_p.this_ = arg1]

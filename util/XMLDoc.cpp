@@ -56,7 +56,7 @@
 
 #include "XMLDoc.h"
 
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 
 #include <stdexcept>
 
@@ -68,7 +68,7 @@ namespace {
     std::string element_name;
     std::string attribute_name;
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
 
     typedef chset<unsigned char> chset_t;
     typedef chlit<unsigned char> chlit_t;

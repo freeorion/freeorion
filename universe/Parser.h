@@ -10,9 +10,9 @@
 #include "Tech.h"
 #include "../Empire/Empire.h"
 
-#include <boost/spirit.hpp>
-#include <boost/spirit/attribute.hpp>
-#include <boost/spirit/phoenix.hpp>
+#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/classic_attribute.hpp>
+#include <boost/spirit/include/phoenix1.hpp>
 #include <boost/tuple/tuple.hpp>
 
 #include <stdexcept>
@@ -41,31 +41,31 @@ struct FleetPlan;
 ////////////////////////////////////////////////////////////
 // Scanner                                                //
 ////////////////////////////////////////////////////////////
-struct Skip : boost::spirit::grammar<Skip>
+struct Skip : boost::spirit::classic::grammar<Skip>
 {
     template <class ScannerT>
     struct definition
     {
         definition(const Skip&)
         {
-            using namespace boost::spirit;
+            using namespace boost::spirit::classic;
             skip = space_p | comment_p("//") | comment_p("/*", "*/");
         }
-        boost::spirit::rule<ScannerT> skip;
-        const boost::spirit::rule<ScannerT>& start() const {return skip;}
+        boost::spirit::classic::rule<ScannerT> skip;
+        const boost::spirit::classic::rule<ScannerT>& start() const {return skip;}
     };
 };
 extern const Skip skip_p;
 
-typedef boost::spirit::scanner<const char*, boost::spirit::scanner_policies<boost::spirit::skip_parser_iteration_policy<Skip> > > ScannerBase;
-typedef boost::spirit::as_lower_scanner<ScannerBase>::type Scanner;
+typedef boost::spirit::classic::scanner<const char*, boost::spirit::classic::scanner_policies<boost::spirit::classic::skip_parser_iteration_policy<Skip> > > ScannerBase;
+typedef boost::spirit::classic::as_lower_scanner<ScannerBase>::type Scanner;
 
-struct NameClosure : boost::spirit::closure<NameClosure, std::string>
+struct NameClosure : boost::spirit::classic::closure<NameClosure, std::string>
 {
     member1 this_;
 };
 
-struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, unsigned int, unsigned int, unsigned int, unsigned int>
+struct ColourClosure : boost::spirit::classic::closure<ColourClosure, GG::Clr, unsigned int, unsigned int, unsigned int, unsigned int>
 {
     member1 this_;
     member2 r;
@@ -77,32 +77,32 @@ struct ColourClosure : boost::spirit::closure<ColourClosure, GG::Clr, unsigned i
 ////////////////////////////////////////////////////////////
 // Condition Parser                                       //
 ////////////////////////////////////////////////////////////
-struct ConditionClosure : boost::spirit::closure<ConditionClosure, Condition::ConditionBase*>
+struct ConditionClosure : boost::spirit::classic::closure<ConditionClosure, Condition::ConditionBase*>
 {
     member1 this_;
 };
 
-extern boost::spirit::rule<Scanner, ConditionClosure::context_t> condition_p;
+extern boost::spirit::classic::rule<Scanner, ConditionClosure::context_t> condition_p;
 
 
 ////////////////////////////////////////////////////////////
 // Effect Parser                                          //
 ////////////////////////////////////////////////////////////
-struct EffectClosure : boost::spirit::closure<EffectClosure, Effect::EffectBase*>
+struct EffectClosure : boost::spirit::classic::closure<EffectClosure, Effect::EffectBase*>
 {
     member1 this_;
 };
 
-extern boost::spirit::rule<Scanner, EffectClosure::context_t> effect_p;
+extern boost::spirit::classic::rule<Scanner, EffectClosure::context_t> effect_p;
 
 
 ////////////////////////////////////////////////////////////
 // Top Level Parsers                                      //
 ////////////////////////////////////////////////////////////
-struct BuildingTypeClosure : boost::spirit::closure<BuildingTypeClosure, BuildingType*, std::string,
-                                                    std::string, double, int, double, Condition::ConditionBase*,
-                                                    std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                                    std::string>
+struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure, BuildingType*, std::string,
+                                                             std::string, double, int, double, Condition::ConditionBase*,
+                                                             std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                             std::string>
 {
     member1 this_;
     member2 name;
@@ -115,9 +115,9 @@ struct BuildingTypeClosure : boost::spirit::closure<BuildingTypeClosure, Buildin
     member9 graphic;
 };
 
-struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::string, std::string,
-                                               std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                               std::string>
+struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*, std::string, std::string,
+                                                        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                        std::string>
 {
     member1 this_;
     member2 name;
@@ -126,7 +126,7 @@ struct SpecialClosure : boost::spirit::closure<SpecialClosure, Special*, std::st
     member5 graphic;
 };
 
-struct CategoryClosure : boost::spirit::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>
+struct CategoryClosure : boost::spirit::classic::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>
 {
     member1 this_;
     member2 name;
@@ -134,10 +134,10 @@ struct CategoryClosure : boost::spirit::closure<CategoryClosure, TechCategory*, 
     member4 colour;
 };
 
-struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std::string, std::string,
-                                            std::string, TechType, double, int,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                            std::set<std::string>, std::vector<ItemSpec>, std::string>
+struct TechClosure : boost::spirit::classic::closure<TechClosure, Tech*, std::string, std::string, std::string,
+                                                     std::string, TechType, double, int,
+                                                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                     std::set<std::string>, std::vector<ItemSpec>, std::string>
 {
     member1 this_;
     member2 name;
@@ -153,16 +153,16 @@ struct TechClosure : boost::spirit::closure<TechClosure, Tech*, std::string, std
     member12 graphic;
 };
 
-struct ItemSpecClosure : boost::spirit::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
+struct ItemSpecClosure : boost::spirit::classic::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>
 {
     member1 this_;
     member2 type;
     member3 name;
 };
 
-struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats, double, double,
-                                                 double, double, double, double, CombatFighterType,
-                                                 double, double, double, int>
+struct PartStatsClosure : boost::spirit::classic::closure<PartStatsClosure, PartTypeStats, double, double,
+                                                          double, double, double, double, CombatFighterType,
+                                                          double, double, double, int>
 {
     member1 this_;
     member2 damage;
@@ -178,11 +178,11 @@ struct PartStatsClosure : boost::spirit::closure<PartStatsClosure, PartTypeStats
     member12 capacity;
 };
 
-struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
-                                            PartTypeStats, double, int, std::vector<ShipSlotType>,
-                                            Condition::ConditionBase*,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                            std::string>
+struct PartClosure : boost::spirit::classic::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
+                                                     PartTypeStats, double, int, std::vector<ShipSlotType>,
+                                                     Condition::ConditionBase*,
+                                                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                     std::string>
 {
     member1 this_;
     member2 name;
@@ -197,8 +197,8 @@ struct PartClosure : boost::spirit::closure<PartClosure, PartType*, std::string,
     member11 graphic;
 };
 
-struct HullStatsClosure : boost::spirit::closure<HullStatsClosure, HullTypeStats, double,
-                                                 double, double, double, double>
+struct HullStatsClosure : boost::spirit::classic::closure<HullStatsClosure, HullTypeStats, double,
+                                                          double, double, double, double>
 {
     member1 this_;
     member2 battle_speed;
@@ -208,11 +208,11 @@ struct HullStatsClosure : boost::spirit::closure<HullStatsClosure, HullTypeStats
     member6 health;
 };
 
-struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string, std::string,
-                                            HullTypeStats, double, int, std::vector<HullType::Slot>,
-                                            Condition::ConditionBase*,
-                                            std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
-                                            std::string>
+struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std::string, std::string,
+                                                     HullTypeStats, double, int, std::vector<HullType::Slot>,
+                                                     Condition::ConditionBase*,
+                                                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                     std::string>
 {
     member1 this_;
     member2 name;
@@ -226,9 +226,9 @@ struct HullClosure : boost::spirit::closure<HullClosure, HullType*, std::string,
     member10 graphic;
 };
 
-struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,
-                                                  std::string, std::vector<std::string>,
-                                                  std::string, std::string, bool>
+struct ShipDesignClosure : boost::spirit::classic::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,
+                                                           std::string, std::vector<std::string>,
+                                                           std::string, std::string, bool>
 {
     member1 this_;
     member2 name;
@@ -240,23 +240,23 @@ struct ShipDesignClosure : boost::spirit::closure<ShipDesignClosure, ShipDesign*
     member8 name_desc_in_stringtable;
 };
 
-struct FleetPlanClosure : boost::spirit::closure<FleetPlanClosure, FleetPlan, std::string,
-                                                 std::vector<std::string> >
+struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, FleetPlan, std::string,
+                                                          std::vector<std::string> >
 {
     member1 this_;
     member2 name;
     member3 ship_designs;
 };
 
-extern boost::spirit::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
-extern boost::spirit::rule<Scanner, SpecialClosure::context_t>      special_p;
-extern boost::spirit::rule<Scanner, CategoryClosure::context_t>     category_p;
-extern boost::spirit::rule<Scanner, TechClosure::context_t>         tech_p;
-extern boost::spirit::rule<Scanner, ItemSpecClosure::context_t>     item_spec_p;
-extern boost::spirit::rule<Scanner, PartStatsClosure::context_t>    part_stats_p;
-extern boost::spirit::rule<Scanner, PartClosure::context_t>         part_p;
-extern boost::spirit::rule<Scanner, HullClosure::context_t>         hull_p;
-extern boost::spirit::rule<Scanner, ShipDesignClosure::context_t>   ship_design_p;
-extern boost::spirit::rule<Scanner, FleetPlanClosure::context_t>    fleet_plan_p;
+extern boost::spirit::classic::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
+extern boost::spirit::classic::rule<Scanner, SpecialClosure::context_t>      special_p;
+extern boost::spirit::classic::rule<Scanner, CategoryClosure::context_t>     category_p;
+extern boost::spirit::classic::rule<Scanner, TechClosure::context_t>         tech_p;
+extern boost::spirit::classic::rule<Scanner, ItemSpecClosure::context_t>     item_spec_p;
+extern boost::spirit::classic::rule<Scanner, PartStatsClosure::context_t>    part_stats_p;
+extern boost::spirit::classic::rule<Scanner, PartClosure::context_t>         part_p;
+extern boost::spirit::classic::rule<Scanner, HullClosure::context_t>         hull_p;
+extern boost::spirit::classic::rule<Scanner, ShipDesignClosure::context_t>   ship_design_p;
+extern boost::spirit::classic::rule<Scanner, FleetPlanClosure::context_t>    fleet_plan_p;
 
 #endif // _Parser_h_

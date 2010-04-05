@@ -2,14 +2,14 @@
 
 #include "MultiplayerCommon.h"
 
-#include <boost/spirit.hpp>
-#include <boost/spirit/dynamic/for.hpp>
+#include <boost/spirit/include/classic.hpp>
+#include <boost/spirit/include/classic_for.hpp>
 
 #include <map>
 #include <string>
 #include <vector>
 
-using namespace boost::spirit;
+using namespace boost::spirit::classic;
 
 typedef scanner<file_iterator<> > Scanner;
 typedef rule<Scanner> Rule;

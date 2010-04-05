@@ -4,7 +4,7 @@
 #include "MultiplayerCommon.h"
 #include "../universe/UniverseObject.h"
 
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 
 // Forward declarations
 class Tech;
@@ -110,7 +110,7 @@ void VarText::GenerateVarText(const std::string& template_str)
     // get template string
     std::string final_str;
 
-    using namespace boost::spirit;
+    using namespace boost::spirit::classic;
     rule<> token = *(anychar_p - space_p - END_VAR.c_str());
     rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, final_str)] >> END_VAR.c_str();
     rule<> non_var = anychar_p - START_VAR.c_str();

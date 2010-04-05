@@ -18,7 +18,7 @@
 
 #include <boost/cast.hpp>
 #include <boost/format.hpp>
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/convenience.hpp>
@@ -196,7 +196,7 @@ namespace {
                 return;
             }
             int w, h, bpp;
-            using namespace boost::spirit;
+            using namespace boost::spirit::classic;
             rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
             parse(row->Name().c_str(), resolution_p);
             GetOptionsDB().Set<int>("app-width", w);

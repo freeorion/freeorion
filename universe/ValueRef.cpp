@@ -10,7 +10,7 @@
 #include "../Empire/Empire.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <boost/spirit.hpp>
+#include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string.hpp>
 
 int g_indent = 0;
@@ -18,7 +18,7 @@ int g_indent = 0;
 namespace detail {
     std::vector<std::string> TokenizeDottedReference(const std::string& str)
     {
-        using namespace boost::spirit;
+        using namespace boost::spirit::classic;
         std::vector<std::string> retval;
         rule<> tokenizer = *((+(anychar_p - '.'))[append(retval)] >> !ch_p('.'));
         parse(str.c_str(), tokenizer);
