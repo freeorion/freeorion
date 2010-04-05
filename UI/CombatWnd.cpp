@@ -1194,7 +1194,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
         }
     }
     m_combat_setup_wnd =
-        new CombatSetupWnd(fleets, setup_groups, this, m_scene_manager,
+        new CombatSetupWnd(fleets, setup_groups, this, m_combat_data, m_scene_manager,
                            boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1),
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),

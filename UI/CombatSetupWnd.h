@@ -19,6 +19,7 @@ namespace Ogre {
 
 struct CombatSetupGroup;
 class CombatWnd;
+struct CombatData;
 class Fleet;
 class Ship;
 class ShipDesign;
@@ -30,6 +31,7 @@ public:
     CombatSetupWnd(std::vector<Fleet*> fleets,
                    const std::vector<CombatSetupGroup>& setup_groups,
                    CombatWnd* combat_wnd,
+                   CombatData* combat_data,
                    Ogre::SceneManager* scene_manager,
                    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt&)>
                    intersect_mouse_with_ecliptic,
@@ -74,6 +76,7 @@ private:
     std::map<int, Ogre::Entity*> m_ship_entities;
     std::map<int, Ogre::SceneNode*> m_ship_nodes;
     Ogre::SceneManager* m_scene_manager;
+    CombatData* m_combat_data;
 
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     m_intersect_mouse_with_ecliptic;

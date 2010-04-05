@@ -230,32 +230,54 @@ namespace {
         boost::signals::connection                          m_ship_connection;
     };
 
+    // End of cut-and-pasted stuff
+
     class ShipRow : public GG::ListBox::Row
     {
     public:
-        ShipRow(Ship* ship, GG::X w, GG::Y h) :
+        ShipRow(Ship* ship, Fleet* fleet, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, ""),
             m_ship(ship)
             {
                 SetName("ShipRow");
                 SetChildClippingMode(ClipToClient);
-                push_back(new ShipDataPanel(w, h, m_ship));
+
+                std::vector<GG::X> widths(3);
+                widths[0] = GG::X(275);
+                widths[1] = (w - widths[0]) / 2;
+                widths[2] = w - widths[0] - widths[1];
+
+                push_back(new ShipDataPanel(widths[0], h, m_ship));
+
+                const std::string& fleet_name = fleet->Name();
+                push_back(new GG::TextControl(GG::X0, GG::Y0, widths[1], h, fleet_name,
+                                              ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+
+                std::string arrival_starlane = "Present";
+                if (fleet->ArrivedThisTurn())
+                    arrival_starlane = "From " + GetObject(fleet->ArrivalStarlane())->Name();
+                push_back(new GG::TextControl(GG::X0, GG::Y0, widths[2], h, arrival_starlane,
+                                              ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
+
+                assert(widths[0] != ColWidth(0));
+                assert(widths[1] != ColWidth(1));
+                assert(widths[2] != ColWidth(2));
+                SetColWidths(widths);
             }
 
-        void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-            const GG::Pt old_size = Size();
-            GG::ListBox::Row::SizeMove(ul, lr);
-            //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (!empty() && old_size != Size())
-                at(0)->Resize(Size());
-        }
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+            {
+                const GG::Pt old_size = Size();
+                GG::ListBox::Row::SizeMove(ul, lr);
+                if (!empty() && old_size != Size())
+                    at(0)->Resize(Size());
+            }
 
-        int             ShipID() const {return m_ship->ID();}
+        int ShipID() const
+            { return m_ship->ID(); }
 
-        Ship* const     m_ship;
+        Ship* const m_ship;
     };
-
-    // End of cut-and-pasted stuff
 
     const GG::Y SETUP_WND_HEIGHT(250);
 
@@ -268,6 +290,7 @@ CombatSetupWnd::CombatSetupWnd(
     std::vector<Fleet*> fleets,
     const std::vector<CombatSetupGroup>& setup_groups,
     CombatWnd* combat_wnd,
+    CombatData* combat_data,
     Ogre::SceneManager* scene_manager,
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     intersect_mouse_with_ecliptic,
@@ -281,7 +304,7 @@ CombatSetupWnd::CombatSetupWnd(
     reposition_ship_node,
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
-           GG::X(300), SETUP_WND_HEIGHT, flags),
+           GG::X(500), SETUP_WND_HEIGHT, flags),
     m_setup_groups(setup_groups),
     m_setup_finished_waiting_for_server(false),
     m_dragging_placed_ship(false),
@@ -293,6 +316,7 @@ CombatSetupWnd::CombatSetupWnd(
     m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
     m_scene_manager(scene_manager),
+    m_combat_data(combat_data),
     m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic),
     m_get_ship_material(get_ship_material),
     m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd),
@@ -311,14 +335,15 @@ CombatSetupWnd::CombatSetupWnd(
     GetLayout()->SetRowStretch(1, Value(original_button_height));
     GetLayout()->SetCellMargin(2);
 
-    ObjectMap& objects = GetUniverse().Objects();
     const GG::Pt row_size = ListRowSize();
 
     for (std::size_t i = 0; i < fleets.size(); ++i) {
         for (Fleet::const_iterator it = fleets[i]->begin(); it != fleets[i]->end(); ++it) {
-            ShipRow* row = new ShipRow(objects.Object<Ship>(*it), GG::X1, row_size.y);
+            UniverseObject* o = m_combat_data->m_combat_universe[*it];
+            assert(universe_object_cast<Ship*>(o));
+            Ship* ship = static_cast<Ship*>(o);
+            ShipRow* row = new ShipRow(ship, fleets[i], row_size.x, row_size.y);
             m_listbox->Insert(row);
-            row->Resize(row_size);
         }
     }
 
