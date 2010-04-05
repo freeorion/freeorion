@@ -56,11 +56,11 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
     std::set<int>                   filtered_destroyed_object_ids;
     std::map<int, std::set<int> >   filtered_destroyed_object_knowers;
 
-    GetEmpireIdsToSerialize(                filtered_empire_ids,                s_encoding_empire);
-    GetObjectsToSerialize(                  filtered_objects,                   s_encoding_empire);
-    GetEmpireKnownObjectsToSerialize(       filtered_empire_known_objects,      s_encoding_empire);
-    GetDestroyedObjectsToSerialize(         filtered_destroyed_objects,         s_encoding_empire);
-    GetDestroyedObjectKnowersToSerialize(   filtered_destroyed_object_knowers,  s_encoding_empire);
+    GetEmpireIdsToSerialize(                filtered_empire_ids,                Universe::s_encoding_empire);
+    GetObjectsToSerialize(                  filtered_objects,                   Universe::s_encoding_empire);
+    GetEmpireKnownObjectsToSerialize(       filtered_empire_known_objects,      Universe::s_encoding_empire);
+    GetDestroyedObjectsToSerialize(         filtered_destroyed_object_ids,      Universe::s_encoding_empire);
+    GetDestroyedObjectKnowersToSerialize(   filtered_destroyed_object_knowers,  Universe::s_encoding_empire);
 
     ar  & BOOST_SERIALIZATION_NVP(system_id)
         & BOOST_SERIALIZATION_NVP(filtered_empire_ids)
