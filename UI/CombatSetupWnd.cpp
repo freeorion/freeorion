@@ -307,9 +307,9 @@ namespace {
         }
 
         const std::string UNIT_CIRCLE_MESH_NAME = std::string(allow ? "allow" : "deny") + "_unit_circle_mesh";
+        const std::string RING_MESH_NAME = "deny_ring_mesh";
         const Ogre::ColourValue COLOR(allow ? 0.0 : 1.0, allow ? 1.0 : 0.0, 0.0, 0.5);
 
-        Ogre::MeshPtr unit_circle_mesh = Ogre::MeshManager::getSingleton().getByName("unit_circle_mesh");
         //Ogre::ManualObject* manual_object = new Ogre::ManualObject();
 
         std::string base_name =
@@ -319,13 +319,39 @@ namespace {
 
         switch (region.m_type) {
         case CombatSetupRegion::RING: {
+            // HACK! This currently assumes all rings are starlane exclusion
+            // zones, so we only create one mesh for all RING's and reuse it;
+            // this may need to be generalized later.
+            Ogre::MeshPtr ring_mesh = Ogre::MeshManager::getSingleton().getByName(RING_MESH_NAME);
+            if (ring_mesh.isNull()) {
+                Ogre::ManualObject manual_object("");
+                manual_object.estimateVertexCount(unit_circle_vertices.size() * 2 + 2);
+                manual_object.begin("", Ogre::RenderOperation::OT_TRIANGLE_STRIP);
+                for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
+                    manual_object.position(unit_circle_vertices[i] * region.m_radius_begin);
+                    manual_object.colour(COLOR);
+                    manual_object.position(unit_circle_vertices[i] * region.m_radius_end);
+                    manual_object.colour(COLOR);
+                }
+                manual_object.position(unit_circle_vertices[0] * region.m_radius_begin);
+                manual_object.colour(COLOR);
+                manual_object.position(unit_circle_vertices[0] * region.m_radius_end);
+                manual_object.colour(COLOR);
+                manual_object.end();
+                ring_mesh = manual_object.convertToMesh(RING_MESH_NAME);
+            }
+            Ogre::Entity* entity = scene_manager->createEntity(base_name + "entity", RING_MESH_NAME);
+            entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            entity->setMaterialName("effects/area");
+            retval->attachObject(entity);
             break;
         }
 
         case CombatSetupRegion::ELLIPSE: {
+            Ogre::MeshPtr unit_circle_mesh = Ogre::MeshManager::getSingleton().getByName(UNIT_CIRCLE_MESH_NAME);
             if (unit_circle_mesh.isNull()) {
                 Ogre::ManualObject manual_object("");
-                manual_object.estimateVertexCount(unit_circle_vertices.size());
+                manual_object.estimateVertexCount(unit_circle_vertices.size() + 2);
                 manual_object.begin("", Ogre::RenderOperation::OT_TRIANGLE_FAN);
                 manual_object.position(0.0, 0.0, 0.0);
                 manual_object.colour(COLOR);
