@@ -117,14 +117,12 @@ namespace {
                 double orbit_r = OrbitalRadius(it->first);
                 double rads = planet->OrbitalPositionOnTurn(CurrentTurn());
                 float planet_r = PlanetRadius(planet->Size());
-                // TODO: Exclude planet orbital rings of non-owned planets;
-                // this region just covers the planets themselves.
                 setup_group.m_regions.push_back(
-                    CombatSetupRegion(orbit_r * std::cos(rads), orbit_r * std::sin(rads), planet_r));
+                    CombatSetupRegion(orbit_r * std::cos(rads), orbit_r * std::sin(rads), planet_r * 1.5));
             }
         }
 
-        setup_group.m_regions.push_back(CombatSetupRegion(0.0, 0.0, StarRadius()));
+        setup_group.m_regions.push_back(CombatSetupRegion(0.0, 0.0, StarRadius() / 2.0));
 
         // provide a gap between the nearest point on the ellipse and the
         // allowed placement area.
@@ -438,7 +436,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
 {
     using OpenSteer::SphereObstacle;
     using OpenSteer::Vec3;
-    m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius(), Vec3()));
+    m_pathing_engine.AddObstacle(new SphereObstacle(StarRadius() / 2.0, Vec3()));
 
     ObjectMap& objects = GetUniverse().Objects();
 

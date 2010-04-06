@@ -655,13 +655,13 @@ double OrbitalRadius(unsigned int orbit)
 }
 
 double StarlaneEntranceOrbitalRadius()
-{ return 1000.0 + 25.0; }
+{ return SystemRadius() - StarlaneEntranceRadialAxis(); }
 
 double StarlaneEntranceRadialAxis()
-{ return 20.0; }
+{ return 40.0; }
 
 double StarlaneEntranceTangentAxis()
-{ return 40.0; }
+{ return 80.0; }
 
 double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
 {
