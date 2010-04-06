@@ -4,8 +4,6 @@ material effects/area {
         pass {
             cull_hardware none
             cull_software none
-            depth_check off
-            depth_write off
             lighting off
             scene_blend modulate
         }
