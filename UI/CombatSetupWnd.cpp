@@ -294,7 +294,7 @@ namespace {
         Ogre::SceneNode* retval = 0;
 
         const int SLICES = 100;
-        const double INCR = 2.0 * Ogre::Math::PI / SLICES;
+        const double INCR = Ogre::Math::TWO_PI / SLICES;
         static std::vector<Ogre::Vector3> unit_circle_vertices;
         if (unit_circle_vertices.empty()) {
             unit_circle_vertices.resize(SLICES);
@@ -428,7 +428,7 @@ CombatSetupWnd::CombatSetupWnd(
     add_ship_node_to_combat_wnd,
     boost::function<Ogre::MovableObject* (const GG::Pt&)>
     get_object_under_pt,
-    boost::function<void (int, const Ogre::Vector3&)>
+    boost::function<void (int, const Ogre::Vector3&, const Ogre::Quaternion&)>
     reposition_ship_node,
     boost::function<void (const Ogre::Vector3&)>
     look_at,
@@ -533,7 +533,12 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
                     const Ship* const * ship =
                         Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
                     assert(ship);
-                    m_reposition_ship_node((*ship)->ID(), intersection.second);
+                    m_reposition_ship_node(
+                        (*ship)->ID(),
+                        intersection.second,
+                        Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
+                                                      std::atan2(-intersection.second.y, -intersection.second.x)),
+                                         Ogre::Vector3(0.0, 0.0, 1.0)));
                     CreateCombatOrder((*ship)->ID(), m_button_press_placed_ship_node);
                 }
             }
@@ -576,6 +581,10 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
         if (intersection.first) {
             node->setVisible(true);
             node->setPosition(intersection.second);
+            node->setOrientation(
+                Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
+                                              std::atan2(-intersection.second.y, -intersection.second.x)),
+                                 Ogre::Vector3(0.0, 0.0, 1.0)));
         } else {
             node->setVisible(false);
         }

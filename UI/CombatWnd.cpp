@@ -181,6 +181,9 @@ namespace {
     btVector3 ToCollision(const Ogre::Vector3& vec)
     { return btVector3(vec.x, vec.y, vec.z); }
 
+    btQuaternion ToCollision(const Ogre::Quaternion& q)
+    { return btQuaternion(q.x, q.y, q.z, q.w); }
+
     btVector3 ToCollision(const OpenSteer::Vec3& vec)
     { return btVector3(vec.x, vec.y, vec.z); }
 
@@ -1137,11 +1140,11 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                 std::string planet_name =
                     "orbit " + boost::lexical_cast<std::string>(it->first) + " planet";
 
-                const Ogre::Real DELTA_THETA = 2.0 * Ogre::Math::PI / ASTEROIDS;
+                const Ogre::Real DELTA_THETA = Ogre::Math::TWO_PI / ASTEROIDS;
                 Ogre::Real theta = 0.0;
                 for (int i = 0; i < ASTEROIDS; ++i, theta += DELTA_THETA) {
                     const Ogre::Real THICKNESS = AsteroidBeltRadius() * 2.0;
-                    Ogre::Radian yaw(2.0 * Ogre::Math::PI * RandZeroToOne());
+                    Ogre::Radian yaw(Ogre::Math::TWO_PI * RandZeroToOne());
                     Ogre::Vector3 position;
                     position.z = THICKNESS * (RandZeroToOne() - 0.5);
                     position.y =
@@ -1187,7 +1190,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),
                            boost::bind(&CombatWnd::GetObjectUnderPt, this, _1),
-                           boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2),
+                           boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2, _3),
                            boost::bind(&CombatWnd::LookAtPosition, this, _1));
     AttachChild(m_combat_setup_wnd);
 }
@@ -1890,6 +1893,7 @@ void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* en
     collision_object->getWorldTransform().setBasis(scaled);
 #endif
     collision_object->getWorldTransform().setOrigin(ToCollision(node->getPosition()));
+    collision_object->getWorldTransform().setRotation(ToCollision(node->getOrientation()));
     collision_object->setCollisionShape(collision_shape);
     m_collision_world->addCollisionObject(collision_object);
     collision_object->setUserPointer(static_cast<Ogre::MovableObject*>(entity));
@@ -1898,13 +1902,17 @@ void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* en
         ShipData(node, material, collision_mesh, collision_shape, collision_object);
 }
 
-void CombatWnd::RepositionShipNode(int ship_id, const Ogre::Vector3& position)
+void CombatWnd::RepositionShipNode(int ship_id,
+                                   const Ogre::Vector3& position,
+                                   const Ogre::Quaternion& orientation)
 {
     assert(m_ship_assets.find(ship_id) != m_ship_assets.end());
     ShipData& ship_data = m_ship_assets[ship_id];
     ship_data.m_node->setPosition(position);
+    ship_data.m_node->setOrientation(orientation);
     ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
     m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+    ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
     m_collision_world->addCollisionObject(ship_data.m_bt_object);
 }
 

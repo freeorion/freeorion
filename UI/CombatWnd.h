@@ -139,7 +139,9 @@ private:
     const Ogre::MaterialPtr& GetShipMaterial(const ShipDesign& ship_design);
     void AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
                      const Ogre::MaterialPtr& material);
-    void RepositionShipNode(int ship_id, const Ogre::Vector3& position);
+    void RepositionShipNode(int ship_id,
+                            const Ogre::Vector3& position,
+                            const Ogre::Quaternion& orientation);
     void AddCombatShip(const CombatShipPtr& combat_ship);
     void RemoveCombatShip(const CombatShipPtr& combat_ship);
 

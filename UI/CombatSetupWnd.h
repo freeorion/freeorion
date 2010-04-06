@@ -12,6 +12,7 @@ namespace Ogre {
     class Material;
     class MaterialPtr;
     class MovableObject;
+    class Quaternion;
     class SceneManager;
     class SceneNode;
     class Vector3;
@@ -41,7 +42,7 @@ public:
                    add_ship_node_to_combat_wnd,
                    boost::function<Ogre::MovableObject* (const GG::Pt&)>
                    get_object_under_pt,
-                   boost::function<void (int, const Ogre::Vector3&)>
+                   boost::function<void (int, const Ogre::Vector3&, const Ogre::Quaternion&)>
                    reposition_ship_node,
                    boost::function<void (const Ogre::Vector3&)>
                    look_at,
@@ -91,7 +92,7 @@ private:
     m_add_ship_node_to_combat_wnd;
     boost::function<Ogre::MovableObject* (const GG::Pt&)>
     m_get_object_under_pt;
-    boost::function<void (int, const Ogre::Vector3&)>
+    boost::function<void (int, const Ogre::Vector3&, const Ogre::Quaternion&)>
     m_reposition_ship_node;
     boost::function<void (const Ogre::Vector3&)>
     m_look_at;
