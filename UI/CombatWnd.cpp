@@ -1187,7 +1187,8 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),
                            boost::bind(&CombatWnd::GetObjectUnderPt, this, _1),
-                           boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2));
+                           boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2),
+                           boost::bind(&CombatWnd::LookAtPosition, this, _1));
     AttachChild(m_combat_setup_wnd);
 }
 
@@ -1312,13 +1313,13 @@ void CombatWnd::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         EndSelectionDrag();
 }
 
-void CombatWnd::LookAt(Ogre::SceneNode* look_at_node)
+void CombatWnd::LookAtNode(Ogre::SceneNode* look_at_node)
 {
     m_look_at_scene_node = look_at_node;
-    LookAt(m_look_at_scene_node->_getDerivedPosition());
+    LookAtPosition(m_look_at_scene_node->_getDerivedPosition());
 }
 
-void CombatWnd::LookAt(const Ogre::Vector3& look_at_point)
+void CombatWnd::LookAtPosition(const Ogre::Vector3& look_at_point)
 {
     const Ogre::Vector3 DISTANCE = look_at_point - m_look_at_point;
     m_look_at_point = look_at_point;
@@ -1408,11 +1409,11 @@ void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
                 Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
                 assert(clicked_scene_node);
-                LookAt(clicked_scene_node);
+                LookAtNode(clicked_scene_node);
             } else {
                 std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
                 if (intersection.first)
-                    LookAt(intersection.second);
+                    LookAtPosition(intersection.second);
             }
         }
     } else {

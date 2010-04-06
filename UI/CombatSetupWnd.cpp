@@ -430,6 +430,8 @@ CombatSetupWnd::CombatSetupWnd(
     get_object_under_pt,
     boost::function<void (int, const Ogre::Vector3&)>
     reposition_ship_node,
+    boost::function<void (const Ogre::Vector3&)>
+    look_at,
     GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE*/) :
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(500), SETUP_WND_HEIGHT, flags),
@@ -450,7 +452,8 @@ CombatSetupWnd::CombatSetupWnd(
     m_get_ship_material(get_ship_material),
     m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd),
     m_get_object_under_pt(get_object_under_pt),
-    m_reposition_ship_node(reposition_ship_node)
+    m_reposition_ship_node(reposition_ship_node),
+    m_look_at(look_at)
 {
     m_listbox->SetStyle(m_listbox->Style() | GG::LIST_SINGLESEL);
     Connect(m_done_button->ClickedSignal, &CombatSetupWnd::DoneButtonClicked, this);
@@ -646,6 +649,10 @@ void CombatSetupWnd::UpdatePlacementIndicators(const Ship* ship)
                         }
                     }
                     m_current_setup_group = i;
+                    if (m_setup_groups[m_current_setup_group].m_allow &&
+                        m_region_nodes_by_setup_group[m_current_setup_group].size() == 1u) {
+                        m_look_at(m_region_nodes_by_setup_group[m_current_setup_group].back()->getPosition());
+                    }
                 }
                 break;
             }

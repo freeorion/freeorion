@@ -43,6 +43,8 @@ public:
                    get_object_under_pt,
                    boost::function<void (int, const Ogre::Vector3&)>
                    reposition_ship_node,
+                   boost::function<void (const Ogre::Vector3&)>
+                   look_at,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE);
     ~CombatSetupWnd();
 
@@ -91,6 +93,8 @@ private:
     m_get_object_under_pt;
     boost::function<void (int, const Ogre::Vector3&)>
     m_reposition_ship_node;
+    boost::function<void (const Ogre::Vector3&)>
+    m_look_at;
 };
 
 #endif // _CombatSetupWnd_h_

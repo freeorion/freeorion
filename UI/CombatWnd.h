@@ -125,8 +125,8 @@ private:
 
     void RenderLensFlare();
 
-    void LookAt(Ogre::SceneNode* look_at_node);
-    void LookAt(const Ogre::Vector3& look_at_point);
+    void LookAtNode(Ogre::SceneNode* look_at_node);
+    void LookAtPosition(const Ogre::Vector3& look_at_point);
     void Zoom(int move, GG::Flags<GG::ModKey> mod_keys);
     void HandleRotation(const GG::Pt& delta);
     void UpdateCameraPosition();
