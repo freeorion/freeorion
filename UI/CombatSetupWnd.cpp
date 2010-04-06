@@ -294,10 +294,10 @@ namespace {
         Ogre::SceneNode* retval = 0;
 
         const int SLICES = 100;
+        const double INCR = 2.0 * Ogre::Math::PI / SLICES;
         static std::vector<Ogre::Vector3> unit_circle_vertices;
         if (unit_circle_vertices.empty()) {
             unit_circle_vertices.resize(SLICES);
-            const double INCR = 2.0 * Ogre::Math::PI / SLICES;
             for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
                 double theta = i * INCR;
                 unit_circle_vertices[i].x = std::cos(theta);
@@ -309,8 +309,6 @@ namespace {
         const std::string UNIT_CIRCLE_MESH_NAME = std::string(allow ? "allow" : "deny") + "_unit_circle_mesh";
         const std::string RING_MESH_NAME = "deny_ring_mesh";
         const Ogre::ColourValue COLOR(allow ? 0.0 : 1.0, allow ? 1.0 : 0.0, 0.0, 0.5);
-
-        //Ogre::ManualObject* manual_object = new Ogre::ManualObject();
 
         std::string base_name =
             boost::lexical_cast<std::string>(group_index) + "_" +
@@ -368,6 +366,34 @@ namespace {
             entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
             entity->setMaterialName("effects/area");
             retval->attachObject(entity);
+            break;
+        }
+
+        case CombatSetupRegion::PARTIAL_ELLIPSE: {
+            Ogre::ManualObject* manual_object = new Ogre::ManualObject(base_name + "manual_object");
+            manual_object->estimateVertexCount(unit_circle_vertices.size());
+            manual_object->begin("effects/area", Ogre::RenderOperation::OT_TRIANGLE_FAN);
+            manual_object->position(0.0, 0.0, 0.0);
+            manual_object->colour(COLOR);
+            manual_object->position(std::cos(region.m_theta_begin), std::sin(region.m_theta_begin), 0.0);
+            manual_object->colour(COLOR);
+            for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
+                double theta = i * INCR;
+                if (region.m_theta_begin < theta && theta < region.m_theta_end) {
+                    manual_object->position(unit_circle_vertices[i]);
+                    manual_object->colour(COLOR);
+                }
+            }
+            manual_object->position(std::cos(region.m_theta_end), std::sin(region.m_theta_end), 0.0);
+            manual_object->colour(COLOR);
+            manual_object->end();
+            manual_object->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            retval->attachObject(manual_object);
+            break;
+        }
+        }
+
+        if (region.m_type == CombatSetupRegion::ELLIPSE || region.m_type == CombatSetupRegion::PARTIAL_ELLIPSE) {
             retval->setPosition(region.m_centroid[0], region.m_centroid[1], 0.0);
             retval->setScale(region.m_radial_axis, region.m_tangent_axis, 1.0);
             // if non-circular, rotate
@@ -376,12 +402,6 @@ namespace {
                     Ogre::Quaternion(Ogre::Radian(std::atan2(region.m_centroid[1], region.m_centroid[0])),
                                      Ogre::Vector3(0.0, 0.0, 1.0)));
             }
-            break;
-        }
-
-        case CombatSetupRegion::PARTIAL_ELLIPSE: {
-            break;
-        }
         }
 
         return retval;
