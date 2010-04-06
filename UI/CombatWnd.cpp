@@ -1181,20 +1181,8 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
         // TODO
     }
 
-    // TODO: For prototyping only!
-    std::vector<Fleet*> fleets;
-    for (std::map<int, UniverseObject*>::iterator it =
-             m_combat_data->m_combat_universe.begin();
-         it != m_combat_data->m_combat_universe.end();
-         ++it) {
-        if (Fleet* fleet = universe_object_cast<Fleet*>(it->second)) {
-            if (fleet->Owners().size() == 1u &&
-                *fleet->Owners().begin() == HumanClientApp::GetApp()->PlayerID())
-                fleets.push_back(fleet);
-        }
-    }
     m_combat_setup_wnd =
-        new CombatSetupWnd(fleets, setup_groups, this, m_combat_data, m_scene_manager,
+        new CombatSetupWnd(setup_groups, this, m_combat_data, m_scene_manager,
                            boost::bind(&CombatWnd::IntersectMouseWithEcliptic, this, _1),
                            boost::bind(&CombatWnd::GetShipMaterial, this, _1),
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),

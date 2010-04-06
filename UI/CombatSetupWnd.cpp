@@ -287,7 +287,6 @@ namespace {
 }
 
 CombatSetupWnd::CombatSetupWnd(
-    std::vector<Fleet*> fleets,
     const std::vector<CombatSetupGroup>& setup_groups,
     CombatWnd* combat_wnd,
     CombatData* combat_data,
@@ -316,7 +315,7 @@ CombatSetupWnd::CombatSetupWnd(
     m_selected_placeable_ship(0),
     m_placeable_ship_node(0),
     m_scene_manager(scene_manager),
-    m_combat_data(combat_data),
+    m_combat_universe(combat_data->m_combat_universe),
     m_intersect_mouse_with_ecliptic(intersect_mouse_with_ecliptic),
     m_get_ship_material(get_ship_material),
     m_add_ship_node_to_combat_wnd(add_ship_node_to_combat_wnd),
@@ -337,12 +336,17 @@ CombatSetupWnd::CombatSetupWnd(
 
     const GG::Pt row_size = ListRowSize();
 
-    for (std::size_t i = 0; i < fleets.size(); ++i) {
-        for (Fleet::const_iterator it = fleets[i]->begin(); it != fleets[i]->end(); ++it) {
-            UniverseObject* o = m_combat_data->m_combat_universe[*it];
+    for (std::size_t i = 0; i < m_setup_groups.size(); ++i) {
+        for (std::set<int>::const_iterator it = m_setup_groups[i].m_ships.begin();
+             it != m_setup_groups[i].m_ships.end();
+             ++it) {
+            UniverseObject* o = m_combat_universe[*it];
             assert(universe_object_cast<Ship*>(o));
             Ship* ship = static_cast<Ship*>(o);
-            ShipRow* row = new ShipRow(ship, fleets[i], row_size.x, row_size.y);
+            o = m_combat_universe[ship->FleetID()];
+            assert(universe_object_cast<Fleet*>(o));
+            Fleet* fleet = static_cast<Fleet*>(o);
+            ShipRow* row = new ShipRow(ship, fleet, row_size.x, row_size.y);
             m_listbox->Insert(row);
         }
     }

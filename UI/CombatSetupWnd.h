@@ -23,13 +23,13 @@ struct CombatData;
 class Fleet;
 class Ship;
 class ShipDesign;
+class UniverseObject;
 
 class CombatSetupWnd :
     public CUIWnd
 {
 public:
-    CombatSetupWnd(std::vector<Fleet*> fleets,
-                   const std::vector<CombatSetupGroup>& setup_groups,
+    CombatSetupWnd(const std::vector<CombatSetupGroup>& setup_groups,
                    CombatWnd* combat_wnd,
                    CombatData* combat_data,
                    Ogre::SceneManager* scene_manager,
@@ -76,7 +76,7 @@ private:
     std::map<int, Ogre::Entity*> m_ship_entities;
     std::map<int, Ogre::SceneNode*> m_ship_nodes;
     Ogre::SceneManager* m_scene_manager;
-    CombatData* m_combat_data;
+    std::map<int, UniverseObject*> m_combat_universe;
 
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     m_intersect_mouse_with_ecliptic;
