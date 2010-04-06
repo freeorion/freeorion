@@ -14,12 +14,18 @@
 
 #include <OgreEntity.h>
 #include <OgreMaterialManager.h>
+#include <OgreMeshManager.h>
 #include <OgreSceneManager.h>
 
 #include <boost/cast.hpp>
 
 
 namespace {
+
+    const GG::Y SETUP_WND_HEIGHT(250);
+
+    // HACK! This must be kept in synch with CombatWnd.cpp.
+    const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
 
     // HACK! These functions and classes were cut-and-pasted from FleetWnd.
     // If they continue to be used without modification, move them into a
@@ -279,11 +285,88 @@ namespace {
         Ship* const m_ship;
     };
 
-    const GG::Y SETUP_WND_HEIGHT(250);
+    Ogre::SceneNode* CreatePlacementRegionNode(Ogre::SceneManager* scene_manager,
+                                               const CombatSetupRegion& region,
+                                               bool allow,
+                                               std::size_t group_index,
+                                               std::size_t region_index)
+    {
+        Ogre::SceneNode* retval = 0;
 
-    // HACK! This must be kept in synch with CombatWnd.cpp.
-    const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
+        const int SLICES = 100;
+        static std::vector<Ogre::Vector3> unit_circle_vertices;
+        if (unit_circle_vertices.empty()) {
+            unit_circle_vertices.resize(SLICES);
+            const double INCR = 2.0 * Ogre::Math::PI / SLICES;
+            for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
+                double theta = i * INCR;
+                unit_circle_vertices[i].x = std::cos(theta);
+                unit_circle_vertices[i].y = std::sin(theta);
+                unit_circle_vertices[i].z = 0.0;
+            }
+        }
 
+        const std::string UNIT_CIRCLE_MESH_NAME = std::string(allow ? "allow" : "deny") + "_unit_circle_mesh";
+        const Ogre::ColourValue COLOR(allow ? 0.0 : 1.0, allow ? 1.0 : 0.0, 0.0, 0.5);
+
+        Ogre::MeshPtr unit_circle_mesh = Ogre::MeshManager::getSingleton().getByName("unit_circle_mesh");
+        //Ogre::ManualObject* manual_object = new Ogre::ManualObject();
+
+        std::string base_name =
+            boost::lexical_cast<std::string>(group_index) + "_" +
+            boost::lexical_cast<std::string>(region_index) + "_";
+        retval = scene_manager->getRootSceneNode()->createChildSceneNode(base_name + "node");
+
+        switch (region.m_type) {
+        case CombatSetupRegion::RING: {
+            break;
+        }
+
+        case CombatSetupRegion::ELLIPSE: {
+            if (unit_circle_mesh.isNull()) {
+                Ogre::ManualObject manual_object("");
+                manual_object.estimateVertexCount(unit_circle_vertices.size());
+                manual_object.begin("", Ogre::RenderOperation::OT_TRIANGLE_FAN);
+                manual_object.position(0.0, 0.0, 0.0);
+                manual_object.colour(COLOR);
+                for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
+                    manual_object.position(unit_circle_vertices[i]);
+                    manual_object.colour(COLOR);
+                }
+                manual_object.position(unit_circle_vertices[0]);
+                manual_object.colour(COLOR);
+                manual_object.end();
+                unit_circle_mesh = manual_object.convertToMesh(UNIT_CIRCLE_MESH_NAME);
+            }
+            Ogre::Entity* entity = scene_manager->createEntity(base_name + "entity", UNIT_CIRCLE_MESH_NAME);
+            entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            entity->setMaterialName("effects/area");
+            retval->attachObject(entity);
+            retval->setPosition(region.m_centroid[0], region.m_centroid[1], 0.0);
+            retval->setScale(region.m_radial_axis, region.m_tangent_axis, 1.0);
+            // if non-circular, rotate
+            if (region.m_radial_axis != region.m_tangent_axis) {
+                retval->setOrientation(
+                    Ogre::Quaternion(Ogre::Radian(std::atan2(region.m_centroid[1], region.m_centroid[0])),
+                                     Ogre::Vector3(0.0, 0.0, 1.0)));
+            }
+            break;
+        }
+
+        case CombatSetupRegion::PARTIAL_ELLIPSE: {
+            break;
+        }
+        }
+
+        return retval;
+    }
+
+    void SetRegionNodesVisibility(const std::vector<Ogre::SceneNode*>& nodes, bool visible)
+    {
+        for (std::size_t i = 0; i < nodes.size(); ++i) {
+            nodes[i]->setVisible(visible);
+        }
+    }
 }
 
 CombatSetupWnd::CombatSetupWnd(
@@ -305,6 +388,7 @@ CombatSetupWnd::CombatSetupWnd(
     CUIWnd("Ships", GG::X(PAD), GG::GUI::GetGUI()->AppHeight() - SETUP_WND_HEIGHT - GG::Y(PAD),
            GG::X(500), SETUP_WND_HEIGHT, flags),
     m_setup_groups(setup_groups),
+    m_current_setup_group(m_setup_groups.size()),
     m_setup_finished_waiting_for_server(false),
     m_dragging_placed_ship(false),
     m_button_press_on_placed_ship(INVALID_PRESS_POS),
@@ -463,10 +547,12 @@ void CombatSetupWnd::PlaceableShipSelected_(const GG::ListBox::SelectionSet& sel
     assert(sels.size() <= 1u);
     if (sels.empty()) {
         PlaceableShipSelected(0);
+        UpdatePlacementIndicators(0);
     } else {
         GG::ListBox::Row* row = **sels.begin();
         ShipRow* ship_row = boost::polymorphic_downcast<ShipRow*>(row);
         PlaceableShipSelected(const_cast<Ship*>(ship_row->m_ship));
+        UpdatePlacementIndicators(ship_row->m_ship);
     }
 }
 
@@ -490,6 +576,37 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
             }
             m_placeable_ship_node = node;
         }
+    }
+}
+
+void CombatSetupWnd::UpdatePlacementIndicators(const Ship* ship)
+{
+    if (m_selected_placeable_ship) {
+        for (std::size_t i = 0; i < m_setup_groups.size(); ++i) {
+            if (m_setup_groups[i].m_ships.find(m_selected_placeable_ship->ID()) !=
+                m_setup_groups[i].m_ships.end()) {
+                if (m_current_setup_group != i) {
+                    if (m_current_setup_group < m_setup_groups.size())
+                        SetRegionNodesVisibility(m_region_nodes_by_setup_group[m_current_setup_group], false);
+                    if (m_region_nodes_by_setup_group.find(i) != m_region_nodes_by_setup_group.end()) {
+                        SetRegionNodesVisibility(m_region_nodes_by_setup_group[i], true);
+                    } else {
+                        CombatSetupGroup& group = m_setup_groups[i];
+                        for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
+                            Ogre::SceneNode* node =
+                                CreatePlacementRegionNode(m_scene_manager, group.m_regions[j],
+                                                          group.m_allow, i, j);
+                            m_region_nodes_by_setup_group[i].push_back(node);
+                        }
+                    }
+                    m_current_setup_group = i;
+                }
+                break;
+            }
+        }
+    } else {
+        if (m_current_setup_group < m_setup_groups.size())
+            SetRegionNodesVisibility(m_region_nodes_by_setup_group[m_current_setup_group], false);
     }
 }
 

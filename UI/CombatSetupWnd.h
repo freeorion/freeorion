@@ -57,11 +57,14 @@ private:
     void CreateCombatOrder(int ship_id, Ogre::SceneNode* node);
     void PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels);
     void PlaceableShipSelected(Ship* ship);
+    void UpdatePlacementIndicators(const Ship* ship);
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
     void DoneButtonClicked();
 
     std::vector<CombatSetupGroup> m_setup_groups;
+    std::map<std::size_t, std::vector<Ogre::SceneNode*> > m_region_nodes_by_setup_group;
+    std::size_t m_current_setup_group;
     std::map<int, CombatOrder> m_placement_orders;
     bool m_setup_finished_waiting_for_server;
     bool m_dragging_placed_ship;
