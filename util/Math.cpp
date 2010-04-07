@@ -27,7 +27,7 @@ namespace {
         v = prod(rotate, v);
 
         if (theta_begin != theta_end) {
-            double theta = std::atan2(y, x);
+            double theta = std::atan2(v(1, 0), v(0, 0));
             if (theta < theta_begin || theta_end < theta)
                 return false;
         }
