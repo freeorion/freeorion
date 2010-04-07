@@ -56,6 +56,7 @@ protected:
 
 private:
     Ogre::SceneNode* PlaceableShipNode() const;
+    bool ValidPlacement(Ship* ship, const Ogre::Vector3& point);
     void HandleMouseMoves(const GG::Pt& pt);
     void CreateCombatOrder(int ship_id, Ogre::SceneNode* node);
     void PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels);

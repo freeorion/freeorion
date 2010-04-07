@@ -5,6 +5,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
+#include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 
@@ -413,6 +414,48 @@ namespace {
             nodes[i]->setVisible(visible);
         }
     }
+
+    std::size_t GroupIndexOfShip(const std::vector<CombatSetupGroup>& setup_groups, const Ship* ship)
+    {
+        std::size_t retval = setup_groups.size();
+        for (std::size_t i = 0; i < setup_groups.size(); ++i) {
+            if (setup_groups[i].m_ships.find(ship->ID()) != setup_groups[i].m_ships.end()) {
+                retval = i;
+                break;
+            }
+        }
+        return retval;
+    }
+
+    bool PointInRegion(const Ogre::Vector3& point, const CombatSetupRegion& region)
+    {
+        bool retval = false;
+        switch (region.m_type) {
+        case CombatSetupRegion::RING: {
+            Ogre::Real range = point.length();
+            retval = region.m_radius_begin < range && range < region.m_radius_end;
+            break;
+        }
+        case CombatSetupRegion::ELLIPSE: {
+            double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
+            retval = PointInEllipse(point.x, point.y,
+                                    region.m_centroid[0], region.m_centroid[1],
+                                    region.m_radial_axis, region.m_tangent_axis,
+                                    theta_major);
+            break;
+        }
+        case CombatSetupRegion::PARTIAL_ELLIPSE: {
+            double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
+            retval = PointInPartialEllipse(point.x, point.y,
+                                           region.m_centroid[0], region.m_centroid[1],
+                                           region.m_radial_axis, region.m_tangent_axis,
+                                           theta_major,
+                                           region.m_theta_begin, region.m_theta_end);
+            break;
+        }
+        }
+        return retval;
+    }
 }
 
 CombatSetupWnd::CombatSetupWnd(
@@ -529,17 +572,16 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
             }
             if (m_dragging_placed_ship) {
                 std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
-                if (intersection.first) {
-                    const Ship* const * ship =
-                        Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
-                    assert(ship);
+                Ship* ship = *Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
+                bool valid_location = intersection.first && ValidPlacement(ship, intersection.second);
+                if (valid_location) {
                     m_reposition_ship_node(
-                        (*ship)->ID(),
+                        ship->ID(),
                         intersection.second,
                         Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
                                                       std::atan2(-intersection.second.y, -intersection.second.x)),
                                          Ogre::Vector3(0.0, 0.0, 1.0)));
-                    CreateCombatOrder((*ship)->ID(), m_button_press_placed_ship_node);
+                    CreateCombatOrder(ship->ID(), m_button_press_placed_ship_node);
                 }
             }
         }
@@ -574,11 +616,31 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 Ogre::SceneNode* CombatSetupWnd::PlaceableShipNode() const
 { return m_selected_placeable_ship ? m_placeable_ship_node : 0; }
 
+bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point)
+{
+    bool retval = false;
+    std::size_t i = GroupIndexOfShip(m_setup_groups, ship);
+    if (i != m_setup_groups.size()) {
+        CombatSetupGroup& group = m_setup_groups[i];
+        retval = !group.m_allow;
+        for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
+            if (PointInRegion(point, group.m_regions[j])) {
+                retval = !retval;
+                break;
+            }
+        }
+    }
+    return retval;
+}
+
 void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
 {
     if (Ogre::SceneNode* node = PlaceableShipNode()) {
         std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(pt);
-        if (intersection.first) {
+        bool valid_location =
+            intersection.first &&
+            ValidPlacement(*Ogre::any_cast<Ship*>(&node->getUserAny()), intersection.second);
+        if (valid_location) {
             node->setVisible(true);
             node->setPosition(intersection.second);
             node->setOrientation(
@@ -633,37 +695,35 @@ void CombatSetupWnd::PlaceableShipSelected(Ship* ship)
                 node->attachObject(entity);
             }
             m_placeable_ship_node = node;
+            m_placeable_ship_node->setVisible(false);
         }
     }
 }
 
 void CombatSetupWnd::UpdatePlacementIndicators(const Ship* ship)
 {
-    if (m_selected_placeable_ship) {
-        for (std::size_t i = 0; i < m_setup_groups.size(); ++i) {
-            if (m_setup_groups[i].m_ships.find(m_selected_placeable_ship->ID()) !=
-                m_setup_groups[i].m_ships.end()) {
-                if (m_current_setup_group != i) {
-                    if (m_current_setup_group < m_setup_groups.size())
-                        SetRegionNodesVisibility(m_region_nodes_by_setup_group[m_current_setup_group], false);
-                    if (m_region_nodes_by_setup_group.find(i) != m_region_nodes_by_setup_group.end()) {
-                        SetRegionNodesVisibility(m_region_nodes_by_setup_group[i], true);
-                    } else {
-                        CombatSetupGroup& group = m_setup_groups[i];
-                        for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
-                            Ogre::SceneNode* node =
-                                CreatePlacementRegionNode(m_scene_manager, group.m_regions[j],
-                                                          group.m_allow, i, j);
-                            m_region_nodes_by_setup_group[i].push_back(node);
-                        }
-                    }
-                    m_current_setup_group = i;
-                    if (m_setup_groups[m_current_setup_group].m_allow &&
-                        m_region_nodes_by_setup_group[m_current_setup_group].size() == 1u) {
-                        m_look_at(m_region_nodes_by_setup_group[m_current_setup_group].back()->getPosition());
+    if (ship) {
+        std::size_t i = GroupIndexOfShip(m_setup_groups, ship);
+        if (i != m_setup_groups.size()) {
+            if (m_current_setup_group != i) {
+                if (m_current_setup_group < m_setup_groups.size())
+                    SetRegionNodesVisibility(m_region_nodes_by_setup_group[m_current_setup_group], false);
+                if (m_region_nodes_by_setup_group.find(i) != m_region_nodes_by_setup_group.end()) {
+                    SetRegionNodesVisibility(m_region_nodes_by_setup_group[i], true);
+                } else {
+                    CombatSetupGroup& group = m_setup_groups[i];
+                    for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
+                        Ogre::SceneNode* node =
+                            CreatePlacementRegionNode(m_scene_manager, group.m_regions[j],
+                                                      group.m_allow, i, j);
+                        m_region_nodes_by_setup_group[i].push_back(node);
                     }
                 }
-                break;
+                m_current_setup_group = i;
+                if (m_setup_groups[m_current_setup_group].m_allow &&
+                    m_region_nodes_by_setup_group[m_current_setup_group].size() == 1u) {
+                    m_look_at(m_region_nodes_by_setup_group[m_current_setup_group].back()->getPosition());
+                }
             }
         }
     } else {
