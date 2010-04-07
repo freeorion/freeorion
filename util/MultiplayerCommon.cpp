@@ -92,7 +92,8 @@ namespace {
                 assert(starlane_it->second.find(owner) != starlane_it->second.end());
                 std::size_t position_among_empires =
                     std::distance(starlane_it->second.begin(), starlane_it->second.find(owner));
-                const double SLICE_SIZE = 1.0 / empires;
+                const double TWO_PI = 8.0 * std::atan(1.0);
+                const double SLICE_SIZE = TWO_PI / empires;
                 const double START = position_among_empires * SLICE_SIZE;
                 setup_group.m_regions.push_back(
                     CombatSetupRegion(x, y, StarlaneEntranceRadialAxis(), StarlaneEntranceTangentAxis(),
