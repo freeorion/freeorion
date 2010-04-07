@@ -1857,7 +1857,7 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
 {
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    std::string modified_material_name = "ship material " + ship_design.Model();
+    std::string modified_material_name = ShipMaterialName(ship_design);
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
@@ -2174,3 +2174,6 @@ Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& sh
 
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
 { return OpenSteer::Vec3(vec.x, vec.y, vec.z); }
+
+std::string ShipMaterialName(const ShipDesign& ship_design)
+{ return "ship material " + ship_design.Model(); }

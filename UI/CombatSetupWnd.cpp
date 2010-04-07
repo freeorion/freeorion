@@ -28,6 +28,8 @@ namespace {
     // HACK! This must be kept in synch with CombatWnd.cpp.
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
 
+    const std::string UNPLACEABLE_MATERIAL_PREFIX = "unplaceable ";
+
     // HACK! These functions and classes were cut-and-pasted from FleetWnd.
     // If they continue to be used without modification, move them into a
     // common location.
@@ -591,8 +593,14 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         m_button_press_placed_ship_node = 0;
         m_mouse_dragged = false;
     } else if (event.Type() == GG::WndEvent::LClick) {
-        Ogre::SceneNode* placement_node = 0;
-        if ((placement_node = PlaceableShipNode()) && IsVisible(*placement_node)) {
+        Ogre::SceneNode* placement_node = PlaceableShipNode();
+        bool valid_placement = false;
+        if (placement_node) {
+            std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
+            Ship* ship = *Ogre::any_cast<Ship*>(&placement_node->getUserAny());
+            valid_placement = intersection.first && ValidPlacement(ship, intersection.second);
+        }
+        if (valid_placement) {
             PlaceCurrentShip();
             retval = true;
         } else if (m_mouse_dragged) {
@@ -637,16 +645,37 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
 {
     if (Ogre::SceneNode* node = PlaceableShipNode()) {
         std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(pt);
-        bool valid_location =
-            intersection.first &&
-            ValidPlacement(*Ogre::any_cast<Ship*>(&node->getUserAny()), intersection.second);
-        if (valid_location) {
+        if (intersection.first) {
+            Ship* ship = *Ogre::any_cast<Ship*>(&node->getUserAny());
+            bool valid_location = ValidPlacement(ship, intersection.second);
             node->setVisible(true);
             node->setPosition(intersection.second);
             node->setOrientation(
                 Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
                                               std::atan2(-intersection.second.y, -intersection.second.x)),
                                  Ogre::Vector3(0.0, 0.0, 1.0)));
+            if (valid_location) {
+                Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
+                assert(iterator.hasMoreElements());
+                boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext())->
+                    setMaterialName(ShipMaterialName(*ship->Design()));
+            } else {
+                std::string base_material_name = ShipMaterialName(*ship->Design());
+                std::string material_name = UNPLACEABLE_MATERIAL_PREFIX + base_material_name;
+                if (!Ogre::MaterialManager::getSingleton().resourceExists(material_name)) {
+                    Ogre::MaterialPtr unmodified_material =
+                        Ogre::MaterialManager::getSingleton().getByName(base_material_name);
+                    Ogre::MaterialPtr material = unmodified_material->clone(material_name);
+                    Ogre::Pass* pass = material->getTechnique(0)->getPass(0);
+                    assert(pass->hasFragmentProgram());
+                    pass->getFragmentProgramParameters()->setNamedConstant("alpha", 0.5f);
+                    pass->setSceneBlending(Ogre::SBF_SOURCE_ALPHA, Ogre::SBF_ONE_MINUS_SOURCE_ALPHA);
+                    pass->setDepthWriteEnabled(false);
+                }
+                Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
+                assert(iterator.hasMoreElements());
+                boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext())->setMaterialName(material_name);
+            }
         } else {
             node->setVisible(false);
         }

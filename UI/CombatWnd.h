@@ -257,5 +257,6 @@ Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Sh
 Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
                                const Ogre::MaterialPtr& material);
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);
+std::string ShipMaterialName(const ShipDesign& ship_design);
 
 #endif

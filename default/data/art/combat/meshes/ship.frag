@@ -1,6 +1,7 @@
 // -*- C++ -*-
 uniform sampler2D color_texture, glow_texture, normal_texture, specular_gloss_texture;
 uniform vec3 star_light_color, skybox_light_color;
+uniform float alpha;
 
 varying vec3 half_angle;
 varying vec3 light_dir;
@@ -24,5 +25,5 @@ void main()
     vec3 glow_color = texture2D(glow_texture, gl_TexCoord[0].st).rgb;
     vec3 color = max(glow_color, diffuse_color * diffuse + vec3(specular) * gloss);
 
-    gl_FragColor = vec4(color, 1.0);
+    gl_FragColor = vec4(color, alpha);
 }
