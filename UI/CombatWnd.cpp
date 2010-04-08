@@ -13,6 +13,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
+#include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
@@ -144,6 +145,45 @@ namespace {
         return GG::Pt(GG::X(static_cast<int>(projection.x * camera.getViewport()->getActualWidth())),
                       GG::Y(static_cast<int>((1.0 - projection.y) * camera.getViewport()->getActualHeight())));
     }
+
+    void GetCameraToViewportRay(const Ogre::Camera& camera,
+                                double screen_x, double screen_y,
+                                double out_ray_origin[3], double out_ray_direction[3])
+    {
+        Matrix projection(4, 4);
+        std::copy(camera.getProjectionMatrix()[0], camera.getProjectionMatrix()[0] + 16,
+                  projection.data().begin());
+
+        Matrix view(4, 4);
+        std::copy(camera.getViewMatrix(true)[0], camera.getViewMatrix(true)[0] + 16, view.data().begin());
+
+        Matrix inverse_vp = Inverse4(prod(projection, view));
+
+        double nx = (2.0 * screen_x) - 1.0;
+        double ny = 1.0 - (2.0 * screen_y);
+        Matrix near_point(3, 1);
+        near_point(0, 0) = nx;
+        near_point(1, 0) = ny;
+        near_point(2, 0) = -1.0;
+        // Use mid_point rather than far point to avoid issues with infinite projection
+        Matrix mid_point(3, 1);
+        mid_point(0, 0) = nx;
+        mid_point(1, 0) = ny;
+        mid_point(2, 0) = 0.0;
+
+        // Get ray origin and ray target on near plane in world space
+        Matrix ray_origin = Matrix4xVector3(inverse_vp, near_point);
+        Matrix ray_target = Matrix4xVector3(inverse_vp, mid_point);
+
+        Matrix ray_direction = ray_target - ray_origin;
+        ray_direction /=
+            ray_direction(0, 0) * ray_direction(0, 0) +
+            ray_direction(1, 0) * ray_direction(1, 0) +
+            ray_direction(2, 0) * ray_direction(2, 0);
+
+        std::copy(ray_origin.data().begin(), ray_origin.data().end(), out_ray_origin);
+        std::copy(ray_direction.data().begin(), ray_direction.data().end(), out_ray_direction);
+    } 
 
     std::string PlanetNodeMaterial(PlanetType type)
     {
@@ -1551,16 +1591,27 @@ void CombatWnd::MissileRemoved(const MissilePtr &missile)
 std::pair<bool, Ogre::Vector3> CombatWnd::IntersectMouseWithEcliptic(const GG::Pt& pt) const
 {
     std::pair<bool, Ogre::Vector3> retval(false, Ogre::Vector3());
-    Ogre::Ray ray = m_camera->getCameraToViewportRay(Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
-                                                     Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()));
-    std::pair<bool, Ogre::Real> intersection =
-        Ogre::Math::intersects(ray, Ogre::Plane(Ogre::Vector3::UNIT_Z, Ogre::Vector3::ZERO));
-    const Ogre::Real MAX_DISTANCE_SQ = SystemRadius() * SystemRadius();
+    double ray_origin[3];
+    double ray_direction[3];
+    GetCameraToViewportRay(*m_camera,
+                           Value(pt.x * 1.0 / GG::GUI::GetGUI()->AppWidth()),
+                           Value(pt.y * 1.0 / GG::GUI::GetGUI()->AppHeight()),
+                           ray_origin, ray_direction);
+    double unit_z[3] = { 0, 0, 1.0 };
+    double origin[3] = { 0, 0, 0 };
+    std::pair<bool, double> intersection = Intersects(ray_origin, ray_direction, unit_z, origin);
     if (intersection.first) {
-        Ogre::Vector3 intersection_point = ray.getPoint(intersection.second);
-        if (intersection_point.squaredLength() < MAX_DISTANCE_SQ) {
+        double point[3] = {
+            ray_origin[0] + ray_direction[0] * intersection.second,
+            ray_origin[1] + ray_direction[1] * intersection.second,
+            ray_origin[2] + ray_direction[2] * intersection.second
+        };
+        const double MAX_DISTANCE_SQ = SystemRadius() * SystemRadius();
+        if ((point[0] * point[0] + point[1] * point[1] + point[2] * point[2]) < MAX_DISTANCE_SQ) {
             retval.first = true;
-            retval.second = intersection_point;
+            retval.second.x = point[0];
+            retval.second.y = point[1];
+            retval.second.z = point[2];
         }
     }
     return retval;
