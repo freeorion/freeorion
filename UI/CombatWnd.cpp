@@ -491,6 +491,25 @@ namespace {
         return delta < EPSILON;
     }
 
+    const Ogre::Vector3& GetSystemColor(const std::string& star_or_skybox_base_name)
+    {
+        static std::map<std::string, Ogre::Vector3> colors;
+        if (colors.empty()) {
+            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "combat" / "backgrounds" / "system_colors.txt");
+            std::string line, name;
+            StreamableColor clr;
+            while (ifs) {
+                std::getline(ifs, line);
+                if (!line.empty() && line[0] != '#') {
+                    std::stringstream ss(line.c_str());
+                    ss >> name >> clr;
+                    colors[name] = Ogre::Vector3(clr.r / 255.0, clr.g / 255.0, clr.b / 255.0);
+                }
+            }
+        }
+        return colors[star_or_skybox_base_name];
+    }
+
     void AddOptions(OptionsDB& db)
     {
         db.AddFlag("tech-demo",             "OPTIONS_DB_TECH_DEMO",                 false);
@@ -1005,14 +1024,10 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
     SetAccelerators();
 
-    assert(StarTextures().find(m_combat_data->m_system->GetStarType()) != StarTextures().end());
-    const std::set<std::string>& star_textures =
-        StarTextures().find(m_combat_data->m_system->GetStarType())->second;
+    const std::string& base_name = StarBaseName();
 
     // pick and assign star textures
     {
-        std::string base_name =
-            *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
         Ogre::MaterialPtr back_material =
             Ogre::MaterialManager::getSingleton().getByName("backgrounds/star_back");
         Ogre::Technique* technique = back_material->getTechnique(0);
@@ -1617,6 +1632,14 @@ std::pair<bool, Ogre::Vector3> CombatWnd::IntersectMouseWithEcliptic(const GG::P
     return retval;
 }
 
+const std::string& CombatWnd::StarBaseName() const
+{
+    assert(StarTextures().find(m_combat_data->m_system->GetStarType()) != StarTextures().end());
+    const std::set<std::string>& star_textures =
+        StarTextures().find(m_combat_data->m_system->GetStarType())->second;
+    return *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
+}
+
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
     Ogre::RenderTarget::FrameStats stats =
@@ -1827,6 +1850,7 @@ void CombatWnd::UpdateStarFromCameraPosition()
 
 void CombatWnd::UpdateSkyBox()
 {
+    // TODO: Select an appropriate skybox, once we have more than one.
     Ogre::String skybox_material_name = "backgrounds/sky_box_1";
     Ogre::Real skybox_distance = 50.0;
     if (GetOptionsDB().Get<bool>("combat.enable-skybox")) {
@@ -1921,6 +1945,11 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
         modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
             setTextureName(ship_design.Model() + "_Specular.png");
     }
+    modified_material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+        setNamedConstant("star_light_color", GetSystemColor(StarBaseName()));
+    // TODO: Use the current skybox, once we have more than one.
+    modified_material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+        setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
     return modified_material;
 }
 

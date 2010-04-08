@@ -119,6 +119,7 @@ private:
     class StencilOpQueueListener;
 
     std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
+    const std::string& StarBaseName() const;
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
