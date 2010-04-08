@@ -5,7 +5,6 @@ uniform float alpha;
 
 varying vec3 half_angle;
 varying vec3 light_dir;
-varying float raw_diffuse;
 
 void main()
 {
@@ -14,12 +13,15 @@ void main()
     const float MAX_SPECULAR_EXPONENT = 32.0;
     float specular_exponent =
         MIN_SPECULAR_EXPONENT + sg.r * (MAX_SPECULAR_EXPONENT - MIN_SPECULAR_EXPONENT);
-    float gloss = 1.0;//sg.g; // TODO: change this when we get a gloss map
+    float gloss = sg.g;
 
     vec3 normal = texture2D(normal_texture, gl_TexCoord[0].st).xyz * 2.0 - 1.0;
 
     float diffuse = max(dot(normal, light_dir), 0.0);
-    float specular = pow(max(dot(normal, half_angle), 0.0), specular_exponent) * raw_diffuse;
+    float specular = pow(max(dot(normal, half_angle), 0.0), specular_exponent);
+
+    // This acts as "if (diffuse == 0.0) specular = 0.0;", without the branch.
+    specular *= sign(max(diffuse, 0.0));
 
     vec3 diffuse_color = texture2D(color_texture, gl_TexCoord[0].st).rgb;
     vec3 glow_color = texture2D(glow_texture, gl_TexCoord[0].st).rgb;

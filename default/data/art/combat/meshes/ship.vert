@@ -4,7 +4,6 @@ uniform vec3 camera_pos;
 
 varying vec3 half_angle;
 varying vec3 light_dir;
-varying float raw_diffuse;
 
 void main()
 {
@@ -15,7 +14,6 @@ void main()
 
     light_dir = normalize(light_pos) * tangent_space;
     half_angle = normalize(eye_dir + light_dir);
-    raw_diffuse = max(dot(normalize(light_pos), gl_Normal), 0.0);
 
     gl_TexCoord[0].st = vec2(gl_MultiTexCoord0);
     gl_Position = ftransform();
