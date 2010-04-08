@@ -2,7 +2,8 @@
 uniform vec3 light_pos;
 uniform vec3 camera_pos;
 
-varying vec3 half_angle;
+varying vec3 star_half_angle;
+varying vec3 skybox_half_angle;
 varying vec3 light_dir;
 
 void main()
@@ -13,7 +14,8 @@ void main()
     vec3 eye_dir = normalize(camera_pos) * tangent_space;
 
     light_dir = normalize(light_pos) * tangent_space;
-    half_angle = normalize(eye_dir + light_dir);
+    star_half_angle = normalize(eye_dir + light_dir);
+    skybox_half_angle = normalize(eye_dir + -light_dir);
 
     gl_TexCoord[0].st = vec2(gl_MultiTexCoord0);
     gl_Position = ftransform();

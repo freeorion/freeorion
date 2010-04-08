@@ -3,7 +3,8 @@ uniform sampler2D color_texture, glow_texture, normal_texture, specular_gloss_te
 uniform vec3 star_light_color, skybox_light_color;
 uniform float alpha;
 
-varying vec3 half_angle;
+varying vec3 star_half_angle;
+varying vec3 skybox_half_angle;
 varying vec3 light_dir;
 
 void main()
@@ -17,15 +18,23 @@ void main()
 
     vec3 normal = texture2D(normal_texture, gl_TexCoord[0].st).xyz * 2.0 - 1.0;
 
-    float diffuse = max(dot(normal, light_dir), 0.0);
-    float specular = pow(max(dot(normal, half_angle), 0.0), specular_exponent);
+    float star_diffuse = max(dot(normal, light_dir), 0.0);
+    float star_specular = pow(max(dot(normal, star_half_angle), 0.0), specular_exponent);
 
-    // This acts as "if (diffuse == 0.0) specular = 0.0;", without the branch.
-    specular *= sign(max(diffuse, 0.0));
+    float skybox_diffuse = max(-dot(normal, light_dir), 0.0);
+    float skybox_specular = pow(max(dot(normal, skybox_half_angle), 0.0), specular_exponent);
 
-    vec3 diffuse_color = texture2D(color_texture, gl_TexCoord[0].st).rgb;
+    // These lines act as "if ([...]_diffuse == 0.0) [...]_specular = 0.0;",
+    // without the branch.
+    star_specular *= sign(max(star_diffuse, 0.0));
+    skybox_specular *= sign(max(skybox_diffuse, 0.0));
+
+    vec3 hull_color = texture2D(color_texture, gl_TexCoord[0].st).rgb;
     vec3 glow_color = texture2D(glow_texture, gl_TexCoord[0].st).rgb;
-    vec3 color = max(glow_color, diffuse_color * diffuse + vec3(specular) * gloss);
+    vec3 color =
+        max(glow_color,
+            (hull_color * star_diffuse + vec3(star_specular) * gloss) * star_light_color +
+            (hull_color * skybox_diffuse + vec3(skybox_specular) * gloss) * skybox_light_color);
 
     gl_FragColor = vec4(color, alpha);
 }
