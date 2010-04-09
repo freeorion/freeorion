@@ -6,6 +6,8 @@
 #include "../UI/StringTable.h"
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
+#include "../util/Math.h"
+#include "../util/Random.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -34,6 +36,8 @@ namespace {
         db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    const double TWO_PI = 8.0 * std::atan(1.0);
 
     const StringTable_& GetStringTable() {
         static std::auto_ptr<StringTable_> string_table(
@@ -92,7 +96,6 @@ namespace {
                 assert(starlane_it->second.find(owner) != starlane_it->second.end());
                 std::size_t position_among_empires =
                     std::distance(starlane_it->second.begin(), starlane_it->second.find(owner));
-                const double TWO_PI = 8.0 * std::atan(1.0);
                 const double SLICE_SIZE = TWO_PI / empires;
                 const double START = position_among_empires * SLICE_SIZE;
                 setup_group.m_regions.push_back(
@@ -136,23 +139,97 @@ namespace {
         setup_group.m_allow = false;
     }
 
-    // TODO: Take into account more of the tactical situation (enemy fleets, etc.)
     void PlaceShips(const System* system,
                     const CombatSetupGroup& setup_group,
+                    const std::map<int, UniverseObject*>& combat_universe,
                     std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
-        // TODO
+        // TODO: Do something other than just random placement.  Take into
+        // account more of the tactical situation (enemy fleets, etc.).
+        for (std::set<int>::const_iterator it = setup_group.m_ships.begin();
+             it != setup_group.m_ships.end();
+             ++it) {
+            assert(combat_universe.find(*it) != combat_universe.end());
+            Ship* ship = static_cast<Ship*>(combat_universe.find(*it)->second);
+#define LIMIT_ITERATIONS 0
+#if LIMIT_ITERATIONS
+            const unsigned int MAX_PLACEMENT_ITERATIONS = 50;
+#endif
+            if (setup_group.m_allow) {
+#if LIMIT_ITERATIONS
+                // TODO: Account for possible lack of room when placing ships.
+                unsigned int iterations = 0;
+                while (iterations++ < MAX_PLACEMENT_ITERATIONS) {
+#else
+                while (1) {
+#endif
+                    CombatSetupRegion region =
+                        setup_group.m_regions[RandSmallInt(0, setup_group.m_regions.size() - 1)];
+                    double min_radius =
+                        region.m_type == CombatSetupRegion::RING ?
+                        region.m_radius_begin :
+                        0.0;
+                    double max_radius =
+                        region.m_type == CombatSetupRegion::RING ?
+                        region.m_radius_end :
+                        std::max(region.m_radial_axis, region.m_tangent_axis);
+                    double min_theta =
+                        region.m_type == CombatSetupRegion::PARTIAL_ELLIPSE ? region.m_theta_begin : 0.0;
+                    double max_theta =
+                        region.m_type == CombatSetupRegion::PARTIAL_ELLIPSE ? region.m_theta_end : TWO_PI;
+                    double r = RandDouble(min_radius, max_radius);
+                    double theta = RandDouble(min_theta, max_theta);
+                    double point[2] = {
+                        region.m_centroid[0] + r * std::cos(theta),
+                        region.m_centroid[1] + r * std::sin(theta)
+                    };
+                    if (PointInRegion(point, region)) {
+                        // TODO: Check for proximity to already-placed ships.
+                        placements[ship].first = OpenSteer::Vec3(point[0], point[1], 0.0);
+                        placements[ship].second = -placements[ship].first;
+                        break;
+                    }
+                }
+            } else {
+#if LIMIT_ITERATIONS
+                // TODO: Account for possible lack of room when placing ships.
+                unsigned int iterations = 0;
+                while (iterations++ < MAX_PLACEMENT_ITERATIONS) {
+#else
+                while (1) {
+#endif
+                    double point[2] = {
+                        RandDouble(-SystemRadius(), SystemRadius()),
+                        RandDouble(-SystemRadius(), SystemRadius())
+                    };
+                    bool valid_location = true;
+                    for (std::size_t i = 0; i < setup_group.m_regions.size(); ++i) {
+                        if (PointInRegion(point, setup_group.m_regions[i])) {
+                            valid_location = false;
+                            break;
+                        }
+                    }
+                    if (valid_location) {
+                        // TODO: Check for proximity to already-placed ships.
+                        placements[ship].first = OpenSteer::Vec3(point[0], point[1], 0.0);
+                        placements[ship].second = -placements[ship].first;
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     void PlaceShips(const System* system,
                     const std::map<int, std::vector<CombatSetupGroup> >& setup_groups,
+                    const std::map<int, UniverseObject*>& combat_universe,
                     std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> >& placements)
     {
         for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
              it != setup_groups.end();
              ++it) {
             for (std::size_t i = 0; i < it->second.size(); ++i) {
-                PlaceShips(system, it->second[i], placements);
+                PlaceShips(system, it->second[i], combat_universe, placements);
             }
         }
     }
@@ -494,7 +571,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
     }
 
     std::map<Ship*, std::pair<OpenSteer::Vec3, OpenSteer::Vec3> > placements;
-    PlaceShips(m_system, setup_groups, placements);
+    PlaceShips(m_system, setup_groups, m_combat_universe, placements);
 
     for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
          it != setup_groups.end();
@@ -581,6 +658,39 @@ CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y,
     m_centroid[1] = centroid_y;
 }
 
+
+////////////////////////////////////////////////
+// PointInRegion()
+////////////////////////////////////////////////
+bool PointInRegion(double point[2], const CombatSetupRegion& region)
+{
+    bool retval = false;
+    switch (region.m_type) {
+    case CombatSetupRegion::RING: {
+        double range = std::sqrt(point[0] * point[0] + point[1] * point[1]);
+        retval = region.m_radius_begin < range && range < region.m_radius_end;
+        break;
+    }
+    case CombatSetupRegion::ELLIPSE: {
+        double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
+        retval = PointInEllipse(point[0], point[1],
+                                region.m_centroid[0], region.m_centroid[1],
+                                region.m_radial_axis, region.m_tangent_axis,
+                                theta_major);
+        break;
+    }
+    case CombatSetupRegion::PARTIAL_ELLIPSE: {
+        double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
+        retval = PointInPartialEllipse(point[0], point[1],
+                                       region.m_centroid[0], region.m_centroid[1],
+                                       region.m_radial_axis, region.m_tangent_axis,
+                                       theta_major,
+                                       region.m_theta_begin, region.m_theta_end);
+        break;
+    }
+    }
+    return retval;
+}
 
 ////////////////////////////////////////////////
 // CombatSetupGroup

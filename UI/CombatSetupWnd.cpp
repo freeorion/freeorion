@@ -428,36 +428,6 @@ namespace {
         }
         return retval;
     }
-
-    bool PointInRegion(const Ogre::Vector3& point, const CombatSetupRegion& region)
-    {
-        bool retval = false;
-        switch (region.m_type) {
-        case CombatSetupRegion::RING: {
-            Ogre::Real range = point.length();
-            retval = region.m_radius_begin < range && range < region.m_radius_end;
-            break;
-        }
-        case CombatSetupRegion::ELLIPSE: {
-            double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
-            retval = PointInEllipse(point.x, point.y,
-                                    region.m_centroid[0], region.m_centroid[1],
-                                    region.m_radial_axis, region.m_tangent_axis,
-                                    theta_major);
-            break;
-        }
-        case CombatSetupRegion::PARTIAL_ELLIPSE: {
-            double theta_major = std::atan2(region.m_centroid[1], region.m_centroid[0]);
-            retval = PointInPartialEllipse(point.x, point.y,
-                                           region.m_centroid[0], region.m_centroid[1],
-                                           region.m_radial_axis, region.m_tangent_axis,
-                                           theta_major,
-                                           region.m_theta_begin, region.m_theta_end);
-            break;
-        }
-        }
-        return retval;
-    }
 }
 
 CombatSetupWnd::CombatSetupWnd(
@@ -632,7 +602,8 @@ bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point) cons
         const CombatSetupGroup& group = m_setup_groups[i];
         retval = !group.m_allow;
         for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
-            if (PointInRegion(point, group.m_regions[j])) {
+            double point_d[2] = { point.x, point.y };
+            if (PointInRegion(point_d, group.m_regions[j])) {
                 retval = !retval;
                 break;
             }

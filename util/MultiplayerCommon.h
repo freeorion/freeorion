@@ -239,6 +239,9 @@ struct CombatSetupRegion
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Returns true iff \a point falls within \a region. */
+bool PointInRegion(double point[2], const CombatSetupRegion& region);
+
 /** A group of ships and a description of where they may be placed. */
 struct CombatSetupGroup
 {
