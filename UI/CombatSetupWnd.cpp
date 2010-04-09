@@ -624,16 +624,31 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 Ogre::SceneNode* CombatSetupWnd::PlaceableShipNode() const
 { return m_selected_placeable_ship ? m_placeable_ship_node : 0; }
 
-bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point)
+bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point) const
 {
     bool retval = false;
     std::size_t i = GroupIndexOfShip(m_setup_groups, ship);
     if (i != m_setup_groups.size()) {
-        CombatSetupGroup& group = m_setup_groups[i];
+        const CombatSetupGroup& group = m_setup_groups[i];
         retval = !group.m_allow;
         for (std::size_t j = 0; j < group.m_regions.size(); ++j) {
             if (PointInRegion(point, group.m_regions[j])) {
                 retval = !retval;
+                break;
+            }
+        }
+    }
+    if (retval) {
+        // verify that this placement is not too near to other ships
+        for (std::map<int, Ogre::SceneNode*>::const_iterator it = m_placed_nodes.begin();
+             it != m_placed_nodes.end();
+             ++it) {
+            Ogre::SceneNode::ObjectIterator iterator = it->second->getAttachedObjectIterator();
+            assert(iterator.hasMoreElements());
+            const Ogre::Sphere& sphere =
+                boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext())->getWorldBoundingSphere();
+            if (sphere.intersects(point)) {
+                retval = false;
                 break;
             }
         }
@@ -789,6 +804,8 @@ void CombatSetupWnd::PlaceCurrentShip()
 
     assert(m_placement_orders.find(ship_id) == m_placement_orders.end());
     CreateCombatOrder(ship_id, m_placeable_ship_node);
+
+    m_placed_nodes[ship_id] = m_ship_nodes[ship_id];
 
     m_ship_entities.erase(ship_id);
     m_ship_nodes.erase(ship_id);
