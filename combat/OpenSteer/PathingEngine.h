@@ -21,6 +21,7 @@ public:
     typedef std::multimap<CombatObjectPtr, CombatObjectWeakPtr> Attackees;
     typedef std::pair<Attackees::const_iterator, Attackees::const_iterator> ConstAttackerRange;
     typedef std::pair<Attackees::iterator, Attackees::iterator> AttackerRange;
+    typedef std::set<CombatObjectPtr>::const_iterator const_iterator;
 
     PathingEngine();
     ~PathingEngine();
@@ -40,6 +41,9 @@ public:
                                      int empire_id) const;
     std::size_t UpdateNumber() const;
     ConstAttackerRange Attackers (const CombatObjectPtr& attackee) const;
+
+    const_iterator begin () const;
+    const_iterator end () const;
 
     void Update(const float current_time, const float elapsed_time);
     void TurnStarted(unsigned int number);

@@ -125,6 +125,12 @@ PathingEngine::ConstAttackerRange
 PathingEngine::Attackers (const CombatObjectPtr& attackee) const
 { return m_attackees.equal_range(attackee); }
 
+PathingEngine::const_iterator PathingEngine::begin () const
+{ return m_objects.begin(); }
+
+PathingEngine::const_iterator PathingEngine::end () const
+{ return m_objects.end(); }
+
 void PathingEngine::TurnStarted(unsigned int number)
 {
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
