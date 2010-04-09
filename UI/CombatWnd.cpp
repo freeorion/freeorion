@@ -230,9 +230,6 @@ namespace {
     Ogre::Vector3 ToOgre(const btVector3& vec)
     { return Ogre::Vector3(vec.x(), vec.y(), vec.z()); }
 
-    Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec)
-    { return Ogre::Vector3(vec.x, vec.y, vec.z); }
-
     OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
     { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
 
@@ -1246,6 +1243,7 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                            boost::bind(&CombatWnd::AddShipNode, this, _1, _2, _3, _4),
                            boost::bind(&CombatWnd::GetObjectUnderPt, this, _1),
                            boost::bind(&CombatWnd::RepositionShipNode, this, _1, _2, _3),
+                           boost::bind(&CombatWnd::RemoveShip, this, _1),
                            boost::bind(&CombatWnd::LookAtPosition, this, _1));
     AttachChild(m_combat_setup_wnd);
 }
@@ -1956,6 +1954,9 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
 void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
                             const Ogre::MaterialPtr& material)
 {
+    if (m_ship_assets.find(ship_id) != m_ship_assets.end())
+        return;
+
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;
@@ -1994,6 +1995,13 @@ void CombatWnd::RepositionShipNode(int ship_id,
     m_collision_world->removeCollisionObject(ship_data.m_bt_object);
     ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
     m_collision_world->addCollisionObject(ship_data.m_bt_object);
+}
+
+void CombatWnd::RemoveShip(int ship_id)
+{
+    ShipData& ship_data = m_ship_assets[ship_id];
+    m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+    ship_data.m_node->setVisible(false);
 }
 
 void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
@@ -2251,6 +2259,9 @@ Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& sh
     entity->setMaterialName(material->getName());
     return entity;
 }
+
+Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec)
+{ return Ogre::Vector3(vec.x, vec.y, vec.z); }
 
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
 { return OpenSteer::Vec3(vec.x, vec.y, vec.z); }

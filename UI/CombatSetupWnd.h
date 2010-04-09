@@ -32,7 +32,7 @@ class CombatSetupWnd :
 public:
     CombatSetupWnd(const std::vector<CombatSetupGroup>& setup_groups,
                    CombatWnd* combat_wnd,
-                   CombatData* combat_data,
+                   const CombatData* combat_data,
                    Ogre::SceneManager* scene_manager,
                    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt&)>
                    intersect_mouse_with_ecliptic,
@@ -44,6 +44,8 @@ public:
                    get_object_under_pt,
                    boost::function<void (int, const Ogre::Vector3&, const Ogre::Quaternion&)>
                    reposition_ship_node,
+                   boost::function<void (int)>
+                   remove_ship,
                    boost::function<void (const Ogre::Vector3&)>
                    look_at,
                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE);
@@ -60,11 +62,15 @@ private:
 
     void HandleMouseMoves(const GG::Pt& pt);
     void CreateCombatOrder(int ship_id, Ogre::SceneNode* node);
+    Ogre::SceneNode* GetShipNode(Ship& ship);
     void PlaceableShipSelected_(const GG::ListBox::SelectionSet& sels);
     void PlaceableShipSelected(Ship* ship);
     void UpdatePlacementIndicators(const Ship* ship);
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
+    void PlaceShip(Ship* ship, Ogre::SceneNode* node);
+    void RedoPlacementsButtonClicked();
+    void AutoPlaceButtonClicked();
     void DoneButtonClicked();
 
     std::vector<CombatSetupGroup> m_setup_groups;
@@ -78,6 +84,8 @@ private:
     bool m_mouse_dragged;
 
     CUIListBox* m_listbox;
+    CUIButton* m_redo_placements_button;
+    CUIButton* m_auto_place_button;
     CUIButton* m_done_button;
     Ship* m_selected_placeable_ship;
     Ogre::SceneNode* m_placeable_ship_node;
@@ -97,6 +105,8 @@ private:
     m_get_object_under_pt;
     boost::function<void (int, const Ogre::Vector3&, const Ogre::Quaternion&)>
     m_reposition_ship_node;
+    boost::function<void (int)>
+    m_remove_ship;
     boost::function<void (const Ogre::Vector3&)>
     m_look_at;
 };
