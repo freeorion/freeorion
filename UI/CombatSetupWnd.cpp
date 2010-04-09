@@ -666,8 +666,8 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
             node->setVisible(true);
             node->setPosition(intersection.second);
             node->setOrientation(
-                Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
-                                              std::atan2(-intersection.second.y, -intersection.second.x)),
+                Ogre::Quaternion(Ogre::Radian(std::atan2(-intersection.second.y, -intersection.second.x) -
+                                              Ogre::Math::HALF_PI),
                                  Ogre::Vector3(0.0, 0.0, 1.0)));
             if (valid_location) {
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
