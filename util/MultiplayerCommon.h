@@ -345,7 +345,9 @@ void CombatData::load(Archive & ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_combat_turn_number)
         & BOOST_SERIALIZATION_NVP(m_system);
     Deserialize(ar, m_combat_universe);
+    PathingEngine::s_combat_universe = &m_combat_universe;
     Deserialize(ar, m_pathing_engine);
+    PathingEngine::s_combat_universe = 0;
 }
 
 template <class Archive>

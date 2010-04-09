@@ -34,7 +34,7 @@ void CombatShip::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
         & BOOST_SERIALIZATION_NVP(m_proximity_token)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_ship)
+        & BOOST_SERIALIZATION_NVP(m_ship_id)
         & BOOST_SERIALIZATION_NVP(m_last_steer)
         & BOOST_SERIALIZATION_NVP(m_mission_queue)
         & BOOST_SERIALIZATION_NVP(m_mission_weight)
@@ -56,6 +56,9 @@ void CombatShip::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_launched_formations)
         & BOOST_SERIALIZATION_NVP(m_instrument)
         & BOOST_SERIALIZATION_NVP(m_last_mission);
+
+    if (Archive::is_loading::value)
+        m_combat_universe = PathingEngine::s_combat_universe;
 }
 
 template <class Archive>

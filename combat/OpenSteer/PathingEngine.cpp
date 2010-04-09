@@ -29,6 +29,7 @@ unsigned int EnemyOfEmpireFlags(int empire_id)
 const std::size_t PathingEngine::TARGET_FPS = 60;
 const std::size_t PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC = 2;
 const std::size_t PathingEngine::UPDATE_SETS = TARGET_FPS / TARGET_OBJECT_UPDATES_PER_SEC;
+const std::map<int, UniverseObject*>* PathingEngine::s_combat_universe = 0;
 
 PathingEngine::PathingEngine() :
     m_next_fighter_id(0),

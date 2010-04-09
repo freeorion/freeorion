@@ -584,7 +584,7 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
                 Ship* ship = static_cast<Ship*>(objects.Object(*ship_it));
                 const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& placement = placements[ship];
                 CombatShipPtr combat_ship(
-                    new CombatShip(ship, placement.first, placement.second, m_pathing_engine));
+                    new CombatShip(ship, placement.first, placement.second, m_combat_universe, m_pathing_engine));
                 m_pathing_engine.AddObject(combat_ship);
             }
         }

@@ -72,6 +72,8 @@ public:
     static const std::size_t TARGET_OBJECT_UPDATES_PER_SEC;
     static const std::size_t UPDATE_SETS;
 
+    static const std::map<int, UniverseObject*>* s_combat_universe;
+
 private:
     void RemoveFighter(const CombatFighterPtr& fighter,
                        std::set<CombatFighterFormationPtr>::iterator formation_it);

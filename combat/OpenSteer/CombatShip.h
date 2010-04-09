@@ -37,8 +37,10 @@ public:
     typedef std::vector<DirectWeapon> SRVec;
     typedef std::list<DirectWeapon> PDList;
 
-    CombatShip(Ship* ship, const OpenSteer::Vec3& position,
-               const OpenSteer::Vec3& direction, PathingEngine& pathing_engine);
+    CombatShip(Ship* ship,
+               const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction,
+               const std::map<int, UniverseObject*>& combat_universe,
+               PathingEngine& pathing_engine);
     ~CombatShip();
 
     Ship& GetShip() const;
@@ -89,7 +91,9 @@ private:
 
     ProximityDBToken* m_proximity_token;
     int m_empire_id;
-    Ship* m_ship;
+    int m_ship_id;
+    const std::map<int, UniverseObject*>* m_combat_universe;
+
     OpenSteer::Vec3 m_last_steer;
 
     std::list<ShipMission> m_mission_queue;
