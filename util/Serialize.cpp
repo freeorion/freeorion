@@ -516,11 +516,13 @@ template <class Archive>
 void PathingEngine::serialize(Archive& ar, const unsigned int version)
 {
     std::set<CombatObjectPtr> objects;
-    for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
-         it != m_objects.end();
-         ++it) {
-        // TODO: only copy the objects that are visible from m_objects into objects
-        objects.insert(*it);
+    if (Archive::is_saving::value) {
+        for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
+             it != m_objects.end();
+             ++it) {
+            // TODO: only copy the objects that are visible from m_objects into objects
+            objects.insert(*it);
+        }
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_next_fighter_id)
@@ -530,6 +532,9 @@ void PathingEngine::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_attackees)
         & BOOST_SERIALIZATION_NVP(m_proximity_database)
         & BOOST_SERIALIZATION_NVP(m_obstacles);
+
+    if (Archive::is_loading::value)
+        m_objects.swap(objects);
 }
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire)
