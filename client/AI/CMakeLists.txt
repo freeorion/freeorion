@@ -57,7 +57,10 @@ set(THIS_EXE_SOURCES
     ../../util/OrderSet.cpp
     ../../util/Process.cpp
     ../../util/Random.cpp
-    ../../util/Serialize.cpp
+    ../../util/SerializeEmpire.cpp
+    ../../util/SerializeOrderSet.cpp
+    ../../util/SerializePathingEngine.cpp
+    ../../util/SerializeUniverse.cpp
     ../../util/SitRepEntry.cpp
     ../../util/VarText.cpp
     ../../util/binreloc.c
