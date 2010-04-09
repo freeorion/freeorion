@@ -86,24 +86,7 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            std::set<CombatObjectPtr> objects;
-            for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
-                 it != m_objects.end();
-                 ++it) {
-                // TODO: only copy the objects that are visible from m_objects into objects
-                objects.insert(*it);
-            }
-
-            ar  & BOOST_SERIALIZATION_NVP(m_next_fighter_id)
-                & BOOST_SERIALIZATION_NVP(m_update_number)
-                & BOOST_SERIALIZATION_NVP(objects)
-                & BOOST_SERIALIZATION_NVP(m_fighter_formations)
-                & BOOST_SERIALIZATION_NVP(m_attackees)
-                & BOOST_SERIALIZATION_NVP(m_proximity_database)
-                & BOOST_SERIALIZATION_NVP(m_obstacles);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 extern const unsigned int INTERCEPTOR_FLAG;

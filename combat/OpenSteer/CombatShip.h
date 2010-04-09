@@ -32,12 +32,7 @@ public:
         double m_damage;
 
         template <class Archive>
-        void serialize(Archive& ar, const unsigned int version)
-            {
-                ar  & BOOST_SERIALIZATION_NVP(m_name)
-                    & BOOST_SERIALIZATION_NVP(m_range)
-                    & BOOST_SERIALIZATION_NVP(m_damage);
-            }
+        void serialize(Archive& ar, const unsigned int version);
     };
     typedef std::vector<DirectWeapon> SRVec;
     typedef std::list<DirectWeapon> PDList;
@@ -136,34 +131,7 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
-                & BOOST_SERIALIZATION_NVP(m_proximity_token)
-                & BOOST_SERIALIZATION_NVP(m_empire_id)
-                & BOOST_SERIALIZATION_NVP(m_ship)
-                & BOOST_SERIALIZATION_NVP(m_last_steer)
-                & BOOST_SERIALIZATION_NVP(m_mission_queue)
-                & BOOST_SERIALIZATION_NVP(m_mission_weight)
-                & BOOST_SERIALIZATION_NVP(m_mission_destination)
-                & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
-                & BOOST_SERIALIZATION_NVP(m_last_queue_update_turn)
-                & BOOST_SERIALIZATION_NVP(m_next_LR_fire_turns)
-                & BOOST_SERIALIZATION_NVP(m_turn_start_health)
-                & BOOST_SERIALIZATION_NVP(m_turn)
-                & BOOST_SERIALIZATION_NVP(m_enter_starlane_start_turn)
-                & BOOST_SERIALIZATION_NVP(m_pathing_engine)
-                & BOOST_SERIALIZATION_NVP(m_raw_PD_strength)
-                & BOOST_SERIALIZATION_NVP(m_raw_SR_strength)
-                & BOOST_SERIALIZATION_NVP(m_raw_LR_strength)
-                & BOOST_SERIALIZATION_NVP(m_is_PD_ship)
-                & BOOST_SERIALIZATION_NVP(m_unfired_SR_weapons)
-                & BOOST_SERIALIZATION_NVP(m_unfired_PD_weapons)
-                & BOOST_SERIALIZATION_NVP(m_unlaunched_fighters)
-                & BOOST_SERIALIZATION_NVP(m_launched_formations)
-                & BOOST_SERIALIZATION_NVP(m_instrument)
-                & BOOST_SERIALIZATION_NVP(m_last_mission);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 #endif

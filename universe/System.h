@@ -246,14 +246,4 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit) const
     return retval;
 }
 
-template <class Archive>
-void System::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_star)
-        & BOOST_SERIALIZATION_NVP(m_orbits)
-        & BOOST_SERIALIZATION_NVP(m_objects)
-        & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes);
-}
-
 #endif // _System_h_

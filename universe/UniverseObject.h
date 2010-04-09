@@ -199,20 +199,4 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
-template <class Archive>
-void UniverseObject::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_x)
-        & BOOST_SERIALIZATION_NVP(m_y)
-        & BOOST_SERIALIZATION_NVP(m_owners)
-        & BOOST_SERIALIZATION_NVP(m_system_id)
-        & BOOST_SERIALIZATION_NVP(m_specials)
-        & BOOST_SERIALIZATION_NVP(m_meters)
-        & BOOST_SERIALIZATION_NVP(m_created_on_turn);
-}
-
 #endif // _UniverseObject_h_
-

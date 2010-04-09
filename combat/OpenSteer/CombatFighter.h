@@ -51,12 +51,7 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_NVP(m_leader)
-                & BOOST_SERIALIZATION_NVP(m_members)
-                & BOOST_SERIALIZATION_NVP(m_pathing_engine);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 class CombatFighter :
@@ -151,30 +146,7 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
-                & BOOST_SERIALIZATION_NVP(m_proximity_token)
-                & BOOST_SERIALIZATION_NVP(m_leader)
-                & BOOST_SERIALIZATION_NVP(m_part_name)
-                & BOOST_SERIALIZATION_NVP(m_empire_id)
-                & BOOST_SERIALIZATION_NVP(m_id)
-                & BOOST_SERIALIZATION_NVP(m_last_steer)
-                & BOOST_SERIALIZATION_NVP(m_mission_queue)
-                & BOOST_SERIALIZATION_NVP(m_mission_weight)
-                & BOOST_SERIALIZATION_NVP(m_mission_destination)
-                & BOOST_SERIALIZATION_NVP(m_mission_subtarget)
-                & BOOST_SERIALIZATION_NVP(m_base)
-                & BOOST_SERIALIZATION_NVP(m_formation_position)
-                & BOOST_SERIALIZATION_NVP(m_formation)
-                & BOOST_SERIALIZATION_NVP(m_out_of_formation)
-                & BOOST_SERIALIZATION_NVP(m_health)
-                & BOOST_SERIALIZATION_NVP(m_last_queue_update_turn)
-                & BOOST_SERIALIZATION_NVP(m_last_fired_turn)
-                & BOOST_SERIALIZATION_NVP(m_turn)
-                & BOOST_SERIALIZATION_NVP(m_stats)
-                & BOOST_SERIALIZATION_NVP(m_pathing_engine);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 #endif

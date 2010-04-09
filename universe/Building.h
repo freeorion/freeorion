@@ -157,28 +157,4 @@ BuildingTypeManager& GetBuildingTypeManager();
   * type \a name.  If no such BuildingType exists, 0 is returned instead. */
 const BuildingType* GetBuildingType(const std::string& name);
 
-
-// template implementations
-template <class Archive>
-void Building::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
-        & BOOST_SERIALIZATION_NVP(m_building_type)
-        & BOOST_SERIALIZATION_NVP(m_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped);
-}
-
-template <class Archive>
-void BuildingType::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_build_cost)
-        & BOOST_SERIALIZATION_NVP(m_build_time)
-        & BOOST_SERIALIZATION_NVP(m_maintenance_cost)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
-}
-
 #endif // _Building_h_

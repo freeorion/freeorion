@@ -60,18 +60,7 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatObject)
-                & BOOST_SERIALIZATION_NVP(m_proximity_token)
-                & BOOST_SERIALIZATION_NVP(m_empire_id)
-                & BOOST_SERIALIZATION_NVP(m_last_steer)
-                & BOOST_SERIALIZATION_NVP(m_destination)
-                & BOOST_SERIALIZATION_NVP(m_target)
-                & BOOST_SERIALIZATION_NVP(m_health)
-                & BOOST_SERIALIZATION_NVP(m_stats)
-                & BOOST_SERIALIZATION_NVP(m_pathing_engine);
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 #endif

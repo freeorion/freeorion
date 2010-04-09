@@ -76,12 +76,4 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// template implementations
-template <class Archive>
-void EmpireManager::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
-        & BOOST_SERIALIZATION_NVP(m_eliminated_empires);
-}
-
 #endif // _EmpireManager_h_
