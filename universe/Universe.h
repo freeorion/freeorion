@@ -132,10 +132,10 @@ public:
       * are left unchanged. */
     void                                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
-    /** Copies the objects of the ObjectMap \a copied_map that are visisble to
+    /** Copies the objects of the ObjectMap \a copied_map that are visible to
       * the empire with id \a empire_id into this ObjectMap.  Copied objects
       * are complete copies of all information in \a copied_map about objects
-      * that are visisble, and no information about not-visible objects is
+      * that are visible, and no information about not-visible objects is
       * copied.  Any existing objects in this ObjectMap that are not visible to
       * the empire with id \a empire_id are left unchanged.  If \a empire_id is
       * ALL_EMPIRES, then all objects in \a copied_map are copied completely
@@ -163,7 +163,11 @@ public:
 
     /** Empties map and deletes all objects within. */
     void                                Clear();
+
+    /** Swaps the contents of *this with \a rhs. */
+    void                                swap(ObjectMap& rhs);
     //@}
+
 private:
     void                                CopyObjectsToConstObjects();
 

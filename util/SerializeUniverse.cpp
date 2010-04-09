@@ -54,12 +54,12 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     }
 
     if (Archive::is_loading::value) {
-        m_objects =                             objects;
-        m_empire_latest_known_objects =         empire_latest_known_objects;
-        m_empire_object_visibility =            empire_object_visibility;
-        m_empire_object_visibility_turns =      empire_object_visibility_turns;
-        m_empire_known_destroyed_object_ids =   empire_known_destroyed_object_ids;
-        m_ship_designs =                        ship_designs;
+        m_objects.swap(objects);
+        m_empire_latest_known_objects.swap(empire_latest_known_objects);
+        m_empire_object_visibility.swap(empire_object_visibility);
+        m_empire_object_visibility_turns.swap(empire_object_visibility_turns);
+        m_empire_known_destroyed_object_ids.swap(empire_known_destroyed_object_ids);
+        m_ship_designs.swap(ship_designs);
         InitializeSystemGraph(s_encoding_empire);
     }
 }

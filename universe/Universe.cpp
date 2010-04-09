@@ -489,6 +489,12 @@ void ObjectMap::Clear()
     m_const_objects.clear();
 }
 
+void ObjectMap::swap(ObjectMap& rhs)
+{
+    m_objects.swap(rhs.m_objects);
+    m_const_objects.swap(rhs.m_const_objects);
+}
+
 void ObjectMap::CopyObjectsToConstObjects()
 {
     // remove existing entries in const objects and replace with values from non-const objects
@@ -2150,8 +2156,8 @@ void Universe::GetObjectsToSerialize(ObjectMap& objects, int encoding_empire) co
         if (it == m_empire_latest_known_objects.end())
             return;                 // empire has no object knowledge, so there is nothing to send
 
-        // completely copy visisble objects, rather than copying only the
-        // currently visisble information as would be done with 
+        // completely copy visible objects, rather than copying only the
+        // currently visible information as would be done with 
         // objects.Copy as the empire's latest known objects map already
         // contains only information known to the empire for which objects are
         // being serialized.
