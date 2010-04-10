@@ -2,6 +2,7 @@
 
 #include "../combat/CombatOrder.h"
 #include "../combat/OpenSteer/CombatObject.h"
+#include "../Empire/EmpireManager.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../universe/Meter.h"
@@ -256,7 +257,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        Serialize(oa, empires);
+        oa << BOOST_SERIALIZATION_NVP(empires);
         Serialize(oa, universe);
         bool loaded_game_data = false;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -277,7 +278,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        Serialize(oa, empires);
+        oa << BOOST_SERIALIZATION_NVP(empires);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -305,7 +306,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        Serialize(oa, empires);
+        oa << BOOST_SERIALIZATION_NVP(empires);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -365,8 +366,8 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
     {
         FREEORION_OARCHIVE_TYPE oa(os);
         Universe::s_encoding_empire = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(current_turn);
-        Serialize(oa, empires);
+        oa << BOOST_SERIALIZATION_NVP(current_turn)
+           << BOOST_SERIALIZATION_NVP(empires);
         Serialize(oa, universe);
         oa << BOOST_SERIALIZATION_NVP(players);
     }
@@ -629,7 +630,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         Universe::s_encoding_empire = empire_id;
 
         boost::timer deserialize_timer;
-        Deserialize(ia, empires);
+        ia >> BOOST_SERIALIZATION_NVP(empires);
         Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
 
         deserialize_timer.restart();
@@ -683,8 +684,8 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         Universe::s_encoding_empire = empire_id;
-        ia >> BOOST_SERIALIZATION_NVP(current_turn);
-        Deserialize(ia, empires);
+        ia >> BOOST_SERIALIZATION_NVP(current_turn)
+           >> BOOST_SERIALIZATION_NVP(empires);
         Deserialize(ia, universe);
         ia >> BOOST_SERIALIZATION_NVP(players);
     } catch (const boost::archive::archive_exception) {

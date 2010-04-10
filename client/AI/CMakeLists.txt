@@ -58,6 +58,7 @@ set(THIS_EXE_SOURCES
     ../../util/Process.cpp
     ../../util/Random.cpp
     ../../util/SerializeEmpire.cpp
+    ../../util/SerializeMultiplayerCommon.cpp
     ../../util/SerializeOrderSet.cpp
     ../../util/SerializePathingEngine.cpp
     ../../util/SerializeUniverse.cpp

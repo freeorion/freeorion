@@ -519,6 +519,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-// Note: *::serialize() implemented in Serialize.cpp.
+// Note: *::serialize() implemented in SerializeOrderSet.cpp.
 
 #endif // _Order_h_

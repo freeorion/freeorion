@@ -20,8 +20,6 @@
 #include <vector>
 #include <map>
 
-class Empire;
-class EmpireManager;
 class OrderSet;
 class PathingEngine;
 class Universe;
@@ -29,12 +27,6 @@ class UniverseObject;
 
 // NB: Do not try to serialize types that contain longs, since longs are different sizes on 32- and 64-bit
 // architectures.  Replace your longs with long longs for portability.  See longer note in Serialize.cpp for more info.
-
-/** Serializes the single empire \a empire to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Empire& empire);
-
-/** Serializes \a empire_empire, including all its Empires, to output archive \a oa. */
-void Serialize(FREEORION_OARCHIVE_TYPE& oa, const EmpireManager& empire_manager);
 
 /** Serializes \a universe to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe);
@@ -47,12 +39,6 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set);
 
 /** Serializes \a pathing_engine to output archive \a oa. */
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine);
-
-/** Deserializes the single empire \a empire from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Empire& empire);
-
-/** Deserializes \a empire_empire, including all its Empires, from input archive \a ia. */
-void Deserialize(FREEORION_IARCHIVE_TYPE& ia, EmpireManager& empire_manager);
 
 /** Deserializes \a universe from input archive \a ia. */
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, Universe& universe);
