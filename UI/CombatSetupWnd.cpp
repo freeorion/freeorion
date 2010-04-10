@@ -645,6 +645,9 @@ bool CombatSetupWnd::ValidPlacement(Ship* ship, const Ogre::Vector3& point) cons
         for (std::map<int, Ogre::SceneNode*>::const_iterator it = m_placed_nodes.begin();
              it != m_placed_nodes.end();
              ++it) {
+            Ship* this_ship = *Ogre::any_cast<Ship*>(&it->second->getUserAny());
+            if (this_ship == ship)
+                continue;
             Ogre::SceneNode::ObjectIterator iterator = it->second->getAttachedObjectIterator();
             assert(iterator.hasMoreElements());
             const Ogre::Sphere& sphere =
