@@ -631,7 +631,7 @@ MapWnd::MapWnd() :
     m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
-    m_zoom_slider->SlideTo(m_zoom_steps_in);
+    m_zoom_slider->SlideTo(static_cast<int>(m_zoom_steps_in));
     GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
     // stealth threshold slider
@@ -845,8 +845,8 @@ void MapWnd::Render()
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
     glPushMatrix();
     glLoadIdentity();
-    glScalef(ZoomFactor(), ZoomFactor(), 1.0);
-    glTranslatef(Value(origin_offset.x / ZoomFactor()), Value(origin_offset.y / ZoomFactor()), 0.0);
+    glScalef(static_cast<GLfloat>(ZoomFactor()), static_cast<GLfloat>(ZoomFactor()), 1.0f);
+    glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())), static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())), 0.0f);
 
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1279,10 +1279,10 @@ void MapWnd::InitSystemRenderingBuffers()
         // Add disc and halo textures for system icon
         // See note above texture coords for why we're making coordinate sets that are 2x too big.
         double icon_size = ClientUI::SystemIconSize();
-        double icon_ul_x = system->X() - icon_size;
-        double icon_ul_y = system->Y() - icon_size;
-        double icon_lr_x = system->X() + icon_size;
-        double icon_lr_y = system->Y() + icon_size;
+        float icon_ul_x = static_cast<float>(system->X() - icon_size);
+        float icon_ul_y = static_cast<float>(system->Y() - icon_size);
+        float icon_lr_x = static_cast<float>(system->X() + icon_size);
+        float icon_lr_y = static_cast<float>(system->Y() + icon_size);
 
         if (icon->DiscTexture()) {
             glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
@@ -1345,14 +1345,14 @@ void MapWnd::InitSystemRenderingBuffers()
             // See note above texture coords for why we're making coordinate sets that are 2x too big.
 
             // add to system position to get translated scaled rotated quad corner
-            const double GAS_X1 = system->X() + (X1r * GAS_SIZE);
-            const double GAS_Y1 = system->Y() + (Y1r * GAS_SIZE);
-            const double GAS_X2 = system->X() + (X2r * GAS_SIZE);
-            const double GAS_Y2 = system->Y() + (Y2r * GAS_SIZE);
-            const double GAS_X3 = system->X() + (X3r * GAS_SIZE);
-            const double GAS_Y3 = system->Y() + (Y3r * GAS_SIZE);
-            const double GAS_X4 = system->X() + (X4r * GAS_SIZE);
-            const double GAS_Y4 = system->Y() + (Y4r * GAS_SIZE);
+            const float GAS_X1 = static_cast<float>(system->X() + (X1r * GAS_SIZE));
+            const float GAS_Y1 = static_cast<float>(system->Y() + (Y1r * GAS_SIZE));
+            const float GAS_X2 = static_cast<float>(system->X() + (X2r * GAS_SIZE));
+            const float GAS_Y2 = static_cast<float>(system->Y() + (Y2r * GAS_SIZE));
+            const float GAS_X3 = static_cast<float>(system->X() + (X3r * GAS_SIZE));
+            const float GAS_Y3 = static_cast<float>(system->Y() + (Y3r * GAS_SIZE));
+            const float GAS_X4 = static_cast<float>(system->X() + (X4r * GAS_SIZE));
+            const float GAS_Y4 = static_cast<float>(system->Y() + (Y4r * GAS_SIZE));
 
             std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
             // rotated upper right
