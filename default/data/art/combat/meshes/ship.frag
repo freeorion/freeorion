@@ -33,7 +33,7 @@ void main()
     vec3 glow_color = texture2D(glow_texture, gl_TexCoord[0].st).rgb;
     vec3 color =
         max(glow_color,
-            (hull_color * star_diffuse + vec3(star_specular) * gloss) * star_light_color +
+            (hull_color * star_diffuse + vec3(star_specular) * gloss) * star_light_color * 1.5 +
             (hull_color * skybox_diffuse + vec3(skybox_specular) * gloss) * skybox_light_color);
 
     gl_FragColor = vec4(color, alpha);
