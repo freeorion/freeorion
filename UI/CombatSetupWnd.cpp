@@ -428,6 +428,13 @@ namespace {
         }
         return retval;
     }
+
+    Ogre::Quaternion OrientationForPosition(const Ogre::Vector3& position)
+    {
+        return Ogre::Quaternion(Ogre::Radian(std::atan2(-position.y, -position.x) -
+                                             Ogre::Math::HALF_PI),
+                                Ogre::Vector3(0.0, 0.0, 1.0));
+    }
 }
 
 CombatSetupWnd::CombatSetupWnd(
@@ -577,15 +584,8 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
                 std::pair<bool, Ogre::Vector3> intersection = m_intersect_mouse_with_ecliptic(event.Point());
                 Ship* ship = *Ogre::any_cast<Ship*>(&m_button_press_placed_ship_node->getUserAny());
                 bool valid_location = intersection.first && ValidPlacement(ship, intersection.second);
-                if (valid_location) {
-                    m_reposition_ship_node(
-                        ship->ID(),
-                        intersection.second,
-                        Ogre::Quaternion(Ogre::Radian(Ogre::Math::HALF_PI +
-                                                      std::atan2(-intersection.second.y, -intersection.second.x)),
-                                         Ogre::Vector3(0.0, 0.0, 1.0)));
-                    CreateCombatOrder(ship->ID(), m_button_press_placed_ship_node);
-                }
+                if (valid_location)
+                    RepositionShip(ship, m_button_press_placed_ship_node, intersection.second);
             }
         }
         retval = true;
@@ -667,10 +667,7 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
             bool valid_location = ValidPlacement(ship, intersection.second);
             node->setVisible(true);
             node->setPosition(intersection.second);
-            node->setOrientation(
-                Ogre::Quaternion(Ogre::Radian(std::atan2(-intersection.second.y, -intersection.second.x) -
-                                              Ogre::Math::HALF_PI),
-                                 Ogre::Vector3(0.0, 0.0, 1.0)));
+            node->setOrientation(OrientationForPosition(intersection.second));
             if (valid_location) {
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
@@ -797,7 +794,7 @@ void CombatSetupWnd::PlaceCurrentShip()
     assert(m_selected_placeable_ship);
     assert(m_placeable_ship_node);
 
-    PlaceShip(m_selected_placeable_ship, m_placeable_ship_node);
+    RepositionShip(m_selected_placeable_ship, m_placeable_ship_node, m_placeable_ship_node->getPosition());
 
     const CUIListBox::SelectionSet& selections = m_listbox->Selections();
     assert(selections.size() == 1u);
@@ -816,6 +813,14 @@ void CombatSetupWnd::PlaceShip(Ship* ship, Ogre::SceneNode* node)
                                   node,
                                   m_ship_entities[ship_id],
                                   m_get_ship_material(*ship->Design()));
+    CreateCombatOrder(ship_id, node);
+    m_placed_nodes[ship_id] = node;
+}
+
+void CombatSetupWnd::RepositionShip(Ship* ship, Ogre::SceneNode* node, const Ogre::Vector3& position)
+{
+    int ship_id = ship->ID();
+    m_reposition_ship_node(ship_id, position, OrientationForPosition(position));
     CreateCombatOrder(ship_id, node);
     m_placed_nodes[ship_id] = node;
 }

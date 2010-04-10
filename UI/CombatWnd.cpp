@@ -1954,9 +1954,6 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
 void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
                             const Ogre::MaterialPtr& material)
 {
-    if (m_ship_assets.find(ship_id) != m_ship_assets.end())
-        return;
-
     CollisionMeshConverter collision_mesh_converter(entity);
     btTriangleMesh* collision_mesh = 0;
     btBvhTriangleMeshShape* collision_shape = 0;

@@ -69,6 +69,7 @@ private:
     void CancelCurrentShipPlacement();
     void PlaceCurrentShip();
     void PlaceShip(Ship* ship, Ogre::SceneNode* node);
+    void RepositionShip(Ship* ship, Ogre::SceneNode* node, const Ogre::Vector3& position);
     void RedoPlacementsButtonClicked();
     void AutoPlaceButtonClicked();
     void DoneButtonClicked();
