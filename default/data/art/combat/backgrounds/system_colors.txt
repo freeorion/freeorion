@@ -5,8 +5,8 @@ blue01 (177, 205, 246)
 neutron01 (85, 85, 85)
 orange01 (240, 186, 130)
 red01 (223, 112, 82)
-white01back (255, 255, 255)
-yellow01back (233, 226, 124)
+white01 (255, 255, 255)
+yellow01 (233, 226, 124)
 
 # skybox colors
 
