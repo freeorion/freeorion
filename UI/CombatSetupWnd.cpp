@@ -558,15 +558,13 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
 
     bool retval = false;
     if (event.Type() == GG::WndEvent::LButtonDown) {
-        if (PlaceableShipNode()) {
-            retval = true;
-        } else if (Ogre::MovableObject* movable_object = m_get_object_under_pt(event.Point())) {
+        Ogre::MovableObject* movable_object = 0;
+        if (!PlaceableShipNode() && (movable_object = m_get_object_under_pt(event.Point()))) {
             Ogre::SceneNode* node = movable_object->getParentSceneNode();
             if (Ogre::any_cast<Ship*>(&node->getUserAny())) {
                 m_button_press_placed_ship_node = node;
                 assert(m_button_press_placed_ship_node);
                 m_button_press_on_placed_ship = event.Point();
-                retval = true;
             }
         }
         m_dragging_placed_ship = false;
@@ -619,6 +617,7 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         if (Ogre::SceneNode* placement_node = PlaceableShipNode())
             placement_node->setVisible(false);
     }
+
     return retval;
 }
 
