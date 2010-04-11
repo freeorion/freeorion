@@ -10,4 +10,4 @@ yellow01 (233, 226, 124)
 
 # skybox colors
 
-sky_box_1 (65, 96, 87)
+sky_box_1 (95, 126, 117)
