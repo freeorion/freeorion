@@ -262,4 +262,14 @@ Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec);
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);
 std::string ShipMaterialName(const ShipDesign& ship_design);
 
+extern const int PAGED_GEOMETRY_IMPOSTOR_QUEUE;
+extern const int SELECTION_HILITING_OBJECT_RENDER_QUEUE;
+extern const int STAR_BACK_QUEUE;
+extern const int STAR_CORE_QUEUE;
+extern const int ALPHA_OBJECTS_QUEUE;
+extern const int SELECTION_HILITING_OUTLINED_RENDER_QUEUE;
+extern const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE;
+extern const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE;
+extern const std::set<int> STENCIL_OP_RENDER_QUEUES;
+
 #endif

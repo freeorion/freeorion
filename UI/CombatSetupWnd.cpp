@@ -342,7 +342,7 @@ namespace {
                 ring_mesh = manual_object.convertToMesh(RING_MESH_NAME);
             }
             Ogre::Entity* entity = scene_manager->createEntity(base_name + "entity", RING_MESH_NAME);
-            entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
             entity->setMaterialName("effects/area");
             retval->attachObject(entity);
             break;
@@ -366,7 +366,7 @@ namespace {
                 unit_circle_mesh = manual_object.convertToMesh(UNIT_CIRCLE_MESH_NAME);
             }
             Ogre::Entity* entity = scene_manager->createEntity(base_name + "entity", UNIT_CIRCLE_MESH_NAME);
-            entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
             entity->setMaterialName("effects/area");
             retval->attachObject(entity);
             break;
@@ -390,7 +390,7 @@ namespace {
             manual_object->position(std::cos(region.m_theta_end), std::sin(region.m_theta_end), 0.0);
             manual_object->colour(COLOR);
             manual_object->end();
-            manual_object->setRenderQueueGroup(Ogre::RENDER_QUEUE_8);
+            manual_object->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
             retval->attachObject(manual_object);
             break;
         }
@@ -673,8 +673,9 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
             if (valid_location) {
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
-                boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext())->
-                    setMaterialName(ShipMaterialName(*ship->Design()));
+                Ogre::Entity* entity = boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext());
+                entity->setMaterialName(ShipMaterialName(*ship->Design()));
+                entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
             } else {
                 std::string base_material_name = ShipMaterialName(*ship->Design());
                 std::string material_name = UNPLACEABLE_MATERIAL_PREFIX + base_material_name;
@@ -682,15 +683,17 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
                     Ogre::MaterialPtr unmodified_material =
                         Ogre::MaterialManager::getSingleton().getByName(base_material_name);
                     Ogre::MaterialPtr material = unmodified_material->clone(material_name);
-                    Ogre::Pass* pass = material->getTechnique(0)->getPass(0);
+                    Ogre::Pass* pass = material->getTechnique(0)->getPass(1);
                     assert(pass->hasFragmentProgram());
-                    pass->getFragmentProgramParameters()->setNamedConstant("alpha", 0.5f);
+                    pass->getFragmentProgramParameters()->setNamedConstant("alpha", 0.25f);
                     pass->setSceneBlending(Ogre::SBF_SOURCE_ALPHA, Ogre::SBF_ONE_MINUS_SOURCE_ALPHA);
                     pass->setDepthWriteEnabled(false);
                 }
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
-                boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext())->setMaterialName(material_name);
+                Ogre::Entity* entity = boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext());
+                entity->setMaterialName(material_name);
+                entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
             }
         } else {
             node->setVisible(false);

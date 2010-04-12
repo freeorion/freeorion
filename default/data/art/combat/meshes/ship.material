@@ -7,6 +7,12 @@ fragment_program ship_frag glsl
 material ship {
     technique {
         pass {
+            colour_write off
+        }
+
+        pass {
+            depth_bias 1
+
             vertex_program_ref ship_vert
             {
                 param_named_auto light_pos light_position_object_space 0

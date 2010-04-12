@@ -67,6 +67,26 @@
 
 #define TEST_STATIC_OPENSTEER_OBSTACLES 0
 
+// queue groups
+const int PAGED_GEOMETRY_IMPOSTOR_QUEUE =            Ogre::RENDER_QUEUE_MAIN - 1;
+
+const int SELECTION_HILITING_OBJECT_RENDER_QUEUE =   Ogre::RENDER_QUEUE_MAIN + 1;
+
+const int STAR_BACK_QUEUE =                          Ogre::RENDER_QUEUE_6 + 0;
+const int STAR_CORE_QUEUE =                          Ogre::RENDER_QUEUE_6 + 1;
+const int ALPHA_OBJECTS_QUEUE =                      Ogre::RENDER_QUEUE_6 + 2;
+
+const int SELECTION_HILITING_OUTLINED_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 0;
+const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 1;
+const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
+
+const std::set<int> STENCIL_OP_RENDER_QUEUES =
+    boost::assign::list_of
+    (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
+    (SELECTION_HILITING_OUTLINED_RENDER_QUEUE)
+    (SELECTION_HILITING_FILLED_1_RENDER_QUEUE)
+    (SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
+
 namespace {
     PathingEngine g_pathing_engine;
     std::map<const OpenSteer::AbstractObstacle*, std::string> g_obstacle_names;
@@ -90,26 +110,6 @@ namespace {
     // visibility masks
     const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
     const Ogre::uint32 GLOWING_OBJECTS_MASK = 1 << 1;
-
-    // queue groups
-    const int PAGED_GEOMETRY_IMPOSTOR_QUEUE =            Ogre::RENDER_QUEUE_MAIN - 1;
-
-    const int SELECTION_HILITING_OBJECT_RENDER_QUEUE =   Ogre::RENDER_QUEUE_MAIN + 1;
-
-    const int STAR_BACK_QUEUE =                          Ogre::RENDER_QUEUE_6 + 0;
-    const int STAR_CORE_QUEUE =                          Ogre::RENDER_QUEUE_6 + 1;
-    const int ALPHA_OBJECTS_QUEUE =                      Ogre::RENDER_QUEUE_6 + 2;
-
-    const int SELECTION_HILITING_OUTLINED_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 0;
-    const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 1;
-    const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE = Ogre::RENDER_QUEUE_7 + 2;
-
-    const std::set<int> STENCIL_OP_RENDER_QUEUES =
-        boost::assign::list_of
-        (SELECTION_HILITING_OBJECT_RENDER_QUEUE)
-        (SELECTION_HILITING_OUTLINED_RENDER_QUEUE)
-        (SELECTION_HILITING_FILLED_1_RENDER_QUEUE)
-        (SELECTION_HILITING_FILLED_2_RENDER_QUEUE);
 
     // stencil masks
     const Ogre::uint32 OUTLINE_SELECTION_HILITING_STENCIL_VALUE = 1 << 0;
@@ -1934,19 +1934,19 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
-        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->
+        modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(0)->
             setTextureName(ship_design.Model() + "_Color.png");
-        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->
+        modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(1)->
             setTextureName(ship_design.Model() + "_Glow.png");
-        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
+        modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(2)->
             setTextureName(ship_design.Model() + "_Normal.png");
-        modified_material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
+        modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(3)->
             setTextureName(ship_design.Model() + "_Specular.png");
     }
-    modified_material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+    modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("star_light_color", GetSystemColor(StarBaseName()));
     // TODO: Use the current skybox, once we have more than one.
-    modified_material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+    modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
     return modified_material;
 }
