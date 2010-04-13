@@ -917,9 +917,6 @@ void CUISlider::Render()
         lr.y   = ul.y + static_cast<int>(LineWidth());
     }
     GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
-    Tab()->OffsetMove(UpperLeft());
-    Tab()->Render();
-    Tab()->OffsetMove(-UpperLeft());
 }
 
 void CUISlider::SizeMove(const GG::Pt& ul, const GG::Pt& lr)

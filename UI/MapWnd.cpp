@@ -634,7 +634,6 @@ MapWnd::MapWnd() :
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
     m_zoom_slider->SlideTo(static_cast<int>(m_zoom_steps_in));
-    GG::Connect(m_zoom_slider->SlidSignal, &MapWnd::ZoomSlid, this);
 
     // stealth threshold slider
     m_stealth_threshold_slider = new CUISlider(m_zoom_slider->UpperLeft().x + GG::X(ClientUI::ScrollWidth()*3), m_zoom_slider->UpperLeft().y,
