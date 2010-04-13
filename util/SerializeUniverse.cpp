@@ -2,6 +2,10 @@
 
 #include "Serialize.ipp"
 
+#ifndef FREEORION_WIN32
+#include "SerializeUniverseExports.ipp"
+#endif
+
 
 template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
