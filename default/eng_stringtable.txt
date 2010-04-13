@@ -606,6 +606,9 @@ Uses a filled-in effect, as opposed to an outline effect, on selected objects.
 OPTIONS_DB_QUICKSTART
 Starts a new quickstart game, bypassing the main menu.
 
+OPTIONS_DB_AUTO_FIRST_TURN
+Hits the "Turn" button automatically on the first turn; useful for debugging, especially when used with --quickstart.
+
 OPTIONS_DB_CHECKED_GL_VERSION
 Stores whether the OpenGL version of this system has been checked.  If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
 

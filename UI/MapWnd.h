@@ -378,6 +378,8 @@ private:
     GG::Slider*                 m_zoom_slider;      //!< allows user to set zoom level
 
     GG::Slider*                 m_stealth_threshold_slider; //!< allows user to set threshold of stealth detectable at distance for detection range displays
+
+    friend class PlayingTurn;
 };
 
 

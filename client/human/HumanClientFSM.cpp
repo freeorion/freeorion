@@ -499,6 +499,14 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->InitTurn(Client().CurrentTurn());
     Client().m_ui->GetMapWnd()->ReselectLastSystem();
     //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings
+
+    if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
+        static bool once = true;
+        if (once) {
+            post_event(AutoAdvanceFirstTurn());
+            once = false;
+        }
+    }
 }
 
 PlayingTurn::~PlayingTurn()
@@ -531,6 +539,12 @@ boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
         sender_colour = GG::CLR_WHITE;
     std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.m_message.Text() + "</rgba>\n";
     GetChatWnd()->HandlePlayerChatMessage(wrapped_text);
+    return discard_event();
+}
+
+boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d)
+{
+    Client().m_ui->GetMapWnd()->m_turn_update->ClickedSignal();
     return discard_event();
 }
 

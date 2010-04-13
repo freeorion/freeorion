@@ -54,6 +54,9 @@ struct TurnEnded : boost::statechart::event<TurnEnded> {};
 // Indicates that a game has ended and that the state should be reset to IntroMenu.
 struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
 
+// Posted by PlayingTurn's ctor when --auto-advance-first-turn is in use.
+struct AutoAdvanceFirstTurn : boost::statechart::event<AutoAdvanceFirstTurn> {};
+
 // This is a Boost.Preprocessor list of all the events above.  As new events are added above, they should be added to
 // this list as well.
 #define HUMAN_CLIENT_FSM_EVENTS                                    \
@@ -369,7 +372,8 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<PlayerChat>
+        boost::statechart::custom_reaction<PlayerChat>,
+        boost::statechart::custom_reaction<AutoAdvanceFirstTurn>
     > reactions;
 
     PlayingTurn(my_context ctx);
@@ -378,6 +382,7 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
     boost::statechart::result react(const SaveGame& d);
     boost::statechart::result react(const TurnEnded& d);
     boost::statechart::result react(const PlayerChat& msg);
+    boost::statechart::result react(const AutoAdvanceFirstTurn& d);
 
     CLIENT_ACCESSOR
 };
