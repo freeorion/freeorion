@@ -574,6 +574,8 @@ MapWnd::MapWnd() :
     // situation report window
     m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, (APP_HEIGHT-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
+    GG::GUI::GetGUI()->Register(m_sitrep_panel);
+    m_sitrep_panel->Hide();
 
 
     // research window
@@ -781,6 +783,7 @@ MapWnd::MapWnd() :
 MapWnd::~MapWnd()
 {
     delete m_toolbar;
+    delete m_sitrep_panel;
     delete m_research_wnd;
     delete m_production_wnd;
     delete m_design_wnd;
@@ -886,7 +889,6 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
-    m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
     m_dragged = true;
@@ -1758,14 +1760,12 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
@@ -1793,14 +1793,12 @@ void MapWnd::CenterOnMapCoord(double x, double y)
                              static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 }
@@ -1891,7 +1889,6 @@ void MapWnd::SelectSystem(int system_id)
         // selected a valid system, show sidepanel
         AttachChild(m_side_panel);
         MoveChildUp(m_side_panel);
-        MoveChildUp(m_sitrep_panel);
         m_side_panel->Show();
     }
 }
@@ -2657,14 +2654,12 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
                     static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
     m_side_panel->OffsetMove(-map_move);
-    m_sitrep_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
-    m_sitrep_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
 
@@ -3642,8 +3637,6 @@ void MapWnd::ShowSitRep()
     HideDesign();
 
     // show the sitrep window
-    AttachChild(m_sitrep_panel);
-    MoveChildUp(m_sitrep_panel);
     m_sitrep_panel->Show();
 
     // indicate selection on button
@@ -3652,7 +3645,6 @@ void MapWnd::ShowSitRep()
 
 void MapWnd::HideSitRep()
 {
-    DetachChild(m_sitrep_panel);
     m_sitrep_panel->Hide(); // necessary so it won't be visible when next toggled
     m_btn_siterep->MarkNotSelected();
 }
