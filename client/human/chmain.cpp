@@ -93,6 +93,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
+        GetOptionsDB().Add<std::string>("load",             "OPTIONS_DB_LOAD",                  "");
 
 
         // read config.xml and set options entries from it, if present
@@ -234,12 +235,20 @@ int mainSetupAndRunOgre()
 #endif
 
         if (GetOptionsDB().Get<bool>("quickstart")) {
-            // immediaely start the server, establish network connections, and go into a single player
-            // game, using default universe options (a standard quickstart, without requiring the user
-            // to click the quickstart button).
+            // immediately start the server, establish network connections, and
+            // go into a single player game, using default universe options (a
+            // standard quickstart, without requiring the user to click the
+            // quickstart button).
             app.NewSinglePlayerGame(true);  // acceptable to call before app()
         }
 
+        std::string load_filename = GetOptionsDB().Get<std::string>("load");
+        if (load_filename != "") {
+            // immediately start the server, establish network connections, and
+            // go into a single player game, loading the indicated file
+            // (without requiring the user to click the load button).
+            app.LoadSinglePlayerGame(load_filename);  // acceptable to call before app()
+        }
 
         // run rendering loop
         app();  // calls GUI::operator() which calls OgreGUI::Run() which starts rendering loop

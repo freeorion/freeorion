@@ -391,53 +391,66 @@ void HumanClientApp::SaveGame(const std::string& filename)
 void HumanClientApp::EndGame()
 { EndGame(false); }
 
-void HumanClientApp::LoadSinglePlayerGame()
+void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
 {
-    std::vector<std::pair<std::string, std::string> > save_file_types;
-    save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
-
-    try {
-        FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
-        dlg.Run();
-        if (!dlg.Result().empty()) {
-            if (m_game_started) {
-                EndGame();
-                Sleep(1500);    // to make sure old game is cleaned up before attempting to start a new one
-            } else {
-                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
-            }
-
-            if (!GetOptionsDB().Get<bool>("force-external-server")) {
-                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
-                StartServer();
-            } else {
-                Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
-            }
-
-            unsigned int start_time = Ticks();
-            while (!Networking().ConnectToLocalHostServer()) {
-                if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                    ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                    KillServer();
-                    return;
-                }
-            }
-
-            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() connected to server";
-
-            m_connected = true;
-            SetPlayerID(Networking::HOST_PLAYER_ID);
-            SetEmpireID(ALL_EMPIRES);
-
-            SinglePlayerSetupData setup_data;
-            setup_data.m_new_game = false;
-            setup_data.m_filename = *dlg.Result().begin();
-            setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
-            Networking().SendMessage(HostSPGameMessage(setup_data));
-            m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
+    if (filename != "") {
+        if (!exists(boost::filesystem::path(filename))) {
+            std::string msg =
+                "HumanClientApp::LoadSinglePlayerGame() given a nonexistent file \"" + filename + "\" to load; aborting.";
+            Logger().fatalStream() << msg;
+            std::cerr << msg << '\n';
+            abort();
         }
-    } catch (const FileDlg::BadInitialDirectory& e) {
-        ClientUI::MessageBox(e.what(), true);
+    } else {
+        try {
+            std::vector<std::pair<std::string, std::string> > save_file_types;
+            save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
+
+            FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
+            dlg.Run();
+            if (!dlg.Result().empty())
+                filename = *dlg.Result().begin();
+        } catch (const FileDlg::BadInitialDirectory& e) {
+            ClientUI::MessageBox(e.what(), true);
+        }
+    }
+
+    if (filename != "") {
+        if (m_game_started) {
+            EndGame();
+            Sleep(1500);    // to make sure old game is cleaned up before attempting to start a new one
+        } else {
+            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
+        }
+
+        if (!GetOptionsDB().Get<bool>("force-external-server")) {
+            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() Starting server";
+            StartServer();
+        } else {
+            Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() assuming external server will be available";
+        }
+
+        unsigned int start_time = Ticks();
+        while (!Networking().ConnectToLocalHostServer()) {
+            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+                KillServer();
+                return;
+            }
+        }
+
+        Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() connected to server";
+
+        m_connected = true;
+        SetPlayerID(Networking::HOST_PLAYER_ID);
+        SetEmpireID(ALL_EMPIRES);
+
+        SinglePlayerSetupData setup_data;
+        setup_data.m_new_game = false;
+        setup_data.m_filename = filename;
+        setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
+        Networking().SendMessage(HostSPGameMessage(setup_data));
+        m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
     }
 }
 

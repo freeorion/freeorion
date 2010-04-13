@@ -54,7 +54,7 @@ public:
     void            MulitplayerGame();
     void            SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     void            EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
-    void            LoadSinglePlayerGame();                         ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void            LoadSinglePlayerGame(std::string filename = ""); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void            SetSaveFileName(const std::string& filename);   ///< records the current game's filename
 
     Ogre::SceneManager*     SceneManager();
