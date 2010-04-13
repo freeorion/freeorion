@@ -1231,9 +1231,27 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
     // create starlane entrance points
     for (System::const_lane_iterator it = m_combat_data->m_system->begin_lanes();
-         it != m_combat_data->m_system->begin_lanes();
+         it != m_combat_data->m_system->end_lanes();
          ++it) {
-        // TODO
+        // this will break if/when we add support for wormholes, so we'll know to fix this code
+        assert(!it->second);
+
+        std::string starlane_id_str = boost::lexical_cast<std::string>(it->first);
+        Ogre::SceneNode* node =
+            m_scene_manager->getRootSceneNode()->createChildSceneNode(
+                starlane_id_str + "_starlane_entrance_node");
+        double theta = StarlaneEntranceOrbitalPosition(it->first, m_combat_data->m_system->ID());
+        double r = SystemRadius() + 25.0;
+        Ogre::Vector3 position(r * std::cos(theta), r * std::sin(theta), 0.0);
+        node->setPosition(position);
+        node->setOrientation(StarwardOrientationForPosition(position));
+
+        Ogre::Entity* entity =
+            m_scene_manager->createEntity(starlane_id_str + "_starlane_entity", "starlane_entry.mesh");
+        entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
+        entity->setMaterialName("starlane_entry");
+        entity->setRenderQueueGroup(ALPHA_OBJECTS_QUEUE);
+        node->attachObject(entity);
     }
 
     m_combat_setup_wnd =
@@ -2265,3 +2283,10 @@ OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
 
 std::string ShipMaterialName(const ShipDesign& ship_design)
 { return "ship material " + ship_design.Model(); }
+
+Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position)
+{
+    return Ogre::Quaternion(Ogre::Radian(std::atan2(-position.y, -position.x) -
+                                         Ogre::Math::HALF_PI),
+                            Ogre::Vector3(0.0, 0.0, 1.0));
+}

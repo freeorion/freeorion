@@ -1,0 +1,16 @@
+material starlane_entry {
+    technique {
+        pass {
+            depth_bias 1.0
+            lighting off
+            cull_hardware none
+            cull_software none
+            scene_blend colour_blend
+
+            texture_unit {
+                texture starlane_entry.png 2d 0
+                rotate_anim 0.00833
+            }
+        }
+    }
+}

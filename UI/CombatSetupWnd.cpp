@@ -428,13 +428,6 @@ namespace {
         }
         return retval;
     }
-
-    Ogre::Quaternion OrientationForPosition(const Ogre::Vector3& position)
-    {
-        return Ogre::Quaternion(Ogre::Radian(std::atan2(-position.y, -position.x) -
-                                             Ogre::Math::HALF_PI),
-                                Ogre::Vector3(0.0, 0.0, 1.0));
-    }
 }
 
 CombatSetupWnd::CombatSetupWnd(
@@ -669,7 +662,7 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
             bool valid_location = ValidPlacement(ship, intersection.second);
             node->setVisible(true);
             node->setPosition(intersection.second);
-            node->setOrientation(OrientationForPosition(intersection.second));
+            node->setOrientation(StarwardOrientationForPosition(intersection.second));
             if (valid_location) {
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
@@ -825,7 +818,7 @@ void CombatSetupWnd::PlaceShip(Ship* ship, Ogre::SceneNode* node)
 void CombatSetupWnd::RepositionShip(Ship* ship, Ogre::SceneNode* node, const Ogre::Vector3& position)
 {
     int ship_id = ship->ID();
-    m_reposition_ship_node(ship_id, position, OrientationForPosition(position));
+    m_reposition_ship_node(ship_id, position, StarwardOrientationForPosition(position));
     CreateCombatOrder(ship_id, node);
     m_placed_nodes[ship_id] = node;
 }
