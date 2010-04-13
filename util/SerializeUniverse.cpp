@@ -1,21 +1,7 @@
 #include "Serialize.h"
 
-#include "../universe/Building.h"
-#include "../universe/Fleet.h"
-#include "../universe/Ship.h"
-#include "../universe/Planet.h"
-#include "../universe/ShipDesign.h"
-#include "../universe/System.h"
-
 #include "Serialize.ipp"
 
-
-// exports for boost serialization of polymorphic UniverseObject hierarchy
-BOOST_CLASS_EXPORT(System)
-BOOST_CLASS_EXPORT(Planet)
-BOOST_CLASS_EXPORT(Building)
-BOOST_CLASS_EXPORT(Fleet)
-BOOST_CLASS_EXPORT(Ship)
 
 template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
