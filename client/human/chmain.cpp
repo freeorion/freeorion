@@ -93,7 +93,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
-        GetOptionsDB().Add<std::string>("load",             "OPTIONS_DB_LOAD",                  "");
+        GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(), false);
 
 
         // read config.xml and set options entries from it, if present
