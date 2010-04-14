@@ -24,7 +24,7 @@ void main()
     vec3 normalized_light_pos = normalize(light_pos);
     vec3 axis = cross(normalized_light_pos, vec3(0.0, 0.0, 1.0));
 
-    const float THETA = radians(15.0);
+    const float THETA = radians(20.0);
     const float COS = cos(THETA);
     const float SIN = sin(THETA);
     const float ONE_MINUS_COS = 1.0 - COS;

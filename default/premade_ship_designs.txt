@@ -33,7 +33,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark1.png"
-    model = "new_mark1"
+    model = "mark1"
 
 ShipDesign
     name = "SD_MARK2"
@@ -46,7 +46,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark2.png"
-    model = "mark1"
+    model = "guardian"
 
 ShipDesign
     name = "SD_MARK3"
