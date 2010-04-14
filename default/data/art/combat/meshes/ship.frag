@@ -39,7 +39,12 @@ void main()
     vec3 overlay_color = vec3(BlendOverlayf(glow_decal_texel.a, decal_color.r),
                               BlendOverlayf(glow_decal_texel.a, decal_color.g),
                               BlendOverlayf(glow_decal_texel.a, decal_color.b));
-    vec3 hull_color = max(color_texel.rgb, overlay_color);
+    vec3 hull_color = color_texel.rgb;
+
+    // This acts as "if (bool(glow_decal_texel.a)) hull_color =
+    // overlay_color;", without the branch.
+    float decal_contribution = sign(glow_decal_texel.a);
+    hull_color = mix(hull_color, overlay_color, decal_contribution);
 
     const float STAR_LIGHT_BIAS = 1.5;
     const float SKYBOX_LIGHT_BIAS = 1.2;
