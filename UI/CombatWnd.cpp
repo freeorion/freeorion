@@ -10,6 +10,7 @@
 #include "../combat/OpenSteer/CombatShip.h"
 #include "../combat/OpenSteer/Missile.h"
 #include "../combat/OpenSteer/PathingEngine.h"
+#include "../Empire/Empire.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
@@ -1944,8 +1945,11 @@ Ogre::MovableObject* CombatWnd::GetObjectUnderPt(const GG::Pt& pt)
 void CombatWnd::DeselectAll()
 { m_current_selections.clear(); }
 
-const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_design)
+const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship)
 {
+    assert(ship.Design());
+    const ShipDesign& ship_design = *ship.Design();
+
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
     std::string modified_material_name = ShipMaterialName(ship_design);
@@ -1958,14 +1962,19 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const ShipDesign& ship_desig
             setTextureName(ship_design.Model() + "_Glow.png");
         modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(2)->
             setTextureName(ship_design.Model() + "_Normal.png");
-        modified_material->getTechnique(0)->getPass(1)->getTextureUnitState(3)->
-            setTextureName(ship_design.Model() + "_Specular.png");
     }
+
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("star_light_color", GetSystemColor(StarBaseName()));
+
     // TODO: Use the current skybox, once we have more than one.
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
+
+    GG::Clr color = Empires().Lookup(ClientApp::GetApp()->PlayerID())->Color();
+    modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
+        setNamedConstant("decal_color", Ogre::Vector3(color.r / 255.0, color.g / 255.0, color.b / 255.0));
+
     return modified_material;
 }
 
@@ -2024,7 +2033,7 @@ void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
     const Ship& ship = combat_ship->GetShip();
     std::string mesh_name = ship.Design()->Model() + ".mesh";
 
-    const Ogre::MaterialPtr& material = GetShipMaterial(*ship.Design());
+    const Ogre::MaterialPtr& material = GetShipMaterial(ship);
     Ogre::Entity* entity = CreateShipEntity(m_scene_manager, ship, material);
     Ogre::SceneNode* node = CreateShipSceneNode(m_scene_manager, ship);
     node->attachObject(entity);

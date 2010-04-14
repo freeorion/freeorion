@@ -437,7 +437,7 @@ CombatSetupWnd::CombatSetupWnd(
     Ogre::SceneManager* scene_manager,
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     intersect_mouse_with_ecliptic,
-    boost::function<const Ogre::MaterialPtr& (const ShipDesign&)>
+    boost::function<const Ogre::MaterialPtr& (const Ship&)>
     get_ship_material,
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     add_ship_node_to_combat_wnd,
@@ -707,7 +707,7 @@ Ogre::SceneNode* CombatSetupWnd::GetShipNode(Ship& ship)
     if (!retval) {
         retval = CreateShipSceneNode(m_scene_manager, ship);
         retval->setUserAny(Ogre::Any(&ship));
-        const Ogre::MaterialPtr& material = m_get_ship_material(*ship.Design());
+        const Ogre::MaterialPtr& material = m_get_ship_material(ship);
         Ogre::Entity*& entity = m_ship_entities[ship.ID()];
         entity = CreateShipEntity(m_scene_manager, ship, material);
         retval->attachObject(entity);
@@ -808,7 +808,7 @@ void CombatSetupWnd::PlaceShip(Ship* ship, Ogre::SceneNode* node)
     m_add_ship_node_to_combat_wnd(ship_id,
                                   node,
                                   m_ship_entities[ship_id],
-                                  m_get_ship_material(*ship->Design()));
+                                  m_get_ship_material(*ship));
     CreateCombatOrder(ship_id, node);
     m_placed_nodes[ship_id] = node;
 }

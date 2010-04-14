@@ -36,7 +36,7 @@ public:
                    Ogre::SceneManager* scene_manager,
                    boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt&)>
                    intersect_mouse_with_ecliptic,
-                   boost::function<const Ogre::MaterialPtr& (const ShipDesign&)>
+                   boost::function<const Ogre::MaterialPtr& (const Ship&)>
                    get_ship_material,
                    boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
                    add_ship_node_to_combat_wnd,
@@ -98,7 +98,7 @@ private:
 
     boost::function<std::pair<bool, Ogre::Vector3> (const GG::Pt& pt)>
     m_intersect_mouse_with_ecliptic;
-    boost::function<const Ogre::MaterialPtr& (const ShipDesign&)>
+    boost::function<const Ogre::MaterialPtr& (const Ship&)>
     m_get_ship_material;
     boost::function<void (int, Ogre::SceneNode*, Ogre::Entity*, const Ogre::MaterialPtr&)>
     m_add_ship_node_to_combat_wnd;

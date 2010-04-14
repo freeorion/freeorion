@@ -137,7 +137,7 @@ private:
     void SelectObjectsInVolume(bool toggle_selected_items);
     Ogre::MovableObject* GetObjectUnderPt(const GG::Pt& pt);
     void DeselectAll();
-    const Ogre::MaterialPtr& GetShipMaterial(const ShipDesign& ship_design);
+    const Ogre::MaterialPtr& GetShipMaterial(const Ship& ship);
     void AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* entity,
                      const Ogre::MaterialPtr& material);
     void RepositionShipNode(int ship_id,
