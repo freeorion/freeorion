@@ -679,8 +679,6 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
                     Ogre::Pass* pass = material->getTechnique(0)->getPass(1);
                     assert(pass->hasFragmentProgram());
                     pass->getFragmentProgramParameters()->setNamedConstant("alpha", 0.25f);
-                    pass->setSceneBlending(Ogre::SBF_SOURCE_ALPHA, Ogre::SBF_ONE_MINUS_SOURCE_ALPHA);
-                    pass->setDepthWriteEnabled(false);
                 }
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
