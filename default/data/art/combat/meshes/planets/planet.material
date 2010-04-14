@@ -42,13 +42,13 @@ material planet {
             }
 
             texture_unit
-            { texture Terran01Day.png 2d 0 }
+            { texture Terran01Day.png }
 
             texture_unit
-            { texture Terran01Night.png 2d 0 }
+            { texture Terran01Night.png }
 
             texture_unit
-            { texture Terran01CloudGloss.png 2d 0 }
+            { texture Terran01CloudGloss.png }
         }
     }
 }
@@ -86,16 +86,16 @@ material atmosphereless_planet {
             }
 
             texture_unit
-            { texture Barren01Day.png 2d 0 }
+            { texture Barren01Day.png }
 
             texture_unit
-            { texture Barren01Night.png 2d 0 }
+            { texture Barren01Night.png }
 
             texture_unit
-            { texture Barren01Normal.png 2d 0 }
+            { texture Barren01Normal.png }
 
             texture_unit
-            { texture Barren01LightsA.png 2d 0 }
+            { texture Barren01LightsA.png }
         }
     }
 }
@@ -124,7 +124,7 @@ material gas_giant {
             { param_named gas_texture int 0 }
 
             texture_unit
-            { texture GasGiant01.png 2d 0 }
+            { texture GasGiant01.png }
         }
     }
 }
@@ -141,10 +141,10 @@ material asteroid {
             }
 
             texture_unit
-            { texture Asteroid01Color.png 2d 0 }
+            { texture Asteroid01Color.png }
 
             texture_unit
-            { texture Asteroid01Normal.png 2d 0 }
+            { texture Asteroid01Normal.png }
         }
     }
 }

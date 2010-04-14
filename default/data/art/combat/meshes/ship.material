@@ -30,16 +30,16 @@ material ship {
             }
 
             texture_unit
-            { texture seed_Color.png 2d 0 }
+            { texture seed_Color.png }
 
             texture_unit
-            { texture seed_Glow.png 2d 0 }
+            { texture seed_Glow.png }
 
             texture_unit
-            { texture seed_Normal.png 2d 0 }
+            { texture seed_Normal.png }
 
             texture_unit
-            { texture seed_Specular.png 2d 0 }
+            { texture seed_Specular.png }
         }
     }
 }
