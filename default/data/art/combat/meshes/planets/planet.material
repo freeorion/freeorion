@@ -83,6 +83,7 @@ material atmosphereless_planet {
                 param_named night_texture int 1
                 param_named normal_texture int 2
                 param_named lights_texture int 3
+                param_named lights_channel int -1
             }
 
             texture_unit

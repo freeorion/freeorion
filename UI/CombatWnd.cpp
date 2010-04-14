@@ -54,8 +54,6 @@
 #include <btBulletCollisionCommon.h>
 
 #include <GG/GUI.h>
-#include "../GG/src/GIL/image.hpp"
-#include "../GG/src/GIL/extension/io/png_dynamic_io.hpp"
 
 #include <boost/cast.hpp>
 #include <boost/algorithm/string/case_conv.hpp>
@@ -260,71 +258,37 @@ namespace {
         return retval;
     }
 
-    struct BadLightsTexture :
-        GG::ExceptionBase
+    std::pair<std::string, int> PlanetLightsChannel(const std::string& base_name, const Planet& planet)
     {
-        BadLightsTexture(const std::string& msg) throw() : ExceptionBase(msg) {}
-        virtual const char* type() const throw() {return "BadLightsTexture";}
-    };
+        std::pair<std::string, int> retval;
 
-    Ogre::TexturePtr PlanetLightsTexture(const std::string& base_name,
-                                         unsigned int light_level)
-    {
-        assert(light_level == NO_CITY_LIGHTS || 0 <= light_level && light_level < 10);
-        std::string filename = base_name;
-        unsigned int channel = 0;
-        if (light_level < 4) {
-            filename += "LightsA.png";
-            channel = light_level;
-        } else if (light_level < 8) {
-            filename += "LightsB.png";
-            channel = light_level - 4;
-        } else if (light_level == 8) {
-            filename += "Day.png";
-            channel = 3;
+        double pop = planet.GetMeter(METER_POPULATION)->Current();
+        unsigned int lights_level = NO_CITY_LIGHTS;
+        const double MIN_POP_FOR_LIGHTS = 5.0;
+        if (MIN_POP_FOR_LIGHTS < pop)
+            lights_level = std::fmod(pop - 5.0, (100.0 - MIN_POP_FOR_LIGHTS) / 10.0);
+
+        assert(lights_level == NO_CITY_LIGHTS || lights_level < 10);
+
+        retval.first = base_name;
+        if (lights_level == NO_CITY_LIGHTS) {
+            retval.first += "LightsA.png";
+            retval.second = -1;
+        } else if (lights_level < 4) {
+            retval.first += "LightsA.png";
+            retval.second = lights_level;
+        } else if (lights_level < 8) {
+            retval.first += "LightsB.png";
+            retval.second = lights_level - 4;
+        } else if (lights_level == 8) {
+            retval.first += "Day.png";
+            retval.second = 3;
         } else {
-            filename += "Night.png";
-            channel = 3;
+            retval.first += "Night.png";
+            retval.second = 3;
         }
 
-        namespace fs = boost::filesystem;
-        fs::path path(ClientUI::ArtDir() / "combat" / "meshes" / "planets" / filename);
-
-        if (!fs::exists(path))
-            throw BadLightsTexture("Texture file \"" + filename + "\" does not exist");
-
-        if (!fs::is_regular_file(path))
-            throw BadLightsTexture("Texture \"file\" \"" + filename + "\" is not a file");
-
-        boost::gil::gray8_image_t final_image;
-        if (light_level == NO_CITY_LIGHTS) {
-            boost::gil::point2<std::ptrdiff_t> dimensions;
-            try {
-                dimensions = boost::gil::png_read_dimensions(path.string());
-            } catch (const std::ios_base::failure &) {
-                throw BadLightsTexture("Texture \"" + path.string() +
-                                       "\" could not be read as a PNG file");
-            }
-            final_image.recreate(dimensions);
-        } else {
-            boost::gil::rgba8_image_t source_image;
-            try {
-                boost::gil::png_read_image(path.string(), source_image);
-            } catch (const std::ios_base::failure &) {
-                throw BadLightsTexture("Texture \"" + path.string() +
-                                       "\" could not be read as a 32-bit RGBA PNG file");
-            }
-            final_image.recreate(source_image.dimensions());
-            copy_pixels(nth_channel_view(const_view(source_image), channel), view(final_image));
-        }
-
-        const void* image_data = interleaved_view_get_raw_data(const_view(final_image));
-        std::size_t image_size = final_image.width() * final_image.height();
-        Ogre::DataStreamPtr stream(
-            new Ogre::MemoryDataStream(const_cast<void*>(image_data), image_size));
-        return Ogre::TextureManager::getSingleton().loadRawData(
-            base_name + "_city_lights", "General", stream,
-            final_image.width(), final_image.height(), Ogre::PF_BYTE_L);
+        return retval;
     }
 
     // TODO: For prototyping only.
@@ -1001,11 +965,6 @@ CombatWnd::~CombatWnd()
         delete it->second.m_bt_object;
     }
 
-    for (std::size_t i = 0; i < m_city_lights_textures.size(); ++i) {
-        Ogre::TextureManager::getSingleton().remove(m_city_lights_textures[i]->getName());
-    }
-    m_city_lights_textures.clear();
-
     m_collision_shapes.clear();
     m_collision_objects.clear();
     delete m_collision_world;
@@ -1167,17 +1126,11 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                         assert(material_name == "atmosphereless_planet");
                         material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->
                             setTextureName(base_name + "Normal.png");
-                        double pop = planet->GetMeter(METER_POPULATION)->Current();
-                        unsigned int lights_level = NO_CITY_LIGHTS;
-                        const double MIN_POP_FOR_LIGHTS = 5.0;
-                        if (MIN_POP_FOR_LIGHTS < pop) {
-                            lights_level =
-                                std::fmod(pop - 5.0, (100.0 - MIN_POP_FOR_LIGHTS) / 10.0);
-                        }
-                        Ogre::TexturePtr texture = PlanetLightsTexture(base_name, lights_level);
-                        m_city_lights_textures.push_back(texture);
+                        std::pair<std::string, int> lights_channel = PlanetLightsChannel(base_name, *planet);
                         material->getTechnique(0)->getPass(0)->getTextureUnitState(3)->
-                            setTextureName(texture->getName());
+                            setTextureName(lights_channel.first);
+                        material->getTechnique(0)->getPass(0)->getFragmentProgramParameters()->
+                            setNamedConstant("lights_channel", lights_channel.second);
                     }
                 }
 

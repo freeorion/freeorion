@@ -223,8 +223,6 @@ private:
     std::map<int, ShipData> m_ship_assets;
     std::map<std::string, Ogre::MaterialPtr> m_ship_materials;
 
-    std::vector<Ogre::TexturePtr> m_city_lights_textures;
-
     // The collision detection system
     btDefaultCollisionConfiguration* m_collision_configuration;
     btCollisionDispatcher* m_collision_dispatcher;
