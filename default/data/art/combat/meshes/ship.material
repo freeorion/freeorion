@@ -12,6 +12,7 @@ material ship {
 
         pass {
             depth_bias 1
+            scene_blend alpha_blend
 
             vertex_program_ref ship_vert
             {
