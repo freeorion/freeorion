@@ -1,11 +1,10 @@
 material starlane_entry {
     technique {
         pass {
-            depth_bias 1.0
             lighting off
             cull_hardware none
             cull_software none
-            scene_blend colour_blend
+            scene_blend alpha_blend
 
             texture_unit {
                 texture starlane_entry.png
