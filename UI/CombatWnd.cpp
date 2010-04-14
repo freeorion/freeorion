@@ -99,7 +99,7 @@ namespace {
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
 
     const Ogre::Real NEAR_CLIP = 0.01;
-    const Ogre::Real FAR_CLIP = 3.0 * SystemRadius();
+    const Ogre::Real FAR_CLIP = 4.0 * SystemRadius();
 
     const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0 * SystemRadius();
     const Ogre::Real MIN_ZOOM_IN_DISTANCE = PlanetRadius(SZ_GASGIANT) * 1.05;
@@ -1417,15 +1417,9 @@ void CombatWnd::Zoom(int move, GG::Flags<GG::ModKey> mod_keys)
 {
     Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
     if (m_look_at_scene_node)
-    {std::cerr << m_look_at_scene_node->getName() << " "
-               << m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere().getRadius() << '\n';
         bounding_sphere = m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
-    }
     const Ogre::Real EFFECTIVE_MIN_DISTANCE =
         std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
-
-    std::cerr << "MIN_ZOOM_IN_DISTANCE=" << MIN_ZOOM_IN_DISTANCE << '\n'
-              << "EFFECTIVE_MIN_DISTANCE=" << EFFECTIVE_MIN_DISTANCE << '\n';
 
     Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
     Ogre::Real scale_factor = 1.0;
