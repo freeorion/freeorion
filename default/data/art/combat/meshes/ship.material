@@ -26,7 +26,7 @@ material ship {
                 param_named normal_specular_texture int 2
                 param_named star_light_color float3 1.0 1.0 1.0
                 param_named skybox_light_color float3 0.0 0.0 0.0
-                param_named decal_color float3 0.0 1.0 0.0
+                param_named decal_color float3 1.0 1.0 1.0
                 param_named alpha float 1.0
             }
 
@@ -38,10 +38,6 @@ material ship {
 
             texture_unit
             { texture seed_Normal.png }
-
-            // TODO: Remove this, once C++ code changes are in place.
-            texture_unit
-            { texture seed_Specular.png }
         }
     }
 }
