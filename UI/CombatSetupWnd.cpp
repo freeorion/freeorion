@@ -538,7 +538,14 @@ CombatSetupWnd::CombatSetupWnd(
 
 CombatSetupWnd::~CombatSetupWnd()
 {
-    // TODO: clean up nodes maintained during initial placement
+    for (std::map<std::size_t, std::vector<Ogre::SceneNode*> >::iterator it =
+             m_region_nodes_by_setup_group.begin();
+         it != m_region_nodes_by_setup_group.end();
+         ++it) {
+        for (std::size_t i = 0; i < it->second.size(); ++i) {
+            m_scene_manager->destroySceneNode(it->second[i]);
+        }
+    }
 }
 
 GG::Pt CombatSetupWnd::ListRowSize() const
