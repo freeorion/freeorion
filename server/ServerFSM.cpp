@@ -950,6 +950,10 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
                 "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
                 "\" attempted to issue combat orders for an object it does not own!  Terminating...");
         }
+
+        // TODO: check legality of placement orders, and check that mission
+        // orders are given to the right kind of object (e.g. ship missions
+        // given to ships, not fighters).
     }
 
     Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : Received combat orders from player " << message.SendingPlayer();
