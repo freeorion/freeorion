@@ -189,42 +189,12 @@ private:
 
     friend class boost::serialization::access;
     template <class Archive>
-    void serialize(Archive& ar, const unsigned int version)
-        {
-            ar & BOOST_SERIALIZATION_NVP(m_order_type);
-            switch (m_order_type) {
-            case SHIP_ORDER:
-                ar & BOOST_SERIALIZATION_NVP(m_ship_mission); break;
-            case FIGHTER_ORDER:
-                ar & BOOST_SERIALIZATION_NVP(m_fighter_mission); break;
-            case SETUP_PLACEMENT_ORDER:
-                ar & BOOST_SERIALIZATION_NVP(m_position_and_direction); break;
-            }
-        }
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /////////////////////////////////////////////////////
 // CombatOrderSet
 /////////////////////////////////////////////////////
 typedef std::vector<CombatOrder> CombatOrderSet;
-
-
-// implementations
-
-template <class Archive>
-void ShipMission::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_destination)
-        & BOOST_SERIALIZATION_NVP(m_target);
-}
-
-template <class Archive>
-void FighterMission::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_type)
-        & BOOST_SERIALIZATION_NVP(m_destination)
-        & BOOST_SERIALIZATION_NVP(m_target);
-}
 
 #endif

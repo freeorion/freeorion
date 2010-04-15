@@ -341,6 +341,8 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
 
 void ExtractMessageData(const Message& msg, CombatData& combat_data, std::vector<CombatSetupGroup>& setup_groups);
 
+void ExtractMessageData(const Message& msg, CombatOrderSet& order_set);
+
 void ExtractMessageData(const Message& msg, CombatData& combat_data);
 
 void ExtractMessageData(const Message& msg, System*& system,

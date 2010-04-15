@@ -853,6 +853,8 @@ ResolvingCombat::ResolvingCombat(my_context c) :
         new CombatData(context<ProcessingTurn>().m_combat_system, setup_groups);
     context<ProcessingTurn>().m_combat_system = 0;
 
+    server.ClearEmpireCombatTurns();
+
     for (ServerNetworking::const_established_iterator it =
              server.m_networking.established_begin();
          it != server.m_networking.established_end();
@@ -869,6 +871,7 @@ ResolvingCombat::ResolvingCombat(my_context c) :
                     empire_id,
                     *server.m_current_combat,
                     setup_groups[empire_id]));
+            server.AddEmpireCombatTurn(empire_id);
         }
     }
 }
@@ -884,39 +887,38 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ResolvingCombat.CombatTurnOrders";
 
-#if 0 // Cut-n-paste from WaitingForTurnEndIdle; this sort of thing needs to be done, but for combat turns instead of game turns
     ServerApp& server = Server();
     const Message& message = msg.m_message;
+ 
+    CombatOrderSet* order_set = new CombatOrderSet;
 
-    OrderSet* order_set = new OrderSet;
     ExtractMessageData(message, *order_set);
 
     // check order validity -- all orders must originate from this empire in order to be considered valid
     Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
     assert(empire);
-    for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-        OrderPtr order = it->second;
+    for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
+        const CombatOrder* order = &*it;
         assert(order);
-        if (empire->EmpireID() != order->EmpireID()) {
+        UniverseObject* object = GetObject(order->ID());
+        if (object->Owners().find(empire->EmpireID()) == object->Owners().end()) {
             throw std::runtime_error(
                 "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
-                "\" attempted to issue combat orders for player \"" +
-                Empires().Lookup(order->EmpireID())->PlayerName() + "\"!  Terminating...");
+                "\" attempted to issue combat orders for an object (\"" + object->Name() +
+                "\") it does not own!  Terminating...");
         }
     }
 
-    server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS, -1));
-
     Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : Received combat orders from player " << message.SendingPlayer();
 
-    server.SetEmpireTurnOrders(server.GetPlayerEmpire(message.SendingPlayer())->EmpireID(), order_set);
+    server.SetEmpireCombatTurnOrders(empire->EmpireID(), order_set);
 
     if (server.AllOrdersReceived()) {
         Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : All orders received.  Processing combat turn....";
-        server.ProcessTurns();
-        return transit<CombatTurnProcessingIdle>();
+        server.ProcessCombatTurn();
+        if (server.CombatTerminated())
+            return transit<ProcessingTurnIdle>();
     }
-#endif
 
     return discard_event();
 }

@@ -2,6 +2,7 @@
 
 #include "CombatWnd.h"
 #include "InfoPanels.h"
+#include "../client/human/HumanClientApp.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
@@ -845,7 +846,6 @@ void CombatSetupWnd::AutoPlaceButtonClicked()
 
 void CombatSetupWnd::DoneButtonClicked()
 {
-#if 0 // TODO
     CombatOrderSet orders;
     for (std::map<int, CombatOrder>::iterator it = m_placement_orders.begin();
          it != m_placement_orders.end();
@@ -856,7 +856,6 @@ void CombatSetupWnd::DoneButtonClicked()
         CombatTurnOrdersMessage(
             HumanClientApp::GetApp()->PlayerID(),
             orders));
-#endif
 
     m_setup_finished_waiting_for_server = true;
     m_done_button->Disable(true);

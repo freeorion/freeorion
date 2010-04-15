@@ -2,8 +2,15 @@
 
 #include "../util/OrderSet.h"
 
+#include "../combat/CombatOrder.h"
+#include "../combat/OpenSteer/CombatObject.h"
+
 #include "Serialize.ipp"
 
+
+////////////////////////////////////////////////////////////
+// Galaxy Map orders
+////////////////////////////////////////////////////////////
 
 // exports for boost serialization of polymorphic Order hierarchy
 BOOST_CLASS_EXPORT(RenameOrder)
@@ -133,3 +140,48 @@ void Serialize(FREEORION_OARCHIVE_TYPE& oa, const OrderSet& order_set)
 
 void Deserialize(FREEORION_IARCHIVE_TYPE& ia, OrderSet& order_set)
 { ia >> BOOST_SERIALIZATION_NVP(order_set); }
+
+
+////////////////////////////////////////////////////////////
+// Combat orders
+////////////////////////////////////////////////////////////
+
+template <class Archive>
+void ShipMission::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_destination)
+        & BOOST_SERIALIZATION_NVP(m_target);
+}
+
+template void ShipMission::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void ShipMission::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void FighterMission::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_type)
+        & BOOST_SERIALIZATION_NVP(m_destination)
+        & BOOST_SERIALIZATION_NVP(m_target);
+}
+
+template void FighterMission::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void FighterMission::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);
+
+template <class Archive>
+void CombatOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_order_type)
+        & BOOST_SERIALIZATION_NVP(m_id);
+    switch (m_order_type) {
+    case SHIP_ORDER:
+        ar & BOOST_SERIALIZATION_NVP(m_ship_mission); break;
+    case FIGHTER_ORDER:
+        ar & BOOST_SERIALIZATION_NVP(m_fighter_mission); break;
+    case SETUP_PLACEMENT_ORDER:
+        ar & BOOST_SERIALIZATION_NVP(m_position_and_direction); break;
+    }
+}
+
+template void CombatOrder::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
+template void CombatOrder::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE&, const unsigned int);

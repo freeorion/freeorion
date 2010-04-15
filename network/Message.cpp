@@ -809,6 +809,19 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data, std::vector
     }
 }
 
+void ExtractMessageData(const Message& msg, CombatOrderSet& order_set)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(order_set);
+    } catch (const boost::archive::archive_exception) {
+        std::cerr << "ExtractMessageData(const Message& msg, CombatOrderSet& "
+                  << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;
+        throw;
+    }
+}
+
 void ExtractMessageData(const Message& msg, CombatData& combat_data)
 {
     try {

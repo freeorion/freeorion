@@ -129,6 +129,20 @@ public:
       * are victorious.  Informs players of victories or eliminations, and
       * disconnects eliminated players. */
     void                CheckForEmpireEliminationOrVictory();
+    
+    void AddEmpireCombatTurn(int empire_id);
+
+    void ClearEmpireCombatTurns();
+
+    void SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set);
+
+    void ClearEmpireCombatTurnOrders();
+
+    bool AllCombatOrdersReceived();
+
+    void ProcessCombatTurn();
+
+    bool CombatTerminated();
 
     /** Intializes game universe, sends out initial game state to clients, and
       * signals clients to start first turn */
@@ -205,6 +219,8 @@ private:
       * the start of a game or reload and then the map maintains OrderSets for
       * that turn. */
     std::map<int, OrderSet*>        m_turn_sequence;
+
+    std::map<int, CombatOrderSet*>  m_combat_turn_sequence;
 
     std::map<int, std::set<std::string> >   m_victors;              ///< for each player id, the victory types that player has achived
     std::set<int>                           m_eliminated_players;   ///< ids of players whose connections have been severed by the server after they were eliminated

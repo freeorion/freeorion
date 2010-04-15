@@ -500,7 +500,7 @@ void ServerApp::RemoveEmpireTurn(int empire_id)
     m_turn_sequence.erase(empire_id);
 }
 
-void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet *order_set)
+void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet* order_set)
 {
     m_turn_sequence[empire_id] = order_set;
 }
@@ -1374,4 +1374,48 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
         empires.EliminateEmpire(it->second);
         RemoveEmpireTurn(it->second);
     }
+}
+
+void ServerApp::AddEmpireCombatTurn(int empire_id)
+{ m_turn_sequence[empire_id] = 0; }
+
+void ServerApp::ClearEmpireCombatTurns()
+{ m_turn_sequence.clear(); }
+
+void ServerApp::SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set)
+{ m_combat_turn_sequence[empire_id] = order_set; }
+
+void ServerApp::ClearEmpireCombatTurnOrders()
+{
+    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
+         it != m_combat_turn_sequence.end();
+         ++it) {
+        if (it->second) {
+            delete it->second;
+            it->second = 0;
+        }
+    }
+}
+
+bool ServerApp::AllCombatOrdersReceived()
+{
+    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
+         it != m_combat_turn_sequence.end();
+         ++it) {
+        if (!it->second)
+            return false;
+    }
+    return true;
+}
+
+void ServerApp::ProcessCombatTurn()
+{
+    // TODO
+    ClearEmpireCombatTurnOrders();
+}
+
+bool ServerApp::CombatTerminated()
+{
+    // TODO
+    return false;
 }
