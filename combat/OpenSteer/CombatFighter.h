@@ -68,6 +68,8 @@ public:
     virtual float maxForce() const;
     virtual float maxSpeed() const;
     int ID() const;
+    int Owner() const;
+    bool IsLeader() const;
     const FighterStats& Stats() const;
     const std::string& PartName() const;
     const FighterMission& CurrentMission() const;

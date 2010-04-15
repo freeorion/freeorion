@@ -855,6 +855,8 @@ ResolvingCombat::ResolvingCombat(my_context c) :
 
     server.ClearEmpireCombatTurns();
 
+    std::cerr << "ResolvingCombat: waiting for orders from empires ";
+
     for (ServerNetworking::const_established_iterator it =
              server.m_networking.established_begin();
          it != server.m_networking.established_end();
@@ -872,8 +874,10 @@ ResolvingCombat::ResolvingCombat(my_context c) :
                     *server.m_current_combat,
                     setup_groups[empire_id]));
             server.AddEmpireCombatTurn(empire_id);
+            std::cerr << empire_id << " ";
         }
     }
+    std::cerr << "\n";
 }
 
 ResolvingCombat::~ResolvingCombat()
@@ -898,14 +902,31 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
     Empire* empire = server.GetPlayerEmpire(message.SendingPlayer());
     assert(empire);
     for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-        const CombatOrder* order = &*it;
-        assert(order);
-        UniverseObject* object = GetObject(order->ID());
-        if (object->Owners().find(empire->EmpireID()) == object->Owners().end()) {
+        const CombatOrder& order = *it;
+        int owner_id = -1;
+        if (order.Type() == CombatOrder::SHIP_ORDER ||
+            order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
+            if (UniverseObject* object = GetObject(order.ID())) {
+                assert(object->Owners().size() == 1u);
+                owner_id = *object->Owners().begin();
+            }
+        } else if (order.Type() == CombatOrder::FIGHTER_ORDER) {
+            CombatFighterPtr combat_fighter =
+                server.m_current_combat->m_pathing_engine.FindLeader(order.ID());
+            if (combat_fighter)
+                owner_id = combat_fighter->Owner();
+        } else {
+            assert(!"Unknown CombatOrder type!");
+        }
+        if (owner_id == -1) {
             throw std::runtime_error(
                 "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
-                "\" attempted to issue combat orders for an object (\"" + object->Name() +
-                "\") it does not own!  Terminating...");
+                "\" attempted to issue combat orders for an object that does not exist!  "
+                "Terminating...");
+        } else if (owner_id != empire->EmpireID()) {
+            throw std::runtime_error(
+                "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
+                "\" attempted to issue combat orders for an object it does not own!  Terminating...");
         }
     }
 
@@ -913,11 +934,34 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
 
     server.SetEmpireCombatTurnOrders(empire->EmpireID(), order_set);
 
-    if (server.AllOrdersReceived()) {
+    std::cerr << "received orderd for empire " << empire->EmpireID() << '\n';
+
+    if (server.AllCombatOrdersReceived()) {
+        std::cerr << "all orders received; processing turn\n";
         Logger().debugStream() << "ResolvingCombat.CombatTurnOrders : All orders received.  Processing combat turn....";
         server.ProcessCombatTurn();
+
+        std::cerr << "turn complete; sending out updates to empires ";
+
+        for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+             it != server.m_networking.established_end();
+             ++it) {
+            int player_id = (*it)->ID();
+            int empire_id = server.GetPlayerEmpire(player_id)->EmpireID();
+            if (context<ProcessingTurn>().m_combat_empire_ids.find(empire_id) !=
+                context<ProcessingTurn>().m_combat_empire_ids.end())
+            {
+                (*it)->SendMessage(
+                    ServerCombatUpdateMessage(player_id, empire_id, *server.m_current_combat));
+                std::cerr << empire_id << " ";
+            }
+        }
+        std::cerr << "\n";
+
         if (server.CombatTerminated())
+        {std::cerr << "this combat is over\n";
             return transit<ProcessingTurnIdle>();
+        }
     }
 
     return discard_event();

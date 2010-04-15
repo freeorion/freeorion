@@ -504,12 +504,12 @@ PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_
 // CombatData
 ////////////////////////////////////////////////
 CombatData::CombatData() :
-    m_combat_turn_number(1),
+    m_combat_turn_number(0),
     m_system(0)
 {}
 
 CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups) :
-    m_combat_turn_number(1),
+    m_combat_turn_number(0),
     m_system(system)
 {
     using OpenSteer::SphereObstacle;

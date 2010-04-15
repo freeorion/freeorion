@@ -45,6 +45,10 @@ public:
     const_iterator begin () const;
     const_iterator end () const;
 
+    CombatShipPtr FindShip(int id) const;
+    CombatFighterPtr FindLeader(int id) const;
+    CombatFighterPtr FindFighter(int id) const;
+
     void Update(const float current_time, const float elapsed_time);
     void TurnStarted(unsigned int number);
 
@@ -85,6 +89,11 @@ private:
     Attackees m_attackees;
     ProximityDB* m_proximity_database;
     ObstacleVec m_obstacles;
+
+    // not serialized
+    std::map<int, CombatShipPtr> m_ships_by_id;
+    std::map<int, CombatFighterPtr> m_leaders_by_id;
+    std::map<int, CombatFighterPtr> m_fighters_by_id;
 
     friend class boost::serialization::access;
     template <class Archive>

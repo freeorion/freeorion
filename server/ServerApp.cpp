@@ -1377,10 +1377,13 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
 }
 
 void ServerApp::AddEmpireCombatTurn(int empire_id)
-{ m_turn_sequence[empire_id] = 0; }
+{ m_combat_turn_sequence[empire_id] = 0; }
 
 void ServerApp::ClearEmpireCombatTurns()
-{ m_turn_sequence.clear(); }
+{
+    ClearEmpireCombatTurnOrders();
+    m_combat_turn_sequence.clear();
+}
 
 void ServerApp::SetEmpireCombatTurnOrders(int empire_id, CombatOrderSet* order_set)
 { m_combat_turn_sequence[empire_id] = order_set; }
@@ -1390,10 +1393,8 @@ void ServerApp::ClearEmpireCombatTurnOrders()
     for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
          it != m_combat_turn_sequence.end();
          ++it) {
-        if (it->second) {
-            delete it->second;
-            it->second = 0;
-        }
+        delete it->second;
+        it->second = 0;
     }
 }
 
@@ -1410,8 +1411,45 @@ bool ServerApp::AllCombatOrdersReceived()
 
 void ServerApp::ProcessCombatTurn()
 {
-    // TODO
+    PathingEngine& pathing_engine = m_current_combat->m_pathing_engine;
+
+    // apply combat orders
+    for (std::map<int, CombatOrderSet*>::iterator it = m_combat_turn_sequence.begin();
+         it != m_combat_turn_sequence.end();
+         ++it) {
+        for (std::size_t i = 0; i < it->second->size(); ++i) {
+            const CombatOrder& order = (*it->second)[i];
+            switch (order.Type()) {
+            case CombatOrder::SHIP_ORDER: {
+                // TODO
+                break;
+            }
+            case CombatOrder::FIGHTER_ORDER: {
+                // TODO
+                break;
+            }
+            case CombatOrder::SETUP_PLACEMENT_ORDER: {
+                CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
+                assert(combat_ship);
+                combat_ship->setPosition(order.GetPositionAndDirection().first);
+                combat_ship->regenerateOrthonormalBasis(order.GetPositionAndDirection().first,
+                                                        OpenSteer::Vec3(0.0, 0.0, 1.0));
+                break;
+            }
+            }
+        }
+    }
+
+    // clear applied combat orders
     ClearEmpireCombatTurnOrders();
+
+    // process combat turn
+    if (m_current_combat->m_combat_turn_number) {
+        // TODO: execute turn
+    }
+
+    // increment combat turn number
+    ++m_current_combat->m_combat_turn_number;
 }
 
 bool ServerApp::CombatTerminated()

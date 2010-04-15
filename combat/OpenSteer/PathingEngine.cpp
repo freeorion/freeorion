@@ -132,6 +132,33 @@ PathingEngine::const_iterator PathingEngine::begin () const
 PathingEngine::const_iterator PathingEngine::end () const
 { return m_objects.end(); }
 
+CombatShipPtr PathingEngine::FindShip(int id) const
+{
+    CombatShipPtr retval;
+    std::map<int, CombatShipPtr>::const_iterator it = m_ships_by_id.find(id);
+    if (it != m_ships_by_id.end())
+        retval = it->second;
+    return retval;
+}
+
+CombatFighterPtr PathingEngine::FindLeader(int id) const
+{
+    CombatFighterPtr retval;
+    std::map<int, CombatFighterPtr>::const_iterator it = m_leaders_by_id.find(id);
+    if (it != m_leaders_by_id.end())
+        retval = it->second;
+    return retval;
+}
+
+CombatFighterPtr PathingEngine::FindFighter(int id) const
+{
+    CombatFighterPtr retval;
+    std::map<int, CombatFighterPtr>::const_iterator it = m_fighters_by_id.find(id);
+    if (it != m_fighters_by_id.end())
+        retval = it->second;
+    return retval;
+}
+
 void PathingEngine::TurnStarted(unsigned int number)
 {
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
@@ -169,12 +196,32 @@ void PathingEngine::Update(const float current_time, const float elapsed_time)
 }
 
 void PathingEngine::AddObject(const CombatObjectPtr& obj)
-{ m_objects.insert(obj); }
+{
+    m_objects.insert(obj);
+    if (obj->IsFighter()) {
+        CombatFighterPtr combat_fighter = boost::static_pointer_cast<CombatFighter>(obj);
+        if (combat_fighter->IsLeader())
+            m_leaders_by_id[combat_fighter->ID()] = combat_fighter;
+        else
+            m_fighters_by_id[combat_fighter->ID()] = combat_fighter;
+    } else if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(obj)) {
+        m_ships_by_id[combat_ship->GetShip().ID()] = combat_ship;
+    }
+}
 
 void PathingEngine::RemoveObject(const CombatObjectPtr& obj)
 {
     m_attackees.erase(obj);
     m_objects.erase(obj);
+    if (obj->IsFighter()) {
+        CombatFighterPtr combat_fighter = boost::static_pointer_cast<CombatFighter>(obj);
+        if (combat_fighter->IsLeader())
+            m_leaders_by_id.erase(combat_fighter->ID());
+        else
+            m_fighters_by_id.erase(combat_fighter->ID());
+    } else if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(obj)) {
+        m_ships_by_id.erase(combat_ship->GetShip().ID());
+    }
 }
 
 int PathingEngine::NextFighterID()
@@ -200,9 +247,11 @@ void PathingEngine::EndAttack(const CombatObjectPtr& attacker,
 void PathingEngine::AddFighterFormation(const CombatFighterFormationPtr& formation)
 {
     formation->Leader().EnterSpace();
+    m_leaders_by_id[formation->Leader().ID()] = formation->Leader().shared_from_this();
     for (CombatFighterFormation::iterator it = formation->begin(); it != formation->end(); ++it) {
         (*it)->EnterSpace();
         m_objects.insert(*it);
+        m_fighters_by_id[(*it)->ID()] = *it;
     }
     m_fighter_formations.insert(formation);
 }

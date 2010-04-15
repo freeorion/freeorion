@@ -252,6 +252,12 @@ float CombatFighter::maxSpeed() const
 int CombatFighter::ID() const
 { return m_id; }
 
+int CombatFighter::Owner() const
+{ return m_empire_id; }
+
+bool CombatFighter::IsLeader() const
+{ return m_leader; }
+
 const FighterStats& CombatFighter::Stats() const
 { return m_stats; }
 
