@@ -1881,12 +1881,12 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
     const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
     const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
 
-    float left = Value(std::min(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
-    float right = Value(std::max(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
-    float top = Value(std::min(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
-    float bottom = Value(std::max(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
+    double left = Value(1.0 * std::min(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
+    double right = Value(1.0 * std::max(m_selection_drag_start.x, m_selection_drag_stop.x) / APP_WIDTH);
+    double top = Value(1.0 * std::min(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
+    double bottom = Value(1.0 * std::max(m_selection_drag_start.y, m_selection_drag_stop.y) / APP_HEIGHT);
 
-    const float MIN_SELECTION_VOLUME = 0.0001;
+    const double MIN_SELECTION_VOLUME = 0.0001;
     if ((right - left) * (bottom - top) < MIN_SELECTION_VOLUME)
         return;
 
