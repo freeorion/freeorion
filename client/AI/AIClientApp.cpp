@@ -187,7 +187,8 @@ void AIClientApp::HandleMessage(const Message& msg)
     case Message::COMBAT_START: {
         CombatData combat_data;
         std::vector<CombatSetupGroup> setup_groups;
-        ExtractMessageData(msg, combat_data, setup_groups);
+        Universe::ShipDesignMap foreign_designs;
+        ExtractMessageData(msg, combat_data, setup_groups, foreign_designs);
         // TODO: Do we need to do anything here, like decide on overall goals
         // for this combat, so we don't have to figure such things out each
         // turn?

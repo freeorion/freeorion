@@ -68,6 +68,7 @@ public:
     virtual ~CombatWnd();
 
     void InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups);
+    void CombatTurnUpdate(CombatData& combat_data);
     void HandlePlayerChatMessage(const std::string& msg);
 
     virtual void Render();

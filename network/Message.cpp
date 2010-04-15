@@ -561,14 +561,16 @@ Message StartMPGameMessage(int player_id)
 
 Message ServerCombatStartMessage(int receiver, int empire_id,
                                  const CombatData& combat_data,
-                                 const std::vector<CombatSetupGroup>& setup_groups)
+                                 const std::vector<CombatSetupGroup>& setup_groups,
+                                 const ShipDesignMap& foreign_designs)
 {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
         Universe::s_encoding_empire = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data)
-           << BOOST_SERIALIZATION_NVP(setup_groups);
+           << BOOST_SERIALIZATION_NVP(setup_groups)
+           << BOOST_SERIALIZATION_NVP(foreign_designs);
     }
     return Message(Message::COMBAT_START, -1, receiver, os.str());
 }
@@ -795,13 +797,16 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
     }
 }
 
-void ExtractMessageData(const Message& msg, CombatData& combat_data, std::vector<CombatSetupGroup>& setup_groups)
+void ExtractMessageData(const Message& msg, CombatData& combat_data,
+                        std::vector<CombatSetupGroup>& setup_groups,
+                        ShipDesignMap& foreign_designs)
 {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(combat_data)
-           >> BOOST_SERIALIZATION_NVP(setup_groups);
+           >> BOOST_SERIALIZATION_NVP(setup_groups)
+           >> BOOST_SERIALIZATION_NVP(foreign_designs);
     } catch (const boost::archive::archive_exception) {
         std::cerr << "ExtractMessageData(const Message& msg, CombatData& "
                   << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;

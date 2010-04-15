@@ -1220,6 +1220,44 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
     AttachChild(m_combat_setup_wnd);
 }
 
+void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
+{
+    m_combat_data = &combat_data;
+
+    if (m_combat_setup_wnd) {
+        delete m_combat_setup_wnd;
+        m_combat_setup_wnd = 0;
+
+        for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
+             it != m_combat_data->m_pathing_engine.end();
+             ++it) {
+            if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(*it)) {
+                Ship& ship = combat_ship->GetShip();
+                std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+                if (ship_data_it == m_ship_assets.end()) {
+                    AddCombatShip(combat_ship);
+                } else {
+                    ShipData& ship_data = ship_data_it->second;
+                    ship_data.m_node->setUserAny(Ogre::Any(*it));
+
+                    Ogre::Vector3 position(ToOgre(combat_ship->position()));
+                    Ogre::Quaternion orientation(ToOgre(combat_ship->side()),
+                                                 ToOgre(combat_ship->forward()),
+                                                 ToOgre(combat_ship->up()));
+                    ship_data.m_node->setPosition(position);
+                    ship_data.m_node->setOrientation(orientation);
+                    m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+                    ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
+                    ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
+                    m_collision_world->addCollisionObject(ship_data.m_bt_object);
+                }
+            }
+        }
+    } else {
+        // TODO
+    }
+}
+
 void CombatWnd::Render()
 {
 #if 0 // TODO: Remove this.  It makes the planets all rotate, to test normal and parallax mapping.
@@ -1970,8 +2008,8 @@ void CombatWnd::RepositionShipNode(int ship_id,
     ShipData& ship_data = m_ship_assets[ship_id];
     ship_data.m_node->setPosition(position);
     ship_data.m_node->setOrientation(orientation);
-    ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
     m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+    ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
     ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
     m_collision_world->addCollisionObject(ship_data.m_bt_object);
 }
@@ -1986,13 +2024,12 @@ void CombatWnd::RemoveShip(int ship_id)
 void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
 {
     const Ship& ship = combat_ship->GetShip();
-    std::string mesh_name = ship.Design()->Model() + ".mesh";
 
     const Ogre::MaterialPtr& material = GetShipMaterial(ship);
     Ogre::Entity* entity = CreateShipEntity(m_scene_manager, ship, material);
     Ogre::SceneNode* node = CreateShipSceneNode(m_scene_manager, ship);
     node->attachObject(entity);
-    node->setUserAny(Ogre::Any(combat_ship));
+    node->setUserAny(Ogre::Any(CombatObjectPtr(combat_ship)));
 
     node->setPosition(ToOgre(combat_ship->position()));
     node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),

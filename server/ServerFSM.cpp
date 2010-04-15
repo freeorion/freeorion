@@ -853,6 +853,27 @@ ResolvingCombat::ResolvingCombat(my_context c) :
         new CombatData(context<ProcessingTurn>().m_combat_system, setup_groups);
     context<ProcessingTurn>().m_combat_system = 0;
 
+    // TODO: For now, we're just sending all designs to everyone.  Reconsider
+    // this later.
+    std::map<int, Universe::ShipDesignMap> foreign_designs;
+    for (std::map<int, std::vector<CombatSetupGroup> >::const_iterator it = setup_groups.begin();
+         it != setup_groups.end();
+         ++it) {
+        for (std::size_t i = 0; i < it->second.size(); ++i) {
+            for (std::set<int>::const_iterator ship_it = it->second[i].m_ships.begin();
+                 ship_it != it->second[i].m_ships.end();
+                 ++ship_it) {
+                ShipDesign* design = const_cast<ShipDesign*>(GetObject<Ship>(*ship_it)->Design());
+                for (std::set<int>::const_iterator empire_it =
+                         context<ProcessingTurn>().m_combat_empire_ids.begin();
+                     empire_it != context<ProcessingTurn>().m_combat_empire_ids.end();
+                     ++empire_it) {
+                    foreign_designs[*empire_it][design->ID()] = design;
+                }
+            }
+        }
+    }
+
     server.ClearEmpireCombatTurns();
 
     std::cerr << "ResolvingCombat: waiting for orders from empires ";
@@ -872,7 +893,8 @@ ResolvingCombat::ResolvingCombat(my_context c) :
                     player_id,
                     empire_id,
                     *server.m_current_combat,
-                    setup_groups[empire_id]));
+                    setup_groups[empire_id],
+                    foreign_designs[empire_id]));
             server.AddEmpireCombatTurn(empire_id);
             std::cerr << empire_id << " ";
         }

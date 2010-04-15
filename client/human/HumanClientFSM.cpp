@@ -575,7 +575,13 @@ boost::statechart::result ResolvingCombat::react(const CombatStart& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatStart";
     std::vector<CombatSetupGroup> setup_groups;
-    ExtractMessageData(msg.m_message, *m_combat_data, setup_groups);
+    Universe::ShipDesignMap foreign_designs;
+    ExtractMessageData(msg.m_message, *m_combat_data, setup_groups, foreign_designs);
+    for (Universe::ShipDesignMap::const_iterator it = foreign_designs.begin();
+         it != foreign_designs.end();
+         ++it) {
+        GetUniverse().InsertShipDesignID(it->second, it->first);
+    }
     m_combat_wnd->InitCombat(*m_combat_data, setup_groups);
     return discard_event();
 }
@@ -585,6 +591,7 @@ boost::statechart::result ResolvingCombat::react(const CombatRoundUpdate& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat.CombatRoundUpdate";
     FreeCombatData();
     ExtractMessageData(msg.m_message, *m_combat_data);
+    m_combat_wnd->CombatTurnUpdate(*m_combat_data);
     return discard_event();
 }
 

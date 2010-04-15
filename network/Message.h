@@ -22,11 +22,13 @@ class OrderSet;
 struct PlayerInfo;
 struct SaveGameUIData;
 struct SinglePlayerSetupData;
+class ShipDesign;
 class System;
 class Universe;
 class UniverseObject;
 
 typedef std::vector<CombatOrder> CombatOrderSet;
+typedef std::map<int, ShipDesign*> ShipDesignMap;
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
 void BufferToHeader(const int* header_buf, Message& message);
@@ -297,7 +299,8 @@ Message StartMPGameMessage(int player_id);
 /** creates a COMBAT_START message.  This message should only be sent by the server.*/
 Message ServerCombatStartMessage(int receiver, int empire_id,
                                  const CombatData& combat_data,
-                                 const std::vector<CombatSetupGroup>& setup_groups);
+                                 const std::vector<CombatSetupGroup>& setup_groups,
+                                 const ShipDesignMap& foreign_designs);
 
 /** creates a COMBAT_TURN_UPDATE message.  This message should only be sent by the server.*/
 Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data);
@@ -316,17 +319,20 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
 void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
-                        EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& orders,
-                        bool& loaded_game_data, bool& ui_data_available, SaveGameUIData& ui_data,
-                        bool& save_state_string_available, std::string& save_state_string);
+                        EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players,
+                        OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
+                        SaveGameUIData& ui_data, bool& save_state_string_available,
+                        std::string& save_state_string);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
-void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires, Universe& universe,
+void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
+                        Universe& universe,
                         std::map<int, PlayerInfo>& players);
 
-void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available, SaveGameUIData& ui_data,
-                        bool& save_state_string_available, std::string& save_state_string);
+void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
+                        SaveGameUIData& ui_data, bool& save_state_string_available,
+                        std::string& save_state_string);
 
 void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id);
 
@@ -336,10 +342,12 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason, std:
 
 void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_name);
 
-void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat, std::string& reason_string,
-                        int& empire_id);
+void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or_defeat,
+                        std::string& reason_string, int& empire_id);
 
-void ExtractMessageData(const Message& msg, CombatData& combat_data, std::vector<CombatSetupGroup>& setup_groups);
+void ExtractMessageData(const Message& msg, CombatData& combat_data,
+                        std::vector<CombatSetupGroup>& setup_groups,
+                        ShipDesignMap& foreign_designs);
 
 void ExtractMessageData(const Message& msg, CombatOrderSet& order_set);
 

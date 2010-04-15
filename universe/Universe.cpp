@@ -2113,7 +2113,7 @@ void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, Sh
     if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {
-        // add all ship designs of ships this empire knows about -> "objects" from above, not "m_objects"
+        // add all ship designs of ships this empire knows about -> "serialized_objects" from above, not "m_objects"
         for (ObjectMap::const_iterator it = serialized_objects.const_begin(); it != serialized_objects.const_end(); ++it) {
             Ship* ship = universe_object_cast<Ship*>(it->second);
             if (ship) {
