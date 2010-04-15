@@ -259,7 +259,7 @@ Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& sh
                                const Ogre::MaterialPtr& material);
 Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec);
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);
-std::string ShipMaterialName(const ShipDesign& ship_design);
+std::string ShipMaterialName(const ShipDesign& ship_design, int empire_id);
 Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position);
 
 extern const int PAGED_GEOMETRY_IMPOSTOR_QUEUE;

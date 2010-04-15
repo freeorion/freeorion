@@ -1945,7 +1945,7 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship)
 
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    std::string modified_material_name = ShipMaterialName(ship_design);
+    std::string modified_material_name = ShipMaterialName(ship_design, *ship.Owners().begin());
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
@@ -2283,8 +2283,8 @@ Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec)
 OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec)
 { return OpenSteer::Vec3(vec.x, vec.y, vec.z); }
 
-std::string ShipMaterialName(const ShipDesign& ship_design)
-{ return "ship material " + ship_design.Model(); }
+std::string ShipMaterialName(const ShipDesign& ship_design, int empire_id)
+{ return "ship material " + ship_design.Model() + " empire " + boost::lexical_cast<std::string>(empire_id); }
 
 Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position)
 {

@@ -675,10 +675,10 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
                 Ogre::Entity* entity = boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext());
-                entity->setMaterialName(ShipMaterialName(*ship->Design()));
+                entity->setMaterialName(ShipMaterialName(*ship->Design(), *ship->Owners().begin()));
                 entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
             } else {
-                std::string base_material_name = ShipMaterialName(*ship->Design());
+                std::string base_material_name = ShipMaterialName(*ship->Design(), *ship->Owners().begin());
                 std::string material_name = UNPLACEABLE_MATERIAL_PREFIX + base_material_name;
                 if (!Ogre::MaterialManager::getSingleton().resourceExists(material_name)) {
                     Ogre::MaterialPtr unmodified_material =
