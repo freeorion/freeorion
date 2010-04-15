@@ -167,8 +167,8 @@ public:
 
     /** \name Structors */ //@{
     CombatOrder();
-    CombatOrder(int id, const ShipMission& ship_mission);
-    CombatOrder(int id, const FighterMission& fighter_mission);
+    CombatOrder(int id, const ShipMission& ship_mission, bool append);
+    CombatOrder(int id, const FighterMission& fighter_mission, bool append);
     CombatOrder(int id, const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction);
     //@}
 
@@ -178,6 +178,7 @@ public:
     const ShipMission& GetShipMission() const;
     const FighterMission& GetFighterMission() const;
     const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& GetPositionAndDirection() const;
+    bool Append() const;
     //@}
 
 private:
@@ -186,6 +187,7 @@ private:
     ShipMission m_ship_mission;
     FighterMission m_fighter_mission;
     std::pair<OpenSteer::Vec3, OpenSteer::Vec3> m_position_and_direction;
+    bool m_append;
 
     friend class boost::serialization::access;
     template <class Archive>

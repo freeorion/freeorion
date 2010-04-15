@@ -172,7 +172,8 @@ template <class Archive>
 void CombatOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_order_type)
-        & BOOST_SERIALIZATION_NVP(m_id);
+        & BOOST_SERIALIZATION_NVP(m_id)
+        & BOOST_SERIALIZATION_NVP(m_append);
     switch (m_order_type) {
     case SHIP_ORDER:
         ar & BOOST_SERIALIZATION_NVP(m_ship_mission); break;

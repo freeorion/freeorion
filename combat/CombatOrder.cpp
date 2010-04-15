@@ -84,25 +84,29 @@ FighterMission::FighterMission(Type type, const CombatObjectPtr& target) :
 /////////////////////////////////////////////////////
 CombatOrder::CombatOrder() :
     m_order_type(),
-    m_id()
+    m_id(),
+    m_append(false)
 {}
 
-CombatOrder::CombatOrder(int id, const ShipMission& ship_mission) :
+CombatOrder::CombatOrder(int id, const ShipMission& ship_mission, bool append) :
     m_order_type(SHIP_ORDER),
     m_id(id),
-    m_ship_mission(ship_mission)
+    m_ship_mission(ship_mission),
+    m_append(append)
 {}
 
-CombatOrder::CombatOrder(int id, const FighterMission& fighter_mission) :
+CombatOrder::CombatOrder(int id, const FighterMission& fighter_mission, bool append) :
     m_order_type(FIGHTER_ORDER),
     m_id(id),
-    m_fighter_mission(fighter_mission)
+    m_fighter_mission(fighter_mission),
+    m_append(append)
 {}
 
 CombatOrder::CombatOrder(int id, const OpenSteer::Vec3& position, const OpenSteer::Vec3& direction) :
     m_order_type(SETUP_PLACEMENT_ORDER),
     m_id(id),
-    m_position_and_direction(position, direction)
+    m_position_and_direction(position, direction),
+    m_append(false)
 {}
 
 CombatOrder::OrderType CombatOrder::Type() const
@@ -128,3 +132,6 @@ const std::pair<OpenSteer::Vec3, OpenSteer::Vec3>& CombatOrder::GetPositionAndDi
     assert(m_order_type == SETUP_PLACEMENT_ORDER);
     return m_position_and_direction;
 }
+
+bool CombatOrder::Append() const
+{ return m_append; }
