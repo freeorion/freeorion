@@ -700,6 +700,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_stencil_op_frame_listener(new StencilOpQueueListener),
     m_fps_text(new FPSIndicator(GG::X(5), GG::Y(5))),
     m_menu_showing(false),
+    m_end_turn_button(new CUIButton(GG::X0, GG::Y0, GG::X(75), UserString("TURN"))),
     m_exit(false)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("combat.enable-glow"),
@@ -790,6 +791,11 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_look_at_scene_node = star_node;
     UpdateCameraPosition();
 
+    m_end_turn_button->MoveTo(
+        GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - m_end_turn_button->Height() - GG::Y(5)));
+    GG::Connect(m_end_turn_button->ClickedSignal, boost::bind(&CombatWnd::EndTurn, this));
+
+    AttachChild(m_end_turn_button);
     AttachChild(m_fps_text);
 
     if (GetOptionsDB().Get<bool>("tech-demo")) {
@@ -1222,40 +1228,51 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
 void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
 {
+#if 0 // TODO: this may be necessary when not in turn-at-a-time mode
+    if (!m_combat_order_set.empty()) {
+        HumanClientApp::GetApp()->Networking().SendMessage(
+            CombatTurnOrdersMessage(
+                HumanClientApp::GetApp()->PlayerID(),
+                m_combat_order_set));
+        m_combat_order_set.clear();
+    }
+#endif
+
     m_combat_data = &combat_data;
 
     if (m_combat_setup_wnd) {
         delete m_combat_setup_wnd;
         m_combat_setup_wnd = 0;
+    }
 
-        for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
-             it != m_combat_data->m_pathing_engine.end();
-             ++it) {
-            if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(*it)) {
-                Ship& ship = combat_ship->GetShip();
-                std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
-                if (ship_data_it == m_ship_assets.end()) {
-                    AddCombatShip(combat_ship);
-                } else {
-                    ShipData& ship_data = ship_data_it->second;
-                    ship_data.m_node->setUserAny(Ogre::Any(*it));
+    for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
+         it != m_combat_data->m_pathing_engine.end();
+         ++it) {
+        if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(*it)) {
+            combat_ship->SetListener(*this);
+            Ship& ship = combat_ship->GetShip();
+            std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+            if (ship_data_it == m_ship_assets.end()) {
+                AddCombatShip(combat_ship);
+            } else {
+                ShipData& ship_data = ship_data_it->second;
+                ship_data.m_node->setUserAny(Ogre::Any(*it));
 
-                    Ogre::Vector3 position(ToOgre(combat_ship->position()));
-                    Ogre::Quaternion orientation(ToOgre(combat_ship->side()),
-                                                 ToOgre(combat_ship->forward()),
-                                                 ToOgre(combat_ship->up()));
-                    ship_data.m_node->setPosition(position);
-                    ship_data.m_node->setOrientation(orientation);
-                    m_collision_world->removeCollisionObject(ship_data.m_bt_object);
-                    ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
-                    ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
-                    m_collision_world->addCollisionObject(ship_data.m_bt_object);
-                }
+                Ogre::Vector3 position(ToOgre(combat_ship->position()));
+                Ogre::Quaternion orientation(ToOgre(combat_ship->side()),
+                                             ToOgre(combat_ship->forward()),
+                                             ToOgre(combat_ship->up()));
+                ship_data.m_node->setPosition(position);
+                ship_data.m_node->setOrientation(orientation);
+                m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+                ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
+                ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
+                m_collision_world->addCollisionObject(ship_data.m_bt_object);
             }
         }
-    } else {
-        // TODO
     }
+
+    // TODO: Handle object removals.
 }
 
 void CombatWnd::Render()
@@ -1533,8 +1550,117 @@ void CombatWnd::RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
 }
 
+void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (!m_current_selections.empty()) {
+        bool append = mod_keys & GG::MOD_KEY_SHIFT;
+
+        if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
+            Ogre::SceneNode* node = movable_object->getParentSceneNode();
+            assert(node);
+            // TODO: Handle attacking planets.  For now, one can only
+            // explicitly attack ships and fighters with ships and fighters.
+            if (const CombatObjectPtr* target = Ogre::any_cast<CombatObjectPtr>(&node->getUserAny())) {
+                // TODO: use friends/enemies considerations later
+                bool attack = (*target)->Owner() != HumanClientApp::GetApp()->PlayerID();
+                for (std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
+                         m_current_selections.begin();
+                     it != m_current_selections.end();
+                     ++it) {
+                    Ogre::SceneNode* node = it->first->getParentSceneNode();
+                    assert(node);
+                    const CombatObjectPtr* combat_object_ =
+                        Ogre::any_cast<CombatObjectPtr>(&node->getUserAny());
+
+                    // TODO: Handle planets (really, their defenses) attacking
+                    // objects.  For now, one can only explicitly attack ships
+                    // and fighters with ships and fighters.
+                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->PlayerID())
+                        continue;
+
+                    // don't defend yourself
+                    if (*combat_object_ == *target)
+                        continue;
+
+                    CombatObjectPtr combat_object = *combat_object_;
+
+                    if (combat_object->IsShip()) {
+                        assert(boost::dynamic_pointer_cast<CombatShip>(combat_object));
+                        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
+                        m_combat_order_set.push_back(
+                            CombatOrder(
+                                combat_ship->GetShip().ID(),
+                                ShipMission(attack ?
+                                            ShipMission::ATTACK_THIS : ShipMission::DEFEND_THIS,
+                                            *target),
+                                append));
+                    } else if (combat_object->IsFighter()) {
+                        assert(boost::dynamic_pointer_cast<CombatFighter>(combat_object));
+                        CombatFighterPtr combat_fighter =
+                            boost::static_pointer_cast<CombatFighter>(combat_object);
+                        m_combat_order_set.push_back(
+                            CombatOrder(
+                                combat_fighter->ID(),
+                                FighterMission(attack ?
+                                               FighterMission::ATTACK_THIS : FighterMission::DEFEND_THIS,
+                                               *target),
+                                append));
+                    }
+                }
+            }
+        } else if (0 /* TODO: if starlane clicked */) {
+            // TODO: queue append/replace MOVE_TO starlane, then queue append ENTER_STARLANE
+        } else {
+            std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+            if (intersection.first) {
+                bool patrol = mod_keys & GG::MOD_KEY_CTRL;
+                for (std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
+                         m_current_selections.begin();
+                     it != m_current_selections.end();
+                     ++it) {
+                    Ogre::SceneNode* node = it->first->getParentSceneNode();
+                    assert(node);
+                    const CombatObjectPtr* combat_object_ =
+                        Ogre::any_cast<CombatObjectPtr>(&node->getUserAny());
+
+                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->PlayerID())
+                        continue;
+
+                    CombatObjectPtr combat_object = *combat_object_;
+
+                    if (combat_object->IsShip()) {
+                        assert(boost::dynamic_pointer_cast<CombatShip>(combat_object));
+                        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
+                        m_combat_order_set.push_back(
+                            CombatOrder(
+                                combat_ship->GetShip().ID(),
+                                ShipMission(patrol ? ShipMission::PATROL_TO : ShipMission::MOVE_TO,
+                                            ToOpenSteer(intersection.second)),
+                                append));
+                    } else if (combat_object->IsFighter()) {
+                        assert(boost::dynamic_pointer_cast<CombatFighter>(combat_object));
+                        CombatFighterPtr combat_fighter =
+                            boost::static_pointer_cast<CombatFighter>(combat_object);
+                        m_combat_order_set.push_back(
+                            CombatOrder(
+                                combat_fighter->ID(),
+                                FighterMission(patrol ? FighterMission::PATROL_TO : FighterMission::MOVE_TO,
+                                               ToOpenSteer(intersection.second)),
+                                append));
+                    }
+                }
+            }
+        }
+    }
+}
+
 void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
+    // TODO: for all below, shift-double-click means append to queue, other
+    // double-clicks mean replace queue
+
+    // TODO: treat double-click on target as ATTACK_THIS_STANDOFF for ships,
+    // and treat double-click on base as RETURN_TO_BASE
 }
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -2064,7 +2190,13 @@ bool CombatWnd::OpenChatWindow()
 
 bool CombatWnd::EndTurn()
 {
-    // TODO
+    if (!m_combat_order_set.empty()) {
+        HumanClientApp::GetApp()->Networking().SendMessage(
+            CombatTurnOrdersMessage(
+                HumanClientApp::GetApp()->PlayerID(),
+                m_combat_order_set));
+        m_combat_order_set.clear();
+    }
     return true;
 }
 

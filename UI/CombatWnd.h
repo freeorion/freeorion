@@ -3,6 +3,7 @@
 #define _CombatWnd_h_
 
 #include "../combat/CombatEventListener.h"
+#include "../combat/CombatOrder.h"
 
 #include <OgreFrameListener.h>
 #include <OgreManualObject.h>
@@ -36,6 +37,7 @@ namespace GG {
 class CombatData;
 struct CombatSetupGroup;
 class CombatSetupWnd;
+class CUIButton;
 class FPSIndicator;
 class System;
 class Ship;
@@ -86,6 +88,7 @@ public:
     virtual void RButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
     virtual void RButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
@@ -249,6 +252,9 @@ private:
     bool m_menu_showing;
     std::set<boost::signals::connection> m_keyboard_accelerator_signals;
     std::set<GG::Key> m_disabled_accels_list;
+
+    CombatOrderSet m_combat_order_set;
+    CUIButton* m_end_turn_button;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

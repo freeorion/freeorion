@@ -72,6 +72,9 @@ ERROR
 RESET
 Reset
 
+TURN
+Turn
+
 CHAT_WHISPER
 whisper
 
