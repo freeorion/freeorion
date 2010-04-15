@@ -1432,7 +1432,7 @@ void ServerApp::ProcessCombatTurn()
                 CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
                 assert(combat_ship);
                 combat_ship->setPosition(order.GetPositionAndDirection().first);
-                combat_ship->regenerateOrthonormalBasis(order.GetPositionAndDirection().first,
+                combat_ship->regenerateOrthonormalBasis(-order.GetPositionAndDirection().first,
                                                         OpenSteer::Vec3(0.0, 0.0, 1.0));
                 break;
             }
