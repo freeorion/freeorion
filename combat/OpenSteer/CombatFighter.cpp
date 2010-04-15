@@ -252,9 +252,6 @@ float CombatFighter::maxSpeed() const
 int CombatFighter::ID() const
 { return m_id; }
 
-int CombatFighter::Owner() const
-{ return m_empire_id; }
-
 bool CombatFighter::IsLeader() const
 { return m_leader; }
 
@@ -284,6 +281,12 @@ double CombatFighter::AntiShipStrength(CombatShipPtr/* target = CombatShipPtr()*
 
 bool CombatFighter::IsFighter() const
 { return true; }
+
+bool CombatFighter::IsShip() const
+{ return false; }
+
+int CombatFighter::Owner() const
+{ return m_empire_id; }
 
 void CombatFighter::update(const float /*current_time*/, const float elapsed_time)
 {
@@ -869,14 +872,16 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
          ++it) {
         CombatFighterPtr fighter;
         float strength = FLT_MAX;
-        if (Stats().m_anti_fighter_damage &&
-            (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock()))) {
+        CombatObjectPtr ptr = it->second.lock();
+        if (Stats().m_anti_fighter_damage && ptr && ptr->IsFighter()) {
+            assert(boost::dynamic_pointer_cast<CombatFighter>(ptr));
+            CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(ptr);
             strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
-        } else if (CombatObjectPtr ptr = it->second.lock()) {
+        } else if (ptr) {
             strength = ptr->HealthAndShield() * (1.0 + ptr->AntiFighterStrength());
         }
         if (strength < weakest) {
-            retval = it->second.lock();
+            retval = ptr;
             weakest = strength;
         }
     }

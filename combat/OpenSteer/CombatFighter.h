@@ -68,7 +68,6 @@ public:
     virtual float maxForce() const;
     virtual float maxSpeed() const;
     int ID() const;
-    int Owner() const;
     bool IsLeader() const;
     const FighterStats& Stats() const;
     const std::string& PartName() const;
@@ -79,6 +78,8 @@ public:
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
+    virtual bool IsShip() const;
+    virtual int Owner() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,

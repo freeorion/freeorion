@@ -204,7 +204,9 @@ void PathingEngine::AddObject(const CombatObjectPtr& obj)
             m_leaders_by_id[combat_fighter->ID()] = combat_fighter;
         else
             m_fighters_by_id[combat_fighter->ID()] = combat_fighter;
-    } else if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(obj)) {
+    } else if (obj->IsShip()) {
+        assert(boost::dynamic_pointer_cast<CombatShip>(obj));
+        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(obj);
         m_ships_by_id[combat_ship->GetShip().ID()] = combat_ship;
     }
 }
@@ -219,7 +221,9 @@ void PathingEngine::RemoveObject(const CombatObjectPtr& obj)
             m_leaders_by_id.erase(combat_fighter->ID());
         else
             m_fighters_by_id.erase(combat_fighter->ID());
-    } else if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(obj)) {
+    } else if (obj->IsShip()) {
+        assert(boost::dynamic_pointer_cast<CombatShip>(obj));
+        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(obj);
         m_ships_by_id.erase(combat_ship->GetShip().ID());
     }
 }

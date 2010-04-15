@@ -63,6 +63,12 @@ double Missile::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) con
 bool Missile::IsFighter() const
 { return false; }
 
+bool Missile::IsShip() const
+{ return false; }
+
+int Missile::Owner() const
+{ return m_empire_id; }
+
 void Missile::update(const float /*current_time*/, const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;

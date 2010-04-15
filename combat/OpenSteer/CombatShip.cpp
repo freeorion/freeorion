@@ -171,6 +171,12 @@ double CombatShip::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) 
 bool CombatShip::IsFighter() const
 { return false; }
 
+bool CombatShip::IsShip() const
+{ return true; }
+
+int CombatShip::Owner() const
+{ return *GetShip().Owners().begin(); }
+
 void CombatShip::LaunchFighters()
 {
     // Note that this just launches the fighters that can be launched on this
@@ -520,8 +526,10 @@ void CombatShip::UpdateMissionQueue()
                 for (PathingEngine::Attackees::const_iterator it = attackers.first;
                      it != attackers.second;
                      ++it) {
-                    if (CombatShipPtr temp =
-                        boost::dynamic_pointer_cast<CombatShip>(it->second.lock())) {
+                    CombatObjectPtr attacker = it->second.lock();
+                    if (attacker && attacker->IsShip()) {
+                        assert(boost::dynamic_pointer_cast<CombatShip>(attacker));
+                        CombatShipPtr temp = boost::static_pointer_cast<CombatShip>(attacker);
                         if (!ship || ship->m_raw_LR_strength < temp->m_raw_LR_strength)
                             ship = temp;
                     }
@@ -800,10 +808,12 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
     for (PathingEngine::Attackees::const_iterator it = attackers.first;
          it != attackers.second;
          ++it) {
-        CombatFighterPtr fighter;
         CombatShipPtr ship;
         float strength = FLT_MAX;
-        if (fighter = boost::dynamic_pointer_cast<CombatFighter>(it->second.lock())) {
+        CombatObjectPtr attacker = it->second.lock();
+        if (attacker->IsFighter()) {
+            assert(boost::dynamic_pointer_cast<CombatFighter>(attacker));
+            CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(attacker);
             strength =
                 fighter->HealthAndShield() * (fighter->Stats().m_type == INTERCEPTOR ?
                                               INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);

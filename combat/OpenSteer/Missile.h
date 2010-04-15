@@ -30,6 +30,8 @@ public:
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
+    virtual bool IsShip() const;
+    virtual int Owner() const;
 
     virtual void update(const float /*current_time*/, const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
