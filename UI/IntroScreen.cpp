@@ -172,7 +172,7 @@ void CreditsWnd::Render()
     // move credits
     glTranslatef(
         0,
-        m_co + passedTicks / -40.0,
+        m_co + passedTicks / -40.0f,
         0
         );
     if (m_displayListID != 0) {
@@ -219,15 +219,67 @@ IntroScreen::IntroScreen() :
     m_version->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() -  m_version->Size().x,
                              GG::GUI::GetGUI()->AppHeight() - m_version->Size().y));
 
+    //size calculation consts and variables
+    const GG::X MIN_BUTTON_WIDTH(160);
+    const GG::Y MIN_BUTTON_HEIGHT(40);
+    const GG::X H_BUTTON_MARGIN(16); //horizontal empty space
+    const GG::Y V_BUTTON_MARGIN(16); //vertical empty space
+    GG::X button_width(0); //width of the buttons
+    GG::Y button_height(0); //height of the buttons
+    const GG::X H_MAINMENU_MARGIN(40); //horizontal empty space
+    const GG::Y V_MAINMENU_MARGIN(40); //vertical empty space
+    GG::X mainmenu_width(0);  //width of the mainmenu
+    GG::Y mainmenu_height(0); //height of the mainmenu
+    GG::Y button_y(12); //relativ buttonlocation
+    GG::X button_x(15);
+    //calculate necessary button width
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_SINGLE_PLAYER")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_QUICK_START")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_MULTI_PLAYER")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_LOAD_GAME")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_OPTIONS")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_ABOUT")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_CREDITS")).x, button_width);
+    button_width = std::max(font->TextExtent(UserString("INTRO_BTN_EXIT")).x, button_width);
+    button_width += H_BUTTON_MARGIN;
+    button_width = std::max(MIN_BUTTON_WIDTH, button_width);
+    //calculate  necessary button height
+    button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
+    //culate window width and height
+    mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
+    mainmenu_height = 8.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+
+    //adjust window if necessary
+    if ( MAIN_MENU_WIDTH < mainmenu_width || MAIN_MENU_HEIGHT < mainmenu_height) {
+        GG::Pt ul(
+            GG::GUI::GetGUI()->AppWidth()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
+            GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2
+            );
+        GG::Pt lr(
+            GG::GUI::GetGUI()->AppWidth()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
+            GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2
+            );
+
+        SizeMove(ul, lr);
+    }
+
     //create buttons
-    m_single_player =   new CUIButton(GG::X(15), GG::Y(12),  GG::X(160), UserString("INTRO_BTN_SINGLE_PLAYER"));
-    m_quick_start =     new CUIButton(GG::X(15), GG::Y(52),  GG::X(160), UserString("INTRO_BTN_QUICK_START"));
-    m_multi_player =    new CUIButton(GG::X(15), GG::Y(92),  GG::X(160), UserString("INTRO_BTN_MULTI_PLAYER"));
-    m_load_game =       new CUIButton(GG::X(15), GG::Y(132), GG::X(160), UserString("INTRO_BTN_LOAD_GAME"));
-    m_options =         new CUIButton(GG::X(15), GG::Y(172), GG::X(160), UserString("INTRO_BTN_OPTIONS"));
-    m_about =           new CUIButton(GG::X(15), GG::Y(212), GG::X(160), UserString("INTRO_BTN_ABOUT"));
-    m_credits =         new CUIButton(GG::X(15), GG::Y(252), GG::X(160), UserString("INTRO_BTN_CREDITS"));
-    m_exit_game =       new CUIButton(GG::X(15), GG::Y(322), GG::X(160), UserString("INTRO_BTN_EXIT"));
+    m_single_player =   new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_SINGLE_PLAYER"));
+    button_y += button_height;
+    m_quick_start =     new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_QUICK_START"));
+    button_y += button_height;
+    m_multi_player =    new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_MULTI_PLAYER"));
+    button_y += button_height;
+    m_load_game =       new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_LOAD_GAME"));
+    button_y += button_height;
+    m_options =         new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_OPTIONS"));
+    button_y += button_height;
+    m_about =           new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_ABOUT"));
+    button_y += button_height;
+    m_credits =         new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_CREDITS"));
+    button_y += 1.75 * button_height;
+    m_exit_game =       new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
     AttachChild(m_single_player);
