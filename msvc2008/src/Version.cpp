@@ -1,7 +1,7 @@
 #include "../../util/Version.h"
 
 namespace {
-    static const std::string retval = "v0.3.14 [Rev 3460ish]";
+    static const std::string retval = "v0.3.14 [Rev 3480ish]";
 }
 
 const std::string& FreeOrionVersionString()

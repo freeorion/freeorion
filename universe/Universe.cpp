@@ -1477,7 +1477,7 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
 namespace {
     /** Sets visibilities for indicated \a empires of object with \a object_id
       * in the passed-in \a empire_vis_map to \a vis */
-    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map, const std::set<int>& empires, int object_id, Visibility vis) {
+    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map, std::map<int, std::set<int> >& empire_known_design_ids, const std::set<int>& empires, int object_id, Visibility vis) {
         for (std::set<int>::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
             int empire_id = *empire_it;
 
@@ -1496,6 +1496,18 @@ namespace {
             // increase stored value if new visibility is higher than last recorded
             if (vis > vis_map_it->second)
                 vis_map_it->second = vis;
+
+            // if object is a ship, empire also gets knowledge of its design
+            if (vis >= VIS_PARTIAL_VISIBILITY) {
+                if (const Ship* ship = GetObject<Ship>(object_id)) {
+                    int design_id = ship->DesignID();
+                    if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+                        Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
+                    } else {
+                        empire_known_design_ids[empire_id].insert(design_id);
+                    }
+                }
+            }
         }
     }
 }
@@ -1520,7 +1532,7 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
         // owners of an object get full visibility of it
-        SetEmpireObjectVisibility(m_empire_object_visibility, detector_owners, detector_id, VIS_FULL_VISIBILITY);
+        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector_owners, detector_id, VIS_FULL_VISIBILITY);
 
 
         // get detection ability
@@ -1604,7 +1616,7 @@ void Universe::UpdateEmpireObjectVisibilities()
             int target_id = target->ID();
 
             // if target visible to detector, update visibility of target for all empires that own detector
-            SetEmpireObjectVisibility(m_empire_object_visibility, detector_owners, target_id, target_visibility_to_detector);
+            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector_owners, target_id, target_visibility_to_detector);
         }
     }
 
@@ -1874,6 +1886,20 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
     m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 }
 
+void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
+{
+    if (ship_design_id == ShipDesign::INVALID_DESIGN_ID) {
+        Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called with INVALID_DESIGN_ID";
+        return;
+    }
+
+    const Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called for invalid empire id: " << empire_id;
+    }
+    m_empire_known_ship_design_ids[empire_id].insert(ship_design_id);
+}
+
 void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/)
 {
     // remove object from any containing UniverseObject
@@ -2108,31 +2134,27 @@ void Universe::RecursiveDestroy(int object_id)
     }
 }
 
-void Universe::GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize, int encoding_empire) const
+void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const
 {
     if (encoding_empire == ALL_EMPIRES) {
         designs_to_serialize = m_ship_designs;
     } else {
-        // add all ship designs of ships this empire knows about -> "serialized_objects" from above, not "m_objects"
-        for (ObjectMap::const_iterator it = serialized_objects.const_begin(); it != serialized_objects.const_end(); ++it) {
-            Ship* ship = universe_object_cast<Ship*>(it->second);
-            if (ship) {
-                int design_id = ship->DesignID();
-                if (design_id != ShipDesign::INVALID_DESIGN_ID) {
-                    ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);
-                    if (design_it != m_ship_designs.end())
-                        designs_to_serialize[design_id] = design_it->second;
-                }
-            }
-        }
+        designs_to_serialize.clear();
 
-        // add all ship designs owned by this empire
-        Empire* empire = Empires().Lookup(encoding_empire);
-        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-            int design_id = *it;
-            ShipDesignMap::const_iterator design_it = m_ship_designs.find(design_id);
-            if (design_it != m_ship_designs.end())
-                designs_to_serialize[design_id] = design_it->second;
+        std::map<int, std::set<int> >::const_iterator it = m_empire_known_ship_design_ids.find(encoding_empire);
+        if (it == m_empire_known_ship_design_ids.end())
+            return; // no known designs to serialize
+
+        const std::set<int>& empire_designs = it->second;
+
+        // add all ship designs of ships this empire knows about 
+        for (std::set<int>::const_iterator known_design_it = empire_designs.begin(); known_design_it != empire_designs.end(); ++known_design_it) {
+            int design_id = *known_design_it;
+            ShipDesignMap::const_iterator universe_design_it = m_ship_designs.find(design_id);
+            if (universe_design_it != m_ship_designs.end())
+                designs_to_serialize[design_id] = universe_design_it->second;
+            else
+                Logger().errorStream() << "Universe::GetShipDesignsToSerialize empire " << encoding_empire << " should know about design with id " << design_id << " but no such design exists in the Universe!";
         }
     }
 }

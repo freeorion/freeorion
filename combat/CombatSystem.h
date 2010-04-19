@@ -42,7 +42,8 @@ private:
     void save(Archive & ar, const unsigned int version) const;
     template<class Archive>
     void load(Archive & ar, const unsigned int version);
-    BOOST_SERIALIZATION_SPLIT_MEMBER()};
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
+};
 
 /** Auto-resolves a battle. */
 void AutoResolveCombat(CombatInfo& combat_info);

@@ -23,11 +23,12 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         GetEmpireObjectVisibilityMap(       empire_object_visibility,           s_encoding_empire);
         GetEmpireObjectVisibilityTurnMap(   empire_object_visibility_turns,     s_encoding_empire);
         GetEmpireKnownDestroyedObjects(     empire_known_destroyed_object_ids,  s_encoding_empire);
-        GetShipDesignsToSerialize(          objects,    ship_designs,           s_encoding_empire);
+        GetShipDesignsToSerialize(          ship_designs,                       s_encoding_empire);
     }
 
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(ship_designs)
+        & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility)
         & BOOST_SERIALIZATION_NVP(empire_object_visibility_turns)
         & BOOST_SERIALIZATION_NVP(empire_known_destroyed_object_ids)

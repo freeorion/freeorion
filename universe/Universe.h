@@ -454,6 +454,10 @@ public:
       * with id \a empire_id that the empire knows have been destroyed. */
     void            SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id);
 
+    /** Adds the ship design ID \a ship_design_id to the set of ship design ids
+      * known by the empire with id \a empire_id */
+    void            SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id);
+
     /** Removes the object with ID number \a object_id from the universe's map
       * of existing objects, and adds the object's id to the set of destroyed
       * object ids.  If \a update_destroyed_object_knowers is true, empires
@@ -530,18 +534,12 @@ private:
     struct GraphImpl;
 
     /** Clears \a effects_targets_map, and then populates with all
-      * EffectsGroups and their targets in the known universe.  If
-      * \a effects_causes_map is provided (nonzero pointer) then this map will
-      * be simultaneously* populated with information about the causes of each
-      * effects group. */
+      * EffectsGroups and their targets in the known universe. */
     void    GetEffectsAndTargets(EffectsTargetsCausesMap& effects_targets_map);
 
     /** Removes entries in \a effects_targets_map about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
-      * that act on at least one of the objects in \a target_objects.  If
-      * \a effects_causes_map is provided (nonzero pointer) then this map will
-      * be simultaneously populated with information about the causes of each
-      * effects group. */
+      * that act on at least one of the objects in \a target_objects. */
     void    GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects);
 
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
@@ -552,13 +550,11 @@ private:
                                                  const std::string& specific_cause_name,
                                                  const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map);
 
-    /** Executes all effects.  Does not store effect accounting information.
-      * For use on server when processing turns. */
+    /** Executes all effects.  For use on server when processing turns. */
     void    ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map);
 
-    /** Executes only meter-altering effects; ignores other effects..  Stores
-      * effect accounting information in \a targets_causes_map.  Can be used
-      * on server or on clients to determine meter values after effects are
+    /** Executes only meter-altering effects; ignores other effects..  Can be
+      * used on server or on clients to determine meter values after effects are
       * applied */
     void    ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map);
 
@@ -601,6 +597,7 @@ private:
     ObjectKnowledgeMap              m_empire_known_destroyed_object_ids;///< map from empire id to (set of object ids that the empire knows have been destroyed)
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
+    std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
     DistanceMatrix                  m_system_distances;                 ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
     GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
@@ -617,13 +614,10 @@ private:
     static double                   s_universe_width;
     static bool                     s_inhibit_universe_object_signals;
 
-    /** Fills \a designs_to_serialize with ShipDesigns based on the objects
-      * being serialized in \a serialized_objects and the empire with id
-      * \a encoding_empire for which designs are being serialized, so that all
-      * the designs of ships being serialized and all the designs known of and
-      * remembered by the indicated empire are included.  If encoding_empire is
-      * ALL_EMPIRES, then all designs are included. */
-    void    GetShipDesignsToSerialize(const ObjectMap& serialized_objects, ShipDesignMap& designs_to_serialize, int encoding_empire) const;
+    /** Fills \a designs_to_serialize with ShipDesigns known to the empire with
+      * the ID \a encoding empire.  If encoding_empire is ALL_EMPIRES, then all
+      * designs are included. */
+    void    GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const;
 
     /** Fills \a objects with copies of UniverseObjects that should be sent
       * to the empire with id \a encoding_empires */
