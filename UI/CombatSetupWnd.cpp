@@ -610,6 +610,8 @@ bool CombatSetupWnd::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     } else if (event.Type() == GG::WndEvent::RClick) {
         CancelCurrentShipPlacement();
         retval = true;
+    } else if (event.Type() == GG::WndEvent::RDoubleClick) {
+        retval = true;
     } else if (event.Type() == GG::WndEvent::MouseEnter) {
         HandleMouseMoves(event.Point());
     } else if (event.Type() == GG::WndEvent::MouseHere) {
