@@ -655,11 +655,12 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
             save_state_string_available = false;
         }
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, bool& single_player_game, "
-                  << "int& empire_id, int& current_turn, EmpireManager& empires, "
-                  << "Universe& universe, std::map<int, PlayerInfo>& players, OrderSet& "
-                  << "orders, SaveGameUIData& ui_data, bool& loaded_game_data, "
-                  << "bool& ui_data_available) failed!  Message:\n"
+        std::cerr << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
+                  << "int& current_turn, EmpireManager& empires, Universe& universe, "
+                  << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
+                  << "bool& loaded_game_data, bool& ui_data_available, "
+                  << "SaveGameUIData& ui_data, bool& save_state_string_available, "
+                  << "std::string& save_state_string) failed!  Message:\n"
                   << msg.Text() << std::endl;
         throw;
     }
@@ -715,7 +716,9 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
             ia >> BOOST_SERIALIZATION_NVP(save_state_string);
     } catch (const boost::archive::archive_exception) {
         std::cerr << "ExtractMessageData(const Message& msg, OrderSet& orders, "
-                  << "SaveGameUIData& ui_data) failed!  Message:\n"
+                  << "bool& ui_data_available, SaveGameUIData& ui_data, "
+                  << "bool& save_state_string_available, std::string& save_state_string) "
+                  << "failed!  Message:\n"
                   << msg.Text() << std::endl;
         throw;
     }
@@ -809,7 +812,9 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
            >> BOOST_SERIALIZATION_NVP(foreign_designs);
     } catch (const boost::archive::archive_exception) {
         std::cerr << "ExtractMessageData(const Message& msg, CombatData& "
-                  << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;
+                  << "combat_data, std::vector<CombatSetupGroup>& setup_groups, "
+                  << "ShipDesignMap& foreign_designs) failed!  Message:\n"
+                  << msg.Text() << std::endl;
         throw;
     }
 }
@@ -850,7 +855,8 @@ void ExtractMessageData(const Message& msg, System*& system,
         Deserialize(ia, combat_universe);
     } catch (const boost::archive::archive_exception) {
         std::cerr << "ExtractMessageData(const Message& msg, System*& "
-                  << "system) failed!  Message:\n" << msg.Text() << std::endl;
+                  << "system, std::map<int, UniverseObject*>& combat_universe) failed!  "
+                  << "Message:\n" << msg.Text() << std::endl;
         throw;
     }
 }
