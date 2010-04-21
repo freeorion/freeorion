@@ -634,6 +634,8 @@ CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y, float r
 CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y,
                                      float radial_axis, float tangent_axis) :
     m_type(ELLIPSE),
+    m_radius_begin(),
+    m_radius_end(),
     m_centroid(),
     m_radial_axis(radial_axis),
     m_tangent_axis(tangent_axis),
@@ -648,6 +650,8 @@ CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y,
                                      float radial_axis, float tangent_axis,
                                      float theta_begin, float theta_end) :
     m_type(PARTIAL_ELLIPSE),
+    m_radius_begin(),
+    m_radius_end(),
     m_centroid(),
     m_radial_axis(radial_axis),
     m_tangent_axis(tangent_axis),
