@@ -33,10 +33,9 @@ const std::map<int, UniverseObject*>* PathingEngine::s_combat_universe = 0;
 
 PathingEngine::PathingEngine() :
     m_next_fighter_id(0),
-    m_update_number(0)
-{
-    m_proximity_database = new ProximityDB(OpenSteer::Vec3(), 2.0 * SystemRadius(), 100);
-}
+    m_update_number(0),
+    m_proximity_database(new ProximityDB(OpenSteer::Vec3(), 2.0 * SystemRadius(), 100))
+{}
 
 PathingEngine::~PathingEngine()
 {
