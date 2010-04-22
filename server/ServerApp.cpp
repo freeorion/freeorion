@@ -1453,10 +1453,9 @@ void ServerApp::ProcessCombatTurn()
     if (m_current_combat->m_combat_turn_number) {
         // TODO: execute turn
         pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
-        const unsigned int ITERATIONS_PER_SEC = 60;
-        const unsigned int TURN_LENGTH = 5; // seconds
-        const unsigned int ITERATIONS = TURN_LENGTH * ITERATIONS_PER_SEC;
-        const double ITERATION_DURATION = 1.0 / ITERATIONS_PER_SEC;
+        const std::size_t TURN_LENGTH = 5; // seconds
+        const unsigned int ITERATIONS = TURN_LENGTH * PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
+        const double ITERATION_DURATION = 1.0 / PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
         for (unsigned int i = 0; i < ITERATIONS; ++i) {
             pathing_engine.Update(0.0, ITERATION_DURATION);
         }
