@@ -1272,6 +1272,8 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
         }
     }
 
+    m_end_turn_button->Disable(false);
+
     // TODO: Handle object removals.
 }
 
@@ -1685,59 +1687,100 @@ void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<
     }
 }
 
+#define INSTRUMENT_COMBAT_LISTENER_INTERFACE 1
+
 void CombatWnd::ShipPlaced(const CombatShipPtr &ship)
-{ AddCombatShip(ship); }
+{
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::ShipPlaced()\n";
+#endif
+    AddCombatShip(ship);
+}
 
 void CombatWnd::ShipFired(const CombatShipPtr &ship,
                           const CombatObjectPtr &target,
                           const std::string& part_name)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::ShipFired()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::ShipDestroyed(const CombatShipPtr &ship)
-{ RemoveCombatShip(ship); }
+{
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::ShipDestroyed()\n";
+#endif
+    RemoveCombatShip(ship);
+}
 
 void CombatWnd::ShipEnteredStarlane(const CombatShipPtr &ship)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::ShipEnteredStarlane()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::FighterLaunched(const CombatFighterPtr &fighter)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::FighterLaunched()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::FighterFired(const CombatFighterPtr &fighter,
                              const CombatObjectPtr &target)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::FighterFired()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::FighterDestroyed(const CombatFighterPtr &fighter)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::FighterDestroyed()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::FighterDocked(const CombatFighterPtr &fighter)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::FighterDocked()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::MissileLaunched(const MissilePtr &missile)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::MissileLaunched()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::MissileExploded(const MissilePtr &missile)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::MissileExploded()\n";
+#endif
     // TODO
 }
 
 void CombatWnd::MissileRemoved(const MissilePtr &missile)
 {
+#if INSTRUMENT_COMBAT_LISTENER_INTERFACE
+    std::cerr << "CombatWnd::MissileRemoved()\n";
+#endif
     // TODO
 }
+
+#undef INSTRUMENT_COMBAT_LISTENER_INTERFACE
 
 std::pair<bool, Ogre::Vector3> CombatWnd::IntersectMouseWithEcliptic(const GG::Pt& pt) const
 {
@@ -2190,13 +2233,12 @@ bool CombatWnd::OpenChatWindow()
 
 bool CombatWnd::EndTurn()
 {
-    if (!m_combat_order_set.empty()) {
-        HumanClientApp::GetApp()->Networking().SendMessage(
-            CombatTurnOrdersMessage(
-                HumanClientApp::GetApp()->PlayerID(),
-                m_combat_order_set));
-        m_combat_order_set.clear();
-    }
+    HumanClientApp::GetApp()->Networking().SendMessage(
+        CombatTurnOrdersMessage(
+            HumanClientApp::GetApp()->PlayerID(),
+            m_combat_order_set));
+    m_combat_order_set.clear();
+    m_end_turn_button->Disable();
     return true;
 }
 

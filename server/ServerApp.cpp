@@ -1421,11 +1421,17 @@ void ServerApp::ProcessCombatTurn()
             const CombatOrder& order = (*it->second)[i];
             switch (order.Type()) {
             case CombatOrder::SHIP_ORDER: {
-                // TODO
+                CombatShipPtr combat_ship = pathing_engine.FindShip(order.ID());
+                if (order.Append())
+                    combat_ship->ClearMissions();
+                combat_ship->AppendMission(order.GetShipMission());
                 break;
             }
             case CombatOrder::FIGHTER_ORDER: {
-                // TODO
+                CombatFighterPtr combat_fighter = pathing_engine.FindLeader(order.ID());
+                if (order.Append())
+                    combat_fighter->ClearMissions();
+                combat_fighter->AppendMission(order.GetFighterMission());
                 break;
             }
             case CombatOrder::SETUP_PLACEMENT_ORDER: {
@@ -1446,6 +1452,14 @@ void ServerApp::ProcessCombatTurn()
     // process combat turn
     if (m_current_combat->m_combat_turn_number) {
         // TODO: execute turn
+        pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
+        const unsigned int ITERATIONS_PER_SEC = 60;
+        const unsigned int TURN_LENGTH = 5; // seconds
+        const unsigned int ITERATIONS = TURN_LENGTH * ITERATIONS_PER_SEC;
+        const double ITERATION_DURATION = 1.0 / ITERATIONS_PER_SEC;
+        for (unsigned int i = 0; i < ITERATIONS; ++i) {
+            pathing_engine.Update(0.0, ITERATION_DURATION);
+        }
     }
 
     // increment combat turn number
