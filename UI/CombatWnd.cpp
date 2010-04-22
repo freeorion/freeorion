@@ -95,6 +95,7 @@ namespace {
     };
 
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
+    const Ogre::Vector3 INVALID_MAP_LOCATION(FLT_MAX, FLT_MAX, FLT_MAX);
 
     const Ogre::Real NEAR_CLIP = 0.01;
     const Ogre::Real FAR_CLIP = 4.0 * SystemRadius();
@@ -183,6 +184,16 @@ namespace {
         std::copy(ray_origin.data().begin(), ray_origin.data().end(), out_ray_origin);
         std::copy(ray_direction.data().begin(), ray_direction.data().end(), out_ray_direction);
     } 
+
+    Ogre::Real ZoomFactor(GG::Flags<GG::ModKey> mod_keys)
+    {
+        Ogre::Real retval = 1.0;
+        if (mod_keys & GG::MOD_KEY_SHIFT)
+            retval *= 2.0;
+        if (mod_keys & GG::MOD_KEY_CTRL)
+            retval /= 4.0;
+        return retval;
+    }
 
     std::string PlanetNodeMaterial(PlanetType type)
     {
@@ -687,6 +698,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_look_at_scene_node(0),
     m_selection_rect(),
     m_look_at_point(0, 0, 0),
+    m_initial_zoom_in_position(INVALID_MAP_LOCATION),
+    m_previous_zoom_in_time(0),
     m_star_back_billboard(0),
     m_collision_configuration(0),
     m_collision_dispatcher(0),
@@ -1425,19 +1438,20 @@ void CombatWnd::LookAtPosition(const Ogre::Vector3& look_at_point)
 
 void CombatWnd::Zoom(int move, GG::Flags<GG::ModKey> mod_keys)
 {
+    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
+    Ogre::Real scale_factor = ZoomFactor(mod_keys);
+    Ogre::Real total_move = move_incr * scale_factor * -move;
+    ZoomImpl(total_move);
+}
+
+void CombatWnd::ZoomImpl(Ogre::Real total_move)
+{
     Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
     if (m_look_at_scene_node)
         bounding_sphere = m_look_at_scene_node->getAttachedObject(0)->getWorldBoundingSphere();
     const Ogre::Real EFFECTIVE_MIN_DISTANCE =
         std::max(bounding_sphere.getRadius() * Ogre::Real(1.05), MIN_ZOOM_IN_DISTANCE);
 
-    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
-    Ogre::Real scale_factor = 1.0;
-    if (mod_keys & GG::MOD_KEY_SHIFT)
-        scale_factor *= 2.0;
-    if (mod_keys & GG::MOD_KEY_CTRL)
-        scale_factor /= 4.0;
-    Ogre::Real total_move = move_incr * scale_factor * -move;
     if (m_distance_to_look_at_point + total_move < EFFECTIVE_MIN_DISTANCE)
         total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_look_at_point + total_move);
     else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
@@ -1667,8 +1681,45 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (move)
-        Zoom(move, mod_keys);
+    if (move) {
+        Ogre::Real move_incr = m_distance_to_look_at_point * 0.2;
+        Ogre::Real scale_factor = ZoomFactor(mod_keys);
+        Ogre::Real total_move = move_incr * scale_factor * -move;
+        if (0 < move)
+        {
+            const unsigned int TICKS = GG::GUI::GetGUI()->Ticks();
+
+            const unsigned int ZOOM_IN_TIMEOUT = 750u;
+            if (m_initial_zoom_in_position == INVALID_MAP_LOCATION ||
+                ZOOM_IN_TIMEOUT < TICKS - m_previous_zoom_in_time)
+            {
+                std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+                m_initial_zoom_in_position = intersection.first ? intersection.second : INVALID_MAP_LOCATION;
+            }
+
+            if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
+                const double CLOSE_FACTOR = move * 0.25;
+                Ogre::Vector3 delta = m_initial_zoom_in_position - m_look_at_point;
+                double delta_length = delta.length();
+                double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
+                delta.normalise();
+                Ogre::Vector3 new_center = m_look_at_point + delta * distance;
+                if (new_center.length() < SystemRadius()) {
+                    m_look_at_scene_node = 0;
+#if 0
+                    // TODO: Integrate with LookAtPosition(), if possible/convenient.
+                    LookAtPosition(new_center);
+#else
+                    m_look_at_point = new_center;
+                    UpdateCameraPosition();
+#endif
+                }
+            }
+
+            m_previous_zoom_in_time = TICKS;
+        }
+        ZoomImpl(total_move);
+    }
 }
 
 void CombatWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)

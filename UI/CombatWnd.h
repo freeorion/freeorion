@@ -133,6 +133,7 @@ private:
     void LookAtNode(Ogre::SceneNode* look_at_node);
     void LookAtPosition(const Ogre::Vector3& look_at_point);
     void Zoom(int move, GG::Flags<GG::ModKey> mod_keys);
+    void ZoomImpl(Ogre::Real total_move);
     void HandleRotation(const GG::Pt& delta);
     void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
@@ -191,6 +192,8 @@ private:
     Ogre::SceneNode* m_look_at_scene_node;
     GG::Rect m_selection_rect;
     Ogre::Vector3 m_look_at_point;
+    Ogre::Vector3 m_initial_zoom_in_position;
+    unsigned int m_previous_zoom_in_time;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
     Ogre::Real m_star_brightness_factor;
