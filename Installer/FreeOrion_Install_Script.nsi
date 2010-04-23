@@ -5,7 +5,7 @@
 !define PRODUCT_VERSION "0.3.14"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
-!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\freeorionca.exe"
+!define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_NAME}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 
@@ -29,7 +29,7 @@ SetCompressor bzip2
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\freeorion.exe"
-!define MUI_FINISHPAGE_RUN_PARAMETERS "--fullscreen 1"
+;!define MUI_FINISHPAGE_RUN_PARAMETERS "--fullscreen 1"
 !insertmacro MUI_PAGE_FINISH
 
 ; Uninstaller pages
@@ -55,6 +55,7 @@ Section "MainSection" SEC01
   SetOverwrite try
   File "..\..\vcredist_x86.exe"
   ExecWait "$INSTDIR\vcredist_x86.exe /q"
+  Delete "$INSTDIR\vcredist_x86.exe"
   File /r /x .svn "..\default"
   File "..\GiGi.dll"
   File "..\GiGiOgre.dll"
@@ -93,26 +94,27 @@ Section "MainSection" SEC01
   File "..\freeorionca.exe.manifest"
   File "..\freeoriond.exe.manifest"
   File "..\freeorion.exe.manifest"
+  File "..\FreeOrion.ico"
   File "..\OISInput.cfg"
   File "..\ogre_plugins.cfg"
   CreateDirectory "$SMPROGRAMS\FreeOrion"
-  CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion.lnk" "$INSTDIR\freeorion.exe" "--fullscreen"
-  CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk" "$INSTDIR\freeorion.exe"
+  CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$INSTDIR\freeorion.exe" "--fullscreen"
+  CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Windowed.lnk" "$INSTDIR\freeorion.exe"
   CreateShortCut "$DESKTOP\FreeOrion.lnk" "$INSTDIR\freeorion.exe" "--fullscreen 1"
 SectionEnd
 
 Section -AdditionalIcons
-  WriteIniStr "$INSTDIR\${PRODUCT_NAME}.url" "InternetShortcut" "URL" "${PRODUCT_WEB_SITE}"
-  CreateShortCut "$SMPROGRAMS\FreeOrion\Website.lnk" "$INSTDIR\${PRODUCT_NAME}.url"
-  CreateShortCut "$SMPROGRAMS\FreeOrion\Uninstall.lnk" "$INSTDIR\uninst.exe"
+  WriteIniStr "$INSTDIR\FreeOrion.org.url" "InternetShortcut" "URL" "http://www.freeorion.org"
+  CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion.org.lnk" "$INSTDIR\FreeOrion.org.url"
+  CreateShortCut "$SMPROGRAMS\FreeOrion\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
 SectionEnd
 
 Section -Post
-  WriteUninstaller "$INSTDIR\uninst.exe"
+  WriteUninstaller "$INSTDIR\Uninstall.exe"
   WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\freeorionca.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\freeorionca.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe"
+  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\FreeOrion.ico"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "URLInfoAbout" "${PRODUCT_WEB_SITE}"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "Publisher" "${PRODUCT_PUBLISHER}"
@@ -137,7 +139,50 @@ Section Uninstall
   Delete "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk"
 
   RMDir "$SMPROGRAMS\FreeOrion"
-  RMDir /r "$INSTDIR"
+
+  Delete "$INSTDIR\GiGi.dll"
+  Delete "$INSTDIR\GiGiOgre.dll"
+  Delete "$INSTDIR\GiGiOgrePlugin_OIS.dll"
+  Delete "$INSTDIR\OIS.dll"
+  Delete "$INSTDIR\OgreMain.dll"
+  Delete "$INSTDIR\OpenAL32.dll"
+  Delete "$INSTDIR\Plugin_OctreeSceneManager.dll"
+  Delete "$INSTDIR\Plugin_CgProgramManager.dll"
+  Delete "$INSTDIR\Plugin_ParticleFX.dll"
+  Delete "$INSTDIR\RenderSystem_GL.dll"
+  Delete "$INSTDIR\alut.dll"
+  Delete "$INSTDIR\cg.dll"
+  Delete "$INSTDIR\boost_date_time-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_filesystem-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_python-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_regex-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_serialization-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_signals-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_system-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\boost_thread-vc90-mt-1_42.dll"
+  Delete "$INSTDIR\glew32.dll"
+  Delete "$INSTDIR\jpeg.dll"
+  Delete "$INSTDIR\libexpat.dll"
+  Delete "$INSTDIR\libogg.dll"
+  Delete "$INSTDIR\libpng13.dll"
+  Delete "$INSTDIR\libvorbis.dll"
+  Delete "$INSTDIR\libvorbisfile.dll"
+  Delete "$INSTDIR\python26.dll"
+  Delete "$INSTDIR\wrap_oal.dll"
+  Delete "$INSTDIR\z.dll"
+  Delete "$INSTDIR\zlib1.dll"
+  Delete "$INSTDIR\freeorionca.exe"
+  Delete "$INSTDIR\freeoriond.exe"
+  Delete "$INSTDIR\freeorion.exe"
+  Delete "$INSTDIR\freeorionca.exe.manifest"
+  Delete "$INSTDIR\freeoriond.exe.manifest"
+  Delete "$INSTDIR\freeorion.exe.manifest"
+  Delete "$INSTDIR\FreeOrion.ico"
+  Delete "$INSTDIR\OISInput.cfg"
+  Delete "$INSTDIR\ogre_plugins.cfg"
+
+  RMDir /r "$INSTDIR\default"
+  RMDir "$INSTDIR"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
