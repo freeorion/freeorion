@@ -119,15 +119,17 @@ namespace {
     const Ogre::uint32 UNSELECTABLE_OBJECT_MASK = 1 << 0;
 
     // The time it takes to recenter on a new point, in seconds.
-    const Ogre::Real CAMERA_RECENTER_TIME = 0.33333;
-
-    const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
-
-    const Ogre::Real IGNORE_DISTANCE = FLT_MAX;
+    const Ogre::Real CAMERA_MOVE_TIME = 0.33333;
+    const int CAMERA_ANIMATION_STEPS = 8;
+    const Ogre::Real TIME_INCREMENT = CAMERA_MOVE_TIME / CAMERA_ANIMATION_STEPS;
 
     const unsigned short CAMERA_NODE_TRACK_HANDLE = 0;
     const unsigned short DISTANCE_TRACK_HANDLE = 1;
     const unsigned short CAMERA_TRACK_HANDLE = 2;
+
+    const Ogre::Real IGNORE_DISTANCE = FLT_MAX;
+
+    const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
 
     // HACK! The currently-used star cores only cover part of the texture.
     // Here, we adjust for this, so that the edge of the star as it appears
@@ -739,7 +741,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_camera_node(m_scene_manager->getRootSceneNode()->createChildSceneNode()),
     m_viewport(viewport),
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
-    m_camera_animation(m_scene_manager->createAnimation("CameraTrack", CAMERA_RECENTER_TIME)),
+    m_camera_animation(m_scene_manager->createAnimation("CameraTrack", CAMERA_MOVE_TIME)),
     m_camera_animation_state(m_scene_manager->createAnimationState("CameraTrack")),
     m_distance_to_look_at_point(SystemRadius() / 2.0),
     m_pitch(0.0),
@@ -1478,56 +1480,37 @@ void CombatWnd::LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Rea
 {
     if (distance == IGNORE_DISTANCE)
         distance = m_distance_to_look_at_point;
-    else
-        m_camera_animation->destroyAllTracks();
-
-    Ogre::Vector3 node_start = m_look_at_point;
-    Ogre::Vector3 node_stop = look_at_point;
-
-    Ogre::Vector3 camera_start = CameraPositionAndOrientation(m_distance_to_look_at_point).first;
-    Ogre::Vector3 camera_stop = CameraPositionAndOrientation(distance).first;
-
-    const Ogre::Vector3 NODE_POS_DELTA = node_stop - node_start;
-    const Ogre::Real DISTANCE_DELTA = distance - m_distance_to_look_at_point;
-    const Ogre::Vector3 CAMERA_DELTA = camera_stop - camera_start;
-
-    m_look_at_point = look_at_point;
 
     // We interpolate three things in our animation: the position of
     // m_camera_node, which always stays on the ecliptic; the value of
     // m_distance_to_look_at_point, which determines how far back m_camera is
     // from its parent m_camera_node; and the parent-relative position of
     // m_camera (which includes the interpolated value of
-    // m_distance_to_look_at_point).  It is necessary to track
-    // m_distance_to_look_at_point separately, so that we can maintain its
-    // value during animated camera moves, even if we interrupt an animation
-    // in the middle to start a new one (as we do when the user rapidly rolls
-    // the mouse wheel).
-    m_camera_animation_state->setTimePosition(0.0);
+    // m_distance_to_look_at_point).  The latter two are interpolated in
+    // ZoomImpl(). It is necessary to track m_distance_to_look_at_point
+    // separately, so that we can maintain its value during animated camera
+    // moves, even if we interrupt an animation in the middle to start a new
+    // one (as we do when the user rapidly rolls the mouse wheel).
+
+    ZoomImpl(distance - m_distance_to_look_at_point);
+
+    Ogre::Vector3 node_start = m_look_at_point;
+    Ogre::Vector3 node_stop = look_at_point;
+
+    const Ogre::Vector3 NODE_POS_DELTA = node_stop - node_start;
+
+    m_look_at_point = look_at_point;
+
     Ogre::NodeAnimationTrack* node_track =
         m_camera_animation->createNodeTrack(CAMERA_NODE_TRACK_HANDLE, m_camera_node);
-    Ogre::AnimableValuePtr animable_distance(new AnimableReal(m_distance_to_look_at_point));
-    Ogre::NumericAnimationTrack* distance_track =
-        m_camera_animation->createNumericTrack(DISTANCE_TRACK_HANDLE, animable_distance);
-    Ogre::AnimableValuePtr animable_camera_pos(new AnimableCamera(*m_camera, camera_start));
-    Ogre::NumericAnimationTrack* camera_track =
-        m_camera_animation->createNumericTrack(CAMERA_TRACK_HANDLE, animable_camera_pos);
 
-    const int STEPS = 8;
-    const Ogre::Real TIME_INCREMENT = CAMERA_RECENTER_TIME / STEPS;
-    const Ogre::Vector3 NODE_POS_INCREMENT = NODE_POS_DELTA / STEPS;
-    const Ogre::Real DISTANCE_INCREMENT = DISTANCE_DELTA / STEPS;
-    const Ogre::Vector3 CAMERA_INCREMENT = CAMERA_DELTA / STEPS;
+    const Ogre::Vector3 NODE_POS_INCREMENT = NODE_POS_DELTA / CAMERA_ANIMATION_STEPS;
 
     // the loop extends an extra 2 steps in either direction, to
     // ensure smoothness (since splines are being used)
-    for (int i = -2; i < STEPS + 2; ++i) {
+    for (int i = -2; i < CAMERA_ANIMATION_STEPS + 2; ++i) {
         Ogre::TransformKeyFrame* node_key = node_track->createNodeKeyFrame(i * TIME_INCREMENT);
         node_key->setTranslate(node_stop - NODE_POS_DELTA + i * NODE_POS_INCREMENT);
-        Ogre::NumericKeyFrame* distance_key = distance_track->createNumericKeyFrame(i * TIME_INCREMENT);
-        distance_key->setValue(distance - DISTANCE_DELTA + i * DISTANCE_INCREMENT);
-        Ogre::NumericKeyFrame* camera_key = camera_track->createNumericKeyFrame(i * TIME_INCREMENT);
-        camera_key->setValue(camera_stop - CAMERA_DELTA + i * CAMERA_INCREMENT);
     }
 }
 
@@ -1551,8 +1534,35 @@ Ogre::Real CombatWnd::ZoomResult(Ogre::Real total_move)
 
 void CombatWnd::ZoomImpl(Ogre::Real total_move)
 {
-    m_distance_to_look_at_point = ZoomResult(total_move);
-    UpdateCameraPosition();
+    m_camera_animation->destroyAllTracks();
+
+    Ogre::Real distance = ZoomResult(total_move);
+
+    Ogre::Vector3 camera_start = CameraPositionAndOrientation(m_distance_to_look_at_point).first;
+    Ogre::Vector3 camera_stop = CameraPositionAndOrientation(distance).first;
+
+    const Ogre::Real DISTANCE_DELTA = distance - m_distance_to_look_at_point;
+    const Ogre::Vector3 CAMERA_DELTA = camera_stop - camera_start;
+
+    m_camera_animation_state->setTimePosition(0.0);
+    Ogre::AnimableValuePtr animable_distance(new AnimableReal(m_distance_to_look_at_point));
+    Ogre::NumericAnimationTrack* distance_track =
+        m_camera_animation->createNumericTrack(DISTANCE_TRACK_HANDLE, animable_distance);
+    Ogre::AnimableValuePtr animable_camera_pos(new AnimableCamera(*m_camera, camera_start));
+    Ogre::NumericAnimationTrack* camera_track =
+        m_camera_animation->createNumericTrack(CAMERA_TRACK_HANDLE, animable_camera_pos);
+
+    const Ogre::Real DISTANCE_INCREMENT = DISTANCE_DELTA / CAMERA_ANIMATION_STEPS;
+    const Ogre::Vector3 CAMERA_INCREMENT = CAMERA_DELTA / CAMERA_ANIMATION_STEPS;
+
+    // the loop extends an extra 2 steps in either direction, to
+    // ensure smoothness (since splines are being used)
+    for (int i = -2; i < CAMERA_ANIMATION_STEPS + 2; ++i) {
+        Ogre::NumericKeyFrame* distance_key = distance_track->createNumericKeyFrame(i * TIME_INCREMENT);
+        distance_key->setValue(distance - DISTANCE_DELTA + i * DISTANCE_INCREMENT);
+        Ogre::NumericKeyFrame* camera_key = camera_track->createNumericKeyFrame(i * TIME_INCREMENT);
+        camera_key->setValue(camera_stop - CAMERA_DELTA + i * CAMERA_INCREMENT);
+    }
 }
 
 void CombatWnd::HandleRotation(const GG::Pt& delta)
