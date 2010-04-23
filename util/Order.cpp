@@ -20,9 +20,6 @@
 
 const Tech* GetTech(const std::string& name);
 
-using boost::lexical_cast;
-using std::vector;
-
 #define DEBUG_CREATE_FLEET_ORDER 0
 #define DEBUG_FLEET_MOVE_ORDER   0
 #if DEBUG_CREATE_FLEET_ORDER || DEBUG_FLEET_MOVE_ORDER
@@ -361,7 +358,7 @@ void FleetTransferOrder::ExecuteImpl() const
 
     // iterate down the ship vector and add each one to the fleet
     // after first verifying that it is a valid ship id
-    vector<int>::const_iterator itr = m_add_ships.begin();
+    std::vector<int>::const_iterator itr = m_add_ships.begin();
     while (itr != m_add_ships.end()) {
         // find the ship, verify that ID is valid
         int curr = (*itr);
@@ -855,6 +852,7 @@ void ShipDesignOrder::ExecuteImpl() const
 
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_delete_design_from_empire) {
+        // player is ordering empire to forget about a particular design
         if (!empire->ShipDesignKept(m_design_id)) {
             Logger().errorStream() << "Tried to remove a ShipDesign that the empire wasn't remembering";
             return;
@@ -862,6 +860,7 @@ void ShipDesignOrder::ExecuteImpl() const
         empire->RemoveShipDesign(m_design_id);
 
     } else if (m_create_new_design) {
+        // player is creating a new design
         if (m_ship_design.DesignedByEmpire() != EmpireID()) {
             Logger().errorStream() << "Tried to create a new ShipDesign designed by another empire";
             return;
@@ -875,9 +874,17 @@ void ShipDesignOrder::ExecuteImpl() const
         ShipDesign* new_ship_design = new ShipDesign(m_ship_design);
 
         universe.InsertShipDesignID(new_ship_design, m_design_id);
+        universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());
         empire->AddShipDesign(m_design_id);
 
     } else if (!m_create_new_design && !m_delete_design_from_empire) {
+        // player is order empire to retain a particular design, so that is can
+        // be used to construct ships by that empire.
+
+        // TODO: consider removing this order, so that an empire needs to use
+        // espionage or trade to gain access to a ship design made by another
+        // player
+
         // check if empire is already remembering the design
         if (empire->ShipDesignKept(m_design_id)) {
             Logger().errorStream() << "Tried to remember a ShipDesign that was already being remembered";
@@ -885,21 +892,11 @@ void ShipDesignOrder::ExecuteImpl() const
         }
 
         // check if the empire can see any objects that have this design (thus enabling it to be copied)
-        std::vector<Ship*> ship_vec = objects.FindObjects<Ship>();
-        bool known = false;
-        for (std::vector<Ship*>::const_iterator it = ship_vec.begin(); it != ship_vec.end(); ++it) {
-            if (Universe::ALL_OBJECTS_VISIBLE || (*it)->GetVisibility(EmpireID()) != VIS_NO_VISIBILITY) {
-                if ((*it)->DesignID() == m_design_id) {
-                    known = true;
-                    break;
-                }
-            }
-        }
-
-        if (known) {
+        const std::set<int>& empire_known_design_ids = universe.EmpireKnownShipDesignIDs(EmpireID());
+        if (empire_known_design_ids.find(m_design_id) != empire_known_design_ids.end()) {
             empire->AddShipDesign(m_design_id);
         } else {
-            Logger().errorStream() << "Tried to remember a ShipDesign that this empire can't see";
+            Logger().errorStream() << "Tried to remember a ShipDesign that this empire hasn't seen";
             return;
         }
 

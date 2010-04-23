@@ -283,7 +283,7 @@ public:
     /** Returns IDs of objects that the Empire with id \a empire_id knows have
       * been destroyed.  Each empire's latest known objects data contains the
       * last known information about each object, whether it has been destroyed
-      * or not.  If \a empire_id = ALL_EMPIRES and empty set of IDs is
+      * or not.  If \a empire_id = ALL_EMPIRES an empty set of IDs is
       * returned. */
     const std::set<int>&    EmpireKnownDestroyedObjectIDs(int empire_id) const;
 
@@ -291,6 +291,10 @@ public:
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
 
+    /** Returns IDs of ship designs that the Empire with id \a empire_id has
+      * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of
+      * ids is returned */
+    const std::set<int>&    EmpireKnownShipDesignIDs(int empire_id) const;
 
     Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id) const;///< returns the Visibility level of empire with id \a empire_id of UniverseObject with id \a object_id as determined by calling UpdateEmpireObjectVisibilities
     const VisibilityTurnMap&GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const; ///< returns the map from Visibility level to turn number on which the empire with id \a empire_id last had the various Visibility levels of the UniverseObject with id \a object_id .  The returned map may be empty or not have entries for all visibility levels, if the empire has not seen the object at that visibility level yet.

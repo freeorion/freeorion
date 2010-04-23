@@ -171,15 +171,18 @@ Section Uninstall
   Delete "$INSTDIR\ogre_plugins.cfg"
 
   RMDir /r "$INSTDIR\default"
-  RMDir "$INSTDIR"
 
   Delete "$SMPROGRAMS\FreeOrion\Uninstall.lnk"
   Delete "$SMPROGRAMS\FreeOrion\Website.lnk"
   Delete "$DESKTOP\FreeOrion.lnk"
   Delete "$SMPROGRAMS\FreeOrion\FreeOrion.lnk"
   Delete "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk"
-
   RMDir "$SMPROGRAMS\FreeOrion"
+
+  Delete "$INSTDIR\FreeOrion.org.url"
+  Delete "$INSTDIR\Uninstall.exe"
+  RMDir "$INSTDIR"
+
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"

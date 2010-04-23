@@ -216,7 +216,6 @@ int mainSetupAndRunOgre()
 #ifdef FREEORION_WIN32
 #  ifdef IDI_ICON1
         // set window icon to embedded application icon
-        std::cout << "setting render window icon" << std::endl;
         HWND hwnd;
         window->getCustomAttribute("WINDOW", &hwnd);
         HINSTANCE hInst = (HINSTANCE)GetModuleHandle(NULL);

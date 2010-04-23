@@ -1082,9 +1082,9 @@ std::set<int> Empire::AvailableShipDesigns() const
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const
 {
-    // if design isn't kept by this empire, it can't be built
+    // if design isn't kept by this empire, it can't be built.
     if (!ShipDesignKept(ship_design_id))
-        return false;
+        return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
 
     const ShipDesign* design = GetShipDesign(ship_design_id);
     if (!design) return false;
@@ -2218,9 +2218,11 @@ void Empire::AddShipDesign(int ship_design_id)
 {
     /* Check if design id is valid.  that is, check that it corresponds to an
      * existing shipdesign in the universe.  On clients, this means that this
-     * empire knows about this ship design.  On the server, all existing ship
-     * designs will be valid, so this just adds this design's id to those that
-     * this empire will remember */
+     * empire knows about this ship design and the server consequently sent the
+     * design to this player.  On the server, all existing ship designs will be
+     * valid, so this just adds this design's id to those that this empire will
+     * retain as one of it's ship designs, which are those displayed in the GUI
+     * list of available designs for human players, and */
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {
         // design is valid, so just add the id to empire's set of ids that it knows about

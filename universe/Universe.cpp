@@ -774,6 +774,15 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
     return (it != m_ship_designs.end() ? it->second : 0);
 }
 
+const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const
+{
+    std::map<int, std::set<int> >::const_iterator it = m_empire_known_ship_design_ids.find(empire_id);
+    if (it != m_empire_known_ship_design_ids.end())
+        return it->second;
+    static const std::set<int> empty_set;
+    return empty_set;
+}
+
 Visibility Universe::GetObjectVisibilityByEmpire(int object_id, int empire_id) const
 {
     if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
