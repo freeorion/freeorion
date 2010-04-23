@@ -124,6 +124,7 @@ private:
 
     std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
     const std::string& StarBaseName() const;
+    std::pair<Ogre::Vector3, Ogre::Quaternion> CameraPositionAndOrientation(Ogre::Real distance) const;
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
@@ -132,7 +133,9 @@ private:
 
     void LookAtNode(Ogre::SceneNode* look_at_node);
     void LookAtPosition(const Ogre::Vector3& look_at_point);
+    void LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Real zoom);
     void Zoom(int move, GG::Flags<GG::ModKey> mod_keys);
+    Ogre::Real ZoomResult(Ogre::Real total_move);
     void ZoomImpl(Ogre::Real total_move);
     void HandleRotation(const GG::Pt& delta);
     void UpdateCameraPosition();

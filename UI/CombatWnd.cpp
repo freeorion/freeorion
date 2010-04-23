@@ -123,7 +123,11 @@ namespace {
 
     const unsigned int NO_CITY_LIGHTS = std::numeric_limits<unsigned int>::max();
 
-    const unsigned short LOOKAT_NODE_TRACK_HANDLE = 0;
+    const Ogre::Real IGNORE_DISTANCE = FLT_MAX;
+
+    const unsigned short CAMERA_NODE_TRACK_HANDLE = 0;
+    const unsigned short DISTANCE_TRACK_HANDLE = 1;
+    const unsigned short CAMERA_TRACK_HANDLE = 2;
 
     // HACK! The currently-used star cores only cover part of the texture.
     // Here, we adjust for this, so that the edge of the star as it appears
@@ -194,6 +198,9 @@ namespace {
             retval /= 4.0;
         return retval;
     }
+
+    Ogre::Real TotalMove(int move, GG::Flags<GG::ModKey> mod_keys, Ogre::Real current_distance)
+    { return current_distance * 0.25 * ZoomFactor(mod_keys) * -move; }
 
     std::string PlanetNodeMaterial(PlanetType type)
     {
@@ -482,6 +489,53 @@ namespace {
         }
         return colors[star_or_skybox_base_name];
     }
+
+    class AnimableReal :
+        public Ogre::AnimableValue
+    {
+    public:
+        AnimableReal(Ogre::Real& value) :
+            AnimableValue(REAL),
+            m_value(value)
+            { mBaseValueReal[0] = m_value; }
+
+        virtual void setValue(Ogre::Real v)
+            { m_value = mBaseValueReal[0] = v; }
+
+        virtual void setCurrentStateAsBaseValue()
+            {}
+
+        virtual void applyDeltaValue(Ogre::Real v)
+            { m_value = mBaseValueReal[0] = v; }
+
+    private:
+        Ogre::Real& m_value;
+    };
+
+    class AnimableCamera :
+        public Ogre::AnimableValue
+    {
+    public:
+        AnimableCamera(Ogre::Camera& camera, const Ogre::Vector3& v) :
+            AnimableValue(VECTOR3),
+            m_camera(camera)
+            { std::memcpy(mBaseValueReal, v.ptr(), sizeof(Ogre::Real) * 3); }
+
+        virtual void setValue(const Ogre::Vector3& v)
+            { setAsBaseValue(v); }
+
+        virtual void setCurrentStateAsBaseValue()
+            {}
+
+        virtual void applyDeltaValue(const Ogre::Vector3& v)
+            {
+                setAsBaseValue(v);
+                m_camera.setPosition(v);
+            }
+
+    private:
+        Ogre::Camera& m_camera;
+    };
 
     void AddOptions(OptionsDB& db)
     {
@@ -1418,33 +1472,69 @@ void CombatWnd::LookAtNode(Ogre::SceneNode* look_at_node)
 }
 
 void CombatWnd::LookAtPosition(const Ogre::Vector3& look_at_point)
+{ LookAtPositionImpl(look_at_point, IGNORE_DISTANCE); }
+
+void CombatWnd::LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Real distance)
 {
-    const Ogre::Vector3 DISTANCE = look_at_point - m_look_at_point;
+    if (distance == IGNORE_DISTANCE)
+        distance = m_distance_to_look_at_point;
+    else
+        m_camera_animation->destroyAllTracks();
+
+    Ogre::Vector3 node_start = m_look_at_point;
+    Ogre::Vector3 node_stop = look_at_point;
+
+    Ogre::Vector3 camera_start = CameraPositionAndOrientation(m_distance_to_look_at_point).first;
+    Ogre::Vector3 camera_stop = CameraPositionAndOrientation(distance).first;
+
+    const Ogre::Vector3 NODE_POS_DELTA = node_stop - node_start;
+    const Ogre::Real DISTANCE_DELTA = distance - m_distance_to_look_at_point;
+    const Ogre::Vector3 CAMERA_DELTA = camera_stop - camera_start;
+
     m_look_at_point = look_at_point;
-    UpdateCameraPosition();
+
+    // We interpolate three things in our animation: the position of
+    // m_camera_node, which always stays on the ecliptic; the value of
+    // m_distance_to_look_at_point, which determines how far back m_camera is
+    // from its parent m_camera_node; and the parent-relative position of
+    // m_camera (which includes the interpolated value of
+    // m_distance_to_look_at_point).  It is necessary to track
+    // m_distance_to_look_at_point separately, so that we can maintain its
+    // value during animated camera moves, even if we interrupt an animation
+    // in the middle to start a new one (as we do when the user rapidly rolls
+    // the mouse wheel).
     m_camera_animation_state->setTimePosition(0.0);
-    Ogre::NodeAnimationTrack* track =
-        m_camera_animation->createNodeTrack(LOOKAT_NODE_TRACK_HANDLE, m_camera_node);
+    Ogre::NodeAnimationTrack* node_track =
+        m_camera_animation->createNodeTrack(CAMERA_NODE_TRACK_HANDLE, m_camera_node);
+    Ogre::AnimableValuePtr animable_distance(new AnimableReal(m_distance_to_look_at_point));
+    Ogre::NumericAnimationTrack* distance_track =
+        m_camera_animation->createNumericTrack(DISTANCE_TRACK_HANDLE, animable_distance);
+    Ogre::AnimableValuePtr animable_camera_pos(new AnimableCamera(*m_camera, camera_start));
+    Ogre::NumericAnimationTrack* camera_track =
+        m_camera_animation->createNumericTrack(CAMERA_TRACK_HANDLE, animable_camera_pos);
+
     const int STEPS = 8;
     const Ogre::Real TIME_INCREMENT = CAMERA_RECENTER_TIME / STEPS;
-    const Ogre::Vector3 DISTANCE_INCREMENT = DISTANCE / STEPS;
+    const Ogre::Vector3 NODE_POS_INCREMENT = NODE_POS_DELTA / STEPS;
+    const Ogre::Real DISTANCE_INCREMENT = DISTANCE_DELTA / STEPS;
+    const Ogre::Vector3 CAMERA_INCREMENT = CAMERA_DELTA / STEPS;
+
     // the loop extends an extra 2 steps in either direction, to
     // ensure smoothness (since splines are being used)
     for (int i = -2; i < STEPS + 2; ++i) {
-        Ogre::TransformKeyFrame* key = track->createNodeKeyFrame(i * TIME_INCREMENT);
-        key->setTranslate(look_at_point - DISTANCE + i * DISTANCE_INCREMENT);
+        Ogre::TransformKeyFrame* node_key = node_track->createNodeKeyFrame(i * TIME_INCREMENT);
+        node_key->setTranslate(node_stop - NODE_POS_DELTA + i * NODE_POS_INCREMENT);
+        Ogre::NumericKeyFrame* distance_key = distance_track->createNumericKeyFrame(i * TIME_INCREMENT);
+        distance_key->setValue(distance - DISTANCE_DELTA + i * DISTANCE_INCREMENT);
+        Ogre::NumericKeyFrame* camera_key = camera_track->createNumericKeyFrame(i * TIME_INCREMENT);
+        camera_key->setValue(camera_stop - CAMERA_DELTA + i * CAMERA_INCREMENT);
     }
 }
 
 void CombatWnd::Zoom(int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    Ogre::Real move_incr = m_distance_to_look_at_point * 0.25;
-    Ogre::Real scale_factor = ZoomFactor(mod_keys);
-    Ogre::Real total_move = move_incr * scale_factor * -move;
-    ZoomImpl(total_move);
-}
+{ ZoomImpl(TotalMove(move, mod_keys, m_distance_to_look_at_point)); }
 
-void CombatWnd::ZoomImpl(Ogre::Real total_move)
+Ogre::Real CombatWnd::ZoomResult(Ogre::Real total_move)
 {
     Ogre::Sphere bounding_sphere(Ogre::Vector3(), 0.0);
     if (m_look_at_scene_node)
@@ -1456,7 +1546,12 @@ void CombatWnd::ZoomImpl(Ogre::Real total_move)
         total_move += EFFECTIVE_MIN_DISTANCE - (m_distance_to_look_at_point + total_move);
     else if (MAX_ZOOM_OUT_DISTANCE < m_distance_to_look_at_point + total_move)
         total_move -= (m_distance_to_look_at_point + total_move) - MAX_ZOOM_OUT_DISTANCE;
-    m_distance_to_look_at_point += total_move;
+    return m_distance_to_look_at_point + total_move;
+}
+
+void CombatWnd::ZoomImpl(Ogre::Real total_move)
+{
+    m_distance_to_look_at_point = ZoomResult(total_move);
     UpdateCameraPosition();
 }
 
@@ -1504,7 +1599,7 @@ void CombatWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void CombatWnd::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (CloseTo(pt, m_last_click_pos)) {
-        if (!m_mouse_dragged && !m_camera_animation->hasNodeTrack(LOOKAT_NODE_TRACK_HANDLE)) {
+        if (!m_mouse_dragged && !m_camera_animation->hasNodeTrack(CAMERA_NODE_TRACK_HANDLE)) {
             if (Ogre::MovableObject* movable_object = GetObjectUnderPt(pt)) {
                 Ogre::SceneNode* clicked_scene_node = movable_object->getParentSceneNode();
                 assert(clicked_scene_node);
@@ -1681,43 +1776,34 @@ void CombatWnd::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CombatWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (move) {
-        Ogre::Real move_incr = m_distance_to_look_at_point * 0.2;
-        Ogre::Real scale_factor = ZoomFactor(mod_keys);
-        Ogre::Real total_move = move_incr * scale_factor * -move;
-        if (0 < move)
+    Ogre::Real total_move = TotalMove(move, mod_keys, m_distance_to_look_at_point);
+    if (0 < move)
+    {
+        const unsigned int TICKS = GG::GUI::GetGUI()->Ticks();
+
+        const unsigned int ZOOM_IN_TIMEOUT = 750u;
+        if (m_initial_zoom_in_position == INVALID_MAP_LOCATION ||
+            ZOOM_IN_TIMEOUT < TICKS - m_previous_zoom_in_time)
         {
-            const unsigned int TICKS = GG::GUI::GetGUI()->Ticks();
-
-            const unsigned int ZOOM_IN_TIMEOUT = 750u;
-            if (m_initial_zoom_in_position == INVALID_MAP_LOCATION ||
-                ZOOM_IN_TIMEOUT < TICKS - m_previous_zoom_in_time)
-            {
-                std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
-                m_initial_zoom_in_position = intersection.first ? intersection.second : INVALID_MAP_LOCATION;
-            }
-
-            if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
-                const double CLOSE_FACTOR = move * 0.25;
-                Ogre::Vector3 delta = m_initial_zoom_in_position - m_look_at_point;
-                double delta_length = delta.length();
-                double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
-                delta.normalise();
-                Ogre::Vector3 new_center = m_look_at_point + delta * distance;
-                if (new_center.length() < SystemRadius()) {
-                    m_look_at_scene_node = 0;
-#if 0
-                    // TODO: Integrate with LookAtPosition(), if possible/convenient.
-                    LookAtPosition(new_center);
-#else
-                    m_look_at_point = new_center;
-                    UpdateCameraPosition();
-#endif
-                }
-            }
-
-            m_previous_zoom_in_time = TICKS;
+            std::pair<bool, Ogre::Vector3> intersection = IntersectMouseWithEcliptic(pt);
+            m_initial_zoom_in_position = intersection.first ? intersection.second : INVALID_MAP_LOCATION;
         }
+
+        if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
+            const double CLOSE_FACTOR = move * 0.25;
+            Ogre::Vector3 delta = m_initial_zoom_in_position - m_look_at_point;
+            double delta_length = delta.length();
+            double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
+            delta.normalise();
+            Ogre::Vector3 new_center = m_look_at_point + delta * distance;
+            if (new_center.length() < SystemRadius()) {
+                m_look_at_scene_node = 0;
+                LookAtPositionImpl(new_center, ZoomResult(total_move));
+            }
+        }
+
+        m_previous_zoom_in_time = TICKS;
+    } else if (move < 0) {
         ZoomImpl(total_move);
     }
 }
@@ -1870,6 +1956,57 @@ const std::string& CombatWnd::StarBaseName() const
     return *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
 }
 
+std::pair<Ogre::Vector3, Ogre::Quaternion> CombatWnd::CameraPositionAndOrientation(Ogre::Real distance) const
+{
+    // Here, we calculate where m_camera should be relative to its parent
+    // m_camera_node.  m_camera_node always stays on the ecliptic, and the
+    // camera moves away from it a bit to look at the position it occupies.
+    // This code was originally written using the high-level Ogre::Camera API,
+    // but now the camera position sometimes needs to be known without
+    // actually moving the camera.  The original lines of code are preserved
+    // here as comments, and under each one is the equivalent code cut from
+    // OgreCamera.cpp.
+
+    std::pair<Ogre::Vector3, Ogre::Quaternion> retval;
+
+    // Ogre::Camera::setPosition(Ogre::Vector3::ZERO);
+    retval.first = Ogre::Vector3::ZERO;
+
+    // Ogre::Camera::setDirection(Ogre::Vector3::NEGATIVE_UNIT_Z);
+    {
+        Ogre::Vector3 zAdjustVec = -Ogre::Vector3::NEGATIVE_UNIT_Z;
+        Ogre::Vector3 xVec = Ogre::Vector3::UNIT_Y.crossProduct( zAdjustVec );
+        xVec.normalise();
+        Ogre::Vector3 yVec = zAdjustVec.crossProduct( xVec );
+        yVec.normalise();
+        retval.second.FromAxes( xVec, yVec, zAdjustVec );
+    }
+
+    // Ogre::Camera::roll(m_roll);
+    {
+        Ogre::Vector3 zAxis = retval.second * Ogre::Vector3::UNIT_Z;
+        Ogre::Quaternion roll_q(m_roll, zAxis);
+        roll_q.normalise();
+        retval.second = roll_q * retval.second;
+    }
+
+    // Ogre::Camera::pitch(m_pitch);
+    {
+        Ogre::Vector3 xAxis = retval.second * Ogre::Vector3::UNIT_X;
+        Ogre::Quaternion pitch_q(m_pitch, xAxis);
+        pitch_q.normalise();
+        retval.second = pitch_q * retval.second;
+    }
+
+    // Ogre::Camera::moveRelative(Ogre::Vector3(0, 0, distance));
+    {
+        Ogre::Vector3 trans = retval.second * Ogre::Vector3(0, 0, distance);
+        retval.first += trans;
+    }
+
+    return retval;
+}
+
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
     Ogre::RenderTarget::FrameStats stats =
@@ -1906,11 +2043,10 @@ bool CombatWnd::frameEnded(const Ogre::FrameEvent& event)
 void CombatWnd::UpdateCameraPosition()
 {
     m_camera_node->setPosition(m_look_at_point);
-    m_camera->setPosition(Ogre::Vector3::ZERO);
-    m_camera->setDirection(Ogre::Vector3::NEGATIVE_UNIT_Z);
-    m_camera->roll(m_roll);
-    m_camera->pitch(m_pitch);
-    m_camera->moveRelative(Ogre::Vector3(0, 0, m_distance_to_look_at_point));
+    std::pair<Ogre::Vector3, Ogre::Quaternion> position_and_orientation =
+        CameraPositionAndOrientation(m_distance_to_look_at_point);
+    m_camera->setPosition(position_and_orientation.first);
+    m_camera->setOrientation(position_and_orientation.second);
     UpdateStarFromCameraPosition();
 #if TEST_STATIC_OPENSTEER_OBSTACLES
     std::cout << "testing...\n";
