@@ -1224,6 +1224,14 @@
 				</File>
 			</Filter>
 		</Filter>
+		<File
+			RelativePath=".\freeorion.rc"
+			>
+		</File>
+		<File
+			RelativePath=".\resource.h"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

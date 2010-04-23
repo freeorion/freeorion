@@ -56,7 +56,7 @@ Section "MainSection" SEC01
   File "..\..\vcredist_x86.exe"
   ExecWait "$INSTDIR\vcredist_x86.exe /q"
   Delete "$INSTDIR\vcredist_x86.exe"
-  File /r /x .svn "..\default"
+
   File "..\GiGi.dll"
   File "..\GiGiOgre.dll"
   File "..\GiGiOgrePlugin_OIS.dll"
@@ -91,12 +91,12 @@ Section "MainSection" SEC01
   File "..\freeorionca.exe"
   File "..\freeoriond.exe"
   File "..\freeorion.exe"
-  File "..\freeorionca.exe.manifest"
-  File "..\freeoriond.exe.manifest"
-  File "..\freeorion.exe.manifest"
   File "..\FreeOrion.ico"
   File "..\OISInput.cfg"
   File "..\ogre_plugins.cfg"
+
+  File /r /x .svn "..\default"
+
   CreateDirectory "$SMPROGRAMS\FreeOrion"
   CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$INSTDIR\freeorion.exe" "--fullscreen"
   CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Windowed.lnk" "$INSTDIR\freeorion.exe"
@@ -111,7 +111,7 @@ SectionEnd
 
 Section -Post
   WriteUninstaller "$INSTDIR\Uninstall.exe"
-  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR\freeorionca.exe"
+  WriteRegStr HKLM "${PRODUCT_DIR_REGKEY}" "" "$INSTDIR"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\Uninstall.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayIcon" "$INSTDIR\FreeOrion.ico"
@@ -132,14 +132,6 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
-  Delete "$SMPROGRAMS\FreeOrion\Uninstall.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\Website.lnk"
-  Delete "$DESKTOP\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk"
-
-  RMDir "$SMPROGRAMS\FreeOrion"
-
   Delete "$INSTDIR\GiGi.dll"
   Delete "$INSTDIR\GiGiOgre.dll"
   Delete "$INSTDIR\GiGiOgrePlugin_OIS.dll"
@@ -174,15 +166,20 @@ Section Uninstall
   Delete "$INSTDIR\freeorionca.exe"
   Delete "$INSTDIR\freeoriond.exe"
   Delete "$INSTDIR\freeorion.exe"
-  Delete "$INSTDIR\freeorionca.exe.manifest"
-  Delete "$INSTDIR\freeoriond.exe.manifest"
-  Delete "$INSTDIR\freeorion.exe.manifest"
   Delete "$INSTDIR\FreeOrion.ico"
   Delete "$INSTDIR\OISInput.cfg"
   Delete "$INSTDIR\ogre_plugins.cfg"
 
   RMDir /r "$INSTDIR\default"
   RMDir "$INSTDIR"
+
+  Delete "$SMPROGRAMS\FreeOrion\Uninstall.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\Website.lnk"
+  Delete "$DESKTOP\FreeOrion.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\FreeOrion.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk"
+
+  RMDir "$SMPROGRAMS\FreeOrion"
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
