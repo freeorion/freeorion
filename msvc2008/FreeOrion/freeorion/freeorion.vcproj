@@ -137,6 +137,14 @@
 				<File
 					RelativePath="..\..\..\client\human\chmain.cpp"
 					>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							PreprocessorDefinitions="IDI_ICON1=101"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\..\client\human\chmain.h"
@@ -1226,10 +1234,6 @@
 		</Filter>
 		<File
 			RelativePath=".\freeorion.rc"
-			>
-		</File>
-		<File
-			RelativePath=".\resource.h"
 			>
 		</File>
 	</Files>

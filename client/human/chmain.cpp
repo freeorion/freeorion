@@ -212,6 +212,19 @@ int mainSetupAndRunOgre()
         selected_render_system->setConfigOption("Video Mode", video_mode_str);
 
         RenderWindow* window = root->initialise(true, "FreeOrion " + FreeOrionVersionString());
+
+#ifdef FREEORION_WIN32
+#  ifdef IDI_ICON1
+        // set window icon to embedded application icon
+        std::cout << "setting render window icon" << std::endl;
+        HWND hwnd;
+        window->getCustomAttribute("WINDOW", &hwnd);
+        HINSTANCE hInst = (HINSTANCE)GetModuleHandle(NULL);
+        SetClassLong (hwnd, GCL_HICON,
+            (LONG)LoadIcon (hInst, MAKEINTRESOURCE (IDI_ICON1)));
+#  endif
+#endif
+
         SceneManager* scene_manager = root->createSceneManager("OctreeSceneManager", "SceneMgr");
 
         Camera* camera = scene_manager->createCamera("Camera");

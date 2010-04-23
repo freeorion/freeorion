@@ -2216,10 +2216,11 @@ std::string Empire::NewShipName()
 
 void Empire::AddShipDesign(int ship_design_id)
 {
-    /* Check if design id is valid.  that is, check that it corresponds to an existing shipdesign in the
-       universe.  On clients, this means that this empire knows about this ship design.  On the server,
-       all existing ship designs will be valid, so this just adds this design's id to those that this empire
-       will remember */
+    /* Check if design id is valid.  that is, check that it corresponds to an
+     * existing shipdesign in the universe.  On clients, this means that this
+     * empire knows about this ship design.  On the server, all existing ship
+     * designs will be valid, so this just adds this design's id to those that
+     * this empire will remember */
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {
         // design is valid, so just add the id to empire's set of ids that it knows about
