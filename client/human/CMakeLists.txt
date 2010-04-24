@@ -157,6 +157,9 @@ set(THIS_EXE_SOURCES
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
     ../../UI/ClientUI.cpp
+    ../../UI/CollisionMeshConverter.cpp
+    ../../UI/CombatCamera.cpp
+    ../../UI/CombatWnd.cpp
     ../../UI/CombatSetupWnd.cpp
     ../../UI/CUIControls.cpp
     ../../UI/CUIDrawUtil.cpp
@@ -170,8 +173,6 @@ set(THIS_EXE_SOURCES
     ../../UI/InfoPanels.cpp
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
-    ../../UI/CollisionMeshConverter.cpp
-    ../../UI/CombatWnd.cpp
     ../../UI/MapWnd.cpp
     ../../UI/MultiplayerLobbyWnd.cpp
     ../../UI/OptionsWnd.cpp

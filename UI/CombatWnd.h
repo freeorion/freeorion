@@ -2,6 +2,7 @@
 #ifndef _CombatWnd_h_
 #define _CombatWnd_h_
 
+#include "CombatWndFwd.h"
 #include "../combat/CombatEventListener.h"
 #include "../combat/CombatOrder.h"
 
@@ -19,29 +20,21 @@ namespace Ogre {
     class Camera;
     class MovableObject;
     class RaySceneQuery;
-    class SceneManager;
-    class SceneNode;
-    class Vector3;
     class Viewport;
     class PlaneBoundedVolumeListSceneQuery;
-}
-
-namespace OpenSteer {
-    class Vec3;
 }
 
 namespace GG {
     class Texture;
 }
 
+class CombatCamera;
 class CombatData;
 struct CombatSetupGroup;
 class CombatSetupWnd;
 class CUIButton;
 class FPSIndicator;
 class System;
-class Ship;
-class ShipDesign;
 class UniverseObject;
 
 class bt32BitAxisSweep3;
@@ -124,21 +117,12 @@ private:
 
     std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
     const std::string& StarBaseName() const;
-    std::pair<Ogre::Vector3, Ogre::Quaternion> CameraPositionAndOrientation(Ogre::Real distance) const;
 
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
 
     void RenderLensFlare();
 
-    void LookAtNode(Ogre::SceneNode* look_at_node);
-    void LookAtPosition(const Ogre::Vector3& look_at_point);
-    void LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Real zoom);
-    void Zoom(int move, GG::Flags<GG::ModKey> mod_keys);
-    Ogre::Real ZoomResult(Ogre::Real total_move);
-    void ZoomImpl(Ogre::Real total_move);
-    void HandleRotation(const GG::Pt& delta);
-    void UpdateCameraPosition();
     void UpdateStarFromCameraPosition();
     void UpdateSkyBox();
     void EndSelectionDrag();
@@ -174,29 +158,20 @@ private:
     void ChatMessageSentSlot();
 
     Ogre::SceneManager* m_scene_manager;
-    Ogre::Camera* m_camera;
-    Ogre::SceneNode* m_camera_node;
     Ogre::Viewport* m_viewport;
     Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
 
-    Ogre::Animation* m_camera_animation;
-    Ogre::AnimationState* m_camera_animation_state;
+    CombatCamera* m_camera;
+    const Ogre::Camera* m_ogre_camera;
 
     CombatData* m_combat_data;
 
-    Ogre::Real m_distance_to_look_at_point;
-    Ogre::Radian m_pitch;
-    Ogre::Radian m_roll;
     GG::Pt m_last_pos;
     GG::Pt m_last_click_pos;
     GG::Pt m_selection_drag_start;
     GG::Pt m_selection_drag_stop;
     bool m_mouse_dragged;
-    Ogre::SceneNode* m_look_at_scene_node;
     GG::Rect m_selection_rect;
-    Ogre::Vector3 m_look_at_point;
-    Ogre::Vector3 m_initial_zoom_in_position;
-    unsigned int m_previous_zoom_in_time;
     std::map<Ogre::MovableObject*, SelectedObject> m_current_selections;
     Ogre::Billboard* m_star_back_billboard;
     Ogre::Real m_star_brightness_factor;
@@ -264,24 +239,5 @@ private:
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };
-
-bool IsVisible(const Ogre::SceneNode& node);
-Ogre::SceneNode* CreateShipSceneNode(Ogre::SceneManager* scene_manager, const Ship& ship);
-Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& ship,
-                               const Ogre::MaterialPtr& material);
-Ogre::Vector3 ToOgre(const OpenSteer::Vec3& vec);
-OpenSteer::Vec3 ToOpenSteer(const Ogre::Vector3& vec);
-std::string ShipMaterialName(const ShipDesign& ship_design, int empire_id);
-Ogre::Quaternion StarwardOrientationForPosition(const Ogre::Vector3& position);
-
-extern const int PAGED_GEOMETRY_IMPOSTOR_QUEUE;
-extern const int SELECTION_HILITING_OBJECT_RENDER_QUEUE;
-extern const int STAR_BACK_QUEUE;
-extern const int STAR_CORE_QUEUE;
-extern const int ALPHA_OBJECTS_QUEUE;
-extern const int SELECTION_HILITING_OUTLINED_RENDER_QUEUE;
-extern const int SELECTION_HILITING_FILLED_1_RENDER_QUEUE;
-extern const int SELECTION_HILITING_FILLED_2_RENDER_QUEUE;
-extern const std::set<int> STENCIL_OP_RENDER_QUEUES;
 
 #endif
