@@ -70,6 +70,7 @@
 		34972C460F4A00650015C864 /* libLinearMath.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34972C430F4A002F0015C864 /* libLinearMath.dylib */; };
 		34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */; };
+		34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A7028E118360090013F8C6 /* CombatCamera.cpp */; };
 		34ACA00E0FFED9A100500F40 /* OISInput.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */; };
 		34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA37F0FFFAB4900500F40 /* AppKit.framework */; };
 		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
@@ -567,6 +568,9 @@
 		34972C420F4A002F0015C864 /* libBulletDynamics.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libBulletDynamics.dylib; path = dep/local/lib/libBulletDynamics.dylib; sourceTree = "<group>"; };
 		34972C430F4A002F0015C864 /* libLinearMath.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libLinearMath.dylib; path = dep/local/lib/libLinearMath.dylib; sourceTree = "<group>"; };
 		34A1E2DD0F75CB540019466D /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = dep/lib/libz.dylib; sourceTree = "<group>"; };
+		34A7028E118360090013F8C6 /* CombatCamera.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatCamera.cpp; sourceTree = "<group>"; };
+		34A7028F118360090013F8C6 /* CombatCamera.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatCamera.h; sourceTree = "<group>"; };
+		34A70290118360090013F8C6 /* CombatWndFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatWndFwd.h; sourceTree = "<group>"; };
 		34A97FE50FC978C600620707 /* OgreGUIInputPlugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGUIInputPlugin.h; sourceTree = "<group>"; };
 		34A97FE60FC978C600620707 /* OISInput.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OISInput.h; sourceTree = "<group>"; };
 		34A97FEA0FC97AE500620707 /* OgreGLXContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OgreGLXContext.h; sourceTree = "<group>"; };
@@ -2891,6 +2895,9 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				34A7028E118360090013F8C6 /* CombatCamera.cpp */,
+				34A7028F118360090013F8C6 /* CombatCamera.h */,
+				34A70290118360090013F8C6 /* CombatWndFwd.h */,
 				3415B09E10851BB200009F19 /* CombatSetupWnd.cpp */,
 				3415B09F10851BB200009F19 /* CombatSetupWnd.h */,
 				346D87ED0FC5F6080095593E /* ShaderProgram.cpp */,
@@ -3581,6 +3588,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
 				471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */,
