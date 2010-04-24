@@ -125,6 +125,8 @@ struct HumanClientFSM : boost::statechart::state_machine<HumanClientFSM, IntroMe
 
     void unconsumed_event(const boost::statechart::event_base &event);
 
+    using Base::post_event;
+
     HumanClientApp&    m_client;
     WaitingForDataMode m_next_waiting_for_data_mode;
 };
