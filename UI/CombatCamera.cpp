@@ -203,7 +203,7 @@ void CombatCamera::Update(Ogre::Real time_since_last_frame)
 void CombatCamera::LookAtNode(Ogre::SceneNode* look_at_node)
 {
     m_look_at_scene_node = look_at_node;
-    LookAtPosition(m_look_at_scene_node->_getDerivedPosition());
+    LookAtPositionImpl(m_look_at_scene_node->_getDerivedPosition(), IGNORE_DISTANCE);
 }
 
 void CombatCamera::LookAtPosition(const Ogre::Vector3& look_at_point)
@@ -237,7 +237,7 @@ void CombatCamera::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> 
         }
 
         if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
-            const double CLOSE_FACTOR = move * 0.25;
+            const double CLOSE_FACTOR = move * 0.333;
             Ogre::Vector3 delta = m_initial_zoom_in_position - m_look_at_point;
             double delta_length = delta.length();
             double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
