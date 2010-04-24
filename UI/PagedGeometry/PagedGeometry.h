@@ -179,7 +179,7 @@ public:
 	infinite mode. If you are constantly switching between multiple cameras
 	that are relatively far apart, consider using bounded mode.
 	*/
-	void setCamera(Ogre::Camera *cam);
+	void setCamera(const Ogre::Camera *cam);
 
 	/**
 	\brief Gets the camera which is used to calculate levels of detail.
@@ -190,7 +190,7 @@ public:
 	instead of storing a local copy. This is an inline function, so don't worry
 	too much about performance.
 	*/
-	inline Ogre::Camera *getCamera() const
+	inline const Ogre::Camera *getCamera() const
 	{
 		return sceneCam;
 	}
@@ -746,10 +746,10 @@ protected:
 	#endif
 
 	//Camera data
-	Ogre::Camera *sceneCam;
+	const Ogre::Camera *sceneCam;
 	Ogre::Vector3 oldCamPos;
 
-	Ogre::Camera *lastSceneCam;
+	const Ogre::Camera *lastSceneCam;
 	Ogre::Vector3 lastOldCamPos;
 
 	//This list keeps track of all the GeometryPageManager's added with addPageManager()

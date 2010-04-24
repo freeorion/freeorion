@@ -82,7 +82,7 @@ void PagedGeometry::setPageLoader(PageLoader *loader)
 	pageLoader = loader;
 }
 
-void PagedGeometry::setCamera(Camera *cam)
+void PagedGeometry::setCamera(const Camera *cam)
 {
 	if (cam == NULL){
 		//Simply set camera to null
