@@ -45,6 +45,7 @@ private:
                      double out_ray_origin[3], double out_ray_direction[3]) const;
     std::pair<Ogre::Vector3, Ogre::Quaternion> CameraPositionAndOrientation(Ogre::Real distance) const;
     Ogre::Real ZoomResult(Ogre::Real total_move) const;
+    Ogre::Vector3 LookAtPoint() const;
 
     void LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Real zoom);
     void ZoomImpl(Ogre::Real total_move);
@@ -60,7 +61,6 @@ private:
     Ogre::Radian m_pitch;
     Ogre::Radian m_roll;
     Ogre::SceneNode* m_look_at_scene_node;
-    Ogre::Vector3 m_look_at_point;
     Ogre::Vector3 m_initial_zoom_in_position;
     unsigned int m_previous_zoom_in_time;
 };

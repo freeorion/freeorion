@@ -106,7 +106,6 @@ CombatCamera::CombatCamera(Ogre::Camera& camera,
     m_pitch(0.0),
     m_roll(0.0),
     m_look_at_scene_node(look_at_node),
-    m_look_at_point(0, 0, 0),
     m_initial_zoom_in_position(INVALID_MAP_LOCATION),
     m_previous_zoom_in_time(0)
 {
@@ -238,11 +237,11 @@ void CombatCamera::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> 
 
         if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
             const double CLOSE_FACTOR = move * 0.333;
-            Ogre::Vector3 delta = m_initial_zoom_in_position - m_look_at_point;
+            Ogre::Vector3 delta = m_initial_zoom_in_position - LookAtPoint();
             double delta_length = delta.length();
             double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
             delta.normalise();
-            Ogre::Vector3 new_center = m_look_at_point + delta * distance;
+            Ogre::Vector3 new_center = LookAtPoint() + delta * distance;
             if (new_center.length() < SystemRadius())
                 LookAtPositionAndZoom(new_center, ZoomResult(total_move));
         }
@@ -374,6 +373,9 @@ Ogre::Real CombatCamera::ZoomResult(Ogre::Real total_move) const
     return m_distance_to_look_at_point + total_move;
 }
 
+Ogre::Vector3 CombatCamera::LookAtPoint() const
+{ return m_camera_node->getPosition(); }
+
 void CombatCamera::LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::Real distance)
 {
     if (distance == IGNORE_DISTANCE)
@@ -392,12 +394,10 @@ void CombatCamera::LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::
 
     ZoomImpl(distance - m_distance_to_look_at_point);
 
-    Ogre::Vector3 node_start = m_look_at_point;
+    Ogre::Vector3 node_start = LookAtPoint();
     Ogre::Vector3 node_stop = look_at_point;
 
     const Ogre::Vector3 NODE_POS_DELTA = node_stop - node_start;
-
-    m_look_at_point = look_at_point;
 
     Ogre::NodeAnimationTrack* node_track =
         m_camera_animation->createNodeTrack(CAMERA_NODE_TRACK_HANDLE, m_camera_node);
@@ -447,7 +447,6 @@ void CombatCamera::ZoomImpl(Ogre::Real total_move)
 
 void CombatCamera::UpdateCameraPosition()
 {
-    m_camera_node->setPosition(m_look_at_point);
     std::pair<Ogre::Vector3, Ogre::Quaternion> position_and_orientation =
         CameraPositionAndOrientation(m_distance_to_look_at_point);
     m_camera.setPosition(position_and_orientation.first);
