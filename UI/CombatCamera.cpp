@@ -214,7 +214,7 @@ void CombatCamera::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> 
         }
 
         if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
-            const double CLOSE_FACTOR = move * 0.333;
+            const double CLOSE_FACTOR = move * 0.333 * ZoomFactor(mod_keys);
             Ogre::Vector3 start = Moving() ? m_look_at_point_target : LookAtPoint();
             Ogre::Vector3 delta = m_initial_zoom_in_position - start;
             double delta_length = delta.length();
