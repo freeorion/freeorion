@@ -137,6 +137,12 @@
 		34BAB2190FC5D02600EF792E /* token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2000FC5D02600EF792E /* token.cpp */; };
 		34BAB21A0FC5D02600EF792E /* typeinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2010FC5D02600EF792E /* typeinfo.cpp */; };
 		34BAB21B0FC5D02600EF792E /* virtual_machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2020FC5D02600EF792E /* virtual_machine.cpp */; };
+		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
+		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
+		34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */; };
+		34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44959118271590071E09A /* SerializeOrderSet.cpp */; };
+		34C449621182716E0071E09A /* SerializePathingEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C4495A118271590071E09A /* SerializePathingEngine.cpp */; };
+		34C449631182716E0071E09A /* SerializeUniverse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C4495B118271590071E09A /* SerializeUniverse.cpp */; };
 		34CA5AF80F4DDF690002B5DB /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5AF70F4DDF690002B5DB /* libpng.dylib */; };
 		34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */; };
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
@@ -239,7 +245,6 @@
 		47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471030490CEF569900A7DF2B /* SaveLoad.cpp */; };
 		47103C3B0CF051B000A7DF2B /* Directories.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D1E0A98A3F900DA9C21 /* Directories.cpp */; };
 		47103C3C0CF0524200A7DF2B /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471032080CEF625900A7DF2B /* Version.cpp */; };
-		47103C3D0CF052A200A7DF2B /* Serialize.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D340A98A3F900DA9C21 /* Serialize.cpp */; };
 		471D5D3F0A98A40900DA9C21 /* libGG.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D5A300A988D5700DA9C21 /* libGG.a */; };
 		471D5D400A98A42B00DA9C21 /* AppInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D180A98A3F900DA9C21 /* AppInterface.cpp */; };
 		471D5E080A98A8C300DA9C21 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
@@ -674,7 +679,7 @@
 		34ACA37F0FFFAB4900500F40 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		34ACA3800FFFAB4900500F40 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 		34ACA3810FFFAB4900500F40 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
-		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.xib; path = main.xib; sourceTree = "<group>"; };
+		34ACA40C0FFFABE600500F40 /* main.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = main.xib; sourceTree = "<group>"; };
 		34ACA4BE0FFFD2DB00500F40 /* chmain.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = chmain.mm; sourceTree = "<group>"; };
 		34ACA4C00FFFD2DB00500F40 /* OgreController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OgreController.mm; sourceTree = "<group>"; };
 		34ACA4C50FFFD50100500F40 /* chmain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = chmain.h; sourceTree = "<group>"; };
@@ -1095,10 +1100,20 @@
 		34BAB26B0FC5D08C00EF792E /* widget_utils.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = widget_utils.cpp; sourceTree = "<group>"; };
 		34BAB26C0FC5D08C00EF792E /* window_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = window_factory.cpp; sourceTree = "<group>"; };
 		34BAB26D0FC5D08C00EF792E /* window_server.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = window_server.cpp; sourceTree = "<group>"; };
+		34C44954118271590071E09A /* Math.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Math.cpp; sourceTree = "<group>"; };
+		34C44955118271590071E09A /* Math.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Math.h; sourceTree = "<group>"; };
+		34C44956118271590071E09A /* Serialize.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Serialize.ipp; sourceTree = "<group>"; };
+		34C44957118271590071E09A /* SerializeEmpire.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeEmpire.cpp; sourceTree = "<group>"; };
+		34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeMultiplayerCommon.cpp; sourceTree = "<group>"; };
+		34C44959118271590071E09A /* SerializeOrderSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeOrderSet.cpp; sourceTree = "<group>"; };
+		34C4495A118271590071E09A /* SerializePathingEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializePathingEngine.cpp; sourceTree = "<group>"; };
+		34C4495B118271590071E09A /* SerializeUniverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeUniverse.cpp; sourceTree = "<group>"; };
+		34C4495C118271590071E09A /* SerializeUniverseExports.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerializeUniverseExports.ipp; sourceTree = "<group>"; };
+		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Version.cpp.in; sourceTree = "<group>"; };
 		34CA5AF70F4DDF690002B5DB /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = dep/local/lib/libpng.dylib; sourceTree = "<group>"; };
 		34CA5CA60F4E18680002B5DB /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOIS.a; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
-		34DD943911360BFA00265AF9 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file; path = main.nib; sourceTree = "<group>"; };
+		34DD943911360BFA00265AF9 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
 		34DD944011360CBE00265AF9 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_CgProgramManager.dylib; sourceTree = "<group>"; };
 		34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_OctreeSceneManager.dylib; sourceTree = "<group>"; };
@@ -1428,7 +1443,6 @@
 		471D5D310A98A3F900DA9C21 /* Process.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Process.h; sourceTree = "<group>"; };
 		471D5D320A98A3F900DA9C21 /* Random.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Random.cpp; sourceTree = "<group>"; };
 		471D5D330A98A3F900DA9C21 /* Random.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Random.h; sourceTree = "<group>"; };
-		471D5D340A98A3F900DA9C21 /* Serialize.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Serialize.cpp; sourceTree = "<group>"; };
 		471D5D350A98A3F900DA9C21 /* Serialize.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Serialize.h; sourceTree = "<group>"; };
 		471D5D360A98A3F900DA9C21 /* SitRepEntry.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = SitRepEntry.cpp; sourceTree = "<group>"; };
 		471D5D370A98A3F900DA9C21 /* SitRepEntry.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SitRepEntry.h; sourceTree = "<group>"; };
@@ -1449,7 +1463,7 @@
 		471D65570A98B84500DA9C21 /* libjpeg.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libjpeg.dylib; path = dep/local/lib/libjpeg.dylib; sourceTree = "<group>"; };
 		471D65810A98BA7200DA9C21 /* SDL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL.framework; path = dep/Frameworks/SDL.framework; sourceTree = "<group>"; };
 		471FEFD70A9A629800C36AA3 /* freeorionca */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = freeorionca; sourceTree = BUILT_PRODUCTS_DIR; };
-		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Info.plist; sourceTree = "<group>"; };
+		471FF2560A9A7E6400C36AA3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4746ADA50A9BBC32003D2DFC /* libgraph.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgraph.dylib; path = dep/local/lib/libgraph.dylib; sourceTree = "<group>"; };
 		4746ADA60A9BBC32003D2DFC /* libgvc.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgvc.dylib; path = dep/local/lib/libgvc.dylib; sourceTree = "<group>"; };
 		4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpathplan.dylib; path = dep/local/lib/libpathplan.dylib; sourceTree = "<group>"; };
@@ -3033,6 +3047,16 @@
 		471D5D170A98A3F900DA9C21 /* util */ = {
 			isa = PBXGroup;
 			children = (
+				34C44954118271590071E09A /* Math.cpp */,
+				34C44955118271590071E09A /* Math.h */,
+				34C44956118271590071E09A /* Serialize.ipp */,
+				34C44957118271590071E09A /* SerializeEmpire.cpp */,
+				34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */,
+				34C44959118271590071E09A /* SerializeOrderSet.cpp */,
+				34C4495A118271590071E09A /* SerializePathingEngine.cpp */,
+				34C4495B118271590071E09A /* SerializeUniverse.cpp */,
+				34C4495C118271590071E09A /* SerializeUniverseExports.ipp */,
+				34C4495D118271590071E09A /* Version.cpp.in */,
 				471D5D180A98A3F900DA9C21 /* AppInterface.cpp */,
 				471D5D190A98A3F900DA9C21 /* AppInterface.h */,
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
@@ -3058,7 +3082,6 @@
 				471D5D310A98A3F900DA9C21 /* Process.h */,
 				471D5D320A98A3F900DA9C21 /* Random.cpp */,
 				471D5D330A98A3F900DA9C21 /* Random.h */,
-				471D5D340A98A3F900DA9C21 /* Serialize.cpp */,
 				471D5D350A98A3F900DA9C21 /* Serialize.h */,
 				471D5D360A98A3F900DA9C21 /* SitRepEntry.cpp */,
 				471D5D370A98A3F900DA9C21 /* SitRepEntry.h */,
@@ -3324,7 +3347,7 @@
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "FreeOrion" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 2.4";
 			hasScannedForEncodings = 1;
 			mainGroup = 08FB7794FE84155DC02AAC07 /* FreeOrion */;
 			projectDirPath = "";
@@ -3360,6 +3383,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
+				34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */,
+				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
+				34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */,
+				34C449621182716E0071E09A /* SerializePathingEngine.cpp in Sources */,
+				34C449631182716E0071E09A /* SerializeUniverse.cpp in Sources */,
 				346D88140FC6196D0095593E /* AsteroidBeltObstacle.cpp in Sources */,
 				346D88150FC6196D0095593E /* CombatObject.cpp in Sources */,
 				346D88160FC6196D0095593E /* Missile.cpp in Sources */,
@@ -3405,7 +3434,6 @@
 				47103C160CF04E5900A7DF2B /* Empire.cpp in Sources */,
 				47103C170CF04E5900A7DF2B /* EmpireManager.cpp in Sources */,
 				47103C180CF04E5900A7DF2B /* ResourcePool.cpp in Sources */,
-				47103C3D0CF052A200A7DF2B /* Serialize.cpp in Sources */,
 				47103C190CF04E5900A7DF2B /* StringTable.cpp in Sources */,
 				47103C1B0CF04E5900A7DF2B /* Networking.cpp in Sources */,
 				47103C1E0CF04E5900A7DF2B /* SaveLoad.cpp in Sources */,
@@ -3725,6 +3753,7 @@
 		1DEB923608733DC60010E9CD /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/dep/Frameworks";
 				GCC_PREFIX_HEADER = "";
@@ -3747,7 +3776,6 @@
 					"$(SOURCE_ROOT)/../network",
 					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = "/System/Library/Frameworks/Python.framework/Versions/2.5/Headers $(SOURCE_ROOT)/dep/local/include/graphviz $(SOURCE_ROOT)/dep/local/include/bullet $(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers $(SOURCE_ROOT)/dep/local/include $(SOURCE_ROOT)/../GG $(SOURCE_ROOT)/../network $(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
@@ -3808,7 +3836,9 @@
 		3484E9700F58D8B30083041E /* ReleaseUniversal */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/dep/Frameworks";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PREFIX_HEADER = "";
@@ -3830,7 +3860,6 @@
 					"$(SOURCE_ROOT)/../network",
 					"$(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers",
 				);
-				"HEADER_SEARCH_PATHS[arch=*]" = "/System/Library/Frameworks/Python.framework/Versions/2.5/Headers $(SOURCE_ROOT)/dep/local/include/graphviz $(SOURCE_ROOT)/dep/local/include/bullet $(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers $(SOURCE_ROOT)/dep/local/include $(SOURCE_ROOT)/../GG $(SOURCE_ROOT)/../network $(SOURCE_ROOT)/dep/Frameworks/Ogre.framework/Headers";
 				LIBRARY_SEARCH_PATHS = (
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
