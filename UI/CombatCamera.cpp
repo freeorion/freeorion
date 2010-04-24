@@ -83,7 +83,9 @@ CombatCamera::CombatCamera(Ogre::Camera& camera,
     m_roll(0.0),
     m_look_at_scene_node(look_at_node),
     m_initial_zoom_in_position(INVALID_MAP_LOCATION),
-    m_previous_zoom_in_time(0)
+    m_previous_zoom_in_time(0),
+    m_look_at_point_target(0, 0, 0),
+    m_distance_to_look_at_point_target(0)
 {
     m_camera.setNearClipDistance(NEAR_CLIP);
     m_camera.setFarClipDistance(FAR_CLIP);
@@ -213,11 +215,12 @@ void CombatCamera::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> 
 
         if (m_initial_zoom_in_position != INVALID_MAP_LOCATION) {
             const double CLOSE_FACTOR = move * 0.333;
-            Ogre::Vector3 delta = m_initial_zoom_in_position - LookAtPoint();
+            Ogre::Vector3 start = Moving() ? m_look_at_point_target : LookAtPoint();
+            Ogre::Vector3 delta = m_initial_zoom_in_position - start;
             double delta_length = delta.length();
             double distance = std::min(std::max(1.0, delta_length * CLOSE_FACTOR), delta_length);
             delta.normalise();
-            Ogre::Vector3 new_center = LookAtPoint() + delta * distance;
+            Ogre::Vector3 new_center = start + delta * distance;
             if (new_center.length() < SystemRadius())
                 LookAtPositionAndZoom(new_center, ZoomResult(total_move));
         }
@@ -384,11 +387,16 @@ void CombatCamera::LookAtPositionImpl(const Ogre::Vector3& look_at_point, Ogre::
         Ogre::TransformKeyFrame* node_key = node_track->createNodeKeyFrame(i * TIME_INCREMENT);
         node_key->setTranslate(node_stop - NODE_POS_DELTA + i * NODE_POS_INCREMENT);
     }
+
+    m_look_at_point_target = look_at_point;
 }
 
 void CombatCamera::ZoomImpl(Ogre::Real total_move)
 {
     m_camera_animation->destroyAllTracks();
+
+    if (Moving())
+        total_move += m_distance_to_look_at_point_target - DistanceToLookAtPoint();
 
     Ogre::Real distance = ZoomResult(total_move);
 
@@ -410,6 +418,8 @@ void CombatCamera::ZoomImpl(Ogre::Real total_move)
         Ogre::NumericKeyFrame* camera_key = camera_track->createNumericKeyFrame(i * TIME_INCREMENT);
         camera_key->setValue(camera_stop - CAMERA_DELTA + i * CAMERA_INCREMENT);
     }
+
+    m_distance_to_look_at_point_target = distance;
 }
 
 void CombatCamera::UpdateCameraPosition()

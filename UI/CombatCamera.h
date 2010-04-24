@@ -63,6 +63,9 @@ private:
     Ogre::SceneNode* m_look_at_scene_node;
     Ogre::Vector3 m_initial_zoom_in_position;
     unsigned int m_previous_zoom_in_time;
+
+    Ogre::Vector3 m_look_at_point_target;
+    Ogre::Real m_distance_to_look_at_point_target;
 };
 
 #endif
