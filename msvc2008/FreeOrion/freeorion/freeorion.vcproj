@@ -496,6 +496,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\CombatCamera.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\CombatCamera.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\UI\CombatSetupWnd.cpp"
 				>
 			</File>
