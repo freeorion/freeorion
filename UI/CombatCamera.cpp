@@ -8,6 +8,7 @@
 #include <OgreAnimation.h>
 #include <OgreCamera.h>
 #include <OgreSceneManager.h>
+#include <OgreViewport.h>
 
 #include <GG/GUI.h>
 
