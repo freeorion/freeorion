@@ -51,6 +51,8 @@ ShowInstDetails show
 ShowUnInstDetails show
 
 Section "MainSection" SEC01
+  SetShellVarContext all
+
   SetOutPath "$INSTDIR"
   SetOverwrite try
   File "..\..\vcredist_x86.exe"
@@ -100,6 +102,7 @@ Section "MainSection" SEC01
   CreateDirectory "$SMPROGRAMS\FreeOrion"
   CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk" "$INSTDIR\freeorion.exe" "--fullscreen"
   CreateShortCut "$SMPROGRAMS\FreeOrion\FreeOrion Windowed.lnk" "$INSTDIR\freeorion.exe"
+
   CreateShortCut "$DESKTOP\FreeOrion.lnk" "$INSTDIR\freeorion.exe" "--fullscreen 1"
 SectionEnd
 
@@ -132,6 +135,8 @@ Function un.onInit
 FunctionEnd
 
 Section Uninstall
+  SetShellVarContext all
+
   Delete "$INSTDIR\GiGi.dll"
   Delete "$INSTDIR\GiGiOgre.dll"
   Delete "$INSTDIR\GiGiOgrePlugin_OIS.dll"
@@ -172,17 +177,19 @@ Section Uninstall
 
   RMDir /r "$INSTDIR\default"
 
-  Delete "$SMPROGRAMS\FreeOrion\Uninstall.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\Website.lnk"
+  Delete "$INSTDIR\FreeOrion.org.url"
+
   Delete "$DESKTOP\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\FreeOrion.lnk"
-  Delete "$SMPROGRAMS\FreeOrion\FreeOrion windowed.lnk"
+
+  Delete "$SMPROGRAMS\FreeOrion\FreeOrion Fullscreen.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\FreeOrion Windowed.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\FreeOrion.org.lnk"
+  Delete "$SMPROGRAMS\FreeOrion\Uninstall.lnk"
+
   RMDir "$SMPROGRAMS\FreeOrion"
 
-  Delete "$INSTDIR\FreeOrion.org.url"
   Delete "$INSTDIR\Uninstall.exe"
   RMDir "$INSTDIR"
-
 
   DeleteRegKey ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}"
   DeleteRegKey HKLM "${PRODUCT_DIR_REGKEY}"
