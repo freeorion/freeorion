@@ -848,7 +848,6 @@ void ShipDesignOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
 
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_delete_design_from_empire) {
