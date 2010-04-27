@@ -6,7 +6,22 @@
 #include "../universe/System.h"
 
 // exports for boost serialization of polymorphic UniverseObject hierarchy
-BOOST_CLASS_EXPORT(System)
+
+// HACK!  For some odd reason, defining guid() below with inline, and only
+// when specialized to System, fails to define a reachable specialization when
+// overload resolution looks for it at call time later.  GCC.  Go figure.
+
+namespace boost { namespace serialization {
+    template<>
+    struct guid_defined<System> : boost::mpl::true_ {};
+
+    template<>
+    const char * guid<System>()
+    { return "System"; }
+} }
+
+BOOST_CLASS_EXPORT_IMPLEMENT(System)
+
 BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
