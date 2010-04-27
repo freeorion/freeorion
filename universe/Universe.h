@@ -720,14 +720,4 @@ std::vector<int> ObjectMap::FindObjectIDs() const
     return retval;
 }
 
-template <class Archive>
-void ObjectMap::serialize(Archive& ar, const unsigned int version)
-{
-    ar & BOOST_SERIALIZATION_NVP(m_objects);
-
-    if (Archive::is_loading::value) {
-        CopyObjectsToConstObjects();
-    }
-}
-
 #endif // _Universe_h_

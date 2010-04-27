@@ -8,6 +8,16 @@
 
 
 template <class Archive>
+void ObjectMap::serialize(Archive& ar, const unsigned int version)
+{
+    ar & BOOST_SERIALIZATION_NVP(m_objects);
+
+    if (Archive::is_loading::value) {
+        CopyObjectsToConstObjects();
+    }
+}
+
+template <class Archive>
 void Universe::serialize(Archive& ar, const unsigned int version)
 {
     ObjectMap                       objects;
