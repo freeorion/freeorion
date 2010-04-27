@@ -7,6 +7,12 @@
 
 // exports for boost serialization of polymorphic UniverseObject hierarchy
 
+#ifdef FREEORION_WIN32
+
+BOOST_CLASS_EXPORT(System)
+
+#else
+
 // HACK!  For some odd reason, defining guid() below with inline, and only
 // when specialized to System, fails to define a reachable specialization when
 // overload resolution looks for it at call time later.  GCC.  Go figure.
@@ -21,6 +27,8 @@ namespace boost { namespace serialization {
 } }
 
 BOOST_CLASS_EXPORT_IMPLEMENT(System)
+
+#endif
 
 BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
