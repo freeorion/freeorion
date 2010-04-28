@@ -161,6 +161,14 @@ namespace {
     OpenSteer::Vec3 ToOpenSteer(const btVector3& vec)
     { return OpenSteer::Vec3(vec.x(), vec.y(), vec.z()); }
 
+    void SetNodePositionAndOrientation(Ogre::SceneNode* node, const CombatObjectPtr& combat_object)
+    {
+        node->setPosition(::ToOgre(combat_object->position()));
+        node->setOrientation(Ogre::Quaternion(::ToOgre(combat_object->side()),
+                                              ::ToOgre(combat_object->forward()),
+                                              ::ToOgre(combat_object->up())));
+    }
+
     struct RayIntersectionHit
     {
         RayIntersectionHit() : m_object(0) {}
@@ -623,6 +631,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_fps_text(new FPSIndicator(GG::X(5), GG::Y(5))),
     m_menu_showing(false),
     m_end_turn_button(new CUIButton(GG::X0, GG::Y0, GG::X(75), UserString("TURN"))),
+    m_time_since_last_turn_update(0.0),
     m_exit(false)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("combat.enable-glow"),
@@ -1134,31 +1143,21 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
     for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
          it != m_combat_data->m_pathing_engine.end();
          ++it) {
-        if (CombatShipPtr combat_ship = boost::dynamic_pointer_cast<CombatShip>(*it)) {
+        if ((*it)->IsShip()) {
+            assert(boost::dynamic_pointer_cast<CombatShip>(*it));
+            CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
             combat_ship->SetListener(*this);
             Ship& ship = combat_ship->GetShip();
             std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
-            if (ship_data_it == m_ship_assets.end()) {
+            if (ship_data_it == m_ship_assets.end())
                 AddCombatShip(combat_ship);
-            } else {
-                ShipData& ship_data = ship_data_it->second;
-                ship_data.m_node->setUserAny(Ogre::Any(*it));
-
-                Ogre::Vector3 position(ToOgre(combat_ship->position()));
-                Ogre::Quaternion orientation(ToOgre(combat_ship->side()),
-                                             ToOgre(combat_ship->forward()),
-                                             ToOgre(combat_ship->up()));
-                ship_data.m_node->setPosition(position);
-                ship_data.m_node->setOrientation(orientation);
-                m_collision_world->removeCollisionObject(ship_data.m_bt_object);
-                ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
-                ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
-                m_collision_world->addCollisionObject(ship_data.m_bt_object);
-            }
+            else
+                UpdateObjectPosition(*it);
         }
     }
 
     m_end_turn_button->Disable(false);
+    m_time_since_last_turn_update = 0.0;
 
     // TODO: Handle object removals.
 }
@@ -1607,8 +1606,18 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     if (m_paged_geometry)
         m_paged_geometry->update();
 
-    // TODO: For each combat entity, update its position and orientation based
-    // on the corresponding Combat* object's position and orientation.
+    m_time_since_last_turn_update += event.timeSinceLastFrame;
+
+    if (m_combat_data &&
+        m_combat_data->m_combat_turn_number &&
+        m_time_since_last_turn_update < PathingEngine::SECONDS_PER_TURN) {
+        m_combat_data->m_pathing_engine.Update(0.0, event.timeSinceLastFrame);
+        for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
+             it != m_combat_data->m_pathing_engine.end();
+             ++it) {
+            UpdateObjectPosition(*it);
+        }
+    }
 
     return !m_exit;
 }
@@ -1921,6 +1930,37 @@ void CombatWnd::RepositionShipNode(int ship_id,
     m_collision_world->addCollisionObject(ship_data.m_bt_object);
 }
 
+void CombatWnd::UpdateObjectPosition(const CombatObjectPtr& combat_object)
+{
+    if (combat_object->IsShip()) {
+        assert(boost::dynamic_pointer_cast<CombatShip>(combat_object));
+        CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(combat_object);
+        Ship& ship = combat_ship->GetShip();
+        std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+        assert(ship_data_it != m_ship_assets.end());
+                
+        ShipData& ship_data = ship_data_it->second;
+
+        SetNodePositionAndOrientation(ship_data.m_node, combat_ship);
+
+        Ogre::Vector3 position = ship_data.m_node->getPosition();
+        Ogre::Quaternion orientation = ship_data.m_node->getOrientation();
+
+        ship_data.m_node->setPosition(position);
+        ship_data.m_node->setOrientation(orientation);
+        m_collision_world->removeCollisionObject(ship_data.m_bt_object);
+        ship_data.m_bt_object->getWorldTransform().setOrigin(ToCollision(position));
+        ship_data.m_bt_object->getWorldTransform().setRotation(ToCollision(orientation));
+        m_collision_world->addCollisionObject(ship_data.m_bt_object);
+    } else if (combat_object->IsFighter()) {
+        assert(boost::dynamic_pointer_cast<CombatFighter>(combat_object));
+        CombatFighterPtr combat_fighter = boost::static_pointer_cast<CombatFighter>(combat_object);
+        // TODO
+    } else if (MissilePtr missile = boost::dynamic_pointer_cast<Missile>(combat_object)) {
+        // TODO
+    }
+}
+
 void CombatWnd::RemoveShip(int ship_id)
 {
     ShipData& ship_data = m_ship_assets[ship_id];
@@ -1938,10 +1978,8 @@ void CombatWnd::AddCombatShip(const CombatShipPtr& combat_ship)
     node->attachObject(entity);
     node->setUserAny(Ogre::Any(CombatObjectPtr(combat_ship)));
 
-    node->setPosition(ToOgre(combat_ship->position()));
-    node->setOrientation(Ogre::Quaternion(ToOgre(combat_ship->side()),
-                                          ToOgre(combat_ship->forward()),
-                                          ToOgre(combat_ship->up())));
+    SetNodePositionAndOrientation(node, combat_ship);
+
     AddShipNode(ship.ID(), node, entity, material);
 }
 

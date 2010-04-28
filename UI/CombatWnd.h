@@ -135,6 +135,7 @@ private:
     void RepositionShipNode(int ship_id,
                             const Ogre::Vector3& position,
                             const Ogre::Quaternion& orientation);
+    void UpdateObjectPosition(const CombatObjectPtr& combat_object);
     void RemoveShip(int ship_id);
     void AddCombatShip(const CombatShipPtr& combat_ship);
     void RemoveCombatShip(const CombatShipPtr& combat_ship);
@@ -236,6 +237,7 @@ private:
 
     CombatOrderSet m_combat_order_set;
     CUIButton* m_end_turn_button;
+    double m_time_since_last_turn_update;
 
     bool m_exit; // TODO: Remove this; it is only here for prototyping.
 };

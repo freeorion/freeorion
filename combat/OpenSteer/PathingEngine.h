@@ -75,6 +75,7 @@ public:
     static const std::size_t TARGET_FPS;
     static const std::size_t TARGET_OBJECT_UPDATES_PER_SEC;
     static const std::size_t UPDATE_SETS;
+    static const std::size_t SECONDS_PER_TURN;
 
     static const std::map<int, UniverseObject*>* s_combat_universe;
 
