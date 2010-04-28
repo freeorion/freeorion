@@ -130,8 +130,24 @@ void PathingEngine::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_proximity_database)
         & BOOST_SERIALIZATION_NVP(m_obstacles);
 
-    if (Archive::is_loading::value)
+    if (Archive::is_loading::value) {
         m_objects.swap(objects);
+        for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
+             it != m_objects.end();
+             ++it) {
+            if ((*it)->IsShip()) {
+                assert(boost::dynamic_pointer_cast<CombatShip>(*it));
+                CombatShipPtr ship = boost::static_pointer_cast<CombatShip>(*it);
+                ship->SetWeakPtr(ship);
+            } else if ((*it)->IsFighter()) {
+                assert(boost::dynamic_pointer_cast<CombatFighter>(*it));
+                CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(*it);
+                fighter->SetWeakPtr(fighter);
+            } else if (MissilePtr missile = boost::dynamic_pointer_cast<Missile>(*it)) {
+                missile->SetWeakPtr(missile);
+            }
+        }
+    }
 }
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const PathingEngine& pathing_engine)
