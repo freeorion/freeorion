@@ -716,6 +716,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_end_turn_button->MoveTo(
         GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - m_end_turn_button->Height() - GG::Y(5)));
     GG::Connect(m_end_turn_button->ClickedSignal, boost::bind(&CombatWnd::EndTurn, this));
+    m_end_turn_button->Hide();
 
     AttachChild(m_end_turn_button);
     AttachChild(m_fps_text);
@@ -1158,6 +1159,8 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
 
     m_end_turn_button->Disable(false);
     m_time_since_last_turn_update = 0.0;
+
+    m_end_turn_button->Show();
 
     // TODO: Handle object removals.
 }
