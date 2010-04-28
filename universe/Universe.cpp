@@ -1999,9 +1999,9 @@ void Universe::InitializeSystemGraph(int for_empire_id)
     }
 
     std::vector<int> system_ids = objects.FindObjectIDs<System>();
-    Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: ";
-    for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
-        Logger().debugStream() << " ... " << *it;
+    Logger().debugStream() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
+    //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
+    //    Logger().debugStream() << " ... " << *it;
 
     m_system_distances.resize(system_ids.size());
     GraphImpl::SystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);

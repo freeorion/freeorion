@@ -1222,14 +1222,13 @@ void MapWnd::InitTurnRendering()
     }
 
 
-    // position system icons
-    DoSystemIconsLayout();
-
-
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
     InitStarlaneRenderingBuffers();
 
+
+    // position system icons
+    DoSystemIconsLayout();
 
     // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
     RefreshFleetButtons();
