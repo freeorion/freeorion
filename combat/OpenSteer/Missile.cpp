@@ -120,6 +120,15 @@ void Missile::TurnStarted(unsigned int number)
 void Missile::SignalDestroyed()
 { Listener().MissileRemoved(shared_from_this()); }
 
+void Missile::SetWeakPtr(const MissilePtr& ptr)
+{ m_weak_ptr = ptr; }
+
+MissilePtr Missile::shared_from_this()
+{
+    MissilePtr ptr(m_weak_ptr);
+    return ptr;
+}
+
 void Missile::Init(const Ship& launcher,
                    const OpenSteer::Vec3& position_,
                    const OpenSteer::Vec3& direction)

@@ -341,6 +341,15 @@ void CombatShip::TurnStarted(unsigned int number)
 void CombatShip::SignalDestroyed()
 { Listener().ShipDestroyed(shared_from_this()); }
 
+void CombatShip::SetWeakPtr(const CombatShipPtr& ptr)
+{ m_weak_ptr = ptr; }
+
+CombatShipPtr CombatShip::shared_from_this()
+{
+    CombatShipPtr ptr(m_weak_ptr);
+    return ptr;
+}
+
 double CombatShip::MaxWeaponRange() const
 { return GetShip().Design()->MaxWeaponRange(); }
 
@@ -383,6 +392,7 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         for (std::size_t i = 0; i < num_fighters; ++i) {
             fighter_vec[i].reset(
                 new CombatFighter(shared_from_this(), *part, m_empire_id, *m_pathing_engine));
+            fighter_vec[i]->SetWeakPtr(fighter_vec[i]);
         }
     }
 

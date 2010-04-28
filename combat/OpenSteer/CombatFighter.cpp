@@ -396,6 +396,15 @@ void CombatFighter::TurnStarted(unsigned int number)
 void CombatFighter::SignalDestroyed()
 { Listener().FighterDestroyed(shared_from_this()); }
 
+void CombatFighter::SetWeakPtr(const CombatFighterPtr& ptr)
+{ m_weak_ptr = ptr; }
+
+CombatFighterPtr CombatFighter::shared_from_this()
+{
+    CombatFighterPtr ptr(m_weak_ptr);
+    return ptr;
+}
+
 void CombatFighter::Init(const PartType& part)
 {
     CombatObjectPtr b = m_base.lock();

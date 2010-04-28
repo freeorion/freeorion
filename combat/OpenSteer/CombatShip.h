@@ -8,8 +8,6 @@
 #include "../CombatOrder.h"
 #include "../../universe/Ship.h"
 
-#include <boost/enable_shared_from_this.hpp>
-
 #include <list>
 #include <set>
 
@@ -18,8 +16,7 @@ struct DirectFireStats;
 struct LRStats;
 
 class CombatShip :
-    public CombatObject,
-    public boost::enable_shared_from_this<CombatShip>
+    public CombatObject
 {
 public:
     struct DirectWeapon
@@ -69,6 +66,9 @@ public:
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
     virtual void SignalDestroyed();
+
+    void SetWeakPtr(const CombatShipPtr& ptr);
+    CombatShipPtr shared_from_this();
 
     static const double PD_VS_SHIP_FACTOR;
     static const double NON_PD_VS_FIGHTER_FACTOR;
@@ -134,6 +134,8 @@ private:
     // TODO: Temporary only!
     bool m_instrument;
     ShipMission::Type m_last_mission;
+
+    boost::weak_ptr<CombatShip> m_weak_ptr;
 
     friend class boost::serialization::access;
     template <class Archive>

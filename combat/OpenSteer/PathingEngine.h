@@ -124,9 +124,9 @@ PathingEngine::CreateFighterFormation(CombatShipPtr base, Iter first, Iter last)
     int empire_id = *base->GetShip().Owners().begin();
 
     CombatFighterFormationPtr formation(new CombatFighterFormation(*this));
-    formation->SetLeader(
-        CombatFighterPtr(
-            new CombatFighter(CombatObjectPtr(), empire_id, *this)));
+    CombatFighterPtr fighter(new CombatFighter(CombatObjectPtr(), empire_id, *this));
+    formation->SetLeader(fighter);
+    fighter->SetWeakPtr(fighter);
 
     for (Iter it = first; it != last; ++it) {
         CombatFighterPtr fighter = *it;

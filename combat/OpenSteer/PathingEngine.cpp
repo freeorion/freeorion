@@ -207,6 +207,7 @@ void PathingEngine::AddObject(const CombatObjectPtr& obj)
         assert(boost::dynamic_pointer_cast<CombatShip>(obj));
         CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(obj);
         m_ships_by_id[combat_ship->GetShip().ID()] = combat_ship;
+        combat_ship->SetWeakPtr(combat_ship);
     }
 }
 

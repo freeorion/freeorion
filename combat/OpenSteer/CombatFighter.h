@@ -8,8 +8,6 @@
 #include "../../universe/ShipDesign.h"
 #include "../CombatOrder.h"
 
-#include <boost/enable_shared_from_this.hpp>
-
 #include <list>
 
 
@@ -55,8 +53,7 @@ private:
 };
 
 class CombatFighter :
-    public CombatObject,
-    public boost::enable_shared_from_this<CombatFighter>
+    public CombatObject
 {
 public:
     static const std::size_t FORMATION_SIZE;
@@ -96,6 +93,9 @@ public:
     virtual void Damage(const CombatFighterPtr& source);
     virtual void TurnStarted(unsigned int number);
     virtual void SignalDestroyed();
+
+    void SetWeakPtr(const CombatFighterPtr& ptr);
+    CombatFighterPtr shared_from_this();
 
 private:
     CombatFighter();
@@ -143,6 +143,8 @@ private:
     // TODO: Temporary only!
     bool m_instrument;
     FighterMission::Type m_last_mission;
+
+    boost::weak_ptr<CombatFighter> m_weak_ptr;
 
     friend class PathingEngine;
     friend double CombatFighterFormation::Damage(double);

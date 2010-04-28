@@ -7,14 +7,11 @@
 #include "CombatObject.h"
 #include "../../universe/ShipDesign.h"
 
-#include <boost/enable_shared_from_this.hpp>
-
 
 class Ship;
 
 class Missile :
-    public CombatObject,
-    public boost::enable_shared_from_this<Missile>
+    public CombatObject
 {
 public:
     Missile(const Ship& launcher, const PartType& part, CombatObjectPtr target,
@@ -42,6 +39,9 @@ public:
     virtual void TurnStarted(unsigned int number);
     virtual void SignalDestroyed();
 
+    void SetWeakPtr(const MissilePtr& ptr);
+    MissilePtr shared_from_this();
+
 private:
     Missile();
 
@@ -59,6 +59,8 @@ private:
     double m_health;
     LRStats m_stats;
     PathingEngine* m_pathing_engine;
+
+    boost::weak_ptr<Missile> m_weak_ptr;
 
     friend class boost::serialization::access;
     template <class Archive>
