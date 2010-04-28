@@ -57,8 +57,8 @@
 
 
 const OpenSteer::Vec3 OpenSteer::Vec3::zero    (0, 0, 0);
-const OpenSteer::Vec3 OpenSteer::Vec3::up      (0, 1, 0);
-const OpenSteer::Vec3 OpenSteer::Vec3::forward (0, 0, 1);
+const OpenSteer::Vec3 OpenSteer::Vec3::up      (0, 0, 1);
+const OpenSteer::Vec3 OpenSteer::Vec3::forward (0, 1, 0);
 
 // XXX  This should be unified with LocalSpace::rightHanded, but I don't want
 // XXX  Vec3 to be based on LocalSpace which is based on Vec3.  Perhaps there

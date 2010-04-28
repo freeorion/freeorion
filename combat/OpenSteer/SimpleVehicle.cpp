@@ -253,7 +253,7 @@ OpenSteer::SimpleVehicle::regenerateLocalSpaceForBanking (const Vec3& newVelocit
 {
     // the length of this global-upward-pointing vector controls the vehicle's
     // tendency to right itself as it is rolled over from turning acceleration
-    const Vec3 globalUp (0, 0.2f, 0);
+    const Vec3 globalUp (0, 0, 0.2f);
 
     // acceleration points toward the center of local path curvature, the
     // length determines how much the vehicle will roll while turning

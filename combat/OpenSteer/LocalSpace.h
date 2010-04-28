@@ -223,9 +223,9 @@ namespace OpenSteer {
 
         void resetLocalSpace (void)
         {
-            _forward.set (0, 0, 1);
+            _forward.set (0, 1, 0);
             _side = localRotateForwardToSide (_forward);
-            _up.set (0, 1, 0);
+            _up.set (0, 0, 1);
             _position.set (0, 0, 0);
         };
 
