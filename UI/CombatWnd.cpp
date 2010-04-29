@@ -1609,7 +1609,7 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     if (m_combat_data &&
         m_combat_data->m_combat_turn_number &&
         m_time_since_last_turn_update < PathingEngine::SECONDS_PER_TURN) {
-        m_combat_data->m_pathing_engine.Update(event.timeSinceLastFrame);
+        m_combat_data->m_pathing_engine.Update(event.timeSinceLastFrame, false);
         for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
              it != m_combat_data->m_pathing_engine.end();
              ++it) {

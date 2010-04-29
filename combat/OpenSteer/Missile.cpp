@@ -69,10 +69,11 @@ bool Missile::IsShip() const
 int Missile::Owner() const
 { return m_empire_id; }
 
-void Missile::update(const float elapsed_time)
+void Missile::update(const float elapsed_time, bool force)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
+    if (force ||
+        m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
         const float AT_DESTINATION = speed();
         const float AT_DEST_SQUARED = AT_DESTINATION * AT_DESTINATION;

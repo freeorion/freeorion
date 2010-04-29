@@ -288,10 +288,11 @@ bool CombatFighter::IsShip() const
 int CombatFighter::Owner() const
 { return m_empire_id; }
 
-void CombatFighter::update(const float elapsed_time)
+void CombatFighter::update(const float elapsed_time, bool force)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
+    if (force ||
+        m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
         if (m_leader) {
             if (m_last_queue_update_turn != m_turn)

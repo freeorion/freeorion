@@ -92,7 +92,7 @@ namespace OpenSteer {
         virtual float setMaxSpeed (float) = 0;
 
         // dp - added to support heterogeneous flocks
-        virtual void update(const float elapsedTime) = 0;
+        virtual void update(const float elapsedTime, bool force) = 0;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version)

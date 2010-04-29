@@ -276,10 +276,11 @@ void CombatShip::ClearFighterMissions()
     }
 }
 
-void CombatShip::update(const float elapsed_time)
+void CombatShip::update(const float elapsed_time, bool force)
 {
     OpenSteer::Vec3 steer = m_last_steer;
-    if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
+    if (force ||
+        m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==
         serialNumber % PathingEngine::UPDATE_SETS) {
         if (m_last_queue_update_turn != m_turn)
             UpdateMissionQueue();
