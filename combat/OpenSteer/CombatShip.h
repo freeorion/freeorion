@@ -58,7 +58,7 @@ public:
     void AppendFighterMission(const FighterMission& mission);
     void ClearFighterMissions();
 
-    virtual void update(const float /*current_time*/, const float elapsed_time);
+    virtual void update(const float elapsed_time);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
                                       const float elapsedTime);
 

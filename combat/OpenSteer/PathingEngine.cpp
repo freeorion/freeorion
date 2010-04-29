@@ -183,14 +183,14 @@ void PathingEngine::TurnStarted(unsigned int number)
     }
 }
 
-void PathingEngine::Update(const float current_time, const float elapsed_time)
+void PathingEngine::Update(const float elapsed_time)
 {
     // We use a temporary pointer, because an object may remove itself from the
     // engine during its update.
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {
         CombatObjectPtr ptr = *it++;
-        ptr->update(current_time, elapsed_time);
+        ptr->update(elapsed_time);
     }
     ++m_update_number;
 }

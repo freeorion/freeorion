@@ -276,7 +276,7 @@ void CombatShip::ClearFighterMissions()
     }
 }
 
-void CombatShip::update(const float /*current_time*/, const float elapsed_time)
+void CombatShip::update(const float elapsed_time)
 {
     OpenSteer::Vec3 steer = m_last_steer;
     if (m_pathing_engine->UpdateNumber() % PathingEngine::UPDATE_SETS ==

@@ -1451,13 +1451,12 @@ void ServerApp::ProcessCombatTurn()
 
     // process combat turn
     if (m_current_combat->m_combat_turn_number) {
-        // TODO: execute turn
         pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
         const unsigned int ITERATIONS =
             PathingEngine::SECONDS_PER_TURN * PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
         const double ITERATION_DURATION = 1.0 / PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
         for (unsigned int i = 0; i < ITERATIONS; ++i) {
-            pathing_engine.Update(0.0, ITERATION_DURATION);
+            pathing_engine.Update(ITERATION_DURATION);
         }
     }
 

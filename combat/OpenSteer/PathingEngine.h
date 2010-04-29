@@ -49,7 +49,7 @@ public:
     CombatFighterPtr FindLeader(int id) const;
     CombatFighterPtr FindFighter(int id) const;
 
-    void Update(const float current_time, const float elapsed_time);
+    void Update(const float elapsed_time);
     void TurnStarted(unsigned int number);
 
     void AddObject(const CombatObjectPtr& obj);
