@@ -53,9 +53,14 @@ OBJS="combat/Combat.o combat/CombatOrder.o Empire/Empire.o Empire/EmpireManager.
 #
 #-Wl,--as-needed \
 
+OGRE_LIBDIR=/usr/local/lib/OGRE
+OGRE_LIBS_PLUGIN="${OGRE_LIBDIR}/libPlugin_CgProgramManagerStatic.a ${OGRE_LIBDIR}/libPlugin_ParticleFXStatic.a ${OGRE_LIBDIR}/libPlugin_OctreeSceneManagerStatic.a ${OGRE_LIBDIR}/libRenderSystem_GLStatic.a"
+
+
 if ! \
 $CXX \
 -o freeorion-static \
+-Wl,--as-needed \
 -Wl,--start-group \
 $OBJS \
 -static-libgcc \
@@ -76,7 +81,7 @@ $GV/lib/pathplan/.libs/libpathplan_C.a \
 -lasound -lopenal -lfreetype -lz -lalut -lopenal -lvorbisfile -lvorbis \
 -logg -lnsl -lvga -lx86 \
 -lartsc -laudio -lcaca -lcucul -lmng -llcms \
- /usr/local/lib/OGRE/Plugin_CgProgramManager.a  /usr/local/lib/OGRE/Plugin_ParticleFX.a  /usr/local/lib/OGRE/Plugin_OctreeSceneManager.a /usr/local/lib/OGRE/RenderSystem_GL.a \
+$OGRE_LIBS_PLUGIN \
 -lXrandr -lXrender -lOIS \
 -lboost_system${BOOST_SUFFIX} -lboost_thread${BOOST_SUFFIX} -lboost_signals${BOOST_SUFFIX} -lboost_filesystem${BOOST_SUFFIX} -lboost_serialization${BOOST_SUFFIX} -lboost_iostreams${BOOST_SUFFIX} \
 -lesd -lICE -lexpat -ljpeg -lutil -lpng12 \
@@ -85,7 +90,8 @@ $GV/lib/pathplan/.libs/libpathplan_C.a \
 -lslang -lXau  \
 -laa -lncurses -lgpm  \
 -lstdc++ -lm  \
--lGiGi -lGiGiOgre -lOgreMain -lGiGiOgrePlugin_OIS -lfreeimage \
+-lGiGi -lGiGiOgre -lGiGiOgrePlugin_OIS -lfreeimage \
+/usr/local/lib/libOgreMainStatic.a \
 -Wl,-dy -lCgGL -lCg -lGL -lGLU \
 -Wl,--end-group \
 ;

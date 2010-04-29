@@ -181,7 +181,8 @@ if 'FREEORION_BUILD_HUMAN' in env['target_defines']:
         'UI/PagedGeometry/WindBatchedGeometry.cpp',
         'UI/PagedGeometry/WindBatchPage.cpp',
         'universe/Universe.cpp',
-        'util/AppInterface.cpp'
+        'util/AppInterface.cpp',
+        'UI/CombatCamera.cpp'
         ]
     target = 'human'
 
