@@ -85,13 +85,6 @@ const std::set<int> STENCIL_OP_RENDER_QUEUES =
 const Ogre::uint32 UNSELECTABLE_OBJECT_MASK = 1 << 0;
 
 namespace {
-    PathingEngine g_pathing_engine;
-    std::map<const OpenSteer::AbstractObstacle*, std::string> g_obstacle_names;
-    class FakeVehicle : public OpenSteer::SimpleVehicle
-    {
-        virtual void update(const float, const float) {}
-    };
-
     const GG::Pt INVALID_SELECTION_DRAG_POS(-GG::X1, -GG::Y1);
 
     // collision dection system params
@@ -1155,6 +1148,8 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
             else
                 UpdateObjectPosition(*it);
         }
+        if (m_combat_data->m_combat_turn_number)
+            m_combat_data->m_pathing_engine.TurnStarted(m_combat_data->m_combat_turn_number);
     }
 
     m_end_turn_button->Disable(false);

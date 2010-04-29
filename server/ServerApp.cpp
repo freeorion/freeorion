@@ -1452,9 +1452,8 @@ void ServerApp::ProcessCombatTurn()
     // process combat turn
     if (m_current_combat->m_combat_turn_number) {
         pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
-        const unsigned int ITERATIONS =
-            PathingEngine::SECONDS_PER_TURN * PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
-        const double ITERATION_DURATION = 1.0 / PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC;
+        const unsigned int ITERATIONS = PathingEngine::SECONDS_PER_TURN * PathingEngine::TARGET_FPS;
+        const double ITERATION_DURATION = 1.0 / PathingEngine::TARGET_FPS;
         for (unsigned int i = 0; i < ITERATIONS; ++i) {
             pathing_engine.Update(ITERATION_DURATION);
         }
