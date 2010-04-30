@@ -42,7 +42,11 @@ PathingEngine::~PathingEngine()
 {
     m_objects.clear();
     m_fighter_formations.clear();
+    m_attackees.clear();
     m_obstacles.clear();
+    m_ships_by_id.clear();
+    m_leaders_by_id.clear();
+    m_fighters_by_id.clear();
     delete m_proximity_database;
 }
 
