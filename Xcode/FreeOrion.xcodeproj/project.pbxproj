@@ -155,6 +155,7 @@
 		34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */; };
 		34F0E429113F497500A10EED /* Python.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
 		34F0E455113F49E900A10EED /* Python.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 34F0E427113F491C00A10EED /* Python.framework */; };
+		34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */; };
 		470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */; };
 		4710240A0CEF3AAC00A7DF2B /* AlignmentFlags.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */; };
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
@@ -3390,6 +3391,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */,
 				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
 				34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */,
 				34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */,
