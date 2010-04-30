@@ -1118,10 +1118,12 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
             combat_ship->SetListener(*this);
             Ship& ship = combat_ship->GetShip();
             std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
-            if (ship_data_it == m_ship_assets.end())
+            if (ship_data_it == m_ship_assets.end()) {
                 AddCombatShip(combat_ship);
-            else
+            } else {
+                ship_data_it->second.m_node->setUserAny(Ogre::Any(*it));
                 UpdateObjectPosition(*it);
+            }
         }
     }
 
