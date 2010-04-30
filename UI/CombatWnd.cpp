@@ -611,6 +611,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_mouse_dragged(false),
     m_selection_rect(),
     m_star_back_billboard(0),
+    m_star_brightness_factor(1.0),
     m_collision_configuration(0),
     m_collision_dispatcher(0),
     m_collision_broadphase(0),
@@ -1148,9 +1149,10 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
             else
                 UpdateObjectPosition(*it);
         }
-        if (m_combat_data->m_combat_turn_number)
-            m_combat_data->m_pathing_engine.TurnStarted(m_combat_data->m_combat_turn_number);
     }
+
+    if (m_combat_data->m_combat_turn_number)
+        m_combat_data->m_pathing_engine.TurnStarted(m_combat_data->m_combat_turn_number);
 
     m_end_turn_button->Disable(false);
     m_time_since_last_turn_update = 0.0;
