@@ -1059,22 +1059,6 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
                         position, yaw, scale
                     );
                 }
-
-#if 0
-                // set up a sphere in the collision detection system
-                m_collision_shapes.push_back(new btSphereShape(planet_radius));
-                m_collision_objects.push_back(new btCollisionObject);
-                btMatrix3x3 identity;
-                identity.setIdentity();
-                m_collision_objects.back().getWorldTransform().setBasis(identity);
-                m_collision_objects.back().getWorldTransform().setOrigin(
-                    ToCollision(position));
-                m_collision_objects.back().setCollisionShape(&m_collision_shapes.back());
-                m_collision_world->addCollisionObject(&m_collision_objects.back());
-
-                m_collision_objects.back().setUserPointer(
-                    static_cast<Ogre::MovableObject*>(entity));
-#endif
             }
         }
     }
@@ -1118,16 +1102,6 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
 void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
 {
-#if 0 // TODO: this may be necessary when not in turn-at-a-time mode
-    if (!m_combat_order_set.empty()) {
-        HumanClientApp::GetApp()->Networking().SendMessage(
-            CombatTurnOrdersMessage(
-                HumanClientApp::GetApp()->PlayerID(),
-                m_combat_order_set));
-        m_combat_order_set.clear();
-    }
-#endif
-
     m_combat_data = &combat_data;
 
     if (m_combat_setup_wnd) {
@@ -1164,20 +1138,6 @@ void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
 
 void CombatWnd::Render()
 {
-#if 0 // TODO: Remove this.  It makes the planets all rotate, to test normal and parallax mapping.
-    for (std::map<int, std::pair<Ogre::SceneNode*, std::vector<Ogre::MaterialPtr> > >::iterator it =
-             m_planet_assets.begin();
-         it != m_planet_assets.end();
-         ++it) {
-        it->second.first->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
-    }
-    for (std::map<int, ShipData>::iterator it = m_ship_assets.begin();
-         it != m_ship_assets.end();
-         ++it) {
-        it->second.get<0>()->yaw(Ogre::Radian(3.14159 / 180.0 / 3.0));
-    }
-#endif
-
     RenderLensFlare();
 
     if (m_selection_rect.ul != m_selection_rect.lr) {
@@ -1900,12 +1860,6 @@ void CombatWnd::AddShipNode(int ship_id, Ogre::SceneNode* node, Ogre::Entity* en
     m_collision_objects.insert(collision_object);
     btMatrix3x3 identity;
     identity.setIdentity();
-#if 0
-    // TODO: Remove this when it's removal can be verified as correct
-    // (i.e. after placement of ships is implemented).
-    btMatrix3x3 scaled = identity.scaled(btVector3(1.0, 1.0, -1.0));
-    collision_object->getWorldTransform().setBasis(scaled);
-#endif
     collision_object->getWorldTransform().setOrigin(ToCollision(node->getPosition()));
     collision_object->getWorldTransform().setRotation(ToCollision(node->getOrientation()));
     collision_object->setCollisionShape(collision_shape);
