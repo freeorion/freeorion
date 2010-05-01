@@ -19,9 +19,10 @@
 namespace Ogre {
     class Camera;
     class MovableObject;
-    class RaySceneQuery;
-    class Viewport;
     class PlaneBoundedVolumeListSceneQuery;
+    class RaySceneQuery;
+    class Timer;
+    class Viewport;
 }
 
 namespace GG {
@@ -118,11 +119,13 @@ private:
     std::pair<bool, Ogre::Vector3> IntersectMouseWithEcliptic(const GG::Pt& pt) const;
     const std::string& StarBaseName() const;
 
+    void ApplyUpdateFromServer();
+    void ResolveTurn();
+
     virtual bool frameStarted(const Ogre::FrameEvent& event);
     virtual bool frameEnded(const Ogre::FrameEvent& event);
 
     void RenderLensFlare();
-
     void UpdateStarFromCameraPosition();
     void UpdateSkyBox();
     void EndSelectionDrag();
@@ -166,6 +169,7 @@ private:
     const Ogre::Camera* m_ogre_camera;
 
     CombatData* m_combat_data;
+    CombatData* m_new_combat_data;
 
     GG::Pt m_last_pos;
     GG::Pt m_last_click_pos;

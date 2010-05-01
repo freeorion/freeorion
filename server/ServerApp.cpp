@@ -1452,7 +1452,7 @@ void ServerApp::ProcessCombatTurn()
     // process combat turn
     if (m_current_combat->m_combat_turn_number) {
         pathing_engine.TurnStarted(m_current_combat->m_combat_turn_number);
-        const std::size_t MIN_ITERATIONS = 30;
+        const std::size_t MIN_ITERATIONS = 60;
         const std::size_t ITERATIONS =
             std::max(MIN_ITERATIONS,
                      PathingEngine::SECONDS_PER_TURN * PathingEngine::TARGET_OBJECT_UPDATES_PER_SEC);

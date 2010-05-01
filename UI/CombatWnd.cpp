@@ -604,6 +604,8 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
     m_volume_scene_query(m_scene_manager->createPlaneBoundedVolumeQuery(Ogre::PlaneBoundedVolumeList())),
     m_camera(0),
     m_ogre_camera(camera),
+    m_combat_data(0),
+    m_new_combat_data(0),
     m_last_pos(),
     m_last_click_pos(),
     m_selection_drag_start(INVALID_SELECTION_DRAG_POS),
@@ -874,6 +876,7 @@ CombatWnd::~CombatWnd()
 void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetupGroup>& setup_groups)
 {
     m_combat_data = &combat_data;
+    m_new_combat_data = 0;
 
     SetAccelerators();
 
@@ -1102,40 +1105,13 @@ void CombatWnd::InitCombat(CombatData& combat_data, const std::vector<CombatSetu
 
 void CombatWnd::CombatTurnUpdate(CombatData& combat_data)
 {
-    m_combat_data = &combat_data;
+    m_new_combat_data = &combat_data;
 
     if (m_combat_setup_wnd) {
         delete m_combat_setup_wnd;
         m_combat_setup_wnd = 0;
+        ApplyUpdateFromServer();
     }
-
-    for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
-         it != m_combat_data->m_pathing_engine.end();
-         ++it) {
-        if ((*it)->IsShip()) {
-            assert(boost::dynamic_pointer_cast<CombatShip>(*it));
-            CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
-            combat_ship->SetListener(*this);
-            Ship& ship = combat_ship->GetShip();
-            std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
-            if (ship_data_it == m_ship_assets.end()) {
-                AddCombatShip(combat_ship);
-            } else {
-                ship_data_it->second.m_node->setUserAny(Ogre::Any(*it));
-                UpdateObjectPosition(*it);
-            }
-        }
-    }
-
-    if (m_combat_data->m_combat_turn_number)
-        m_combat_data->m_pathing_engine.TurnStarted(m_combat_data->m_combat_turn_number);
-
-    m_end_turn_button->Disable(false);
-    m_time_since_last_turn_update = 0.0;
-
-    m_end_turn_button->Show();
-
-    // TODO: Handle object removals.
 }
 
 void CombatWnd::Render()
@@ -1551,6 +1527,40 @@ const std::string& CombatWnd::StarBaseName() const
     return *boost::next(star_textures.begin(), m_combat_data->m_system->ID() % star_textures.size());
 }
 
+void CombatWnd::ApplyUpdateFromServer()
+{
+    m_combat_data = m_new_combat_data;
+    m_new_combat_data = 0;
+
+    for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
+         it != m_combat_data->m_pathing_engine.end();
+         ++it) {
+        if ((*it)->IsShip()) {
+            assert(boost::dynamic_pointer_cast<CombatShip>(*it));
+            CombatShipPtr combat_ship = boost::static_pointer_cast<CombatShip>(*it);
+            combat_ship->SetListener(*this);
+            Ship& ship = combat_ship->GetShip();
+            std::map<int, ShipData>::iterator ship_data_it = m_ship_assets.find(ship.ID());
+            if (ship_data_it == m_ship_assets.end()) {
+                AddCombatShip(combat_ship);
+            } else {
+                ship_data_it->second.m_node->setUserAny(Ogre::Any(*it));
+                UpdateObjectPosition(*it);
+            }
+        }
+    }
+
+    if (m_combat_data->m_combat_turn_number)
+        m_combat_data->m_pathing_engine.TurnStarted(m_combat_data->m_combat_turn_number);
+
+    m_end_turn_button->Show();
+
+    // TODO: Handle object removals.
+}
+
+void CombatWnd::ResolveTurn()
+{ m_time_since_last_turn_update = 0.0; }
+
 bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
 {
     Ogre::RenderTarget::FrameStats stats =
@@ -1568,18 +1578,29 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     if (m_paged_geometry)
         m_paged_geometry->update();
 
-    m_time_since_last_turn_update += event.timeSinceLastFrame;
+    const Ogre::Real MIN_ENGINE_UPDATE_TIME = 0.01;
 
     if (m_combat_data &&
         m_combat_data->m_combat_turn_number &&
         m_time_since_last_turn_update < PathingEngine::SECONDS_PER_TURN) {
-        m_combat_data->m_pathing_engine.Update(event.timeSinceLastFrame, false);
+        unsigned int iterations = static_cast<unsigned int>(event.timeSinceLastFrame / MIN_ENGINE_UPDATE_TIME);
+        for (unsigned int i = 0; i < iterations; ++i) {
+            m_combat_data->m_pathing_engine.Update(MIN_ENGINE_UPDATE_TIME, false);
+        }
+        double remainder = event.timeSinceLastFrame - iterations * MIN_ENGINE_UPDATE_TIME;
+        if (0.0 < remainder)
+            m_combat_data->m_pathing_engine.Update(remainder, false);
         for (PathingEngine::const_iterator it = m_combat_data->m_pathing_engine.begin();
              it != m_combat_data->m_pathing_engine.end();
              ++it) {
             UpdateObjectPosition(*it);
         }
     }
+
+    m_time_since_last_turn_update += event.timeSinceLastFrame;
+
+    if (PathingEngine::SECONDS_PER_TURN < m_time_since_last_turn_update && m_new_combat_data)
+        ApplyUpdateFromServer();
 
     return !m_exit;
 }
@@ -1969,7 +1990,7 @@ bool CombatWnd::EndTurn()
             HumanClientApp::GetApp()->PlayerID(),
             m_combat_order_set));
     m_combat_order_set.clear();
-    m_end_turn_button->Disable();
+    ResolveTurn();
     return true;
 }
 
