@@ -1243,6 +1243,14 @@
 		<File
 			RelativePath=".\freeorion.rc"
 			>
+			<FileConfiguration
+				Name="Release|Win32"
+				>
+				<Tool
+					Name="VCResourceCompilerTool"
+					PreprocessorDefinitions="IDI_ICON1=101"
+				/>
+			</FileConfiguration>
 		</File>
 	</Files>
 	<Globals>
