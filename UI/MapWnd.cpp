@@ -841,6 +841,7 @@ void MapWnd::Render()
     if (m_design_wnd->Visible())
         return; // as of this writing, the design screen has a fully opaque background
 
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
 
     RenderStarfields();
 
@@ -859,25 +860,24 @@ void MapWnd::Render()
     RenderVisibilityRadii();
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
     glDisable(GL_TEXTURE_2D);
     glEnable(GL_LINE_SMOOTH);
     glEnable(GL_LINE_STIPPLE);
-    RenderStarlanes();
-    glEnable(GL_TEXTURE_2D);
-    glDisable(GL_LINE_SMOOTH);
-    glDisable(GL_LINE_STIPPLE);
-    glLineWidth(1.0);
 
+    RenderStarlanes();
+
+    glDisable(GL_LINE_STIPPLE);
+    glDisable(GL_LINE_SMOOTH);
+    glEnable(GL_TEXTURE_2D);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    glLineWidth(1.0);
 
     RenderSystems();
     RenderFleetMovementLines();
 
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisableClientState(GL_VERTEX_ARRAY);
-
     glPopMatrix();
+    glPopClientAttrib();
 }
 
 void MapWnd::RenderStarfields()
@@ -1082,23 +1082,28 @@ void MapWnd::RenderStarlanes()
         glLineStipple(1, 0xffff);   // solid line / no stipple
         glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
 
-        //if (coloured)
-        //    glEnableClientState(GL_COLOR_ARRAY);
-        //else
+        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+
+        glEnableClientState(GL_VERTEX_ARRAY);
+
+        if (coloured)
+            glEnableClientState(GL_COLOR_ARRAY);
+        else
             glColor(UNOWNED_LANE_COLOUR);
 
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
         glVertexPointer(2, GL_FLOAT, 0, 0);
 
-        //if (coloured) {
-        //    glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
-        //    glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
-        //}
+        if (coloured) {
+            glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
+            glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        }
 
         glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
 
-        //if (coloured)
-        //    glDisableClientState(GL_COLOR_ARRAY);
+        glPopClientAttrib();
+        glPopAttrib();
 
         glLineWidth(1.0);
     }
