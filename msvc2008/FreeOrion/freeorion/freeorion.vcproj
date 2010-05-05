@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
-				AdditionalIncludeDirectories="../../../log4cpp/;../../../../include/;../../../../Boost/include/boost_1_42;../../../GG/;../../include;../../../../include/OGRE;../../../../include/bullet"
+				AdditionalIncludeDirectories="../../../log4cpp/;../../../../include/;../../../../Boost/include/boost_1_42;../../../GG/;../../include;../../../../include/OGRE;../../../../include/bullet;../../../../include/AL/"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_WARNINGS;_SCL_SECURE_NO_WARNINGS"
 				StringPooling="false"
 				MinimalRebuild="true"
