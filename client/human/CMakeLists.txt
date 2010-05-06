@@ -166,6 +166,7 @@ set(THIS_EXE_SOURCES
     ../../UI/CUIStyle.cpp
     ../../UI/CUIWnd.cpp
     ../../UI/EncyclopediaDetailPanel.cpp
+    ../../UI/EntityRenderer.cpp
     ../../UI/FleetButton.cpp
     ../../UI/FleetWnd.cpp
     ../../UI/GalaxySetupWnd.cpp

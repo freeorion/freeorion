@@ -6,6 +6,7 @@
 #include "CombatCamera.h"
 #include "CombatSetupWnd.h"
 #include "CUIControls.h"
+#include "EntityRenderer.h" // TODO: Remove; for testing only.
 #include "InGameMenu.h"
 #include "../combat/OpenSteer/CombatFighter.h"
 #include "../combat/OpenSteer/CombatShip.h"
@@ -2200,6 +2201,7 @@ Ogre::Entity* CreateShipEntity(Ogre::SceneManager* scene_manager, const Ship& sh
     entity->setCastShadows(true);
     entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
     entity->setMaterialName(material->getName());
+    EntityRenderer::Instance().GetTexture(entity, PAGED_GEOMETRY_IMPOSTOR_QUEUE - 1); // TODO: Remove; for testing only.
     return entity;
 }
 

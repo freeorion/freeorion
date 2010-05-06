@@ -14,6 +14,7 @@
 #include "../../util/Version.h"
 #include "../../util/XMLDoc.h"
 #include "../../util/MultiplayerCommon.h"
+#include "../../UI/EntityRenderer.h"
 
 #include <OgreCamera.h>
 #include <OgreLogManager.h>
@@ -233,6 +234,8 @@ int mainSetupAndRunOgre()
 
         Viewport* viewport = window->addViewport(camera);
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
+
+        EntityRenderer entity_renderer(scene_manager);
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
 
