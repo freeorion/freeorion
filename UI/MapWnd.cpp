@@ -971,7 +971,7 @@ void MapWnd::RenderSystems()
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0, 1.0, 1.0, 1.0);
 
-        if (0.5 < HALO_SCALE_FACTOR) {
+        if (0.5 < HALO_SCALE_FACTOR && m_star_texture_coords.m_name) {
             glMatrixMode(GL_TEXTURE);
             glTranslatef(0.5, 0.5, 0.0);
             glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
@@ -979,6 +979,9 @@ void MapWnd::RenderSystems()
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
                  it != m_star_halo_quad_vertices.end(); ++it)
             {
+                if (!it->second.m_name)
+                    continue;
+
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
                 glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -990,10 +993,13 @@ void MapWnd::RenderSystems()
             glMatrixMode(GL_MODELVIEW);
         }
 
-        if (GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
+        if (m_star_texture_coords.m_name && GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
                  it != m_star_core_quad_vertices.end(); ++it)
             {
+                if (!it->second.m_name)
+                    continue;
+
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
                 glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
                 glVertexPointer(2, GL_FLOAT, 0, 0);
@@ -1807,6 +1813,10 @@ void MapWnd::InitTurnRendering()
 void MapWnd::InitSystemRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
+    if (HumanClientApp::GetApp()->GLVersion() < 1.5f) {
+        Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers aborting due to GL version below 1.5";
+        return;
+    }
     boost::timer timer;
 
     // temp storage
@@ -2038,6 +2048,10 @@ void MapWnd::ClearSystemRenderingBuffers()
 void MapWnd::InitStarlaneRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
+    if (HumanClientApp::GetApp()->GLVersion() < 1.5f) {
+        Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers aborting due to GL version below 1.5";
+        return;
+    }
     boost::timer timer;
 
     // temp storage

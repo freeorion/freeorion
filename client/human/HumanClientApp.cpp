@@ -75,9 +75,9 @@ void SigHandler(int sig)
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    const unsigned int SERVER_CONNECT_TIMEOUT = 10000; // in ms
+    const unsigned int  SERVER_CONNECT_TIMEOUT = 10000; // in ms
 
-    const bool INSTRUMENT_MESSAGE_HANDLING = false;
+    const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
     // command-line options
     void AddOptions(OptionsDB& db)
@@ -101,24 +101,38 @@ namespace {
             GetOptionsDB().Set("multiplayersetup.player-name", UserString("DEFAULT_PLAYER_NAME"));
     }
 
-    void CheckGLVersion() {
-        // only execute once
-        if (GetOptionsDB().Get<bool>("checked-gl-version"))
-            return;
-        GetOptionsDB().Set<bool>("checked-gl-version", true);
+    static float stored_gl_version = -1.0f;  // to be replaced when gl version first checked
 
+    float GetGLVersion() {
+        if (stored_gl_version != -1.0f)
+            return stored_gl_version;
 
         // get OpenGL version string and parse to get version number
         const GLubyte* gl_version = glGetString(GL_VERSION);
         std::string gl_version_string = boost::lexical_cast<std::string>(gl_version);
-        Logger().debugStream() << "OpenGL version string: " << boost::lexical_cast<std::string>(gl_version);
 
-        float version_number = 0.0;
+        float version_number = 0.0f;
         std::istringstream iss(gl_version_string);
         iss >> version_number;
         version_number += 0.05f;    // ensures proper rounding of 1.1 digit number
 
-        Logger().debugStream() << "...extracted version number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+        stored_gl_version = version_number;
+
+        return stored_gl_version;
+    }
+
+    void SetGLVersionDependentOptionDefaults() {
+        // get OpenGL version string and parse to get version number
+        float version_number = GetGLVersion();
+        Logger().debugStream() << "OpenGL Version Number: " << DoubleToString(version_number, 2, false);    // combination of floating point precision and DoubleToString preferring to round down means the +0.05 is needed to round properly
+        if (version_number < 1.5) {
+            Logger().errorStream() << "OpenGL Version is less than 2.0 (official required) or 1.5 (usually works).  FreeOrion may crash when trying to start a game.";
+        }
+
+        // only execute default option setting once
+        if (GetOptionsDB().Get<bool>("checked-gl-version"))
+            return;
+        GetOptionsDB().Set<bool>("checked-gl-version", true);
 
         // if GL version is too low, set various map rendering options to
         // disabled, so as to prevent crashes when running on systems that
@@ -207,7 +221,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
 
     SetStringtableDependentOptionDefaults();
-    CheckGLVersion();
+    SetGLVersionDependentOptionDefaults();
 
     m_fsm->initiate();
 }
@@ -465,6 +479,11 @@ Ogre::Camera* HumanClientApp::Camera()
 
 Ogre::Viewport* HumanClientApp::Viewport()
 { return m_viewport; }
+
+float HumanClientApp::GLVersion() const
+{
+    return GetGLVersion();
+}
 
 void HumanClientApp::Enter2DMode()
 {

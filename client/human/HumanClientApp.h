@@ -47,25 +47,27 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void            StartServer();                  ///< starts a server process on localhost
-    void            FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
-    void            KillServer();                   ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
-    void            NewSinglePlayerGame(bool quickstart = false);
-    void            MulitplayerGame();
-    void            SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
-    void            EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
-    void            LoadSinglePlayerGame(std::string filename = ""); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
-    void            SetSaveFileName(const std::string& filename);   ///< records the current game's filename
+    void                StartServer();                  ///< starts a server process on localhost
+    void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
+    void                KillServer();                   ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
+    void                NewSinglePlayerGame(bool quickstart = false);
+    void                MulitplayerGame();
+    void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
+    void                EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
+    void                LoadSinglePlayerGame(std::string filename = ""); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void                SetSaveFileName(const std::string& filename);   ///< records the current game's filename
 
-    Ogre::SceneManager*     SceneManager();
-    Ogre::Camera*           Camera();
-    Ogre::Viewport*         Viewport();
+    Ogre::SceneManager* SceneManager();
+    Ogre::Camera*       Camera();
+    Ogre::Viewport*     Viewport();
 
-    virtual void    Enter2DMode();
-    virtual void    Exit2DMode();
-    virtual void    StartTurn();
+    float               GLVersion() const;
 
-    virtual void    Exit(int code);
+    virtual void        Enter2DMode();
+    virtual void        Exit2DMode();
+    virtual void        StartTurn();
+
+    virtual void        Exit(int code);
     //@}
 
     static HumanClientApp*  GetApp();                   ///< returns HumanClientApp pointer to the single instance of the app
