@@ -846,33 +846,17 @@ void MapWnd::Render()
     RenderStarfields();
 
     GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+
     glPushMatrix();
     glLoadIdentity();
+
     glScalef(static_cast<GLfloat>(ZoomFactor()), static_cast<GLfloat>(ZoomFactor()), 1.0f);
     glTranslatef(static_cast<GLfloat>(Value(origin_offset.x / ZoomFactor())), static_cast<GLfloat>(Value(origin_offset.y / ZoomFactor())), 0.0f);
 
-    glEnableClientState(GL_VERTEX_ARRAY);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
     RenderGalaxyGas();
     RenderNebulae();
-
     RenderVisibilityRadii();
-
-    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-    glDisable(GL_TEXTURE_2D);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_LINE_STIPPLE);
-
     RenderStarlanes();
-
-    glDisable(GL_LINE_STIPPLE);
-    glDisable(GL_LINE_SMOOTH);
-    glEnable(GL_TEXTURE_2D);
-    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-    glLineWidth(1.0);
-
     RenderSystems();
     RenderFleetMovementLines();
 
@@ -922,7 +906,11 @@ void MapWnd::RenderNebulae()
     // nebula rendering disabled until we add nebulae worth rendering, which likely
     // means for them to have some gameplay purpose and artist-approved way to
     // specify what colours or specific nebula images to use
-
+    //
+    //glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    //glEnableClientState(GL_VERTEX_ARRAY);
+    //glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+    //
     //glColor4f(1.0, 1.0, 1.0, 1.0);
     //glPushMatrix();
     //glLoadIdentity();
@@ -939,6 +927,8 @@ void MapWnd::RenderNebulae()
     //                                        static_cast<int>(nebula_height * ZoomFactor())));
     //}
     //glPopMatrix();
+    //glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    //glPopClientAttrib();
 }
 
 void MapWnd::RenderGalaxyGas()
@@ -946,6 +936,11 @@ void MapWnd::RenderGalaxyGas()
     if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
         return;
     glColor4f(1.0, 1.0, 1.0, 1.0);
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
     for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it)
@@ -957,12 +952,20 @@ void MapWnd::RenderGalaxyGas()
         glTexCoordPointer(2, GL_FLOAT, 0, 0);
         glDrawArrays(GL_QUADS, 0, it->second.m_size);
     }
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glPopClientAttrib();
 }
 
 void MapWnd::RenderSystems()
 {
     const double HALO_SCALE_FACTOR = SystemHaloScaleFactor();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
 
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0, 1.0, 1.0, 1.0);
@@ -1070,6 +1073,9 @@ void MapWnd::RenderSystems()
         glPopMatrix();
         glLineWidth(1.0);
     }
+
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+    glPopClientAttrib();
 }
 
 void MapWnd::RenderStarlanes()
@@ -1079,12 +1085,15 @@ void MapWnd::RenderStarlanes()
     if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
-        glLineStipple(1, 0xffff);   // solid line / no stipple
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_LINE_STIPPLE);
+
         glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
+        glLineStipple(1, 0xffff);   // solid line / no stipple
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-
         glEnableClientState(GL_VERTEX_ARRAY);
 
         if (coloured)
@@ -1102,10 +1111,14 @@ void MapWnd::RenderStarlanes()
 
         glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
 
+        glLineWidth(1.0);
+
         glPopClientAttrib();
         glPopAttrib();
 
-        glLineWidth(1.0);
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_LINE_STIPPLE);
     }
 
     if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
@@ -1117,15 +1130,23 @@ void MapWnd::RenderStarlanes()
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
         glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
         glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
+
+        glPushAttrib(GL_COLOR_BUFFER_BIT);
+        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+        glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
+
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
         glVertexPointer(2, GL_FLOAT, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
         glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
         glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.m_size);
-        glDisableClientState(GL_COLOR_ARRAY);
-        glLineWidth(1.0);
+
+        glPopClientAttrib();
+        glPopAttrib();
     }
+
+    glLineWidth(1.0);
 }
 
 void MapWnd::RenderFleetMovementLines()
@@ -1355,6 +1376,10 @@ void MapWnd::RenderVisibilityRadii() {
         }
     }
 
+
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+
 #define USE_STENCILS 1
 
 #if USE_STENCILS
@@ -1397,6 +1422,7 @@ void MapWnd::RenderVisibilityRadii() {
     glEnable(GL_TEXTURE_2D);
     glDisable(GL_LINE_SMOOTH);
 #endif
+
     glPopMatrix();
     glLineWidth(1.0);
 
@@ -1405,6 +1431,8 @@ void MapWnd::RenderVisibilityRadii() {
 #endif
 
 #undef USE_STENCILS
+
+    glPopClientAttrib();
 }
 
 void MapWnd::LButtonDown(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
