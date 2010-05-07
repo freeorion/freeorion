@@ -58,6 +58,7 @@
 		346D88140FC6196D0095593E /* AsteroidBeltObstacle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E70FC5F5B00095593E /* AsteroidBeltObstacle.cpp */; };
 		346D88150FC6196D0095593E /* CombatObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87E90FC5F5B00095593E /* CombatObject.cpp */; };
 		346D88160FC6196D0095593E /* Missile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 346D87EB0FC5F5B00095593E /* Missile.cpp */; };
+		348D0F5F1194D9DE0034C679 /* EntityRenderer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 348D0F5B1194D6230034C679 /* EntityRenderer.cpp */; };
 		349036EC0F41F74F0045D32F /* libcdt.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 474A95330A9A5093007F8CD7 /* libcdt.dylib */; };
 		349036ED0F41F74F0045D32F /* libgraph.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA50A9BBC32003D2DFC /* libgraph.dylib */; };
 		349036EF0F41F74F0045D32F /* libpathplan.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 4746ADA80A9BBC32003D2DFC /* libpathplan.dylib */; };
@@ -547,6 +548,8 @@
 		346D87ED0FC5F6080095593E /* ShaderProgram.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ShaderProgram.cpp; sourceTree = "<group>"; };
 		346D87EE0FC5F6080095593E /* ShaderProgram.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ShaderProgram.h; sourceTree = "<group>"; };
 		3484E98E0F59A04D0083041E /* ogre_plugins.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ogre_plugins.cfg; sourceTree = "<group>"; };
+		348D0F5B1194D6230034C679 /* EntityRenderer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EntityRenderer.cpp; sourceTree = "<group>"; };
+		348D0F5C1194D6230034C679 /* EntityRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntityRenderer.h; sourceTree = "<group>"; };
 		349036F70F41FE870045D32F /* libgvplugin_dot_layout.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libgvplugin_dot_layout.dylib; path = dep/local/lib/libgvplugin_dot_layout.dylib; sourceTree = "<group>"; };
 		349724D70F49C9220015C864 /* Ogre.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ogre.framework; path = dep/Frameworks/Ogre.framework; sourceTree = "<group>"; };
 		34972B590F49CB100015C864 /* COPYING.OPENSTEER */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = COPYING.OPENSTEER; sourceTree = "<group>"; };
@@ -2896,6 +2899,8 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				348D0F5B1194D6230034C679 /* EntityRenderer.cpp */,
+				348D0F5C1194D6230034C679 /* EntityRenderer.h */,
 				34A7028E118360090013F8C6 /* CombatCamera.cpp */,
 				34A7028F118360090013F8C6 /* CombatCamera.h */,
 				34A70290118360090013F8C6 /* CombatWndFwd.h */,
@@ -3590,6 +3595,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				348D0F5F1194D9DE0034C679 /* EntityRenderer.cpp in Sources */,
 				34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */,
 				34ACA4C70FFFDBC000500F40 /* chmain.cpp in Sources */,
 				343EC66F0F3F60F000782AD3 /* DesignWnd.cpp in Sources */,
