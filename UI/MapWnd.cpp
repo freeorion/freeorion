@@ -639,6 +639,7 @@ MapWnd::MapWnd() :
     m_stealth_threshold_slider = new CUISlider(m_zoom_slider->UpperLeft().x + GG::X(ClientUI::ScrollWidth()*3), m_zoom_slider->UpperLeft().y,
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
                                   0, 100, GG::VERTICAL);
+    m_stealth_threshold_slider->SetPageSize(1);
     m_stealth_threshold_slider->SlideTo(GetOptionsDB().Get<int>("UI.detection-range-stealth-threshold"));
 
 
@@ -1128,6 +1129,11 @@ void MapWnd::RenderStarlanes()
         const double RATE = 0.1;            // slow crawl
         const int SHIFT = static_cast<int>(GG::GUI::GetGUI()->Ticks() * RATE / GLUSHORT_BIT_LENGTH) % GLUSHORT_BIT_LENGTH;
         const unsigned int STIPPLE = (PATTERN << SHIFT) | (PATTERN >> (GLUSHORT_BIT_LENGTH - SHIFT));
+
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_LINE_STIPPLE);
+
         glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
         glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
 
@@ -1144,6 +1150,10 @@ void MapWnd::RenderStarlanes()
 
         glPopClientAttrib();
         glPopAttrib();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_LINE_STIPPLE);
     }
 
     glLineWidth(1.0);
