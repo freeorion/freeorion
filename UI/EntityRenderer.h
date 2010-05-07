@@ -6,7 +6,19 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include <GL/gl.h>
+#ifdef _MSC_VER
+# define WIN32_LEAN_AND_MEAN
+# include <windows.h>
+#endif
+
+// include OpenGL headers
+#if defined(__APPLE__) && defined(__MACH__)
+# include <OpenGL/gl.h>
+# include <OpenGL/glu.h>
+#else
+# include <GL/gl.h>
+# include <GL/glu.h>
+#endif
 
 
 namespace Ogre {
