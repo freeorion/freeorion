@@ -122,7 +122,7 @@ namespace {
 
         variable_final =
             str_p("farming")
-            | "maxfarming"
+            | "targetfarming"
             | "industry"
             | "targetindustry"
             | "research"

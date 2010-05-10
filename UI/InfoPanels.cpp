@@ -25,8 +25,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-using boost::lexical_cast;
-
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
     std::string ColourWrappedtext(const std::string& text, const GG::Clr colour) {
@@ -1303,7 +1301,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
-    for (std::vector<std::pair<MeterType, MeterType>>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         const MeterType PRIMARY_METER_TYPE = it->first;
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
