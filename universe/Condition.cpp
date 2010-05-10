@@ -1197,11 +1197,10 @@ bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
-Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high, bool max_meter) :
+Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
     m_meter(meter),
     m_low(low),
-    m_high(high),
-    m_max_meter(max_meter)
+    m_high(high)
 {}
 
 Condition::MeterValue::~MeterValue()
@@ -1214,7 +1213,7 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
-    std::string description_str = m_max_meter ? "DESC_METER_VALUE_MAX" : "DESC_METER_VALUE_CURRENT";
+    std::string description_str = "DESC_METER_VALUE_CURRENT";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str))
@@ -1225,16 +1224,45 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 
 std::string Condition::MeterValue::Dump() const
 {
-    std::string retval = DumpIndent() + (m_max_meter ? "Max" : "Current");
+    std::string retval = DumpIndent() + "Current";
     switch (m_meter) {
-    case METER_POPULATION:   retval += "Population"; break;
-    case METER_FARMING:      retval += "Farming"; break;
-    case METER_INDUSTRY:     retval += "Industry"; break;
-    case METER_RESEARCH:     retval += "Research"; break;
-    case METER_TRADE:        retval += "Trade"; break;
-    case METER_MINING:       retval += "Mining"; break;
-    case METER_CONSTRUCTION: retval += "Construction"; break;
-    case METER_HEALTH:       retval += "Health"; break;
+    case INVALID_METER_TYPE:        retval += "INVALID_METER_TYPE"; break;
+    case METER_TARGET_POPULATION:   retval += "TargetPopulation";   break;
+    case METER_TARGET_HEALTH:       retval += "TargetHealth";       break;
+    case METER_TARGET_FARMING:      retval += "TargetFarming";      break;
+    case METER_TARGET_INDUSTRY:     retval += "TargetIndustry";     break;
+    case METER_TARGET_RESEARCH:     retval += "TargetResearch";     break;
+    case METER_TARGET_TRADE:        retval += "TargetTrade";        break;
+    case METER_TARGET_MINING:       retval += "TargetMining";       break;
+    case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
+    case METER_MAX_FUEL:            retval += "MaxFuel";            break;
+    case METER_MAX_SHIELD:          retval += "MaxShield";          break;
+    case METER_MAX_DEFENSE:         retval += "MaxDefense";         break;
+    case METER_POPULATION:          retval += "Population";         break;
+    case METER_HEALTH:              retval += "Health";             break;
+    case METER_FARMING:             retval += "Farming";            break;
+    case METER_INDUSTRY:            retval += "Industry";           break;
+    case METER_RESEARCH:            retval += "Research";           break;
+    case METER_TRADE:               retval += "Trade";              break;
+    case METER_MINING:              retval += "Mining";             break;
+    case METER_CONSTRUCTION:        retval += "Construction";       break;
+    case METER_FUEL:                retval += "Fuel";               break;
+    case METER_SHIELD:              retval += "Shield";             break;
+    case METER_DEFENSE:             retval += "Defense";            break;
+    case METER_SUPPLY:              retval += "Supply";             break;
+    case METER_STEALTH:             retval += "Stealth";            break;
+    case METER_DETECTION:           retval += "Detection";          break;
+    case METER_BATTLE_SPEED:        retval += "BattleSpeed";        break;
+    case METER_STARLANE_SPEED:      retval += "StarlaneSpeed";      break;
+    case METER_DAMAGE:              retval += "Damage";             break;
+    case METER_ROF:                 retval += "ROF";                break;
+    case METER_RANGE:               retval += "Range";              break;
+    case METER_SPEED:               retval += "Speed";              break;
+    case METER_CAPACITY:            retval += "Capacity";           break;
+    case METER_ANTI_SHIP_DAMAGE:    retval += "AntiShipDamage";     break;
+    case METER_ANTI_FIGHTER_DAMAGE: retval += "AntiFighterDamage";  break;
+    case METER_LAUNCH_RATE:         retval += "LaunchRate";         break;
+    case METER_FIGHTER_WEAPON_RANGE:retval += "FighterWeaponRange"; break;
     default: retval += "?"; break;
     }
     retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
@@ -1243,11 +1271,13 @@ std::string Condition::MeterValue::Dump() const
 
 bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    double low = std::max(Meter::METER_MIN, m_low->Eval(source, target, boost::any()));
-    double high = std::min(m_high->Eval(source, target, boost::any()), Meter::METER_MAX);
+    double low = m_low->Eval(source, target, boost::any());
+    double high = m_high->Eval(source, target, boost::any());
     if (const Meter* meter = target->GetMeter(m_meter)) {
-        double value = m_max_meter ? meter->Max() : meter->Current();
+        double value = meter->Current();
         return low <= value && value < high;
+    } else {
+        Logger().errorStream() << "Condition::MeterValue::Match couldn't get meter of requested type";
     }
     return false;
 }

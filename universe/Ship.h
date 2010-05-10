@@ -42,38 +42,36 @@ public:
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double              ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
+    virtual double              NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
     bool                        OrderedScrapped() const;
 
     const Meter*                GetMeter(MeterType type, const std::string& part_name) const; ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-
-    using UniverseObject::GetMeter;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    void                        SetFleetID(int fleet_id);                       ///< sets the ID of the fleet the ship resides in
+    void            SetFleetID(int fleet_id);                               ///< sets the ID of the fleet the ship resides in
 
-    void                        Resupply();
+    void            Resupply();
 
-    void                        AddFighters(const std::string& part_name, std::size_t n);
-    void                        RemoveFighters(const std::string& part_name, std::size_t n);
-    void                        RemoveMissiles(const std::string& part_name, std::size_t n);
+    void            AddFighters(const std::string& part_name, std::size_t n);
+    void            RemoveFighters(const std::string& part_name, std::size_t n);
+    void            RemoveMissiles(const std::string& part_name, std::size_t n);
 
-    virtual void                MoveTo(double x, double y);
+    virtual void    MoveTo(double x, double y);
 
-    void                        SetOrderedScrapped(bool b = true);              ///< flags ship for scrapping
+    void            SetOrderedScrapped(bool b = true);                      ///< flags ship for scrapping
 
-    Meter*                      GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    Meter*          GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
 
 private:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
 
-    virtual void CustomResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void CustomClampMeters();
+    virtual void    ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void    ClampMeters();
 
     int             m_design_id;
     int             m_fleet_id;

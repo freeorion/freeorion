@@ -411,16 +411,16 @@ void CombatFighter::Init(const PartType& part)
     CombatObjectPtr b = m_base.lock();
     assert(boost::dynamic_pointer_cast<CombatShip>(b));
     const Ship& base = boost::static_pointer_cast<CombatShip>(b)->GetShip();
-    m_stats.m_type = boost::get<FighterStats>(part.Stats()).m_type;
-    m_stats.m_anti_ship_damage = base.GetMeter(METER_ANTI_SHIP_DAMAGE, m_part_name)->Max();
-    m_stats.m_anti_fighter_damage = base.GetMeter(METER_ANTI_FIGHTER_DAMAGE, m_part_name)->Max();
-    m_stats.m_launch_rate = base.GetMeter(METER_LAUNCH_RATE, m_part_name)->Max();
-    m_stats.m_fighter_weapon_range = base.GetMeter(METER_FIGHTER_WEAPON_RANGE, m_part_name)->Max();
-    m_stats.m_speed = base.GetMeter(METER_SPEED, m_part_name)->Max();
-    m_stats.m_stealth = base.GetMeter(METER_STEALTH, m_part_name)->Max();
-    m_stats.m_health = base.GetMeter(METER_HEALTH, m_part_name)->Max();
-    m_stats.m_detection = base.GetMeter(METER_DETECTION, m_part_name)->Max();
-    m_stats.m_capacity = base.GetMeter(METER_CAPACITY, m_part_name)->Max();
+    m_stats.m_type =                boost::get<FighterStats>(part.Stats()).m_type;
+    m_stats.m_anti_ship_damage =    base.GetMeter(METER_ANTI_SHIP_DAMAGE,       m_part_name)->Current();
+    m_stats.m_anti_fighter_damage = base.GetMeter(METER_ANTI_FIGHTER_DAMAGE,    m_part_name)->Current();
+    m_stats.m_launch_rate =         base.GetMeter(METER_LAUNCH_RATE,            m_part_name)->Current();
+    m_stats.m_fighter_weapon_range= base.GetMeter(METER_FIGHTER_WEAPON_RANGE,   m_part_name)->Current();
+    m_stats.m_speed =               base.GetMeter(METER_SPEED,                  m_part_name)->Current();
+    m_stats.m_stealth =             base.GetMeter(METER_STEALTH,                m_part_name)->Current();
+    m_stats.m_health =              base.GetMeter(METER_HEALTH,                 m_part_name)->Current();
+    m_stats.m_detection =           base.GetMeter(METER_DETECTION,              m_part_name)->Current();
+    m_stats.m_capacity =            base.GetMeter(METER_CAPACITY,               m_part_name)->Current();
 }
 
 void CombatFighter::DamageImpl(double d)

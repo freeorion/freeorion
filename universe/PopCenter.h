@@ -19,54 +19,52 @@ class PopCenter
 {
 public:
     /** \name Structors */ //@{
-    explicit PopCenter(int race);   ///< basic ctor
-    virtual ~PopCenter();           ///< dtor
+    explicit PopCenter(const std::string& species_name);    ///< basic ctor
+    virtual ~PopCenter();                                   ///< dtor
     //@}
 
     /** \name Accessors */ //@{
-    int                     Race() const {return m_race;}                       ///< returns the race that the population is composed of
-    double                  Inhabitants() const;                                ///< returns the number of inhabitants in the center (not the pop points); depends on race
-    double                  AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
+    std::string     SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
+    double          AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
 
-    virtual const Meter*    GetMeter(MeterType type) const = 0;                 ///< implimentation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    double          NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
+    double          NextTurnPopGrowthMax() const;                       ///< maximum possible pop growth next turn, not accounting for limits due to food
 
-    virtual double          ProjectedCurrentMeter(MeterType type) const;        ///< returns expected value of  specified meter current value on the next turn
-    virtual double          MeterPoints(MeterType type) const;                  ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
-    virtual double          ProjectedMeterPoints(MeterType type) const;         ///< returns expected "true amount" associated with a meter on the next turn
-
-    double                  FuturePopGrowth() const;                            ///< predicts by which amount the population will grow next turn, AllocatedFood might limit growth rate
-    double                  FuturePopGrowthMax() const;                         ///< predicts by which amount the population will grow at maximum next turn (assuming there is enough food)
-    double                  FutureHealthGrowth() const;                         ///< predicts by which amount the health meter will grow next turn
+    virtual double  CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
+    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
     //@}
 
     /** \name Mutators */ //@{
-    void                    Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void            Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void                    SetRace(int race)                       {m_race = race;}                        ///< sets the race of the population to \a race
-    void                    SetAllocatedFood(double allocated_food) {m_allocated_food = allocated_food;}    ///< sets the amount of food which is currently available
+    void            SetSpecies(const std::string& species_name) {m_species_name = species_name;}    ///< sets the species of the population to \a species_name
+    void            SetAllocatedFood(double allocated_food)     {m_allocated_food = allocated_food;}///< sets the amount of food which is currently available
 
-    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void            PopGrowthProductionResearchPhase();
-
-    void                    Reset(double max_pop_mod, double max_health_mod);   ///< Resets the meters, etc.  This should be called when a PopCenter is wiped out due to starvation, etc.
+    void            Reset();                                ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
     //@}
 
-    static const double MINIMUM_POP_CENTER_POPULATION;                          ///< below this population, planet is considered unpopulated and reset to uncolonized state
+    static const double MINIMUM_POP_CENTER_POPULATION;      ///< below this population, planet is considered unpopulated and reset to uncolonized state
 
 protected:
-    void                    Init(double max_pop_mod, double max_health_mod);    ///< initialization that needs to be called by derived class after derived class is constructed
+    void            Init();                                 ///< initialization that needs to be called by derived class after derived class is constructed
+
+    double          NextTurnHealthGrowth() const;           ///< returns change in actual health for next turn.
+
+    double          PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
+    void            PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    void            PopCenterClampMeters();
+
+    void            PopCenterPopGrowthProductionResearchPhase();
 
 private:
-    PopCenter();                                                                ///< default ctor
+    PopCenter();                                                ///< default ctor
 
-    //virtual Visibility      GetVisibility(int empire_id) const = 0;             ///< implementation should return the visbility of this PopCenter for the empire with the specified \a empire_id
-    virtual Meter*          GetMeter(MeterType type) = 0;                       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
-    virtual const
-        UniverseObject*     GetThisObject() const = 0;                          ///< implementation should return the UniverseObject associated with this PopCenter
+    virtual Meter*          GetMeter(MeterType type) = 0;       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
+    virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
-    int         m_race;             ///< the id of the race that occupies this planet
-    double      m_allocated_food;   ///< amount of food allocated to this PopCenter by Empire food distribution
+    std::string m_species_name;                                 ///< the name of the species that occupies this planet
+    double      m_allocated_food;                               ///< amount of food allocated to this PopCenter by Empire food distribution
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -77,7 +75,7 @@ private:
 template <class Archive>
 void PopCenter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_race)
+    ar  & BOOST_SERIALIZATION_NVP(m_species_name)
         & BOOST_SERIALIZATION_NVP(m_allocated_food);
 }
 

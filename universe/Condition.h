@@ -439,11 +439,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that have a meter of type \a meter, and whose current value (if \a max_meter == false) or
-    maximum value (if \a max_meter == true) of that meter is >= \a low and < \a high. */
+/** Matches all objects that have a meter of type \a meter, and whose current
+  * value is >= \a low and < \a high. */
 struct Condition::MeterValue : Condition::ConditionBase
 {
-    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high, bool max_meter);
+    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
     virtual ~MeterValue();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -453,7 +453,6 @@ private:
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_low;
     const ValueRef::ValueRefBase<double>* m_high;
-    bool                                  m_max_meter;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -802,8 +801,7 @@ void Condition::MeterValue::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_meter)
         & BOOST_SERIALIZATION_NVP(m_low)
-        & BOOST_SERIALIZATION_NVP(m_high)
-        & BOOST_SERIALIZATION_NVP(m_max_meter);
+        & BOOST_SERIALIZATION_NVP(m_high);
 }
 
 template <class Archive>

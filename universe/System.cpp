@@ -15,8 +15,6 @@ using boost::lexical_cast;
 
 #include <stdexcept>
 
-
-
 System::System() :
     UniverseObject(),
     m_star(INVALID_STAR_TYPE),
@@ -470,12 +468,13 @@ void System::AddOwner(int id)
 void System::RemoveOwner(int id)
 {}  ///< removing owner from system objects is a no-op
 
-void System::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
+void System::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
+    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
     // give systems base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
         if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AdjustMax(0.01);
+            stealth->AddToCurrent(0.001);
 }
 
 System::orbit_iterator System::begin()

@@ -174,30 +174,39 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     std::string icon_filename;
     switch (meter_type) {
     case METER_POPULATION:
+    case METER_TARGET_POPULATION:
         icon_filename = "pop.png";
         break;
     case METER_FARMING:
+    case METER_TARGET_FARMING:
         icon_filename = "farming.png";
         break;
     case METER_INDUSTRY:
+    case METER_TARGET_INDUSTRY:
         icon_filename = "industry.png";
         break;
     case METER_RESEARCH:
+    case METER_TARGET_RESEARCH:
         icon_filename = "research.png";
         break;
     case METER_TRADE:
+    case METER_TARGET_TRADE:
         icon_filename = "trade.png";
         break;
     case METER_MINING:
+    case METER_TARGET_MINING:
         icon_filename = "mining.png";
         break;
     case METER_CONSTRUCTION:
+    case METER_TARGET_CONSTRUCTION:
         icon_filename = "construction.png";
         break;
     case METER_HEALTH:
+    case METER_TARGET_HEALTH:
         icon_filename = "health.png";
         break;
     case METER_FUEL:
+    case METER_MAX_FUEL:
         icon_filename = "fuel.png";
         break;
     case METER_SUPPLY:
@@ -210,9 +219,11 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
         icon_filename = "detection.png";
         break;
     case METER_SHIELD:
+    case METER_MAX_SHIELD:
         icon_filename = "shield.png";
         break;
     case METER_DEFENSE:
+    case METER_MAX_DEFENSE:
         icon_filename = "defense.png";
         break;
     default:

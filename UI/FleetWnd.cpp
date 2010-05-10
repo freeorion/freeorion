@@ -63,6 +63,23 @@ namespace {
         return INVALID_METER_TYPE;
     }
 
+    MeterType           AssociatedMeterType(MeterType meter_type) {
+        switch (meter_type) {
+        case METER_POPULATION:  return METER_TARGET_POPULATION;     break;
+        case METER_HEALTH:      return METER_TARGET_HEALTH;         break;
+        case METER_FARMING:     return METER_TARGET_FARMING;        break;
+        case METER_INDUSTRY:    return METER_TARGET_INDUSTRY;       break;
+        case METER_RESEARCH:    return METER_TARGET_RESEARCH;       break;
+        case METER_TRADE:       return METER_TARGET_TRADE;          break;
+        case METER_MINING:      return METER_TARGET_MINING;         break;
+        case METER_CONSTRUCTION:return METER_TARGET_CONSTRUCTION;   break;
+        case METER_FUEL:        return METER_MAX_FUEL;              break;
+        case METER_SHIELD:      return METER_MAX_SHIELD;            break;
+        case METER_DEFENSE:     return METER_MAX_DEFENSE;           break;
+        default:                return INVALID_METER_TYPE;          break;
+        }
+    }
+
     GG::Y LabelHeight() {
         return GG::Y(ClientUI::Pts()*3/2);
     }
@@ -744,7 +761,8 @@ namespace {
                     it->second->SetBrowseInfoWnd(browse_wnd);
                 } else {
                     MeterType meter_type = MeterTypeFromStatString(it->first);
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(meter_type, m_ship_id));
+                    MeterType associated_meter_type = AssociatedMeterType(meter_type);
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_ship_id, meter_type, associated_meter_type));
                     it->second->SetBrowseInfoWnd(browse_wnd);
                 }
             }
@@ -760,9 +778,9 @@ namespace {
                 } else {
                     MeterType meter_type = MeterTypeFromStatString(stat_name);
                     //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
-                    if (ship->GetMeter(meter_type)) {
-                        //std::cout << " ... ship has meter! returning meter points value " << ship->MeterPoints(meter_type) << std::endl;
-                        return ship->MeterPoints(meter_type);
+                    if (ship->UniverseObject::GetMeter(meter_type)) {
+                        //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
+                        return ship->CurrentMeterValue(meter_type);
                     }
                 }
             }

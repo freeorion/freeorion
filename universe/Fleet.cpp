@@ -33,11 +33,6 @@ namespace {
         return false;
     }
 
-    void GrowFuelMeter(Meter* fuel_meter) {
-        assert(fuel_meter);
-        fuel_meter->AdjustCurrent(0.1001);  // TODO: make this configurable.  slightly larger than 0.1 ensures rounding will go up, not down, which is preferable for gameplay and UI purposes
-    }
-
 }
 
 // static(s)
@@ -460,7 +455,7 @@ double Fleet::Fuel() const
         return 0.0;
 
     // determine fuel available to fleet (fuel of the ship that has the least fuel in the fleet)
-    double fuel = Meter::METER_MAX;
+    double fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = GetObject<Ship>(*ship_it);
@@ -468,17 +463,17 @@ double Fleet::Fuel() const
             Logger().errorStream() << "Fleet::Fuel couldn't get ship with id " << *ship_it;
             continue;
         }
-        const Meter* meter = ship->GetMeter(METER_FUEL);
+        const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             Logger().errorStream() << "Fleet::Fuel skipping ship with no fuel meter";
             continue;
         }
-        if(!ship->OrderedScrapped()) {
+        if (!ship->OrderedScrapped()) {
             fuel = std::min(fuel, meter->Current());
             is_fleet_scrapped = false;
         } 
     }
-    if(is_fleet_scrapped) {
+    if (is_fleet_scrapped) {
         fuel = 0.0;
     }
     return fuel;
@@ -491,7 +486,7 @@ double Fleet::MaxFuel() const
 
     // determine the maximum amount of fuel that can be stored by the ship in the fleet that
     // can store the least amount of fuel
-    double max_fuel = Meter::METER_MAX;
+    double max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
     for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it) {
         const Ship* ship = GetObject<Ship>(*ship_it);
@@ -499,17 +494,17 @@ double Fleet::MaxFuel() const
             Logger().errorStream() << "Fleet::MaxFuel couldn't get ship with id " << *ship_it;
             continue;
         }
-        const Meter* meter = ship->GetMeter(METER_FUEL);
+        const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             Logger().errorStream() << "Fleet::MaxFuel skipping ship with no fuel meter";
             continue;
         }
-        if(!ship->OrderedScrapped()) {
+        if (!ship->OrderedScrapped()) {
             max_fuel = std::min(max_fuel, meter->Current());
             is_fleet_scrapped = false;
         }
     }
-    if(is_fleet_scrapped) {
+    if (is_fleet_scrapped) {
         max_fuel = 0.0;
     }
     return max_fuel;
@@ -848,8 +843,8 @@ void Fleet::MovementPhase()
             {
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
                     if (Ship* ship = GetObject<Ship>(*ship_it))
-                        if (Meter* fuel_meter = ship->GetMeter(METER_FUEL))
-                            GrowFuelMeter(fuel_meter);
+                        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                            fuel_meter->AddToCurrent(0.1001);
                 }
             }
             return;
@@ -962,8 +957,8 @@ void Fleet::MovementPhase()
     if (fuel_consumed > 0.0) {
         for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it)
             if (Ship* ship = GetObject<Ship>(*ship_it))
-                if (Meter* meter = ship->GetMeter(METER_FUEL))
-                    meter->AdjustCurrent(-fuel_consumed);
+                if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                    meter->AddToCurrent(-fuel_consumed);
     }
 }
 
@@ -986,14 +981,16 @@ void Fleet::PopGrowthProductionResearchPhase()
     CalculateRoute();
 }
 
-void Fleet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
+void Fleet::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
+    UniverseObject::ResetTargetMaxUnpairedMeters();
+
     // give fleets base stealth very high, so that they can (almost?) never be
     // seen by empires that don't own them, unless their ships are seen and
     // that visibility is propegated to the fleet that contains the ships
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
         if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AdjustMax(200.0);  // well over 100 (the max meter value) so that effects won't reduce to below 100
+            stealth->AddToCurrent(2000.0);  // very large addition to make fleets always very stealthy, so that their visibility will always be determined by their contained fleets
 }
 
 void Fleet::CalculateRoute() const

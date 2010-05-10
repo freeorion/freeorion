@@ -9,11 +9,6 @@
 #include "../Empire/EmpireManager.h"
 
 namespace {
-    void GrowFuelMeter(Meter* fuel_meter) {
-        assert(fuel_meter);
-        fuel_meter->AdjustCurrent(0.1001);
-    }
-
     /** returns true iff one of the empires with the indiated ids can provide
       * fleet supply directly or has resource connections to the system with
       * the id \a system_id 
@@ -46,12 +41,15 @@ Ship::Ship(int empire_id, int design_id) :
 
     UniverseObject::Init();
 
-    InsertMeter(METER_FUEL,           Meter());
-    InsertMeter(METER_SHIELD,         Meter());
-    InsertMeter(METER_DETECTION,      Meter());
-    InsertMeter(METER_HEALTH,         Meter());
-    InsertMeter(METER_BATTLE_SPEED,   Meter());
-    InsertMeter(METER_STARLANE_SPEED, Meter());
+    AddMeter(METER_FUEL);
+    AddMeter(METER_MAX_FUEL);
+    AddMeter(METER_SHIELD);
+    AddMeter(METER_MAX_SHIELD);
+    AddMeter(METER_DETECTION);
+    AddMeter(METER_HEALTH);
+    AddMeter(METER_TARGET_HEALTH);
+    AddMeter(METER_BATTLE_SPEED);
+    AddMeter(METER_STARLANE_SPEED);
 
     const std::vector<std::string>& part_names = Design()->Parts();
     for (std::size_t i = 0; i < part_names.size(); ++i) {
@@ -65,9 +63,9 @@ Ship::Ship(int empire_id, int design_id) :
             switch (part->Class()) {
             case PC_SHORT_RANGE:
             case PC_POINT_DEFENSE: {
-                m_part_meters[std::make_pair(METER_DAMAGE, part->Name())];
-                m_part_meters[std::make_pair(METER_ROF, part->Name())];
-                m_part_meters[std::make_pair(METER_RANGE, part->Name())];
+                m_part_meters[std::make_pair(METER_DAMAGE,              part->Name())];
+                m_part_meters[std::make_pair(METER_ROF,                 part->Name())];
+                m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
                 break;
             }
             case PC_MISSILES: {
@@ -75,13 +73,13 @@ Ship::Ship(int empire_id, int design_id) :
                     m_missiles[part_names[i]];
                 ++part_missiles.first;
                 part_missiles.second += boost::get<LRStats>(part->Stats()).m_capacity;
-                m_part_meters[std::make_pair(METER_DAMAGE, part->Name())];
-                m_part_meters[std::make_pair(METER_ROF, part->Name())];
-                m_part_meters[std::make_pair(METER_RANGE, part->Name())];
-                m_part_meters[std::make_pair(METER_SPEED, part->Name())];
-                m_part_meters[std::make_pair(METER_STEALTH, part->Name())];
-                m_part_meters[std::make_pair(METER_HEALTH, part->Name())];
-                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                m_part_meters[std::make_pair(METER_DAMAGE,              part->Name())];
+                m_part_meters[std::make_pair(METER_ROF,                 part->Name())];
+                m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
+                m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
+                m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
+                m_part_meters[std::make_pair(METER_HEALTH,              part->Name())];
+                m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
                 break;
             }
             case PC_FIGHTERS: {
@@ -89,15 +87,15 @@ Ship::Ship(int empire_id, int design_id) :
                     m_fighters[part_names[i]];
                 ++part_fighters.first;
                 part_fighters.second += boost::get<FighterStats>(part->Stats()).m_capacity;
-                m_part_meters[std::make_pair(METER_ANTI_SHIP_DAMAGE, part->Name())];
+                m_part_meters[std::make_pair(METER_ANTI_SHIP_DAMAGE,    part->Name())];
                 m_part_meters[std::make_pair(METER_ANTI_FIGHTER_DAMAGE, part->Name())];
-                m_part_meters[std::make_pair(METER_LAUNCH_RATE, part->Name())];
-                m_part_meters[std::make_pair(METER_FIGHTER_WEAPON_RANGE, part->Name())];
-                m_part_meters[std::make_pair(METER_SPEED, part->Name())];
-                m_part_meters[std::make_pair(METER_STEALTH, part->Name())];
-                m_part_meters[std::make_pair(METER_HEALTH, part->Name())];
-                m_part_meters[std::make_pair(METER_DETECTION, part->Name())];
-                m_part_meters[std::make_pair(METER_CAPACITY, part->Name())];
+                m_part_meters[std::make_pair(METER_LAUNCH_RATE,         part->Name())];
+                m_part_meters[std::make_pair(METER_FIGHTER_WEAPON_RANGE,part->Name())];
+                m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
+                m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
+                m_part_meters[std::make_pair(METER_HEALTH,              part->Name())];
+                m_part_meters[std::make_pair(METER_DETECTION,           part->Name())];
+                m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
                 break;
             }
             default:
@@ -217,37 +215,10 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
     return visitor.Visit(const_cast<Ship* const>(this));
 }
 
-double Ship::ProjectedCurrentMeter(MeterType type) const {
-    const ObjectMap& objects = GetMainObjectMap();
-    const Meter* original_meter = GetMeter(type);
-    if (!original_meter) {
-        Logger().errorStream() << "Ship::ProjectedeCurrentMeter couldn't get meter of type " << boost::lexical_cast<std::string>(type);
-        return 0.0;
-    }
-    Meter meter = Meter(*original_meter);
-    const Fleet* fleet = objects.Object<Fleet>(this->FleetID());
-    if (!fleet) {
-        Logger().errorStream() << "Ship::ProjectedeCurrentMeter couldn't get fleet with id " << this->FleetID();
-        return 0.0;
-    }
-
-    switch (type) {
-    case METER_FUEL:
-        if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(fleet->SystemID(), fleet->Owners())) {
-            // fleets at systems where they can be supplied are fully resupplied
-            meter.SetCurrent(meter.Max());
-        } else if (fleet->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
-                   fleet->FinalDestinationID() == fleet->SystemID())
-        {
-            // fleets that are stationary regenerate fuel slowly
-            GrowFuelMeter(&meter);
-        }
-        meter.Clamp();
-        return meter.Current();
-        break;
-    default:
-        return UniverseObject::ProjectedCurrentMeter(type);
-    }
+double Ship::NextTurnCurrentMeterValue(MeterType type) const {
+    return UniverseObject::NextTurnCurrentMeterValue(type);
+    // todo: consider fleet movement or being stationary, which may replenish ship fuel
+    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
 }
 
 bool Ship::OrderedScrapped() const
@@ -264,9 +235,14 @@ void Ship::SetFleetID(int fleet_id)
 
 void Ship::Resupply()
 {
-    Meter* meter = GetMeter(METER_FUEL);
-    assert(meter);
-    meter->SetCurrent(meter->Max());
+    Meter* fuel_meter = UniverseObject::GetMeter(METER_FUEL);
+    const Meter* max_fuel_meter = UniverseObject::GetMeter(METER_MAX_FUEL);
+    if (!fuel_meter || !max_fuel_meter) {
+        Logger().errorStream() << "Ship::Resupply couldn't get fuel meters!";
+        return;
+    }
+
+    fuel_meter->SetCurrent(max_fuel_meter->Current());
 
     for (ConsumablesMap::iterator it = m_fighters.begin();
          it != m_fighters.end();
@@ -337,17 +313,47 @@ Meter* Ship::GetMeter(MeterType type, const std::string& part_name)
     return retval;
 }
 
-void Ship::CustomResetMaxMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void Ship::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
+    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_FUEL)
+        UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_SHIELD)
+        UniverseObject::GetMeter(METER_MAX_SHIELD)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_TARGET_HEALTH)
+        UniverseObject::GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_DETECTION)
+        UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_BATTLE_SPEED)
+        UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STARLANE_SPEED)
+        UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+
     for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
         if (meter_type == INVALID_METER_TYPE || it->first.first == meter_type)
-            it->second.ResetMax();
+            it->second.ResetCurrent();
     }
 }
 
-void Ship::CustomClampMeters()
+void Ship::ClampMeters()
 {
+    UniverseObject::ClampMeters();
+
+    UniverseObject::GetMeter(METER_MAX_FUEL)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_FUEL)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_FUEL)->Current());
+    UniverseObject::GetMeter(METER_MAX_SHIELD)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
+
+    UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_HEALTH)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_TARGET_HEALTH)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_STARLANE_SPEED)->ClampCurrentToRange();
+
     for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        it->second.Clamp();
+        it->second.ClampCurrentToRange();
     }
 }

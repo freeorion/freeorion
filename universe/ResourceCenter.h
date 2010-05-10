@@ -31,43 +31,43 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    FocusType               PrimaryFocus() const     {return m_primary;}
-    FocusType               SecondaryFocus() const   {return m_secondary;}
+    FocusType       PrimaryFocus() const     {return m_primary;}
+    FocusType       SecondaryFocus() const   {return m_secondary;}
 
-    virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
-    virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
-    virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
+    virtual double  CurrentMeterValue(MeterType type) const = 0;        ///< implementation should return the current value of the specified meter \a type
+    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
-    mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
+    mutable boost::signal<void ()> ResourceCenterChangedSignal;                 ///< the state changed signal object for this ResourceCenter
     //@}
 
     /** \name Mutators */ //@{
-    void                    Copy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void            Copy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void                    SetPrimaryFocus(FocusType focus);
-    void                    SetSecondaryFocus(FocusType focus);
+    void            SetPrimaryFocus(FocusType focus);
+    void            SetSecondaryFocus(FocusType focus);
 
-    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void            PopGrowthProductionResearchPhase();
-
-    void                    Reset();                                        /// Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
+    void            Reset();                                        /// Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
     //@}
 
 protected:
-    void                    Init();                                         ///< initialization that needs to be called by derived class after derived class is constructed
+    void            Init();                                                         ///< initialization that needs to be called by derived class after derived class is constructed
+
+    double          ResourceCenterNextTurnMeterValue(MeterType meter_type) const;   ///< returns estimate of the next turn's current values of meters relevant to this ResourceCenter
+    void            ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    void            ResourceCenterClampMeters();
+
+    void            ResourceCenterPopGrowthProductionResearchPhase();
+
 
 private:
     FocusType  m_primary;
     FocusType  m_secondary;
 
     virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
-    virtual const Meter*    GetPopMeter() const = 0;                        ///< implementation should return the population meter to use when calculating meter points for this resource center
     virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual Meter*          GetMeter(MeterType type) = 0;                   ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual const
-        UniverseObject*     GetThisObject() const = 0;                      ///< implementation should return the UniverseObject associated with this ResourceCenter
 
-    virtual void            InsertMeter(MeterType meter_type, Meter meter) = 0; ///< implementation should add \a meter to the object so that it can be accessed with the GetMeter() functions
+    virtual void            AddMeter(MeterType meter_type) = 0;             ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions
 
     friend class boost::serialization::access;
     template <class Archive>

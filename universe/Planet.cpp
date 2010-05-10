@@ -7,48 +7,15 @@
 #include "Predicates.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
-#include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
 #include "../util/Directories.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-#include <boost/lexical_cast.hpp>
-
-#include <stdexcept>
-
-
-using boost::lexical_cast;
-
 namespace {
     // high tilt is arbitrarily taken to mean 35 degrees or more
     const double HIGH_TILT_THERSHOLD = 35.0;
-
-    DataTableMap& PlanetDataTables() {
-        static DataTableMap map;
-        if (map.empty())
-            LoadDataTables((GetResourceDir() / "planet_tables.txt").file_string(), map);
-        return map;
-    }
-
-    double MaxPopMod(PlanetSize size, PlanetEnvironment environment) {
-        return PlanetDataTables()["PlanetMaxPop"][size][environment];
-    }
-
-    double MaxHealthMod(PlanetEnvironment environment) {
-        return PlanetDataTables()["PlanetEnvHealthMod"][0][environment];
-    }
-
-    void GrowMeter(Meter* meter, double updated_current_construction) {
-        // TODO: something better here, likely depending on meter type
-        assert(meter);
-        double initial_current =    meter->InitialCurrent();
-
-        double delta =              updated_current_construction / (10.0 + initial_current);
-
-        meter->AdjustCurrent(delta);
-    }
 
     double SizeRotationFactor(PlanetSize size)
     {
@@ -110,7 +77,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_is_about_to_be_colonized(false)
 {
     UniverseObject::Init();
-    PopCenter::Init(MaxPopMod(size, Environment(type)), MaxHealthMod(Environment(type)));
+    PopCenter::Init();
     ResourceCenter::Init();
     Planet::Init();
     SetType(type);
@@ -176,10 +143,12 @@ const std::string& Planet::TypeName() const
 }
 
 void Planet::Init() {
-    InsertMeter(METER_SUPPLY, Meter());
-    InsertMeter(METER_SHIELD, Meter());
-    InsertMeter(METER_DEFENSE, Meter());
-    InsertMeter(METER_DETECTION, Meter());
+    AddMeter(METER_SUPPLY);
+    AddMeter(METER_SHIELD);
+    AddMeter(METER_MAX_SHIELD);
+    AddMeter(METER_DEFENSE);
+    AddMeter(METER_MAX_DEFENSE);
+    AddMeter(METER_DETECTION);
 }
 
 PlanetEnvironment Planet::Environment() const
@@ -245,91 +214,42 @@ UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
     return visitor.Visit(const_cast<Planet* const>(this));
 }
 
-double Planet::ProjectedCurrentMeter(MeterType type) const
-{
-    const Meter* original_meter = 0;
-    Meter meter;
+Meter* Planet::GetMeter(MeterType type)
+{return UniverseObject::GetMeter(type);}
 
-    switch (type) {
-    case METER_FARMING:
-    case METER_MINING:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-    case METER_CONSTRUCTION:
-        return ResourceCenter::ProjectedCurrentMeter(type);
-        break;
-    case METER_POPULATION:
-    case METER_HEALTH:
-        return PopCenter::ProjectedCurrentMeter(type);
-        break;
-    case METER_SUPPLY:
-    case METER_SHIELD:
-    case METER_DEFENSE:
-    case METER_DETECTION:
-        original_meter = GetMeter(type);
-        assert(original_meter);
-        meter = Meter(*original_meter);
-        GrowMeter(&meter, ProjectedCurrentMeter(METER_CONSTRUCTION));
-        meter.Clamp();
-        return meter.Current();
-        break;
-    default:
-        return UniverseObject::ProjectedCurrentMeter(type);
-        break;
-    }
+const Meter* Planet::GetMeter(MeterType type) const
+{return UniverseObject::GetMeter(type);}
+
+double Planet::CurrentMeterValue(MeterType type) const
+{
+    return UniverseObject::CurrentMeterValue(type);
 }
 
-double Planet::MeterPoints(MeterType type) const
+double Planet::NextTurnCurrentMeterValue(MeterType type) const
 {
     switch (type) {
+    case METER_TARGET_POPULATION:
+    case METER_TARGET_HEALTH:
+    case METER_POPULATION:
+    case METER_HEALTH:
+        return PopCenterNextTurnMeterValue(type);
+        break;
+    case METER_TARGET_FARMING:
+    case METER_TARGET_INDUSTRY:
+    case METER_TARGET_RESEARCH:
+    case METER_TARGET_TRADE:
+    case METER_TARGET_MINING:
+    case METER_TARGET_CONSTRUCTION:
     case METER_FARMING:
-    case METER_MINING:
     case METER_INDUSTRY:
     case METER_RESEARCH:
     case METER_TRADE:
-    case METER_CONSTRUCTION:
-        return ResourceCenter::MeterPoints(type);
-        break;
-    case METER_POPULATION:
-    case METER_HEALTH:
-        return PopCenter::MeterPoints(type);
-        break;
-    case METER_SUPPLY:
-    case METER_SHIELD:
-    case METER_DEFENSE:
-    case METER_DETECTION:
-        return GetMeter(type)->InitialCurrent();
-        break;
-    default:
-        return UniverseObject::MeterPoints(type);
-        break;
-    }
-}
-
-double Planet::ProjectedMeterPoints(MeterType type) const
-{
-    switch (type) {
-    case METER_FARMING:
     case METER_MINING:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
     case METER_CONSTRUCTION:
-        return ResourceCenter::ProjectedMeterPoints(type);
+        return ResourceCenterNextTurnMeterValue(type);
         break;
-    case METER_POPULATION:
-    case METER_HEALTH:
-        return PopCenter::ProjectedMeterPoints(type);
-        break;
-    case METER_SUPPLY:
-    case METER_SHIELD:
-    case METER_DEFENSE:
-    case METER_DETECTION:
-        return ProjectedCurrentMeter(type);
     default:
-        return UniverseObject::ProjectedMeterPoints(type);
-        break;
+        return UniverseObject::NextTurnCurrentMeterValue(type);
     }
 }
 
@@ -339,15 +259,6 @@ void Planet::SetType(PlanetType type)
         type = PT_SWAMP;
     if (NUM_PLANET_TYPES <= type)
         type = PT_GASGIANT;
-    double old_farming_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(m_type)];
-    double new_farming_modifier = PlanetDataTables()["PlanetEnvFarmingMod"][0][Environment(type)];
-    GetMeter(METER_FARMING)->AdjustMax(new_farming_modifier - old_farming_modifier);
-    double old_health_modifier = PlanetDataTables()["PlanetEnvHealthMod"][0][Environment(m_type)];
-    double new_health_modifier = PlanetDataTables()["PlanetEnvHealthMod"][0][Environment(type)];
-    GetMeter(METER_HEALTH)->AdjustMax(new_health_modifier - old_health_modifier);
-    double old_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(m_type)];
-    double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(type)];
-    GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_type = type;
     StateChangedSignal();
 }
@@ -358,12 +269,6 @@ void Planet::SetSize(PlanetSize size)
         size = SZ_TINY;
     if (NUM_PLANET_SIZES <= size)
         size = SZ_GASGIANT;
-    double old_industry_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][m_size];
-    double new_industry_modifier = PlanetDataTables()["PlanetSizeIndustryMod"][0][size];
-    GetMeter(METER_INDUSTRY)->AdjustMax(new_industry_modifier - old_industry_modifier);
-    double old_population_modifier = PlanetDataTables()["PlanetMaxPop"][m_size][Environment(m_type)];
-    double new_population_modifier = PlanetDataTables()["PlanetMaxPop"][size][Environment(m_type)];
-    GetMeter(METER_POPULATION)->AdjustMax(new_population_modifier - old_population_modifier);
     m_size = size;
     StateChangedSignal();
 }
@@ -468,16 +373,18 @@ void Planet::Reset()
     ClearOwners();
 
     // reset popcenter meters
-    PopCenter::Reset(MaxPopMod(Size(), Environment(Type())), MaxHealthMod(Environment(Type())));
+    PopCenter::Reset();
 
     // reset resourcecenter meters
     ResourceCenter::Reset();
 
     // reset planet meters
-    GetMeter(METER_SUPPLY)->ResetMax();
-    GetMeter(METER_SHIELD)->ResetMax();
-    GetMeter(METER_DEFENSE)->ResetMax();
-    GetMeter(METER_DETECTION)->ResetMax();
+    GetMeter(METER_SUPPLY)->Reset();
+    GetMeter(METER_SHIELD)->Reset();
+    GetMeter(METER_MAX_SHIELD)->Reset();
+    GetMeter(METER_DEFENSE)->Reset();
+    GetMeter(METER_MAX_DEFENSE)->Reset();
+    GetMeter(METER_DETECTION)->Reset();
 
     // reset buildings
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it)
@@ -584,17 +491,6 @@ void Planet::MoveTo(double x, double y)
     }
 }
 
-void Planet::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
-{
-    ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
-    PopCenter::ApplyUniverseTableMaxMeterAdjustments(meter_type);
-
-    // give planets base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
-        if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AdjustMax(0.01);
-}
-
 void Planet::PopGrowthProductionResearchPhase()
 {
     UniverseObject::PopGrowthProductionResearchPhase();
@@ -603,12 +499,12 @@ void Planet::PopGrowthProductionResearchPhase()
     if (m_just_conquered)
         m_just_conquered = false;
     else
-        ResourceCenter::PopGrowthProductionResearchPhase();
+        ResourceCenterPopGrowthProductionResearchPhase();
 
-    PopCenter::PopGrowthProductionResearchPhase();
+    PopCenterPopGrowthProductionResearchPhase();
 
     // check for starvation
-    if (GetPopMeter()->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
+    if (GetMeter(METER_POPULATION)->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
         // starving.
 
         // generate starvation sitreps
@@ -625,14 +521,32 @@ void Planet::PopGrowthProductionResearchPhase()
 
     } else {
         // not starving.  grow meters
-        double current_construction = GetMeter(METER_CONSTRUCTION)->Current();  // want current construction, that has been updated from initial current construction
-        GrowMeter(GetMeter(METER_SUPPLY),       current_construction);
-        GrowMeter(GetMeter(METER_SHIELD),       current_construction);
-        GrowMeter(GetMeter(METER_DEFENSE),      current_construction);
-        GrowMeter(GetMeter(METER_DETECTION),    current_construction);
+        GetMeter(METER_SHIELD)->AddToCurrent(1.0);
+        GetMeter(METER_DEFENSE)->AddToCurrent(1.0);
     }
 
     StateChangedSignal();
+}
+
+void Planet::ResetTargetMaxUnpairedMeters(MeterType meter_type)
+{
+    ResetTargetMaxUnpairedMeters(meter_type);
+    ResourceCenterResetTargetMaxUnpairedMeters(meter_type);
+    PopCenterResetTargetMaxUnpairedMeters(meter_type);
+
+    // give planets base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
+        if (Meter* stealth = GetMeter(METER_STEALTH)) {
+            stealth->ResetCurrent();
+            stealth->AddToCurrent(0.01);
+        }
+}
+
+void Planet::ClampMeters()
+{
+    UniverseObject::ClampMeters();
+    ResourceCenterClampMeters();
+    PopCenterClampMeters();
 }
 
 PlanetEnvironment Planet::Environment(PlanetType type)

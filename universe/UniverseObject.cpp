@@ -63,21 +63,6 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
 UniverseObject::~UniverseObject()
 {}
 
-//void UniverseObject::Copy(const UniverseObject* copied_object, int empire_id)
-//{
-//    if (copied_object == this)
-//        return;
-//    if (!copied_object) {
-//        Logger().errorStream() << "UniverseObject::Copy passed a null object";
-//        return;
-//    }
-//
-//    int copied_object_id = copied_object->ID();
-//    Visibility vis = universe.GetObjectVisibilityByEmpire(copied_object_id, empire_id);
-//
-//    Copy(copied_object, vis);
-//}
-
 void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 {
     if (copied_object == this)
@@ -103,15 +88,15 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
             this->m_specials =          copied_object->m_specials;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
-            if (vis >= VIS_FULL_VISIBILITY) {
-            }
+            //if (vis >= VIS_FULL_VISIBILITY) {
+            //}
         }
     }
 }
 
 void UniverseObject::Init()
 {
-    InsertMeter(METER_STEALTH, Meter());
+    AddMeter(METER_STEALTH);
 }
 
 int UniverseObject::ID() const
@@ -195,34 +180,44 @@ const Meter* UniverseObject::GetMeter(MeterType type) const
     return 0;
 }
 
-double UniverseObject::ProjectedCurrentMeter(MeterType type) const
+double UniverseObject::CurrentMeterValue(MeterType type) const
 {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::ProjectedCurrentMeter was passed a MeterType that this UniverseObject does not have");
+        throw std::invalid_argument("UniverseObject::CurrentMeterValue was passed a MeterType that this UniverseObject does not have");
 
-    if (type == METER_STEALTH)
-        return it->second.Max();
+    return it->second.Current();
+}
+
+double UniverseObject::InitialMeterValue(MeterType type) const
+{
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::InitialMeterValue was passed a MeterType that this UniverseObject does not have");
+
+    return it->second.Initial();
+}
+
+double UniverseObject::PreviousMeterValue(MeterType type) const
+{
+    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
+    if (it == m_meters.end())
+        throw std::invalid_argument("UniverseObject::PreviousMeterValue was passed a MeterType that this UniverseObject does not have");
+
+    return it->second.Previous();
+}
+
+double UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
+{
+    return UniverseObject::CurrentMeterValue(type);
+}
+
+void UniverseObject::AddMeter(MeterType meter_type)
+{
+    if (INVALID_METER_TYPE == meter_type)
+        Logger().errorStream() << "UniverseObject::AddMeter asked to add invalid meter type!";
     else
-        return it->second.Current();    // default to no growth
-}
-
-double UniverseObject::MeterPoints(MeterType type) const
-{
-    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::MeterPoints was passed a MeterType that this UniverseObject does not have");
-    return it->second.InitialCurrent();
-}
-
-double UniverseObject::ProjectedMeterPoints(MeterType type) const
-{
-    return ProjectedCurrentMeter(type);
-}
-
-void UniverseObject::InsertMeter(MeterType meter_type, const Meter& meter)
-{
-    m_meters[meter_type] = meter;
+        m_meters[meter_type];
 }
 
 bool UniverseObject::Unowned() const 
@@ -352,40 +347,6 @@ void UniverseObject::RemoveSpecial(const std::string& name)
     m_specials.erase(name);
 }
 
-void UniverseObject::ResetMaxMeters(MeterType meter_type)
-{
-    if (meter_type == INVALID_METER_TYPE) {
-        for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-            it->second.ResetMax();
-    } else {
-        if (Meter* meter = GetMeter(meter_type))
-            meter->ResetMax();
-        else
-            Logger().errorStream() << "UniverseObject::ResetMaxMeters called with MeterType this object does not have";
-    }
-    CustomResetMaxMeters(meter_type);
-}
-
-void UniverseObject::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
-{}
-
-void UniverseObject::ClampMeters()
-{
-    for (std::map<MeterType, Meter>::iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-        it->second.Clamp();
-    CustomClampMeters();
-}
-
-void UniverseObject::PopGrowthProductionResearchPhase()
-{
-    Meter* meter = GetMeter(METER_STEALTH);
-    assert(meter);
-    meter->SetCurrent(meter->Max());
-}
-
-void UniverseObject::MovementPhase()
-{}
-
 std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
 {
     std::map<MeterType, Meter> retval;
@@ -397,3 +358,14 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
     }
     return retval;
 }
+
+void UniverseObject::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+{
+    GetMeter(METER_STEALTH)->ResetCurrent();
+}
+
+void UniverseObject::ClampMeters()
+{
+    GetMeter(METER_STEALTH)->ClampCurrentToRange();
+}
+

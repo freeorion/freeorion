@@ -24,7 +24,7 @@ extern int g_indent;
 
 namespace {
     boost::tuple<bool, ValueRef::OpType, double>
-    SimpleMeterModification(MeterType meter, bool max, const ValueRef::ValueRefBase<double>* ref)
+    SimpleMeterModification(MeterType meter, const ValueRef::ValueRefBase<double>* ref)
     {
         boost::tuple<bool, ValueRef::OpType, double> retval(false, ValueRef::PLUS, 0.0);
         if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
@@ -36,7 +36,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ((max ? "Max" : "Current") + meter_str) == var->PropertyName()[0];
+                        ("Current" + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -47,7 +47,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ((max ? "Max" : "Current") + meter_str) == var->PropertyName()[0];
+                        ("Current" + meter_str) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -78,7 +78,7 @@ namespace {
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
         Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), owner_empire_id);
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         universe.InsertID(fleet, new_fleet_id);
         system->Insert(fleet);
@@ -109,7 +109,7 @@ namespace {
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
         Fleet* fleet = new Fleet(fleet_name, x, y, owner_empire_id);
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         universe.InsertID(fleet, new_fleet_id);
 
@@ -415,10 +415,9 @@ EffectBase::~EffectBase()
 ///////////////////////////////////////////////////////////
 // SetMeter                                              //
 ///////////////////////////////////////////////////////////
-SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value, bool max) :
+SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value) :
     m_meter(meter),
-    m_value(value),
-    m_max(max)
+    m_value(value)
 {}
 
 SetMeter::~SetMeter()
@@ -429,10 +428,8 @@ SetMeter::~SetMeter()
 void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) const
 {
     if (Meter* m = target->GetMeter(m_meter)) {
-        double val = m_value->Eval(source, target, m_max ? m->Max() : m->Current());
-        //Logger().debugStream() << "Setting " << (m_max ? "max " : "current ") << boost::lexical_cast<std::string>(m_meter) << " meter from "
-        //                       << (m_max ? m->Max() : m->Current()) << " to " << val;
-        m_max ? m->SetMax(val) : m->SetCurrent(val);
+        double val = m_value->Eval(source, target, m->Current());
+        m->SetCurrent(val);
     }
 }
 
@@ -441,7 +438,7 @@ std::string SetMeter::Description() const
     bool simple;
     ValueRef::OpType op;
     double const_operand;
-    boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_max, m_value);
+    boost::tie(simple, op, const_operand) = SimpleMeterModification(m_meter, m_value);
     if (simple) {
         char op_char = '+';
         switch (op) {
@@ -451,12 +448,12 @@ std::string SetMeter::Description() const
         case ValueRef::DIVIDES: op_char = '/'; break;
         default: op_char = '?';
         }
-        return str(FlexibleFormat(UserString(m_max ? "DESC_SIMPLE_SET_METER_MAX" : "DESC_SIMPLE_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER_CURRENT"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % op_char
                    % lexical_cast<std::string>(const_operand));
     } else {
-        return str(FlexibleFormat(UserString(m_max ? "DESC_COMPLEX_SET_METER_MAX" : "DESC_COMPLEX_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString("DESC_COMPLEX_SET_METER_CURRENT"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % m_value->Description());
     }
@@ -464,17 +461,42 @@ std::string SetMeter::Description() const
 
 std::string SetMeter::Dump() const
 {
-    std::string retval = DumpIndent() + (m_max ? "SetMax" : "SetCurrent");
+    std::string retval = DumpIndent() + "Set";
     switch (m_meter) {
-    case METER_POPULATION:   retval += "Population"; break;
-    case METER_FARMING:      retval += "Farming"; break;
-    case METER_INDUSTRY:     retval += "Industry"; break;
-    case METER_RESEARCH:     retval += "Research"; break;
-    case METER_TRADE:        retval += "Trade"; break;
-    case METER_MINING:       retval += "Mining"; break;
-    case METER_CONSTRUCTION: retval += "Construction"; break;
-    case METER_HEALTH:       retval += "Health"; break;
+    case METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
+    case METER_TARGET_HEALTH:       retval += "TargetHealth"; break;
+    case METER_TARGET_FARMING:      retval += "TargetFarming"; break;
+    case METER_TARGET_INDUSTRY:     retval += "TargetIndustry"; break;
+    case METER_TARGET_RESEARCH:     retval += "TargetResearch"; break;
+    case METER_TARGET_TRADE:        retval += "TargetTrade"; break;
+    case METER_TARGET_MINING:       retval += "TargetMining"; break;
+    case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
+
+    case METER_MAX_FUEL:            retval += "MaxFuel"; break;
+    case METER_MAX_SHIELD:          retval += "MaxShield"; break;
+    case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
+
+    case METER_POPULATION:          retval += "Population"; break;
+    case METER_HEALTH:              retval += "Health"; break;
+    case METER_FARMING:             retval += "Farming"; break;
+    case METER_INDUSTRY:            retval += "Industry"; break;
+    case METER_RESEARCH:            retval += "Research"; break;
+    case METER_TRADE:               retval += "Trade"; break;
+    case METER_MINING:              retval += "Mining"; break;
+    case METER_CONSTRUCTION:        retval += "Construction"; break;
+
+    case METER_FUEL:                retval += "Fuel"; break;
+    case METER_SHIELD:              retval += "Shield"; break;
+    case METER_DEFENSE:             retval += "Defense"; break;
+
+    case METER_SUPPLY:              retval += "Supply"; break;
+    case METER_STEALTH:             retval += "Stealth"; break;
+    case METER_DETECTION:           retval += "Detection"; break;
+    case METER_BATTLE_SPEED:        retval += "BattleSpeed"; break;
+    case METER_STARLANE_SPEED:      retval += "StarlaneSpeed"; break;
+
     default: retval += "?"; break;
+
     }
     retval += " value = " + m_value->Dump() + "\n";
     return retval;
@@ -530,8 +552,7 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
             if (Meter* meter = ship->GetMeter(m_meter, m_part_name)) {
                 const PartType* part = GetPartType(ship->Design()->Parts()[i]);
                 if (PartMatchesEffect(*part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
-                    double val = m_value->Eval(source, target, meter->Max());
-                    meter->SetMax(val);
+                    double val = m_value->Eval(source, target, meter->Current());
                     meter->SetCurrent(val);
                 }
             }
@@ -932,11 +953,11 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
     ship->Rename(empire->NewShipName());
-    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
-    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
-    ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
-    ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
-    ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
+    ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+    ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);

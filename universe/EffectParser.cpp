@@ -20,12 +20,11 @@ namespace {
         EffectParserDefinition();
 
     private:
-        struct SetMeterClosure : boost::spirit::classic::closure<SetMeterClosure, Effect::EffectBase*, MeterType, ValueRef::ValueRefBase<double>*, bool>
+        struct SetMeterClosure : boost::spirit::classic::closure<SetMeterClosure, Effect::EffectBase*, MeterType, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 meter;
             member3 value;
-            member4 max_meter;
         };
 
         struct SetShipPartMeterClosure : boost::spirit::classic::closure<SetShipPartMeterClosure, Effect::EffectBase*, MeterType, ShipPartClass, CombatFighterType, std::string, ValueRef::ValueRefBase<double>*, ShipSlotType>
@@ -173,39 +172,56 @@ namespace {
         part_class_label("partclass")
     {
         set_meter =
-            ((str_p("setmax")[set_meter.max_meter = val(true)]
-              | str_p("setcurrent")[set_meter.max_meter = val(false)])
-             >> (str_p("population")[set_meter.meter = val(METER_POPULATION)]
-                 | str_p("farming")[set_meter.meter = val(METER_FARMING)]
-                 | str_p("industry")[set_meter.meter = val(METER_INDUSTRY)]
-                 | str_p("research")[set_meter.meter = val(METER_RESEARCH)]
-                 | str_p("trade")[set_meter.meter = val(METER_TRADE)]
-                 | str_p("mining")[set_meter.meter = val(METER_MINING)]
-                 | str_p("construction")[set_meter.meter = val(METER_CONSTRUCTION)]
-                 | str_p("health")[set_meter.meter = val(METER_HEALTH)]
-                 | str_p("fuel")[set_meter.meter = val(METER_FUEL)]
-                 | str_p("supply")[set_meter.meter = val(METER_SUPPLY)]
-                 | str_p("stealth")[set_meter.meter = val(METER_STEALTH)]
-                 | str_p("detection")[set_meter.meter = val(METER_DETECTION)]
-                 | str_p("shield")[set_meter.meter = val(METER_SHIELD)]
-                 | str_p("defense")[set_meter.meter = val(METER_DEFENSE)])
+            (str_p("setcurrent")
+             >> (str_p("targetpopulation")[set_meter.meter =    val(METER_TARGET_POPULATION)]
+                 | str_p("targethealth")[set_meter.meter =      val(METER_TARGET_HEALTH)]
+                 | str_p("targetfarming")[set_meter.meter =     val(METER_TARGET_FARMING)]
+                 | str_p("targethealth")[set_meter.meter =      val(METER_TARGET_FARMING)]
+                 | str_p("targetindustry")[set_meter.meter =    val(METER_TARGET_INDUSTRY)]
+                 | str_p("targetresearch")[set_meter.meter =    val(METER_TARGET_RESEARCH)]
+                 | str_p("targettrade")[set_meter.meter =       val(METER_TARGET_TRADE)]
+                 | str_p("targetmining")[set_meter.meter =      val(METER_TARGET_MINING)]
+                 | str_p("targetconstruction")[set_meter.meter =val(METER_TARGET_CONSTRUCTION)]
+
+                 | str_p("maxfuel")[set_meter.meter =           val(METER_MAX_FUEL)]
+                 | str_p("maxshield")[set_meter.meter =         val(METER_MAX_SHIELD)]
+                 | str_p("maxdefense")[set_meter.meter =        val(METER_MAX_DEFENSE)]
+
+                 | str_p("population")[set_meter.meter =        val(METER_POPULATION)]
+                 | str_p("health")[set_meter.meter =            val(METER_HEALTH)]
+                 | str_p("farming")[set_meter.meter =           val(METER_FARMING)]
+                 | str_p("industry")[set_meter.meter =          val(METER_INDUSTRY)]
+                 | str_p("research")[set_meter.meter =          val(METER_RESEARCH)]
+                 | str_p("trade")[set_meter.meter =             val(METER_TRADE)]
+                 | str_p("mining")[set_meter.meter =            val(METER_MINING)]
+                 | str_p("construction")[set_meter.meter =      val(METER_CONSTRUCTION)]
+
+                 | str_p("fuel")[set_meter.meter =              val(METER_FUEL)]
+                 | str_p("shield")[set_meter.meter =            val(METER_SHIELD)]
+                 | str_p("defense")[set_meter.meter =           val(METER_DEFENSE)]
+
+                 | str_p("supply")[set_meter.meter =            val(METER_SUPPLY)]
+                 | str_p("stealth")[set_meter.meter =           val(METER_STEALTH)]
+                 | str_p("detection")[set_meter.meter =         val(METER_DETECTION)]
+                 | str_p("battlespeed")[set_meter.meter =       val(METER_BATTLE_SPEED)]
+                 | str_p("starlanespeed")[set_meter.meter =     val(METER_STARLANE_SPEED)])
              >> value_label >> double_expr_p[set_meter.value = arg1])
-            [set_meter.this_ = new_<Effect::SetMeter>(set_meter.meter, set_meter.value, set_meter.max_meter)];
+            [set_meter.this_ = new_<Effect::SetMeter>(set_meter.meter, set_meter.value)];
 
         set_ship_part_meter =
-            str_p("set")[set_ship_part_meter.slot_type = val(INVALID_SHIP_SLOT_TYPE)]
-            >> (str_p("damage")[set_ship_part_meter.meter = val(METER_DAMAGE)]
-                | str_p("rof")[set_ship_part_meter.meter = val(METER_ROF)]
-                | str_p("range")[set_ship_part_meter.meter = val(METER_RANGE)]
-                | str_p("speed")[set_ship_part_meter.meter = val(METER_SPEED)]
-                | str_p("capacity")[set_ship_part_meter.meter = val(METER_CAPACITY)]
-                | str_p("antishipdamage")[set_ship_part_meter.meter = val(METER_ANTI_SHIP_DAMAGE)]
-                | str_p("antifighterdamage")[set_ship_part_meter.meter = val(METER_ANTI_FIGHTER_DAMAGE)]
-                | str_p("launchrate")[set_ship_part_meter.meter = val(METER_LAUNCH_RATE)]
-                | str_p("fighterweaponrange")[set_ship_part_meter.meter = val(METER_FIGHTER_WEAPON_RANGE)]
-                | str_p("stealth")[set_ship_part_meter.meter = val(METER_STEALTH)]
-                | str_p("health")[set_ship_part_meter.meter = val(METER_HEALTH)]
-                | str_p("detection")[set_ship_part_meter.meter = val(METER_DETECTION)])
+            str_p("set")[set_ship_part_meter.slot_type =                    val(INVALID_SHIP_SLOT_TYPE)]
+            >> (str_p("damage")[set_ship_part_meter.meter =                 val(METER_DAMAGE)]
+                | str_p("rof")[set_ship_part_meter.meter =                  val(METER_ROF)]
+                | str_p("range")[set_ship_part_meter.meter =                val(METER_RANGE)]
+                | str_p("speed")[set_ship_part_meter.meter =                val(METER_SPEED)]
+                | str_p("capacity")[set_ship_part_meter.meter =             val(METER_CAPACITY)]
+                | str_p("antishipdamage")[set_ship_part_meter.meter =       val(METER_ANTI_SHIP_DAMAGE)]
+                | str_p("antifighterdamage")[set_ship_part_meter.meter =    val(METER_ANTI_FIGHTER_DAMAGE)]
+                | str_p("launchrate")[set_ship_part_meter.meter =           val(METER_LAUNCH_RATE)]
+                | str_p("fighterweaponrange")[set_ship_part_meter.meter =   val(METER_FIGHTER_WEAPON_RANGE)]
+                | str_p("stealth")[set_ship_part_meter.meter =              val(METER_STEALTH)]
+                | str_p("health")[set_ship_part_meter.meter =               val(METER_HEALTH)]
+                | str_p("detection")[set_ship_part_meter.meter =            val(METER_DETECTION)])
             >> (((part_class_label >> part_class_p[set_ship_part_meter.part_class = arg1]
                   >> value_label >> double_expr_p[set_ship_part_meter.value = arg1]
                   >> slot_type_label >> slot_type_p[set_ship_part_meter.slot_type = arg1])

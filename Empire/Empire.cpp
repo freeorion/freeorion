@@ -1320,7 +1320,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects)
         // check if object has a construction meter
         if (obj->GetMeter(METER_CONSTRUCTION)) {
             // get resource supply range for next turn for this object
-            int resource_supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_CONSTRUCTION) / 20.0));
+            int resource_supply_range = static_cast<int>(floor(obj->NextTurnCurrentMeterValue(METER_CONSTRUCTION) / 20.0));
 
             // if this object can provide more resource supply range than the best previously checked object in this system, record its range as the new best for the system
             std::map<int, int>::iterator system_it = m_resource_supply_system_ranges.find(system_id);               // try to find a previous entry for this system's supply range
@@ -1333,7 +1333,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects)
         // check if object has a supply meter
         if (obj->GetMeter(METER_SUPPLY)) {
             // get fleet supply range for next turn for this object
-            int fleet_supply_range = static_cast<int>(floor(obj->ProjectedCurrentMeter(METER_SUPPLY)));
+            int fleet_supply_range = static_cast<int>(floor(obj->NextTurnCurrentMeterValue(METER_SUPPLY)));
 
             // if this object can provide more supply than the best previously checked object in this system, record its range as the new best for the system
             std::map<int, int>::iterator system_it = m_fleet_supply_system_ranges.find(system_id);          // try to find a previous entry for this system's supply range
@@ -2407,7 +2407,7 @@ void Empire::CheckProductionProgress()
                 // visisble to other empires on first turn if it shouldn't be.
                 // current value will be clamped to max meter value after
                 // effects are applied
-                building->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+                building->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int building_id = universe.Insert(building);
 
@@ -2433,7 +2433,7 @@ void Empire::CheckProductionProgress()
                 // to other empires on first turn if it shouldn't be.  current
                 // value will be clamped to max meter value after effects are
                 // applied
-                fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+                fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int fleet_id = universe.Insert(fleet);
 
@@ -2445,11 +2445,11 @@ void Empire::CheckProductionProgress()
                 // start with with maxed meters.  current values will be
                 // clamped to max value after effects are applied to set that
                 // max value appropriately
-                ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
-                ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
-                ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
-                ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
-                ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+                ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+                ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+                ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
+                ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+                ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int ship_id = universe.Insert(ship);
 
@@ -2815,7 +2815,7 @@ void Empire::UpdateFoodDistribution()
             const UniverseObject* obj = pop_center_objects[*pop_it];
             std::map<const UniverseObject*, const ResourceCenter*>::const_iterator res_it = object_resource_centers.find(obj);
             if (res_it != object_resource_centers.end())
-                food_production[*pop_it] = res_it->second->ProjectedMeterPoints(METER_FARMING);
+                food_production[*pop_it] = res_it->second->NextTurnCurrentMeterValue(METER_FARMING);
             else    // if not a ResourceCenter, produces no food
                 food_production[*pop_it] = 0.0;
 
@@ -2842,8 +2842,8 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
-            double need = pc->MeterPoints(METER_POPULATION);    // basic need is current population - prevents starvation
-            double prod = food_production[pc];                  // preferential allocation for food producers
+            double need = pc->CurrentMeterValue(METER_POPULATION);  // basic need is current population - prevents starvation
+            double prod = food_production[pc];                      // preferential allocation for food producers
 
             // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
             double allocation = std::min(std::min(need, prod), food_available);
@@ -2860,7 +2860,7 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
-            double need = pc->MeterPoints(METER_POPULATION);    // basic need is current population - prevents starvation
+            double need = pc->CurrentMeterValue(METER_POPULATION);    // basic need is current population - prevents starvation
             double has = pc->AllocatedFood();
             double addition = std::min(std::max(need - has, 0.0), food_available);
             double new_allocation = has + addition;
@@ -2878,7 +2878,7 @@ void Empire::UpdateFoodDistribution()
             PopCenter* pc = *pop_it;
 
             double has = pc->AllocatedFood();
-            double addition = std::min(std::max(pc->FuturePopGrowthMax(), 0.0), food_available);
+            double addition = std::min(std::max(pc->NextTurnPopGrowthMax(), 0.0), food_available);
             double new_allocation = has + addition;
 
             //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " to allow max possible growth";

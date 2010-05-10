@@ -81,14 +81,14 @@ namespace ValueRef {
     std::string Constant<PlanetSize>::Dump() const
     {
         switch (m_value) {
-        case SZ_TINY: return "Tiny";
-        case SZ_SMALL: return "Small";
-        case SZ_MEDIUM: return "Medium";
-        case SZ_LARGE: return "Large";
-        case SZ_HUGE: return "Huge";
-        case SZ_ASTEROIDS: return "Asteroids";
-        case SZ_GASGIANT: return "GasGiant";
-        default: return "?";
+        case SZ_TINY:       return "Tiny";
+        case SZ_SMALL:      return "Small";
+        case SZ_MEDIUM:     return "Medium";
+        case SZ_LARGE:      return "Large";
+        case SZ_HUGE:       return "Huge";
+        case SZ_ASTEROIDS:  return "Asteroids";
+        case SZ_GASGIANT:   return "GasGiant";
+        default:            return "?";
         }
     }
 
@@ -96,18 +96,18 @@ namespace ValueRef {
     std::string Constant<PlanetType>::Dump() const
     {
         switch (m_value) {
-        case PT_SWAMP: return "Swamp";
-        case PT_TOXIC: return "Toxic";
-        case PT_INFERNO: return "Inferno";
-        case PT_RADIATED: return "Radiated";
-        case PT_BARREN: return "Barren";
-        case PT_TUNDRA: return "Tundra";
-        case PT_DESERT: return "Desert";
-        case PT_TERRAN: return "Terran";
-        case PT_OCEAN: return "Ocean";
-        case PT_ASTEROIDS: return "Asteroids";
-        case PT_GASGIANT: return "GasGiant";
-        default: return "?";
+        case PT_SWAMP:      return "Swamp";
+        case PT_TOXIC:      return "Toxic";
+        case PT_INFERNO:    return "Inferno";
+        case PT_RADIATED:   return "Radiated";
+        case PT_BARREN:     return "Barren";
+        case PT_TUNDRA:     return "Tundra";
+        case PT_DESERT:     return "Desert";
+        case PT_TERRAN:     return "Terran";
+        case PT_OCEAN:      return "Ocean";
+        case PT_ASTEROIDS:  return "Asteroids";
+        case PT_GASGIANT:   return "GasGiant";
+        default:            return "?";
         }
     }
 
@@ -115,12 +115,12 @@ namespace ValueRef {
     std::string Constant<PlanetEnvironment>::Dump() const
     {
         switch (m_value) {
-        case PE_UNINHABITABLE: return "Uninhabitable";
-        case PE_HOSTILE: return "Hostile";
-        case PE_POOR: return "Poor";
-        case PE_ADEQUATE: return "Adequate";
-        case PE_GOOD: return "Good";
-        default: return "?";
+        case PE_UNINHABITABLE:  return "Uninhabitable";
+        case PE_HOSTILE:        return "Hostile";
+        case PE_POOR:           return "Poor";
+        case PE_ADEQUATE:       return "Adequate";
+        case PE_GOOD:           return "Good";
+        default:                return "?";
         }
     }
 
@@ -128,14 +128,14 @@ namespace ValueRef {
     std::string Constant<UniverseObjectType>::Dump() const
     {
         switch (m_value) {
-        case OBJ_BUILDING: return "Building";
-        case OBJ_SHIP: return "Ship";
-        case OBJ_FLEET: return "Fleet"; 
-        case OBJ_PLANET: return "Planet";
-        case OBJ_POP_CENTER: return "PopulationCenter";
-        case OBJ_PROD_CENTER: return "ProductionCenter";
-        case OBJ_SYSTEM: return "System";
-        default: return "?";
+        case OBJ_BUILDING:      return "Building";
+        case OBJ_SHIP:          return "Ship";
+        case OBJ_FLEET:         return "Fleet"; 
+        case OBJ_PLANET:        return "Planet";
+        case OBJ_POP_CENTER:    return "PopulationCenter";
+        case OBJ_PROD_CENTER:   return "ProductionCenter";
+        case OBJ_SYSTEM:        return "System";
+        default:                return "?";
         }
     }
 
@@ -143,14 +143,14 @@ namespace ValueRef {
     std::string Constant<StarType>::Dump() const
     {
         switch (m_value) {
-        case STAR_BLUE: return "Blue";
-        case STAR_WHITE: return "White";
-        case STAR_YELLOW: return "Yellow";
-        case STAR_ORANGE: return "Orange";
-        case STAR_RED: return "Red";
-        case STAR_NEUTRON: return "Neutron";
-        case STAR_BLACK: return "BlackHole";
-        default: return "?";
+        case STAR_BLUE:     return "Blue";
+        case STAR_WHITE:    return "White";
+        case STAR_YELLOW:   return "Yellow";
+        case STAR_ORANGE:   return "Orange";
+        case STAR_RED:      return "Red";
+        case STAR_NEUTRON:  return "Neutron";
+        case STAR_BLACK:    return "BlackHole";
+        default:            return "?";
         }
     }
 
@@ -158,14 +158,14 @@ namespace ValueRef {
     std::string Constant<FocusType>::Dump() const
     {
         switch (m_value) {
-        case FOCUS_UNKNOWN: return "Unknown";
-        case FOCUS_BALANCED: return "Balanced";
-        case FOCUS_FARMING: return "Farming";
-        case FOCUS_INDUSTRY: return "Industry";
-        case FOCUS_MINING: return "Mining";
-        case FOCUS_RESEARCH: return "Research";
-        case FOCUS_TRADE: return "Trade";
-        default: return "?";
+        case INVALID_FOCUS_TYPE:    return "Unknown";
+        case FOCUS_BALANCED:        return "Balanced";
+        case FOCUS_FARMING:         return "Farming";
+        case FOCUS_INDUSTRY:        return "Industry";
+        case FOCUS_MINING:          return "Mining";
+        case FOCUS_RESEARCH:        return "Research";
+        case FOCUS_TRADE:           return "Trade";
+        default:                    return "?";
         }
     }
 
@@ -330,88 +330,85 @@ namespace ValueRef {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         std::string property_name = m_property_name.back();
         IF_CURRENT_VALUE_ELSE(double)
-        if (boost::iequals(property_name, "CurrentFarming")) {
+        if (boost::iequals(property_name, "Farming")) {
             const Meter* m = object->GetMeter(METER_FARMING);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxFarming")) {
-            const Meter* m = object->GetMeter(METER_FARMING);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentIndustry")) {
+        } else if (boost::iequals(property_name, "TargetFarming")) {
+            const Meter* m = object->GetMeter(METER_TARGET_FARMING);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Industry")) {
             const Meter* m = object->GetMeter(METER_INDUSTRY);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxIndustry")) {
-            const Meter* m = object->GetMeter(METER_INDUSTRY);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentResearch")) {
+        } else if (boost::iequals(property_name, "TargetIndustry")) {
+            const Meter* m = object->GetMeter(METER_TARGET_INDUSTRY);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Research")) {
             const Meter* m = object->GetMeter(METER_RESEARCH);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxResearch")) {
-            const Meter* m = object->GetMeter(METER_RESEARCH);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentTrade")) {
+        } else if (boost::iequals(property_name, "TargetResearch")) {
+            const Meter* m = object->GetMeter(METER_TARGET_RESEARCH);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Trade")) {
             const Meter* m = object->GetMeter(METER_TRADE);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxTrade")) {
-            const Meter* m = object->GetMeter(METER_TRADE);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentMining")) {
+        } else if (boost::iequals(property_name, "TargetTrade")) {
+            const Meter* m = object->GetMeter(METER_TARGET_TRADE);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Mining")) {
             const Meter* m = object->GetMeter(METER_MINING);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxMining")) {
-            const Meter* m = object->GetMeter(METER_MINING);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentConstruction")) {
+        } else if (boost::iequals(property_name, "TargetMining")) {
+            const Meter* m = object->GetMeter(METER_TARGET_MINING);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Construction")) {
             const Meter* m = object->GetMeter(METER_CONSTRUCTION);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxConstruction")) {
-            const Meter* m = object->GetMeter(METER_CONSTRUCTION);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentHealth")) {
+        } else if (boost::iequals(property_name, "TargetConstruction")) {
+            const Meter* m = object->GetMeter(METER_TARGET_CONSTRUCTION);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Health")) {
             const Meter* m = object->GetMeter(METER_HEALTH);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxHealth")) {
-            const Meter* m = object->GetMeter(METER_HEALTH);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentPopulation")) {
+        } else if (boost::iequals(property_name, "TargetHealth")) {
+            const Meter* m = object->GetMeter(METER_TARGET_HEALTH);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Population")) {
             const Meter* m = object->GetMeter(METER_POPULATION);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxPopulation")) {
-            const Meter* m = object->GetMeter(METER_POPULATION);
-            retval = m ? m->Max() : 0;
+        } else if (boost::iequals(property_name, "TargetPopulation")) {
+            const Meter* m = object->GetMeter(METER_TARGET_POPULATION);
+            retval = m ? m->Current() : 0;
         } else if (boost::iequals(property_name, "MaxFuel")) {
-            const Meter* m = object->GetMeter(METER_FUEL);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentFuel")) {
+            const Meter* m = object->GetMeter(METER_MAX_FUEL);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Fuel")) {
             const Meter* m = object->GetMeter(METER_FUEL);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxSupply")) {
-            const Meter* m = object->GetMeter(METER_SUPPLY);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentSupply")) {
+        } else if (boost::iequals(property_name, "Supply")) {
             const Meter* m = object->GetMeter(METER_SUPPLY);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxStealth")) {
-            const Meter* m = object->GetMeter(METER_STEALTH);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentStealth")) {
+        } else if (boost::iequals(property_name, "Stealth")) {
             const Meter* m = object->GetMeter(METER_STEALTH);
             retval = m ? m->Current() : 0;
-        } else if (boost::iequals(property_name, "MaxDetection")) {
+        } else if (boost::iequals(property_name, "Detection")) {
             const Meter* m = object->GetMeter(METER_DETECTION);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentDetection")) {
-            const Meter* m = object->GetMeter(METER_DETECTION);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "BattleSpeed")) {
+            const Meter* m = object->GetMeter(METER_BATTLE_SPEED);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "StarlaneSpeed")) {
+            const Meter* m = object->GetMeter(METER_STARLANE_SPEED);
             retval = m ? m->Current() : 0;
         } else if (boost::iequals(property_name, "MaxShield")) {
-            const Meter* m = object->GetMeter(METER_SHIELD);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentShield")) {
+            const Meter* m = object->GetMeter(METER_MAX_SHIELD);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Shield")) {
             const Meter* m = object->GetMeter(METER_SHIELD);
             retval = m ? m->Current() : 0;
         } else if (boost::iequals(property_name, "MaxDefense")) {
-            const Meter* m = object->GetMeter(METER_DEFENSE);
-            retval = m ? m->Max() : 0;
-        } else if (boost::iequals(property_name, "CurrentDefense")) {
+            const Meter* m = object->GetMeter(METER_MAX_DEFENSE);
+            retval = m ? m->Current() : 0;
+        } else if (boost::iequals(property_name, "Defense")) {
             const Meter* m = object->GetMeter(METER_DEFENSE);
             retval = m ? m->Current() : 0;
         } else if (boost::iequals(property_name, "TradeStockpile")) {
@@ -431,23 +428,23 @@ namespace ValueRef {
             }
         } else if (boost::iequals(property_name, "TradeProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MeterPoints(METER_TRADE);
+                retval = prod_center->CurrentMeterValue(METER_TRADE);
             }
         } else if (boost::iequals(property_name, "FoodProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MeterPoints(METER_FARMING);
+                retval = prod_center->CurrentMeterValue(METER_FARMING);
             }
         } else if (boost::iequals(property_name, "MineralProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MeterPoints(METER_MINING);
+                retval = prod_center->CurrentMeterValue(METER_MINING);
             }
         } else if (boost::iequals(property_name, "IndustryProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MeterPoints(METER_INDUSTRY);
+                retval = prod_center->CurrentMeterValue(METER_INDUSTRY);
             }
         } else if (boost::iequals(property_name, "ResearchProduction")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
-                retval = prod_center->MeterPoints(METER_RESEARCH);
+                retval = prod_center->CurrentMeterValue(METER_RESEARCH);
             }
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");

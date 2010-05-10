@@ -80,21 +80,21 @@ public:
 
     virtual std::vector<int>FindObjectIDs() const;              ///< returns ids of objects contained within this object
 
-    virtual bool            Contains(int object_id) const;                  ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
-    virtual bool            ContainedBy(int object_id) const;               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
+    virtual bool            Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
+    virtual bool            ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     const Meter*            GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual double          ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
-    virtual double          MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value)
-    virtual double          ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
+    double                  CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
+    double                  InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
+    double                  PreviousMeterValue(MeterType type) const;       ///< returns the previous turn's initial value for the specified meter \a type
+    virtual double          NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
     bool                    Unowned() const;                    ///< returns true iff there are no owners of this object
     bool                    OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire is an owner of this object
     bool                    WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
 
-    Visibility              GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual const std::string&
-                            PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
+    Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
+    virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
     /** accepts a visitor object \see UniverseObjectVisitor */
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
@@ -140,27 +140,25 @@ public:
     virtual void            AddSpecial(const std::string& name);    ///< adds the Special \a name to this object, if it is not already present
     virtual void            RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
 
-    /** performs the movement that this object is responsible for this object's actions during the movement phase of 
-        a turn. */
-    virtual void            MovementPhase();
+    /** Performs the movement that this object is responsible for this object's
+      * actions during the movement phase of a turn. */
+    virtual void            MovementPhase() {};
 
-    /** sets max meter value(s) for meter(s) in this UniverseObject to Meter::METER_MIN.  This should be done before any
-      * Effects that alter meter(s) act on the object.  if \a meter_type is INVALID_METER_TYPE, all meters are reset.  if
-      * \a meter_type is a valid meter type, just that meter is reset. */
-    void                    ResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE);
+    /** Sets current value of max, target and unpaired meters in in this
+      * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
+      * Effects that alter these meter(s) act on the object.  if \a meter_type
+      * is INVALID_METER_TYPE, all meters are reset.  if \a meter_type is a
+      * valid meter type, just that meter is reset. */
+    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
 
-    /** adjusts max meter value(s) for meter(s) in this UniverseObject, based on its own properties (ie. not due to effects).
-      * if \a meter_type is INVALID_METER_TYPE, all meter(s) are adjusted.  If \a meter_type is a valid meter type, just that 
-      * meter is adjusted. */
-    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-
-    /** calls Clamp() on each meter in this UniverseObject, to ensure that no Meter's Max() falls outside the range
-      * [Meter::METER_MIN, METER::METER_MAX]and that no Meter's Current() value exceed its Max() value. */
-    void                    ClampMeters();
+    /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
+      * ensure that meter current values aren't outside the valid range for
+      * each meter. */
+    virtual void            ClampMeters();
 
     /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
         phase of a turn. */
-    virtual void            PopGrowthProductionResearchPhase();
+    virtual void            PopGrowthProductionResearchPhase() {};
     //@}
 
     static const double         INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed
@@ -170,19 +168,13 @@ public:
     static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
-    void                    InsertMeter(MeterType meter_type, const Meter& meter);      ///< inserts \a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
-    void                    Init();                     ///< adds stealth meter
+    void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
+    void                    Init();                         ///< adds stealth meter
 
     void                    Copy(const UniverseObject* copied_object, Visibility vis);  ///< used by public UniverseObject::Copy and derived classes' ::Copy methods
 
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
-
-    /** any actions that should be performed at the end of ResetMaxMeters() goes here */
-    virtual void CustomResetMaxMeters(MeterType meter_type = INVALID_METER_TYPE) {}
-
-    /** any actions that should be performed at the end of ClampMeters() goes here */
-    virtual void CustomClampMeters() {}
 
     int                         m_id;
     std::string                 m_name;

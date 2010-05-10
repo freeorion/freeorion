@@ -281,14 +281,14 @@ protected:
     GG::TextControl*        m_name;
 };
 
-/** Display icon and number for various meter-related quantities associated with objects.  Typical use
-    would be to display the resource production values for a planet (not the meter values) and the
-    construction (a meter value), or the population (not a meter value) and health (a meter value).
-    Given a set of MeterType, the indicator will present the appropriate values for each. */
+/** Display icon and number for various meter-related quantities associated
+  * with objects.  Typical use would be to display the resource production
+  * values or population for a planet.  Given a set of MeterType, the indicator
+  * will present the appropriate values for each. */
 class MultiIconValueIndicator : public GG::Wnd {
 public:
-    MultiIconValueIndicator(GG::X w, int object_id, const std::vector<MeterType>& meter_types);
-    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<MeterType>& meter_types);
+    MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
+    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
     MultiIconValueIndicator(GG::X w); ///< initializes with no icons shown
 
     bool            Empty();
@@ -302,17 +302,16 @@ public:
     void            ClearToolTip(MeterType meter_type);
 
 private:
-    std::vector<StatisticIcon*> m_icons;
-
-    std::vector<MeterType>      m_meter_types;
-    std::vector<int>            m_object_ids;
+    std::vector<StatisticIcon*>                         m_icons;
+    const std::vector<std::pair<MeterType, MeterType> > m_meter_types;
+    std::vector<int>                                    m_object_ids;
 };
 
-/** Graphically represets the current max and projected changes to values of multiple Meters, using a
-    horizontal indicator for each meter. */
+/** Graphically represets current value and projected changes to single meters
+  * or pairs of meters, using horizontal indicators. */
 class MultiMeterStatusBar : public GG::Wnd {
 public:
-    MultiMeterStatusBar(GG::X w, int object_id, const std::vector<MeterType>& meter_types);
+    MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
 
     virtual void    Render();
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
@@ -320,17 +319,16 @@ public:
     void            Update();
 
 private:
-    boost::shared_ptr<GG::Texture>  m_bar_shading_texture;
+    boost::shared_ptr<GG::Texture>                  m_bar_shading_texture;
 
-    std::vector<MeterType>  m_meter_types;
-    std::vector<double>     m_initial_maxes;
-    std::vector<double>     m_initial_currents;
-    std::vector<double>     m_projected_maxes;
-    std::vector<double>     m_projected_currents;
+    std::vector<std::pair<MeterType, MeterType> >   m_meter_types;      // list of <MeterType, MeterType> pairs, where .first is the "actual" meter value, and .second is the the "target" or "max" meter value.  Either may be INVALID_METER_TYPE, in which case nothing will be shown for that MeterType
+    std::vector<double>                             m_initial_values;   // initial value of .first MeterTypes at the start of this turn
+    std::vector<double>                             m_projected_values; // projected current value of .first MeterTypes for the start of next turn
+    std::vector<double>                             m_target_max_values;// current values of the .second MeterTypes in m_meter_types
 
-    int                     m_object_id;
+    int                                             m_object_id;
 
-    std::vector<GG::Clr>    m_bar_colours;
+    std::vector<GG::Clr>                            m_bar_colours;
 };
 
 /** A popup tooltop for display when mousing over in-game icons.  Has an icon and title and some detail text.*/
@@ -392,7 +390,7 @@ private:
   * shows the current turn's current meter value and the predicted current meter value for next turn. */
 class MeterBrowseWnd : public GG::BrowseInfoWnd {
 public:
-    MeterBrowseWnd(MeterType meter_type, int object_id);
+    MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type = INVALID_METER_TYPE);
 
     virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
     virtual void    Render();
@@ -404,7 +402,8 @@ private:
     void            UpdateSummary();
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 
-    MeterType               m_meter_type;
+    MeterType               m_primary_meter_type;
+    MeterType               m_secondary_meter_type;
     int                     m_object_id;
 
     GG::TextControl*        m_summary_title;

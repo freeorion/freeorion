@@ -257,7 +257,7 @@ Tech
                 PrimaryFocus Research
             ]
             activation = Source
-            effects = SetMaxResearch Target.MaxResearch + 4
+            effects = SetTargetResearch Target.TargetResearch + 4
 
         EffectsGroup
             scope = And [
@@ -267,7 +267,7 @@ Tech
                 PrimaryFocus Research
             ]
             activation = Source
-            effects = SetMaxResearch Target.MaxResearch + 3
+            effects = SetTargetResearch Target.TargetResearch + 3
 
         EffectsGroup
             scope = And [
@@ -277,7 +277,7 @@ Tech
                 PrimaryFocus Research
             ]
             activation = Source
-            effects = SetMaxResearch Target.MaxResearch + 2
+            effects = SetTargetResearch Target.TargetResearch + 2
 
         EffectsGroup
             scope = And [
@@ -287,7 +287,7 @@ Tech
                 PrimaryFocus Research
             ]
             activation = Source
-            effects = SetMaxResearch Target.MaxResearch + 1
+            effects = SetTargetResearch Target.TargetResearch + 1
     ]
     graphic = "icons/tech/stellar_tomography.png"
         
@@ -351,7 +351,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxResearch value = Target.MaxResearch + 5
+                SetTargetResearch value = Target.TargetResearch + 5
     graphic = ""
 
 Tech
@@ -598,7 +598,7 @@ Tech
                     PrimaryFocus Farming
             ]
             activation = Source
-            effects = SetMaxFarming Target.MaxFarming + 5
+            effects = SetTargetFarming Target.TargetFarming + 5
     graphic = "icons/tech/self-rotating_crops.png"
 
 Tech
@@ -619,7 +619,7 @@ Tech
                     Planet environment = [Poor Adequate]
             ]
             activation = Source
-            effects = SetMaxPopulation Target.MaxPopulation + 2
+            effects = SetTargetPopulation Target.TargetPopulation + 2
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -707,7 +707,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxFarming value = Target.MaxFarming + 2
+                SetTargetFarming value = Target.TargetFarming + 2
     graphic = "icons/tech/urban_farming.png"
 
 Tech
@@ -942,7 +942,7 @@ Tech
                     Planet environment = Good
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 2
+            effects = SetTargetMining value = Target.TargetMining + 2
 
         EffectsGroup
             scope = And [
@@ -952,7 +952,7 @@ Tech
                     Planet environment = Good
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 1
+            effects = SetTargetMining value = Target.TargetMining + 1
 
         EffectsGroup
             scope = And [
@@ -962,7 +962,7 @@ Tech
                     Planet environment = Good
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 1
+            effects = SetTargetMining value = Target.TargetMining + 1
     ]
     graphic = "icons/tech/environmentally_conscious_mining.png"
 
@@ -1109,7 +1109,7 @@ Tech
                     Planet type = [Barren Inferno]
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 4
+            effects = SetTargetMining value = Target.TargetMining + 4
 
         EffectsGroup
             scope = And [
@@ -1119,7 +1119,7 @@ Tech
                     Planet type = [Desert Radiated Toxic]
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 2
+            effects = SetTargetMining value = Target.TargetMining + 2
 
         EffectsGroup
             scope = And [
@@ -1129,7 +1129,7 @@ Tech
                     Planet type = [Tundra Terran]
                 ]
             activation = Source
-            effects = SetMaxMining value = Target.MaxMining + 1
+            effects = SetTargetMining value = Target.TargetMining + 1
     ]
     graphic = ""
 
@@ -1153,7 +1153,7 @@ Tech
                     Planet size = [Small Tiny]
                 ]
             activation = Source
-            effects = SetMaxIndustry value = Target.MaxIndustry + 4
+            effects = SetTargetIndustry value = Target.TargetIndustry + 4
 
         EffectsGroup
             scope =
@@ -1164,7 +1164,7 @@ Tech
                     Planet size = Medium
                 ]
             activation = Source
-            effects = SetMaxIndustry value = Target.MaxIndustry + 2
+            effects = SetTargetIndustry value = Target.TargetIndustry + 2
 
         EffectsGroup
             scope =
@@ -1175,7 +1175,7 @@ Tech
                     Planet size = Large
                 ]
             activation = Source
-            effects = SetMaxIndustry value = Target.MaxIndustry + 1
+            effects = SetTargetIndustry value = Target.TargetIndustry + 1
     ]
     graphic = "icons/tech/exobots.png"
 
@@ -1199,7 +1199,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxIndustry value = Target.MaxIndustry + 3
+                SetTargetIndustry value = Target.TargetIndustry + 3
     graphic = "icons/tech/fusion_plants.png"
 
 Tech
@@ -1569,7 +1569,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxConstruction value = Target.MaxConstruction + 5
+                SetTargetConstruction value = Target.TargetConstruction + 5
     graphic = ""
 
 Tech
@@ -1619,7 +1619,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxConstruction value = Target.MaxConstruction + 5
+                SetTargetConstruction value = Target.TargetConstruction + 5
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
@@ -1819,7 +1819,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxTrade value = Target.MaxTrade + 3
+                SetTargetTrade value = Target.TargetTrade + 3
     graphic = ""
 
 Tech
@@ -1867,8 +1867,8 @@ Tech
             activation =
                 Source
             effects = [
-                SetMaxTrade value = Target.MaxTrade + 5
-                SetMaxConstruction value = Target.MaxConstruction - 2
+                SetTargetTrade value = Target.TargetTrade + 5
+                SetTargetConstruction value = Target.TargetConstruction - 2
             ]
     graphic = "icons/tech/economic_etherealization.png"
 
@@ -1976,7 +1976,7 @@ Tech
             activation =
                 Source
             effects =
-                SetMaxSupply value = Target.MaxSupply + 2
+                SetSupply value = Target.Supply + 2
     graphic = ""
 
 Tech

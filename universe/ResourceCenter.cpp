@@ -2,7 +2,6 @@
 
 #include "../util/AppInterface.h"
 #include "../util/Directories.h"
-#include "../util/DataTable.h"
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 #include "../Empire/Empire.h"
@@ -19,53 +18,12 @@
 using boost::lexical_cast;
 
 namespace {
-    DataTableMap& ProductionDataTables()
-    {
-        static DataTableMap map;
-        if (map.empty())
-            LoadDataTables((GetResourceDir() / "production_tables.txt").file_string(), map);
-        return map;
-    }
+    const double PRIMARY_FOCUS_BONUS = 15.0;
+    const double PRIMARY_BALANCED_BONUS = 3.0;
+    const double SECONDARY_FOCUS_BONUS = 5.0;
+    const double SECONDARY_BALANCED_BONUS = 1.0;
 
-    DataTableMap& PlanetDataTables()
-    {
-        static DataTableMap map;
-        if (map.empty())
-            LoadDataTables((GetResourceDir() / "planet_tables.txt").file_string(), map);
-        return map;
-    }
-
-    double MaxFarmingModFromObject(const UniverseObject* object)
-    {
-        double retval = 0.0;
-        if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetEnvFarmingMod"][0][planet->Environment()];
-        }
-        return retval;
-    }
-
-    double MaxIndustryModFromObject(const UniverseObject* object)
-    {
-        double retval = 0.0;
-        if (const Planet* planet = universe_object_cast<const Planet*>(object)) {
-            retval = PlanetDataTables()["PlanetSizeIndustryMod"][0][planet->Size()];
-        }
-        return retval;
-    }
-
-    void GrowResourceMeter(Meter* resource_meter)
-    {
-        assert(resource_meter);
-        double delta = 1.0;
-        resource_meter->AdjustCurrent(delta);
-    }
-
-    void GrowConstructionMeter(Meter* construction_meter)
-    {
-        assert(construction_meter);
-        double delta = 1.0;
-        construction_meter->AdjustCurrent(delta);
-    }
+    const double METER_GROWTH_RATE = 1.0;
 }
 
 ResourceCenter::ResourceCenter() :
@@ -98,91 +56,54 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
 
 void ResourceCenter::Init()
 {
-    InsertMeter(METER_FARMING,      Meter());
-    InsertMeter(METER_MINING,       Meter());
-    InsertMeter(METER_INDUSTRY,     Meter());
-    InsertMeter(METER_RESEARCH,     Meter());
-    InsertMeter(METER_TRADE,        Meter());
-    InsertMeter(METER_CONSTRUCTION, Meter());
+    AddMeter(METER_FARMING);
+    AddMeter(METER_MINING);
+    AddMeter(METER_INDUSTRY);
+    AddMeter(METER_RESEARCH);
+    AddMeter(METER_TRADE);
+    AddMeter(METER_CONSTRUCTION);
+    AddMeter(METER_TARGET_FARMING);
+    AddMeter(METER_TARGET_MINING);
+    AddMeter(METER_TARGET_INDUSTRY);
+    AddMeter(METER_TARGET_RESEARCH);
+    AddMeter(METER_TARGET_TRADE);
+    AddMeter(METER_TARGET_CONSTRUCTION);
     Reset();
 }
 
-double ResourceCenter::ProjectedCurrentMeter(MeterType type) const
+double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
 {
-    Meter construction = Meter(*GetMeter(METER_CONSTRUCTION));
-    const Meter* original_meter = GetMeter(type);
-    assert(original_meter);
-    Meter meter = Meter(*original_meter);
-
-    switch (type) {
-    case METER_FARMING:
-    case METER_MINING:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-        GrowConstructionMeter(&construction);
-        construction.Clamp();
-        GrowResourceMeter(&meter);
-        meter.Clamp();
-        return meter.Current();
-        break;
-    case METER_CONSTRUCTION:
-        GrowConstructionMeter(&construction);
-        construction.Clamp();
-        return construction.Current();
-        break;
-    default:
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
-        if (obj)
-            return obj->ProjectedCurrentMeter(type);
-        else
-            throw std::runtime_error("ResourceCenter::ProjectedCurrentMeter couldn't convert this pointer to UniverseObject*");
+    const Meter* meter = GetMeter(type);
+    if (!meter) {
+        throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
     }
-}
+    double current_meter_value = meter->Current();
 
-double ResourceCenter::MeterPoints(MeterType type) const
-{
+    MeterType target_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case METER_FARMING:
-    case METER_MINING:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-        return GetPopMeter()->InitialCurrent() / 10.0 * GetMeter(type)->InitialCurrent();
-        break;
-    case METER_CONSTRUCTION:
-        return GetMeter(METER_CONSTRUCTION)->InitialCurrent();
-        break;
+    case (METER_FARMING):       target_meter_type = METER_TARGET_FARMING;       break;
+    case (METER_MINING):        target_meter_type = METER_TARGET_MINING;        break;
+    case (METER_INDUSTRY):      target_meter_type = METER_TARGET_INDUSTRY;      break;
+    case (METER_RESEARCH):      target_meter_type = METER_TARGET_RESEARCH;      break;
+    case (METER_TRADE):         target_meter_type = METER_TARGET_TRADE;         break;
+    case (METER_CONSTRUCTION):  target_meter_type = METER_TARGET_CONSTRUCTION;  break;
     default:
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
-        if (obj)
-            return obj->MeterPoints(type);
-        else
-            throw std::runtime_error("ResourceCenter::MeterPoints couldn't convert this pointer to UniverseObject*");
+        throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
     }
-}
 
-double ResourceCenter::ProjectedMeterPoints(MeterType type) const
-{
-    switch (type) {
-    case METER_FARMING:
-    case METER_MINING:
-    case METER_INDUSTRY:
-    case METER_RESEARCH:
-    case METER_TRADE:
-        // TODO: get projected current population instead of using just current population
-        return GetPopMeter()->InitialCurrent() / 10.0 * ProjectedCurrentMeter(type);
-        break;
-    case METER_CONSTRUCTION:
-        return ProjectedCurrentMeter(METER_CONSTRUCTION);
-        break;
-    default:
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(this);
-        if (obj)
-            return obj->ProjectedMeterPoints(type);
-        else
-            throw std::runtime_error("ResourceCenter::ProjectedMeterPoints couldn't convert this pointer to UniverseObject*");
+    const Meter* target_meter = GetMeter(target_meter_type);
+    if (!target_meter) {
+        throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
     }
+    double target_meter_value = target_meter->Current();
+
+    // currently meter growth is one per turn.
+    if (target_meter_value > current_meter_value)
+        return std::min(current_meter_value + 1.0, target_meter_value);
+    else if (target_meter_value < current_meter_value)
+         return std::max(target_meter_value, current_meter_value - 1.0);
+    else
+        return current_meter_value;
 }
 
 void ResourceCenter::SetPrimaryFocus(FocusType focus)
@@ -197,32 +118,19 @@ void ResourceCenter::SetSecondaryFocus(FocusType focus)
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
+void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
-    // determine meter maxes; they should have been previously reset to 0
-    double primary_specialized_factor = ProductionDataTables()["FocusMods"][0][0];
-    double secondary_specialized_factor = ProductionDataTables()["FocusMods"][1][0];
-    double primary_balanced_factor = ProductionDataTables()["FocusMods"][2][0];
-    double secondary_balanced_factor = ProductionDataTables()["FocusMods"][3][0];
-
-    const UniverseObject* object = GetThisObject();
-    if (!object) {
-        Logger().errorStream() << "ResourceCenter GetThisObject returned 0";
-        return;
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_TARGET_CONSTRUCTION) {
+        GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
+        GetMeter(METER_TARGET_CONSTRUCTION)->AddToCurrent(10.0);// TODO: replace with effect as part of species
     }
 
-    // special cases for construction, farming and industry
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_CONSTRUCTION)
-        GetMeter(METER_CONSTRUCTION)->AdjustMax(10.0); // default construction max is 20
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_FARMING)
-        GetMeter(METER_FARMING)->AdjustMax(MaxFarmingModFromObject(object));
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_INDUSTRY)
-        GetMeter(METER_INDUSTRY)->AdjustMax(MaxIndustryModFromObject(object));
-
-    // general-cases for all resource meters
     std::vector<MeterType> res_meter_types;
-    res_meter_types.push_back(METER_FARMING);   res_meter_types.push_back(METER_MINING);    res_meter_types.push_back(METER_INDUSTRY);
-    res_meter_types.push_back(METER_RESEARCH);  res_meter_types.push_back(METER_TRADE);
+    res_meter_types.push_back(METER_TARGET_FARMING);
+    res_meter_types.push_back(METER_TARGET_MINING);
+    res_meter_types.push_back(METER_TARGET_INDUSTRY);
+    res_meter_types.push_back(METER_TARGET_RESEARCH);
+    res_meter_types.push_back(METER_TARGET_TRADE);
 
     // all meters matching parameter meter_type should be adjusted, depending on focus
     for (unsigned int i = 0; i < res_meter_types.size(); ++i) {
@@ -230,34 +138,52 @@ void ResourceCenter::ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type)
 
         if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE) {
             Meter* meter = GetMeter(CUR_METER_TYPE);
+            meter->ResetCurrent();
 
             if (m_primary == MeterToFocus(CUR_METER_TYPE))
-                meter->AdjustMax(primary_specialized_factor);
+                meter->AddToCurrent(PRIMARY_FOCUS_BONUS);
             else if (m_primary == FOCUS_BALANCED)
-                meter->AdjustMax(primary_balanced_factor);
+                meter->AddToCurrent(PRIMARY_BALANCED_BONUS);
 
             if (m_secondary == MeterToFocus(CUR_METER_TYPE))
-                meter->AdjustMax(secondary_specialized_factor);
+                meter->AddToCurrent(SECONDARY_FOCUS_BONUS);
             else if (m_secondary == FOCUS_BALANCED)
-                meter->AdjustMax(secondary_balanced_factor);
+                meter->AddToCurrent(SECONDARY_BALANCED_BONUS);
         }
     }
 }
 
-void ResourceCenter::PopGrowthProductionResearchPhase()
+void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
 {
-    GrowConstructionMeter(GetMeter(METER_CONSTRUCTION));
-    GrowResourceMeter(GetMeter(METER_FARMING));
-    GrowResourceMeter(GetMeter(METER_INDUSTRY));
-    GrowResourceMeter(GetMeter(METER_MINING));
-    GrowResourceMeter(GetMeter(METER_RESEARCH));
-    GrowResourceMeter(GetMeter(METER_TRADE));
+    GetMeter(METER_CONSTRUCTION)->AddToCurrent(1.0);
+    GetMeter(METER_FARMING)->AddToCurrent(1.0);
+    GetMeter(METER_INDUSTRY)->AddToCurrent(1.0);
+    GetMeter(METER_MINING)->AddToCurrent(1.0);
+    GetMeter(METER_RESEARCH)->AddToCurrent(1.0);
+    GetMeter(METER_TRADE)->AddToCurrent(1.0);
+}
+
+void ResourceCenter::ResourceCenterClampMeters()
+{
+    GetMeter(METER_FARMING)->ClampCurrentToRange();
+    GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(METER_MINING)->ClampCurrentToRange();
+    GetMeter(METER_RESEARCH)->ClampCurrentToRange();
+    GetMeter(METER_TRADE)->ClampCurrentToRange();
+    GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange();
+
+    GetMeter(METER_TARGET_FARMING)->ClampCurrentToRange();
+    GetMeter(METER_TARGET_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(METER_TARGET_MINING)->ClampCurrentToRange();
+    GetMeter(METER_TARGET_RESEARCH)->ClampCurrentToRange();
+    GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
+    GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 }
 
 void ResourceCenter::Reset()
 {
-    m_primary = FOCUS_UNKNOWN;
-    m_secondary = FOCUS_UNKNOWN;
+    m_primary = INVALID_FOCUS_TYPE;
+    m_secondary = INVALID_FOCUS_TYPE;
 
     GetMeter(METER_FARMING)->Reset();
     GetMeter(METER_INDUSTRY)->Reset();
@@ -266,10 +192,10 @@ void ResourceCenter::Reset()
     GetMeter(METER_TRADE)->Reset();
     GetMeter(METER_CONSTRUCTION)->Reset();
 
-    double balanced_balanced_max = ProductionDataTables()["FocusMods"][2][0] + ProductionDataTables()["FocusMods"][3][0];
-    GetMeter(METER_FARMING)->SetMax(balanced_balanced_max);
-    GetMeter(METER_INDUSTRY)->SetMax(balanced_balanced_max);
-    GetMeter(METER_MINING)->SetMax(balanced_balanced_max);
-    GetMeter(METER_RESEARCH)->SetMax(balanced_balanced_max);
-    GetMeter(METER_TRADE)->SetMax(balanced_balanced_max);
+    GetMeter(METER_TARGET_FARMING)->Reset();
+    GetMeter(METER_TARGET_INDUSTRY)->Reset();
+    GetMeter(METER_TARGET_MINING)->Reset();
+    GetMeter(METER_TARGET_RESEARCH)->Reset();
+    GetMeter(METER_TARGET_TRADE)->Reset();
+    GetMeter(METER_TARGET_CONSTRUCTION)->Reset();
 }

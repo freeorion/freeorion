@@ -38,9 +38,9 @@ namespace {
                 const std::string name = elem.second->Name();
                 return CombatShip::DirectWeapon(
                     name,
-                    m_ship.GetMeter(METER_RANGE, name)->Max(),
-                    m_ship.GetMeter(METER_DAMAGE, name)->Max() *
-                    m_ship.GetMeter(METER_ROF, name)->Max() *
+                    m_ship.GetMeter(METER_RANGE, name)->Current(),
+                    m_ship.GetMeter(METER_DAMAGE, name)->Current() *
+                    m_ship.GetMeter(METER_ROF, name)->Current() *
                     m_health_factor);
             }
         const Ship& m_ship;
@@ -123,7 +123,7 @@ CombatShip::CombatShip(Ship* ship,
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_enter_starlane_start_turn(1 << 20),
     m_next_LR_fire_turns(ship->Design()->LRWeapons().size(), INVALID_TURN),
-    m_turn_start_health(ship->GetMeter(METER_HEALTH)->Current()),
+    m_turn_start_health(ship->CurrentMeterValue(METER_HEALTH)),
     m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(&pathing_engine),
     m_raw_PD_strength(0.0),
@@ -150,13 +150,13 @@ const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
 
 double CombatShip::HealthAndShield() const
-{ return Health() + GetShip().GetMeter(METER_SHIELD)->Current(); }
+{ return Health() + GetShip().CurrentMeterValue(METER_SHIELD); }
 
 double CombatShip::Health() const
-{ return GetShip().GetMeter(METER_HEALTH)->Current(); }
+{ return GetShip().CurrentMeterValue(METER_HEALTH); }
 
 double CombatShip::FractionalHealth() const
-{ return m_turn_start_health / GetShip().GetMeter(METER_HEALTH)->Max(); }
+{ return m_turn_start_health / GetShip().CurrentMeterValue(METER_TARGET_HEALTH); }
 
 double CombatShip::AntiFighterStrength() const
 { return m_raw_PD_strength * FractionalHealth(); }
@@ -194,7 +194,7 @@ void CombatShip::LaunchFighters()
 
         std::vector<CombatFighterPtr>& fighters_vec = it->second.second;
         std::size_t num_fighters = fighters_vec.size();
-        double launch_rate = GetShip().GetMeter(METER_LAUNCH_RATE, part->Name())->Max();
+        double launch_rate = GetShip().GetMeter(METER_LAUNCH_RATE, part->Name())->Current();
         std::size_t launch_size =
             std::min<std::size_t>(num_fighters, launch_rate * it->second.first);
 
@@ -304,19 +304,19 @@ void CombatShip::Damage(double d, DamageSource source)
     assert(0.0 < d);
     if (source == PD_DAMAGE)
         d *= PD_VS_SHIP_FACTOR;
-    double shield_damage = std::min(d, GetShip().GetMeter(METER_SHIELD)->Current());
-    GetShip().GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+    double shield_damage = std::min(d, GetShip().CurrentMeterValue(METER_SHIELD));
+    GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     d -= shield_damage;
-    GetShip().GetMeter(METER_HEALTH)->AdjustCurrent(-d);
+    GetShip().UniverseObject::GetMeter(METER_HEALTH)->AddToCurrent(-d);
 }
 
 void CombatShip::Damage(const CombatFighterPtr& source)
 {
     double damage = source->Stats().m_anti_ship_damage * source->Formation()->size();
-    double shield_damage = std::min(damage, GetShip().GetMeter(METER_SHIELD)->Current());
-    GetShip().GetMeter(METER_SHIELD)->AdjustCurrent(-shield_damage);
+    double shield_damage = std::min(damage, GetShip().CurrentMeterValue(METER_SHIELD));
+    GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     damage -= shield_damage;
-    GetShip().GetMeter(METER_HEALTH)->AdjustCurrent(-damage);
+    GetShip().UniverseObject::GetMeter(METER_HEALTH)->AddToCurrent(-damage);
 }
 
 void CombatShip::TurnStarted(unsigned int number)
@@ -411,27 +411,27 @@ void CombatShip::Init(const OpenSteer::Vec3& position_, const OpenSteer::Vec3& d
         assert(part);
         if (part->Class() == PC_POINT_DEFENSE) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Max();
+            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
             m_raw_PD_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Max() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Max();
+                GetShip().GetMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD += damage;
         } else if (part->Class() == PC_SHORT_RANGE) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Max();
+            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
             m_raw_SR_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Max() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Max();
+                GetShip().GetMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         } else if (part->Class() == PC_MISSILES) {
             const std::string& part_name = part->Name();
-            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Max();
+            double damage = GetShip().GetMeter(METER_DAMAGE, part_name)->Current();
             m_raw_LR_strength +=
                 damage *
-                GetShip().GetMeter(METER_ROF, part_name)->Max() *
-                GetShip().GetMeter(METER_RANGE, part_name)->Max();
+                GetShip().GetMeter(METER_ROF, part_name)->Current() *
+                GetShip().GetMeter(METER_RANGE, part_name)->Current();
             PD_minus_non_PD -= damage;
         }
     }
@@ -769,7 +769,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
-                    GetShip().GetMeter(METER_ROF, it->second->Name())->Max() * health_factor;
+                    GetShip().GetMeter(METER_ROF, it->second->Name())->Current() * health_factor;
                 Listener().MissileLaunched(missile);
             }
         }

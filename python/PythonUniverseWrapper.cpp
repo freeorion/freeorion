@@ -96,13 +96,7 @@ namespace {
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
     boost::function<double(const UniverseObject*, MeterType)> InitialCurrentMeterValueFromObject =
-        boost::bind(&Meter::InitialCurrent, boost::bind(ObjectGetMeter, _1, _2));
-
-    boost::function<double(const UniverseObject*, MeterType)> InitialMaxMeterValueFromObject =
-        boost::bind(&Meter::InitialMax, boost::bind(ObjectGetMeter, _1, _2));
-
-    boost::function<double(const UniverseObject*, MeterType)> ProjectedMaxMeterValueFromObject =
-        boost::bind(&Meter::Max, boost::bind(ObjectGetMeter, _1, _2));
+        boost::bind(&Meter::Initial, boost::bind(ObjectGetMeter, _1, _2));
 
     bool                    (*ValidDesignHullAndParts)(const std::string& hull,
                                                        const std::vector<std::string>& parts) = &ShipDesign::ValidDesign;
@@ -202,25 +196,10 @@ namespace FreeOrionPython {
             .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
             .def("Contains",                    &UniverseObject::Contains)
             .def("ContainedBy",                 &UniverseObject::ContainedBy)
-            .def("MeterPoints",                 &UniverseObject::MeterPoints)           // actual amount of something represented by meter.  eg. population or resource production that isn't equal to the meter value
-            .def("ProjectedMeterPoints",        &UniverseObject::ProjectedMeterPoints)
-            .def("CurrentMeter",                make_function(
-                                                    boost::bind(InitialCurrentMeterValueFromObject, _1, _2),
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
-                                                ))
-            .def("ProjectedCurrentMeter",       &UniverseObject::ProjectedCurrentMeter)
-            .def("MaxMeter",                    make_function(
-                                                    boost::bind(InitialMaxMeterValueFromObject, _1, _2),
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
-                                                ))
-            .def("ProjectedMaxMeter",           make_function(
-                                                    boost::bind(ProjectedMaxMeterValueFromObject, _1, _2),
-                                                    return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<double, const UniverseObject*, MeterType>()
-                                                ))
-            //.def("GetMeter",                    ObjectGetMeter,                             return_value_policy<reference_existing_object>())
+            .def("CurrentMeterValue",           &UniverseObject::CurrentMeterValue)
+            .def("InitialMeterValue",           &UniverseObject::InitialMeterValue)
+            .def("PreviousMeterValue",          &UniverseObject::PreviousMeterValue)
+            .def("NextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
         ;
 
         ///////////////////
@@ -330,7 +309,6 @@ namespace FreeOrionPython {
         //   PopCenter   //
         ///////////////////
         class_<PopCenter, noncopyable>("popCenter", no_init)
-            .add_property("inhabitants",        &PopCenter::Inhabitants)
             .add_property("allocatedFood",      &PopCenter::AllocatedFood)
         ;
 

@@ -231,8 +231,8 @@ namespace {
         if (damage <= 0.0)
             return;
 
-        Meter* target_shield = target->GetMeter(METER_SHIELD);
-        Meter* target_health = target->GetMeter(METER_HEALTH);
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        Meter* target_health = target->UniverseObject::GetMeter(METER_HEALTH);
         if (!target_shield || ! target_health) {
             Logger().errorStream() << "couldn't get target health or shield meter";
             return;
@@ -246,11 +246,11 @@ namespace {
             health_damage = std::min(target_health->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target_shield->AdjustCurrent(-shield_damage);
+            target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
         if (health_damage >= 0) {
-            target_health->AdjustCurrent(-health_damage);
+            target_health->AddToCurrent(-health_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
     }
@@ -266,9 +266,9 @@ namespace {
         if (damage <= 0.0)
             return;
 
-        Meter* target_shield = target->GetMeter(METER_SHIELD);
-        Meter* target_health = target->GetMeter(METER_HEALTH);
-        Meter* target_construction = target->GetMeter(METER_CONSTRUCTION);
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        Meter* target_health = target->UniverseObject::GetMeter(METER_HEALTH);
+        Meter* target_construction = target->UniverseObject::GetMeter(METER_CONSTRUCTION);
         if (!target_shield || ! target_health || !target_construction) {
             Logger().errorStream() << "couldn't get target health, shield, or construction meter";
             return;
@@ -282,11 +282,11 @@ namespace {
             construction_damage = std::min(target_construction->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target_shield->AdjustCurrent(-shield_damage);
+            target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
         if (construction_damage >= 0) {
-            target_construction->AdjustCurrent(-construction_damage);
+            target_construction->AddToCurrent(-construction_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
     }
@@ -294,13 +294,13 @@ namespace {
     void AttackPlanetShip(Planet* attacker, Ship* target) {
         if (!attacker || ! target) return;
 
-        double damage = attacker->GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
+        double damage = attacker->UniverseObject::GetMeter(METER_DEFENSE)->Current();   // planet "Defense" meter is actually its attack power
 
         if (damage <= 0.0)
             return;
 
-        Meter* target_shield = target->GetMeter(METER_SHIELD);
-        Meter* target_health = target->GetMeter(METER_HEALTH);
+        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
+        Meter* target_health = target->UniverseObject::GetMeter(METER_HEALTH);
         if (!target_shield || ! target_health) {
             Logger().errorStream() << "couldn't get target health or shield meter";
             return;
@@ -314,11 +314,11 @@ namespace {
             health_damage = std::min(target_health->Current(), damage - shield_damage);
 
         if (shield_damage >= 0) {
-            target_shield->AdjustCurrent(-shield_damage);
+            target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
         if (health_damage >= 0) {
-            target_health->AdjustCurrent(-health_damage);
+            target_health->AddToCurrent(-health_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << health_damage << " health damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
     }
@@ -466,7 +466,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         // check for destruction of ships
         if (universe_object_cast<Ship*>(target)) {
-            if (target->GetMeter(METER_HEALTH)->Current() <= 0.0) {
+            if (target->UniverseObject::GetMeter(METER_HEALTH)->Current() <= 0.0) {
                 // object id destroyed
                 combat_info.destroyed_object_ids.insert(target_id);
                 // all empires in battle know object was destroyed
@@ -479,7 +479,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
             if (planet->Unowned())
                 continue;
-            if (target->GetMeter(METER_CONSTRUCTION)->Current() <= 0.0) {
+            if (target->UniverseObject::GetMeter(METER_CONSTRUCTION)->Current() <= 0.0) {
                 const std::set<int>& attacker_owners = attacker->Owners();
                 if (attacker_owners.size() == 1) {
                     int attacker_owner = *attacker_owners.begin();

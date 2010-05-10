@@ -152,8 +152,6 @@ public:
     virtual void            RemoveOwner(int id);            ///< removing owner from system objects is a no-op
     void                    UpdateOwnership();
 
-    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-
     orbit_iterator          begin();                        ///< begin iterator for all system objects
     orbit_iterator          end();                          ///< end iterator for all system objects
 
@@ -168,6 +166,8 @@ public:
     //@}
 
 private:
+    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+
     /** returns the subset of m_objects that is visible to empire with id
       * \a empire_id */
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;

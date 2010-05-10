@@ -655,7 +655,7 @@ Universe::EffectAccountingInfo::EffectAccountingInfo() :
     EffectCause(),
     source_id(UniverseObject::INVALID_OBJECT_ID),
     meter_change(0.0),
-    running_meter_total(Meter::METER_MIN)
+    running_meter_total(Meter::DEFAULT_VALUE)
 {}
 
 
@@ -956,13 +956,12 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
 
     // reset max meter state that is affected by the application of effects
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->ApplyUniverseTableMaxMeterAdjustments();
+        it->second->ResetTargetMaxUnpairedMeters();
     }
 
     ExecuteEffects(targets_causes_map);
 
-    // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+    // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         it->second->ClampMeters();
     }
@@ -977,14 +976,13 @@ void Universe::ApplyMeterEffectsAndUpdateMeters()
 
     // reset max meter state that is affected by the application of effects
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ResetMaxMeters();
-        it->second->ApplyUniverseTableMaxMeterAdjustments();
+        it->second->ResetTargetMaxUnpairedMeters();
     }
 
     ExecuteMeterEffects(targets_causes_map);
 
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ClampMeters();                              // clamp max meters to [METER_MIN, METER_MAX] and current meters to [METER_MIN, max]
+        it->second->ClampMeters();                              // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     }
 }
 
@@ -1018,7 +1016,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             int object_id = obj->ID();
 
             // discrepancy is the difference between expected and actual meter values at start of turn
-            double discrepancy = meter->InitialMax() - meter->Max();
+            double discrepancy = meter->Initial() - meter->Current();
 
             if (discrepancy == 0.0) continue;   // no discrepancy for this meter
 
@@ -1026,13 +1024,13 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             m_effect_discrepancy_map[object_id][type] = discrepancy;
 
             // correct current max meter estimate for discrepancy
-            meter->AdjustMax(discrepancy);
+            meter->AddToCurrent(discrepancy);
 
             // add discrepancy adjustment to meter accounting
             EffectAccountingInfo info;
             info.cause_type = ECT_UNKNOWN_CAUSE;
             info.meter_change = discrepancy;
-            info.running_meter_total = meter->Max();
+            info.running_meter_total = meter->Current();
 
             m_effect_accounting_map[object_id][type].push_back(info);
         }
@@ -1132,13 +1130,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
 
-        // Reset max meters to METER_MIN
-        obj->ResetMaxMeters(meter_type);
+        // Reset max meters to DEFAULT_VALUE
+        obj->ResetTargetMaxUnpairedMeters(meter_type);
 
-        // Apply non-effect focus mods from tables
-        obj->ApplyUniverseTableMaxMeterAdjustments(meter_type);
-
-        // record value(s) of max meter(s) after applying universe table adjustments.
+        // record current value(s) of meter(s) after resetting target and max meters.
         // also set current meter value to initial current value.  this ensures that the
         // projected current value will be based on the actual initial current value this
         // turn, rather than the altered current value that may be different after meter
@@ -1155,13 +1150,13 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
         for (MeterType type = start; type != end; type = MeterType(type + 1)) {
             if (Meter* meter = obj->GetMeter(type)) {
-                meter->SetCurrent(meter->InitialCurrent());
+                meter->SetCurrent(meter->Initial());
 
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
-                info.meter_change = meter->Max() - Meter::METER_MIN;
-                info.running_meter_total = meter->Max();
+                info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
+                info.running_meter_total = meter->Current();
 
                 m_effect_accounting_map[obj_id][type].push_back(info);
             }
@@ -1204,12 +1199,12 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
                 if (meter) {
                     //Logger().debugStream() << "object " << obj_id << " has meter " << type << " discrepancy: " << discrepancy << " and final max: " << meter->Max();
 
-                    meter->AdjustMax(discrepancy);
+                    meter->AddToCurrent(discrepancy);
 
                     EffectAccountingInfo info;
                     info.cause_type = ECT_UNKNOWN_CAUSE;
                     info.meter_change = discrepancy;
-                    info.running_meter_total = meter->Max();
+                    info.running_meter_total = meter->Current();
 
                     m_effect_accounting_map[obj_id][type].push_back(info);
                 }
@@ -1447,7 +1442,7 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
                     info.cause_type =           targets_and_cause.effect_cause.cause_type;
                     info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
                     info.source_id =            sourced_effects_group.source_object_id;
-                    info.running_meter_total =  meter->Max();
+                    info.running_meter_total =  meter->Current();
 
                     // add accounting for this effect to end of vector
                     m_effect_accounting_map[target->ID()][meter_type].push_back(info);
@@ -1468,8 +1463,8 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
                     EffectAccountingInfo& info = m_effect_accounting_map[target->ID()][meter_type].back();
 
                     // update accounting info with meter change and new total
-                    info.meter_change = meter->Max() - info.running_meter_total;
-                    info.running_meter_total = meter->Max();
+                    info.meter_change = meter->Current() - info.running_meter_total;
+                    info.running_meter_total = meter->Current();
                 }
             }
         }
@@ -3745,9 +3740,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     for (ObjectMap::iterator it = Objects().begin(); it != Objects().end(); ++it) {
         for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
             if (Meter* meter = it->second->GetMeter(i)) {
-                // set all meter current and max values to initial max value
-                double max = meter->Max();
-                meter->Set(max, max, max, max, max, max);
+                meter->Set(Meter::LARGE_VALUE, Meter::LARGE_VALUE, Meter::LARGE_VALUE);
             }
         }
     }
@@ -3823,7 +3816,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             Planet* planet = new Planet(planet_type, planet_size);
 
-            //Logger().debugStream() << "Created new planet with current population: " << planet->GetMeter(METER_POPULATION)->Current() << " and initial current population: " << planet->GetMeter(METER_POPULATION)->InitialCurrent();
+            //Logger().debugStream() << "Created new planet with current population: " << planet->GetMeter(METER_POPULATION)->Current() << " and initial current population: " << planet->GetMeter(METER_POPULATION)->Initial();
 
             bool tidal_lock = false;
             if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {
@@ -4254,7 +4247,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                 Logger().errorStream() << "unable to create new fleet!";
                 break;
             }
-            fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+            fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
             Insert(fleet);
             home_system->Insert(fleet);
 
@@ -4280,11 +4273,11 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                         Logger().errorStream() << "unable to create new ship!";
                         break;
                     }
-                    ship->GetMeter(METER_FUEL)->SetCurrent(Meter::METER_MAX);
-                    ship->GetMeter(METER_SHIELD)->SetCurrent(Meter::METER_MAX);
-                    ship->GetMeter(METER_DETECTION)->SetCurrent(Meter::METER_MAX);
-                    ship->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
-                    ship->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);
+                    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
+                    ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                     ship->Rename(empire->NewShipName());
                     int ship_id = Insert(ship);

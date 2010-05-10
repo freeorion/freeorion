@@ -49,23 +49,31 @@ namespace {
     GG::Clr MeterColor(MeterType meter_type) {
         switch (meter_type) {
         case METER_FARMING:
+        case METER_TARGET_FARMING:
             return GG::CLR_YELLOW;
             break;
         case METER_MINING:
+        case METER_TARGET_MINING:
         case METER_HEALTH:
+        case METER_TARGET_HEALTH:
             return GG::CLR_RED;
             break;
         case METER_INDUSTRY:
+        case METER_TARGET_INDUSTRY:
             return GG::CLR_BLUE;
             break;
         case METER_RESEARCH:
+        case METER_TARGET_RESEARCH:
             return GG::CLR_GREEN;
             break;
         case METER_TRADE:
+        case METER_TARGET_TRADE:
             return GG::Clr(255, 148, 0, 255);   // orange
             break;
         case METER_CONSTRUCTION:
+        case METER_TARGET_CONSTRUCTION:
         case METER_POPULATION:
+        case METER_TARGET_POPULATION:
         default:
             return GG::CLR_WHITE;
         }
@@ -182,6 +190,8 @@ namespace {
     const GG::X     SPECIAL_ICON_WIDTH(24);
     const GG::Y     SPECIAL_ICON_HEIGHT(24);
 
+    const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE = 100.0;
+
    /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
         std::map<int, int> retval;
@@ -241,8 +251,9 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 
 
     // meter and production indicators
-    std::vector<MeterType> meters;
-    meters.push_back(METER_POPULATION); meters.push_back(METER_HEALTH);
+    std::vector<std::pair<MeterType, MeterType> > meters;
+    meters.push_back(std::make_pair(METER_POPULATION, METER_TARGET_POPULATION));
+    meters.push_back(std::make_pair(METER_HEALTH, METER_TARGET_HEALTH));
 
     // attach and show meter bars and large resource indicators
     GG::Y top = UpperLeft().y;
@@ -402,16 +413,16 @@ void PopulationPanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_pop_stat->SetValue(pop->ProjectedMeterPoints(METER_POPULATION));
-    m_health_stat->SetValue(pop->ProjectedMeterPoints(METER_HEALTH));
+    m_pop_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_POPULATION));
+    m_health_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_HEALTH));
 
 
     // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(METER_POPULATION, m_popcenter_id));
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_popcenter_id, METER_POPULATION, METER_TARGET_POPULATION));
     m_pop_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_POPULATION, browse_wnd);
 
-    browse_wnd.reset(new MeterBrowseWnd(METER_HEALTH, m_popcenter_id));
+    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_HEALTH, METER_TARGET_HEALTH));
     m_health_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
 }
@@ -551,9 +562,13 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
 
     // meter and production indicators
-    std::vector<MeterType> meters;
-    meters.push_back(METER_FARMING);    meters.push_back(METER_MINING); meters.push_back(METER_INDUSTRY);
-    meters.push_back(METER_RESEARCH);   meters.push_back(METER_TRADE);  meters.push_back(METER_CONSTRUCTION);
+    std::vector<std::pair<MeterType, MeterType> > meters;
+    meters.push_back(std::make_pair(METER_FARMING, METER_TARGET_FARMING));
+    meters.push_back(std::make_pair(METER_MINING, METER_TARGET_MINING));
+    meters.push_back(std::make_pair(METER_INDUSTRY, METER_TARGET_INDUSTRY));
+    meters.push_back(std::make_pair(METER_RESEARCH, METER_TARGET_RESEARCH));
+    meters.push_back(std::make_pair(METER_TRADE, METER_TARGET_TRADE));
+    meters.push_back(std::make_pair(METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_rescenter_id, meters);
@@ -622,11 +637,11 @@ void ResourcePanel::DoExpandCollapseLayout() {
             // determine which two resource icons to display while collapsed: the two with the highest production.
             // sort by insereting into multimap keyed by production amount, then taking the first two icons therein.
             std::multimap<double, StatisticIcon*> res_prod_icon_map;
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_FARMING),    m_farming_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_MINING),     m_mining_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_INDUSTRY),   m_industry_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_RESEARCH),   m_research_stat));
-            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->ProjectedMeterPoints(METER_TRADE),      m_trade_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_FARMING),   m_farming_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_MINING),    m_mining_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_INDUSTRY),  m_industry_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_RESEARCH),  m_research_stat));
+            res_prod_icon_map.insert(std::pair<double, StatisticIcon*>(res->NextTurnCurrentMeterValue(METER_TRADE),     m_trade_stat));
 
             // position and reattach icons to be shown
             int n = 0;
@@ -807,37 +822,37 @@ void ResourcePanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_farming_stat->SetValue(res->ProjectedMeterPoints(METER_FARMING));
-    m_mining_stat->SetValue(res->ProjectedMeterPoints(METER_MINING));
-    m_industry_stat->SetValue(res->ProjectedMeterPoints(METER_INDUSTRY));
-    m_research_stat->SetValue(res->ProjectedMeterPoints(METER_RESEARCH));
-    m_trade_stat->SetValue(res->ProjectedMeterPoints(METER_TRADE));
+    m_farming_stat->SetValue(res->NextTurnCurrentMeterValue(METER_FARMING));
+    m_mining_stat->SetValue(res->NextTurnCurrentMeterValue(METER_MINING));
+    m_industry_stat->SetValue(res->NextTurnCurrentMeterValue(METER_INDUSTRY));
+    m_research_stat->SetValue(res->NextTurnCurrentMeterValue(METER_RESEARCH));
+    m_trade_stat->SetValue(res->NextTurnCurrentMeterValue(METER_TRADE));
 
 
     // create an attach browse info wnds for each meter type on the icon + number stats used when collapsed and
     // for all meter types shown in the multi icon value indicator.  this replaces any previous-present
     // browse wnd on these indicators
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_FARMING, m_rescenter_id));
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_FARMING, METER_TARGET_FARMING));
     m_farming_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_FARMING, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_MINING, m_rescenter_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_MINING, METER_TARGET_MINING));
     m_mining_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_MINING, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_INDUSTRY, m_rescenter_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_INDUSTRY, METER_TARGET_INDUSTRY));
     m_industry_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_INDUSTRY, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_RESEARCH, m_rescenter_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_RESEARCH, METER_TARGET_RESEARCH));
     m_research_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_RESEARCH, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_TRADE, m_rescenter_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_TRADE, METER_TARGET_TRADE));
     m_trade_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_TRADE, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_CONSTRUCTION, m_rescenter_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
     // focus droplists
@@ -869,7 +884,7 @@ void ResourcePanel::Update()
         break;
     default:
         m_primary_focus_drop->Select(-1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("INVALID_FOCUS_TYPE"));
         break;
     }
     m_primary_focus_drop->SetBrowseText(text);
@@ -901,7 +916,7 @@ void ResourcePanel::Update()
         break;
     default:
         m_secondary_focus_drop->Select(-1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_UNKNOWN"));
+        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("INVALID_FOCUS_TYPE"));
         break;
     }
     m_secondary_focus_drop->SetBrowseText(text);
@@ -1032,9 +1047,13 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 
 
     // meter and production indicators
-    std::vector<MeterType> meters;
-    meters.push_back(METER_SUPPLY);     meters.push_back(METER_SHIELD);     meters.push_back(METER_DEFENSE);
-    meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
+    std::vector<std::pair<MeterType, MeterType> > meters;
+    meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
+    meters.push_back(std::make_pair(METER_SHIELD, METER_MAX_SHIELD));
+    meters.push_back(std::make_pair(METER_DEFENSE, METER_MAX_DEFENSE));
+    meters.push_back(std::make_pair(METER_DETECTION, INVALID_METER_TYPE));
+    meters.push_back(std::make_pair(METER_STEALTH, INVALID_METER_TYPE));
+
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_planet_id, meters);
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_planet_id, meters);
@@ -1132,30 +1151,30 @@ void MilitaryPanel::Update()
     m_multi_meter_status_bar->Update();
     m_multi_icon_value_indicator->Update();
 
-    m_fleet_supply_stat->SetValue(obj->ProjectedMeterPoints(METER_SUPPLY));
-    m_shield_stat->SetValue(obj->ProjectedMeterPoints(METER_SHIELD));
-    m_defense_stat->SetValue(obj->ProjectedMeterPoints(METER_DEFENSE));
-    m_detection_stat->SetValue(obj->ProjectedMeterPoints(METER_DETECTION));
-    m_stealth_stat->SetValue(obj->ProjectedMeterPoints(METER_STEALTH));
+    m_fleet_supply_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SUPPLY));
+    m_shield_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SHIELD));
+    m_defense_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DEFENSE));
+    m_detection_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DETECTION));
+    m_stealth_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_STEALTH));
 
     // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SUPPLY, m_planet_id));
+    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SUPPLY));
     m_fleet_supply_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_SUPPLY, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_SHIELD, m_planet_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_SHIELD, METER_MAX_SHIELD));
     m_shield_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_SHIELD, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DEFENSE, m_planet_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DEFENSE, METER_MAX_DEFENSE));
     m_defense_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_DETECTION, m_planet_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DETECTION));
     m_detection_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_DETECTION, browse_wnd);
 
-    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(METER_STEALTH, m_planet_id));
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_STEALTH));
     m_stealth_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_STEALTH, browse_wnd);
 }
@@ -1250,7 +1269,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
 /////////////////////////////////////
 //    MultiIconValueIndicator      //
 /////////////////////////////////////
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
@@ -1261,8 +1280,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const s
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
-    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
+    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        const MeterType PRIMARY_METER_TYPE = it->first;
+        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false));
         AttachChild(m_icons.back());
@@ -1274,7 +1294,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const s
     Update();
 }
 
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<MeterType>& meter_types) :
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
@@ -1283,8 +1303,9 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
-    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(*it);
+    for (std::vector<std::pair<MeterType, MeterType>>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
+        const MeterType PRIMARY_METER_TYPE = it->first;
+        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
         m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
                                             0.0, 3, false));
         AttachChild(m_icons.back());
@@ -1334,14 +1355,15 @@ void MultiIconValueIndicator::Update()
         assert(m_icons[i]);
         double sum = 0.0;
         for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
-            const UniverseObject* obj = GetObject(m_object_ids[j]);
+            int object_id = m_object_ids[j];
+            const UniverseObject* obj = GetObject(object_id);
             if (!obj)
-                obj = GetEmpireKnownObject(m_object_ids[j], HumanClientApp::GetApp()->EmpireID());
+                obj = GetEmpireKnownObject(object_id, HumanClientApp::GetApp()->EmpireID());
             if (!obj) {
-                Logger().errorStream() << "MultiIconValueIndicator::Update coudln't get object with id " << m_object_ids[j];
+                Logger().errorStream() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
                 continue;
             }
-            sum += obj->ProjectedMeterPoints(m_meter_types[i]);
+            sum += obj->NextTurnCurrentMeterValue(m_meter_types[i].first);
         }
         m_icons[i]->SetValue(sum);
     }
@@ -1350,28 +1372,27 @@ void MultiIconValueIndicator::Update()
 void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd)
 {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
-        if (m_meter_types.at(i) == meter_type)
+        if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
 }
 
 void MultiIconValueIndicator::ClearToolTip(MeterType meter_type)
 {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
-        if (m_meter_types.at(i) == meter_type)
+        if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->ClearBrowseInfoWnd();
 }
 
 /////////////////////////////////////
 //       MultiMeterStatusBar       //
 /////////////////////////////////////
-MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<MeterType>& meter_types) :
+MultiMeterStatusBar::MultiMeterStatusBar(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_bar_shading_texture(ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "meter_bar_shading.png")),
     m_meter_types(meter_types),
-    m_initial_maxes(),
-    m_initial_currents(),
-    m_projected_maxes(),
-    m_projected_currents(),
+    m_initial_values(),
+    m_projected_values(),
+    m_target_max_values(),
     m_object_id(object_id),
     m_bar_colours()
 {
@@ -1396,7 +1417,7 @@ void MultiMeterStatusBar::Render()
     const GG::Y TOP = ClientUpperLeft().y + EDGE_PAD;
     GG::Y y = TOP;
 
-    for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
+    for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
         // bar grey backgrounds
         GG::FlatRectangle(GG::Pt(BAR_LEFT, y), GG::Pt(BAR_RIGHT, y + BAR_HEIGHT), DARY_GREY, DARY_GREY, 0);
 
@@ -1408,64 +1429,77 @@ void MultiMeterStatusBar::Render()
     glDisable(GL_TEXTURE_2D);
     glColor(HALF_GREY);
     glBegin(GL_LINES);
-    glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
-    glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
-    glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
-    glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
-    glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
-    glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
+        glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, TOP);
+        glVertex(BAR_LEFT +   BAR_MAX_LENGTH/5, y - BAR_PAD);
+        glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, TOP);
+        glVertex(BAR_LEFT + 2*BAR_MAX_LENGTH/5, y - BAR_PAD);
+        glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, TOP);
+        glVertex(BAR_LEFT + 3*BAR_MAX_LENGTH/5, y - BAR_PAD);
+        glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, TOP);
+        glVertex(BAR_LEFT + 4*BAR_MAX_LENGTH/5, y - BAR_PAD);
     glEnd();
     glEnable(GL_TEXTURE_2D);
 
 
+    // current, initial, and target/max horizontal bars for each pair of MeterType
     y = TOP;
-    for (unsigned int i = 0; i < m_initial_maxes.size(); ++i) {
+    for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
         GG::Clr clr;
 
-        const GG::X MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_maxes[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
         const int BORDER = 1;
         const GG::Y BAR_BOTTOM = y + BAR_HEIGHT;
 
-        // max value
-        if (MAX_RIGHT > BAR_LEFT) {
+        const bool SHOW_INITIAL = (m_initial_values[i] != Meter::INVALID_VALUE);
+        const bool SHOW_PROJECTED = (m_projected_values[i] != Meter::INVALID_VALUE);
+        const bool SHOW_TARGET_MAX = (m_target_max_values[i] != Meter::INVALID_VALUE);
+
+        // max / target value
+        if (SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT) {
             glColor(DarkColor(m_bar_colours[i]));
-            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(MAX_RIGHT, BAR_BOTTOM));
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM));
         }
 
-        const GG::X CUR_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
-        const GG::X PROJECTED_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_currents[i] / (Meter::METER_MAX - Meter::METER_MIN));
+        const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        const GG::X PROJECTED_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
         const GG::Y PROJECTED_TOP = y + 3*EDGE_PAD/2;
 
         GG::Clr projected_clr = ClientUI::StatIncrColor();
-        if (m_projected_currents[i] < m_initial_currents[i]) projected_clr = ClientUI::StatDecrColor();
+        if (m_projected_values[i] < m_initial_values[i]) projected_clr = ClientUI::StatDecrColor();
 
-        if (PROJECTED_RIGHT > CUR_RIGHT) {
-            // projected border
+        if (PROJECTED_RIGHT > INITIAL_RIGHT) {
             glColor(GG::CLR_BLACK);
-            GG::FlatRectangle(GG::Pt(CUR_RIGHT, PROJECTED_TOP),     GG::Pt(PROJECTED_RIGHT + 1, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
-            // projected colour bar
-            GG::FlatRectangle(GG::Pt(CUR_RIGHT, PROJECTED_TOP + 1), GG::Pt(PROJECTED_RIGHT,     BAR_BOTTOM), projected_clr, projected_clr, 0);
-            // current value
-            glColor(m_bar_colours[i]);
-            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(CUR_RIGHT, BAR_BOTTOM));
-            // black border
-            GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            if (SHOW_PROJECTED) {
+                // projected border
+                GG::FlatRectangle(GG::Pt(INITIAL_RIGHT, PROJECTED_TOP),     GG::Pt(PROJECTED_RIGHT + 1, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
+                // projected colour bar
+                GG::FlatRectangle(GG::Pt(INITIAL_RIGHT, PROJECTED_TOP + 1), GG::Pt(PROJECTED_RIGHT,     BAR_BOTTOM), projected_clr, projected_clr, 0);
+            }
+            if (SHOW_INITIAL) {
+                // initial value
+                glColor(m_bar_colours[i]);
+                m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
+                // black border
+                GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(TARGET_MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            }
         } else {
-            // current value
-            glColor(m_bar_colours[i]);
-            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(CUR_RIGHT, BAR_BOTTOM));
-            if (PROJECTED_RIGHT < CUR_RIGHT) {
+            if (SHOW_INITIAL) {
+                // initial value
+                glColor(m_bar_colours[i]);
+                m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
+            }
+            if (SHOW_PROJECTED && PROJECTED_RIGHT < INITIAL_RIGHT) {
                 // projected border
                 glColor(GG::CLR_BLACK);
-                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP),     GG::Pt(CUR_RIGHT, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
+                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP),     GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
                 // projected colour bar
                 glColor(m_bar_colours[i]);
-                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT,     PROJECTED_TOP + 1), GG::Pt(CUR_RIGHT, BAR_BOTTOM), projected_clr, projected_clr, 0);
+                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT,     PROJECTED_TOP + 1), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), projected_clr, projected_clr, 0);
             }
-            // black border
-            GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(CUR_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            if (SHOW_INITIAL) {
+                // black border
+                GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(INITIAL_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+            }
         }
 
         y += BAR_HEIGHT + BAR_PAD;
@@ -1477,10 +1511,9 @@ void MultiMeterStatusBar::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::M
 
 void MultiMeterStatusBar::Update()
 {
-    m_initial_maxes.clear();
-    m_initial_currents.clear();
-    m_projected_maxes.clear();
-    m_projected_currents.clear();
+    m_initial_values.clear();   // initial value of .first MeterTypes at the start of this turn
+    m_projected_values.clear(); // projected current value of .first MeterTypes for the start of next turn
+    m_target_max_values.clear();// current values of the .second MeterTypes in m_meter_types
 
     const UniverseObject* obj = GetObject(m_object_id);
     if (!obj)
@@ -1490,26 +1523,33 @@ void MultiMeterStatusBar::Update()
         return;
     }
 
-    std::vector<const Meter*> meters;
-    for (std::vector<MeterType>::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const Meter* meter = obj->GetMeter(*it);
-        if (!meter)
-            throw std::runtime_error("MultiMeterStatusBar::Update() tried to get a meter from and object that didn't have a meter of the specified type (" + boost::lexical_cast<std::string>(*it) + ")");
-        meters.push_back(meter);
+    int num_bars = 0;   // count number of valid bars' data added
+
+    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator meter_pairs_it = m_meter_types.begin(); meter_pairs_it != m_meter_types.end(); ++meter_pairs_it) {
+        const std::pair<MeterType, MeterType>& meter_types_pair = *meter_pairs_it;
+        const Meter* actual_meter = obj->GetMeter(meter_types_pair.first);
+        const Meter* target_max_meter = obj->GetMeter(meter_types_pair.second);
+
+        if (actual_meter || target_max_meter) {
+            ++num_bars;
+            if (actual_meter) {
+                m_initial_values.push_back(actual_meter->Initial());
+                m_projected_values.push_back(obj->NextTurnCurrentMeterValue(meter_types_pair.first));
+            } else {
+                m_initial_values.push_back(Meter::INVALID_VALUE);
+                m_projected_values.push_back(Meter::INVALID_VALUE);
+            }
+            if (target_max_meter) {
+                m_target_max_values.push_back(target_max_meter->Current());
+            } else {
+                m_target_max_values.push_back(Meter::INVALID_VALUE);
+            }
+            m_bar_colours.push_back(MeterColor(meter_types_pair.first));
+        }
     }
-    const int NUM_BARS = meters.size();
 
-    const GG::Y HEIGHT = NUM_BARS*BAR_HEIGHT + (NUM_BARS - 1)*BAR_PAD + 2*EDGE_PAD;
-
-    for (int i = 0; i < NUM_BARS; ++i) {
-        const Meter* meter = meters[i];
-        m_initial_maxes.push_back(meter->InitialMax());
-        m_initial_currents.push_back(meter->InitialCurrent());
-        m_projected_maxes.push_back(meter->Max());
-        m_projected_currents.push_back(obj->ProjectedCurrentMeter(m_meter_types[i]));
-        m_bar_colours.push_back(MeterColor(m_meter_types[i]));
-    }
-
+    // calculate height from number of bars to be shown
+    const GG::Y HEIGHT = num_bars*BAR_HEIGHT + (num_bars - 1)*BAR_PAD + 2*EDGE_PAD;
     Resize(GG::Pt(Width(), HEIGHT));
 }
 
@@ -2232,7 +2272,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
             continue;
 
         std::string name = obj->Name();
-        double production = rc->ProjectedMeterPoints(ResourceToMeter(m_resource_type));
+        double production = rc->NextTurnCurrentMeterValue(ResourceToMeter(m_resource_type));
         m_production += production;
 
         std::string amount_text = DoubleToString(production, 3, false);
@@ -2534,9 +2574,10 @@ void SystemResourceSummaryBrowseWnd::Clear() {
 //////////////////////////////////////
 //         MeterBrowseWnd           //
 //////////////////////////////////////
-MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, int object_id) :
+MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type/* = INVALID_METER_TYPE*/) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, GG::Y1),
-    m_meter_type(meter_type),
+    m_primary_meter_type(primary_meter_type),
+    m_secondary_meter_type(secondary_meter_type),
     m_object_id(object_id),
     m_summary_title(0),
     m_current_label(0), m_current_value(0),
@@ -2545,8 +2586,7 @@ MeterBrowseWnd::MeterBrowseWnd(MeterType meter_type, int object_id) :
     m_meter_title(0),
     m_row_height(1),
     m_initialized(false)
-{
-}
+{}
 
 bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
     assert(mode <= wnd->BrowseModes().size());
@@ -2614,24 +2654,31 @@ void MeterBrowseWnd::UpdateSummary() {
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj)
         return;
-    const Meter* meter = obj->GetMeter(m_meter_type);
-    if (!meter)
-        return;
+    if (obj->GetMeter(m_primary_meter_type)) {
 
-    double current = obj->MeterPoints(m_meter_type);
-    double next = obj->ProjectedMeterPoints(m_meter_type);
-    double change = next - current;
-    double meter_cur = meter->Current();
-    double meter_max = meter->Max();
+        double primary_current = obj->CurrentMeterValue(m_primary_meter_type);
+        double primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
+        double primary_change = primary_next - primary_current;
 
-    m_current_value->SetText(DoubleToString(current, 3, false));
-    m_next_turn_value->SetText(DoubleToString(next, 3, false));
-    m_change_value->SetText(ColouredNumber(change));
-    m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER")) %
-                                          DoubleToString(meter_cur, 3, false) %
-                                          DoubleToString(meter_max, 3, false)));
+        m_current_value->SetText(DoubleToString(primary_current, 3, false));
+        m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));
+        m_change_value->SetText(ColouredNumber(primary_change));
 
-    switch (m_meter_type) {
+        if (obj->GetMeter(m_secondary_meter_type)) {
+            double secondary_current = obj->CurrentMeterValue(m_secondary_meter_type);
+            double secondary_next = obj->NextTurnCurrentMeterValue(m_secondary_meter_type);
+            double secondary_change = secondary_next - secondary_current;
+
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_TWO_VALUES")) %
+                                                  DoubleToString(primary_current, 3, false) %
+                                                DoubleToString(secondary_current, 3, false)));
+        } else {
+            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_ONE_VALUE")) %
+                                                  DoubleToString(primary_current, 3, false)));
+        }
+    }
+
+    switch (m_primary_meter_type) {
     case METER_POPULATION:
         m_summary_title->SetText(UserString("PP_POPULATION"));  break;
     case METER_FARMING:
@@ -2660,6 +2707,7 @@ void MeterBrowseWnd::UpdateSummary() {
         m_summary_title->SetText(UserString("MP_DETECTION"));   break;
     case METER_STEALTH:
         m_summary_title->SetText(UserString("MP_STEALTH"));     break;
+    // TODO: other meters?  ship meters?
     default:
         m_summary_title->SetText("");                           break;
     }
@@ -2693,8 +2741,22 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map = map_it->second;
 
 
+    // select which meter type to display accounting for.  if there is a valid
+    // secondary meter type, then this is probably the target or max meter and
+    // should have accounting displayed.  if there is no valid secondary meter
+    // (and there is a valid primary meter) then that is probably an unpaired
+    // meter and should have accounting displayed
+    MeterType accounting_displayed_for_meter = INVALID_METER_TYPE;
+    if (m_secondary_meter_type != INVALID_METER_TYPE)
+        accounting_displayed_for_meter = m_secondary_meter_type;
+    else if (m_primary_meter_type != INVALID_METER_TYPE)
+        accounting_displayed_for_meter = m_primary_meter_type;
+    if (accounting_displayed_for_meter == INVALID_METER_TYPE)
+        return; // nothing to display
+
+
     // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(m_meter_type);
+    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(accounting_displayed_for_meter);
     if (meter_it == meter_map.end() || meter_it->second.empty())
         return; // couldn't find appropriate meter type, or there were no entries for that meter.
     const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;

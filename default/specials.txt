@@ -8,12 +8,12 @@ Special
             activation =
                 Source
             effects = [
-                SetMaxPopulation Value + 10
-                SetMaxFarming Value + 8
-                SetMaxIndustry Value + 5
-                SetMaxTrade Value + 2
-                SetMaxSupply Value + 2
-                SetMaxConstruction  Value + 20
-                SetMaxDetection Value + 5
+                SetTargetPopulation Value + 10
+                SetTargetFarming Value + 8
+                SetTargetIndustry Value + 5
+                SetTargetTrade Value + 2
+                SetTargetConstruction  Value + 20
+                SetSupply Value + 2
+                SetDetection Value + 5
             ]
     graphic = "icons/specials_huge/homeworld.png"

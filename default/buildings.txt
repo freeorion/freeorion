@@ -11,7 +11,7 @@ BuildingType
             scope = Contains Source
             activation = Source
             effects = [
-                SetMaxConstruction Target.MaxConstruction + 2
+                SetTargetConstruction Value + 2
                 SetOwnerCapitol
             ]
     graphic = ""
@@ -27,7 +27,7 @@ BuildingType
         EffectsGroup
             scope = Contains Source
             activation = Source
-            effects = SetMaxStealth Target.MaxStealth - 10
+            effects = SetStealth Value - 10
         EffectsGroup
             scope = And [
                 Planet
@@ -35,7 +35,7 @@ BuildingType
                 WithinDistance distance = 200 condition = Source
             ]
             activation = Source
-            effects = SetMaxDetection Target.MaxDetection + 10
+            effects = SetDetection Value + 10
         ]
     graphic = ""
 
@@ -71,7 +71,7 @@ BuildingType
         EffectsGroup
             scope = Contains Source
             activation = Source
-            effects = SetMaxHealth Target.MaxHealth - 2
+            effects = SetTargetHealth Value - 2
     graphic = "icons/building/bioterror_lab.png"
 
 BuildingType
@@ -90,7 +90,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BIOTERROR_PROJECTOR_SELF"
-            effects = SetMaxHealth Target.MaxHealth - 1
+            effects = SetTargetHealth Value - 1
 
         EffectsGroup
             scope = And [
@@ -106,7 +106,7 @@ BuildingType
                 ]
             ]
             stackinggroup = "BIOTERROR_PROJECTOR_OTHER"
-            effects = SetMaxHealth Target.MaxHealth - 4
+            effects = SetTargetHealth Value - 4
     ]            
     graphic = "icons/building/bioterror_projector.png"
 
@@ -126,8 +126,8 @@ BuildingType
             activation = Source
             stackinggroup = "AUTOLAB_STACK_PRIMARY"
             effects = [ 
-                SetMaxResearch Target.MaxResearch + 2
-                SetMaxHealth Target.MaxHealth - 2
+                SetTargetResearch Value + 2
+                SetTargetHealth Value - 2
             ]
 
          EffectsGroup
@@ -138,8 +138,8 @@ BuildingType
             activation = Source
             stackinggroup = "AUTOLAB_STACK_SECONDARY"
             effects = [
-                SetMaxResearch Target.MaxResearch + 1
-                SetMaxHealth Target.MaxHealth - 1
+                SetTargetResearch Value + 1
+                SetTargetHealth Value - 1
             ]
     ]            
     graphic = "icons/building/autolab_control_centre.png"
@@ -159,7 +159,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "AUTOFACTORY_STACK_PRIMARY"
-            effects = SetMaxIndustry Target.MaxIndustry + 2
+            effects = SetTargetIndustry Value + 2
 
          EffectsGroup
             scope = And [
@@ -168,7 +168,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "AUTOFACTORY_STACK_SECONDARY"
-            effects = SetMaxIndustry Target.MaxIndustry + 1
+            effects = SetTargetIndustry Value + 1
     ]            
     graphic = "icons/building/autofactory_control_centre.png"
 
@@ -187,7 +187,7 @@ BuildingType
             ]
             activation = OwnerHasTech "LRN_THEOREM_PROVER"
             stackinggroup = "THEOREM_PROVER_STACK_PRIMARY"
-            effects = SetMaxResearch Target.MaxResearch + 5
+            effects = SetTargetResearch Value + 5
 
          EffectsGroup
             scope = And [
@@ -196,7 +196,7 @@ BuildingType
             ]
             activation = OwnerHasTech "LRN_THEOREM_PROVER"
             stackinggroup = "THEOREM_PROVER_STACK_SECONDARY"
-            effects = SetMaxResearch Target.MaxResearch + 2
+            effects = SetTargetResearch Value + 2
     ]            
     graphic = ""
 
@@ -217,7 +217,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "LIGHTHOUSE_STACK"
-            effects = SetMaxSupply Target.MaxSupply + 1
+            effects = SetSupply Value + 1
     graphic = ""
 
 BuildingType
@@ -237,15 +237,15 @@ BuildingType
             ]
             activation = OwnerHasTech "PRO_HEAVY_MINING_I"
             stackinggroup = "HEAVY_MINE_PROCESSOR_STACK"
-            effects = SetMaxMining Target.MaxMining + 5
+            effects = SetTargetMining Value + 5
 
         EffectsGroup
             scope = Contains Source
             activation = Source
             stackinggroup = "HEAVY_MINE_PROCESSOR_LOCAL_STACK"
             effects = [
-                SetMaxFarming Target.MaxFarming - 5
-                SetMaxMining Target.MaxMining + 2
+                SetTargetFarming Value - 5
+                SetTargetMining Value + 2
             ]
     ]
     graphic = "icons/building/heavy_mining_processor.png"
@@ -269,7 +269,7 @@ BuildingType
                 Not OwnerHasTech "PRO_INDUSTRY_CENTRE_II"
             ]
             stackinggroup = "INDUSTRY_CENTRE_STACK"
-            effects = SetMaxIndustry Target.MaxIndustry + 5
+            effects = SetTargetIndustry Value + 5
 
         EffectsGroup
             scope = And [
@@ -282,7 +282,7 @@ BuildingType
                 Not OwnerHasTech "PRO_INDUSTRY_CENTRE_III"
             ]
             stackinggroup = "INDUSTRY_CENTRE_STACK"
-            effects = SetMaxIndustry Target.MaxIndustry + 6
+            effects = SetTargetIndustry Value + 6
 
         EffectsGroup
             scope = And [
@@ -292,7 +292,7 @@ BuildingType
             ]
             activation = OwnerHasTech "PRO_INDUSTRY_CENTRE_III"
             stackinggroup = "INDUSTRY_CENTRE_STACK"
-            effects = SetMaxIndustry Target.MaxIndustry + 7
+            effects = SetTargetIndustry Value + 7
     ]
     graphic = ""
 
@@ -317,7 +317,7 @@ BuildingType
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE"
             stackinggroup = "ASTEROID_LOCAL_EFFECT"
-            effects = SetMaxMining Target.MaxMining + 4
+            effects = SetTargetMining Value + 4
 
         EffectsGroup
             scope = And [
@@ -329,7 +329,7 @@ BuildingType
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE_II"
             stackinggroup = "ASTEROID_LOCAL_EFFECT"
-            effects = SetMaxMining Target.MaxMining + 8
+            effects = SetTargetMining Value + 8
 
     ]
     graphic = ""
@@ -350,8 +350,8 @@ BuildingType
                 CurrentConstruction low = 30 high = 999
             stackinggroup = "MEGALITH_LOCAL_EFFECT"
             effects = [
-                SetMaxPopulation value = Target.MaxPopulation + 1
-                SetMaxTrade value = Target.MaxTrade + 1
+                SetTargetPopulation value = Value + 1
+                SetTargetTrade value = Value + 1
             ]
         EffectsGroup
             scope =
@@ -366,7 +366,7 @@ BuildingType
                 Source
             stackinggroup = "MEGALITH_NEIGHBOUR_EFFECT"
             effects =
-                SetMaxConstruction value = Target.MaxConstruction + 3
+                SetTargetConstruction value = Value + 3
     ]
     graphic = "icons/building/megalith.png"
 
@@ -388,10 +388,10 @@ BuildingType
                 Source
             stackinggroup = "BLD_COLLECTIVE_NET_EFFECTS"
             effects = [
-                SetMaxResearch value = Target.MaxResearch + 3
-                SetMaxTrade value = Target.MaxTrade + 3
-                SetMaxIndustry value = Target.MaxIndustry - 3
-                SetMaxFarming value = Target.MaxFarming - 3
+                SetTargetResearch value = Value + 3
+                SetTargetTrade value = Value + 3
+                SetTargetIndustry value = Value - 3
+                SetTargetFarming value = Value - 3
             ]
     graphic = ""
 
@@ -413,9 +413,9 @@ BuildingType
                 Source
             stackinggroup = "BLD_GENOME_BANK_EFFECTS"
             effects = [
-                SetMaxHealth value = Target.MaxHealth + 2
-                SetMaxFarming value = Target.MaxFarming + 1
-                SetMaxResearch value = Target.MaxResearch + 1
+                SetTargetHealth value = Value + 2
+                SetTargetFarming value = Value + 1
+                SetTargetResearch value = Value + 1
             ]
     graphic = ""
 
@@ -439,9 +439,9 @@ BuildingType
                 Source
             stackinggroup = "BLD_GRAVITY_WELLS_EFFECT"
             effects = [
-                SetMaxIndustry value = Target.MaxIndustry + 2
-                SetMaxConstruction value = Target.MaxConstruction + 2
-                SetMaxTrade value = Target.MaxTrade + 1
+                SetTargetIndustry value = Value + 2
+                SetTargetConstruction value = Value + 2
+                SetTargetTrade value = Value + 1
             ]
     graphic = ""
 
@@ -461,10 +461,10 @@ BuildingType
                 Source
             stackinggroup = "BLD_PLANET_RING_EFFECT"
             effects = [
-                SetMaxPopulation value = Target.MaxPopulation + 3
-                SetMaxConstruction value = Target.MaxConstruction + 1
-                SetMaxTrade value = Target.MaxTrade + 3
-                SetMaxFarming value = Target.MaxFarming - 5
+                SetTargetPopulation value = Value + 3
+                SetTargetConstruction value = Value + 1
+                SetTargetTrade value = Value + 3
+                SetTargetFarming value = Value - 5
             ]
     graphic = ""
 
@@ -492,7 +492,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_SPACE_ELEVATOR_EFFECT"
             effects =
-                SetMaxTrade value = Target.MaxTrade + 2
+                SetTargetTrade value = Value + 2
     graphic = ""
 
 BuildingType
@@ -514,7 +514,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_COMM_UNION_EFFECT"
             effects =
-                SetMaxTrade value = Target.MaxTrade + 5
+                SetTargetTrade value = Value + 5
     graphic = ""
 
 BuildingType
@@ -535,7 +535,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_DEEP_GREEN_EFFECT"
             effects =
-                SetMaxTrade value = Target.MaxTrade + 2
+                SetTargetTrade value = Value + 2
     graphic = ""
 
 BuildingType
@@ -554,9 +554,9 @@ BuildingType
                 PrimaryFocus focus = Trade
             stackinggroup = "BLD_PARADISE_SELF_EFFECT"
             effects = [
-                SetMaxTrade value = Target.MaxTrade + 5
-                SetMaxMining value = Target.MaxMining - 5
-                SetMaxIndustry value = Target.MaxIndustry - 5
+                SetTargetTrade value = Value + 5
+                SetTargetMining value = Value - 5
+                SetTargetIndustry value = Value - 5
             ]
         EffectsGroup
             scope =
@@ -570,7 +570,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_PARADISE_AREA_EFFECT"
             effects =
-                SetMaxHealth value = Target.MaxHealth + 2
+                SetTargetHealth value = Value + 2
     ]
     graphic = ""
 
@@ -589,7 +589,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_CADUCEAN"
-            effects = SetMaxHealth value = Target.MaxHealth + 2
+            effects = SetTargetHealth value = Value + 2
     graphic = "icons/building/the_caducean_institute.png"
 
 BuildingType
@@ -610,7 +610,7 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "LIVING_PLANET_EMPIRE_EFFECT"
             effects =
-                SetMaxResearch value = Target.MaxResearch + 2
+                SetTargetResearch value = Value + 2
         EffectsGroup
             scope =
                 Contains condition =
@@ -619,8 +619,8 @@ BuildingType
                 Source
             stackinggroup = "LIVING_PLANET_SELF_EFFECT"
             effects = [
-                SetMaxHealth value = Target.MaxHealth + 5
-                SetMaxFarming value = Target.MaxFarming + 5
+                SetTargetHealth value = Value + 5
+                SetTargetFarming value = Value + 5
             ]
         EffectsGroup
             scope =
@@ -629,8 +629,8 @@ BuildingType
             activation =
                 Source
             effects = [
-                SetMaxIndustry value = 0
-                SetMaxMining value = 0
+                SetTargetIndustry value = 0
+                SetTargetMining value = 0
             ]
     ]
     graphic = ""
@@ -651,8 +651,8 @@ BuildingType
                 PrimaryFocus focus = Trade
             stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
             effects = [
-                SetMaxTrade value = Target.MaxTrade + 5
-                SetMaxFarming value = Target.MaxFarming + 2
+                SetTargetTrade value = Value + 5
+                SetTargetFarming value = Value + 2
             ]
         EffectsGroup
             scope =
@@ -664,7 +664,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
             effects =
-                SetMaxFarming value = Target.MaxFarming + 2
+                SetTargetFarming value = Value + 2
     ]
     graphic = ""
 
@@ -690,23 +690,23 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "BLD_ENCLAVE_VOID_EMPIRE_EFFECT"
             effects =
-                SetMaxResearch value = Target.MaxResearch + 5
+                SetTargetResearch value = Value + 5
         EffectsGroup
             scope =
                 Contains condition =
                     Source
             activation =
-                MaxIndustry low = 10 high = 999
+                TargetIndustry low = 10 high = 999
             effects =
-                SetMaxIndustry value = 10
+                SetTargetIndustry value = 10
         EffectsGroup
             scope =
                 Contains condition =
                     Source
             activation =
-                MaxMining low = 10 high = 999
+                TargetMining low = 10 high = 999
             effects =
-                SetMaxMining value = 10
+                SetTargetMining value = 10
     ]
     graphic = ""
 
@@ -732,7 +732,7 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "BLD_LOOKING_GLASS_RESEARCH_EFFECT"
             effects =
-                SetMaxResearch value = Target.MaxResearch + 3
+                SetTargetResearch value = Value + 3
         EffectsGroup
             scope =
                 And [
@@ -747,7 +747,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_LOOKING_GLASS_TRADE_EFFECT"
             effects =
-                SetMaxTrade value = Target.MaxTrade + 5
+                SetTargetTrade value = Value + 5
     ]
     graphic = ""
 
@@ -770,7 +770,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
             effects =
-                SetMaxHealth value = Target.MaxHealth + 10
+                SetTargetHealth value = Value + 10
     graphic = "icons/building/monument_to_exodus.png"
 
 BuildingType
@@ -792,7 +792,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_PSICORP_EFFECT"
             effects =
-                SetMaxResearch value = Target.MaxResearch + Target.CurrentPopulation / 5
+                SetTargetResearch value = Value + Target.CurrentPopulation / 5
     graphic = ""
 
 BuildingType
@@ -816,7 +816,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_ART_BLACK_HOLE_EFFECT"
             effects =
-                SetMaxIndustry value = Target.MaxIndustry + 6
+                SetTargetIndustry value = Value + 6
     graphic = ""
 
 BuildingType
@@ -840,7 +840,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
             effects =
-                SetMaxIndustry value = Target.MaxIndustry + 10
+                SetTargetIndustry value = Value + 10
         EffectsGroup
             scope =
                 And [
@@ -853,7 +853,7 @@ BuildingType
             activation =
                 Source
             effects =
-                SetMaxHealth value = Target.MaxHealth - 5
+                SetTargetHealth value = Value - 5
     ]
     graphic = ""
 
@@ -876,7 +876,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_MINI_SUN_EFFECT"
             effects =
-                SetMaxIndustry value = Target.MaxIndustry + 4
+                SetTargetIndustry value = Value + 4
     graphic = "icons/building/miniature_sun.png"
 
 BuildingType
@@ -895,5 +895,5 @@ BuildingType
                 Source
             stackinggroup = "BLD_ECON_SINKHOLE_EFFECT"
             effects =
-                SetMaxTrade value = Target.MaxTrade - 10
+                SetTargetTrade value = Value - 10
     graphic = "icons/building/economic_sinkhole.png"

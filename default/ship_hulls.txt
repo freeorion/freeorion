@@ -38,7 +38,7 @@ Hull
             ]
             activation = Source
             stackinggroup = "SH_EMPTY_FARMER_STACK_FARMING"
-            effects = SetMaxFarming Target.MaxFarming + 5
+            effects = SetTargetFarming Target.TargetFarming + 5
     graphic = ""
 
 Hull

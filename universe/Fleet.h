@@ -36,6 +36,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    virtual void                        MovementPhase();
+
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
 
     const_iterator                      begin() const;                      ///< returns the begin const_iterator for the ships in the fleet
@@ -105,9 +107,6 @@ public:
     virtual void            MoveTo(double x, double y);
     void                    SetNextAndPreviousSystems(int next, int prev);  ///< sets the previous and next systems for this fleet.  Useful after moving a moving fleet to a different location, so that it moves along its new local starlanes
 
-    virtual void            MovementPhase();
-    virtual void            ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void            PopGrowthProductionResearchPhase();
     void                    RecalculateFleetSpeed();                        ///< recalculates the speed of the fleet by finding the lowest speed of the ships in the fleet.
     //@}
 
@@ -117,8 +116,11 @@ public:
     static const int            ETA_NEVER;                                  ///< returned by ETA when fleet can't reach destination due to lack of route or inability to move
     static const int            ETA_UNKNOWN;                                ///< returned when ETA can't be determined
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
-    
+
 private:
+    virtual void            PopGrowthProductionResearchPhase();
+    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+
     void                    CalculateRoute() const;                         ///< sets m_travel_route and m_travel_distance to their proper values based on the other member data
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 

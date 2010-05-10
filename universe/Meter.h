@@ -6,54 +6,46 @@
 #include <boost/serialization/nvp.hpp>
 #include <string>
 
-class Universe;
-class ServerApp;
-
 /** A Meter is a value with an associated maximum value.  A typical example is the population meter.  The max represents the max 
     pop for a planet, and the current represents the current pop there.  The max may be adjusted upwards or downwards, and the 
     current may be as well. */
 class Meter
 {
 public:
-    Meter();                                    ///< default ctor.
-    Meter(double current, double max);          ///< basic ctor
-    Meter(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max); ///< basic ctor
+    /** \name Structors */ //@{
+    Meter();                                ///< default ctor.  values all set to DEFAULT_VALUE
+    explicit Meter(double current_value);   ///< basic ctor.  current value set to \a cuurent_value and initial and current values set to DEFAULT_VALUE
+    Meter(double current_value, double initial_value, double previous_value);   ///< full ctor
+    //@}
 
+    /** \name Accessors */ //@{
+    double      Current() const;                    ///< returns the current value of the meter
+    double      Initial() const;                    ///< returns the value of the meter as it was at the beginning of the turn
+    double      Previous() const;                   ///< returns the value of the meter as it was at the beginning of the previous turn
 
-    double  Current() const;                    ///< returns the current value of the meter, which will be in [METER_MIN, Max()]
-    double  Max() const;                        ///< returns the maximum value of the meter, which will be in [METER_MIN, METER_MAX]
+    std::string Dump() const;                       ///< returns text of meter values
+    //@}
 
-    double  InitialCurrent() const;             ///< returns the current value of the meter, as it was at the beginning of the turn
-    double  InitialMax() const;                 ///< returns the maximum value of the meter, as it was at the beginning of the turn
-    double  PreviousCurrent() const;            ///< returns the current value of the meter, as it was at the beginning of last turn
-    double  PreviousMax() const;                ///< returns the maximum value of the meter, as it was at the beginning of last turn
+    /** \name Mutators */ //@{
+    void        SetCurrent(double current_value);   ///< sets current value, leaving initial and previous values unchanged
+    void        Set(double current_value, double initial_value, double previous_value); ///< sets current, initial and previous values
+    void        ResetCurrent();                     ///< sets current value equal to DEFAULT_VALUE
+    void        Reset();                            ///< sets current, initial and previous values to DEFAULT_VALUE
 
-    std::string Dump() const;                   ///< returns text of meter values
+    void        AddToCurrent(double adjustment);    ///< adds \a current to the current value of the Meter
+    void        ClampCurrentToRange(double min = DEFAULT_VALUE, double max = LARGE_VALUE);  ///< ensures the current value falls in the range [\a min, \a max]
 
-    void    BackPropegate();                    ///< sets previous current and max to initial current and max, and then sets initial current and max to current and max
+    void        BackPropegate();                    ///< sets previous equal to initial, then sets initial equal to current
+    //@}
 
-    void    ResetMax();                         ///< sets the max value of the Meter to METER_MIN, during max value recalculation
-    void    SetCurrent(double current);         ///< sets the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void    SetMax(double max);                 ///< sets the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void    AdjustCurrent(double adjustment);   ///< adds \a current to the current value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void    AdjustMax(double max);              ///< adds \a max to the maximum value of the Meter, clamping it to the range [METER_MIN, METER_MAX]
-    void    Clamp();                            ///< clamps Max() to the range [METER_MIN, METER_MAX] and clamps Current() to the range [METER_MIN, Max()]
-
-    void    Reset();                            ///< sets all members to METER_MIN
-    /** Sets all members */
-    void    Set(double current, double max, double initial_current, double initial_max, double previous_current, double previous_max);
-    void    Set(double current, double max);    ///< sets current and max, previous and initial current and maxes unchanges
-
-    static const double     METER_MIN;
-    static const double     METER_MAX;
+    static const double DEFAULT_VALUE;              ///< value assigned to current, initial, or previous when resetting or when no value is specified in a constructor
+    static const double LARGE_VALUE;                ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
+    static const double INVALID_VALUE;              ///< sentinel value to indicate no valid value for this meter
 
 private:
-    double      m_current;
-    double      m_max;
-    double      m_initial_current;
-    double      m_initial_max;
-    double      m_previous_current;
-    double      m_previous_max;
+    double  m_current_value;
+    double  m_initial_value;
+    double  m_previous_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -64,12 +56,9 @@ private:
 template <class Archive>
 void Meter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_current)
-        & BOOST_SERIALIZATION_NVP(m_max)
-        & BOOST_SERIALIZATION_NVP(m_initial_current)
-        & BOOST_SERIALIZATION_NVP(m_initial_max)
-        & BOOST_SERIALIZATION_NVP(m_previous_current)
-        & BOOST_SERIALIZATION_NVP(m_previous_max);
+    ar  & BOOST_SERIALIZATION_NVP(m_current_value)
+        & BOOST_SERIALIZATION_NVP(m_initial_value)
+        & BOOST_SERIALIZATION_NVP(m_previous_value);
 }
 
 #endif // _Meter_h_

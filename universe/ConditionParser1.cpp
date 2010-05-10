@@ -82,13 +82,12 @@ namespace {
             member3 primary;
         };
 
-        struct MeterValueClosure : boost::spirit::classic::closure<MeterValueClosure, Condition::ConditionBase*, MeterType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*, bool>
+        struct MeterValueClosure : boost::spirit::classic::closure<MeterValueClosure, Condition::ConditionBase*, MeterType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 meter;
             member3 low;
             member4 high;
-            member5 max_meter;
         };
 
         struct AndOrClosure : boost::spirit::classic::closure<AndOrClosure, Condition::ConditionBase*, std::vector<const Condition::ConditionBase*> >
@@ -195,19 +194,37 @@ namespace {
             [focus_type.this_ = new_<Condition::FocusType>(focus_type.foci, focus_type.primary)];
 
         meter_value =
-            (((str_p("max")[meter_value.max_meter = val(true)]
-               | str_p("current")[meter_value.max_meter = val(false)])
-              >> (str_p("population")[meter_value.meter = val(METER_POPULATION)]
-                  | str_p("farming")[meter_value.meter = val(METER_FARMING)]
-                  | str_p("industry")[meter_value.meter = val(METER_INDUSTRY)]
-                  | str_p("research")[meter_value.meter = val(METER_RESEARCH)]
-                  | str_p("trade")[meter_value.meter = val(METER_TRADE)]
-                  | str_p("mining")[meter_value.meter = val(METER_MINING)]
-                  | str_p("construction")[meter_value.meter = val(METER_CONSTRUCTION)]
-                  | str_p("health")[meter_value.meter = val(METER_HEALTH)]))
+            (str_p("current") >> (
+             str_p("targetpopulation")[meter_value.meter =  val(METER_TARGET_POPULATION)]
+           | str_p("targethealth")[meter_value.meter =      val(METER_TARGET_HEALTH)]
+           | str_p("targetfarming")[meter_value.meter =     val(METER_TARGET_FARMING)]
+           | str_p("targetindustry")[meter_value.meter =    val(METER_TARGET_INDUSTRY)]
+           | str_p("targetresearch")[meter_value.meter =    val(METER_TARGET_RESEARCH)]
+           | str_p("targettrade")[meter_value.meter =       val(METER_TARGET_TRADE)]
+           | str_p("targetmining")[meter_value.meter =      val(METER_TARGET_MINING)]
+           | str_p("targetconstruction")[meter_value.meter =val(METER_TARGET_CONSTRUCTION)]
+           | str_p("maxfuel")[meter_value.meter =           val(METER_MAX_FUEL)]
+           | str_p("maxshield")[meter_value.meter =         val(METER_MAX_SHIELD)]
+           | str_p("maxdefense")[meter_value.meter =        val(METER_MAX_DEFENSE)]
+           | str_p("population")[meter_value.meter =        val(METER_POPULATION)]
+           | str_p("health")[meter_value.meter =            val(METER_HEALTH)]
+           | str_p("farming")[meter_value.meter =           val(METER_FARMING)]
+           | str_p("industry")[meter_value.meter =          val(METER_INDUSTRY)]
+           | str_p("research")[meter_value.meter =          val(METER_RESEARCH)]
+           | str_p("trade")[meter_value.meter =             val(METER_TRADE)]
+           | str_p("mining")[meter_value.meter =            val(METER_MINING)]
+           | str_p("construction")[meter_value.meter =      val(METER_CONSTRUCTION)]
+           | str_p("fuel")[meter_value.meter =              val(METER_FUEL)]
+           | str_p("shield")[meter_value.meter =            val(METER_SHIELD)]
+           | str_p("defense")[meter_value.meter =           val(METER_DEFENSE)]
+           | str_p("supply")[meter_value.meter =            val(METER_SUPPLY)]
+           | str_p("stealth")[meter_value.meter =           val(METER_STEALTH)]
+           | str_p("detection")[meter_value.meter =         val(METER_DETECTION)]
+           | str_p("battlespeed")[meter_value.meter =       val(METER_BATTLE_SPEED)]
+           | str_p("starlanespeed")[meter_value.meter =     val(METER_STARLANE_SPEED)])
              >> low_label >> double_expr_p[meter_value.low = arg1]
              >> high_label >> double_expr_p[meter_value.high = arg1])
-            [meter_value.this_ = new_<Condition::MeterValue>(meter_value.meter, meter_value.low, meter_value.high, meter_value.max_meter)];
+            [meter_value.this_ = new_<Condition::MeterValue>(meter_value.meter, meter_value.low, meter_value.high)];
 
         and_ =
             (str_p("and") >> '[' >> +(condition_p[push_back_(and_.conditions, arg1)]) >> ']')

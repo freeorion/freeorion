@@ -119,7 +119,7 @@ private:
 class Effect::SetMeter : public Effect::EffectBase
 {
 public:
-    SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value, bool max);
+    SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetMeter();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -130,7 +130,6 @@ public:
 private:
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_value;
-    bool                                  m_max;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -534,8 +533,7 @@ void Effect::SetMeter::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_meter)
-        & BOOST_SERIALIZATION_NVP(m_value)
-        & BOOST_SERIALIZATION_NVP(m_max);
+        & BOOST_SERIALIZATION_NVP(m_value);
 }
 
 template <class Archive>

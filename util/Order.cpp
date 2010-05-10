@@ -162,7 +162,7 @@ void NewFleetOrder::ExecuteImpl() const
 
     // create fleet
     Fleet* fleet = new Fleet(m_fleet_name, system->X(), system->Y(), EmpireID());
-    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+    fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
     // an ID is provided to ensure consistancy between server and client universes
     universe.InsertID(fleet, m_new_id);
     system->Insert(fleet);
@@ -445,15 +445,14 @@ void FleetColonizeOrder::ServerExecute() const
         return;
     }
 
+    planet->Reset();
+
     planet->SetPrimaryFocus(FOCUS_FARMING);
     planet->SetSecondaryFocus(FOCUS_FARMING);
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
-    planet->GetMeter(METER_POPULATION)->BackPropegate();
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
-    planet->GetMeter(METER_FARMING)->BackPropegate();
-    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::METER_MAX);   // will later be clamped to max health
-    planet->GetMeter(METER_HEALTH)->BackPropegate();
+    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);   // will later be clamped to max health
 
     planet->AddOwner(EmpireID());
 
@@ -470,7 +469,7 @@ void FleetColonizeOrder::ServerExecute() const
     //Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
     //for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
     //    if (const Meter* meter = planet->GetMeter(meter_type))
-    //        Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->InitialCurrent() << "/" << meter->InitialMax();
+    //        Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Initial();
 }
 
 void FleetColonizeOrder::ExecuteImpl() const
@@ -577,7 +576,7 @@ bool FleetColonizeOrder::UndoImpl() const
             Logger().errorStream() << "FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID";
             return false;
         }
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::METER_MAX);
+        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         universe.InsertID(fleet, new_fleet_id);
         fleet->AddShip(ship->ID());
@@ -636,7 +635,7 @@ void DeleteFleetOrder::ExecuteImpl() const
 ChangeFocusOrder::ChangeFocusOrder() : 
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_focus(FOCUS_UNKNOWN)
+    m_focus(INVALID_FOCUS_TYPE)
 {}
 
 ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary) : 

@@ -89,92 +89,87 @@ public:
     Planet();                                                                               ///< default ctor
     Planet(PlanetType type, PlanetSize size);                                               ///< general ctor taking just the planet's type and size
 
-    virtual Planet*                     Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
+    virtual Planet*             Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&          TypeName() const;                               ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                               ///< returns user-readable string indicating the type of UniverseObject this is
 
-    PlanetType                          Type() const {return m_type;}
-    PlanetSize                          Size() const {return m_size;}
-    PlanetEnvironment                   Environment() const;
+    PlanetType                  Type() const {return m_type;}
+    PlanetSize                  Size() const {return m_size;}
+    PlanetEnvironment           Environment() const;
 
-    Year                                OrbitalPeriod() const;
-    Radian                              InitialOrbitalPosition() const;
-    Radian                              OrbitalPositionOnTurn(int turn) const;
-    Day                                 RotationalPeriod() const;
-    Degree                              AxialTilt() const;
+    Year                        OrbitalPeriod() const;
+    Radian                      InitialOrbitalPosition() const;
+    Radian                      OrbitalPositionOnTurn(int turn) const;
+    Day                         RotationalPeriod() const;
+    Degree                      AxialTilt() const;
 
-    const std::set<int>&                Buildings() const {return m_buildings;}
+    const std::set<int>&        Buildings() const {return m_buildings;}
 
-    double                              AvailableTrade() const;                         ///< returns the trade available at this planet for use in building maintenance
-    double                              BuildingCosts() const;                          ///< returns the cost in trade for the upkeep of all currently-enabled buildings
+    double                      AvailableTrade() const;                         ///< returns the trade available at this planet for use in building maintenance
+    double                      BuildingCosts() const;                          ///< returns the cost in trade for the upkeep of all currently-enabled buildings
 
     virtual bool                        Contains(int object_id) const;                  ///< returns true iff this Planet contains a building with ID \a id.
     virtual std::vector<UniverseObject*>FindObjects() const;                            ///< returns objects contained within this object
     virtual std::vector<int>            FindObjectIDs() const;                          ///< returns ids of objects contained within this object
 
-    bool                                IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
+    bool                        IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
-    virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
+    virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    virtual double                      ProjectedCurrentMeter(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
-    virtual double                      MeterPoints(MeterType type) const;              ///< returns "true amount" associated with a meter.  In some cases (METER_POPULATION) this is just the meter value.  In other cases (METER_FARMING) this is some other value (a function of population and meter value).
-    virtual double                      ProjectedMeterPoints(MeterType type) const;     ///< returns expected "true amount" associated with a meter on the next turn
-
-    virtual const Meter*                GetMeter(MeterType type) const  {return UniverseObject::GetMeter(type);}
+    double                      CurrentMeterValue(MeterType type) const;
+    virtual double              NextTurnCurrentMeterValue(MeterType type) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                        Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    virtual void                        SetSystem(int sys);
-    virtual void                        MoveTo(double x, double y);
+    virtual Meter*  GetMeter(MeterType type);
 
-    virtual void                        ApplyUniverseTableMaxMeterAdjustments(MeterType meter_type = INVALID_METER_TYPE);
-    virtual void                        PopGrowthProductionResearchPhase();
+    virtual void    SetSystem(int sys);
+    virtual void    MoveTo(double x, double y);
 
-    virtual Meter*                      GetMeter(MeterType type)    {return UniverseObject::GetMeter(type);}
-
-
-    void                                SetType(PlanetType type);           ///< sets the type of this Planet to \a type
-    void                                SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
+    void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
+    void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
 
     /** Sets the orbital period based on the orbit this planet is in. If
         tidally locked, the rotational period is also adjusted. */
-    void                                SetOrbitalPeriod(unsigned int orbit, bool tidal_lock);
+    void            SetOrbitalPeriod(unsigned int orbit, bool tidal_lock);
 
-    void                                SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
-    void                                SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
+    void            SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
+    void            SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
 
-    void                                AddBuilding(int building_id);       ///< adds the building to the planet
-    bool                                RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
+    void            AddBuilding(int building_id);       ///< adds the building to the planet
+    bool            RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
 
-    void                                SetAvailableTrade(double trade);    ///< sets the trade available at this planet for use in building maintenance
+    void            SetAvailableTrade(double trade);    ///< sets the trade available at this planet for use in building maintenance
 
-    virtual void                        AddOwner(int id);                   ///< adds the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
-    virtual void                        RemoveOwner(int id);                ///< removes the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
+    virtual void    AddOwner(int id);                   ///< adds the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
+    virtual void    RemoveOwner(int id);                ///< removes the Empire with ID \a id to the list of owners of this planet, update system owners and empire planets
 
-    void                                Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.  This should be called when a planet is wiped out due to starvation, etc.
+    void            Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.  This should be called when a planet is wiped out due to starvation, etc.
 
-    void                                Conquer(int conquerer);             ///< Called during combat when a planet changes hands
-    void                                SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
-    void                                ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
+    void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
+    void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
+    void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     //@}
 
-    static PlanetEnvironment            Environment(PlanetType type);       ///< returns the environment that corresponds to each planet type
-
-protected:
-    void Init();
+    static PlanetEnvironment    Environment(PlanetType type);           ///< returns the environment that corresponds to each planet type
 
 private:
-    virtual const UniverseObject*       GetThisObject() const {return this;}
+    void Init();
 
-    virtual Visibility                  GetVisibility(int empire_id) const              {return UniverseObject::GetVisibility(empire_id);}
-    virtual void                        InsertMeter(MeterType meter_type, Meter meter)  {UniverseObject::InsertMeter(meter_type, meter);}
-    virtual const Meter*                GetPopMeter() const                             {return GetMeter(METER_POPULATION);}
+    virtual const Meter*    GetMeter(MeterType type) const;
 
-    std::set<int>                       VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
+    virtual void            PopGrowthProductionResearchPhase();
+    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void            ClampMeters();
+
+    virtual Visibility      GetVisibility(int empire_id) const  {return UniverseObject::GetVisibility(empire_id);}
+    virtual void            AddMeter(MeterType meter_type)      {UniverseObject::AddMeter(meter_type);}
+
+    std::set<int>           VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_buildings that is visible to empire with id \a empire_id
 
     PlanetType      m_type;
     PlanetSize      m_size;

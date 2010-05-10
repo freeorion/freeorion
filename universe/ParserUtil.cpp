@@ -103,7 +103,7 @@ namespace {
             ("blackhole",   STAR_BLACK);
 
         focus_type_p.add
-            ("unknown",     FOCUS_UNKNOWN)
+            ("unknown",     INVALID_FOCUS_TYPE)
             ("balanced",    FOCUS_BALANCED)
             ("farming",     FOCUS_FARMING)
             ("industry",    FOCUS_INDUSTRY)

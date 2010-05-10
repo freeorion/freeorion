@@ -1028,10 +1028,15 @@ void SidePanel::PlanetPanel::Refresh()
 
 
     // create colonize or cancel button, if appropriate (a ship is in the system that can colonize, or the planet has been ordered to be colonized already this turn)
-    if (!Disabled() && owner == OS_NONE && planet->GetMeter(METER_POPULATION)->Max() > 0 && !planet->IsAboutToBeColonized() && FindColonyShip(planet->SystemID())) {
+    if (!Disabled() &&
+        owner == OS_NONE &&
+        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
+        !planet->IsAboutToBeColonized() &&
+        FindColonyShip(planet->SystemID()))
+    {
         AttachChild(m_button_colonize);
-        std::string max_pop = DoubleToString(planet->GetMeter(METER_POPULATION)->Max(), 2, false);
-        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % max_pop);
+        std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
+        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % target_pop);
         if (m_button_colonize)
             m_button_colonize->SetText(colonize_text);
 
@@ -1782,9 +1787,12 @@ void SidePanel::RefreshImpl()
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<MeterType> meter_types;
-    meter_types.push_back(METER_FARMING);   meter_types.push_back(METER_MINING);    meter_types.push_back(METER_INDUSTRY);
-    meter_types.push_back(METER_RESEARCH);  meter_types.push_back(METER_TRADE);
+    std::vector<std::pair<MeterType, MeterType> > meter_types;
+    meter_types.push_back(std::make_pair(METER_FARMING, METER_TARGET_FARMING));
+    meter_types.push_back(std::make_pair(METER_MINING, METER_TARGET_MINING));
+    meter_types.push_back(std::make_pair(METER_INDUSTRY, METER_TARGET_INDUSTRY));
+    meter_types.push_back(std::make_pair(METER_RESEARCH, METER_TARGET_RESEARCH));
+    meter_types.push_back(std::make_pair(METER_TRADE, METER_TARGET_TRADE));
 
     // refresh the system resource summary.
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
@@ -1798,8 +1806,8 @@ void SidePanel::RefreshImpl()
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (std::vector<MeterType>::const_iterator it = meter_types.begin(); it != meter_types.end(); ++it) {
-            MeterType type = *it;
+        for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = meter_types.begin(); it != meter_types.end(); ++it) {
+            MeterType type = it->first;
             // add tooltip for each meter type
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(
                 new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));

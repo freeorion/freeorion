@@ -137,13 +137,13 @@ void Missile::Init(const Ship& launcher,
     assert(launcher.Owners().size() == 1u);
     m_empire_id = *launcher.Owners().begin();
 
-    m_stats.m_damage = launcher.GetMeter(METER_DAMAGE, m_part_name)->Max();
-    m_stats.m_ROF = launcher.GetMeter(METER_ROF, m_part_name)->Max();
-    m_stats.m_range = launcher.GetMeter(METER_RANGE, m_part_name)->Max();
-    m_stats.m_speed = launcher.GetMeter(METER_SPEED, m_part_name)->Max();
-    m_stats.m_stealth = launcher.GetMeter(METER_STEALTH, m_part_name)->Max();
-    m_stats.m_health = launcher.GetMeter(METER_HEALTH, m_part_name)->Max();
-    m_stats.m_capacity = launcher.GetMeter(METER_CAPACITY, m_part_name)->Max();
+    m_stats.m_damage =  launcher.GetMeter(METER_DAMAGE,         m_part_name)->Current();
+    m_stats.m_ROF =     launcher.GetMeter(METER_ROF,            m_part_name)->Current();
+    m_stats.m_range =   launcher.GetMeter(METER_RANGE,          m_part_name)->Current();
+    m_stats.m_speed =   launcher.GetMeter(METER_SPEED,          m_part_name)->Current();
+    m_stats.m_stealth = launcher.GetMeter(METER_STEALTH,        m_part_name)->Current();
+    m_stats.m_health =  launcher.GetMeter(METER_HEALTH,         m_part_name)->Current();
+    m_stats.m_capacity= launcher.GetMeter(METER_CAPACITY,       m_part_name)->Current();
 
     m_health = m_stats.m_health;
 

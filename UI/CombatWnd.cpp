@@ -193,7 +193,7 @@ namespace {
     {
         std::pair<std::string, int> retval;
 
-        double pop = planet.GetMeter(METER_POPULATION)->Current();
+        double pop = planet.CurrentMeterValue(METER_POPULATION);
         unsigned int lights_level = NO_CITY_LIGHTS;
         const double MIN_POP_FOR_LIGHTS = 5.0;
         if (MIN_POP_FOR_LIGHTS < pop)

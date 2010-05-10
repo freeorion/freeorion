@@ -70,54 +70,62 @@ namespace {
             m_design_name_text(0),
             m_stat_icons(),
             m_selected(false)
-            {
-                if (!m_ship)
-                    throw std::invalid_argument("ShipDataPanel::ShipDataPanel() : Attempted to construct a ShipDataPanel from a null ship pointer.");
+        {
+            if (!m_ship)
+                throw std::invalid_argument("ShipDataPanel::ShipDataPanel() : Attempted to construct a ShipDataPanel from a null ship pointer.");
 
-                SetChildClippingMode(ClipToClient);
+            SetChildClippingMode(ClipToClient);
 
-                m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                       m_ship->Name(), ClientUI::GetFont(),
-                                                       ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-                AttachChild(m_ship_name_text);
+            m_ship_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
+                                                   m_ship->Name(), ClientUI::GetFont(),
+                                                   ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_ship_name_text);
 
-                if (const ShipDesign* design = m_ship->Design()) {
-                    m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                             design->Name(), ClientUI::GetFont(),
-                                                             ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                    AttachChild(m_design_name_text);
-                }
-
-                std::vector<MeterType> meters;
-                meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
-                meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
-
-
-                // tooltip info
-                int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-
-                const Universe::EffectAccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
-                const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-                Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
-                if (map_it != effect_accounting_map.end())
-                    meter_map = &(map_it->second);
-
-
-                for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-                    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
-                                                            ClientUI::MeterIcon(*it), 0, 0, false);
-                    m_stat_icons.push_back(std::make_pair(*it, icon));
-                    AttachChild(icon);
-
-                    // create tooltip explaining effects on meter if such info is available
-                    icon->SetBrowseModeTime(tooltip_delay);
-                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(*it, m_ship->ID()));
-                    icon->SetBrowseInfoWnd(browse_wnd);
-                }
-
-                m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
-                Refresh();
+            if (const ShipDesign* design = m_ship->Design()) {
+                m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
+                                                         design->Name(), ClientUI::GetFont(),
+                                                         ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                AttachChild(m_design_name_text);
             }
+
+            // types of meters to show stat values of
+            std::vector<MeterType> meters;
+            meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
+            meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
+
+            // types of meters to pair with shown stat values when generating tooltips (for max or target meter values)
+            std::vector<MeterType> associated_meters;
+            meters.push_back(METER_TARGET_HEALTH);  meters.push_back(METER_MAX_FUEL);   meters.push_back(INVALID_METER_TYPE);
+            meters.push_back(INVALID_METER_TYPE);   meters.push_back(METER_MAX_SHIELD);
+
+
+            // tooltip info
+            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+            const Universe::EffectAccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
+            const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
+            Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
+            if (map_it != effect_accounting_map.end())
+                meter_map = &(map_it->second);
+
+            for (int i = 0; i < meters.size(); ++i) {
+                const MeterType METER_TYPE = meters[i];
+                const MeterType ASSOCIATED_METER_TYPE = associated_meters[i];
+
+                StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconWidth(), StatIconHeight(),
+                                                        ClientUI::MeterIcon(METER_TYPE), 0, 0, false);
+                m_stat_icons.push_back(std::make_pair(METER_TYPE, icon));
+                AttachChild(icon);
+
+                // create tooltip explaining effects on meter if such info is available
+                icon->SetBrowseModeTime(tooltip_delay);
+                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(m_ship->ID(), METER_TYPE, ASSOCIATED_METER_TYPE));
+                icon->SetBrowseInfoWnd(browse_wnd);
+            }
+
+            m_ship_connection = GG::Connect(m_ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+            Refresh();
+        }
 
         ~ShipDataPanel() {
             delete m_ship_icon;
@@ -198,7 +206,7 @@ namespace {
             // set stat icon values
             GG::Pt icon_ul(GG::X(ICON_SIZE) + GG::X(PAD), LabelHeight());
             for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-                it->second->SetValue(m_ship->MeterPoints(it->first));
+                it->second->SetValue(m_ship->CurrentMeterValue(it->first));
             }
 
             DoLayout();

@@ -58,7 +58,7 @@ double ResourcePool::Production(int object_id) const {
     std::map<const ResourceCenter*, const UniverseObject*>::const_iterator it = m_resource_center_objs.find(res);
     if (it != m_resource_center_objs.end()) {
         MeterType meter_type = ResourceToMeter(m_type);
-        return res->ProjectedMeterPoints(meter_type);
+        return res->NextTurnCurrentMeterValue(meter_type);
     }
 
     Logger().debugStream() << "ResourcePool::Production asked for the resource production of a ResourceCenter that is not in this pool";
@@ -220,8 +220,8 @@ void ResourcePool::Update() {
                 if (obj_it->second->SystemID() == system_in_group_id) {
                     // add this ResourceCenter's production to the group pool
                     const ResourceCenter* rc = obj_it->first;
-                    group_production += rc->ProjectedMeterPoints(meter_type);
-                    //Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->ProjectedMeterPoints(meter_type);
+                    group_production += rc->NextTurnCurrentMeterValue(meter_type);
+                    //Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->NextTurnCurrentMeterValue(meter_type);
                 }
             }
 
@@ -239,7 +239,7 @@ void ResourcePool::Update() {
 //////////////////////////////////////////////////
 namespace {
     bool PopCenterLess(const PopCenter* elem1, const PopCenter* elem2) {
-        return elem1->GetMeter(METER_POPULATION)->Current() < elem2->GetMeter(METER_POPULATION)->Current();
+        return elem1->CurrentMeterValue(METER_POPULATION) < elem2->CurrentMeterValue(METER_POPULATION);
     }
 }
 
@@ -267,8 +267,8 @@ void PopulationPool::Update() {
     // sum population from all PopCenters in this pool
     for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it) {
         const PopCenter* center = (*it);
-        m_population += center->MeterPoints(METER_POPULATION);
-        m_future_population += center->ProjectedMeterPoints(METER_POPULATION);
+        m_population += center->CurrentMeterValue(METER_POPULATION);
+        m_future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
     }
     m_growth = m_future_population - m_population;
     ChangedSignal();
