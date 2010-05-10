@@ -172,7 +172,7 @@ namespace {
         part_class_label("partclass")
     {
         set_meter =
-            (str_p("setcurrent")
+            (str_p("set")
              >> (str_p("targetpopulation")[set_meter.meter =    val(METER_TARGET_POPULATION)]
                  | str_p("targethealth")[set_meter.meter =      val(METER_TARGET_HEALTH)]
                  | str_p("targetfarming")[set_meter.meter =     val(METER_TARGET_FARMING)]

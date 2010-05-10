@@ -194,8 +194,7 @@ namespace {
             [focus_type.this_ = new_<Condition::FocusType>(focus_type.foci, focus_type.primary)];
 
         meter_value =
-            (str_p("current") >> (
-             str_p("targetpopulation")[meter_value.meter =  val(METER_TARGET_POPULATION)]
+           ((str_p("targetpopulation")[meter_value.meter =  val(METER_TARGET_POPULATION)]
            | str_p("targethealth")[meter_value.meter =      val(METER_TARGET_HEALTH)]
            | str_p("targetfarming")[meter_value.meter =     val(METER_TARGET_FARMING)]
            | str_p("targetindustry")[meter_value.meter =    val(METER_TARGET_INDUSTRY)]

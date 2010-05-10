@@ -331,86 +331,59 @@ namespace ValueRef {
         std::string property_name = m_property_name.back();
         IF_CURRENT_VALUE_ELSE(double)
         if (boost::iequals(property_name, "Farming")) {
-            const Meter* m = object->GetMeter(METER_FARMING);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_FARMING);
         } else if (boost::iequals(property_name, "TargetFarming")) {
-            const Meter* m = object->GetMeter(METER_TARGET_FARMING);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_FARMING);
         } else if (boost::iequals(property_name, "Industry")) {
-            const Meter* m = object->GetMeter(METER_INDUSTRY);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_INDUSTRY);
         } else if (boost::iequals(property_name, "TargetIndustry")) {
-            const Meter* m = object->GetMeter(METER_TARGET_INDUSTRY);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_INDUSTRY);
         } else if (boost::iequals(property_name, "Research")) {
-            const Meter* m = object->GetMeter(METER_RESEARCH);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_RESEARCH);
         } else if (boost::iequals(property_name, "TargetResearch")) {
-            const Meter* m = object->GetMeter(METER_TARGET_RESEARCH);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_RESEARCH);
         } else if (boost::iequals(property_name, "Trade")) {
-            const Meter* m = object->GetMeter(METER_TRADE);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TRADE);
         } else if (boost::iequals(property_name, "TargetTrade")) {
-            const Meter* m = object->GetMeter(METER_TARGET_TRADE);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_TRADE);
         } else if (boost::iequals(property_name, "Mining")) {
-            const Meter* m = object->GetMeter(METER_MINING);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_MINING);
         } else if (boost::iequals(property_name, "TargetMining")) {
-            const Meter* m = object->GetMeter(METER_TARGET_MINING);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_MINING);
         } else if (boost::iequals(property_name, "Construction")) {
-            const Meter* m = object->GetMeter(METER_CONSTRUCTION);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_CONSTRUCTION);
         } else if (boost::iequals(property_name, "TargetConstruction")) {
-            const Meter* m = object->GetMeter(METER_TARGET_CONSTRUCTION);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_CONSTRUCTION);
         } else if (boost::iequals(property_name, "Health")) {
-            const Meter* m = object->GetMeter(METER_HEALTH);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_HEALTH);
         } else if (boost::iequals(property_name, "TargetHealth")) {
-            const Meter* m = object->GetMeter(METER_TARGET_HEALTH);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_HEALTH);
         } else if (boost::iequals(property_name, "Population")) {
-            const Meter* m = object->GetMeter(METER_POPULATION);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_POPULATION);
         } else if (boost::iequals(property_name, "TargetPopulation")) {
-            const Meter* m = object->GetMeter(METER_TARGET_POPULATION);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_TARGET_POPULATION);
         } else if (boost::iequals(property_name, "MaxFuel")) {
-            const Meter* m = object->GetMeter(METER_MAX_FUEL);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_MAX_FUEL);
         } else if (boost::iequals(property_name, "Fuel")) {
-            const Meter* m = object->GetMeter(METER_FUEL);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_FUEL);
         } else if (boost::iequals(property_name, "Supply")) {
-            const Meter* m = object->GetMeter(METER_SUPPLY);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_SUPPLY);
         } else if (boost::iequals(property_name, "Stealth")) {
-            const Meter* m = object->GetMeter(METER_STEALTH);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_STEALTH);
         } else if (boost::iequals(property_name, "Detection")) {
-            const Meter* m = object->GetMeter(METER_DETECTION);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_DETECTION);
         } else if (boost::iequals(property_name, "BattleSpeed")) {
-            const Meter* m = object->GetMeter(METER_BATTLE_SPEED);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_BATTLE_SPEED);
         } else if (boost::iequals(property_name, "StarlaneSpeed")) {
-            const Meter* m = object->GetMeter(METER_STARLANE_SPEED);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_STARLANE_SPEED);
         } else if (boost::iequals(property_name, "MaxShield")) {
-            const Meter* m = object->GetMeter(METER_MAX_SHIELD);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_MAX_SHIELD);
         } else if (boost::iequals(property_name, "Shield")) {
-            const Meter* m = object->GetMeter(METER_SHIELD);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_SHIELD);
         } else if (boost::iequals(property_name, "MaxDefense")) {
-            const Meter* m = object->GetMeter(METER_MAX_DEFENSE);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_MAX_DEFENSE);
         } else if (boost::iequals(property_name, "Defense")) {
-            const Meter* m = object->GetMeter(METER_DEFENSE);
-            retval = m ? m->Current() : 0;
+            retval = object->CurrentMeterValue(METER_DEFENSE);
         } else if (boost::iequals(property_name, "TradeStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());

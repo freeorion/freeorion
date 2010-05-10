@@ -348,10 +348,8 @@ Tech
                     PopulationCenter
                     PrimaryFocus focus = Research
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetResearch value = Target.TargetResearch + 5
+            activation = Source
+            effects = SetTargetResearch value = Target.TargetResearch + 5
     graphic = ""
 
 Tech
@@ -702,12 +700,10 @@ Tech
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                     PrimaryFocus focus = Industry
-                    CurrentIndustry low = 20 high = 999
+                    Industry low = 20 high = 999
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetFarming value = Target.TargetFarming + 2
+            activation = Source
+            effects = SetTargetFarming value = Target.TargetFarming + 2
     graphic = "icons/tech/urban_farming.png"
 
 Tech
@@ -1196,10 +1192,8 @@ Tech
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetIndustry value = Target.TargetIndustry + 3
+            activation = Source
+            effects = SetTargetIndustry value = Target.TargetIndustry + 3
     graphic = "icons/tech/fusion_plants.png"
 
 Tech
@@ -1566,10 +1560,8 @@ Tech
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetConstruction value = Target.TargetConstruction + 5
+            activation = Source
+            effects = SetTargetConstruction value = Target.TargetConstruction + 5
     graphic = ""
 
 Tech
@@ -1616,10 +1608,8 @@ Tech
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetConstruction value = Target.TargetConstruction + 5
+            activation = Source
+            effects = SetTargetConstruction value = Target.TargetConstruction + 5
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
@@ -1816,10 +1806,8 @@ Tech
                     PopulationCenter
                     PrimaryFocus focus = Trade
                 ]
-            activation =
-                Source
-            effects =
-                SetTargetTrade value = Target.TargetTrade + 3
+            activation = Source
+            effects = SetTargetTrade value = Target.TargetTrade + 3
     graphic = ""
 
 Tech
@@ -1864,8 +1852,7 @@ Tech
                     PopulationCenter
                     PrimaryFocus focus = Trade
                 ]
-            activation =
-                Source
+            activation = Source
             effects = [
                 SetTargetTrade value = Target.TargetTrade + 5
                 SetTargetConstruction value = Target.TargetConstruction - 2
@@ -1973,10 +1960,8 @@ Tech
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     Planet
                 ]
-            activation =
-                Source
-            effects =
-                SetSupply value = Target.Supply + 2
+            activation = Source
+            effects = SetSupply value = Target.Supply + 2
     graphic = ""
 
 Tech

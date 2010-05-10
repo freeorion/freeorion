@@ -223,12 +223,12 @@ namespace {
 
             if (shine) {
                 glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, static_cast<float>(shine));
-                GLfloat spec_v[] = {spec.r / 255.0, spec.g / 255.0, spec.b / 255.0, spec.a / 255.0};
+                GLfloat spec_v[] = {spec.r / 255.0f, spec.g / 255.0f, spec.b / 255.0f, spec.a / 255.0f};
                 glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, spec_v);
             }
-            GLfloat ambient_v[] = {ambient.r / 255.0, ambient.g / 255.0, ambient.b / 255.0, ambient.a / 255.0};
+            GLfloat ambient_v[] = {ambient.r / 255.0f, ambient.g / 255.0f, ambient.b / 255.0f, ambient.a / 255.0f};
             glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, ambient_v);
-            GLfloat diffuse_v[] = {diffuse.r / 255.0, diffuse.g / 255.0, diffuse.b / 255.0, diffuse.a / 255.0};
+            GLfloat diffuse_v[] = {diffuse.r / 255.0f, diffuse.g / 255.0f, diffuse.b / 255.0f, diffuse.a / 255.0f};
             glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, diffuse_v);
             gluQuadricTexture(quad, texture ? GL_TRUE : GL_FALSE);
             gluQuadricNormals(quad, GLU_SMOOTH);
@@ -248,9 +248,9 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            retval[0] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
+            retval[0] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
+            retval[1] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
+            retval[2] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
         }
 
         return retval;
@@ -269,10 +269,10 @@ namespace {
                 for (XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
                     std::vector<float>& color_vec = light_colors[lexical_cast<StarType>(it->Child("star_type").Text())];
                     GG::Clr color(XMLToClr(it->Child("GG::Clr")));
-                    color_vec.push_back(color.r / 255.0);
-                    color_vec.push_back(color.g / 255.0);
-                    color_vec.push_back(color.b / 255.0);
-                    color_vec.push_back(color.a / 255.0);
+                    color_vec.push_back(color.r / 255.0f);
+                    color_vec.push_back(color.g / 255.0f);
+                    color_vec.push_back(color.b / 255.0f);
+                    color_vec.push_back(color.a / 255.0f);
                 }
             } else {
                 for (int i = STAR_BLUE; i < NUM_STAR_TYPES; ++i) {
@@ -313,10 +313,10 @@ namespace {
         glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));
         glRotated(100.0, -1.0, 0.0, 0.0); // make the poles upright, instead of head-on (we go a bit more than 90 degrees, to avoid some artifacting caused by the GLU-supplied texture coords)
         glRotated(axial_tilt, 0.0, 1.0, 0.0);  // axial tilt
-        double intensity = GetRotatingPlanetAmbientIntensity();
-        GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0);
-        intensity = GetRotatingPlanetDiffuseIntensity();
-        GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0);
+        float intensity = static_cast<float>(GetRotatingPlanetAmbientIntensity());
+        GG::Clr ambient = GG::FloatClr(intensity, intensity, intensity, 1.0f);
+        intensity = static_cast<float>(GetRotatingPlanetDiffuseIntensity());
+        GG::Clr diffuse = GG::FloatClr(intensity, intensity, intensity, 1.0f);
 
         RenderSphere(diameter / 2, ambient, diffuse, GG::CLR_WHITE, shininess, texture);
 
@@ -549,7 +549,7 @@ public:
                 s_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
                     ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
 
-            float fog_scanline_spacing = GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing");
+            float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
             s_scanline_shader->Use();
             s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
             CircleArc(ul, lr, 0.0, TWO_PI, true);

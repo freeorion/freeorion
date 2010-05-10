@@ -347,18 +347,18 @@ BuildingType
                 Contains condition =
                     Source
             activation =
-                CurrentConstruction low = 30 high = 999
+                Construction low = 30 high = 999
             stackinggroup = "MEGALITH_LOCAL_EFFECT"
             effects = [
-                SetTargetPopulation value = Value + 1
-                SetTargetTrade value = Value + 1
+                SetTargetPopulation Value + 1
+                SetTargetTrade Value + 1
             ]
         EffectsGroup
             scope =
                 And [
                     PopulationCenter
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    CurrentConstruction low = 30 high = 999
+                    Construction low = 30 high = 999
                     WithinStarlaneJumps jumps = 1 condition =
                         Source
                 ]
@@ -366,7 +366,7 @@ BuildingType
                 Source
             stackinggroup = "MEGALITH_NEIGHBOUR_EFFECT"
             effects =
-                SetTargetConstruction value = Value + 3
+                SetTargetConstruction Value + 3
     ]
     graphic = "icons/building/megalith.png"
 
@@ -388,10 +388,10 @@ BuildingType
                 Source
             stackinggroup = "BLD_COLLECTIVE_NET_EFFECTS"
             effects = [
-                SetTargetResearch value = Value + 3
-                SetTargetTrade value = Value + 3
-                SetTargetIndustry value = Value - 3
-                SetTargetFarming value = Value - 3
+                SetTargetResearch Value + 3
+                SetTargetTrade Value + 3
+                SetTargetIndustry Value - 3
+                SetTargetFarming Value - 3
             ]
     graphic = ""
 
@@ -413,9 +413,9 @@ BuildingType
                 Source
             stackinggroup = "BLD_GENOME_BANK_EFFECTS"
             effects = [
-                SetTargetHealth value = Value + 2
-                SetTargetFarming value = Value + 1
-                SetTargetResearch value = Value + 1
+                SetTargetHealth Value + 2
+                SetTargetFarming Value + 1
+                SetTargetResearch Value + 1
             ]
     graphic = ""
 
@@ -439,9 +439,9 @@ BuildingType
                 Source
             stackinggroup = "BLD_GRAVITY_WELLS_EFFECT"
             effects = [
-                SetTargetIndustry value = Value + 2
-                SetTargetConstruction value = Value + 2
-                SetTargetTrade value = Value + 1
+                SetTargetIndustry Value + 2
+                SetTargetConstruction Value + 2
+                SetTargetTrade Value + 1
             ]
     graphic = ""
 
@@ -461,10 +461,10 @@ BuildingType
                 Source
             stackinggroup = "BLD_PLANET_RING_EFFECT"
             effects = [
-                SetTargetPopulation value = Value + 3
-                SetTargetConstruction value = Value + 1
-                SetTargetTrade value = Value + 3
-                SetTargetFarming value = Value - 5
+                SetTargetPopulation Value + 3
+                SetTargetConstruction Value + 1
+                SetTargetTrade Value + 3
+                SetTargetFarming Value - 5
             ]
     graphic = ""
 
@@ -492,7 +492,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_SPACE_ELEVATOR_EFFECT"
             effects =
-                SetTargetTrade value = Value + 2
+                SetTargetTrade Value + 2
     graphic = ""
 
 BuildingType
@@ -514,7 +514,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_COMM_UNION_EFFECT"
             effects =
-                SetTargetTrade value = Value + 5
+                SetTargetTrade Value + 5
     graphic = ""
 
 BuildingType
@@ -535,7 +535,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_DEEP_GREEN_EFFECT"
             effects =
-                SetTargetTrade value = Value + 2
+                SetTargetTrade Value + 2
     graphic = ""
 
 BuildingType
@@ -554,9 +554,9 @@ BuildingType
                 PrimaryFocus focus = Trade
             stackinggroup = "BLD_PARADISE_SELF_EFFECT"
             effects = [
-                SetTargetTrade value = Value + 5
-                SetTargetMining value = Value - 5
-                SetTargetIndustry value = Value - 5
+                SetTargetTrade Value + 5
+                SetTargetMining Value - 5
+                SetTargetIndustry Value - 5
             ]
         EffectsGroup
             scope =
@@ -570,7 +570,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_PARADISE_AREA_EFFECT"
             effects =
-                SetTargetHealth value = Value + 2
+                SetTargetHealth Value + 2
     ]
     graphic = ""
 
@@ -589,7 +589,7 @@ BuildingType
             ]
             activation = Source
             stackinggroup = "BLD_CADUCEAN"
-            effects = SetTargetHealth value = Value + 2
+            effects = SetTargetHealth Value + 2
     graphic = "icons/building/the_caducean_institute.png"
 
 BuildingType
@@ -610,7 +610,7 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "LIVING_PLANET_EMPIRE_EFFECT"
             effects =
-                SetTargetResearch value = Value + 2
+                SetTargetResearch Value + 2
         EffectsGroup
             scope =
                 Contains condition =
@@ -619,8 +619,8 @@ BuildingType
                 Source
             stackinggroup = "LIVING_PLANET_SELF_EFFECT"
             effects = [
-                SetTargetHealth value = Value + 5
-                SetTargetFarming value = Value + 5
+                SetTargetHealth Value + 5
+                SetTargetFarming Value + 5
             ]
         EffectsGroup
             scope =
@@ -651,8 +651,8 @@ BuildingType
                 PrimaryFocus focus = Trade
             stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
             effects = [
-                SetTargetTrade value = Value + 5
-                SetTargetFarming value = Value + 2
+                SetTargetTrade Value + 5
+                SetTargetFarming Value + 2
             ]
         EffectsGroup
             scope =
@@ -664,7 +664,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
             effects =
-                SetTargetFarming value = Value + 2
+                SetTargetFarming Value + 2
     ]
     graphic = ""
 
@@ -690,7 +690,7 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "BLD_ENCLAVE_VOID_EMPIRE_EFFECT"
             effects =
-                SetTargetResearch value = Value + 5
+                SetTargetResearch Value + 5
         EffectsGroup
             scope =
                 Contains condition =
@@ -732,7 +732,7 @@ BuildingType
                 PrimaryFocus focus = Research
             stackinggroup = "BLD_LOOKING_GLASS_RESEARCH_EFFECT"
             effects =
-                SetTargetResearch value = Value + 3
+                SetTargetResearch Value + 3
         EffectsGroup
             scope =
                 And [
@@ -747,7 +747,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_LOOKING_GLASS_TRADE_EFFECT"
             effects =
-                SetTargetTrade value = Value + 5
+                SetTargetTrade Value + 5
     ]
     graphic = ""
 
@@ -764,13 +764,13 @@ BuildingType
                 And [
                     PopulationCenter
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    CurrentPopulation low = 0 high = 5
+                    Population low = 0 high = 5
                 ]
             activation =
                 Source
             stackinggroup = "BLD_MONUMENT_EXODUS_EFFECT"
             effects =
-                SetTargetHealth value = Value + 10
+                SetTargetHealth Value + 10
     graphic = "icons/building/monument_to_exodus.png"
 
 BuildingType
@@ -792,7 +792,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_PSICORP_EFFECT"
             effects =
-                SetTargetResearch value = Value + Target.CurrentPopulation / 5
+                SetTargetResearch Value + Target.Population / 5
     graphic = ""
 
 BuildingType
@@ -816,7 +816,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_ART_BLACK_HOLE_EFFECT"
             effects =
-                SetTargetIndustry value = Value + 6
+                SetTargetIndustry Value + 6
     graphic = ""
 
 BuildingType
@@ -840,7 +840,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_HYPER_DAM_BONUS"
             effects =
-                SetTargetIndustry value = Value + 10
+                SetTargetIndustry Value + 10
         EffectsGroup
             scope =
                 And [
@@ -853,7 +853,7 @@ BuildingType
             activation =
                 Source
             effects =
-                SetTargetHealth value = Value - 5
+                SetTargetHealth Value - 5
     ]
     graphic = ""
 
@@ -876,7 +876,7 @@ BuildingType
                 Source
             stackinggroup = "BLD_MINI_SUN_EFFECT"
             effects =
-                SetTargetIndustry value = Value + 4
+                SetTargetIndustry Value + 4
     graphic = "icons/building/miniature_sun.png"
 
 BuildingType
@@ -895,5 +895,5 @@ BuildingType
                 Source
             stackinggroup = "BLD_ECON_SINKHOLE_EFFECT"
             effects =
-                SetTargetTrade value = Value - 10
+                SetTargetTrade Value - 10
     graphic = "icons/building/economic_sinkhole.png"
