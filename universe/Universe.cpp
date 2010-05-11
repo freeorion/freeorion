@@ -2642,7 +2642,7 @@ namespace {
     void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> >& positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
-        Logger().debugStream() << "GenerateStarField";
+        Logger().debugStream() << "GenerateStarField with " << positions.size() << " positions";
         // generate star field
         for (unsigned int star_cnt = 0; star_cnt < positions.size(); ++star_cnt) {
             System* system = GenerateSystem(universe, age, positions[star_cnt].first, positions[star_cnt].second);
@@ -3816,7 +3816,7 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
 
             Planet* planet = new Planet(planet_type, planet_size);
 
-            //Logger().debugStream() << "Created new planet with current population: " << planet->GetMeter(METER_POPULATION)->Current() << " and initial current population: " << planet->GetMeter(METER_POPULATION)->Initial();
+            //Logger().debugStream() << "Created new planet with current population: " << planet->CurrentMeterValue(METER_POPULATION) << " and initial  population: " << planet->InitialMeterValue(METER_POPULATION);
 
             bool tidal_lock = false;
             if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {

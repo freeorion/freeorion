@@ -138,7 +138,7 @@ Part
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [OwnedBy TheEmpire Source.Owner
-                    CurrentPopulation low = 3 high = 999]
+                    Population low = 3 high = 999]
     graphic = "icons/ship_parts/colony_pod.png"
 
 Part
@@ -150,5 +150,5 @@ Part
     buildtime = 12
     mountableSlotTypes = Internal
     location = And [OwnedBy TheEmpire Source.Owner
-                    CurrentPopulation low = 3 high = 999]
+                    Population low = 3 high = 999]
     graphic = "icons/ship_parts/cryonic_colony_pod.png"

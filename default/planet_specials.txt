@@ -1,4 +1,3 @@
-
 Special
     name = "ECCENTRIC_ORBIT_SPECIAL"
     description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
@@ -6,8 +5,8 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetMaxResearch value = Source.MaxResearch + 3
-            SetMaxConstruction value = Source.MaxConstruction - 3
+            SetTargetResearch Value + 3
+            SetTargetConstruction Value - 3
         ]
     graphic = "icons/specials_huge/eccentric_orbit.png"
 
@@ -18,8 +17,8 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetMaxConstruction value = Source.MaxConstruction - 5
-            SetMaxIndustry value = Source.MaxIndustry + 5
+            SetTargetConstruction Value - 5
+            SetTargetIndustry Value + 5
         ]
     graphic = "icons/specials_huge/tidal_lock.png"
 
@@ -30,9 +29,9 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetMaxFarming value = Source.MaxFarming - 5
-            SetMaxConstruction value = Source.MaxConstruction - 5
-            SetMaxPopulation value = Source.MaxPopulation * 0.5
+            SetTargetFarming Value - 5
+            SetTargetConstruction Value - 5
+            SetTargetPopulation value = Source.TargetPopulation * 0.5
         ]
     graphic = "icons/specials_huge/slow_rotation.png"
 
@@ -42,7 +41,7 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetMaxConstruction value = Source.MaxConstruction - 8
+        effects = SetTargetConstruction Value - 8
     graphic = "icons/specials_huge/high_axial_tilt.png"
 
 Special
@@ -52,8 +51,8 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetMaxFarming value = Source.MaxFarming - 5
-            SetMaxHealth value = Source.MaxHealth - 5
+            SetTargetFarming Value - 5
+            SetTargetHealth Value - 5
         ]
     graphic = "icons/specials_huge/solid_core.png"
 
@@ -63,7 +62,7 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetMaxConstruction value = Source.MaxConstruction - 5
+        effects = SetTargetConstruction value = Source.TargetConstruction - 5
     graphic = "icons/specials_huge/techtonic_instability.png"
 
 Special
@@ -72,7 +71,7 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetMaxResearch value = Source.MaxResearch + 4
+        effects = SetTargetResearch Value + 4
     graphic = "icons/specials_huge/ancient_ruins.png"
 
 Special
@@ -82,8 +81,8 @@ Special
         scope = Source
         activation = Source
         effects = [
-            SetMaxMining value = Source.MaxMining + 3
-            SetMaxTrade value = Source.MaxTrade + 1
+            SetTargetMining Value + 3
+            SetTargetTrade Value + 1
         ]
     graphic = "icons/specials_huge/minerals.png"
 
@@ -93,5 +92,5 @@ Special
     effectsgroups = EffectsGroup
         scope = Source
         activation = Source
-        effects = SetMaxPopulation value = Source.MaxPopulation + 3
+        effects = SetTargetPopulation Value + 3
     graphic = "icons/specials_huge/tunnels.png"

@@ -19,6 +19,7 @@ class PopCenter
 {
 public:
     /** \name Structors */ //@{
+    PopCenter();                                            ///< default ctor
     explicit PopCenter(const std::string& species_name);    ///< basic ctor
     virtual ~PopCenter();                                   ///< dtor
     //@}
@@ -57,8 +58,6 @@ protected:
     void            PopCenterPopGrowthProductionResearchPhase();
 
 private:
-    PopCenter();                                                ///< default ctor
-
     virtual Meter*          GetMeter(MeterType type) = 0;       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual const Meter*    GetMeter(MeterType type) const = 0; ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
     virtual void            AddMeter(MeterType meter_type) = 0; ///< implementation should add a meter to the object so that it can be accessed with the GetMeter() functions

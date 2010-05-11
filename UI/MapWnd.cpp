@@ -877,23 +877,23 @@ void MapWnd::RenderStarfields()
     glMatrixMode(GL_TEXTURE);
 
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
-        float texture_coords_per_pixel_x = static_cast<float>(1.0 / Value(m_backgrounds[i]->Width()));
-        float texture_coords_per_pixel_y = static_cast<float>(1.0 / Value(m_backgrounds[i]->Height()));
+        float texture_coords_per_pixel_x = 1.0f / Value(m_backgrounds[i]->Width());
+        float texture_coords_per_pixel_y = 1.0f / Value(m_backgrounds[i]->Height());
         glScalef(Value(texture_coords_per_pixel_x * Width()),
                  Value(texture_coords_per_pixel_y * Height()),
-                 1.0);
-        glTranslatef(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0 * m_bg_scroll_rate[i]),
-                     Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0 * m_bg_scroll_rate[i]),
-                     0.0);
+                 1.0f);
+        glTranslatef(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0f * m_bg_scroll_rate[i]),
+                     Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i]),
+                     0.0f);
         glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
         glBegin(GL_QUADS);
-        glTexCoord2f(0.0, 0.0);
+        glTexCoord2f(0.0f, 0.0f);
         glVertex2i(0, 0);
-        glTexCoord2f(0.0, 1.0);
+        glTexCoord2f(0.0f, 1.0f);
         glVertex(GG::X0, Height());
-        glTexCoord2f(1.0, 1.0);
+        glTexCoord2f(1.0f, 1.0f);
         glVertex(Width(), Height());
-        glTexCoord2f(1.0, 0.0);
+        glTexCoord2f(1.0f, 0.0f);
         glVertex(Width(), GG::Y0);
         glEnd();
         glLoadIdentity();
@@ -936,7 +936,7 @@ void MapWnd::RenderGalaxyGas()
 {
     if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
         return;
-    glColor4f(1.0, 1.0, 1.0, 1.0);
+    glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -969,13 +969,13 @@ void MapWnd::RenderSystems()
 
 
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
-        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
         if (0.5 < HALO_SCALE_FACTOR && m_star_texture_coords.m_name) {
             glMatrixMode(GL_TEXTURE);
-            glTranslatef(0.5, 0.5, 0.0);
-            glScalef(1.0 / HALO_SCALE_FACTOR, 1.0 / HALO_SCALE_FACTOR, 1.0);
-            glTranslatef(-0.5, -0.5, 0.0);
+            glTranslatef(0.5f, 0.5f, 0.0f);
+            glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
+            glTranslatef(-0.5f, -0.5f, 0.0f);
             for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
                  it != m_star_halo_quad_vertices.end(); ++it)
             {
@@ -1012,7 +1012,7 @@ void MapWnd::RenderSystems()
         glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     } else {
-        glColor4f(1.0, 1.0, 1.0, 1.0);
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glPushMatrix();
         glLoadIdentity();
         for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
@@ -1037,7 +1037,7 @@ void MapWnd::RenderSystems()
         const double TWO_PI = 2.0*3.14159;
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
-        glLineWidth(1.5);
+        glLineWidth(1.5f);
         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
         for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
@@ -1078,7 +1078,7 @@ void MapWnd::RenderSystems()
         glDisable(GL_LINE_SMOOTH);
         glEnable(GL_TEXTURE_2D);
         glPopMatrix();
-        glLineWidth(1.0);
+        glLineWidth(1.0f);
     }
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);

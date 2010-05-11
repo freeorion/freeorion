@@ -666,15 +666,15 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     Ogre::CompositorManager::getSingleton().addCompositor(m_viewport, "effects/glow");
 
-    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2, 0.2, 0.2));
+    m_scene_manager->setAmbientLight(Ogre::ColourValue(0.2f, 0.2f, 0.2f));
     m_scene_manager->setShadowTechnique(Ogre::SHADOWTYPE_NONE);//STENCIL_MODULATIVE);
 
     Ogre::SceneNode* star_node = m_scene_manager->getRootSceneNode()->createChildSceneNode();
     Ogre::BillboardSet* star_billboard_set = m_scene_manager->createBillboardSet("StarBackBillboardSet");
     star_billboard_set->setRenderQueueGroup(STAR_BACK_QUEUE);
     star_billboard_set->setMaterialName("backgrounds/star_back");
-    star_billboard_set->setDefaultDimensions(StarRadius() * 2.0, StarRadius() * 2.0);
-    m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0, 0.0, 0.0));
+    star_billboard_set->setDefaultDimensions(StarRadius() * 2.0f, StarRadius() * 2.0f);
+    m_star_back_billboard = star_billboard_set->createBillboard(Ogre::Vector3(0.0f, 0.0f, 0.0f));
     star_billboard_set->setVisible(true);
     star_billboard_set->setVisibilityFlags(REGULAR_OBJECTS_MASK);
     m_initial_left_horizontal_flare_scroll =
@@ -1674,44 +1674,44 @@ void CombatWnd::UpdateStarFromCameraPosition()
         }
         typedef boost::tuple<int, int, float> OcclusionParams;
         const OcclusionParams OCCLUSION_PARAMS[32] = {
-            OcclusionParams(2, 2, 1.0),
-            OcclusionParams(2, 2, 1.0),
-            OcclusionParams(2, 2, 1.0),
-            OcclusionParams(2, 2, 0.8),
+            OcclusionParams(2, 2, 1.0f),
+            OcclusionParams(2, 2, 1.0f),
+            OcclusionParams(2, 2, 1.0f),
+            OcclusionParams(2, 2, 0.8f),
 
-            OcclusionParams(1, 3, 0.8),
-            OcclusionParams(1, 1, 0.4),
-            OcclusionParams(1, 1, 0.4),
-            OcclusionParams(1, 1, 0.4),
+            OcclusionParams(1, 3, 0.8f),
+            OcclusionParams(1, 1, 0.4f),
+            OcclusionParams(1, 1, 0.4f),
+            OcclusionParams(1, 1, 0.4f),
 
-            OcclusionParams(2, 2, 1.0),
-            OcclusionParams(2, 2, 0.8),
-            OcclusionParams(2, 2, 0.8),
-            OcclusionParams(2, 2, 0.6),
+            OcclusionParams(2, 2, 1.0f),
+            OcclusionParams(2, 2, 0.8f),
+            OcclusionParams(2, 2, 0.8f),
+            OcclusionParams(2, 2, 0.6f),
 
-            OcclusionParams(3, 3, 0.4),
-            OcclusionParams(0, 3, 0.4),
-            OcclusionParams(0, 4, 0.4),
-            OcclusionParams(0, 0, 0.2),
+            OcclusionParams(3, 3, 0.4f),
+            OcclusionParams(0, 3, 0.4f),
+            OcclusionParams(0, 4, 0.4f),
+            OcclusionParams(0, 0, 0.2f),
 
-            OcclusionParams(2, 2, 1.0),
-            OcclusionParams(2, 2, 0.8),
-            OcclusionParams(2, 2, 0.8),
-            OcclusionParams(2, 2, 0.6),
+            OcclusionParams(2, 2, 1.0f),
+            OcclusionParams(2, 2, 0.8f),
+            OcclusionParams(2, 2, 0.8f),
+            OcclusionParams(2, 2, 0.6f),
 
-            OcclusionParams(3, 3, 0.4),
-            OcclusionParams(1, 3, 0.4),
-            OcclusionParams(1, 1, 0.2),
-            OcclusionParams(1, 1, 0.2),
+            OcclusionParams(3, 3, 0.4f),
+            OcclusionParams(1, 3, 0.4f),
+            OcclusionParams(1, 1, 0.2f),
+            OcclusionParams(1, 1, 0.2f),
 
-            OcclusionParams(2, 2, 0.8),
-            OcclusionParams(2, 2, 0.6),
-            OcclusionParams(2, 2, 0.4),
-            OcclusionParams(2, 2, 0.4),
+            OcclusionParams(2, 2, 0.8f),
+            OcclusionParams(2, 2, 0.6f),
+            OcclusionParams(2, 2, 0.4f),
+            OcclusionParams(2, 2, 0.4f),
 
-            OcclusionParams(3, 3, 0.4),
-            OcclusionParams(3, 3, 0.2),
-            OcclusionParams(4, 4, 0.2),
+            OcclusionParams(3, 3, 0.4f),
+            OcclusionParams(3, 3, 0.2f),
+            OcclusionParams(4, 4, 0.2f),
             OcclusionParams(-1, -1, 0.0)
         };
 

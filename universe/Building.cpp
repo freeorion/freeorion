@@ -141,6 +141,7 @@ void Building::SetPlanetID(int planet_id)
 
 void Building::MoveTo(double x, double y)
 {
+    //Logger().debugStream() << "Building::MoveTo(" << x << ", " << y << ")";
     UniverseObject::MoveTo(x, y);
 
     // if building is being moved away from its planet, remove from the planet.  otherwise, keep building on planet
@@ -257,7 +258,7 @@ int BuildingType::BuildTime() const
     if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
         return m_build_time;
     else
-        return 1.0;
+        return 1;
 }
 
 double BuildingType::MaintenanceCost() const
@@ -306,8 +307,8 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,
                                              int location_id, bool as_production_item) const
 {
-    Empire*         to_empire =     Empires().Lookup(to_empire_id);
-    UniverseObject* location =      GetMainObjectMap().Object(location_id);
+    const Empire*   to_empire = Empires().Lookup(to_empire_id);
+    UniverseObject* location =  GetMainObjectMap().Object(location_id);
 
     if (as_production_item && location && to_empire)
         return CR_CAPTURE;

@@ -29,7 +29,9 @@ namespace {
 ResourceCenter::ResourceCenter() :
     m_primary(INVALID_FOCUS_TYPE),
     m_secondary(INVALID_FOCUS_TYPE)
-{}
+{
+    //Logger().debugStream() << "ResourceCenter::ResourceCenter()";
+}
 
 ResourceCenter::~ResourceCenter()
 {}
@@ -56,6 +58,7 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
 
 void ResourceCenter::Init()
 {
+    //Logger().debugStream() << "ResourceCenter::Init";
     AddMeter(METER_FARMING);
     AddMeter(METER_MINING);
     AddMeter(METER_INDUSTRY);
@@ -68,7 +71,8 @@ void ResourceCenter::Init()
     AddMeter(METER_TARGET_RESEARCH);
     AddMeter(METER_TARGET_TRADE);
     AddMeter(METER_TARGET_CONSTRUCTION);
-    Reset();
+    m_primary = INVALID_FOCUS_TYPE;
+    m_secondary = INVALID_FOCUS_TYPE;
 }
 
 double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const

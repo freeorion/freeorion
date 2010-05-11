@@ -118,7 +118,7 @@ public:
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
-    double                      CurrentMeterValue(MeterType type) const;
+    virtual double              CurrentMeterValue(MeterType type) const;
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;
     //@}
 

@@ -14,12 +14,15 @@ const double PopCenter::MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 
 PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name), m_allocated_food(0.0)
 {
+    //Logger().debugStream() << "PopCenter::PopCenter(" << species_name << ")";
     // TODO: if race isn't a valid race, throw a fit
 }
 
 PopCenter::PopCenter() :
     m_species_name(""), m_allocated_food(0.0)
-{}
+{
+    //Logger().debugStream() << "PopCenter::PopCenter()";
+}
 
 PopCenter::~PopCenter()
 {}
@@ -41,6 +44,7 @@ void PopCenter::Copy(const PopCenter* copied_object, Visibility vis)
 
 void PopCenter::Init()
 {
+    //Logger().debugStream() << "PopCenter::Init";
     AddMeter(METER_POPULATION);
     AddMeter(METER_TARGET_POPULATION);
     AddMeter(METER_HEALTH);

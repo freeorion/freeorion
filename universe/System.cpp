@@ -11,15 +11,15 @@
 #include "Predicates.h"
 
 #include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
-
 #include <stdexcept>
 
 System::System() :
     UniverseObject(),
     m_star(INVALID_STAR_TYPE),
     m_orbits(0)
-{}
+{
+    //Logger().debugStream() << "System::System()";
+}
 
 System::System(StarType star, int orbits, const std::string& name, double x, double y,
                const std::set<int>& owners/* = std::set<int>()*/) :
@@ -27,6 +27,7 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
     m_star(star),
     m_orbits(orbits)
 {
+    //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
     if (m_orbits < 0)
@@ -42,6 +43,7 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     m_orbits(orbits),
     m_starlanes_wormholes(lanes_and_holes)
 {
+    //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" + Name() + "\" with an invalid star type.");
     if (m_orbits < 0)

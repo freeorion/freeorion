@@ -104,11 +104,11 @@ namespace {
 
         // render texture
         glBegin(GL_TRIANGLE_STRIP);
-            glTexCoord2f(0.0, 0.0);
+            glTexCoord2f(0.0f, 0.0f);
             glVertex2d(vertsXY[0], vertsXY[1]);
-            glTexCoord2f(tex_coord_x, 0.0);
+            glTexCoord2f(tex_coord_x, 0.0f);
             glVertex2d(vertsXY[2], vertsXY[3]);
-            glTexCoord2f(0.0, tex_coord_y);
+            glTexCoord2f(0.0f, tex_coord_y);
             glVertex2d(vertsXY[4], vertsXY[5]);
             glTexCoord2f(tex_coord_x, tex_coord_y);
             glVertex2d(vertsXY[6], vertsXY[7]);
@@ -265,7 +265,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     }
 
     // size icon according to texture size (average two dimensions)
-    double diameter = (Value(texture_width) + Value(texture_height))/2.0;
+    int diameter = static_cast<int>((Value(texture_width) + Value(texture_height)) / 2.0);
     Resize(GG::Pt(GG::X(diameter), GG::Y(diameter)));
 
     // get selection indicator texture

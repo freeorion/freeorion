@@ -23,11 +23,15 @@ const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 UniverseObject::UniverseObject() :
     StateChangedSignal(Universe::UniverseObjectSignalsInhibited()),
     m_id(INVALID_OBJECT_ID),
+    m_name(""),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
+    m_owners(),
     m_system_id(INVALID_OBJECT_ID),
-    m_meters()
+    m_meters(),
+    m_created_on_turn(-1)
 {
+    //Logger().debugStream() << "UniverseObject::UniverseObject()";
     m_created_on_turn = CurrentTurn();
 }
 
@@ -40,8 +44,10 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_y(y),
     m_owners(owners),
     m_system_id(INVALID_OBJECT_ID),
-    m_meters()
+    m_meters(),
+    m_created_on_turn(-1)
 {
+    //Logger().debugStream() << "UniverseObject::UniverseObject(" << name << ", " << x << ", " << y << ")";
     if (m_x < 0.0 || Universe::UniverseWidth() < m_x || m_y < 0.0 || Universe::UniverseWidth() < m_y)
         throw std::invalid_argument("UniverseObject::UniverseObject : Attempted to create an object \"" + m_name + "\" off the map area.");
     m_created_on_turn = CurrentTurn();

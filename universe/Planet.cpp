@@ -46,7 +46,7 @@ Year::Year(Day d) :
 ////////////////////////////////////////////////////////////
 Planet::Planet() :
     UniverseObject(),
-    PopCenter(0),
+    PopCenter(),
     ResourceCenter(),
     m_type(PT_TERRAN),
     m_size(SZ_MEDIUM),
@@ -58,16 +58,17 @@ Planet::Planet() :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
+    //Logger().debugStream() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
     // in functional form by deserialization.  Also assumes planet-specific meters don't need to be re-added.
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
     UniverseObject(),
-    PopCenter(0),
+    PopCenter(),
     ResourceCenter(),
-    m_type(PT_TERRAN),
-    m_size(SZ_MEDIUM),
+    m_type(type),
+    m_size(size),
     m_orbital_period(1.0),
     m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159),
     m_rotational_period(1.0),
@@ -76,6 +77,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_just_conquered(false),
     m_is_about_to_be_colonized(false)
 {
+    //Logger().debugStream() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
     PopCenter::Init();
     ResourceCenter::Init();
@@ -304,7 +306,7 @@ void Planet::AddBuilding(int building_id)
         Logger().debugStream() << "Planet::AddBuilding this planet " << this->Name() << " already contained building " << building_id;
         return;
     }
-    Logger().debugStream() << "Planet " << this->Name() << " adding building: " << building_id;
+    //Logger().debugStream() << "Planet::AddBuilding " << this->Name() << " adding building: " << building_id;
     if (Building* building = GetObject<Building>(building_id)) {
         if (System* system = GetObject<System>(this->SystemID())) {
             system->Insert(building);
@@ -530,7 +532,7 @@ void Planet::PopGrowthProductionResearchPhase()
 
 void Planet::ResetTargetMaxUnpairedMeters(MeterType meter_type)
 {
-    ResetTargetMaxUnpairedMeters(meter_type);
+    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
     ResourceCenterResetTargetMaxUnpairedMeters(meter_type);
     PopCenterResetTargetMaxUnpairedMeters(meter_type);
 
