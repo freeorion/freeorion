@@ -4,8 +4,8 @@
 #include <boost/lexical_cast.hpp>
 
 const double Meter::DEFAULT_VALUE = 0.0;
-const double Meter::LARGE_VALUE = std::numeric_limits<double>::max();
-const double Meter::INVALID_VALUE = -std::numeric_limits<double>::max();
+const double Meter::LARGE_VALUE = static_cast<double>(2 << 15);
+const double Meter::INVALID_VALUE = -LARGE_VALUE;
 
 Meter::Meter() :
     m_current_value(DEFAULT_VALUE),

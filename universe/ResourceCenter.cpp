@@ -85,14 +85,23 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
 
     MeterType target_meter_type = INVALID_METER_TYPE;
     switch (type) {
-    case (METER_FARMING):       target_meter_type = METER_TARGET_FARMING;       break;
-    case (METER_MINING):        target_meter_type = METER_TARGET_MINING;        break;
-    case (METER_INDUSTRY):      target_meter_type = METER_TARGET_INDUSTRY;      break;
-    case (METER_RESEARCH):      target_meter_type = METER_TARGET_RESEARCH;      break;
-    case (METER_TRADE):         target_meter_type = METER_TARGET_TRADE;         break;
-    case (METER_CONSTRUCTION):  target_meter_type = METER_TARGET_CONSTRUCTION;  break;
+    case METER_TARGET_FARMING:
+    case METER_TARGET_MINING:
+    case METER_TARGET_INDUSTRY:
+    case METER_TARGET_RESEARCH:
+    case METER_TARGET_TRADE:
+    case METER_TARGET_CONSTRUCTION:
+        return current_meter_value;
+        break;
+    case METER_FARMING:     target_meter_type = METER_TARGET_FARMING;       break;
+    case METER_MINING:      target_meter_type = METER_TARGET_MINING;        break;
+    case METER_INDUSTRY:    target_meter_type = METER_TARGET_INDUSTRY;      break;
+    case METER_RESEARCH:    target_meter_type = METER_TARGET_RESEARCH;      break;
+    case METER_TRADE:       target_meter_type = METER_TARGET_TRADE;         break;
+    case METER_CONSTRUCTION:target_meter_type = METER_TARGET_CONSTRUCTION;  break;
     default:
-        throw std::runtime_error("ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type");
+        Logger().errorStream() << "ResourceCenter::ResourceCenterNextTurnMeterValue dealing with invalid meter type";
+        return 0.0;
     }
 
     const Meter* target_meter = GetMeter(target_meter_type);

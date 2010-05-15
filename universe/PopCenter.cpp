@@ -76,7 +76,7 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
         return meter->Current();
     } else {
-        throw std::runtime_error("PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type");
+        Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0;
     }
 }
