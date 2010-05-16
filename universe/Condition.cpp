@@ -1237,6 +1237,7 @@ std::string Condition::MeterValue::Dump() const
     case METER_TARGET_CONSTRUCTION: retval += "TargetConstruction"; break;
     case METER_MAX_FUEL:            retval += "MaxFuel";            break;
     case METER_MAX_SHIELD:          retval += "MaxShield";          break;
+    case METER_MAX_STRUCTURE:       retval += "MaxStructure";       break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense";         break;
     case METER_POPULATION:          retval += "Population";         break;
     case METER_HEALTH:              retval += "Health";             break;
@@ -1248,6 +1249,7 @@ std::string Condition::MeterValue::Dump() const
     case METER_CONSTRUCTION:        retval += "Construction";       break;
     case METER_FUEL:                retval += "Fuel";               break;
     case METER_SHIELD:              retval += "Shield";             break;
+    case METER_STRUCTURE:           retval += "Structure";          break;
     case METER_DEFENSE:             retval += "Defense";            break;
     case METER_SUPPLY:              retval += "Supply";             break;
     case METER_STEALTH:             retval += "Stealth";            break;

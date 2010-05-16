@@ -150,6 +150,11 @@ public:
       * valid meter type, just that meter is reset. */
     virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
 
+    /** Sets current value of active paired meters (the non-max non-target
+      * meters that have a max or target meter associated with them) back to
+      * the initial value the meter had at the start of this turn. */
+    virtual void            ResetPairedActiveMeters(MeterType meter_type = INVALID_METER_TYPE);
+
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for
       * each meter. */

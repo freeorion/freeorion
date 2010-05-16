@@ -790,6 +790,9 @@ void ResourcePanel::Update()
         return;
     }
 
+    std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
+    Logger().debugStream() << "ResourcePanel::Update()";
+    obj->Dump();
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
@@ -2654,8 +2657,14 @@ void MeterBrowseWnd::UpdateSummary() {
         obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
     if (!obj)
         return;
-    if (obj->GetMeter(m_primary_meter_type)) {
 
+    const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
+    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
+
+    if (primary_meter && secondary_meter) {
+        // Primary meter holds value from turn to turn and changes slow each turn.
+        // The current value of the primary meter doesn't change with focus changes
+        // so its growth from turn to turn is important to show
         double primary_current = obj->CurrentMeterValue(m_primary_meter_type);
         double primary_next = obj->NextTurnCurrentMeterValue(m_primary_meter_type);
         double primary_change = primary_next - primary_current;
@@ -2664,18 +2673,23 @@ void MeterBrowseWnd::UpdateSummary() {
         m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));
         m_change_value->SetText(ColouredNumber(primary_change));
 
-        if (obj->GetMeter(m_secondary_meter_type)) {
-            double secondary_current = obj->CurrentMeterValue(m_secondary_meter_type);
-            double secondary_next = obj->NextTurnCurrentMeterValue(m_secondary_meter_type);
-            double secondary_change = secondary_next - secondary_current;
+        double secondary_current = obj->CurrentMeterValue(m_secondary_meter_type);
 
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_TWO_VALUES")) %
-                                                  DoubleToString(primary_current, 3, false) %
-                                                DoubleToString(secondary_current, 3, false)));
-        } else {
-            m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_ONE_VALUE")) %
-                                                  DoubleToString(primary_current, 3, false)));
-        }
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_TWO_VALUES")) %
+                                              DoubleToString(primary_current, 3, false) %
+                                              DoubleToString(secondary_current, 3, false)));
+    } else if (primary_meter) {
+        // Primary meter is an unpaired meter that is reset each turn.
+        double primary_current = obj->CurrentMeterValue(m_primary_meter_type);
+
+        m_current_value->SetText(DoubleToString(primary_current, 3, false));
+        m_next_turn_value->SetText("");
+        m_change_value->SetText("");
+
+        // TODO: Hide next and change values when not needed
+
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_ONE_VALUE")) %
+                                              DoubleToString(primary_current, 3, false)));
     }
 
     switch (m_primary_meter_type) {

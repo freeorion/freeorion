@@ -185,6 +185,7 @@ namespace {
 
                  | str_p("maxfuel")[set_meter.meter =           val(METER_MAX_FUEL)]
                  | str_p("maxshield")[set_meter.meter =         val(METER_MAX_SHIELD)]
+                 | str_p("maxstructure")[set_meter.meter =      val(METER_MAX_STRUCTURE)]
                  | str_p("maxdefense")[set_meter.meter =        val(METER_MAX_DEFENSE)]
 
                  | str_p("population")[set_meter.meter =        val(METER_POPULATION)]
@@ -198,6 +199,7 @@ namespace {
 
                  | str_p("fuel")[set_meter.meter =              val(METER_FUEL)]
                  | str_p("shield")[set_meter.meter =            val(METER_SHIELD)]
+                 | str_p("structure")[set_meter.meter =         val(METER_STRUCTURE)]
                  | str_p("defense")[set_meter.meter =           val(METER_DEFENSE)]
 
                  | str_p("supply")[set_meter.meter =            val(METER_SUPPLY)]

@@ -48,6 +48,8 @@ Ship::Ship(int empire_id, int design_id) :
     AddMeter(METER_DETECTION);
     AddMeter(METER_HEALTH);
     AddMeter(METER_TARGET_HEALTH);
+    AddMeter(METER_STRUCTURE);
+    AddMeter(METER_MAX_STRUCTURE);
     AddMeter(METER_BATTLE_SPEED);
     AddMeter(METER_STARLANE_SPEED);
 
@@ -321,6 +323,8 @@ void Ship::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_T
         UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_SHIELD)
         UniverseObject::GetMeter(METER_MAX_SHIELD)->ResetCurrent();
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_STRUCTURE)
+        UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
 
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_TARGET_HEALTH)
         UniverseObject::GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
@@ -346,6 +350,8 @@ void Ship::ClampMeters()
     UniverseObject::GetMeter(METER_FUEL)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_FUEL)->Current());
     UniverseObject::GetMeter(METER_MAX_SHIELD)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
+    UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_STRUCTURE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_STRUCTURE)->Current());
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_HEALTH)->ClampCurrentToRange();

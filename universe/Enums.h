@@ -196,6 +196,7 @@ enum MeterType {
 
     METER_MAX_FUEL,
     METER_MAX_SHIELD,
+    METER_MAX_STRUCTURE,
     METER_MAX_DEFENSE,
 
     METER_POPULATION,
@@ -209,6 +210,7 @@ enum MeterType {
 
     METER_FUEL,
     METER_SHIELD,
+    METER_STRUCTURE,
     METER_DEFENSE,
 
     METER_SUPPLY,
@@ -246,6 +248,7 @@ namespace GG {
 
     GG_ENUM_MAP_INSERT(METER_MAX_FUEL)
     GG_ENUM_MAP_INSERT(METER_MAX_SHIELD)
+    GG_ENUM_MAP_INSERT(METER_MAX_STRUCTURE)
     GG_ENUM_MAP_INSERT(METER_MAX_DEFENSE)
 
     GG_ENUM_MAP_INSERT(METER_POPULATION)
@@ -259,6 +262,7 @@ namespace GG {
 
     GG_ENUM_MAP_INSERT(METER_FUEL)
     GG_ENUM_MAP_INSERT(METER_SHIELD)
+    GG_ENUM_MAP_INSERT(METER_STRUCTURE)
     GG_ENUM_MAP_INSERT(METER_DEFENSE)
 
     GG_ENUM_MAP_INSERT(METER_SUPPLY)
@@ -604,14 +608,22 @@ namespace GG {
 GG_ENUM_STREAM_IN(ShipSlotType)
 GG_ENUM_STREAM_OUT(ShipSlotType)
 
-/** Returns the equivalent meter type for the given focus; if no such focus exists, returns INVALID_FOCUS_TYPE. */
+/** Returns the equivalent meter type for the given focus; if no such focus
+  * exists, returns INVALID_FOCUS_TYPE. */
 FocusType MeterToFocus(MeterType type);
 
-/** Returns the equivalent meter type for the given resource type; if no such meter type exists, returns INVALID_METER_TYPE. */
+/** Returns the equivalent meter type for the given resource type; if no such
+  * meter type exists, returns INVALID_METER_TYPE. */
 MeterType ResourceToMeter(ResourceType type);
 
-/** Returns the equivalent resource type for the given meter type; if no such resource type exists, returns INVALID_RESOURCE_TYPE. */
+/** Returns the equivalent resource type for the given meter type; if no such
+  * resource type exists, returns INVALID_RESOURCE_TYPE. */
 ResourceType MeterToResource(MeterType type);
+
+/** Returns the target or max meter type that is associated with the given
+  * active meter type.  If no associated meter type exists, INVALID_METER_TYPE
+  * is returned. */
+MeterType AssociatedMeterType(MeterType meter_type);
 
 
 extern const int ALL_EMPIRES;

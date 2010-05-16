@@ -970,7 +970,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters()
     ExecuteMeterEffects(targets_causes_map);
 
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ClampMeters();                              // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
+        it->second->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
     }
 }
 
@@ -1113,19 +1113,20 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterTy
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type)
 {
-    // update meter estimates for indicated MeterType for all relevant objects
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
 
+
         // Reset max meters to DEFAULT_VALUE
         obj->ResetTargetMaxUnpairedMeters(meter_type);
 
-        // record current value(s) of meter(s) after resetting target and max meters.
-        // also set current meter value to initial current value.  this ensures that the
-        // projected current value will be based on the actual initial current value this
-        // turn, rather than the altered current value that may be different after meter
-        // effects were applied and meters were clamped.
+
+        // Reset current meters to initial value at start of this turn
+        obj->ResetPairedActiveMeters(meter_type);
+
+
+        // record current value(s) of meter(s) after resetting
         MeterType start, end;
         if (meter_type == INVALID_METER_TYPE) {
             // record data for all meters
@@ -1138,8 +1139,6 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
         for (MeterType type = start; type != end; type = MeterType(type + 1)) {
             if (Meter* meter = obj->GetMeter(type)) {
-                meter->SetCurrent(meter->Initial());
-
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
                 info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
@@ -3657,6 +3656,7 @@ namespace {
         meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
         meters[METER_FUEL] = METER_MAX_FUEL;
         meters[METER_SHIELD] = METER_MAX_SHIELD;
+        meters[METER_STRUCTURE] = METER_MAX_STRUCTURE;
         meters[METER_DEFENSE] = METER_MAX_DEFENSE;
 
         // check for each pair of meter types.  if both exist, set active

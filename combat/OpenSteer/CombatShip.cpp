@@ -32,17 +32,17 @@ namespace {
         CopyStats(const Ship& ship, double health_factor) :
             m_ship(ship),
             m_health_factor(health_factor)
-            {}
+        {}
         CombatShip::DirectWeapon operator()(const std::pair<double, const PartType*>& elem)
-            {
-                const std::string name = elem.second->Name();
-                return CombatShip::DirectWeapon(
-                    name,
-                    m_ship.GetMeter(METER_RANGE, name)->Current(),
-                    m_ship.GetMeter(METER_DAMAGE, name)->Current() *
-                    m_ship.GetMeter(METER_ROF, name)->Current() *
-                    m_health_factor);
-            }
+        {
+            const std::string name = elem.second->Name();
+            return CombatShip::DirectWeapon(
+                name,
+                m_ship.GetMeter(METER_RANGE, name)->Current(),
+                m_ship.GetMeter(METER_DAMAGE, name)->Current() *
+                m_ship.GetMeter(METER_ROF, name)->Current() *
+                m_health_factor);
+        }
         const Ship& m_ship;
         const double m_health_factor;
     };

@@ -153,6 +153,8 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_
             Meter* meter = GetMeter(CUR_METER_TYPE);
             meter->ResetCurrent();
 
+            std::cout << "meter: " << CUR_METER_TYPE << " reset current: " << meter->Current() << std::endl;
+
             if (m_primary == MeterToFocus(CUR_METER_TYPE))
                 meter->AddToCurrent(PRIMARY_FOCUS_BONUS);
             else if (m_primary == FOCUS_BALANCED)
@@ -162,6 +164,7 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_
                 meter->AddToCurrent(SECONDARY_FOCUS_BONUS);
             else if (m_secondary == FOCUS_BALANCED)
                 meter->AddToCurrent(SECONDARY_BALANCED_BONUS);
+            std::cout << "meter: " << CUR_METER_TYPE << " after current: " << meter->Current() << std::endl;
         }
     }
 }

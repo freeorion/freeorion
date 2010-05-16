@@ -390,6 +390,28 @@ void UniverseObject::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVAL
     GetMeter(METER_STEALTH)->ResetCurrent();
 }
 
+void UniverseObject::ResetPairedActiveMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+{
+    std::vector<MeterType> meters;
+    meters.push_back(METER_POPULATION);
+    meters.push_back(METER_HEALTH);
+    meters.push_back(METER_FARMING);
+    meters.push_back(METER_MINING);
+    meters.push_back(METER_INDUSTRY);
+    meters.push_back(METER_RESEARCH);
+    meters.push_back(METER_TRADE);
+    meters.push_back(METER_CONSTRUCTION);
+    meters.push_back(METER_FUEL);
+    meters.push_back(METER_SHIELD);
+    meters.push_back(METER_STRUCTURE);
+    meters.push_back(METER_DEFENSE);
+
+    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it)
+        if (meter_type == INVALID_METER_TYPE || *it == meter_type)
+            if (Meter* meter = GetMeter(*it))
+                meter->SetCurrent(meter->Initial());
+}
+
 void UniverseObject::ClampMeters()
 {
     GetMeter(METER_STEALTH)->ClampCurrentToRange();

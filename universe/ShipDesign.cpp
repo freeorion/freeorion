@@ -450,49 +450,52 @@ PartType::PartType(
     case PC_SHORT_RANGE:
     case PC_POINT_DEFENSE: {
         const DirectFireStats& stats = boost::get<DirectFireStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_DAMAGE, m_name, stats.m_damage));
-        m_effects.push_back(IncreaseMeter(METER_ROF, m_name, stats.m_ROF));
-        m_effects.push_back(IncreaseMeter(METER_RANGE, m_name, stats.m_range));
+        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage));
+        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF));
+        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
         break;
     }
     case PC_MISSILES: {
         const LRStats& stats = boost::get<LRStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_DAMAGE, m_name, stats.m_damage));
-        m_effects.push_back(IncreaseMeter(METER_ROF, m_name, stats.m_ROF));
-        m_effects.push_back(IncreaseMeter(METER_RANGE, m_name, stats.m_range));
-        m_effects.push_back(IncreaseMeter(METER_SPEED, m_name, stats.m_speed));
-        m_effects.push_back(IncreaseMeter(METER_STEALTH, m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_HEALTH, m_name, stats.m_health));
-        m_effects.push_back(IncreaseMeter(METER_CAPACITY, m_name, stats.m_capacity));
+        m_effects.push_back(IncreaseMeter(METER_DAMAGE,                 m_name, stats.m_damage));
+        m_effects.push_back(IncreaseMeter(METER_ROF,                    m_name, stats.m_ROF));
+        m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
+        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
+        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
     case PC_FIGHTERS: {
         const FighterStats& stats = boost::get<FighterStats>(m_stats);
-        m_effects.push_back(IncreaseMeter(METER_ANTI_SHIP_DAMAGE, m_name, stats.m_anti_ship_damage));
-        m_effects.push_back(IncreaseMeter(METER_ANTI_FIGHTER_DAMAGE, m_name, stats.m_anti_fighter_damage));
-        m_effects.push_back(IncreaseMeter(METER_LAUNCH_RATE, m_name, stats.m_launch_rate));
-        m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE, m_name, stats.m_fighter_weapon_range));
-        m_effects.push_back(IncreaseMeter(METER_SPEED, m_name, stats.m_speed));
-        m_effects.push_back(IncreaseMeter(METER_STEALTH, m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_HEALTH, m_name, stats.m_health));
-        m_effects.push_back(IncreaseMeter(METER_DETECTION, m_name, stats.m_detection));
-        m_effects.push_back(IncreaseMeter(METER_CAPACITY, m_name, stats.m_capacity));
+        m_effects.push_back(IncreaseMeter(METER_ANTI_SHIP_DAMAGE,       m_name, stats.m_anti_ship_damage));
+        m_effects.push_back(IncreaseMeter(METER_ANTI_FIGHTER_DAMAGE,    m_name, stats.m_anti_fighter_damage));
+        m_effects.push_back(IncreaseMeter(METER_LAUNCH_RATE,            m_name, stats.m_launch_rate));
+        m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE,   m_name, stats.m_fighter_weapon_range));
+        m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
+        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_DETECTION,              m_name, stats.m_detection));
+        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
     case PC_SHIELD:
-        m_effects.push_back(IncreaseMeter(METER_SHIELD,    boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
         break;
     case PC_DETECTION:
-        m_effects.push_back(IncreaseMeter(METER_DETECTION, boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_DETECTION,      boost::get<double>(m_stats)));
         break;
     case PC_STEALTH:
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,   boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<double>(m_stats)));
         break;
     case PC_FUEL:
-        m_effects.push_back(IncreaseMeter(METER_FUEL,      boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_FUEL,           boost::get<double>(m_stats)));
         break;
     case PC_ARMOUR:
-        m_effects.push_back(IncreaseMeter(METER_HEALTH,    boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,  boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
         break;
     default:
         break;
