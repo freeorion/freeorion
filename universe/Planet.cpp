@@ -507,6 +507,7 @@ void Planet::PopGrowthProductionResearchPhase()
 
     // check for starvation
     if (GetMeter(METER_POPULATION)->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
+        Logger().debugStream() << "Planet::PopGrowthProductionResearchPhase Planet " << this->Name() << " " << this->ID() << " is starving!";
         // starving.
 
         // generate starvation sitreps
@@ -542,6 +543,18 @@ void Planet::ResetTargetMaxUnpairedMeters(MeterType meter_type)
             stealth->ResetCurrent();
             stealth->AddToCurrent(0.01);
         }
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_SUPPLY)
+        GetMeter(METER_SUPPLY)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_SHIELD)
+        GetMeter(METER_MAX_SHIELD)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_DEFENSE)
+        GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_DETECTION)
+        GetMeter(METER_DETECTION)->ResetCurrent();
 }
 
 void Planet::ClampMeters()

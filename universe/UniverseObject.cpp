@@ -159,6 +159,26 @@ const std::string& UniverseObject::TypeName() const
     return UserString("UNIVERSEOBJECT");
 }
 
+void UniverseObject::Dump() const
+{
+    const System* system = GetMainObjectMap().Object<System>(this->SystemID());
+
+    std::stringstream dump_stream;
+
+    dump_stream << TypeName() << " "
+                << this->ID() << ": "
+                << this->Name()
+                << (system ? ("  at: " + system->Name()) : "")
+                << "  Meters: ";
+    for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
+        dump_stream << GG::GetEnumMap<MeterType>().FromEnum(it->first)
+                    << ": cur: " << it->second.Current()
+                    //<< ", init: " << it->second.Initial()
+                    //<< ", prev: " << it->second.Previous()
+                    << "  ";
+    Logger().debugStream() << dump_stream.str();
+}
+
 std::vector<int> UniverseObject::FindObjectIDs() const
 {
     return std::vector<int>();

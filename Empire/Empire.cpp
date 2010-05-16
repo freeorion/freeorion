@@ -2407,7 +2407,6 @@ void Empire::CheckProductionProgress()
                 // visisble to other empires on first turn if it shouldn't be.
                 // current value will be clamped to max meter value after
                 // effects are applied
-                building->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int building_id = universe.Insert(building);
 
@@ -2433,7 +2432,6 @@ void Empire::CheckProductionProgress()
                 // to other empires on first turn if it shouldn't be.  current
                 // value will be clamped to max meter value after effects are
                 // applied
-                fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int fleet_id = universe.Insert(fleet);
 
@@ -2447,8 +2445,6 @@ void Empire::CheckProductionProgress()
                 // max value appropriately
                 ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
                 ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-                ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
-                ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
                 ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                 int ship_id = universe.Insert(ship);
@@ -2590,14 +2586,14 @@ void Empire::CheckGrowthFoodProgress()
             const PopCenter* pop = *it;
             const UniverseObject* obj = dynamic_cast<const UniverseObject*>(pop);
             if (!obj) {
-                Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a PopCenter* to an UniverseObject*";
+                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a PopCenter* to an UniverseObject*";
                 continue;
             }
             int center_system_id = obj->SystemID();
 
             if (stockpile_group_systems.find(center_system_id) != stockpile_group_systems.end()) {
                 stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-                Logger().debugStream() << "object " << obj->Name() << " is in stockpile system group has " << pop->AllocatedFood() << " food allocated to it";
+                Logger().debugStream() << "object " << obj->Name() << " is in stockpile system group that has " << pop->AllocatedFood() << " food allocated to it";
             }
         }
 

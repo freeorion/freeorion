@@ -506,20 +506,7 @@ void ObjectMap::Dump() const
 {
     Logger().debugStream() << "ObjectMap contains UniverseObjects: ";
     for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
-        const UniverseObject* obj = it->second;
-        const System* system = Object<System>(obj->SystemID());
-
-        Logger().debugStream() << obj->ID() << ": "
-                               << obj->TypeName() << "  "
-                               << obj->Name()
-                               << (system ? ("  at: " + system->Name()) : "");
-
-        //const std::set<int>& owners = obj->Owners();
-        //if (!owners.empty()) {
-        //    Logger().debugStream() << "  owners:";
-        //    for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
-        //        Logger().debugStream() << " ... " << *own_it;
-        //}
+        it->second->Dump();
     }
 }
 
@@ -962,6 +949,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
     ExecuteEffects(targets_causes_map);
 
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
+    // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
         it->second->ClampMeters();
     }
@@ -3654,6 +3642,35 @@ namespace {
                 treeSysListsMapIter = treeSysListsMap.begin();
         }
     }
+
+    /** Set active meter current values equal to target/max meter current
+      * values.  Useful when creating new object after applying effects. */
+    void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
+        std::map<MeterType, MeterType> meters;
+        meters[METER_POPULATION] = METER_TARGET_POPULATION;
+        meters[METER_HEALTH] = METER_TARGET_HEALTH;
+        meters[METER_FARMING] = METER_TARGET_FARMING;
+        meters[METER_INDUSTRY] = METER_TARGET_INDUSTRY;
+        meters[METER_RESEARCH] = METER_TARGET_RESEARCH;
+        meters[METER_TRADE] = METER_TARGET_TRADE;
+        meters[METER_MINING] = METER_TARGET_MINING;
+        meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
+        meters[METER_FUEL] = METER_MAX_FUEL;
+        meters[METER_SHIELD] = METER_MAX_SHIELD;
+        meters[METER_DEFENSE] = METER_MAX_DEFENSE;
+
+        // check for each pair of meter types.  if both exist, set active
+        // meter current value equal to target meter current value.
+        for (ObjectMap::iterator it = object_map.begin(); it != object_map.end(); ++it) {
+            UniverseObject* obj = it->second;
+
+            for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it) {
+                if (Meter* meter = obj->GetMeter(meter_it->first))
+                    if (const Meter* targetmax_meter = obj->GetMeter(meter_it->second))
+                        meter->SetCurrent(targetmax_meter->Current());
+            }
+        }
+    }
 }
 
 #endif  // FREEORION_BUILD_SERVER  (although the following functions should also only be used on the server)
@@ -3735,15 +3752,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     // Apply effects for 1st turn
     ApplyAllEffectsAndUpdateMeters();
 
-    // set all current and previous meters of all objects initially in universe to their max values
-    // so that planets start with population and able to produce resources, initial ships have fuel, etc.
-    for (ObjectMap::iterator it = Objects().begin(); it != Objects().end(); ++it) {
-        for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1)) {
-            if (Meter* meter = it->second->GetMeter(i)) {
-                meter->Set(Meter::LARGE_VALUE, Meter::LARGE_VALUE, Meter::LARGE_VALUE);
-            }
-        }
-    }
+    SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
     UpdateEmpireObjectVisibilities();
 
@@ -4213,6 +4222,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
+        home_planet->SetPrimaryFocus(FOCUS_FARMING);
+        home_planet->SetSecondaryFocus(FOCUS_MINING);
+        home_planet->AddSpecial("HOMEWORLD_SPECIAL");
 
 
         // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
@@ -4223,12 +4235,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
         building = new Building(empire_id, "BLD_SHIPYARD_ORBITAL_DRYDOCK", UniverseObject::INVALID_OBJECT_ID);
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
-
-
-        // add homeworld special and set double balanced default focus
-        home_planet->AddSpecial("HOMEWORLD_SPECIAL");
-        home_planet->SetPrimaryFocus(FOCUS_BALANCED);
-        home_planet->SetSecondaryFocus(FOCUS_BALANCED);
 
 
         // give new empire items and ship designs it should start with
@@ -4247,7 +4253,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                 Logger().errorStream() << "unable to create new fleet!";
                 break;
             }
-            fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
             Insert(fleet);
             home_system->Insert(fleet);
 
@@ -4273,11 +4278,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                         Logger().errorStream() << "unable to create new ship!";
                         break;
                     }
-                    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-                    ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
                     ship->Rename(empire->NewShipName());
                     int ship_id = Insert(ship);

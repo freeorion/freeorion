@@ -66,32 +66,31 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    int                     ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
-    const std::string&      Name() const;                       ///< returns the name of this object; some valid objects will have no name
-    double                  X() const;                          ///< the X-coordinate of this object
-    double                  Y() const;                          ///< the Y-coordinate of this object
-    const std::set<int>&    Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
-    virtual int             SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    const std::set<std::string>&
-                            Specials() const;                   ///< returns the set of names of the Specials attached to this object
+    int                         ID() const;                         ///< returns the ID number of this object.  Each object in FreeOrion has a unique ID number.
+    const std::string&          Name() const;                       ///< returns the name of this object; some valid objects will have no name
+    double                      X() const;                          ///< the X-coordinate of this object
+    double                      Y() const;                          ///< the Y-coordinate of this object
+    const std::set<int>&        Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
+    const std::set<std::string>&Specials() const;                   ///< returns the set of names of the Specials attached to this object
 
-    virtual const std::string&
-                            TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual void                Dump() const;                       ///< outputs textual description of object to logger
 
-    virtual std::vector<int>FindObjectIDs() const;              ///< returns ids of objects contained within this object
+    virtual std::vector<int>    FindObjectIDs() const;              ///< returns ids of objects contained within this object
 
-    virtual bool            Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
-    virtual bool            ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
+    virtual bool                Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
+    virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
-    const Meter*            GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    double                  CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
-    double                  InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
-    double                  PreviousMeterValue(MeterType type) const;       ///< returns the previous turn's initial value for the specified meter \a type
-    virtual double          NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
+    const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    double                      CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
+    double                      InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
+    double                      PreviousMeterValue(MeterType type) const;       ///< returns the previous turn's initial value for the specified meter \a type
+    virtual double              NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
-    bool                    Unowned() const;                    ///< returns true iff there are no owners of this object
-    bool                    OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire is an owner of this object
-    bool                    WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
+    bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
+    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire is an owner of this object
+    bool                        WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
