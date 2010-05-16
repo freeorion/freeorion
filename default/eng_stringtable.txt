@@ -2255,83 +2255,83 @@ trade
 # MeterTypes
 
 INVALID_METER_TYPE
-invalid meter type
+Invalid Meter Type
 METER_TARGET_POPULATION
-target population
+Target Population
 METER_TARGET_HEALTH
-target health
+Target Health
 METER_TARGET_FARMING
-target farming
+Target Farming
 METER_TARGET_INDUSTRY
-target industry
+Target Industry
 METER_TARGET_RESEARCH
-target research
+Target Research
 METER_TARGET_TRADE
-target trade
+Target Trade
 METER_TARGET_MINING
-target mining
+Target Mining
 METER_TARGET_CONSTRUCTION
-target construction
+Target Construction
 METER_MAX_FUEL
-max fuel
+Max Fuel
 METER_MAX_SHIELD
-max shield
+Max Shield
 METER_MAX_STRUCTURE
-max structure
+Max Structure
 METER_MAX_DEFENSE
-max defense
+Max Defense
 METER_POPULATION
-population
+Population
 METER_HEALTH
-health
+Health
 METER_FARMING
-farming
+Farming
 METER_INDUSTRY
-industry
+Industry
 METER_RESEARCH
-research
+Research
 METER_TRADE
-trade
+Trade
 METER_MINING
-mining
+Mining
 METER_CONSTRUCTION
-construction
+Construction
 METER_FUEL
-fuel
+Fuel
 METER_SHIELD
-shield
+Shield
 METER_STRUCTURE
-structure
+Structure
 METER_DEFENSE
-defense
+Defense
 METER_SUPPLY
-supply
+Supply
 METER_STEALTH
-stealth
+Stealth
 METER_DETECTION
-detection
+Detection
 METER_BATTLE_SPEED
-battle speed
+Battle Speed
 METER_STARLANE_SPEED
-starlane speed
+Starlane Speed
 METER_DAMAGE
-damage
+Damage
 METER_ROF
-rate of fire
+Rate of Fire
 METER_RANGE
-range
+Range
 METER_SPEED
-speed
+Speed
 METER_CAPACITY
-capacity
+Capacity
 METER_ANTI_SHIP_DAMAGE
-anti-ship damage
+Anti-Ship Damage
 METER_ANTI_FIGHTER_DAMAGE
-anti-fighter damage
+Anti-Fighter Damage
 METER_LAUNCH_RATE
-launch rate
+Launch Rate
 METER_FIGHTER_WEAPON_RANGE
-fighter weapon range
+Fighter Weapon Range
 
 
 # EmpireAffiliationTypes
@@ -2449,81 +2449,81 @@ DESC_VAR_SECONDARYFOCUS
 secondary focus
 
 DESC_VAR_TARGETPOPULATION
-target population
+[[METER_TARGET_POPULATION]]
 DESC_VAR_TARGETHEALTH
-target health
+[[METER_TARGET_HEALTH]]
 DESC_VAR_TARGETFARMING
-target farming
+[[METER_TARGET_FARMING]]
 DESC_VAR_TARGETINDUSTRY
-target industry
+[[METER_TARGET_INDUSTRY]]
 DESC_VAR_TARGETRESEARCH
-target research
+[[METER_TARGET_RESEARCH]]
 DESC_VAR_TARGETTRADE
-target trade
+[[METER_TARGET_TRADE]]
 DESC_VAR_TARGETMINING
-target mining
+[[METER_TARGET_MINING]]
 DESC_VAR_TARGETCONSTRUCTION
-target construction
+[[METER_TARGET_CONSTRUCTION]]
 DESC_VAR_MAXFUEL
-max fuel
+[[METER_MAX_FUEL]]
 DESC_VAR_MAXSHIELD
-max shield
+[[METER_MAX_SHIELD]]
 DESC_VAR_MAXSTRUCTURE
-max structure
+[[METER_MAX_STRUCTURE]]
 DESC_VAR_MAXDEFENSE
-max defense
+[[METER_MAX_DEFENSE]]
 DESC_VAR_POPULATION
-population
+[[METER_POPULATION]]
 DESC_VAR_HEALTH
-health
+[[METER_HEALTH]]
 DESC_VAR_FARMING
-farming output
+[[METER_FARMING]]
 DESC_VAR_INDUSTRY
-industry output
+[[METER_INDUSTRY]]
 DESC_VAR_RESEARCH
-research output
+[[METER_RESEARCH]]
 DESC_VAR_TRADE
-trade output
+[[METER_TRADE]]
 DESC_VAR_MINING
-mining output
+[[METER_MINING]]
 DESC_VAR_CONSTRUCTION
-construction
+[[METER_CONSTRUCTION]]
 DESC_VAR_FUEL
-fuel
+[[METER_FUEL]]
 DESC_VAR_SHIELD
-shield
+[[METER_SHIELD]]
 DESC_VAR_STRUCTURE
-structure
+[[METER_STRUCTURE]]
 DESC_VAR_DEFENSE
-defense
+[[METER_DEFENSE]]
 DESC_VAR_SUPPLY
-supply
+[[METER_SUPPLY]]
 DESC_VAR_STEALTH
-stealth
+[[METER_STEALTH]]
 DESC_VAR_DETECTION
-detection
+[[METER_DETECTION]]
 DESC_VAR_BATTLESPEED
-battle speed
+[[METER_BATTLE_SPEED]]
 DESC_VAR_STARLANESPEED
-starlane speed
+[[METER_STARLANE_SPEED]]
 DESC_VAR_DAMAGE
-damage
+[[METER_DAMAGE]]
 DESC_VAR_ROF
-rate of fire
+[[METER_ROF]]
 DESC_VAR_RANGE
-range
+[[METER_RANGE]]
 DESC_VAR_SPEED
-speed
+[[METER_SPEED]]
 DESC_VAR_CAPACITY
-capacity
+[[METER_CAPACITY]]
 DESC_VAR_ANTISHIPDAMAGE
-anti-ship damage
+[[METER_ANTI_SHIP_DAMAGE]]
 DESC_VAR_ANTIFIGHTERDAMAGE
-anti-fighter damage
+[[METER_ANTI_FIGHTER_DAMAGE]]
 DESC_VAR_LAUNCHRATE
-launch rate
+[[METER_LAUNCH_RATE]]
 DESC_VAR_FIGHTERWEAPONRANGE
-fighter weapon range
+[[METER_FIGHTER_WEAPON_RANGE]]
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
