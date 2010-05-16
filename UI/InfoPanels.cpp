@@ -2601,10 +2601,20 @@ void MeterBrowseWnd::Render() {
     GG::Pt lr = LowerRight();
     // main background
     GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+
     // top title filled background
-    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+    if (m_summary_title)
+        GG::FlatRectangle(m_summary_title->UpperLeft(), m_summary_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+
     // middle title filled background
-    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*m_row_height), GG::Pt(lr.x, ul.y + 5*m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+    if (m_meter_title)
+        GG::FlatRectangle(m_meter_title->UpperLeft(), m_meter_title->LowerRight() + GG::Pt(GG::X(EDGE_PAD), GG::Y0), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+}
+
+namespace {
+    const std::string& MeterToUserString(MeterType meter_type) {
+        return UserString(GG::GetEnumMap<MeterType>().FromEnum(meter_type));
+    }
 }
 
 void MeterBrowseWnd::Initialize() {
@@ -2614,86 +2624,70 @@ void MeterBrowseWnd::Initialize() {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
-    std::string summary_title_text;
-    switch (m_primary_meter_type) {
-    case METER_POPULATION:
-         summary_title_text = UserString("PP_POPULATION");  break;
-    case METER_HEALTH:
-        summary_title_text = UserString("PP_HEALTH");       break;
-    case METER_FARMING:
-        summary_title_text = UserString("RP_FOOD");         break;
-    case METER_INDUSTRY:
-        summary_title_text = UserString("RP_INDUSTRY");     break;
-    case METER_RESEARCH:
-        summary_title_text = UserString("RP_RESEARCH");     break;
-    case METER_TRADE:
-       summary_title_text = UserString("RP_TRADE");         break;
-    case METER_MINING:
-        summary_title_text = UserString("RP_MINERALS");     break;
-    case METER_CONSTRUCTION:
-        summary_title_text = UserString("RP_CONSTRUCTION"); break;
+    // get objects and meters to verify that they exist
+    const UniverseObject* obj = GetObject(m_object_id);
+    if (!obj)
+        obj = GetEmpireKnownObject(m_object_id, HumanClientApp::GetApp()->EmpireID());
+    if (!obj) {
+        Logger().errorStream() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
+        return;
+    }
+    const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
+    const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
-    case METER_FUEL:
-        summary_title_text = UserString("FW_FUEL");         break;
-    case METER_SHIELD:
-        summary_title_text = UserString("MP_SHIELD");       break;
-    case METER_STRUCTURE:
-        summary_title_text = UserString("MP_STRUCTURE");    break;
-    case METER_DEFENSE:
-        summary_title_text = UserString("MP_DEFENSE");      break;
+    GG::Y top = GG::Y0;
 
-    case METER_SUPPLY:
-        summary_title_text = UserString("MP_SUPPLY");       break;
-    case METER_DETECTION:
-        summary_title_text = UserString("MP_DETECTION");    break;
-    case METER_STEALTH:
-        summary_title_text = UserString("MP_STEALTH");      break;
+    // create controls and do layout
+    if (primary_meter && secondary_meter) {
+        // both primary and secondary meter exist.  display a current value
+        // summary at top with current and next turn values
 
-    case METER_BATTLE_SPEED:
-        summary_title_text = UserString("FW_BATTLE_SPEED"); break;
-    case METER_STARLANE_SPEED:
-        summary_title_text = UserString("FW_STARLANE_SPEED");break;
+        std::string summary_title_text = MeterToUserString(m_primary_meter_type);
+        m_summary_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height,
+                                              summary_title_text, font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_summary_title);
+        top += m_row_height;
 
-    // TODO: Ship Part Meters?
+        m_current_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
+                                              UserString("TT_THIS_TURN"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_current_label);
+        m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height,
+                                              "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(m_current_value);
+        top += m_row_height;
 
-    default:                                                break;
+        m_next_turn_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height,
+                                                UserString("TT_NEXT_TURN"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_next_turn_label);
+        m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
+                                                font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(m_next_turn_value);
+        top += m_row_height;
+
+        m_change_label = new GG::TextControl(GG::X0, top, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"),
+                                             font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_change_label);
+        m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, top, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
+                                             font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+        AttachChild(m_change_value);
+        top += m_row_height;
     }
 
-    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, m_row_height,
-                                          summary_title_text, font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_summary_title);
-
-    m_current_label = new GG::TextControl(GG::X0, m_row_height, METER_BROWSE_LABEL_WIDTH, m_row_height,
-                                          UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_current_label);
-    m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height, METER_BROWSE_VALUE_WIDTH, m_row_height,
-                                          "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    AttachChild(m_current_value);
-
-    m_next_turn_label = new GG::TextControl(GG::X0, m_row_height*2, METER_BROWSE_LABEL_WIDTH, m_row_height,
-                                            UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_next_turn_label);
-    m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*2, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
-                                            font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    AttachChild(m_next_turn_value);
-
-    m_change_label = new GG::TextControl(GG::X0, m_row_height*3, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"),
-                                         font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_change_label);
-    m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*3, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
-                                         font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
-    AttachChild(m_change_value);
-
-    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
-                                        font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-    AttachChild(m_meter_title);
+    if (primary_meter) {
+        // effect accounting meter breakdown total / summary.  Shows "Meter Name: Value"
+        // above a list of effects.  Actual text is set in UpdateSummary() but
+        // the control is created here.
+        m_meter_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
+                                            font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+        AttachChild(m_meter_title);
+        top += m_row_height;
+    }
 
     UpdateSummary();
 
-    GG::Y next_row_y = m_meter_title->LowerRight().y;
-    UpdateEffectLabelsAndValues(next_row_y);
+    UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, next_row_y));
+    Resize(GG::Pt(METER_BROWSE_LABEL_WIDTH + METER_BROWSE_VALUE_WIDTH, top));
 
     m_initialized = true;
 }
@@ -2717,7 +2711,15 @@ void MeterBrowseWnd::UpdateSummary() {
     const Meter* primary_meter = obj->GetMeter(m_primary_meter_type);
     const Meter* secondary_meter = obj->GetMeter(m_secondary_meter_type);
 
+    double breakdown_total = 0.0;
+    std::string breakdown_meter_name;
+
     if (primary_meter && secondary_meter) {
+        if (!m_current_value || !m_next_turn_value || !m_change_value) {
+            Logger().errorStream() << "MeterBrowseWnd::UpdateSummary has primary and secondary meters, but is missing one or more controls to display them";
+            return;
+        }
+
         // Primary meter holds value from turn to turn and changes slow each turn.
         // The current value of the primary meter doesn't change with focus changes
         // so its growth from turn to turn is important to show
@@ -2729,24 +2731,24 @@ void MeterBrowseWnd::UpdateSummary() {
         m_next_turn_value->SetText(DoubleToString(primary_next, 3, false));
         m_change_value->SetText(ColouredNumber(primary_change));
 
-        double secondary_current = obj->CurrentMeterValue(m_secondary_meter_type);
+        // target or max meter total for breakdown summary
+        breakdown_total = obj->CurrentMeterValue(m_secondary_meter_type);
+        breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
 
-        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_TWO_VALUES")) %
-                                              DoubleToString(primary_current, 3, false) %
-                                              DoubleToString(secondary_current, 3, false)));
     } else if (primary_meter) {
-        // Primary meter is an unpaired meter that is reset each turn.
-        double primary_current = obj->CurrentMeterValue(m_primary_meter_type);
-
-        m_current_value->SetText(DoubleToString(primary_current, 3, false));
-        m_next_turn_value->SetText("");
-        m_change_value->SetText("");
-
-        // TODO: Hide next and change values when not needed
-
-        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_ONE_VALUE")) %
-                                              DoubleToString(primary_current, 3, false)));
+        // unpaired meter total for breakdown summary
+        breakdown_total = obj->CurrentMeterValue(m_primary_meter_type);
+        breakdown_meter_name = MeterToUserString(m_primary_meter_type);
+    } else {
+        Logger().errorStream() << "MeterBrowseWnd::UpdateSummary can't get primary meter";
+        return;
     }
+
+    // set accounting breakdown total / summary
+    if (m_meter_title)
+        m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY")) %
+                                              breakdown_meter_name %
+                                              DoubleToString(breakdown_total, 3, false)));
 }
 
 void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {

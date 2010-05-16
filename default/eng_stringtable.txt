@@ -1456,56 +1456,12 @@ Size
 PL_COLONIZE
 Colonize (%1%)
 
-##Population Panel#########
-
-PP_POPULATION
-Population
-PP_HEALTH
-Health
-
 ## Resources Panel ##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
 Primary Focus: %1%
 RP_SECONDARY_FOCUS_TOOLTIP
 Secondary Focus: %1%
-
-RP_FOOD
-Food Output
-RP_MINERALS
-Mineral Output
-RP_INDUSTRY
-Industrial Output
-RP_RESEARCH
-Research Output
-RP_TRADE
-Trade Generation
-RP_CONSTRUCTION
-Infrastructure
-
-## Military Panel ##########
-
-MP_SUPPLY
-Fleet Supply
-MP_SHIELD
-Shield
-MP_STRUCTURE
-Structural Integrity
-MP_DEFENSE
-Planetary Weaponry
-MP_DETECTION
-Detection
-MP_STEALTH
-Stealth
-
-## Ships##########
-
-FW_FUEL
-Fuel
-FW_BATTLE_SPEED
-Battle Speed
-FW_STARLANE_SPEED
-Starlane Speed
 
 ## Buildings Panel##########
 
@@ -1527,20 +1483,17 @@ Cancel Scrapping Building
 
 ## General Tooltips#########
 
-TT_CURRENT
-Current
+TT_THIS_TURN
+This Turn
 
-TT_NEXT
+TT_NEXT_TURN
 Next Turn
 
 TT_CHANGE
 Change
 
-TT_METER_ONE_VALUE
-%1% 
-
-TT_METER_TWO_VALUES
-%1% / %2%
+TT_BREAKDOWN_SUMMARY
+%1%: %2% 
 
 TT_BASIC_FOCUS_AND_UNIVERSE
 Basic Focus and Universe
