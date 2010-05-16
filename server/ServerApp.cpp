@@ -359,6 +359,9 @@ void ServerApp::NewGameInit(int size, Shape shape, Age age, StarlaneFrequency st
 
     Logger().debugStream() << "Sending GameStartMessages to players";
 
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! Right before gamestart messages!";
+    m_universe.Objects().Dump();
+
     for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
         int player_id = (*it)->ID();
         int empire_id = GetPlayerEmpire(player_id)->EmpireID();
@@ -1109,8 +1112,15 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns effects and meter updates";
 
 
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!BEFORE TURN PROCESSING EFFECTS APPLICATION";
+    objects.Dump();
+
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
+
+
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
+    objects.Dump();
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
@@ -1173,6 +1183,10 @@ void ServerApp::PostCombatProcessTurns()
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
+
+
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
+    objects.Dump();
 
 
     // copy latest updated current meter values to initial current values, and

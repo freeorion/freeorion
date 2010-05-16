@@ -334,7 +334,7 @@ boost::statechart::result PlayingGame::react(const VictoryDefeat& msg)
     if (empire)
         empire_name = empire->Name();
 
-    ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString(reason_string)) % empire_name));
+    //ClientUI::MessageBox(boost::io::str(FlexibleFormat(UserString(reason_string)) % empire_name));
     return discard_event();
 }
 

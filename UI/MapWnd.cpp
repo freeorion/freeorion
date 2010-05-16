@@ -1529,48 +1529,13 @@ void MapWnd::InitTurn(int turn_number)
     //        std::cout << "    [missing object] (" << *it << ")" << std::endl;
     //}
     // DEBUG
-    std::cout << "Visible UniverseObjects: " << std::endl;
-    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
-        const UniverseObject* obj = it->second;
-        std::cout << obj->ID() << ": " << obj->TypeName() << "  " << obj->Name();
 
-        if (const System* system = objects.Object<System>(obj->SystemID()))
-            std::cout << "  at: " << system->Name();
-
-        const std::set<int>& owners = obj->Owners();
-        if (!owners.empty()) {
-            std::cout << "  owners:";
-            for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
-                std::cout << " " << *own_it;
-        }
-
-        Visibility vis = universe.GetObjectVisibilityByEmpire(it->first, HumanClientApp::GetApp()->EmpireID());
-        std::cout << " vis: " << boost::lexical_cast<std::string>(vis);
-
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
+    Logger().debugStream() << "Visible UniverseObjects: ";
+    objects.Dump();
 
     const ObjectMap& known_objects = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
-    std::cout << "Latest Known UniverseObjects: " << std::endl;
-    for (ObjectMap::const_iterator it = known_objects.const_begin(); it != known_objects.const_end(); ++it) {
-        const UniverseObject* obj = it->second;
-        std::cout << obj->ID() << ": " << obj->TypeName() << "  " << obj->Name();
-
-        if (const System* system = known_objects.Object<System>(obj->SystemID()))
-            std::cout << "  at: " << system->Name();
-
-        const std::set<int>& owners = obj->Owners();
-        if (!owners.empty()) {
-            std::cout << "  owners:";
-            for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it)
-                std::cout << " " << *own_it;
-        }
-
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-
+    Logger().debugStream() << "Latest Known UniverseObjects: ";
+    known_objects.Dump();
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();

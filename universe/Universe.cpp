@@ -3665,9 +3665,15 @@ namespace {
             UniverseObject* obj = it->second;
 
             for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it) {
-                if (Meter* meter = obj->GetMeter(meter_it->first))
-                    if (const Meter* targetmax_meter = obj->GetMeter(meter_it->second))
-                        meter->SetCurrent(targetmax_meter->Current());
+                if (!obj->Owners().empty()) {
+                    if (Meter* meter = obj->GetMeter(meter_it->first)) {
+                        if (Meter* targetmax_meter = obj->GetMeter(meter_it->second)) {
+                            meter->SetCurrent(targetmax_meter->Current());
+                            targetmax_meter->BackPropegate();
+                        }
+                        meter->BackPropegate();
+                    }
+                }
             }
         }
     }
@@ -3753,6 +3759,9 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     ApplyAllEffectsAndUpdateMeters();
 
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
+
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! Populationg systems after setting active meters to targes!";
+    m_objects.Dump();
 
     UpdateEmpireObjectVisibilities();
 
