@@ -474,6 +474,7 @@ std::string SetMeter::Dump() const
 
     case METER_MAX_FUEL:            retval += "MaxFuel"; break;
     case METER_MAX_SHIELD:          retval += "MaxShield"; break;
+    case METER_MAX_STRUCTURE:       retval += "MaxStructure"; break;
     case METER_MAX_DEFENSE:         retval += "MaxDefense"; break;
 
     case METER_POPULATION:          retval += "Population"; break;
@@ -487,6 +488,7 @@ std::string SetMeter::Dump() const
 
     case METER_FUEL:                retval += "Fuel"; break;
     case METER_SHIELD:              retval += "Shield"; break;
+    case METER_STRUCTURE:           retval += "Structure"; break;
     case METER_DEFENSE:             retval += "Defense"; break;
 
     case METER_SUPPLY:              retval += "Supply"; break;

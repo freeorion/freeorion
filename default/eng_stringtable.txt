@@ -1418,37 +1418,28 @@ System Production
 
 RESOURCE_PRODUCTION_TOOLTIP
 System %1%: %2%
-
 RESOURCE_ALLOCATION_TOOLTIP
 System %1%: %2%
 
 FOOD_CONSUMPTION
 Food Consumption
-
 MINERALS_CONSUMPTION
 Minerals Consumption
-
 INDUSTRY_CONSUMPTION
 Industrial Consumption
-
 RESEARCH_CONSUMPTION
 Research Consumption
-
 TRADE_CONSUMPTION
 Trade Consumption
 
 INTERSYSTEM_EXCHANGE_TOOLTIP
 Inter-System Exchange
-
 IMPORT_EXPORT_TOOLTIP
 Import / Export
-
 RESOURCE_IMPORT
 Importing
-
 RESOURCE_EXPORT
 Available for Export
-
 RESOURCE_SELF_SUFFICIENT
 No Import or Export
 
@@ -1456,73 +1447,65 @@ No Import or Export
 
 PLANET_PANEL
 Planet Panel
-
 PL_ASTEROID_BELT
 Asteroid belt
-
 PL_UNINHABITED
 Uninhabited
-
 PL_SIZE
 Size
-
 PL_COLONIZE
 Colonize (%1%)
-
 
 ##Population Panel#########
 
 PP_POPULATION
 Population
-
 PP_HEALTH
 Health
-
 
 ## Resources Panel ##########
 
 RP_PRIMARY_FOCUS_TOOLTIP
 Primary Focus: %1%
-
 RP_SECONDARY_FOCUS_TOOLTIP
 Secondary Focus: %1%
 
 RP_FOOD
-Food Production
-
+Food Output
 RP_MINERALS
-Minerals Production
-
+Mineral Output
 RP_INDUSTRY
 Industrial Output
-
 RP_RESEARCH
 Research Output
-
 RP_TRADE
-Trade Level
-
+Trade Generation
 RP_CONSTRUCTION
-Construction Infrastructure
-
+Infrastructure
 
 ## Military Panel ##########
 
 MP_SUPPLY
 Fleet Supply
-
 MP_SHIELD
 Shield
-
+MP_STRUCTURE
+Structural Integrity
 MP_DEFENSE
-Defense
-
+Planetary Weaponry
 MP_DETECTION
 Detection
-
 MP_STEALTH
 Stealth
 
+## Ships##########
+
+FW_FUEL
+Fuel
+FW_BATTLE_SPEED
+Battle Speed
+FW_STARLANE_SPEED
+Starlane Speed
 
 ## Buildings Panel##########
 
@@ -1666,9 +1649,6 @@ Speed
 
 SHIP_SPEED_STAT_MAIN
 Maximum distance along starlanes travelled per turn.
-
-FW_FUEL
-Fuel
 
 FW_FLEET_FUEL_SUMMARY
 Fleet Fuel - Equal to the minimum fuel of the ships in the fleet.
@@ -2257,8 +2237,8 @@ good
 
 # FocusTypes
 
-FOCUS_UNKNOWN
-unknown
+INVALID_FOCUS_TYPE
+invalid focus type
 FOCUS_BALANCED
 balanced
 FOCUS_FARMING
@@ -2271,12 +2251,39 @@ FOCUS_RESEARCH
 research
 FOCUS_TRADE
 trade
-  
 
 # MeterTypes
 
+INVALID_METER_TYPE
+invalid meter type
+METER_TARGET_POPULATION
+target population
+METER_TARGET_HEALTH
+target health
+METER_TARGET_FARMING
+target farming
+METER_TARGET_INDUSTRY
+target industry
+METER_TARGET_RESEARCH
+target research
+METER_TARGET_TRADE
+target trade
+METER_TARGET_MINING
+target mining
+METER_TARGET_CONSTRUCTION
+target construction
+METER_MAX_FUEL
+max fuel
+METER_MAX_SHIELD
+max shield
+METER_MAX_STRUCTURE
+max structure
+METER_MAX_DEFENSE
+max defense
 METER_POPULATION
 population
+METER_HEALTH
+health
 METER_FARMING
 farming
 METER_INDUSTRY
@@ -2289,20 +2296,42 @@ METER_MINING
 mining
 METER_CONSTRUCTION
 construction
-METER_HEALTH
-health
 METER_FUEL
 fuel
+METER_SHIELD
+shield
+METER_STRUCTURE
+structure
+METER_DEFENSE
+defense
 METER_SUPPLY
 supply
 METER_STEALTH
 stealth
 METER_DETECTION
 detection
-METER_SHIELD
-shield
-METER_DEFENSE
-defense
+METER_BATTLE_SPEED
+battle speed
+METER_STARLANE_SPEED
+starlane speed
+METER_DAMAGE
+damage
+METER_ROF
+rate of fire
+METER_RANGE
+range
+METER_SPEED
+speed
+METER_CAPACITY
+capacity
+METER_ANTI_SHIP_DAMAGE
+anti-ship damage
+METER_ANTI_FIGHTER_DAMAGE
+anti-fighter damage
+METER_LAUNCH_RATE
+launch rate
+METER_FIGHTER_WEAPON_RANGE
+fighter weapon range
 
 
 # EmpireAffiliationTypes
@@ -2317,13 +2346,16 @@ ally
 
 # UnlockableItemTypes
 
+INVALID_UNLOCKABLE_ITEM_TYPE
+Invalid Unlockable Item Type
 UIT_BUILDING
 Building
 UIT_SHIP_PART
 Ship Part
 UIT_SHIP_HULL
 Ship Hull
-
+UIT_TECH
+Technology
 
 # TechTypes
 
@@ -2343,18 +2375,6 @@ BT_BUILDING
 building
 BT_SHIP
 ship
-BT_ORBITAL
-orbital
-
-
-# StockpileTypes
-
-ST_FOOD
-food
-ST_MINERAL
-mineral
-ST_TRADE
-trade
 
 
 # Ship Slot Types
@@ -2428,113 +2448,100 @@ primary focus
 DESC_VAR_SECONDARYFOCUS
 secondary focus
 
-DESC_VAR_CURRENTFARMING
-current farming
-
-DESC_VAR_MAXFARMING
-max farming
-
-DESC_VAR_CURRENTINDUSTRY
-current industry
-
-DESC_VAR_MAXINDUSTRY
-max industry
-
-DESC_VAR_CURRENTRESEARCH
-current research
-
-DESC_VAR_MAXRESEARCH
-max research
-
-DESC_VAR_CURRENTTRADE
-current trade
-
-DESC_VAR_MAXTRADE
-max trade
-
-DESC_VAR_CURRENTMINING
-current mining
-
-DESC_VAR_MAXMINING
-max mining
-
-DESC_VAR_CURRENTCONSTRUCTION
-current construction
-
-DESC_VAR_MAXCONSTRUCTION
-max construction
-
-DESC_VAR_CURRENTHEALTH
-current health
-
-DESC_VAR_MAXHEALTH
-max health
-
-DESC_VAR_CURRENTPOPULATION
-current population
-
-DESC_VAR_MAXPOPULATION
-max population
-
-DESC_VAR_CURRENTFUEL
-current fuel
-
+DESC_VAR_TARGETPOPULATION
+target population
+DESC_VAR_TARGETHEALTH
+target health
+DESC_VAR_TARGETFARMING
+target farming
+DESC_VAR_TARGETINDUSTRY
+target industry
+DESC_VAR_TARGETRESEARCH
+target research
+DESC_VAR_TARGETTRADE
+target trade
+DESC_VAR_TARGETMINING
+target mining
+DESC_VAR_TARGETCONSTRUCTION
+target construction
 DESC_VAR_MAXFUEL
 max fuel
-
-DESC_VAR_CURRENTSUPPLY
-current supply
-
-DESC_VAR_MAXSUPPLY
-max supply
-
-DESC_VAR_CURRENTSTEALTH
-current stealth
-
-DESC_VAR_MAXSTEALTH
-max stealth
-
-DESC_VAR_CURRENTDETECTION
-current detection
-
-DESC_VAR_MAXDETECTION
-max detection
-
-DESC_VAR_CURRENTSHIELD
-current shield
-
 DESC_VAR_MAXSHIELD
 max shield
-
-DESC_VAR_CURRENTDEFENSE
-current defense
-
+DESC_VAR_MAXSTRUCTURE
+max structure
 DESC_VAR_MAXDEFENSE
 max defense
+DESC_VAR_POPULATION
+population
+DESC_VAR_HEALTH
+health
+DESC_VAR_FARMING
+farming output
+DESC_VAR_INDUSTRY
+industry output
+DESC_VAR_RESEARCH
+research output
+DESC_VAR_TRADE
+trade output
+DESC_VAR_MINING
+mining output
+DESC_VAR_CONSTRUCTION
+construction
+DESC_VAR_FUEL
+fuel
+DESC_VAR_SHIELD
+shield
+DESC_VAR_STRUCTURE
+structure
+DESC_VAR_DEFENSE
+defense
+DESC_VAR_SUPPLY
+supply
+DESC_VAR_STEALTH
+stealth
+DESC_VAR_DETECTION
+detection
+DESC_VAR_BATTLESPEED
+battle speed
+DESC_VAR_STARLANESPEED
+starlane speed
+DESC_VAR_DAMAGE
+damage
+DESC_VAR_ROF
+rate of fire
+DESC_VAR_RANGE
+range
+DESC_VAR_SPEED
+speed
+DESC_VAR_CAPACITY
+capacity
+DESC_VAR_ANTISHIPDAMAGE
+anti-ship damage
+DESC_VAR_ANTIFIGHTERDAMAGE
+anti-fighter damage
+DESC_VAR_LAUNCHRATE
+launch rate
+DESC_VAR_FIGHTERWEAPONRANGE
+fighter weapon range
 
 DESC_VAR_TRADESTOCKPILE
 trade stockpile
-
 DESC_VAR_MINERALSTOCKPILE
 mineral stockpile
-
 DESC_VAR_FOODSTOCKPILE
 food stockpile
 
-DESC_VAR_TRADEPRODUCTION
-trade production
-
-DESC_VAR_FOODPRODUCTION
-food production
-
-DESC_VAR_MINERALPRODUCTION
-mineral production
-
-DESC_VAR_INDUSTRYPRODUCTION
-industry production
-
-DESC_VAR_RESEARCHPRODUCTION
-research production
+DESC_VAR_TRADEOUTPUT
+trade output
+DESC_VAR_FOODOUTPUT
+food output
+DESC_VAR_MINERALOUTPUT
+mineral output
+DESC_VAR_INDUSTRYOUTPUT
+industry output
+DESC_VAR_RESEARCHOUTPUT
+research output
 
 DESC_VAR_OWNER
 owner
@@ -2614,10 +2621,10 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 # SetMeter
 
 DESC_SIMPLE_SET_METER_CURRENT
-Current %1% %2%%3%
+%1% %2%%3%
 
 DESC_COMPLEX_SET_METER_CURRENT
-Set current %1% to %2%
+Set %1% to %2%
 
 
 # others

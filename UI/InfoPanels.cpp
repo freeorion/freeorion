@@ -2599,9 +2599,12 @@ bool MeterBrowseWnd::WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const {
 void MeterBrowseWnd::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);    // main background
-    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
-    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*m_row_height), GG::Pt(lr.x, ul.y + 5*m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // middle title filled background
+    // main background
+    GG::FlatRectangle(ul, lr, OpaqueColor(ClientUI::WndColor()), ClientUI::WndOuterBorderColor(), 1);
+    // top title filled background
+    GG::FlatRectangle(ul, GG::Pt(lr.x, ul.y + m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
+    // middle title filled background
+    GG::FlatRectangle(GG::Pt(ul.x, ul.y + 4*m_row_height), GG::Pt(lr.x, ul.y + 5*m_row_height), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);
 }
 
 void MeterBrowseWnd::Initialize() {
@@ -2611,25 +2614,78 @@ void MeterBrowseWnd::Initialize() {
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
     const boost::shared_ptr<GG::Font>& font_bold = ClientUI::GetBoldFont();
 
-    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    std::string summary_title_text;
+    switch (m_primary_meter_type) {
+    case METER_POPULATION:
+         summary_title_text = UserString("PP_POPULATION");  break;
+    case METER_HEALTH:
+        summary_title_text = UserString("PP_HEALTH");       break;
+    case METER_FARMING:
+        summary_title_text = UserString("RP_FOOD");         break;
+    case METER_INDUSTRY:
+        summary_title_text = UserString("RP_INDUSTRY");     break;
+    case METER_RESEARCH:
+        summary_title_text = UserString("RP_RESEARCH");     break;
+    case METER_TRADE:
+       summary_title_text = UserString("RP_TRADE");         break;
+    case METER_MINING:
+        summary_title_text = UserString("RP_MINERALS");     break;
+    case METER_CONSTRUCTION:
+        summary_title_text = UserString("RP_CONSTRUCTION"); break;
+
+    case METER_FUEL:
+        summary_title_text = UserString("FW_FUEL");         break;
+    case METER_SHIELD:
+        summary_title_text = UserString("MP_SHIELD");       break;
+    case METER_STRUCTURE:
+        summary_title_text = UserString("MP_STRUCTURE");    break;
+    case METER_DEFENSE:
+        summary_title_text = UserString("MP_DEFENSE");      break;
+
+    case METER_SUPPLY:
+        summary_title_text = UserString("MP_SUPPLY");       break;
+    case METER_DETECTION:
+        summary_title_text = UserString("MP_DETECTION");    break;
+    case METER_STEALTH:
+        summary_title_text = UserString("MP_STEALTH");      break;
+
+    case METER_BATTLE_SPEED:
+        summary_title_text = UserString("FW_BATTLE_SPEED"); break;
+    case METER_STARLANE_SPEED:
+        summary_title_text = UserString("FW_STARLANE_SPEED");break;
+
+    // TODO: Ship Part Meters?
+
+    default:                                                break;
+    }
+
+    m_summary_title = new GG::TextControl(GG::X0, GG::Y0, TOTAL_WIDTH - EDGE_PAD, m_row_height,
+                                          summary_title_text, font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_summary_title);
 
-    m_current_label = new GG::TextControl(GG::X0, m_row_height, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_current_label = new GG::TextControl(GG::X0, m_row_height, METER_BROWSE_LABEL_WIDTH, m_row_height,
+                                          UserString("TT_CURRENT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_current_label);
-    m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_current_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height, METER_BROWSE_VALUE_WIDTH, m_row_height,
+                                          "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     AttachChild(m_current_value);
 
-    m_next_turn_label = new GG::TextControl(GG::X0, m_row_height*2, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_next_turn_label = new GG::TextControl(GG::X0, m_row_height*2, METER_BROWSE_LABEL_WIDTH, m_row_height,
+                                            UserString("TT_NEXT"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_next_turn_label);
-    m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*2, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_next_turn_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*2, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
+                                            font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     AttachChild(m_next_turn_value);
 
-    m_change_label = new GG::TextControl(GG::X0, m_row_height*3, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_change_label = new GG::TextControl(GG::X0, m_row_height*3, METER_BROWSE_LABEL_WIDTH, m_row_height, UserString("TT_CHANGE"),
+                                         font, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_change_label);
-    m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*3, METER_BROWSE_VALUE_WIDTH, m_row_height, "", font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+    m_change_value = new GG::TextControl(METER_BROWSE_LABEL_WIDTH, m_row_height*3, METER_BROWSE_VALUE_WIDTH, m_row_height, "",
+                                         font, ClientUI::TextColor(), GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
     AttachChild(m_change_value);
 
-    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - EDGE_PAD, m_row_height, "", font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+    m_meter_title = new GG::TextControl(GG::X0, m_row_height*4, TOTAL_WIDTH - EDGE_PAD, m_row_height, "",
+                                        font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
     AttachChild(m_meter_title);
 
     UpdateSummary();
@@ -2690,40 +2746,6 @@ void MeterBrowseWnd::UpdateSummary() {
 
         m_meter_title->SetText(boost::io::str(FlexibleFormat(UserString("TT_METER_ONE_VALUE")) %
                                               DoubleToString(primary_current, 3, false)));
-    }
-
-    switch (m_primary_meter_type) {
-    case METER_POPULATION:
-        m_summary_title->SetText(UserString("PP_POPULATION"));  break;
-    case METER_FARMING:
-        m_summary_title->SetText(UserString("RP_FOOD"));        break;
-    case METER_INDUSTRY:
-        m_summary_title->SetText(UserString("RP_INDUSTRY"));    break;
-    case METER_RESEARCH:
-        m_summary_title->SetText(UserString("RP_RESEARCH"));    break;
-    case METER_TRADE:
-       m_summary_title->SetText(UserString("RP_TRADE"));        break;
-    case METER_MINING:
-        m_summary_title->SetText(UserString("RP_MINERALS"));    break;
-    case METER_CONSTRUCTION:
-        m_summary_title->SetText(UserString("RP_CONSTRUCTION"));break;
-    case METER_HEALTH:
-        m_summary_title->SetText(UserString("PP_HEALTH"));      break;
-    case METER_FUEL:
-        m_summary_title->SetText(UserString("FW_FUEL"));        break;
-    case METER_SUPPLY:
-        m_summary_title->SetText(UserString("MP_SUPPLY"));      break;
-    case METER_SHIELD:
-        m_summary_title->SetText(UserString("MP_SHIELD"));      break;
-    case METER_DEFENSE:
-        m_summary_title->SetText(UserString("MP_DEFENSE"));     break;
-    case METER_DETECTION:
-        m_summary_title->SetText(UserString("MP_DETECTION"));   break;
-    case METER_STEALTH:
-        m_summary_title->SetText(UserString("MP_STEALTH"));     break;
-    // TODO: other meters?  ship meters?
-    default:
-        m_summary_title->SetText("");                           break;
     }
 }
 

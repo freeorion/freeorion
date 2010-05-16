@@ -330,7 +330,16 @@ namespace ValueRef {
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
         std::string property_name = m_property_name.back();
         IF_CURRENT_VALUE_ELSE(double)
-        if (boost::iequals(property_name, "Farming")) {
+        if        (boost::iequals(property_name, "Population")) {
+            retval = object->CurrentMeterValue(METER_POPULATION);
+        } else if (boost::iequals(property_name, "TargetPopulation")) {
+            retval = object->CurrentMeterValue(METER_TARGET_POPULATION);
+        } else if (boost::iequals(property_name, "Health")) {
+            retval = object->CurrentMeterValue(METER_HEALTH);
+        } else if (boost::iequals(property_name, "TargetHealth")) {
+            retval = object->CurrentMeterValue(METER_TARGET_HEALTH);
+
+        } else if (boost::iequals(property_name, "Farming")) {
             retval = object->CurrentMeterValue(METER_FARMING);
         } else if (boost::iequals(property_name, "TargetFarming")) {
             retval = object->CurrentMeterValue(METER_TARGET_FARMING);
@@ -354,18 +363,24 @@ namespace ValueRef {
             retval = object->CurrentMeterValue(METER_CONSTRUCTION);
         } else if (boost::iequals(property_name, "TargetConstruction")) {
             retval = object->CurrentMeterValue(METER_TARGET_CONSTRUCTION);
-        } else if (boost::iequals(property_name, "Health")) {
-            retval = object->CurrentMeterValue(METER_HEALTH);
-        } else if (boost::iequals(property_name, "TargetHealth")) {
-            retval = object->CurrentMeterValue(METER_TARGET_HEALTH);
-        } else if (boost::iequals(property_name, "Population")) {
-            retval = object->CurrentMeterValue(METER_POPULATION);
-        } else if (boost::iequals(property_name, "TargetPopulation")) {
-            retval = object->CurrentMeterValue(METER_TARGET_POPULATION);
+
         } else if (boost::iequals(property_name, "MaxFuel")) {
             retval = object->CurrentMeterValue(METER_MAX_FUEL);
         } else if (boost::iequals(property_name, "Fuel")) {
             retval = object->CurrentMeterValue(METER_FUEL);
+        } else if (boost::iequals(property_name, "MaxStructure")) {
+            retval = object->CurrentMeterValue(METER_MAX_STRUCTURE);
+        } else if (boost::iequals(property_name, "Structure")) {
+            retval = object->CurrentMeterValue(METER_STRUCTURE);
+        } else if (boost::iequals(property_name, "MaxShield")) {
+            retval = object->CurrentMeterValue(METER_MAX_SHIELD);
+        } else if (boost::iequals(property_name, "Shield")) {
+            retval = object->CurrentMeterValue(METER_SHIELD);
+        } else if (boost::iequals(property_name, "MaxDefense")) {
+            retval = object->CurrentMeterValue(METER_MAX_DEFENSE);
+        } else if (boost::iequals(property_name, "Defense")) {
+            retval = object->CurrentMeterValue(METER_DEFENSE);
+
         } else if (boost::iequals(property_name, "Supply")) {
             retval = object->CurrentMeterValue(METER_SUPPLY);
         } else if (boost::iequals(property_name, "Stealth")) {
@@ -376,14 +391,26 @@ namespace ValueRef {
             retval = object->CurrentMeterValue(METER_BATTLE_SPEED);
         } else if (boost::iequals(property_name, "StarlaneSpeed")) {
             retval = object->CurrentMeterValue(METER_STARLANE_SPEED);
-        } else if (boost::iequals(property_name, "MaxShield")) {
-            retval = object->CurrentMeterValue(METER_MAX_SHIELD);
-        } else if (boost::iequals(property_name, "Shield")) {
-            retval = object->CurrentMeterValue(METER_SHIELD);
-        } else if (boost::iequals(property_name, "MaxDefense")) {
-            retval = object->CurrentMeterValue(METER_MAX_DEFENSE);
-        } else if (boost::iequals(property_name, "Defense")) {
-            retval = object->CurrentMeterValue(METER_DEFENSE);
+
+        } else if (boost::iequals(property_name, "Damage")) {
+            retval = object->CurrentMeterValue(METER_DAMAGE);
+        } else if (boost::iequals(property_name, "ROF")) {
+            retval = object->CurrentMeterValue(METER_ROF);
+        } else if (boost::iequals(property_name, "Range")) {
+            retval = object->CurrentMeterValue(METER_RANGE);
+        } else if (boost::iequals(property_name, "Speed")) {
+            retval = object->CurrentMeterValue(METER_SPEED);
+        } else if (boost::iequals(property_name, "Capacity")) {
+            retval = object->CurrentMeterValue(METER_CAPACITY);
+        } else if (boost::iequals(property_name, "AntiShipDamage")) {
+            retval = object->CurrentMeterValue(METER_ANTI_SHIP_DAMAGE);
+        } else if (boost::iequals(property_name, "AntiFighterDamage")) {
+            retval = object->CurrentMeterValue(METER_ANTI_FIGHTER_DAMAGE);
+        } else if (boost::iequals(property_name, "LaunchRate")) {
+            retval = object->CurrentMeterValue(METER_LAUNCH_RATE);
+        } else if (boost::iequals(property_name, "FighterWeaponRange")) {
+            retval = object->CurrentMeterValue(METER_FIGHTER_WEAPON_RANGE);
+
         } else if (boost::iequals(property_name, "TradeStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
@@ -399,23 +426,23 @@ namespace ValueRef {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
                 retval = empire->ResourceStockpile(RE_FOOD);
             }
-        } else if (boost::iequals(property_name, "TradeProduction")) {
+        } else if (boost::iequals(property_name, "TradeOutput")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->CurrentMeterValue(METER_TRADE);
             }
-        } else if (boost::iequals(property_name, "FoodProduction")) {
+        } else if (boost::iequals(property_name, "FoodOutput")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->CurrentMeterValue(METER_FARMING);
             }
-        } else if (boost::iequals(property_name, "MineralProduction")) {
+        } else if (boost::iequals(property_name, "MineralOutput")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->CurrentMeterValue(METER_MINING);
             }
-        } else if (boost::iequals(property_name, "IndustryProduction")) {
+        } else if (boost::iequals(property_name, "IndustryOutput")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->CurrentMeterValue(METER_INDUSTRY);
             }
-        } else if (boost::iequals(property_name, "ResearchProduction")) {
+        } else if (boost::iequals(property_name, "ResearchOutput")) {
             if (const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(object)) {
                 retval = prod_center->CurrentMeterValue(METER_RESEARCH);
             }
