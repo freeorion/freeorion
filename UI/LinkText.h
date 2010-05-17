@@ -8,13 +8,6 @@
 
 class TextLinker
 {
-private:
-    struct BoolCombiner
-    {
-        typedef bool result_type; 
-        template<class InIt> result_type operator()(InIt first, InIt last) const;
-    };
-
 public:
     /** \name Structors */ //@{
     TextLinker();
@@ -111,14 +104,5 @@ public:
 private:
     virtual void    SetLinkedText(const std::string& str);
 };
-
-// template implementations
-template<class InIt>
-TextLinker::BoolCombiner::result_type TextLinker::BoolCombiner::operator()(InIt first, InIt last) const
-{
-    while (first != last)
-        *first++;
-    return true;
-}
 
 #endif // _LinkText_h_
