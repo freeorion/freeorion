@@ -339,22 +339,6 @@ namespace {
         return retval;
     }
 
-    // an internal LUT of string IDs for each SitRep type
-    // It's in this module because SitReps know nothing about how they
-    // should be rendered - this is up to the client UI
-    const char* g_string_id_lut[ SitRepEntry::NUM_SITREP_TYPES ] =
-    {
-        "SITREP_SHIP_BUILT",
-        "SITREP_BUILDING_BUILT",
-        "SITREP_TECH_RESEARCHED",
-        "SITREP_COMBAT_SYSTEM",
-        "SITREP_PLANET_CAPTURED",
-        "SITREP_PLANET_LOST_STARVED_TO_DEATH",
-        "SITREP_PLANET_COLONIZED",
-        "SITREP_FLEET_ARRIVED_AT_DESTINATION",
-        "SITREP_EMPIRE_ELIMINATED",
-        "SITREP_VICTORY"
-    };
     // command-line options
     void AddOptions(OptionsDB& db)
     {
@@ -593,8 +577,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
 
 void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
 {
-    std::string template_str(UserString(g_string_id_lut[sit_rep->GetType()]));
-    sit_rep->GenerateVarText(template_str);
+    sit_rep->GenerateVarText(sit_rep->TemplateString());
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)

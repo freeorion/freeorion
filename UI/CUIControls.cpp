@@ -1219,7 +1219,7 @@ const int ProductionInfoPanel::CORNER_RADIUS = 9;
 const GG::Y ProductionInfoPanel::VERTICAL_SECTION_GAP(4);
 
 ProductionInfoPanel::ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
-                                         double border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
+                                         float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_border_thickness(border_thickness),
     m_color(color),

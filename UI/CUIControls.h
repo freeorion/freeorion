@@ -494,7 +494,7 @@ class ProductionInfoPanel : public GG::Wnd
 public:
     /** \name Structors */ //@{
     ProductionInfoPanel(GG::X w, GG::Y h, const std::string& title, const std::string& points_str,
-                        double border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color);
+                        float border_thickness, const GG::Clr& color, const GG::Clr& text_and_border_color);
     //@}
 
     /** \name Mutators */ //@{
@@ -522,7 +522,7 @@ private:
     GG::TextControl* m_projects_in_queue;
 
     std::pair<int, int> m_center_gap;
-    double m_border_thickness;
+    float m_border_thickness;
     GG::Clr m_color;
     GG::Clr m_text_and_border_color;
 

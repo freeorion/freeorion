@@ -25,11 +25,9 @@ public:
     /** tag name of sitrep update */
     static const std::string SITREP_UPDATE_TAG;
 
-    /** an enumeration of the types of entries 
-        WARNING: make sure to update the LUT in ClientUI.cpp which contain stringIDs for each type of SitRep
-        This LUT is in Client because the server has no need for it - it's a UI issue. This design in a way breaks
-        the data-hiding feature of a class, but is needed because both clients and server share this code. It's better
-        to have the discrepancy here than to bloat the server with data it will not use */
+    /** An enumeration of the types of sitrep entries.
+      * SitRepEntry::SitRepTemplateString needs to be updated for any new
+      * EntryType that is added. */
     enum EntryType {
         INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
         SHIP_BUILT,
@@ -44,44 +42,36 @@ public:
         VICTORY,
         NUM_SITREP_TYPES
     };
+    static const std::string&   SitRepTemplateString(EntryType entry_type);
 
     /** \name Structors */ //@{
-    SitRepEntry() : m_type(INVALID_ENTRY_TYPE) {} ///< default ctor
+    SitRepEntry();  ///< default ctor
+    SitRepEntry(EntryType entry_type);
     //@}
 
-    void        SetType(EntryType type) { m_type = type; }
-    EntryType   GetType() { return m_type; }
+    /** \name Accessors */ //@{
+    EntryType           GetType() const { return m_type; }
+    const std::string&  TemplateString() const;
+    //@}
 
 private:
-    EntryType                  m_type; ///< the type of SitRep this is
+    EntryType       m_type; ///< the type of SitRep this is
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
-// Sitrep constructors - for each SitRep type, there is a global constructor function See implementation file for
-// examples
-
+/** Sitrep constructors for each SitRep type */
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
-
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
-
 SitRepEntry* CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
-
 SitRepEntry* CreateCombatSitRep(int system_id);
-
 SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, const std::string& empire_name);
-
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
-
 SitRepEntry* CreatePlanetColonizedSitRep(int planet_id);
-
 SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
-
 SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name);
-
 SitRepEntry* CreateVictorySitRep(const std::string& reason_string, const std::string& empire_name);
 
 // template implementations

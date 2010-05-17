@@ -1983,6 +1983,9 @@ Situation Report
 # Sit Rep Entries  #
 ####################
 
+SITREP_ERROR
+An unknown event occurred.
+
 SITREP_SHIP_BUILT
 The ship %ship% has been produced in %system%.
 
@@ -2011,17 +2014,17 @@ SITREP_EMPIRE_ELIMINATED
 The %empire% empire has been eliminated.
 
 SITREP_VICTORY
-%1%
+The %empire% empire %text%
 
 ####################
 # Victory / Defeat #
 ####################
 
 TECH_VICTORY
-The %1% empire has achieved a technological victory.
+has achieved a technological victory.
 
 ALL_ENEMIES_ELIMINATED_VICTORY
-The %1% empire has achieved a sole-survivor victory.
+has achieved a sole-survivor victory.
 
 
 ####################

@@ -41,15 +41,25 @@ public:
     std::string& GetText()          { return m_text; }
     void SetText(std::string &text) { m_text = text; }
 
+    static const std::string TEXT_TAG;
+
     static const std::string START_VAR;
     static const std::string END_VAR;
+
     static const std::string PLANET_ID_TAG;
     static const std::string SYSTEM_ID_TAG;
-    static const std::string TECH_ID_TAG;
     static const std::string SHIP_ID_TAG;
     static const std::string FLEET_ID_TAG;
     static const std::string BUILDING_ID_TAG;
+
     static const std::string EMPIRE_ID_TAG;
+
+    static const std::string TECH_TAG;
+    static const std::string BUILDING_TYPE_TAG;
+    static const std::string SPECIAL_TAG;
+    static const std::string SHIP_HULL_TAG;
+    static const std::string SHIP_PART_TAG;
+    static const std::string SPECIES_TAG;
 
 protected:
     XMLElement  m_variables; ///< the data describing the sitrep. See class comments for description

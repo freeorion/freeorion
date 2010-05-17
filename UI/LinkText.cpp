@@ -2,6 +2,7 @@
 
 #include "ClientUI.h"
 #include "../util/MultiplayerCommon.h"
+#include "../util/VarText.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
@@ -11,18 +12,29 @@
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
 
+    static const std::string ENCYCLOPEDIA_TAG = "encyclopedia";
+
     static bool link_tags_registered = false;
     void RegisterLinkTags() {
         if (link_tags_registered)
             return;
         // need to register the tags that link text uses so GG::Font will know how to (not) render them
-        GG::Font::RegisterKnownTag("planet");
-        GG::Font::RegisterKnownTag("system");
-        GG::Font::RegisterKnownTag("fleet");
-        GG::Font::RegisterKnownTag("ship");
-        GG::Font::RegisterKnownTag("tech");
-        GG::Font::RegisterKnownTag("building");
-        GG::Font::RegisterKnownTag("encyclopedia");
+        GG::Font::RegisterKnownTag(VarText::PLANET_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::SYSTEM_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::SHIP_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::FLEET_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
+
+        GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
+
+        GG::Font::RegisterKnownTag(VarText::TECH_TAG);
+        GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
+        GG::Font::RegisterKnownTag(VarText::SPECIAL_TAG);
+        GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
+        GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
+        //GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
+
+        GG::Font::RegisterKnownTag(ENCYCLOPEDIA_TAG);
         link_tags_registered = true;
     }
 }
@@ -236,9 +248,20 @@ void TextLinker::FindLinks()
         for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
             for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
                 const boost::shared_ptr<GG::Font::FormattingTag>& tag = curr_line.char_data[i].tags[j];
-                if (tag->tag_name == "planet" || tag->tag_name == "system" || tag->tag_name == "fleet" ||
-                    tag->tag_name == "ship" || tag->tag_name == "tech" || tag->tag_name == "building" ||
-                    tag->tag_name == "encyclopedia") {
+                if (tag->tag_name == VarText::PLANET_ID_TAG ||
+                    tag->tag_name == VarText::SYSTEM_ID_TAG ||
+                    tag->tag_name == VarText::SHIP_ID_TAG ||
+                    tag->tag_name == VarText::FLEET_ID_TAG ||
+                    tag->tag_name == VarText::BUILDING_ID_TAG ||
+                    tag->tag_name == VarText::EMPIRE_ID_TAG ||
+                    tag->tag_name == VarText::TECH_TAG ||
+                    tag->tag_name == VarText::BUILDING_TYPE_TAG ||
+                    tag->tag_name == VarText::SPECIAL_TAG ||
+                    tag->tag_name == VarText::SHIP_HULL_TAG ||
+                    tag->tag_name == VarText::SHIP_PART_TAG ||
+//                    tag->tag_name == VarText::SPECIES_TAG ||
+                    tag->tag_name == ENCYCLOPEDIA_TAG)
+                {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
                         link.text_posn.second = Value(curr_line.char_data[i].string_index);

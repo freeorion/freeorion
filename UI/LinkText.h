@@ -59,8 +59,13 @@ private:
     <system ID>
     <fleet ID>
     <ship ID>
+    <building ID>
+    <empire ID>
     <tech [string]>
-    <building [string]>
+    <buildingtype [string]>
+    <special [string]>
+    <shiphull [string]>
+    <shippart [string]>
     <encyclopedia [string]>\endverbatim
     The ID parameters refer to the UniverseObjects that should be zoomed to for each link; encyclopedia entries are refered
     to by strings.

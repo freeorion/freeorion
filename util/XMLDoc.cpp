@@ -94,8 +94,7 @@ namespace {
 XMLElement::XMLElement(const std::string& t, bool r) :
     m_tag(t),
     m_root(r)
-{
-}
+{}
 
 const std::string& XMLElement::Tag() const
 {

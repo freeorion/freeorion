@@ -53,7 +53,7 @@ namespace {
             return m_planet_special_names;
         }
 
-        Special* GetSpecial(const std::string& name) const
+        const Special* GetSpecial(const std::string& name) const
         {
             std::map<std::string, Special*>::const_iterator it = m_specials.find(name);
             return it != m_specials.end() ? it->second : 0;
@@ -150,7 +150,7 @@ const std::string& Special::Graphic() const
     return m_graphic;
 }
 
-Special* GetSpecial(const std::string& name)
+const Special* GetSpecial(const std::string& name)
 {
     return GetSpecialManager().GetSpecial(name);
 }
