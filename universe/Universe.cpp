@@ -3664,17 +3664,11 @@ namespace {
         for (ObjectMap::iterator it = object_map.begin(); it != object_map.end(); ++it) {
             UniverseObject* obj = it->second;
 
-            for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it) {
-                if (!obj->Owners().empty()) {
-                    if (Meter* meter = obj->GetMeter(meter_it->first)) {
-                        if (Meter* targetmax_meter = obj->GetMeter(meter_it->second)) {
+            for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
+                if (!obj->Owners().empty())
+                    if (Meter* meter = obj->GetMeter(meter_it->first))
+                        if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
                             meter->SetCurrent(targetmax_meter->Current());
-                            targetmax_meter->BackPropegate();
-                        }
-                        meter->BackPropegate();
-                    }
-                }
-            }
         }
     }
 }
@@ -3759,6 +3753,15 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     ApplyAllEffectsAndUpdateMeters();
 
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
+
+    // copy latest updated current meter values to initial current values, and
+    // initial current values to previous values
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second)
+            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+                if (Meter* meter = obj->GetMeter(i))
+                    meter->BackPropegate();
+    }
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! Populationg systems after setting active meters to targes!";
     m_objects.Dump();
