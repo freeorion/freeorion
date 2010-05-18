@@ -1276,7 +1276,7 @@ bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseOb
     double low = m_low->Eval(source, target, boost::any());
     double high = m_high->Eval(source, target, boost::any());
     if (const Meter* meter = target->GetMeter(m_meter)) {
-        double value = meter->Current();
+        double value = meter->Initial();
         return low <= value && value < high;
     } else {
         Logger().errorStream() << "Condition::MeterValue::Match couldn't get meter of requested type";

@@ -1117,14 +1117,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
 
-
         // Reset max meters to DEFAULT_VALUE
         obj->ResetTargetMaxUnpairedMeters(meter_type);
 
-
         // Reset current meters to initial value at start of this turn
         obj->ResetPairedActiveMeters(meter_type);
-
 
         // record current value(s) of meter(s) after resetting
         MeterType start, end;
@@ -1150,6 +1147,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
     }
 
+    Logger().debugStream() << "UpdateMEterEstimatesImpl after resetting meters";
+    m_objects.Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -1159,6 +1158,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
 
+    Logger().debugStream() << "UpdateMEterEstimatesImpl after executing effects";
+    m_objects.Dump();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -1206,6 +1207,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         // updated should have no effect
         m_objects.Object(*obj_it)->ClampMeters();
     }
+
+    Logger().debugStream() << "UpdateMEterEstimatesImpl after discrepancies and clamping";
+    m_objects.Dump();
 }
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
@@ -3749,9 +3753,24 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 
-    // Apply effects for 1st turn
+    // Apply effects for 1st turn.
     ApplyAllEffectsAndUpdateMeters();
+    // Set active meters to targets or maxes after first effects application
+    SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
+    // copy latest updated current meter values to initial current values, and
+    // initial current values to previous values
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second)
+            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+                if (Meter* meter = obj->GetMeter(i))
+                    meter->BackPropegate();
+    }
+
+    // Re-apply effects, so that results depending on meter values can be
+    // re-checked after initial setting of those meter values
+    ApplyAllEffectsAndUpdateMeters();
+    // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
     // copy latest updated current meter values to initial current values, and

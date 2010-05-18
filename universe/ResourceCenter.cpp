@@ -188,12 +188,12 @@ void ResourceCenter::ResourceCenterClampMeters()
     GetMeter(METER_TARGET_TRADE)->ClampCurrentToRange();
     GetMeter(METER_TARGET_CONSTRUCTION)->ClampCurrentToRange();
 
-    GetMeter(METER_FARMING)->ClampCurrentToRange(Meter::DEFAULT_VALUE,      GetMeter(METER_TARGET_FARMING)->Current());
-    GetMeter(METER_INDUSTRY)->ClampCurrentToRange(Meter::DEFAULT_VALUE,     GetMeter(METER_TARGET_INDUSTRY)->Current());
-    GetMeter(METER_MINING)->ClampCurrentToRange(Meter::DEFAULT_VALUE,       GetMeter(METER_TARGET_MINING)->Current());
-    GetMeter(METER_RESEARCH)->ClampCurrentToRange(Meter::DEFAULT_VALUE,     GetMeter(METER_TARGET_RESEARCH)->Current());
-    GetMeter(METER_TRADE)->ClampCurrentToRange(Meter::DEFAULT_VALUE,        GetMeter(METER_TARGET_TRADE)->Current());
-    GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange(Meter::DEFAULT_VALUE, GetMeter(METER_TARGET_CONSTRUCTION)->Current());
+    GetMeter(METER_FARMING)->ClampCurrentToRange();
+    GetMeter(METER_INDUSTRY)->ClampCurrentToRange();
+    GetMeter(METER_MINING)->ClampCurrentToRange();
+    GetMeter(METER_RESEARCH)->ClampCurrentToRange();
+    GetMeter(METER_TRADE)->ClampCurrentToRange();
+    GetMeter(METER_CONSTRUCTION)->ClampCurrentToRange();
 }
 
 void ResourceCenter::Reset()

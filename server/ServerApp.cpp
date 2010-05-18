@@ -1190,8 +1190,21 @@ void ServerApp::PostCombatProcessTurns()
 
 
     // copy latest updated current meter values to initial current values, and
-    // initial current values to previous values, so that clients will have
-    // this information based on values after all changes that occured this turn
+    // initial current values to previous values
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+        if (UniverseObject* obj = it->second)
+            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+                if (Meter* meter = obj->GetMeter(i))
+                    meter->BackPropegate();
+    }
+
+    // re-execute all meter-related effects after all gamestate changes during
+    // turn processing that might affect the results.  This final update should
+    // be consistent with the meter value breakdowns calculated by clients
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+
+    // copy latest updated current meter values to initial current values, and
+    // initial current values to previous values
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         if (UniverseObject* obj = it->second)
             for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
