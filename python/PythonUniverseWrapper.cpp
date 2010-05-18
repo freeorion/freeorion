@@ -198,7 +198,6 @@ namespace FreeOrionPython {
             .def("ContainedBy",                 &UniverseObject::ContainedBy)
             .def("CurrentMeterValue",           &UniverseObject::CurrentMeterValue)
             .def("InitialMeterValue",           &UniverseObject::InitialMeterValue)
-            .def("PreviousMeterValue",          &UniverseObject::PreviousMeterValue)
             .def("NextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
         ;
 

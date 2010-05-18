@@ -85,7 +85,6 @@ public:
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     double                      CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
     double                      InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
-    double                      PreviousMeterValue(MeterType type) const;       ///< returns the previous turn's initial value for the specified meter \a type
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object

@@ -224,15 +224,6 @@ double UniverseObject::InitialMeterValue(MeterType type) const
     return it->second.Initial();
 }
 
-double UniverseObject::PreviousMeterValue(MeterType type) const
-{
-    std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
-    if (it == m_meters.end())
-        throw std::invalid_argument("UniverseObject::PreviousMeterValue was passed a MeterType that this UniverseObject does not have");
-
-    return it->second.Previous();
-}
-
 double UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
 {
     return UniverseObject::CurrentMeterValue(type);

@@ -1212,6 +1212,17 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     m_objects.Dump();
 }
 
+void Universe::BackPropegateObjectMeters()
+{
+    // copy current meter values to initial values
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        if (UniverseObject* obj = it->second)
+            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+                if (Meter* meter = obj->GetMeter(i))
+                    meter->BackPropegate();
+    }
+}
+
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
     targets_causes_map.clear();
@@ -3758,14 +3769,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     // Set active meters to targets or maxes after first effects application
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
-    // copy latest updated current meter values to initial current values, and
-    // initial current values to previous values
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second)
-            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
-                if (Meter* meter = obj->GetMeter(i))
-                    meter->BackPropegate();
-    }
+    BackPropegateObjectMeters();
 
     // Re-apply effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
@@ -3773,14 +3777,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
-    // copy latest updated current meter values to initial current values, and
-    // initial current values to previous values
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (UniverseObject* obj = it->second)
-            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
-                if (Meter* meter = obj->GetMeter(i))
-                    meter->BackPropegate();
-    }
+    BackPropegateObjectMeters();
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! Populationg systems after setting active meters to targes!";
     m_objects.Dump();

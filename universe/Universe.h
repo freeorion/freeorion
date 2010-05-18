@@ -353,11 +353,13 @@ public:
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const EffectAccountingMap&  GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const EffectAccountingMap&
+                            GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     /** Returns set of objects that have been marked by the Victory effect
       * to grant their owners victory. */
-    const std::multimap<int, std::string>&  GetMarkedForVictory() const {return m_marked_for_victory;}
+    const std::multimap<int, std::string>&
+                            GetMarkedForVictory() const {return m_marked_for_victory;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -439,6 +441,9 @@ public:
 
     /** Updates all meters for all (known) objects */
     void            UpdateMeterEstimates();
+
+    /** Sets all objects' meters' initial values to their current values. */
+    void            BackPropegateObjectMeters();
 
     /** Determines which empires can see which objects at what visibility
       * level, based on  */
