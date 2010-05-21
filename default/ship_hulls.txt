@@ -60,7 +60,7 @@ Hull
         OwnedBy TheEmpire Source.Owner
         Contains Building name = "BLD_SHIPYARD_BASE"
     ]
-    graphic = ""
+    graphic = "hulls_design/mark1.png"
 
 Hull
     name = "SH_INT_SMALL"
