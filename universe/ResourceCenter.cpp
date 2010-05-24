@@ -143,12 +143,12 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_
 
 void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
 {
-    GetMeter(METER_FARMING)->AddToCurrent(1.0);
-    GetMeter(METER_INDUSTRY)->AddToCurrent(1.0);
-    GetMeter(METER_MINING)->AddToCurrent(1.0);
-    GetMeter(METER_RESEARCH)->AddToCurrent(1.0);
-    GetMeter(METER_TRADE)->AddToCurrent(1.0);
-    GetMeter(METER_CONSTRUCTION)->AddToCurrent(1.0);
+    GetMeter(METER_FARMING)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_FARMING));
+    GetMeter(METER_INDUSTRY)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_INDUSTRY));
+    GetMeter(METER_MINING)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_MINING));
+    GetMeter(METER_RESEARCH)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_RESEARCH));
+    GetMeter(METER_TRADE)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_TRADE));
+    GetMeter(METER_CONSTRUCTION)->SetCurrent(ResourceCenterNextTurnMeterValue(METER_CONSTRUCTION));
 }
 
 void ResourceCenter::ResourceCenterClampMeters()

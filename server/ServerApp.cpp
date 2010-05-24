@@ -925,7 +925,7 @@ void ServerApp::PreCombatProcessTurns()
                 }
                 else
                     // this empire isn't armed
-                    if(!winner_is_armed)
+                    if (!winner_is_armed)
                         winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
 
             for (int i = 0; i < static_cast<int>(colonize_orders.size()); i++) {

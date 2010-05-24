@@ -451,8 +451,8 @@ void FleetColonizeOrder::ServerExecute() const
     planet->SetFocus("FOCUS_FARMING");
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
-    planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
-    planet->GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);   // will later be clamped to max health
+    planet->GetMeter(METER_FARMING)->SetCurrent(planet->GetMeter(METER_POPULATION)->Current());
+    planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
 
     planet->AddOwner(EmpireID());
 
