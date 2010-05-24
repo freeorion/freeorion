@@ -1,0 +1,13 @@
+Species
+    name = "SP_HUMAN"
+    description = "SP_HUMAN_DESC"
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetFarming Value + Target.Population * 0.2
+                SetTargetIndustry Value + Target.Population * 0.2
+                SetTargetTrade Value + Target.Population * 0.2
+            ]
+    graphic = "icons/meter/pop.png"

@@ -1000,6 +1000,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\universe\Species.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\universe\Species.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\universe\System.cpp"
 				>
 			</File>

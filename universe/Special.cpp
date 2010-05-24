@@ -96,6 +96,9 @@ namespace {
 
 }
 
+/////////////////////////////////////////////////
+// Special                                     //
+/////////////////////////////////////////////////
 Special::Special(const std::string& name, const std::string& description,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
                  const std::string& graphic) :

@@ -5,6 +5,7 @@
 #include "Effect.h"     // for Effect::EffectsGroup
 #include "Building.h"   // for Building
 #include "Special.h"    // for Special
+#include "Species.h"    // for Species
 #include "Condition.h"
 #include "ShipDesign.h"
 
@@ -13,6 +14,7 @@ using namespace phoenix;
 
 rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
 rule<Scanner, SpecialClosure::context_t>        special_p;
+rule<Scanner, SpeciesClosure::context_t>        species_p;
 rule<Scanner, TechClosure::context_t>           tech_p;
 rule<Scanner, ItemSpecClosure::context_t>       item_spec_p;
 rule<Scanner, CategoryClosure::context_t>       category_p;
@@ -153,6 +155,16 @@ namespace {
              >> graphic_label >> file_name_p[special_p.graphic = arg1])
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
                                              special_p.graphic)];
+
+        species_p =
+            (str_p("species")
+             >> name_label >> name_p[species_p.name = arg1]
+             >> description_label >> name_p[species_p.description = arg1]
+             >> effectsgroups_label >> effects_group_vec_p[special_p.effects_groups = arg1]
+             >> graphic_label >> file_name_p[species_p.graphic = arg1])
+            [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.effects_groups,
+                                             species_p.graphic)];
+
 
         item_spec_p =
             (str_p("item")

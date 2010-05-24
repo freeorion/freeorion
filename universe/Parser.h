@@ -32,6 +32,7 @@ namespace Effect {
     class EffectBase;
 }
 class Special;
+class Species;
 class BuildingType;
 class Tech;
 class ShipDesign;
@@ -116,6 +117,17 @@ struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure
 };
 
 struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*, std::string, std::string,
+                                                        std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
+                                                        std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 effects_groups;
+    member5 graphic;
+};
+
+struct SpeciesClosure : boost::spirit::classic::closure<SpeciesClosure, Species*, std::string, std::string,
                                                         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                         std::string>
 {
@@ -250,6 +262,7 @@ struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, Flee
 
 extern boost::spirit::classic::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
 extern boost::spirit::classic::rule<Scanner, SpecialClosure::context_t>      special_p;
+extern boost::spirit::classic::rule<Scanner, SpeciesClosure::context_t>      species_p;
 extern boost::spirit::classic::rule<Scanner, CategoryClosure::context_t>     category_p;
 extern boost::spirit::classic::rule<Scanner, TechClosure::context_t>         tech_p;
 extern boost::spirit::classic::rule<Scanner, ItemSpecClosure::context_t>     item_spec_p;

@@ -105,6 +105,7 @@ set(THIS_EXE_SOURCES
     ../../universe/Ship.cpp
     ../../universe/ShipDesign.cpp
     ../../universe/Special.cpp
+    ../../universe/Species.cpp
     ../../universe/System.cpp
     ../../universe/Tech.cpp
     ../../universe/TopLevelParsers.cpp
