@@ -945,7 +945,6 @@ void SidePanel::PlanetPanel::DoLayout()
 
 void SidePanel::PlanetPanel::Refresh()
 {
-    std::cout << "SidePanel::PlanetPanel::Refresh" << std::endl;
     const Planet* planet = GetPlanet();
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";

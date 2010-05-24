@@ -783,9 +783,9 @@ void ResourcePanel::Update()
         return;
     }
 
-    std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
-    Logger().debugStream() << "ResourcePanel::Update()";
-    obj->Dump();
+    //std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
+    //Logger().debugStream() << "ResourcePanel::Update()";
+    //obj->Dump();
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 

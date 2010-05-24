@@ -1241,12 +1241,15 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
         if (!pc) continue;
-        const Species* species = GetSpecies(pc->SpeciesName());
+        const std::string& species_name = pc->SpeciesName();
+        if (species_name.empty())
+            continue;
+        const Species* species = GetSpecies(species_name);
         if (!species) {
-            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << pc->SpeciesName();
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << species_name;
             continue;
         }
-        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species->Name(),
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
                                              target_objects, targets_causes_map);
     }
 

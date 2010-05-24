@@ -62,21 +62,21 @@ public:
                   PathingEngine& pathing_engine);
     ~CombatFighter();
 
-    virtual float maxForce() const;
-    virtual float maxSpeed() const;
-    int ID() const;
-    bool IsLeader() const;
-    const FighterStats& Stats() const;
-    const std::string& PartName() const;
-    const FighterMission& CurrentMission() const;
-    virtual double HealthAndShield() const;
-    virtual double Health() const;
-    virtual double FractionalHealth() const;
-    virtual double AntiFighterStrength() const;
-    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
-    virtual bool IsFighter() const;
-    virtual bool IsShip() const;
-    virtual int Owner() const;
+    virtual float           maxForce() const;
+    virtual float           maxSpeed() const;
+    int                     ID() const;
+    bool                    IsLeader() const;
+    const FighterStats&     Stats() const;
+    const std::string&      PartName() const;
+    const FighterMission&   CurrentMission() const;
+    virtual double          StructureAndShield() const;
+    virtual double          Structure() const;
+    virtual double          FractionalStructure() const;
+    virtual double          AntiFighterStrength() const;
+    virtual double          AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
+    virtual bool            IsFighter() const;
+    virtual bool            IsShip() const;
+    virtual int             Owner() const;
 
     virtual void update(const float elapsed_time, bool force);
     virtual void regenerateLocalSpace(const OpenSteer::Vec3& newVelocity,
@@ -84,15 +84,15 @@ public:
 
     CombatFighterFormationPtr Formation();
 
-    void EnterSpace();
-    void AppendMission(const FighterMission& mission);
-    void ClearMissions();
-    void ExitSpace();
+    void            EnterSpace();
+    void            AppendMission(const FighterMission& mission);
+    void            ClearMissions();
+    void            ExitSpace();
 
-    virtual void Damage(double d, DamageSource source);
-    virtual void Damage(const CombatFighterPtr& source);
-    virtual void TurnStarted(unsigned int number);
-    virtual void SignalDestroyed();
+    virtual void    Damage(double d, DamageSource source);
+    virtual void    Damage(const CombatFighterPtr& source);
+    virtual void    TurnStarted(unsigned int number);
+    virtual void    SignalDestroyed();
 
     void SetWeakPtr(const CombatFighterPtr& ptr);
     CombatFighterPtr shared_from_this();
@@ -113,38 +113,38 @@ private:
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
     CombatShipPtr WeakestHostileShip();
 
-    ProximityDBToken* m_proximity_token;
-    bool m_leader;
-    std::string m_part_name;
-    int m_empire_id;
-    int m_id;
-    OpenSteer::Vec3 m_last_steer;
+    ProximityDBToken*   m_proximity_token;
+    bool                m_leader;
+    std::string         m_part_name;
+    int                 m_empire_id;
+    int                 m_id;
+    OpenSteer::Vec3     m_last_steer;
 
-    std::list<FighterMission> m_mission_queue;
-    float m_mission_weight;
-    OpenSteer::Vec3 m_mission_destination; // Only the X and Y values should be nonzero.
-    CombatObjectWeakPtr m_mission_subtarget;
-    CombatObjectWeakPtr m_base;
+    std::list<FighterMission>   m_mission_queue;
+    float                       m_mission_weight;
+    OpenSteer::Vec3             m_mission_destination; // Only the X and Y values should be nonzero.
+    CombatObjectWeakPtr         m_mission_subtarget;
+    CombatObjectWeakPtr         m_base;
 
-    int m_formation_position;
-    CombatFighterFormationPtr m_formation;
-    OpenSteer::Vec3 m_out_of_formation;
+    int                         m_formation_position;
+    CombatFighterFormationPtr   m_formation;
+    OpenSteer::Vec3             m_out_of_formation;
 
-    double m_health;
+    double              m_structure;
 
-    unsigned int m_last_queue_update_turn;
-    unsigned int m_last_fired_turn;
-    unsigned int m_turn;
+    unsigned int        m_last_queue_update_turn;
+    unsigned int        m_last_fired_turn;
+    unsigned int        m_turn;
 
-    FighterStats m_stats;
+    FighterStats        m_stats;
 
-    PathingEngine* m_pathing_engine;
+    PathingEngine*      m_pathing_engine;
 
     // TODO: Temporary only!
     bool m_instrument;
-    FighterMission::Type m_last_mission;
+    FighterMission::Type            m_last_mission;
 
-    boost::weak_ptr<CombatFighter> m_weak_ptr;
+    boost::weak_ptr<CombatFighter>  m_weak_ptr;
 
     friend class PathingEngine;
     friend double CombatFighterFormation::Damage(double);

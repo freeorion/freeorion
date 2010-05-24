@@ -101,6 +101,7 @@ namespace {
     ParamLabel fighter_weapon_range_label("fighterweaponrange");
     ParamLabel stealth_label("stealth");
     ParamLabel health_label("health");
+    ParamLabel structure_label("structure");
     ParamLabel fighter_type_label("fightertype");
     ParamLabel launch_rate_label("launchrate");
     ParamLabel detection_label("detection");
@@ -213,14 +214,14 @@ namespace {
              >> fighter_weapon_range_label >>   real_p[part_stats_p.range = arg1]
              >> speed_label >>                  real_p[part_stats_p.speed = arg1]
              >> stealth_label >>                real_p[part_stats_p.stealth = arg1]
-             >> health_label >>                 real_p[part_stats_p.health = arg1]
+             >> structure_label >>              real_p[part_stats_p.structure = arg1]
              >> detection_label >>              real_p[part_stats_p.detection = arg1]
              >> capacity_label >>               int_p[part_stats_p.capacity = arg1])
             [part_stats_p.this_ =
              construct_<FighterStats>(part_stats_p.fighter_type, part_stats_p.anti_ship_damage,
                                       part_stats_p.anti_fighter_damage, part_stats_p.rate,
                                       part_stats_p.range, part_stats_p.speed,
-                                      part_stats_p.stealth, part_stats_p.health,
+                                      part_stats_p.stealth, part_stats_p.structure,
                                       part_stats_p.detection, part_stats_p.capacity)]
 
             // a single double stat
@@ -232,11 +233,11 @@ namespace {
                >> range_label >>    real_p[part_stats_p.range = arg1]
                >> speed_label >>    real_p[part_stats_p.speed = arg1]
                >> stealth_label >>  real_p[part_stats_p.stealth = arg1]
-               >> health_label >>   real_p[part_stats_p.health = arg1]
+               >> structure_label >>real_p[part_stats_p.structure = arg1]
                >> capacity_label >> int_p[part_stats_p.capacity = arg1])
             [part_stats_p.this_ =
              construct_<LRStats>(part_stats_p.damage, part_stats_p.rate, part_stats_p.range,
-                                 part_stats_p.speed, part_stats_p.stealth, part_stats_p.health,
+                                 part_stats_p.speed, part_stats_p.stealth, part_stats_p.structure,
                                  part_stats_p.capacity)]
 
             // DirectFireStats
@@ -279,10 +280,10 @@ namespace {
             >> starlane_speed_label >>  real_p[hull_stats_p.starlane_speed = arg1]
             >> fuel_label >>            real_p[hull_stats_p.fuel = arg1]
             >> stealth_label >>         real_p[hull_stats_p.stealth = arg1]
-            >> health_label >>          real_p[hull_stats_p.health = arg1])
+            >> structure_label >>       real_p[hull_stats_p.structure = arg1])
             [hull_stats_p.this_ =
              construct_<HullTypeStats>(hull_stats_p.fuel, hull_stats_p.battle_speed, hull_stats_p.starlane_speed,
-                                       hull_stats_p.stealth, hull_stats_p.health)];
+                                       hull_stats_p.stealth, hull_stats_p.structure)];
 
         hull_p =
             (str_p("hull")

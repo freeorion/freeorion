@@ -118,9 +118,9 @@ double PopCenter::NextTurnPopGrowthMax() const
     // if above 20 health and below target population, population can grow
     if (cur_health > 20.0 && cur_pop < cur_health) {
         double underpopulation_fraction = ((target_pop + 1.0) - cur_pop) / target_pop;
-        std::cout << "underpop frac: " << underpopulation_fraction << std::endl;
+        //std::cout << "underpop frac: " << underpopulation_fraction << std::endl;
         double growth_potential = cur_pop * underpopulation_fraction * (cur_health - 20.0) * 0.0005;
-        std::cout << "grow pot: " << growth_potential << std::endl;
+        //std::cout << "grow pot: " << growth_potential << std::endl;
         double max_growth = target_pop - cur_pop;       // most pop can grow is up to target pop
         return std::min(max_growth, growth_potential);
     }

@@ -69,7 +69,7 @@ double CombatFighterFormation::Damage(double d)
 {
     for (iterator it = begin(); it != end(); ) {
         CombatFighterPtr f = *it++;
-        double damage_to_this_fighter = std::min(d, f->HealthAndShield());
+        double damage_to_this_fighter = std::min(d, f->StructureAndShield());
         f->DamageImpl(damage_to_this_fighter);
         d -= damage_to_this_fighter;
     }
@@ -157,7 +157,7 @@ CombatFighter::CombatFighter() :
     m_base(),
     m_formation_position(-1),
     m_formation(),
-    m_health(0),
+    m_structure(0),
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
@@ -178,7 +178,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, int empire_id,
     m_base(base),
     m_formation_position(-1),
     m_formation(),
-    m_health(0),
+    m_structure(0),
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
@@ -199,7 +199,7 @@ CombatFighter::CombatFighter(CombatObjectPtr base, const PartType& part, int emp
     m_base(base),
     m_formation_position(-1),
     m_formation(),
-    m_health(0),
+    m_structure(0),
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_last_fired_turn(std::numeric_limits<unsigned int>::max()),
     m_turn(std::numeric_limits<unsigned int>::max()),
@@ -264,13 +264,13 @@ const std::string& CombatFighter::PartName() const
 const FighterMission& CombatFighter::CurrentMission() const
 { return m_mission_queue.back(); }
 
-double CombatFighter::HealthAndShield() const
-{ return m_health; }
+double CombatFighter::StructureAndShield() const
+{ return m_structure; }
 
-double CombatFighter::Health() const
-{ return m_health; }
+double CombatFighter::Structure() const
+{ return m_structure; }
 
-double CombatFighter::FractionalHealth() const
+double CombatFighter::FractionalStructure() const
 { return 1.0; }
 
 double CombatFighter::AntiFighterStrength() const
@@ -418,13 +418,13 @@ void CombatFighter::Init(const PartType& part)
     m_stats.m_fighter_weapon_range= base.GetMeter(METER_FIGHTER_WEAPON_RANGE,   m_part_name)->Current();
     m_stats.m_speed =               base.GetMeter(METER_SPEED,                  m_part_name)->Current();
     m_stats.m_stealth =             base.GetMeter(METER_STEALTH,                m_part_name)->Current();
-    m_stats.m_health =              base.GetMeter(METER_HEALTH,                 m_part_name)->Current();
+    m_stats.m_structure =              base.GetMeter(METER_STRUCTURE,              m_part_name)->Current();
     m_stats.m_detection =           base.GetMeter(METER_DETECTION,              m_part_name)->Current();
     m_stats.m_capacity =            base.GetMeter(METER_CAPACITY,               m_part_name)->Current();
 }
 
 void CombatFighter::DamageImpl(double d)
-{ m_health = std::max(0.0, m_health - d); }
+{ m_structure = std::max(0.0, m_structure - d); }
 
 void CombatFighter::SetFormation(const CombatFighterFormationPtr& formation)
 { m_formation = formation; }
@@ -886,9 +886,9 @@ CombatObjectPtr CombatFighter::WeakestAttacker(const CombatObjectPtr& attackee)
         if (Stats().m_anti_fighter_damage && ptr && ptr->IsFighter()) {
             assert(boost::dynamic_pointer_cast<CombatFighter>(ptr));
             CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(ptr);
-            strength = fighter->HealthAndShield() * (1.0 + fighter->AntiFighterStrength());
+            strength = fighter->StructureAndShield() * (1.0 + fighter->AntiFighterStrength());
         } else if (ptr) {
-            strength = ptr->HealthAndShield() * (1.0 + ptr->AntiFighterStrength());
+            strength = ptr->StructureAndShield() * (1.0 + ptr->AntiFighterStrength());
         }
         if (strength < weakest) {
             retval = ptr;
@@ -908,9 +908,9 @@ CombatShipPtr CombatFighter::WeakestHostileShip()
     float weakest = FLT_MAX;
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
-        if (ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength()) < weakest) {
+        if (ship->StructureAndShield() * (1.0 + ship->AntiFighterStrength()) < weakest) {
             retval = ship->shared_from_this();
-            weakest = ship->HealthAndShield() * (1.0 + ship->AntiFighterStrength());
+            weakest = ship->StructureAndShield() * (1.0 + ship->AntiFighterStrength());
         }
     }
     return retval;

@@ -5,7 +5,7 @@ Hull
     starlaneSpeed = 120
     fuel = 3
     stealth = 15
-    health = 30
+    structure = 30
     buildCost = 5
     buildTime = 2
     location = And [
@@ -21,7 +21,7 @@ Hull
     starlaneSpeed = 40
     fuel = 3
     stealth = 1
-    health = 30
+    structure = 30
     buildCost = 5
     buildTime = 2
     location = And [
@@ -48,7 +48,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = 10
-    health = 40
+    structure = 40
     buildCost = 10
     buildTime = 4
     slots = [
@@ -69,7 +69,7 @@ Hull
     starlaneSpeed = 80
     fuel = 3
     stealth = 10
-    health = 40
+    structure = 40
     buildCost = 10
     buildTime = 4
     slots = Slot type = Internal position = (0.40, 0.40)
@@ -86,7 +86,7 @@ Hull
     starlaneSpeed = 50
     fuel = 5
     stealth = 5
-    health = 50
+    structure = 50
     buildCost = 20
     buildTime = 5
     slots = [
@@ -110,7 +110,7 @@ Hull
     starlaneSpeed = 50
     fuel = 5
     stealth = 5
-    health = 50
+    structure = 50
     buildCost = 20
     buildTime = 5
     slots = [
@@ -135,7 +135,7 @@ Hull
     starlaneSpeed = 50
     fuel = 5
     stealth = 5
-    health = 50
+    structure = 50
     buildCost = 20
     buildTime = 5
     slots = [
@@ -158,7 +158,7 @@ Hull
     starlaneSpeed = 30
     fuel = 3
     stealth = 5
-    health = 60
+    structure = 60
     buildCost = 25
     buildTime = 6
     slots = [
@@ -184,7 +184,7 @@ Hull
     starlaneSpeed = 40
     fuel = 3
     stealth = 0
-    health = 65
+    structure = 65
     buildCost = 30
     buildTime = 6
     slots = [
@@ -210,7 +210,7 @@ Hull
     starlaneSpeed = 30
     fuel = 1
     stealth = -10
-    health = 80
+    structure = 80
     buildCost = 50
     buildTime = 8
     slots = [

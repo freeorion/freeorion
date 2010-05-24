@@ -19,7 +19,7 @@ Missile::Missile() :
     m_last_steer(),
     m_destination(),
     m_target(),
-    m_health(0.0),
+    m_structure(0.0),
     m_pathing_engine()
 {}
 
@@ -32,7 +32,7 @@ Missile::Missile(const Ship& launcher, const PartType& part, CombatObjectPtr tar
     m_last_steer(),
     m_destination(target->position()),
     m_target(target),
-    m_health(),
+    m_structure(),
     m_pathing_engine(&pathing_engine)
 { Init(launcher, position, direction); }
 
@@ -45,13 +45,13 @@ const LRStats& Missile::Stats() const
 const std::string& Missile::PartName() const
 { return m_part_name; }
 
-double Missile::HealthAndShield() const
-{ return m_health; }
+double Missile::StructureAndShield() const
+{ return m_structure; }
 
-double Missile::Health() const
-{ return m_health; }
+double Missile::Structure() const
+{ return m_structure; }
 
-double Missile::FractionalHealth() const
+double Missile::FractionalStructure() const
 { return 1.0; }
 
 double Missile::AntiFighterStrength() const
@@ -109,7 +109,7 @@ void Missile::Damage(double d, DamageSource source)
 {
     if (source == NON_PD_DAMAGE)
         d *= CombatShip::NON_PD_VS_FIGHTER_FACTOR;
-    m_health = std::max(0.0, m_health - d);
+    m_structure = std::max(0.0, m_structure - d);
 }
 
 void Missile::Damage(const CombatFighterPtr& source)
@@ -137,15 +137,15 @@ void Missile::Init(const Ship& launcher,
     assert(launcher.Owners().size() == 1u);
     m_empire_id = *launcher.Owners().begin();
 
-    m_stats.m_damage =  launcher.GetMeter(METER_DAMAGE,         m_part_name)->Current();
-    m_stats.m_ROF =     launcher.GetMeter(METER_ROF,            m_part_name)->Current();
-    m_stats.m_range =   launcher.GetMeter(METER_RANGE,          m_part_name)->Current();
-    m_stats.m_speed =   launcher.GetMeter(METER_SPEED,          m_part_name)->Current();
-    m_stats.m_stealth = launcher.GetMeter(METER_STEALTH,        m_part_name)->Current();
-    m_stats.m_health =  launcher.GetMeter(METER_HEALTH,         m_part_name)->Current();
-    m_stats.m_capacity= launcher.GetMeter(METER_CAPACITY,       m_part_name)->Current();
+    m_stats.m_damage =      launcher.GetMeter(METER_DAMAGE,     m_part_name)->Current();
+    m_stats.m_ROF =         launcher.GetMeter(METER_ROF,        m_part_name)->Current();
+    m_stats.m_range =       launcher.GetMeter(METER_RANGE,      m_part_name)->Current();
+    m_stats.m_speed =       launcher.GetMeter(METER_SPEED,      m_part_name)->Current();
+    m_stats.m_stealth =     launcher.GetMeter(METER_STEALTH,    m_part_name)->Current();
+    m_stats.m_structure =   launcher.GetMeter(METER_STRUCTURE,  m_part_name)->Current();
+    m_stats.m_capacity=     launcher.GetMeter(METER_CAPACITY,   m_part_name)->Current();
 
-    m_health = m_stats.m_health;
+    m_structure = m_stats.m_structure;
 
     m_proximity_token =
         m_pathing_engine->GetProximityDB().Insert(

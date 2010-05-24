@@ -21,9 +21,9 @@ public:
 
     const LRStats& Stats() const;
     const std::string& PartName() const;
-    virtual double HealthAndShield() const;
-    virtual double Health() const;
-    virtual double FractionalHealth() const;
+    virtual double StructureAndShield() const;
+    virtual double Structure() const;
+    virtual double FractionalStructure() const;
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
@@ -56,7 +56,7 @@ private:
     OpenSteer::Vec3 m_last_steer;
     OpenSteer::Vec3 m_destination; // Only the X and Y values should be nonzero.
     CombatObjectWeakPtr m_target;
-    double m_health;
+    double m_structure;
     LRStats m_stats;
     PathingEngine* m_pathing_engine;
 

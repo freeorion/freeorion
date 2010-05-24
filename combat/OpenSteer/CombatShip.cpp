@@ -29,9 +29,9 @@ namespace {
     template <class Stats>
     struct CopyStats
     {
-        CopyStats(const Ship& ship, double health_factor) :
+        CopyStats(const Ship& ship, double structure_factor) :
             m_ship(ship),
-            m_health_factor(health_factor)
+            m_structure_factor(structure_factor)
         {}
         CombatShip::DirectWeapon operator()(const std::pair<double, const PartType*>& elem)
         {
@@ -41,10 +41,10 @@ namespace {
                 m_ship.GetMeter(METER_RANGE, name)->Current(),
                 m_ship.GetMeter(METER_DAMAGE, name)->Current() *
                 m_ship.GetMeter(METER_ROF, name)->Current() *
-                m_health_factor);
+                m_structure_factor);
         }
         const Ship& m_ship;
-        const double m_health_factor;
+        const double m_structure_factor;
     };
 
 #define ECHO_TOKEN(x) (x, #x)
@@ -97,7 +97,7 @@ CombatShip::CombatShip() :
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_enter_starlane_start_turn(1 << 20),
     m_next_LR_fire_turns(),
-    m_turn_start_health(),
+    m_turn_start_structure(),
     m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(0),
     m_raw_PD_strength(0.0),
@@ -123,7 +123,7 @@ CombatShip::CombatShip(Ship* ship,
     m_last_queue_update_turn(std::numeric_limits<unsigned int>::max()),
     m_enter_starlane_start_turn(1 << 20),
     m_next_LR_fire_turns(ship->Design()->LRWeapons().size(), INVALID_TURN),
-    m_turn_start_health(ship->CurrentMeterValue(METER_HEALTH)),
+    m_turn_start_structure(ship->CurrentMeterValue(METER_STRUCTURE)),
     m_turn(std::numeric_limits<unsigned int>::max()),
     m_pathing_engine(&pathing_engine),
     m_raw_PD_strength(0.0),
@@ -149,24 +149,24 @@ Ship& CombatShip::GetShip() const
 const ShipMission& CombatShip::CurrentMission() const
 { return m_mission_queue.back(); }
 
-double CombatShip::HealthAndShield() const
-{ return Health() + GetShip().CurrentMeterValue(METER_SHIELD); }
+double CombatShip::StructureAndShield() const
+{ return Structure() + GetShip().CurrentMeterValue(METER_SHIELD); }
 
-double CombatShip::Health() const
-{ return GetShip().CurrentMeterValue(METER_HEALTH); }
+double CombatShip::Structure() const
+{ return GetShip().CurrentMeterValue(METER_STRUCTURE); }
 
-double CombatShip::FractionalHealth() const
-{ return m_turn_start_health / GetShip().CurrentMeterValue(METER_TARGET_HEALTH); }
+double CombatShip::FractionalStructure() const
+{ return m_turn_start_structure / GetShip().CurrentMeterValue(METER_MAX_STRUCTURE); }
 
 double CombatShip::AntiFighterStrength() const
-{ return m_raw_PD_strength * FractionalHealth(); }
+{ return m_raw_PD_strength * FractionalStructure(); }
 
 double CombatShip::AntiShipStrength(CombatShipPtr target/* = CombatShipPtr()*/) const
 {
-    double sr = m_raw_SR_strength * FractionalHealth();
-    double lr = m_raw_LR_strength * FractionalHealth();
+    double sr = m_raw_SR_strength * FractionalStructure();
+    double lr = m_raw_LR_strength * FractionalStructure();
     if (target)
-        lr /= 1.0 + target->m_raw_PD_strength * target->FractionalHealth();
+        lr /= 1.0 + target->m_raw_PD_strength * target->FractionalStructure();
     return sr + lr;
 }
 
@@ -307,7 +307,7 @@ void CombatShip::Damage(double d, DamageSource source)
     double shield_damage = std::min(d, GetShip().CurrentMeterValue(METER_SHIELD));
     GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     d -= shield_damage;
-    GetShip().UniverseObject::GetMeter(METER_HEALTH)->AddToCurrent(-d);
+    GetShip().UniverseObject::GetMeter(METER_STRUCTURE)->AddToCurrent(-d);
 }
 
 void CombatShip::Damage(const CombatFighterPtr& source)
@@ -316,13 +316,13 @@ void CombatShip::Damage(const CombatFighterPtr& source)
     double shield_damage = std::min(damage, GetShip().CurrentMeterValue(METER_SHIELD));
     GetShip().UniverseObject::GetMeter(METER_SHIELD)->AddToCurrent(-shield_damage);
     damage -= shield_damage;
-    GetShip().UniverseObject::GetMeter(METER_HEALTH)->AddToCurrent(-damage);
+    GetShip().UniverseObject::GetMeter(METER_STRUCTURE)->AddToCurrent(-damage);
 }
 
 void CombatShip::TurnStarted(unsigned int number)
 {
     m_turn = number;
-    m_turn_start_health = Health();
+    m_turn_start_structure = Structure();
     if (m_turn - m_enter_starlane_start_turn == ENTER_STARLANE_DELAY_TURNS) {
         Listener().ShipEnteredStarlane(shared_from_this());
         delete m_proximity_token;
@@ -334,10 +334,10 @@ void CombatShip::TurnStarted(unsigned int number)
         m_unfired_PD_weapons.clear();
         std::transform(design.SRWeapons().begin(), design.SRWeapons().end(),
                        m_unfired_SR_weapons.begin(),
-                       CopyStats<DirectFireStats>(GetShip(), FractionalHealth()));
+                       CopyStats<DirectFireStats>(GetShip(), FractionalStructure()));
         std::transform(design.PDWeapons().begin(), design.PDWeapons().end(),
                        std::back_inserter(m_unfired_PD_weapons),
-                       CopyStats<DirectFireStats>(GetShip(), FractionalHealth()));
+                       CopyStats<DirectFireStats>(GetShip(), FractionalStructure()));
     }
 }
 
@@ -687,7 +687,7 @@ void CombatShip::FirePDDefensively()
                         boost::polymorphic_downcast<Missile*>(obj)->shared_from_this();
                 }
                 Listener().ShipFired(shared_from_this(), shared_obj, it->m_name);
-                double damage = std::min(obj->HealthAndShield(), it->m_damage);
+                double damage = std::min(obj->StructureAndShield(), it->m_damage);
                 // HACK! This looks weird, but does what we want.  Non-PD
                 // damage on a fighter only affects the fighter itself -- it
                 // is not spread out over its formation mates.  This is
@@ -702,7 +702,7 @@ void CombatShip::FirePDDefensively()
                     m_unfired_PD_weapons.erase((--it).base());
                     it = temp;
                 }
-                if (!obj->HealthAndShield())
+                if (!obj->StructureAndShield())
                     break;
             }
         }
@@ -739,7 +739,7 @@ void CombatShip::FireAtHostiles()
 void CombatShip::FireAt(CombatObjectPtr target)
 {
     double range_squared = (target->position() - position()).lengthSquared();
-    double health_factor = FractionalHealth();
+    double structure_factor = FractionalStructure();
 
     for (CombatShip::SRVec::reverse_iterator it = m_unfired_SR_weapons.rbegin();
          it != m_unfired_SR_weapons.rend();
@@ -769,7 +769,7 @@ void CombatShip::FireAt(CombatObjectPtr target)
                 if (m_next_LR_fire_turns[i] == INVALID_TURN)
                     m_next_LR_fire_turns[i] = m_turn;
                 m_next_LR_fire_turns[i] +=
-                    GetShip().GetMeter(METER_ROF, it->second->Name())->Current() * health_factor;
+                    GetShip().GetMeter(METER_ROF, it->second->Name())->Current() * structure_factor;
                 Listener().MissileLaunched(missile);
             }
         }
@@ -828,14 +828,14 @@ CombatObjectPtr CombatShip::WeakestAttacker(const CombatObjectPtr& attackee)
             assert(boost::dynamic_pointer_cast<CombatFighter>(attacker));
             CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(attacker);
             strength =
-                fighter->HealthAndShield() * (fighter->Stats().m_type == INTERCEPTOR ?
+                fighter->StructureAndShield() * (fighter->Stats().m_type == INTERCEPTOR ?
                                               INTERCEPTOR_SCALE_FACTOR : BOMBER_SCALE_FACTOR);
             strength /= (1.0 + AntiFighterStrength());
             if (AntiFighterStrength())
                 strength *= NO_PD_FIGHTER_ATTACK_SCALE_FACTOR;
         } else if (CombatObjectPtr ptr = it->second.lock()) {
             strength =
-                ptr->HealthAndShield() * (1.0 + ptr->AntiShipStrength(shared_from_this()));
+                ptr->StructureAndShield() * (1.0 + ptr->AntiShipStrength(shared_from_this()));
         }
         if (strength < weakest) {
             retval = it->second.lock();
@@ -856,7 +856,7 @@ CombatShipPtr CombatShip::WeakestHostileShip()
     for (std::size_t i = 0; i < all.size(); ++i) {
         CombatShip* ship = boost::polymorphic_downcast<CombatShip*>(all[i]);
         double strength =
-            ship->HealthAndShield() * (1.0 + ship->AntiShipStrength(shared_from_this()));
+            ship->StructureAndShield() * (1.0 + ship->AntiShipStrength(shared_from_this()));
         if (strength < weakest) {
             retval = ship->shared_from_this();
             weakest = strength;

@@ -24,19 +24,19 @@ public:
 
     void SetListener(CombatEventListener& listener);
 
-    virtual double HealthAndShield() const = 0;
-    virtual double Health() const = 0;
-    virtual double FractionalHealth() const = 0;
-    virtual double AntiFighterStrength() const = 0;
-    virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const = 0;
-    virtual bool IsFighter() const = 0;
-    virtual bool IsShip() const = 0;
-    virtual int Owner() const = 0;
+    virtual double  StructureAndShield() const = 0;
+    virtual double  Structure() const = 0;
+    virtual double  FractionalStructure() const = 0;
+    virtual double  AntiFighterStrength() const = 0;
+    virtual double  AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const = 0;
+    virtual bool    IsFighter() const = 0;
+    virtual bool    IsShip() const = 0;
+    virtual int     Owner() const = 0;
 
-    virtual void Damage(double d, DamageSource source) = 0;
-    virtual void Damage(const CombatFighterPtr& source) = 0;
-    virtual void TurnStarted(unsigned int number) = 0;
-    virtual void SignalDestroyed() = 0;
+    virtual void    Damage(double d, DamageSource source) = 0;
+    virtual void    Damage(const CombatFighterPtr& source) = 0;
+    virtual void    TurnStarted(unsigned int number) = 0;
+    virtual void    SignalDestroyed() = 0;
 
 protected:
     CombatEventListener& Listener();

@@ -54,7 +54,7 @@ struct LRStats
             double range,
             double speed,
             double stealth,
-            double health,
+            double structure,
             int capacity);
 
     double m_damage;
@@ -62,7 +62,7 @@ struct LRStats
     double m_range;
     double m_speed;
     double m_stealth;
-    double m_health;
+    double m_structure;
     int m_capacity;
 
     template <class Archive>
@@ -72,7 +72,7 @@ struct LRStats
             & BOOST_SERIALIZATION_NVP(m_range)
             & BOOST_SERIALIZATION_NVP(m_speed)
             & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_health)
+            & BOOST_SERIALIZATION_NVP(m_structure)
             & BOOST_SERIALIZATION_NVP(m_capacity);
     }
 };
@@ -88,20 +88,20 @@ struct FighterStats
                  double fighter_weapon_range,
                  double speed,
                  double stealth,
-                 double health,
+                 double structure,
                  double detection,
                  int capacity);
 
-    CombatFighterType m_type;
-    double m_anti_ship_damage;
-    double m_anti_fighter_damage;
-    double m_launch_rate;
-    double m_fighter_weapon_range;
-    double m_speed;
-    double m_stealth;
-    double m_health;
-    double m_detection;
-    int m_capacity;
+    CombatFighterType   m_type;
+    double              m_anti_ship_damage;
+    double              m_anti_fighter_damage;
+    double              m_launch_rate;
+    double              m_fighter_weapon_range;
+    double              m_speed;
+    double              m_stealth;
+    double              m_structure;
+    double              m_detection;
+    int                 m_capacity;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
@@ -112,7 +112,7 @@ struct FighterStats
             & BOOST_SERIALIZATION_NVP(m_fighter_weapon_range)
             & BOOST_SERIALIZATION_NVP(m_speed)
             & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_health)
+            & BOOST_SERIALIZATION_NVP(m_structure)
             & BOOST_SERIALIZATION_NVP(m_detection)
             & BOOST_SERIALIZATION_NVP(m_capacity);
     }
@@ -228,13 +228,13 @@ struct HullTypeStats {
                   double battle_speed,
                   double starlane_speed,
                   double stealth,
-                  double health);
+                  double structure);
 
     double m_fuel;
     double m_battle_speed;
     double m_starlane_speed;
     double m_stealth;
-    double m_health;
+    double m_structure;
 
     template <class Archive>
     void serialize(Archive& ar, const unsigned int) {
@@ -242,7 +242,7 @@ struct HullTypeStats {
             & BOOST_SERIALIZATION_NVP(m_battle_speed)
             & BOOST_SERIALIZATION_NVP(m_starlane_speed)
             & BOOST_SERIALIZATION_NVP(m_stealth)
-            & BOOST_SERIALIZATION_NVP(m_health);
+            & BOOST_SERIALIZATION_NVP(m_structure);
     }
 };
 
@@ -262,7 +262,7 @@ public:
     HullType();
     HullType(const std::string& name, const std::string& description,
              double fuel, double battle_speed, double starlane_speed,
-             double stealth, double health,
+             double stealth, double structure,
              double cost, int build_time, const std::vector<Slot>& slots,
              const Condition::ConditionBase* location,
              const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
@@ -288,7 +288,7 @@ public:
 
     double              Fuel() const;           ///< returns fuel capacity of hull
     double              Stealth() const;        ///< returns stealth of hull
-    double              Health() const;         ///< returns health of hull
+    double              Structure() const;      ///< returns structure of hull
 
     double              Cost() const;           ///< returns total cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
@@ -313,7 +313,7 @@ private:
     double                      m_starlane_speed;
     double                      m_fuel;
     double                      m_stealth;
-    double                      m_health;
+    double                      m_structure;
 
     double                      m_cost;         // in PP
     int                         m_build_time;   // in turns
@@ -590,7 +590,7 @@ void HullType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_starlane_speed)
         & BOOST_SERIALIZATION_NVP(m_fuel)
         & BOOST_SERIALIZATION_NVP(m_stealth)
-        & BOOST_SERIALIZATION_NVP(m_health)
+        & BOOST_SERIALIZATION_NVP(m_structure)
         & BOOST_SERIALIZATION_NVP(m_cost)
         & BOOST_SERIALIZATION_NVP(m_build_time)
         & BOOST_SERIALIZATION_NVP(m_slots)

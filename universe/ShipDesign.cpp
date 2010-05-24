@@ -156,7 +156,7 @@ namespace {
                     % stats.m_ROF
                     % stats.m_range
                     % stats.m_speed
-                    % stats.m_health
+                    % stats.m_structure
                     % stats.m_stealth
                     % stats.m_capacity);
         }
@@ -170,7 +170,7 @@ namespace {
                     % stats.m_launch_rate
                     % stats.m_speed
                     % stats.m_stealth
-                    % stats.m_health
+                    % stats.m_structure
                     % stats.m_detection
                     % stats.m_capacity);
         }
@@ -306,7 +306,7 @@ LRStats::LRStats() :
     m_range(),
     m_speed(),
     m_stealth(),
-    m_health()
+    m_structure()
 {}
 
 LRStats::LRStats(double damage,
@@ -314,14 +314,14 @@ LRStats::LRStats(double damage,
                  double range,
                  double speed,
                  double stealth,
-                 double health,
+                 double structure,
                  int capacity) :
     m_damage(damage),
     m_ROF(ROF),
     m_range(range),
     m_speed(speed),
     m_stealth(stealth),
-    m_health(health),
+    m_structure(structure),
     m_capacity(capacity)
 {
     if (m_capacity < 0)
@@ -337,7 +337,7 @@ FighterStats::FighterStats() :
     m_fighter_weapon_range(),
     m_speed(),
     m_stealth(),
-    m_health(),
+    m_structure(),
     m_detection(),
     m_capacity()
 {}
@@ -349,7 +349,7 @@ FighterStats::FighterStats(CombatFighterType type,
                            double fighter_weapon_range,
                            double speed,
                            double stealth,
-                           double health,
+                           double structure,
                            double detection,
                            int capacity) :
     m_type(type),
@@ -359,7 +359,7 @@ FighterStats::FighterStats(CombatFighterType type,
     m_fighter_weapon_range(fighter_weapon_range),
     m_speed(speed),
     m_stealth(stealth),
-    m_health(health),
+    m_structure(structure),
     m_detection(detection),
     m_capacity(capacity)
 {
@@ -462,8 +462,7 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
         m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
         m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,          m_name, stats.m_health));
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_structure));
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
@@ -475,8 +474,7 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE,   m_name, stats.m_fighter_weapon_range));
         m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
         m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,          m_name, stats.m_health));
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_health));
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_structure));
         m_effects.push_back(IncreaseMeter(METER_DETECTION,              m_name, stats.m_detection));
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
@@ -491,10 +489,9 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<double>(m_stats)));
         break;
     case PC_FUEL:
-        m_effects.push_back(IncreaseMeter(METER_FUEL,           boost::get<double>(m_stats)));
+        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       boost::get<double>(m_stats)));
         break;
     case PC_ARMOUR:
-        m_effects.push_back(IncreaseMeter(METER_TARGET_HEALTH,  boost::get<double>(m_stats)));
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
         break;
     default:
@@ -570,16 +567,16 @@ HullTypeStats::HullTypeStats() :
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
     m_stealth(0.0),
-    m_health(0.0)
+    m_structure(0.0)
 {}
 
 HullTypeStats::HullTypeStats(double fuel, double battle_speed, double starlane_speed,
-                             double stealth, double health) :
+                             double stealth, double structure) :
     m_fuel(fuel),
     m_battle_speed(battle_speed),
     m_starlane_speed(starlane_speed),
     m_stealth(stealth),
-    m_health(health)
+    m_structure(structure)
 {}
 
 
@@ -601,7 +598,7 @@ HullType::HullType() :
     m_starlane_speed(1.0),
     m_fuel(0.0),
     m_stealth(0.0),
-    m_health(0.0),
+    m_structure(0.0),
     m_cost(1.0),
     m_build_time(1),
     m_slots(),
@@ -612,7 +609,7 @@ HullType::HullType() :
 
 HullType::HullType(const std::string& name, const std::string& description,
                    double fuel, double battle_speed, double starlane_speed,
-                   double stealth, double health,
+                   double stealth, double structure,
                    double cost, int build_time, const std::vector<Slot>& slots,
                    const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
@@ -623,7 +620,7 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_starlane_speed(starlane_speed),
     m_fuel(fuel),
     m_stealth(stealth),
-    m_health(health),
+    m_structure(structure),
     m_cost(cost),
     m_build_time(build_time),
     m_slots(slots),
@@ -631,9 +628,9 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMeter(METER_FUEL,           m_fuel));
+    m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    m_effects.push_back(IncreaseMeter(METER_HEALTH,         m_health));
+    m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
     m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
     m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
@@ -654,7 +651,7 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_starlane_speed(stats.m_starlane_speed),
     m_fuel(stats.m_fuel),
     m_stealth(stats.m_stealth),
-    m_health(stats.m_health),
+    m_structure(stats.m_structure),
     m_cost(cost),
     m_build_time(build_time),
     m_slots(slots),
@@ -662,9 +659,9 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMeter(METER_FUEL,           m_fuel));
+    m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    m_effects.push_back(IncreaseMeter(METER_HEALTH,         m_health));
+    m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
     m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
     m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
@@ -688,7 +685,7 @@ std::string HullType::StatDescription() const {
             % m_starlane_speed
             % m_fuel
             % m_battle_speed
-            % m_health);
+            % m_structure);
     return retval;
 }
 
@@ -704,8 +701,8 @@ double HullType::Fuel() const {
     return m_fuel;
 }
 
-double HullType::Health() const {
-    return m_health;
+double HullType::Structure() const {
+    return m_structure;
 }
 
 double HullType::Cost() const {

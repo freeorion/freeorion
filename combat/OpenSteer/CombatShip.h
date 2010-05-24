@@ -25,8 +25,8 @@ public:
         DirectWeapon(const std::string& name, double range, double damage);
 
         std::string m_name;
-        double m_range;
-        double m_damage;
+        double      m_range;
+        double      m_damage;
 
         template <class Archive>
         void serialize(Archive& ar, const unsigned int version);
@@ -42,9 +42,9 @@ public:
 
     Ship& GetShip() const;
     const ShipMission& CurrentMission() const;
-    virtual double HealthAndShield() const;
-    virtual double Health() const;
-    virtual double FractionalHealth() const;
+    virtual double StructureAndShield() const;
+    virtual double Structure() const;
+    virtual double FractionalStructure() const;
     virtual double AntiFighterStrength() const;
     virtual double AntiShipStrength(CombatShipPtr target = CombatShipPtr()) const;
     virtual bool IsFighter() const;
@@ -91,33 +91,33 @@ private:
     CombatObjectPtr WeakestAttacker(const CombatObjectPtr& attackee);
     CombatShipPtr WeakestHostileShip();
 
-    ProximityDBToken* m_proximity_token;
-    int m_empire_id;
-    int m_ship_id;
+    ProximityDBToken*       m_proximity_token;
+    int                     m_empire_id;
+    int                     m_ship_id;
     const std::map<int, UniverseObject*>* m_combat_universe;
 
-    OpenSteer::Vec3 m_last_steer;
+    OpenSteer::Vec3         m_last_steer;
 
-    std::list<ShipMission> m_mission_queue;
-    float m_mission_weight;
-    OpenSteer::Vec3 m_mission_destination;
-    CombatObjectWeakPtr m_mission_subtarget;
+    std::list<ShipMission>  m_mission_queue;
+    float                   m_mission_weight;
+    OpenSteer::Vec3         m_mission_destination;
+    CombatObjectWeakPtr     m_mission_subtarget;
 
-    unsigned int m_last_queue_update_turn;
-    unsigned int m_enter_starlane_start_turn;
-    std::vector<double> m_next_LR_fire_turns;
-    double m_turn_start_health;
-    unsigned int m_turn;
+    unsigned int            m_last_queue_update_turn;
+    unsigned int            m_enter_starlane_start_turn;
+    std::vector<double>     m_next_LR_fire_turns;
+    double                  m_turn_start_structure;
+    unsigned int            m_turn;
 
-    PathingEngine* m_pathing_engine;
+    PathingEngine*          m_pathing_engine;
 
-    double m_raw_PD_strength;
-    double m_raw_SR_strength;
-    double m_raw_LR_strength;
-    bool m_is_PD_ship;
+    double                  m_raw_PD_strength;
+    double                  m_raw_SR_strength;
+    double                  m_raw_LR_strength;
+    bool                    m_is_PD_ship;
 
-    SRVec m_unfired_SR_weapons;
-    PDList m_unfired_PD_weapons;
+    SRVec                   m_unfired_SR_weapons;
+    PDList                  m_unfired_PD_weapons;
 
     // map from part type name to (number of parts in the design of that type,
     // the unlaunched fighters of that part type) pairs

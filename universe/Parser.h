@@ -182,7 +182,7 @@ struct PartStatsClosure : boost::spirit::classic::closure<PartStatsClosure, Part
     member4 range;
     member5 speed;
     member6 stealth;
-    member7 health;
+    member7 structure;
     member8 fighter_type;
     member9 anti_ship_damage;
     member10 anti_fighter_damage;
@@ -217,7 +217,7 @@ struct HullStatsClosure : boost::spirit::classic::closure<HullStatsClosure, Hull
     member3 starlane_speed;
     member4 fuel;
     member5 stealth;
-    member6 health;
+    member6 structure;
 };
 
 struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std::string, std::string,

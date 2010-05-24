@@ -167,7 +167,7 @@ void PathingEngine::TurnStarted(unsigned int number)
 {
     for (std::set<CombatObjectPtr>::iterator it = m_objects.begin();
          it != m_objects.end(); ) {
-        if (!(*it)->HealthAndShield()) {
+        if (!(*it)->StructureAndShield()) {
             if ((*it)->IsFighter()) {
                 assert(boost::dynamic_pointer_cast<CombatFighter>(*it));
                 CombatFighterPtr fighter = boost::static_pointer_cast<CombatFighter>(*it);
