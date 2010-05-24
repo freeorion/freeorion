@@ -136,11 +136,8 @@ void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_
     for (unsigned int i = 0; i < res_meter_types.size(); ++i) {
         const MeterType CUR_METER_TYPE = res_meter_types[i];
 
-        if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE) {
-            Meter* meter = GetMeter(CUR_METER_TYPE);
-            meter->ResetCurrent();
-            meter->AddToCurrent(10.0);
-        }
+        if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE)
+            GetMeter(CUR_METER_TYPE)->ResetCurrent();
     }
 }
 

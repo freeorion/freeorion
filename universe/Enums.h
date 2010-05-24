@@ -635,12 +635,13 @@ enum CaptureResult {
 
 /** Types of in-game things that might contain an EffectsGroup, or "cause" effects to occur */
 enum EffectsCauseType {
-    ECT_UNIVERSE_TABLE_ADJUSTMENT = -2,  // not an actual effect, but a meter alteration due to universe tables
     INVALID_EFFECTS_GROUP_CAUSE_TYPE = -1,
     ECT_UNKNOWN_CAUSE,
+    ECT_INHERENT,
     ECT_TECH,
     ECT_BUILDING,
     ECT_SPECIAL,
+    ECT_SPECIES,
     ECT_SHIP_PART,
     ECT_SHIP_HULL
 };

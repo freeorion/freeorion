@@ -18,6 +18,7 @@
 #include "Effect.h"
 #include "Predicates.h"
 #include "Special.h"
+#include "Species.h"
 #include "Parser.h"
 #include "ParserUtil.h"
 
@@ -1138,11 +1139,12 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
             if (Meter* meter = obj->GetMeter(type)) {
                 EffectAccountingInfo info;
                 info.source_id = UniverseObject::INVALID_OBJECT_ID;
-                info.cause_type = ECT_UNIVERSE_TABLE_ADJUSTMENT;
+                info.cause_type = ECT_INHERENT;
                 info.meter_change = meter->Current() - Meter::DEFAULT_VALUE;
                 info.running_meter_total = meter->Current();
 
-                m_effect_accounting_map[obj_id][type].push_back(info);
+                if (info.meter_change > 0.0)
+                    m_effect_accounting_map[obj_id][type].push_back(info);
             }
         }
     }
@@ -1234,6 +1236,20 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
     //Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    // 0) EffectsGroups from Species
+    // get PopCenters
+    for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
+        const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
+        if (!pc) continue;
+        const Species* species = GetSpecies(pc->SpeciesName());
+        if (!species) {
+            Logger().errorStream() << "GetEffectsAndTargets couldn't get Species " << pc->SpeciesName();
+            continue;
+        }
+        StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species->Name(),
+                                             target_objects, targets_causes_map);
+    }
+
     // 1) EffectsGroups from Specials
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
@@ -4250,6 +4266,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
+        home_planet->SetSpecies("SP_HUMAN");
         home_planet->SetFocus("FOCUS_FARMING");
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
 

@@ -1493,8 +1493,8 @@ Change
 TT_BREAKDOWN_SUMMARY
 %1%: %2% 
 
-TT_BASIC_FOCUS_AND_UNIVERSE
-Basic Focus and Universe
+TT_INHERENT
+Inherent
 
 TT_TECH
 %1% Tech <i>%2%</i>
@@ -1510,6 +1510,9 @@ Ship <i>%1%</i> Part <i>%2%</i>
 
 TT_SPECIAL
 Special <i>%1%</i>
+
+TT_SPECIES
+Species <i>%1%</i>
 
 TT_UNKNOWN
 Unknown
@@ -2024,6 +2027,16 @@ has achieved a technological victory.
 ALL_ENEMIES_ELIMINATED_VICTORY
 has achieved a sole-survivor victory.
 
+
+####################
+# Species          #
+####################
+
+SP_HUMAN
+Human
+
+SP_HUMAN_DESC
+The usual.
 
 ####################
 # Specials         #

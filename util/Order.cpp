@@ -447,6 +447,7 @@ void FleetColonizeOrder::ServerExecute() const
 
     planet->Reset();
 
+    planet->SetSpecies("SP_HUMAN");
     planet->SetFocus("FOCUS_FARMING");
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);

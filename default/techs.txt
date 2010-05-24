@@ -257,7 +257,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
-            effects = SetTargetResearch Target.TargetResearch + 4
+            effects = SetTargetResearch Value + 4
 
         EffectsGroup
             scope = And [
@@ -267,7 +267,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
-            effects = SetTargetResearch Target.TargetResearch + 3
+            effects = SetTargetResearch Value + 3
 
         EffectsGroup
             scope = And [
@@ -277,7 +277,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
-            effects = SetTargetResearch Target.TargetResearch + 2
+            effects = SetTargetResearch Value + 2
 
         EffectsGroup
             scope = And [
@@ -287,7 +287,7 @@ Tech
                 Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
-            effects = SetTargetResearch Target.TargetResearch + 1
+            effects = SetTargetResearch Value + 1
     ]
     graphic = "icons/tech/stellar_tomography.png"
         
@@ -349,7 +349,7 @@ Tech
                     Focus type = "FOCUS_RESEARCH"
                 ]
             activation = Source
-            effects = SetTargetResearch value = Target.TargetResearch + 5
+            effects = SetTargetResearch Value + 5
     graphic = ""
 
 Tech
@@ -596,7 +596,7 @@ Tech
                     Focus type = "FOCUS_FARMING"
             ]
             activation = Source
-            effects = SetTargetFarming Target.TargetFarming + 5
+            effects = SetTargetFarming Value + 5
     graphic = "icons/tech/self-rotating_crops.png"
 
 Tech
@@ -617,7 +617,7 @@ Tech
                     Planet environment = [Poor Adequate]
             ]
             activation = Source
-            effects = SetTargetPopulation Target.TargetPopulation + 2
+            effects = SetTargetPopulation Value + 2
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
@@ -703,7 +703,7 @@ Tech
                     Industry low = 20 high = 999
                 ]
             activation = Source
-            effects = SetTargetFarming value = Target.TargetFarming + 2
+            effects = SetTargetFarming Value + 2
     graphic = "icons/tech/urban_farming.png"
 
 Tech
@@ -938,7 +938,7 @@ Tech
                     Planet environment = Good
                 ]
             activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 2
+            effects = SetTargetMining Value + 2
     graphic = "icons/tech/environmentally_conscious_mining.png"
 
 Tech
@@ -1084,7 +1084,7 @@ Tech
                     Planet type = [Barren Inferno]
                 ]
             activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 4
+            effects = SetTargetMining Value + 4
 
         EffectsGroup
             scope = And [
@@ -1094,7 +1094,7 @@ Tech
                     Planet type = [Desert Radiated Toxic]
                 ]
             activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 2
+            effects = SetTargetMining Value + 2
 
         EffectsGroup
             scope = And [
@@ -1104,7 +1104,7 @@ Tech
                     Planet type = [Tundra Terran]
                 ]
             activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 1
+            effects = SetTargetMining Value + 1
     ]
     graphic = ""
 
@@ -1128,7 +1128,7 @@ Tech
                     Planet size = [Small Tiny]
                 ]
             activation = Source
-            effects = SetTargetIndustry value = Target.TargetIndustry + 4
+            effects = SetTargetIndustry Value + 4
 
         EffectsGroup
             scope =
@@ -1139,7 +1139,7 @@ Tech
                     Planet size = Medium
                 ]
             activation = Source
-            effects = SetTargetIndustry value = Target.TargetIndustry + 2
+            effects = SetTargetIndustry Value + 2
 
         EffectsGroup
             scope =
@@ -1150,7 +1150,7 @@ Tech
                     Planet size = Large
                 ]
             activation = Source
-            effects = SetTargetIndustry value = Target.TargetIndustry + 1
+            effects = SetTargetIndustry Value + 1
     ]
     graphic = "icons/tech/exobots.png"
 
@@ -1172,7 +1172,7 @@ Tech
                     PopulationCenter
                 ]
             activation = Source
-            effects = SetTargetIndustry value = Target.TargetIndustry + 3
+            effects = SetTargetIndustry Value + 3
     graphic = "icons/tech/fusion_plants.png"
 
 Tech
@@ -1540,7 +1540,7 @@ Tech
                     PopulationCenter
                 ]
             activation = Source
-            effects = SetTargetConstruction value = Target.TargetConstruction + 5
+            effects = SetTargetConstruction Value + 5
     graphic = ""
 
 Tech
@@ -1588,7 +1588,7 @@ Tech
                     PopulationCenter
                 ]
             activation = Source
-            effects = SetTargetConstruction value = Target.TargetConstruction + 5
+            effects = SetTargetConstruction Value + 5
     graphic = "icons/tech/subterranean_construction.png"
 
 Tech
@@ -1786,7 +1786,7 @@ Tech
                     Focus type = "FOCUS_TRADE"
                 ]
             activation = Source
-            effects = SetTargetTrade value = Target.TargetTrade + 3
+            effects = SetTargetTrade Value + 3
     graphic = ""
 
 Tech
@@ -1833,8 +1833,8 @@ Tech
                 ]
             activation = Source
             effects = [
-                SetTargetTrade value = Target.TargetTrade + 5
-                SetTargetConstruction value = Target.TargetConstruction - 2
+                SetTargetTrade Value + 5
+                SetTargetConstruction Value - 2
             ]
     graphic = "icons/tech/economic_etherealization.png"
 
@@ -1940,7 +1940,7 @@ Tech
                     Planet
                 ]
             activation = Source
-            effects = SetSupply value = Target.Supply + 2
+            effects = SetSupply Value + 2
     graphic = ""
 
 Tech

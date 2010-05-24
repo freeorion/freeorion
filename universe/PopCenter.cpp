@@ -166,15 +166,11 @@ double PopCenter::NextTurnHealthGrowth() const
 
 void PopCenter::PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type)
 {
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_POPULATION) {
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_POPULATION)
         GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
-        GetMeter(METER_TARGET_POPULATION)->AddToCurrent(20.0);  // to be replaced with effects
-    }
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_HEALTH) {
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_HEALTH)
         GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
-        GetMeter(METER_TARGET_HEALTH)->AddToCurrent(25.0);      // to be replaced with effects
-    }
 }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase()

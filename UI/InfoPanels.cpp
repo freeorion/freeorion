@@ -2730,10 +2730,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         std::string text = "", name = "";
 
         switch (info_it->cause_type) {
-        case ECT_UNIVERSE_TABLE_ADJUSTMENT:
-            text += UserString("TT_BASIC_FOCUS_AND_UNIVERSE");
-            break;
-
         case ECT_TECH:
             if (source->Owners().size() == 1) {
                 empire_id = *(source->Owners().begin());
@@ -2757,6 +2753,10 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += boost::io::str(FlexibleFormat(UserString("TT_SPECIAL")) % UserString(info_it->specific_cause));
             break;
 
+        case ECT_SPECIES:
+            text += boost::io::str(FlexibleFormat(UserString("TT_SPECIES")) % UserString(info_it->specific_cause));
+            break;
+
         case ECT_SHIP_HULL:
             ship = universe_object_cast<const Ship*>(source);
             if (ship)
@@ -2771,7 +2771,10 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             text += boost::io::str(FlexibleFormat(UserString("TT_SHIP_PART")) % name % UserString(info_it->specific_cause));
             break;
 
-        case ECT_UNKNOWN_CAUSE:
+        case ECT_INHERENT:
+            text += UserString("TT_INHERENT");
+            break;
+
         default:
             text += UserString("TT_UNKNOWN");
         }
