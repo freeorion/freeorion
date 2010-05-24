@@ -18,6 +18,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Tech.h"
 #include "../universe/Special.h"
+#include "../universe/Species.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
@@ -144,6 +145,17 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialTexture(const std::string& speci
         texture_name = special->Graphic();
     if (texture_name.empty())
         return ClientUI::GetTexture(ArtDir() / "icons" / "specials_huge" / "generic_special.png", true);
+    return ClientUI::GetTexture(ArtDir() / texture_name, true);
+}
+
+boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name)
+{
+    const Species* species = GetSpecies(species_name);
+    std::string texture_name = "";
+    if (species)
+        texture_name = species->Graphic();
+    if (texture_name.empty())
+        return ClientUI::GetTexture(ArtDir() / "icons" / "meter" / "pop.png", true);
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 

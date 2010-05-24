@@ -151,6 +151,7 @@ public:
     static boost::shared_ptr<GG::Texture>   CategoryIcon(const std::string& category_name);
     static boost::shared_ptr<GG::Texture>   TechTexture(const std::string& tech_name);
     static boost::shared_ptr<GG::Texture>   SpecialTexture(const std::string& special_name);
+    static boost::shared_ptr<GG::Texture>   SpeciesIcon(const std::string& species_name);
     static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
     static boost::shared_ptr<GG::Texture>   PartTexture(const std::string& part_name);
     static boost::shared_ptr<GG::Texture>   HullTexture(const std::string& hull_name);

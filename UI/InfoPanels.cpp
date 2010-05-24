@@ -250,7 +250,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
-    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_POPULATION),
+    m_pop_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::SpeciesIcon(pop->SpeciesName()),
                                    0, 3, false);
     AttachChild(m_pop_stat);
 

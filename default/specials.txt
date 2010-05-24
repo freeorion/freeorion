@@ -3,16 +3,14 @@ Special
     description = "HOMEWORLD_SPECIAL_DESCRIPTION"
     effectsgroups =
         EffectsGroup
-            scope =
-                Source
-            activation =
-                Source
+            scope = Source
+            activation = Source
             effects = [
-                SetTargetPopulation Value + 5
-                SetTargetFarming Value + Target.Population * 0.2
-                SetTargetIndustry Value + Target.Population * 0.2
+                SetTargetPopulation Value + 2
+                SetTargetFarming Value + Target.Population * 1.0
+                SetTargetIndustry Value + Target.Population * 0.4
                 SetTargetTrade Value + Target.Population * 0.2
-                SetTargetConstruction Value + 20
+                SetTargetConstruction Value + 10
                 SetSupply Value + 2
                 SetDetection Value + 5
             ]
