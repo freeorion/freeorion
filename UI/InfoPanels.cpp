@@ -226,6 +226,7 @@ namespace {
 //        PopulationPanel          //
 /////////////////////////////////////
 std::map<int, bool> PopulationPanel::s_expanded_map = std::map<int, bool>();
+
 PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(ClientUI::Pts()*2), GG::INTERACTIVE),
     m_popcenter_id(object_id),
@@ -1196,9 +1197,20 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id, const s
     GG::X x(EDGE_PAD);
     for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         const MeterType PRIMARY_METER_TYPE = it->first;
+        // get icon texture.
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
-                                            0.0, 3, false));
+
+        // special case for population meter for an indicator showing only a
+        // single popcenter: icon is species icon, rather than generic pop icon
+        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
+            if (const UniverseObject* obj = GetMainObjectMap().Object(*m_object_ids.begin()))
+                if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
+                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+        }
+
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
+                                            MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
+                                            texture, 0.0, 3, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;
@@ -1219,9 +1231,21 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
     GG::X x(EDGE_PAD);
     for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
         const MeterType PRIMARY_METER_TYPE = it->first;
+
+        // get icon texture.
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
-        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH, MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2, texture,
-                                            0.0, 3, false));
+
+        // special case for population meter for an indicator showing only a
+        // single popcenter: icon is species icon, rather than generic pop icon
+        if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
+            if (const UniverseObject* obj = GetMainObjectMap().Object(*m_object_ids.begin()))
+                if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
+                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+        }
+
+        m_icons.push_back(new StatisticIcon(x, GG::Y(EDGE_PAD), MULTI_INDICATOR_ICON_WIDTH,
+                                            MULTI_INDICATOR_ICON_HEIGHT + ClientUI::Pts()*3/2,
+                                            texture, 0.0, 3, false));
         AttachChild(m_icons.back());
         m_icons.back()->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         x += MULTI_INDICATOR_ICON_WIDTH + MULTI_INDICATOR_ICON_SPACING;

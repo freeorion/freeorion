@@ -171,31 +171,31 @@ Species
             scope = Source
             activation = Focus type = "FOCUS_FARMING"
             effects =
-                SetTargetFarming Value + Target.Population * 0.5
+                SetTargetFarming Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_MINING"
             effects =
-                SetTargetMining Value + Target.Population * 0.5
+                SetTargetMining Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
             effects =
-                SetTargetIndustry Value + Target.Population * 0.5
+                SetTargetIndustry Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
             effects =
-                SetTargetResearch Value + Target.Population * 0.5
+                SetTargetResearch Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_TRADE"
             effects =
-                SetTargetTrade Value + Target.Population * 0.5
+                SetTargetTrade Value + Target.Population * 1.0
 
         EffectsGroup
             scope = Source
