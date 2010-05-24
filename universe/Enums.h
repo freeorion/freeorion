@@ -154,34 +154,6 @@ namespace GG {
 GG_ENUM_STREAM_IN(PlanetEnvironment)
 GG_ENUM_STREAM_OUT(PlanetEnvironment)
 
-
-/** types of production focus*/
-enum FocusType {
-    INVALID_FOCUS_TYPE = -1,
-    FOCUS_BALANCED,
-    FOCUS_FARMING,
-    FOCUS_INDUSTRY,
-    FOCUS_MINING,
-    FOCUS_RESEARCH,
-    FOCUS_TRADE,
-    NUM_FOCI
-};
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(FocusType)
-    GG_ENUM_MAP_INSERT(INVALID_FOCUS_TYPE)
-    GG_ENUM_MAP_INSERT(FOCUS_BALANCED)
-    GG_ENUM_MAP_INSERT(FOCUS_FARMING)
-    GG_ENUM_MAP_INSERT(FOCUS_INDUSTRY)
-    GG_ENUM_MAP_INSERT(FOCUS_MINING)
-    GG_ENUM_MAP_INSERT(FOCUS_RESEARCH)
-    GG_ENUM_MAP_INSERT(FOCUS_TRADE)
-    GG_ENUM_MAP_END
-}
-GG_ENUM_STREAM_IN(FocusType)
-GG_ENUM_STREAM_OUT(FocusType)
-
-
 /** types for Meters */
 enum MeterType {
     INVALID_METER_TYPE = -1,
@@ -608,9 +580,6 @@ namespace GG {
 GG_ENUM_STREAM_IN(ShipSlotType)
 GG_ENUM_STREAM_OUT(ShipSlotType)
 
-/** Returns the equivalent meter type for the given focus; if no such focus
-  * exists, returns INVALID_FOCUS_TYPE. */
-FocusType MeterToFocus(MeterType type);
 
 /** Returns the equivalent meter type for the given resource type; if no such
   * meter type exists, returns INVALID_METER_TYPE. */

@@ -75,7 +75,7 @@ namespace AIInterface
     int                 IssueFleetColonizeOrder(int ship_id, int planet_id);
     int                 IssueDeleteFleetOrder();
 
-    int                 IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary);
+    int                 IssueChangeFocusOrder(int planet_id, const std::string& focus);
 
     int                 IssueEnqueueTechOrder(const std::string& tech_name, int position);
     int                 IssueDequeueTechOrder(const std::string& tech_name);

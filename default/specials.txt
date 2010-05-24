@@ -8,11 +8,11 @@ Special
             activation =
                 Source
             effects = [
-                SetTargetPopulation Value + 10
-                SetTargetFarming Value + 8
-                SetTargetIndustry Value + 5
-                SetTargetTrade Value + 2
-                SetTargetConstruction  Value + 20
+                SetTargetPopulation Value + 5
+                SetTargetFarming Value + Target.Population * 0.2
+                SetTargetIndustry Value + Target.Population * 0.2
+                SetTargetTrade Value + Target.Population * 0.2
+                SetTargetConstruction Value + 20
                 SetSupply Value + 2
                 SetDetection Value + 5
             ]

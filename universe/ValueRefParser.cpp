@@ -14,7 +14,6 @@ PlanetTypeValueRefRule          planettype_expr_p;
 PlanetEnvironmentValueRefRule   planetenvironment_expr_p;
 UniverseObjectTypeValueRefRule  universeobjecttype_expr_p;
 StarTypeValueRefRule            startype_expr_p;
-FocusTypeValueRefRule           focustype_expr_p;
 
 namespace {
     template <class T>
@@ -48,14 +47,13 @@ namespace {
         Rule minus_expr;
     };
 
-    ValueRefParserDefinition<int> int_value_ref_def(int_expr_p);
-    ValueRefParserDefinition<double> double_value_ref_def(double_expr_p);
-    ValueRefParserDefinition<PlanetSize> planetsize_value_ref_def(planetsize_expr_p);
-    ValueRefParserDefinition<PlanetType> planettype_value_ref_def(planettype_expr_p);
-    ValueRefParserDefinition<PlanetEnvironment> planetenvironment_value_ref_def(planetenvironment_expr_p);
-    ValueRefParserDefinition<UniverseObjectType> universeobjecttype_value_ref_def(universeobjecttype_expr_p);
-    ValueRefParserDefinition<StarType> startype_value_ref_def(startype_expr_p);
-    ValueRefParserDefinition<FocusType> focustype_value_ref_def(focustype_expr_p);
+    ValueRefParserDefinition<int>                   int_value_ref_def(int_expr_p);
+    ValueRefParserDefinition<double>                double_value_ref_def(double_expr_p);
+    ValueRefParserDefinition<PlanetSize>            planetsize_value_ref_def(planetsize_expr_p);
+    ValueRefParserDefinition<PlanetType>            planettype_value_ref_def(planettype_expr_p);
+    ValueRefParserDefinition<PlanetEnvironment>     planetenvironment_value_ref_def(planetenvironment_expr_p);
+    ValueRefParserDefinition<UniverseObjectType>    universeobjecttype_value_ref_def(universeobjecttype_expr_p);
+    ValueRefParserDefinition<StarType>              startype_value_ref_def(startype_expr_p);
 
     template <class T>
     ValueRefParserDefinition<T>::ValueRefParserDefinition(Rule& expr)
@@ -199,16 +197,6 @@ namespace {
             | int_p[constant.this_ = new_<RefConst>(static_cast_<StarType>(arg1))];
 
         variable_final = str_p("startype");
-    }
-
-    template <>
-    void ValueRefParserDefinition<FocusType>::SpecializedInit()
-    {
-        constant =
-            focus_type_p[constant.this_ = new_<RefConst>(arg1)]
-            | int_p[constant.this_ = new_<RefConst>(static_cast_<FocusType>(arg1))];
-
-        variable_final = str_p("primaryfocus") | "secondaryfocus";
     }
 
     template <class T>

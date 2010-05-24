@@ -34,7 +34,7 @@ Hull
                 Planet
                 Contains Source
                 OwnedBy TheEmpire Source.Owner
-                PrimaryFocus Farming
+                Focus type = "FOCUS_FARMING"
             ]
             activation = Source
             stackinggroup = "SH_EMPTY_FARMER_STACK_FARMING"

@@ -58,7 +58,7 @@ namespace {
             break;
         case METER_INDUSTRY:
         case METER_TARGET_INDUSTRY:
-            return GG::CLR_BLUE;
+            return GG::Clr(0, 100, 255, 255);   // a bit greener / brighter than blue, at pd's suggestion on forums (sort of)
             break;
         case METER_RESEARCH:
         case METER_TARGET_RESEARCH:
@@ -190,7 +190,7 @@ namespace {
 
     const double    MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE = 100.0;
 
-   /** Returns map from object ID to issued colonize orders affecting it. */
+    /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
         std::map<int, int> retval;
         const ClientApp* app = ClientApp::GetApp();
@@ -203,6 +203,22 @@ namespace {
             }
         }
         return retval;
+    }
+
+    /** What icon to show for focus options.  Probably to be replaced with something moddable. */
+    boost::shared_ptr<GG::Texture> FocusIcon(const std::string& focus) {
+        if (focus == "FOCUS_FARMING")
+            return ClientUI::MeterIcon(METER_FARMING);
+        else if (focus == "FOCUS_MINING")
+            return ClientUI::MeterIcon(METER_MINING);
+        else if (focus == "FOCUS_INDUSTRY")
+            return ClientUI::MeterIcon(METER_INDUSTRY);
+        else if (focus == "FOCUS_RESEARCH")
+            return ClientUI::MeterIcon(METER_RESEARCH);
+        else if (focus == "FOCUS_TRADE")
+            return ClientUI::MeterIcon(METER_TRADE);
+        else
+            return ClientUI::MeterIcon(INVALID_METER_TYPE);
     }
 }
 
@@ -464,8 +480,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_trade_stat(0),
     m_multi_icon_value_indicator(0),
     m_multi_meter_status_bar(0),
-    m_primary_focus_drop(0),
-    m_secondary_focus_drop(0),
+    m_focus_drop(0),
     m_expand_button(0)
 {
     SetName("ResourcePanel");
@@ -496,39 +511,21 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
 
     // focus-selection droplists
-    std::vector<boost::shared_ptr<GG::Texture> > textures;
-    textures.push_back(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "balanced.png"));
-    textures.push_back(ClientUI::MeterIcon(METER_FARMING));
-    textures.push_back(ClientUI::MeterIcon(METER_MINING));
-    textures.push_back(ClientUI::MeterIcon(METER_INDUSTRY));
-    textures.push_back(ClientUI::MeterIcon(METER_RESEARCH));
-    textures.push_back(ClientUI::MeterIcon(METER_TRADE));
-
-    m_primary_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
-    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    const std::vector<std::string>& available_foci = res->AvailableFoci();
+    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
+    for (std::vector<std::string>::const_iterator it = available_foci.begin(); it != available_foci.end(); ++it) {
+        boost::shared_ptr<GG::Texture> texture = FocusIcon(*it);
+        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));
-        m_primary_focus_drop->Insert(row);
+        m_focus_drop->Insert(row);
     }
-    AttachChild(m_primary_focus_drop);
-
-    m_secondary_focus_drop = new CUIDropDownList(m_primary_focus_drop->LowerRight().x + MeterIconSize().x/2, GG::Y0,
-                                                 MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
-    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it) {
-        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, *it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
-        row->push_back(dynamic_cast<GG::Control*>(graphic));
-        m_secondary_focus_drop->Insert(row);
-    }
-    AttachChild(m_secondary_focus_drop);
+    AttachChild(m_focus_drop);
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
-    m_primary_focus_drop->SetBrowseModeTime(tooltip_delay);
-    m_secondary_focus_drop->SetBrowseModeTime(tooltip_delay);
+    m_focus_drop->SetBrowseModeTime(tooltip_delay);
 
-    m_drop_changed_connections[m_primary_focus_drop] =      GG::Connect(m_primary_focus_drop->SelChangedSignal,     &ResourcePanel::PrimaryFocusDropListSelectionChanged,   this);
-    m_drop_changed_connections[m_secondary_focus_drop] =    GG::Connect(m_secondary_focus_drop->SelChangedSignal,   &ResourcePanel::SecondaryFocusDropListSelectionChanged, this);
+    m_drop_changed_connections[m_focus_drop] =  GG::Connect(m_focus_drop->SelChangedSignal, &ResourcePanel::FocusDropListSelectionChanged,  this);
 
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FARMING),
@@ -561,11 +558,11 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
-    meters.push_back(std::make_pair(METER_FARMING, METER_TARGET_FARMING));
-    meters.push_back(std::make_pair(METER_MINING, METER_TARGET_MINING));
-    meters.push_back(std::make_pair(METER_INDUSTRY, METER_TARGET_INDUSTRY));
-    meters.push_back(std::make_pair(METER_RESEARCH, METER_TARGET_RESEARCH));
-    meters.push_back(std::make_pair(METER_TRADE, METER_TARGET_TRADE));
+    meters.push_back(std::make_pair(METER_FARMING,      METER_TARGET_FARMING));
+    meters.push_back(std::make_pair(METER_MINING,       METER_TARGET_MINING));
+    meters.push_back(std::make_pair(METER_INDUSTRY,     METER_TARGET_INDUSTRY));
+    meters.push_back(std::make_pair(METER_RESEARCH,     METER_TARGET_RESEARCH));
+    meters.push_back(std::make_pair(METER_TRADE,        METER_TARGET_TRADE));
     meters.push_back(std::make_pair(METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
 
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_rescenter_id, meters);
@@ -595,8 +592,7 @@ ResourcePanel::~ResourcePanel() {
         it->second.disconnect();
     m_drop_changed_connections.clear();
 
-    delete m_primary_focus_drop;
-    delete m_secondary_focus_drop;
+    delete m_focus_drop;
 
     // don't need to manually delete m_expand_button, as it is attached as a child so will be deleted by ~Wnd
 }
@@ -617,8 +613,7 @@ void ResourcePanel::DoExpandCollapseLayout() {
     DetachChild(m_farming_stat);    DetachChild(m_mining_stat); DetachChild(m_industry_stat);
     DetachChild(m_research_stat);   DetachChild(m_trade_stat);
 
-    DetachChild(m_secondary_focus_drop);
-    DetachChild(m_primary_focus_drop);
+    DetachChild(m_focus_drop);
 
     DetachChild(m_multi_meter_status_bar);
     DetachChild(m_multi_icon_value_indicator);
@@ -661,18 +656,15 @@ void ResourcePanel::DoExpandCollapseLayout() {
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
-        // attach / show focus selector drops
-        m_secondary_focus_drop->Show();
-        AttachChild(m_secondary_focus_drop);
-
-        m_primary_focus_drop->Show();
-        AttachChild(m_primary_focus_drop);
+        // attach / show focus selector drop
+        m_focus_drop->Show();
+        AttachChild(m_focus_drop);
 
         // attach and show meter bars and large resource indicators
         GG::Y top = UpperLeft().y;
 
         AttachChild(m_multi_icon_value_indicator);
-        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_primary_focus_drop->LowerRight().y + EDGE_PAD - top));
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_focus_drop->LowerRight().y + EDGE_PAD - top));
         m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
 
         AttachChild(m_multi_meter_status_bar);
@@ -811,11 +803,9 @@ void ResourcePanel::Update()
 
     // only allow focus changes in UI for planets this client's player's empire owns
     if (owner == OS_SELF) {
-        m_primary_focus_drop->Disable(false);
-        m_secondary_focus_drop->Disable(false);
+        m_focus_drop->Disable(false);
     } else {
-        m_primary_focus_drop->Disable(true);
-        m_secondary_focus_drop->Disable(true);
+        m_focus_drop->Disable(true);
     }
 
 
@@ -857,70 +847,19 @@ void ResourcePanel::Update()
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
     // focus droplists
-    std::string text;
-    switch (res->PrimaryFocus()) {
-    case FOCUS_BALANCED:
-        m_primary_focus_drop->Select(0);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
-        break;
-    case FOCUS_FARMING:
-        m_primary_focus_drop->Select(1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
-        break;
-    case FOCUS_MINING:
-        m_primary_focus_drop->Select(2);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
-        break;
-    case FOCUS_INDUSTRY:
-        m_primary_focus_drop->Select(3);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
-        break;
-    case FOCUS_RESEARCH:
-        m_primary_focus_drop->Select(4);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
-        break;
-    case FOCUS_TRADE:
-        m_primary_focus_drop->Select(5);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
-        break;
-    default:
-        m_primary_focus_drop->Select(-1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_PRIMARY_FOCUS_TOOLTIP")) % UserString("INVALID_FOCUS_TYPE"));
-        break;
+    std::string focus_text;
+    if (!res->Focus().empty()) {
+        const std::vector<std::string>& available_foci = res->AvailableFoci();
+        for (unsigned int i = 0; i < available_foci.size(); ++i) {
+            if (available_foci[i] == res->Focus()) {
+                m_focus_drop->Select(i);
+                focus_text = boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP")) % UserString(res->Focus()));
+            }
+        }
+    } else {
+        m_focus_drop->Select(m_focus_drop->end());
     }
-    m_primary_focus_drop->SetBrowseText(text);
-
-    switch (res->SecondaryFocus()) {
-    case FOCUS_BALANCED:
-        m_secondary_focus_drop->Select(0);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_BALANCED"));
-        break;
-    case FOCUS_FARMING:
-        m_secondary_focus_drop->Select(1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_FARMING"));
-        break;
-    case FOCUS_MINING:
-        m_secondary_focus_drop->Select(2);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_MINING"));
-        break;
-    case FOCUS_INDUSTRY:
-        m_secondary_focus_drop->Select(3);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_INDUSTRY"));
-        break;
-    case FOCUS_RESEARCH:
-        m_secondary_focus_drop->Select(4);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_RESEARCH"));
-        break;
-    case FOCUS_TRADE:
-        m_secondary_focus_drop->Select(5);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("FOCUS_TRADE"));
-        break;
-    default:
-        m_secondary_focus_drop->Select(-1);
-        text = boost::io::str(FlexibleFormat(UserString("RP_SECONDARY_FOCUS_TOOLTIP")) % UserString("INVALID_FOCUS_TYPE"));
-        break;
-    }
-    m_secondary_focus_drop->SetBrowseText(text);
+    m_focus_drop->SetBrowseText(focus_text);
 }
 
 void ResourcePanel::Refresh()
@@ -929,64 +868,38 @@ void ResourcePanel::Refresh()
     DoExpandCollapseLayout();
 }
 
-void ResourcePanel::PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected)
+void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator selected)
 {
-    FocusType focus;
-    switch (m_primary_focus_drop->IteratorToIndex(selected)) {
-    case 0:
-        focus = FOCUS_BALANCED;
-        break;
-    case 1:
-        focus = FOCUS_FARMING;
-        break;
-    case 2:
-        focus = FOCUS_MINING;
-        break;
-    case 3:
-        focus = FOCUS_INDUSTRY;
-        break;
-    case 4:
-        focus = FOCUS_RESEARCH;
-        break;
-    case 5:
-        focus = FOCUS_TRADE;
-        break;
-    default:
-        throw std::invalid_argument("PrimaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
-        break;
-    }
-    Sound::TempUISoundDisabler sound_disabler;
-    PrimaryFocusChangedSignal(focus);
-}
+    // all this funciton needs to do is emit FocusChangedSignal.  The code
+    // preceeding that determines which focus was selected from the iterator 
+    // parameter, does some safety checks, and disables UI sounds
 
-void ResourcePanel::SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected)
-{
-    FocusType focus;
-    switch (m_secondary_focus_drop->IteratorToIndex(selected)) {
-    case 0:
-        focus = FOCUS_BALANCED;
-        break;
-    case 1:
-        focus = FOCUS_FARMING;
-        break;
-    case 2:
-        focus = FOCUS_MINING;
-        break;
-    case 3:
-        focus = FOCUS_INDUSTRY;
-        break;
-    case 4:
-        focus = FOCUS_RESEARCH;
-        break;
-    case 5:
-        focus = FOCUS_TRADE;
-        break;
-    default:
-        throw std::invalid_argument("SecondaryFocusDropListSelectionChanged called with invalid cell/focus selection.");
-        break;
+    if (m_focus_drop->CurrentItem() == m_focus_drop->end()) {
+        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged passed end / invalid interator";
+        return;
     }
+
+    const UniverseObject* obj = GetObject(m_rescenter_id);
+    if (!obj)
+        obj = GetEmpireKnownObject(m_rescenter_id, HumanClientApp::GetApp()->EmpireID());
+    if (!obj) {
+        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged couldn't get object with id " << m_rescenter_id;
+        return;
+    }
+    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
+    if (!res) {
+        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged couldn't convert object with id " << m_rescenter_id << " to a ResourceCenter";
+        return;
+    }
+
+    int i = static_cast<int>(m_focus_drop->IteratorToIndex(selected));
+    if (i >= res->AvailableFoci().size() || i < 0) {
+        Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
+        return;
+    }
+
     Sound::TempUISoundDisabler sound_disabler;
-    SecondaryFocusChangedSignal(focus);
+    FocusChangedSignal(res->AvailableFoci().at(i));
 }
 
 

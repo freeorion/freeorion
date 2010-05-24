@@ -76,6 +76,7 @@ namespace FreeOrionPython {
 
             .value("maxfuel",           METER_MAX_FUEL)
             .value("maxshield",         METER_MAX_SHIELD)
+            .value("maxstructure",      METER_MAX_STRUCTURE)
             .value("maxdefense",        METER_MAX_DEFENSE)
 
             .value("population",        METER_POPULATION)
@@ -89,6 +90,7 @@ namespace FreeOrionPython {
 
             .value("fuel",              METER_FUEL)
             .value("shield",            METER_SHIELD)
+            .value("structure",         METER_STRUCTURE)
             .value("defense",           METER_DEFENSE)
 
             .value("supply",            METER_SUPPLY)
@@ -106,15 +108,6 @@ namespace FreeOrionPython {
             .value("antifighterdamage", METER_ANTI_FIGHTER_DAMAGE)
             .value("launchrate",        METER_LAUNCH_RATE)
             .value("fighterweaponrange",METER_FIGHTER_WEAPON_RANGE)
-        ;
-        enum_<FocusType>("focusType")
-            .value("invalid",       INVALID_FOCUS_TYPE)
-            .value("balanced",      FOCUS_BALANCED)
-            .value("farming",       FOCUS_FARMING)
-            .value("industry",      FOCUS_INDUSTRY)
-            .value("mining",        FOCUS_MINING)
-            .value("research",      FOCUS_RESEARCH)
-            .value("trade",         FOCUS_TRADE)
         ;
         enum_<CaptureResult>("captureResult")
             .value("capture",       CR_CAPTURE)

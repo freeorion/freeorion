@@ -334,7 +334,7 @@ class ChangeFocusOrder : public Order
 public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
-    ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary);
+    ChangeFocusOrder(int empire, int planet, const std::string& focus);
     //@}
 
     /** \name Accessors */ //@{
@@ -347,14 +347,12 @@ private:
      *    - the designated planet must exist, be owned by the issuing empire
      *
      *  Postconditions:
-     *    - the planet focus is changed which=0(primary),1(secondary)
-     *
+     *    - the planet focus is changed
      */
     virtual void ExecuteImpl() const;
 
-    int       m_planet;
-    FocusType m_focus;
-    bool      m_primary;
+    int         m_planet;
+    std::string m_focus;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -221,9 +221,6 @@ namespace ValueRef {
     std::string Constant<StarType>::Dump() const;
 
     template <>
-    std::string Constant<FocusType>::Dump() const;
-
-    template <>
     std::string Constant<double>::Dump() const;
 
     template <>
@@ -309,10 +306,6 @@ namespace ValueRef {
     template <>
     StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                       const boost::any& current_value) const;
-
-    template <>
-    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                        const boost::any& current_value) const;
 
     template <>
     double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,

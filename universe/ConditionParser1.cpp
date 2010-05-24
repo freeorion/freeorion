@@ -16,7 +16,6 @@ ParamLabel affiliation_label("affiliation");
 ParamLabel name_label("name");
 ParamLabel type_label("type");
 ParamLabel planetsize_label("size");
-ParamLabel focus_label("focus");
 ParamLabel environment_label("environment");
 ParamLabel probability_label("probability");
 ParamLabel distance_label("distance");
@@ -75,13 +74,6 @@ namespace {
             member2 type;
         };
 
-        struct FocusTypeClosure : boost::spirit::classic::closure<FocusTypeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::FocusType>*>, bool>
-        {
-            member1 this_;
-            member2 foci;
-            member3 primary;
-        };
-
         struct MeterValueClosure : boost::spirit::classic::closure<MeterValueClosure, Condition::ConditionBase*, MeterType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
@@ -108,7 +100,6 @@ namespace {
         typedef rule<Scanner, PlanetSizeClosure::context_t>         PlanetSizeRule;
         typedef rule<Scanner, PlanetEnvironmentClosure::context_t>  PlanetEnvironmentRule;
         typedef rule<Scanner, ObjectTypeClosure::context_t>         ObjectTypeRule;
-        typedef rule<Scanner, FocusTypeClosure::context_t>          FocusTypeRule;
         typedef rule<Scanner, MeterValueClosure::context_t>         MeterValueRule;
         typedef rule<Scanner, AndOrClosure::context_t>              AndOrRule;
         typedef rule<Scanner, NotClosure::context_t>                NotRule;
@@ -123,7 +114,7 @@ namespace {
         PlanetSizeRule          planet_size;
         PlanetEnvironmentRule   planet_environment;
         ObjectTypeRule          object_type;
-        FocusTypeRule           focus_type;
+        NameParamRule           focus_type;
         MeterValueRule          meter_value;
         AndOrRule               and_;
         AndOrRule               or_;
@@ -187,11 +178,9 @@ namespace {
             [object_type.this_ = new_<Condition::Type>(object_type.type)];
 
         focus_type =
-            ((str_p("primaryfocus")[focus_type.primary = val(true)] | str_p("secondaryfocus")[focus_type.primary = val(false)])
-             >> focus_label
-             >> (focustype_expr_p[push_back_(focus_type.foci, arg1)]
-                 | ('[' >> +(focustype_expr_p[push_back_(focus_type.foci, arg1)]) >> ']')))
-            [focus_type.this_ = new_<Condition::FocusType>(focus_type.foci, focus_type.primary)];
+            (str_p("focus")
+             >> type_label >> name_p[focus_type.name = arg1])
+            [focus_type.this_ = new_<Condition::FocusType>(focus_type.name)];
 
         meter_value =
            ((str_p("targetpopulation")[meter_value.meter =  val(METER_TARGET_POPULATION)]

@@ -13,6 +13,7 @@ class Empire;
 class Meter;
 class UniverseObject;
 
+
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (food, minerals, etc.).  Most
   * likely, such an object will also be a subclass of UniverseObject.
@@ -25,28 +26,28 @@ class ResourceCenter
 {
 public:
     /** \name Structors */ //@{
-    ResourceCenter();                           ///< default ctor
-    virtual ~ResourceCenter();                  ///< dtor
-    ResourceCenter(const ResourceCenter& rhs);  ///< copy ctor
+    ResourceCenter();                               ///< default ctor
+    virtual ~ResourceCenter();                      ///< dtor
+    ResourceCenter(const ResourceCenter& rhs);      ///< copy ctor
     //@}
 
     /** \name Accessors */ //@{
-    FocusType       PrimaryFocus() const     {return m_primary;}
-    FocusType       SecondaryFocus() const   {return m_secondary;}
+    const std::string&  Focus() const;              ///< current focus to which this ResourceCenter is set
+    virtual const std::vector<std::string>&
+                        AvailableFoci() const;      ///< focus settings available to this ResourceCenter
 
-    virtual double  CurrentMeterValue(MeterType type) const = 0;        ///< implementation should return the current value of the specified meter \a type
-    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+    virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should return the current value of the specified meter \a type
+    virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
-    mutable boost::signal<void ()> ResourceCenterChangedSignal;                 ///< the state changed signal object for this ResourceCenter
+    mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
     //@}
 
     /** \name Mutators */ //@{
     void            Copy(const ResourceCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void            SetPrimaryFocus(FocusType focus);
-    void            SetSecondaryFocus(FocusType focus);
+    void            SetFocus(const std::string& focus);
 
-    void            Reset();                                        /// Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
+    void            Reset();                                                ///< Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
     //@}
 
 protected:
@@ -60,8 +61,7 @@ protected:
 
 
 private:
-    FocusType  m_primary;
-    FocusType  m_secondary;
+    std::string m_focus;
 
     virtual Visibility      GetVisibility(int empire_id) const = 0;         ///< implementation should return the visibility of this ResourceCenter for the empire with the specified \a empire_id
     virtual const Meter*    GetMeter(MeterType type) const = 0;             ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object
@@ -78,8 +78,7 @@ private:
 template <class Archive>
 void ResourceCenter::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_primary)
-        & BOOST_SERIALIZATION_NVP(m_secondary);
+    ar  & BOOST_SERIALIZATION_NVP(m_focus);
 }
 
 #endif // _ResourceCenter_h_

@@ -4250,8 +4250,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
-        home_planet->SetPrimaryFocus(FOCUS_FARMING);
-        home_planet->SetSecondaryFocus(FOCUS_MINING);
+        home_planet->SetFocus("FOCUS_FARMING");
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
 
 

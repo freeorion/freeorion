@@ -254,7 +254,7 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
                 Star type = BlackHole
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             effects = SetTargetResearch Target.TargetResearch + 4
@@ -264,7 +264,7 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
                 Star type = Neutron
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             effects = SetTargetResearch Target.TargetResearch + 3
@@ -274,7 +274,7 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
                 Star type = [Blue White]
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             effects = SetTargetResearch Target.TargetResearch + 2
@@ -284,7 +284,7 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
                 Star type = [Red Orange Yellow]
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             effects = SetTargetResearch Target.TargetResearch + 1
@@ -346,7 +346,7 @@ Tech
                 And [
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Research
+                    Focus type = "FOCUS_RESEARCH"
                 ]
             activation = Source
             effects = SetTargetResearch value = Target.TargetResearch + 5
@@ -593,7 +593,7 @@ Tech
         EffectsGroup
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
-                    PrimaryFocus Farming
+                    Focus type = "FOCUS_FARMING"
             ]
             activation = Source
             effects = SetTargetFarming Target.TargetFarming + 5
@@ -699,7 +699,7 @@ Tech
                 And [
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     Industry low = 20 high = 999
                 ]
             activation = Source
@@ -929,37 +929,16 @@ Tech
         "GRO_PLANET_ECOL"
     ]
     unlock = []
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Mining
+                    Focus type = "FOCUS_MINING"
                     Planet environment = Good
                 ]
             activation = Source
             effects = SetTargetMining value = Target.TargetMining + 2
-
-        EffectsGroup
-            scope = And [
-                    OwnedExclusivelyBy TheEmpire Source.Owner
-                    PopulationCenter
-                    PrimaryFocus Balanced
-                    Planet environment = Good
-                ]
-            activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 1
-
-        EffectsGroup
-            scope = And [
-                    OwnedExclusivelyBy TheEmpire Source.Owner
-                    PopulationCenter
-                    SecondaryFocus Mining
-                    Planet environment = Good
-                ]
-            activation = Source
-            effects = SetTargetMining value = Target.TargetMining + 1
-    ]
     graphic = "icons/tech/environmentally_conscious_mining.png"
 
 Tech
@@ -1101,7 +1080,7 @@ Tech
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Mining
+                    Focus type = "FOCUS_MINING"
                     Planet type = [Barren Inferno]
                 ]
             activation = Source
@@ -1111,7 +1090,7 @@ Tech
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Mining
+                    Focus type = "FOCUS_MINING"
                     Planet type = [Desert Radiated Toxic]
                 ]
             activation = Source
@@ -1121,7 +1100,7 @@ Tech
             scope = And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Mining
+                    Focus type = "FOCUS_MINING"
                     Planet type = [Tundra Terran]
                 ]
             activation = Source
@@ -1145,7 +1124,7 @@ Tech
                 And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     Planet size = [Small Tiny]
                 ]
             activation = Source
@@ -1156,7 +1135,7 @@ Tech
                 And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     Planet size = Medium
                 ]
             activation = Source
@@ -1167,7 +1146,7 @@ Tech
                 And [
                     OwnedExclusivelyBy TheEmpire Source.Owner
                     PopulationCenter
-                    PrimaryFocus Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     Planet size = Large
                 ]
             activation = Source
@@ -1804,7 +1783,7 @@ Tech
                 And [
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Trade
+                    Focus type = "FOCUS_TRADE"
                 ]
             activation = Source
             effects = SetTargetTrade value = Target.TargetTrade + 3
@@ -1850,7 +1829,7 @@ Tech
                 And [
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     PopulationCenter
-                    PrimaryFocus focus = Trade
+                    Focus type = "FOCUS_TRADE"
                 ]
             activation = Source
             effects = [

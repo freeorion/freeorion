@@ -425,12 +425,11 @@ public:
 private:
     void                    DoLayout();
 
-    void                    SetPrimaryFocus  (FocusType focus); ///< set the primary focus of the planet to focus
-    void                    SetSecondaryFocus(FocusType focus); ///< set the secondary focus of the planet to focus
+    void                    SetFocus  (const std::string& focus);   ///< set the focus of the planet to \a focus
 
-    void                    ClickColonize();                    ///< called if colonize button is pressed
+    void                    ClickColonize();                        ///< called if colonize button is pressed
 
-    Planet*                 GetPlanet() const;                  ///< returns the planet with ID m_planet_id
+    Planet*                 GetPlanet() const;                      ///< returns the planet with ID m_planet_id
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
@@ -832,8 +831,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_resource_panel = new ResourcePanel(panel_width, m_planet_id);
     AttachChild(m_resource_panel);
     GG::Connect(m_resource_panel->ExpandCollapseSignal,         &SidePanel::PlanetPanel::DoLayout, this);
-    GG::Connect(m_resource_panel->PrimaryFocusChangedSignal,    &SidePanel::PlanetPanel::SetPrimaryFocus, this);
-    GG::Connect(m_resource_panel->SecondaryFocusChangedSignal,  &SidePanel::PlanetPanel::SetSecondaryFocus, this);
+    GG::Connect(m_resource_panel->FocusChangedSignal,           &SidePanel::PlanetPanel::SetFocus, this);
 
     m_military_panel = new MilitaryPanel(panel_width, m_planet_id);
     AttachChild(m_military_panel);
@@ -1059,16 +1057,10 @@ void SidePanel::PlanetPanel::Refresh()
     // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
 }
 
-void SidePanel::PlanetPanel::SetPrimaryFocus(FocusType focus)
+void SidePanel::PlanetPanel::SetFocus(const std::string& focus)
 {
     if (Planet* planet = GetPlanet())
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus, true)));
-}
-
-void SidePanel::PlanetPanel::SetSecondaryFocus(FocusType focus)
-{
-    if (Planet* planet = GetPlanet())
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus, false)));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus)));
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const

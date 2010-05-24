@@ -96,17 +96,15 @@ public:
     void            Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void            Refresh();                      ///< updates, redoes layout, resizes indicator
 
-    mutable boost::signal<void ()>          ExpandCollapseSignal;
-    mutable boost::signal<void (FocusType)> PrimaryFocusChangedSignal;
-    mutable boost::signal<void (FocusType)> SecondaryFocusChangedSignal;
+    mutable boost::signal<void ()>                  ExpandCollapseSignal;
+    mutable boost::signal<void (const std::string&)>FocusChangedSignal;
     //@}
 
 private:
     void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
     void            DoExpandCollapseLayout();       ///< resizes panel and positions widgets according to present collapsed / expanded status
 
-    void            PrimaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);     ///< called when droplist selection changes, emits PrimaryFocusChangedSignal
-    void            SecondaryFocusDropListSelectionChanged(GG::DropDownList::iterator selected);   ///< called when droplist selection changes, emits SecondaryFocusChangedSignal
+    void            FocusDropListSelectionChanged(GG::DropDownList::iterator selected); ///< called when droplist selection changes, emits FocusChangedSignal
 
     int                         m_rescenter_id;         ///< object id for the UniverseObject that is also a PopCenter which is being displayed in this panel
 
@@ -119,8 +117,7 @@ private:
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    CUIDropDownList*            m_primary_focus_drop;   ///< displays and allows selection of primary focus
-    CUIDropDownList*            m_secondary_focus_drop; ///< displays and allows selection of secondary focus
+    CUIDropDownList*            m_focus_drop;   ///< displays and allows selection of primary focus
     std::map<CUIDropDownList*, boost::signals::connection>
         m_drop_changed_connections;                     ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
 

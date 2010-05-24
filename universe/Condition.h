@@ -353,15 +353,13 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct Condition::FocusType : Condition::ConditionBase
 {
-    FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary);
-    virtual ~FocusType();
+    FocusType(const std::string& focus);
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
     virtual bool Match(const UniverseObject* source, const UniverseObject* target) const;
-    std::vector<const ValueRef::ValueRefBase< ::FocusType>*> m_foci;
-    bool m_primary;
+    const std::string   m_focus;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -761,8 +759,7 @@ template <class Archive>
 void Condition::FocusType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_foci)
-        & BOOST_SERIALIZATION_NVP(m_primary);
+        & BOOST_SERIALIZATION_NVP(m_focus);
 }
 
 template <class Archive>

@@ -11,24 +11,10 @@
 #include "System.h"
 #include "Building.h"
 
-#include <boost/lexical_cast.hpp>
-
 #include <stdexcept>
 
-using boost::lexical_cast;
-
-namespace {
-    const double PRIMARY_FOCUS_BONUS = 15.0;
-    const double PRIMARY_BALANCED_BONUS = 3.0;
-    const double SECONDARY_FOCUS_BONUS = 5.0;
-    const double SECONDARY_BALANCED_BONUS = 1.0;
-
-    const double METER_GROWTH_RATE = 1.0;
-}
-
 ResourceCenter::ResourceCenter() :
-    m_primary(INVALID_FOCUS_TYPE),
-    m_secondary(INVALID_FOCUS_TYPE)
+    m_focus("")
 {
     //Logger().debugStream() << "ResourceCenter::ResourceCenter()";
 }
@@ -37,8 +23,7 @@ ResourceCenter::~ResourceCenter()
 {}
 
 ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
-    m_primary(rhs.m_primary),
-    m_secondary(rhs.m_secondary)
+    m_focus(rhs.m_focus)
 {}
 
 void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
@@ -51,8 +36,7 @@ void ResourceCenter::Copy(const ResourceCenter* copied_object, Visibility vis)
     }
 
     if (vis == VIS_FULL_VISIBILITY) {
-        this->m_primary =   copied_object->m_primary;
-        this->m_secondary = copied_object->m_secondary;
+        this->m_focus = copied_object->m_focus;
     }
 }
 
@@ -71,8 +55,18 @@ void ResourceCenter::Init()
     AddMeter(METER_TARGET_RESEARCH);
     AddMeter(METER_TARGET_TRADE);
     AddMeter(METER_TARGET_CONSTRUCTION);
-    m_primary = INVALID_FOCUS_TYPE;
-    m_secondary = INVALID_FOCUS_TYPE;
+    m_focus.clear();
+}
+
+const std::string& ResourceCenter::Focus() const
+{
+    return m_focus;
+}
+
+const std::vector<std::string>& ResourceCenter::AvailableFoci() const
+{
+    static const std::vector<std::string> EMPTY_VEC;
+    return EMPTY_VEC;
 }
 
 double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
@@ -119,64 +113,45 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
         return current_meter_value;
 }
 
-void ResourceCenter::SetPrimaryFocus(FocusType focus)
+void ResourceCenter::SetFocus(const std::string& focus)
 {
-    m_primary = focus;
-    ResourceCenterChangedSignal();
-}
-
-void ResourceCenter::SetSecondaryFocus(FocusType focus)
-{
-    m_secondary = focus;
+    // TODO: verify validitly of focus?
+    m_focus = focus;
     ResourceCenterChangedSignal();
 }
 
 void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_TARGET_CONSTRUCTION) {
-        GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
-        GetMeter(METER_TARGET_CONSTRUCTION)->AddToCurrent(10.0);// TODO: replace with effect as part of species
-    }
-
     std::vector<MeterType> res_meter_types;
     res_meter_types.push_back(METER_TARGET_FARMING);
     res_meter_types.push_back(METER_TARGET_MINING);
     res_meter_types.push_back(METER_TARGET_INDUSTRY);
     res_meter_types.push_back(METER_TARGET_RESEARCH);
     res_meter_types.push_back(METER_TARGET_TRADE);
+    res_meter_types.push_back(METER_TARGET_CONSTRUCTION);
 
     // all meters matching parameter meter_type should be adjusted, depending on focus
+
+    // TODO: Remove this once species give focus-related bonuses
     for (unsigned int i = 0; i < res_meter_types.size(); ++i) {
         const MeterType CUR_METER_TYPE = res_meter_types[i];
 
         if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE) {
             Meter* meter = GetMeter(CUR_METER_TYPE);
             meter->ResetCurrent();
-
-            std::cout << "meter: " << CUR_METER_TYPE << " reset current: " << meter->Current() << std::endl;
-
-            if (m_primary == MeterToFocus(CUR_METER_TYPE))
-                meter->AddToCurrent(PRIMARY_FOCUS_BONUS);
-            else if (m_primary == FOCUS_BALANCED)
-                meter->AddToCurrent(PRIMARY_BALANCED_BONUS);
-
-            if (m_secondary == MeterToFocus(CUR_METER_TYPE))
-                meter->AddToCurrent(SECONDARY_FOCUS_BONUS);
-            else if (m_secondary == FOCUS_BALANCED)
-                meter->AddToCurrent(SECONDARY_BALANCED_BONUS);
-            std::cout << "meter: " << CUR_METER_TYPE << " after current: " << meter->Current() << std::endl;
+            meter->AddToCurrent(10.0);
         }
     }
 }
 
 void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()
 {
-    GetMeter(METER_CONSTRUCTION)->AddToCurrent(1.0);
     GetMeter(METER_FARMING)->AddToCurrent(1.0);
     GetMeter(METER_INDUSTRY)->AddToCurrent(1.0);
     GetMeter(METER_MINING)->AddToCurrent(1.0);
     GetMeter(METER_RESEARCH)->AddToCurrent(1.0);
     GetMeter(METER_TRADE)->AddToCurrent(1.0);
+    GetMeter(METER_CONSTRUCTION)->AddToCurrent(1.0);
 }
 
 void ResourceCenter::ResourceCenterClampMeters()
@@ -198,8 +173,7 @@ void ResourceCenter::ResourceCenterClampMeters()
 
 void ResourceCenter::Reset()
 {
-    m_primary = INVALID_FOCUS_TYPE;
-    m_secondary = INVALID_FOCUS_TYPE;
+    m_focus.clear();
 
     GetMeter(METER_FARMING)->Reset();
     GetMeter(METER_INDUSTRY)->Reset();

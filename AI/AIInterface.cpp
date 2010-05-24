@@ -478,7 +478,7 @@ namespace AIInterface {
         return 0;
     }
 
-    int IssueChangeFocusOrder(int planet_id, FocusType focus_type, bool primary) {
+    int IssueChangeFocusOrder(int planet_id, const std::string& focus) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         const ObjectMap& objects = universe.Objects();
         int empire_id = AIClientApp::GetApp()->EmpireID();
@@ -492,12 +492,12 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : empire does not own planet with passed planet_id";
             return 0;
         }
-        if (focus_type <= INVALID_FOCUS_TYPE || focus_type >= NUM_FOCI) {
+        if (false) {    // todo: verify that focus is valid for specified planet
             Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : invalid focus specified";
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(empire_id, planet_id, focus_type, primary)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(empire_id, planet_id, focus)));
 
         return 1;
     }

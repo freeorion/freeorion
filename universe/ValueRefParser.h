@@ -21,14 +21,13 @@ struct ValueRefRule
     typedef boost::spirit::classic::rule<Scanner, typename Closure::context_t> type;
 };
 
-typedef ValueRefRule<int>::type IntValueRefRule;
-typedef ValueRefRule<double>::type DoubleValueRefRule;
-typedef ValueRefRule<PlanetSize>::type PlanetSizeValueRefRule;
-typedef ValueRefRule<PlanetType>::type PlanetTypeValueRefRule;
-typedef ValueRefRule<PlanetEnvironment>::type PlanetEnvironmentValueRefRule;
-typedef ValueRefRule<UniverseObjectType>::type UniverseObjectTypeValueRefRule;
-typedef ValueRefRule<StarType>::type StarTypeValueRefRule;
-typedef ValueRefRule<FocusType>::type FocusTypeValueRefRule;
+typedef ValueRefRule<int>::type                 IntValueRefRule;
+typedef ValueRefRule<double>::type              DoubleValueRefRule;
+typedef ValueRefRule<PlanetSize>::type          PlanetSizeValueRefRule;
+typedef ValueRefRule<PlanetType>::type          PlanetTypeValueRefRule;
+typedef ValueRefRule<PlanetEnvironment>::type   PlanetEnvironmentValueRefRule;
+typedef ValueRefRule<UniverseObjectType>::type  UniverseObjectTypeValueRefRule;
+typedef ValueRefRule<StarType>::type            StarTypeValueRefRule;
 
 extern IntValueRefRule int_expr_p;
 extern DoubleValueRefRule double_expr_p;
@@ -37,6 +36,5 @@ extern PlanetTypeValueRefRule planettype_expr_p;
 extern PlanetEnvironmentValueRefRule planetenvironment_expr_p;
 extern UniverseObjectTypeValueRefRule universeobjecttype_expr_p;
 extern StarTypeValueRefRule startype_expr_p;
-extern FocusTypeValueRefRule focustype_expr_p;
 
 #endif // _ValueRefParser_h_

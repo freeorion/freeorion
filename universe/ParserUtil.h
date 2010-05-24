@@ -49,7 +49,6 @@ extern boost::spirit::classic::symbols<PlanetType>               planet_type_p;
 extern boost::spirit::classic::symbols<PlanetEnvironment>        planet_environment_type_p;
 extern boost::spirit::classic::symbols<UniverseObjectType>       universe_object_type_p;
 extern boost::spirit::classic::symbols<StarType>                 star_type_p;
-extern boost::spirit::classic::symbols<FocusType>                focus_type_p;
 extern boost::spirit::classic::symbols<EmpireAffiliationType>    affiliation_type_p;
 extern boost::spirit::classic::symbols<UnlockableItemType>       unlockable_item_type_p;
 extern boost::spirit::classic::symbols<TechType>                 tech_type_p;

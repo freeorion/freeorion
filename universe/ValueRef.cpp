@@ -155,21 +155,6 @@ namespace ValueRef {
     }
 
     template <>
-    std::string Constant<FocusType>::Dump() const
-    {
-        switch (m_value) {
-        case INVALID_FOCUS_TYPE:    return "Unknown";
-        case FOCUS_BALANCED:        return "Balanced";
-        case FOCUS_FARMING:         return "Farming";
-        case FOCUS_INDUSTRY:        return "Industry";
-        case FOCUS_MINING:          return "Mining";
-        case FOCUS_RESEARCH:        return "Research";
-        case FOCUS_TRADE:           return "Trade";
-        default:                    return "?";
-        }
-    }
-
-    template <>
     std::string Constant<int>::Dump() const
     {
         return Description();
@@ -297,27 +282,6 @@ namespace ValueRef {
                 retval = s->GetStarType();
         } else {
             throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");
-        }
-        return retval;
-    }
-
-    template <>
-    FocusType Variable<FocusType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                        const boost::any& current_value) const
-    {
-        FocusType retval = INVALID_FOCUS_TYPE;
-        std::string property_name = m_property_name.back();
-        IF_CURRENT_VALUE_ELSE(FocusType)
-        if (boost::iequals(property_name, "PrimaryFocus")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-            if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
-                retval = pc->PrimaryFocus();
-        } else if (boost::iequals(property_name, "SecondaryFocus")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
-            if (const ResourceCenter* pc = dynamic_cast<const ResourceCenter*>(object))
-                retval = pc->SecondaryFocus();
-        } else {
-            throw std::runtime_error("Attempted to read a non-FocusType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type FocusType.");
         }
         return retval;
     }

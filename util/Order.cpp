@@ -447,8 +447,7 @@ void FleetColonizeOrder::ServerExecute() const
 
     planet->Reset();
 
-    planet->SetPrimaryFocus(FOCUS_FARMING);
-    planet->SetSecondaryFocus(FOCUS_FARMING);
+    planet->SetFocus("FOCUS_FARMING");
 
     planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
     planet->GetMeter(METER_FARMING)->SetCurrent(10.0);
@@ -635,14 +634,13 @@ void DeleteFleetOrder::ExecuteImpl() const
 ChangeFocusOrder::ChangeFocusOrder() : 
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
-    m_focus(INVALID_FOCUS_TYPE)
+    m_focus()
 {}
 
-ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, FocusType focus, bool primary) : 
+ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& focus) : 
     Order(empire),
     m_planet(planet),
-    m_focus(focus),
-    m_primary(primary)
+    m_focus(focus)
 {}
 
 void ChangeFocusOrder::ExecuteImpl() const
@@ -661,7 +659,7 @@ void ChangeFocusOrder::ExecuteImpl() const
         return;
     }
 
-    m_primary ? planet->SetPrimaryFocus(m_focus) : planet->SetSecondaryFocus(m_focus);
+    planet->SetFocus(m_focus);
 
     Empire* empire = Empires().Lookup(EmpireID());
     empire->UpdateResearchQueue();

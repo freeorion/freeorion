@@ -13,6 +13,8 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include <boost/assign/list_of.hpp>
+
 namespace {
     // high tilt is arbitrarily taken to mean 35 degrees or more
     const double HIGH_TILT_THERSHOLD = 35.0;
@@ -30,6 +32,12 @@ namespace {
         }
         return 1.0;
     }
+
+    static const std::vector<std::string> FOCI = boost::assign::list_of("FOCUS_FARMING")
+                                                                       ("FOCUS_MINING")
+                                                                       ("FOCUS_INDUSTRY")
+                                                                       ("FOCUS_RESEARCH")
+                                                                       ("FOCUS_TRADE");
 }
 
 
@@ -253,6 +261,12 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
     default:
         return UniverseObject::NextTurnCurrentMeterValue(type);
     }
+}
+
+const std::vector<std::string>& Planet::AvailableFoci() const
+{
+    // TODO: Get available Focus settings from species?
+    return FOCI;
 }
 
 void Planet::SetType(PlanetType type)

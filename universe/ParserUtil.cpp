@@ -25,7 +25,6 @@ symbols<PlanetType>             planet_type_p;
 symbols<PlanetEnvironment>      planet_environment_type_p;
 symbols<UniverseObjectType>     universe_object_type_p;
 symbols<StarType>               star_type_p;
-symbols<FocusType>              focus_type_p;
 symbols<EmpireAffiliationType>  affiliation_type_p;
 symbols<UnlockableItemType>     unlockable_item_type_p;
 symbols<TechType>               tech_type_p;
@@ -101,15 +100,6 @@ namespace {
             ("red",         STAR_RED)
             ("neutron",     STAR_NEUTRON)
             ("blackhole",   STAR_BLACK);
-
-        focus_type_p.add
-            ("unknown",     INVALID_FOCUS_TYPE)
-            ("balanced",    FOCUS_BALANCED)
-            ("farming",     FOCUS_FARMING)
-            ("industry",    FOCUS_INDUSTRY)
-            ("mining",      FOCUS_MINING)
-            ("research",    FOCUS_RESEARCH)
-            ("trade",       FOCUS_TRADE);
 
         affiliation_type_p.add
             ("theempire",   AFFIL_SELF)

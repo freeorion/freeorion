@@ -120,6 +120,9 @@ public:
 
     virtual double              CurrentMeterValue(MeterType type) const;
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;
+
+    virtual const std::vector<std::string>&
+                                AvailableFoci() const;
     //@}
 
     /** \name Mutators */ //@{

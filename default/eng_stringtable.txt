@@ -1458,10 +1458,8 @@ Colonize (%1%)
 
 ## Resources Panel ##########
 
-RP_PRIMARY_FOCUS_TOOLTIP
-Primary Focus: %1%
-RP_SECONDARY_FOCUS_TOOLTIP
-Secondary Focus: %1%
+RP_FOCUS_TOOLTIP
+Focus: %1%
 
 ## Buildings Panel##########
 
@@ -2736,17 +2734,11 @@ DESC_PLANET_ENVIRONMENT
 DESC_PLANET_ENVIRONMENT_NOT
  that is not a %1% planet
 
-DESC_FOCUS_TYPE_PRIMARY
- that has primary focus %1%
+DESC_FOCUS_TYPE
+ that has focus %1%
 
-DESC_FOCUS_TYPE_PRIMARY_NOT
- that doesn't have primary focus %1%
-
-DESC_FOCUS_TYPE_SECONDARY
- that has secondary focus %1%
-
-DESC_FOCUS_TYPE_SECONDARY_NOT
- that doesn't have secondary focus %1%
+DESC_FOCUS_TYPE_NOT
+ that does not have focus %1%
 
 DESC_STAR_TYPE
  that is a system with a %1% star

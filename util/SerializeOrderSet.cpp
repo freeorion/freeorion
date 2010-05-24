@@ -91,8 +91,7 @@ void ChangeFocusOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_planet)
-        & BOOST_SERIALIZATION_NVP(m_focus)
-        & BOOST_SERIALIZATION_NVP(m_primary);
+        & BOOST_SERIALIZATION_NVP(m_focus);
 }
 
 template <class Archive>

@@ -117,11 +117,11 @@ BuildingType
     buildtime = 1
     maintenancecost = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = Source
             stackinggroup = "AUTOLAB_STACK_PRIMARY"
@@ -129,19 +129,6 @@ BuildingType
                 SetTargetResearch Value + 2
                 SetTargetHealth Value - 2
             ]
-
-         EffectsGroup
-            scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
-                SecondaryFocus Research
-            ]
-            activation = Source
-            stackinggroup = "AUTOLAB_STACK_SECONDARY"
-            effects = [
-                SetTargetResearch Value + 1
-                SetTargetHealth Value - 1
-            ]
-    ]            
     graphic = "icons/building/autolab_control_centre.png"
 
 BuildingType
@@ -151,25 +138,15 @@ BuildingType
     buildtime = 1
     maintenancecost = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Industry
+                Focus type = "FOCUS_INDUSTRY"
             ]
             activation = Source
             stackinggroup = "AUTOFACTORY_STACK_PRIMARY"
             effects = SetTargetIndustry Value + 2
-
-         EffectsGroup
-            scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
-                SecondaryFocus Industry
-            ]
-            activation = Source
-            stackinggroup = "AUTOFACTORY_STACK_SECONDARY"
-            effects = SetTargetIndustry Value + 1
-    ]            
     graphic = "icons/building/autofactory_control_centre.png"
 
 BuildingType
@@ -179,25 +156,15 @@ BuildingType
     buildtime = 1
     maintenancecost = 1
     location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = [
+    effectsgroups =
         EffectsGroup
             scope = And [
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Research
+                Focus type = "FOCUS_RESEARCH"
             ]
             activation = OwnerHasTech "LRN_THEOREM_PROVER"
             stackinggroup = "THEOREM_PROVER_STACK_PRIMARY"
             effects = SetTargetResearch Value + 5
-
-         EffectsGroup
-            scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
-                SecondaryFocus Research
-            ]
-            activation = OwnerHasTech "LRN_THEOREM_PROVER"
-            stackinggroup = "THEOREM_PROVER_STACK_SECONDARY"
-            effects = SetTargetResearch Value + 2
-    ]            
     graphic = ""
 
 
@@ -230,7 +197,7 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                PrimaryFocus Mining
+                Focus type = "FOCUS_MINING"
                 Planet type = [Barren Toxic Inferno Radiated]
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 WithinDistance distance = 100 condition = Source
@@ -261,7 +228,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Industry
+                Focus type = "FOCUS_INDUSTRY"
                 WithinDistance distance = 100 condition = Source
             ]
             activation = And [
@@ -274,7 +241,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Industry
+                Focus type = "FOCUS_INDUSTRY"
                 WithinDistance distance = 200 condition = Source
             ]
             activation = And [
@@ -288,7 +255,7 @@ BuildingType
             scope = And [
                 WithinDistance distance = 300 condition = Source
                 OwnedExclusivelyBy TheEmpire Source.Owner
-                PrimaryFocus Industry
+                Focus type = "FOCUS_INDUSTRY"
             ]
             activation = OwnerHasTech "PRO_INDUSTRY_CENTRE_III"
             stackinggroup = "INDUSTRY_CENTRE_STACK"
@@ -313,7 +280,7 @@ BuildingType
                     Contains Source
                     Contains Planet Asteroids
                 ]
-                PrimaryFocus Mining
+                Focus type = "FOCUS_MINING"
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE"
             stackinggroup = "ASTEROID_LOCAL_EFFECT"
@@ -325,7 +292,7 @@ BuildingType
                     Contains Source
                     Contains Planet Asteroids
                 ]
-                PrimaryFocus Mining
+                Focus type = "FOCUS_MINING"
             ]
             activation = OwnerHasTech "PRO_ASTEROID_MINE_II"
             stackinggroup = "ASTEROID_LOCAL_EFFECT"
@@ -381,7 +348,7 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    PrimaryFocus focus = Research
+                    Focus type = "FOCUS_RESEARCH"
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
@@ -479,10 +446,7 @@ BuildingType
         EffectsGroup
             scope =
                 And [
-                    Or [
-                        PrimaryFocus focus = Trade
-                        SecondaryFocus focus = Trade
-                    ]
+                    Focus type = "FOCUS_TRADE"
                     WithinStarlaneJumps jumps = 0 condition =
                         Source
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
@@ -508,7 +472,7 @@ BuildingType
                 And [
                     PopulationCenter
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    PrimaryFocus focus = Trade
+                    Focus type = "FOCUS_TRADE"
                 ]
             activation =
                 Source
@@ -551,7 +515,7 @@ BuildingType
                 Contains condition =
                     Source
             activation =
-                PrimaryFocus focus = Trade
+                Focus type = "FOCUS_TRADE"
             stackinggroup = "BLD_PARADISE_SELF_EFFECT"
             effects = [
                 SetTargetTrade Value + 5
@@ -607,7 +571,7 @@ BuildingType
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
-                PrimaryFocus focus = Research
+                Focus type = "FOCUS_RESEARCH"
             stackinggroup = "LIVING_PLANET_EMPIRE_EFFECT"
             effects =
                 SetTargetResearch Value + 2
@@ -648,7 +612,7 @@ BuildingType
                 Contains condition =
                     Source
             activation =
-                PrimaryFocus focus = Trade
+                Focus type = "FOCUS_TRADE"
             stackinggroup = "BLD_ORBITAL_GARDENS_EFFECT"
             effects = [
                 SetTargetTrade Value + 5
@@ -681,13 +645,10 @@ BuildingType
                 And [
                     PopulationCenter
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    Or [
-                        PrimaryFocus focus = Research
-                        SecondaryFocus focus = Research
-                    ]
+                    Focus type = "FOCUS_RESEARCH"
                 ]
             activation =
-                PrimaryFocus focus = Research
+                Focus type = "FOCUS_RESEARCH"
             stackinggroup = "BLD_ENCLAVE_VOID_EMPIRE_EFFECT"
             effects =
                 SetTargetResearch Value + 5
@@ -723,25 +684,18 @@ BuildingType
                 And [
                     PopulationCenter
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
-                    Or [
-                        PrimaryFocus focus = Research
-                        SecondaryFocus focus = Research
-                    ]
+                    Focus type = "FOCUS_RESEARCH"
                 ]
             activation =
-                PrimaryFocus focus = Research
+                Focus type = "FOCUS_RESEARCH"
             stackinggroup = "BLD_LOOKING_GLASS_RESEARCH_EFFECT"
             effects =
                 SetTargetResearch Value + 3
         EffectsGroup
             scope =
                 And [
-                    Contains condition =
-                        Source
-                    Or [
-                        PrimaryFocus focus = Trade
-                        SecondaryFocus focus = Trade
-                    ]
+                    Contains condition = Source
+                    Focus type = "FOCUS_TRADE"
                 ]
             activation =
                 Source
@@ -785,7 +739,7 @@ BuildingType
             scope =
                 And [
                     PopulationCenter
-                    PrimaryFocus focus = Research
+                    Focus type = "FOCUS_RESEARCH"
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                 ]
             activation =
@@ -807,7 +761,7 @@ BuildingType
             scope =
                 And [
                     PopulationCenter
-                    PrimaryFocus focus = Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     WithinStarlaneJumps jumps = 1 condition =
                         Source
@@ -831,7 +785,7 @@ BuildingType
             scope =
                 And [
                     PopulationCenter
-                    PrimaryFocus focus = Industry
+                    Focus type = "FOCUS_INDUSTRY"
                     OwnedExclusivelyBy affiliation = TheEmpire empire = Source.Owner
                     WithinDistance distance = 50 condition =
                         Source

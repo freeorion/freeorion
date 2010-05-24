@@ -947,72 +947,49 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase< ::FocusType>*>& foci, bool primary) :
-    m_foci(foci),
-    m_primary(primary)
+Condition::FocusType::FocusType(const std::string& focus) :
+    m_focus(focus)
 {}
-
-Condition::FocusType::~FocusType()
-{
-    for (unsigned int i = 0; i < m_foci.size(); ++i) {
-        delete m_foci[i];
-    }
-}
 
 std::string Condition::FocusType::Description(bool negated/* = false*/) const
 {
-    std::string values_str;
-    for (unsigned int i = 0; i < m_foci.size(); ++i) {
-        values_str += ValueRef::ConstantExpr(m_foci[i]) ? UserString(lexical_cast<std::string>(m_foci[i]->Eval(0, 0, boost::any()))) : m_foci[i]->Description();
-        if (2 <= m_foci.size() && i < m_foci.size() - 2) {
-            values_str += ", ";
-        } else if (i == m_foci.size() - 2) {
-            values_str += m_foci.size() < 3 ? " " : ", ";
-            values_str += UserString("OR");
-            values_str += " ";
-        }
-    }
-    std::string description_str = m_primary ? "DESC_FOCUS_TYPE_PRIMARY" : "DESC_FOCUS_TYPE_SECONDARY";
+    std::string description_str = "DESC_FOCUS_TYPE";
     if (negated)
         description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str)) % values_str);
+
+    std::string focus_name = UserString(m_focus);
+
+    return str(FlexibleFormat(UserString(description_str)) % focus_name);
 }
 
 std::string Condition::FocusType::Dump() const
 {
-    std::string retval = DumpIndent() + (m_primary ? "Primary" : "Secondary");
-    retval += "Focus focus = ";
-    if (m_foci.size() == 1) {
-        retval += m_foci[0]->Dump() + "\n";
-    } else {
-        retval += "[ ";
-        for (unsigned int i = 0; i < m_foci.size(); ++i) {
-            retval += m_foci[i]->Dump() + " ";
-        }
-        retval += "]\n";
-    }
+    std::string retval = DumpIndent();
+    retval += "Focus type = \"" + m_focus + "\"\n";
     return retval;
 }
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    const ResourceCenter* prod_center = dynamic_cast<const ResourceCenter*>(target);
-    const ::Building* building = 0;
-    if (!prod_center && (building = universe_object_cast<const ::Building*>(target))) {
+
+    // first check if target is a resource center.  if so, check its focus directly
+    const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(target);
+    if (res_center)
+        return (m_focus == res_center->Focus());
+
+    // if target isn't a resource center, check if it is a building, and if so, check the building's planet's focus
+    const ::Building* building = universe_object_cast<const ::Building*>(target);
+    if (building) {
         const Planet* planet = objects.Object<Planet>(building->PlanetID());
         if (!planet) {
             Logger().errorStream() << "Condition::FocusType::Match couldn't find a planet with id " << building->PlanetID();
             return false;
         }
-        prod_center = static_cast<const ResourceCenter*>(planet);
+        return (m_focus == planet->Focus());
     }
-    if (prod_center) {
-        for (unsigned int i = 0; i < m_foci.size(); ++i) {
-            if (m_foci[i]->Eval(source, target, boost::any()) == (m_primary ? prod_center->PrimaryFocus() : prod_center->SecondaryFocus()))
-                return true;
-        }
-    }
+
+    // target is neither a resource center nor a building.
     return false;
 }
 
