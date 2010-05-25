@@ -556,48 +556,49 @@ namespace {
 
 
             // design name and statistic icons
-            if (ship) {
-                if (const ShipDesign* design = ship->Design()) {
-                    m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
-                                                             design->Name(), ClientUI::GetFont(),
-                                                             ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
-                    AttachChild(m_design_name_text);
-                }
+            if (!ship)
+                return;
+
+            if (const ShipDesign* design = ship->Design()) {
+                m_design_name_text = new GG::TextControl(GG::X(Value(h)), GG::Y0, GG::X1, LabelHeight(),
+                                                         design->Name(), ClientUI::GetFont(),
+                                                         ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
+                AttachChild(m_design_name_text);
+            }
 
 
-                int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+            int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
 
-                // meter stat icons
-                std::vector<MeterType> meters;
-                meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
-                meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
+            // meter stat icons
+            std::vector<MeterType> meters;
+            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
+            meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
 
-                for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
-                    StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                            ClientUI::MeterIcon(*it), 0, 0, false);
-                    m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
-                    AttachChild(icon);
-                    icon->SetBrowseModeTime(tooltip_delay);
-                }
-
-
-                // speed stat icon
+            for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
                 StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                        SpeedIcon(), 0, 0, false);
-                m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
+                                                        ClientUI::MeterIcon(*it), 0, 0, false);
+                m_stat_icons.push_back(std::make_pair(MeterStatString(*it), icon));
                 AttachChild(icon);
                 icon->SetBrowseModeTime(tooltip_delay);
-
-
-                // bookkeeping
-                m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-                if (Fleet* fleet = GetObject<Fleet>(ship->FleetID()))
-                    m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
-
-                Refresh();
             }
+
+
+            // speed stat icon
+            StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                                    SpeedIcon(), 0, 0, false);
+            m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
+            AttachChild(icon);
+            icon->SetBrowseModeTime(tooltip_delay);
+
+
+            // bookkeeping
+            m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+            if (Fleet* fleet = GetObject<Fleet>(ship->FleetID()))
+                m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
+
+            Refresh();
         }
 
         ~ShipDataPanel() {
@@ -756,16 +757,16 @@ namespace {
 
         double StatValue(const std::string& stat_name) const {
             if (const Ship* ship = GetObject<Ship>(m_ship_id)) {
-                if (stat_name == SPEED_STAT_STRING) {
+                if (stat_name == SPEED_STAT_STRING)
                     return ship->Speed();
-                } else {
-                    MeterType meter_type = MeterTypeFromStatString(stat_name);
-                    //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
-                    if (ship->UniverseObject::GetMeter(meter_type)) {
-                        //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
-                        return ship->CurrentMeterValue(meter_type);
-                    }
+
+                MeterType meter_type = MeterTypeFromStatString(stat_name);
+                //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
+                if (ship->UniverseObject::GetMeter(meter_type)) {
+                    //std::cout << " ... ship has meter! returning meter points value " << ship->CurrentMeterValue(meter_type) << std::endl;
+                    return ship->CurrentMeterValue(meter_type);
                 }
+                Logger().errorStream() << "ShipDataPanel::StatValue couldn't get stat of name: " << stat_name;
             }
             return 0.0;
         }

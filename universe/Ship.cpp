@@ -46,8 +46,6 @@ Ship::Ship(int empire_id, int design_id) :
     AddMeter(METER_SHIELD);
     AddMeter(METER_MAX_SHIELD);
     AddMeter(METER_DETECTION);
-    AddMeter(METER_HEALTH);
-    AddMeter(METER_TARGET_HEALTH);
     AddMeter(METER_STRUCTURE);
     AddMeter(METER_MAX_STRUCTURE);
     AddMeter(METER_BATTLE_SPEED);
@@ -80,7 +78,7 @@ Ship::Ship(int empire_id, int design_id) :
                 m_part_meters[std::make_pair(METER_RANGE,               part->Name())];
                 m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
                 m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
-                m_part_meters[std::make_pair(METER_HEALTH,              part->Name())];
+                m_part_meters[std::make_pair(METER_STRUCTURE,           part->Name())];
                 m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
                 break;
             }
@@ -95,7 +93,7 @@ Ship::Ship(int empire_id, int design_id) :
                 m_part_meters[std::make_pair(METER_FIGHTER_WEAPON_RANGE,part->Name())];
                 m_part_meters[std::make_pair(METER_SPEED,               part->Name())];
                 m_part_meters[std::make_pair(METER_STEALTH,             part->Name())];
-                m_part_meters[std::make_pair(METER_HEALTH,              part->Name())];
+                m_part_meters[std::make_pair(METER_STRUCTURE,           part->Name())];
                 m_part_meters[std::make_pair(METER_DETECTION,           part->Name())];
                 m_part_meters[std::make_pair(METER_CAPACITY,            part->Name())];
                 break;
@@ -218,9 +216,15 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::NextTurnCurrentMeterValue(MeterType type) const {
+
+    if (type == INVALID_METER_TYPE || type == METER_FUEL) {
+        // todo: consider fleet movement or being stationary, which may parly replenish fuel
+        // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
+    } else if (type == INVALID_METER_TYPE || type == METER_SUPPLY) {
+        // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
+    }
+
     return UniverseObject::NextTurnCurrentMeterValue(type);
-    // todo: consider fleet movement or being stationary, which may replenish ship fuel
-    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
 }
 
 bool Ship::OrderedScrapped() const
@@ -326,9 +330,6 @@ void Ship::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_T
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_STRUCTURE)
         UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_TARGET_HEALTH)
-        UniverseObject::GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
-
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_DETECTION)
         UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_BATTLE_SPEED)
@@ -354,8 +355,6 @@ void Ship::ClampMeters()
     UniverseObject::GetMeter(METER_STRUCTURE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_STRUCTURE)->Current());
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_HEALTH)->ClampCurrentToRange();
-    UniverseObject::GetMeter(METER_TARGET_HEALTH)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_STARLANE_SPEED)->ClampCurrentToRange();
 

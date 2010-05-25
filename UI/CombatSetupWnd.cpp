@@ -90,12 +90,12 @@ namespace {
 
             // types of meters to show stat values of
             std::vector<MeterType> meters;
-            meters.push_back(METER_HEALTH);     meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
+            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
             meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
 
             // types of meters to pair with shown stat values when generating tooltips (for max or target meter values)
             std::vector<MeterType> associated_meters;
-            meters.push_back(METER_TARGET_HEALTH);  meters.push_back(METER_MAX_FUEL);   meters.push_back(INVALID_METER_TYPE);
+            meters.push_back(METER_MAX_STRUCTURE);  meters.push_back(METER_MAX_FUEL);   meters.push_back(INVALID_METER_TYPE);
             meters.push_back(INVALID_METER_TYPE);   meters.push_back(METER_MAX_SHIELD);
 
 

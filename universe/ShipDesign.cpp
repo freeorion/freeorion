@@ -462,7 +462,7 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_RANGE,                  m_name, stats.m_range));
         m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
         m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_structure));
+        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure));
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
@@ -474,7 +474,7 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_FIGHTER_WEAPON_RANGE,   m_name, stats.m_fighter_weapon_range));
         m_effects.push_back(IncreaseMeter(METER_SPEED,                  m_name, stats.m_speed));
         m_effects.push_back(IncreaseMeter(METER_STEALTH,                m_name, stats.m_stealth));
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,          m_name, stats.m_structure));
+        m_effects.push_back(IncreaseMeter(METER_STRUCTURE,              m_name, stats.m_structure));    // not METER_MAX_STRUCTURE because this stat sets the initial/max structure of battle-spawned missiles, but doesn't need to track a separate max and actual value itself
         m_effects.push_back(IncreaseMeter(METER_DETECTION,              m_name, stats.m_detection));
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
