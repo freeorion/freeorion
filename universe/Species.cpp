@@ -2,6 +2,7 @@
 
 #include "ParserUtil.h"
 #include "Effect.h"
+#include "Condition.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
 
@@ -32,16 +33,55 @@ namespace {
 
 
 /////////////////////////////////////////////////
+// FocusType                                   //
+/////////////////////////////////////////////////
+FocusType::FocusType() :
+    m_name(),
+    m_description(),
+    m_location(),
+    m_graphic()
+{}
+
+FocusType::FocusType(const std::string& name, const std::string& description,
+                     const Condition::ConditionBase* location, const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_location(location),
+    m_graphic(graphic)
+{}
+
+const std::string& FocusType::Name() const {
+    return m_name;
+}
+
+const std::string& FocusType::Description() const {
+    return m_description;
+}
+
+const Condition::ConditionBase* FocusType::Location() const {
+    return m_location.get();
+}
+
+const std::string& FocusType::Graphic() const {
+    return m_graphic;
+}
+
+/////////////////////////////////////////////////
 // Species                                     //
 /////////////////////////////////////////////////
 Species::Species(const std::string& name, const std::string& description,
-                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+                 const std::vector<FocusType>& foci,
+                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
+    m_foci(),
     m_effects(effects),
     m_graphic(graphic)
-{}
+{
+    for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it)
+        m_foci[it->Name()] = *it;
+}
 
 const std::string& Species::Name() const {
     return m_name;
@@ -56,6 +96,14 @@ std::string Species::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    if (m_foci.size() == 1) {
+        retval += DumpIndent() + "foci =\n";
+        //...
+    } else {
+        retval += DumpIndent() + "foci = [\n";
+        //...
+        retval += DumpIndent() + "]\n";
+    }
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;
@@ -73,6 +121,11 @@ std::string Species::Dump() const {
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
+}
+
+const std::map<std::string, FocusType>& Species::Foci() const
+{
+    return m_foci;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Species::Effects() const {

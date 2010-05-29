@@ -96,9 +96,6 @@ public:
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
-    void                    AddShips(const std::vector<int>& ships);        ///< adds the ships with the IDs stored in \a ships to the fleet
-    std::vector<int>        RemoveShips(const std::vector<int>& ships);     ///< removes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
-    std::vector<int>        DeleteShips(const std::vector<int>& ships);     ///< removes and deletes the ships with the IDs stored in \a ships from the fleet, and returns any IDs not found in the fleet
 
     iterator                begin();                                        ///< returns the begin iterator for the ships in the fleet
     iterator                end();                                          ///< returns the end iterator for the ships in the fleet

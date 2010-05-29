@@ -33,6 +33,7 @@ namespace Effect {
 }
 class Special;
 class Species;
+class FocusType;
 class BuildingType;
 class Tech;
 class ShipDesign;
@@ -128,14 +129,16 @@ struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*
 };
 
 struct SpeciesClosure : boost::spirit::classic::closure<SpeciesClosure, Species*, std::string, std::string,
+                                                        std::vector<FocusType>,
                                                         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                         std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
-    member4 effects_groups;
-    member5 graphic;
+    member4 foci;
+    member5 effects_groups;
+    member6 graphic;
 };
 
 struct CategoryClosure : boost::spirit::classic::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>

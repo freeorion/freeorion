@@ -32,7 +32,6 @@ namespace {
                     return true;
         return false;
     }
-
 }
 
 // static(s)
@@ -676,33 +675,6 @@ void Fleet::SetRoute(const std::list<int>& route)
     StateChangedSignal();
 }
 
-void Fleet::AddShips(const std::vector<int>& ships)
-{
-    for (unsigned int i = 0; i < ships.size(); ++i) {
-        int ship_id = ships[i];
-
-        if (this->Contains(ship_id)) {
-            Logger().debugStream() << "Fleet::AddShip this fleet " << this->Name() << " already contained ship " << ship_id;
-            continue;
-        }
-
-        if (Ship* s = GetObject<Ship>(ship_id)) {
-            if (System* system = GetObject<System>(this->SystemID())) {
-                system->Insert(s);
-            } else {
-                s->MoveTo(X(), Y());
-                s->SetSystem(SystemID());
-            }
-            s->SetFleetID(ID());
-            m_ships.insert(ship_id);
-        } else {
-            Logger().errorStream() << "Fleet::AddShips() : Attempted to add an id (" << ship_id << ") of a non-ship object to a fleet.";
-        }
-    }
-    RecalculateFleetSpeed();
-    StateChangedSignal();
-}
-
 void Fleet::AddShip(int ship_id)
 {
     if (this->Contains(ship_id)) {
@@ -725,38 +697,6 @@ void Fleet::AddShip(int ship_id)
     }
     RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
     StateChangedSignal();
-}
-
-std::vector<int> Fleet::RemoveShips(const std::vector<int>& ships)
-{
-    //std::cout << "Fleet::RemoveShips" << std::endl;
-    std::vector<int> retval;
-    for (unsigned int i = 0; i < ships.size(); ++i) {
-        bool found = m_ships.find(ships[i]) != m_ships.end();
-        m_ships.erase(ships[i]);
-        if (!found)
-            retval.push_back(ships[i]);
-    }
-    RecalculateFleetSpeed();
-    StateChangedSignal();
-    return retval;
-}
-
-std::vector<int> Fleet::DeleteShips(const std::vector<int>& ships)
-{
-    std::vector<int> retval;
-    for (unsigned int i = 0; i < ships.size(); ++i) {
-        bool found = m_ships.find(ships[i]) != m_ships.end();
-        m_ships.erase(ships[i]);
-        if (!found) {
-            retval.push_back(ships[i]);
-        } else {
-            GetUniverse().Delete(ships[i]);
-        }
-    }
-    RecalculateFleetSpeed();
-    StateChangedSignal();
-    return retval;
 }
 
 bool Fleet::RemoveShip(int ship)

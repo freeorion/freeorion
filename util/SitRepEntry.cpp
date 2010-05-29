@@ -33,7 +33,7 @@ const std::string& SitRepEntry::SitRepTemplateString(EntryType entry_type)
 
 const std::string& SitRepEntry::TemplateString() const
 {
-    std::cout << "SitRepEntry::TemplateString: " << SitRepTemplateString(m_type) << std::endl;
+    //std::cout << "SitRepEntry::TemplateString: " << SitRepTemplateString(m_type) << std::endl;
     return SitRepTemplateString(m_type);
 }
 

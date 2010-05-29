@@ -1,6 +1,50 @@
 Species
     name = "SP_HUMAN"
     description = "SP_HUMAN_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/meter/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Planet
+            graphic = "icons/meter/mining.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Planet
+            graphic = "icons/meter/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/meter/research.png"
+
+        Focus
+            name = "FOCUS_TRADE"
+            description = "FOCUS_TRADE_DESC"
+            location = Planet
+            graphic = "icons/meter/trade.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/meter/supply.png"
+
+        Focus
+            name = "FOCUS_ADMIN"
+            description = "FOCUS_ADMIN_DESC"
+            location = WithinStarlaneJumps jumps = 3 condition =
+                Building name = "BLD_IMPERIAL_PALACE"
+            graphic = "icons/meter/pop.png"
+    ]
     effectsgroups = [
         EffectsGroup
             scope = Source

@@ -59,12 +59,29 @@ struct ShipSlotTypeVecClosure : boost::spirit::classic::closure<ShipSlotTypeVecC
     member1 this_;
 };
 
+struct FocusTypeClosure : boost::spirit::classic::closure<FocusTypeClosure, FocusType, std::string, std::string,
+                                                          Condition::ConditionBase*, std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 location;
+    member5 graphic;
+};
+
+struct FocusTypeVecClosure : boost::spirit::classic::closure<FocusTypeVecClosure, std::vector<FocusType> >
+{
+    member1 this_;
+};
+
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
     rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
     rule<Scanner, SlotClosure::context_t>               slot_p;
     rule<Scanner, SlotVecClosure::context_t>            slot_vec_p;
     rule<Scanner, ShipSlotTypeVecClosure::context_t>    ship_slot_type_vec_p;
+    rule<Scanner, FocusTypeClosure::context_t>          focus_type_p;
+    rule<Scanner, FocusTypeVecClosure::context_t>       focus_type_vec_p;
 
     ParamLabel scope_label("scope");
     ParamLabel activation_label("activation");
@@ -85,6 +102,7 @@ namespace {
     ParamLabel prerequisites_label("prerequisites");
     ParamLabel unlock_label("unlock");
     ParamLabel type_label("type");
+    ParamLabel foci_label("foci");
     ParamLabel location_label("location");
     ParamLabel partclass_label("class");
     ParamLabel speed_label("speed");
@@ -157,14 +175,28 @@ namespace {
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
                                              special_p.graphic)];
 
+        focus_type_p =
+            (str_p("focus")
+             >> name_label >>               name_p[focus_type_p.name = arg1]
+             >> description_label >>        name_p[focus_type_p.description = arg1]
+             >> location_label >>           condition_p[focus_type_p.location = arg1]
+             >> graphic_label >>            file_name_p[focus_type_p.graphic = arg1])
+            [focus_type_p.this_ = construct_<FocusType>(focus_type_p.name, focus_type_p.description, focus_type_p.location,
+                                                        focus_type_p.graphic)];
+
+        focus_type_vec_p =
+            focus_type_p[push_back_(focus_type_vec_p.this_, arg1)]
+            | ('[' >> +(focus_type_p[push_back_(focus_type_vec_p.this_, arg1)]) >> ']');
+
         species_p =
             (str_p("species")
              >> name_label >>               name_p[species_p.name = arg1]
              >> description_label >>        name_p[species_p.description = arg1]
+             >> foci_label >>               focus_type_vec_p[species_p.foci = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[species_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[species_p.graphic = arg1])
-            [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.effects_groups,
-                                             species_p.graphic)];
+            [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.foci,
+                                             species_p.effects_groups, species_p.graphic)];
 
         item_spec_p =
             (str_p("item")

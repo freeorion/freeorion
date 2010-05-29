@@ -9,9 +9,43 @@
 #include <vector>
 #include <map>
 
+namespace Condition {
+    struct ConditionBase;
+}
 namespace Effect {
     class EffectsGroup;
+    class EffectBase;
 }
+
+/** A setting that a ResourceCenter can be assigned to influence what it
+  * produces.  Doesn't directly affect the ResourceCenter, but effectsgroups
+  * can use activation or scope conditions that check whether a potential
+  * target has a particular focus.  By this method, techs or buildings or
+  * species can act on planets or other ResourceCenters depending what their
+  * focus setting is. */
+class FocusType
+{
+public:
+    /** \name Structors */ //@{
+    /** default ctor */
+    FocusType();
+    /** basic ctor */
+    FocusType(const std::string& name, const std::string& description, const Condition::ConditionBase* location, const std::string& graphic);
+    //@}
+
+    /** \name Accessors */ //@{
+    const std::string&              Name() const;       ///< returns the name for this focus type
+    const std::string&              Description() const;///< returns a text description of this focus type
+    const Condition::ConditionBase* Location() const;   ///< returns the condition that determines whether an UniverseObject can use this FocusType
+    const std::string&              Graphic() const;    ///< returns the name of the grapic file for this focus type
+    //@}
+
+private:
+    std::string                                         m_name;
+    std::string                                         m_description;
+    boost::shared_ptr<const Condition::ConditionBase>   m_location;
+    std::string                                         m_graphic;
+};
 
 /** A predefined type of population that can exist on a PopulationCenter.
   * Species have associated sets of EffectsGroups, and various other 
@@ -24,25 +58,29 @@ public:
     /** \name Structors */ //@{
     /** basic ctor */
     Species(const std::string& name, const std::string& description,
-            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+            const std::vector<FocusType>& foci,
+            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
             const std::string& graphic);
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&          Name() const;               ///< returns the unique name for this type of species
-    const std::string&          Description() const;        ///< returns a text description of this type of species
-    std::string                 Dump() const;               ///< returns a data file format representation of this object
+    const std::string&  Name() const;       ///< returns the unique name for this type of species
+    const std::string&  Description() const;///< returns a text description of this type of species
+    std::string         Dump() const;       ///< returns a data file format representation of this object
+    const std::map<std::string, FocusType>&
+                        Foci() const;       ///< returns the focus types this species can use, indexed by name
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                Effects() const;            ///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    const std::string&          Graphic() const;            ///< returns the name of the grapic file for this species
+                        Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    const std::string&  Graphic() const;    ///< returns the name of the grapic file for this species
     //@}
 
 private:
-    std::string          m_name;
-    std::string          m_description;
+    std::string                         m_name;
+    std::string                         m_description;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                         m_effects;
-    std::string          m_graphic;
+                                        m_effects;
+    std::map<std::string, FocusType>    m_foci;
+    std::string                         m_graphic;
 
     friend class boost::serialization::access;
     template <class Archive>
