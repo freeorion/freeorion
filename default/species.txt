@@ -37,13 +37,6 @@ Species
             description = "FOCUS_LOGISTICS_DESC"
             location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
             graphic = "icons/meter/supply.png"
-
-        Focus
-            name = "FOCUS_ADMIN"
-            description = "FOCUS_ADMIN_DESC"
-            location = WithinStarlaneJumps jumps = 3 condition =
-                Building name = "BLD_IMPERIAL_PALACE"
-            graphic = "icons/meter/pop.png"
     ]
     effectsgroups = [
         EffectsGroup

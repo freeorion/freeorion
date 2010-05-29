@@ -13,6 +13,10 @@
 
 #include <stdexcept>
 
+namespace {
+    static const std::string EMPTY_STRING;
+}
+
 ResourceCenter::ResourceCenter() :
     m_focus("")
 {
@@ -63,10 +67,14 @@ const std::string& ResourceCenter::Focus() const
     return m_focus;
 }
 
-const std::vector<std::string>& ResourceCenter::AvailableFoci() const
+std::vector<std::string> ResourceCenter::AvailableFoci() const
 {
-    static const std::vector<std::string> EMPTY_VEC;
-    return EMPTY_VEC;
+    return std::vector<std::string>();
+}
+
+const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
+{
+    return EMPTY_STRING;
 }
 
 double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const

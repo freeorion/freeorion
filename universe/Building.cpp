@@ -226,6 +226,10 @@ std::string BuildingType::Dump() const
     retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_build_cost) + "\n";
     retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_build_time) + "\n";
     retval += DumpIndent() + "maintenancecost = " + lexical_cast<std::string>(m_maintenance_cost) + "\n";
+    retval += DumpIndent() + "location = \n";
+    ++g_indent;
+    retval += m_location->Dump();
+    --g_indent;
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;
@@ -297,11 +301,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     UniverseObject* source = objects.Object(empire->CapitolID());
     if (!source) return false;
 
-    locations.insert(loc);
-
-    m_location->Eval(source, locations, non_locations, Condition::TARGETS);
-
-    return !(locations.empty());
+    return m_location->Match(source, source);
 }
 
 CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,

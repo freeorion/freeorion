@@ -66,6 +66,20 @@ const std::string& FocusType::Graphic() const {
     return m_graphic;
 }
 
+std::string FocusType::Dump() const {
+    std::string retval = DumpIndent() + "FocusType\n";
+    ++g_indent;
+    retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "location = \n";
+    ++g_indent;
+    retval += m_location->Dump();
+    --g_indent;
+    retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
+    --g_indent;
+    return retval;
+}
+
 /////////////////////////////////////////////////
 // Species                                     //
 /////////////////////////////////////////////////
@@ -75,13 +89,10 @@ Species::Species(const std::string& name, const std::string& description,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_foci(),
+    m_foci(foci),
     m_effects(effects),
     m_graphic(graphic)
-{
-    for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it)
-        m_foci[it->Name()] = *it;
-}
+{}
 
 const std::string& Species::Name() const {
     return m_name;
@@ -98,10 +109,14 @@ std::string Species::Dump() const {
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     if (m_foci.size() == 1) {
         retval += DumpIndent() + "foci =\n";
-        //...
+        m_foci.begin()->Dump();
     } else {
         retval += DumpIndent() + "foci = [\n";
-        //...
+        ++g_indent;
+        for (std::vector<FocusType>::const_iterator it = m_foci.begin(); it != m_foci.end(); ++it) {
+            retval += it->Dump();
+        }
+        --g_indent;
         retval += DumpIndent() + "]\n";
     }
     if (m_effects.size() == 1) {
@@ -123,7 +138,7 @@ std::string Species::Dump() const {
     return retval;
 }
 
-const std::map<std::string, FocusType>& Species::Foci() const
+const std::vector<FocusType>& Species::Foci() const
 {
     return m_foci;
 }

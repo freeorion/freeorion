@@ -14,7 +14,6 @@ namespace Condition {
 }
 namespace Effect {
     class EffectsGroup;
-    class EffectBase;
 }
 
 /** A setting that a ResourceCenter can be assigned to influence what it
@@ -38,6 +37,7 @@ public:
     const std::string&              Description() const;///< returns a text description of this focus type
     const Condition::ConditionBase* Location() const;   ///< returns the condition that determines whether an UniverseObject can use this FocusType
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this focus type
+    std::string                     Dump() const;       ///< returns a data file format representation of this object
     //@}
 
 private:
@@ -64,23 +64,22 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Name() const;       ///< returns the unique name for this type of species
-    const std::string&  Description() const;///< returns a text description of this type of species
-    std::string         Dump() const;       ///< returns a data file format representation of this object
-    const std::map<std::string, FocusType>&
-                        Foci() const;       ///< returns the focus types this species can use, indexed by name
+    const std::string&              Name() const;       ///< returns the unique name for this type of species
+    const std::string&              Description() const;///< returns a text description of this type of species
+    std::string                     Dump() const;       ///< returns a data file format representation of this object
+    const std::vector<FocusType>&   Foci() const;       ///< returns the focus types this species can use, indexed by name
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                        Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    const std::string&  Graphic() const;    ///< returns the name of the grapic file for this species
+                                    Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
     //@}
 
 private:
-    std::string                         m_name;
-    std::string                         m_description;
+    std::string             m_name;
+    std::string             m_description;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                                        m_effects;
-    std::map<std::string, FocusType>    m_foci;
-    std::string                         m_graphic;
+                            m_effects;
+    std::vector<FocusType>  m_foci;
+    std::string             m_graphic;
 
     friend class boost::serialization::access;
     template <class Archive>

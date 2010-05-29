@@ -5,6 +5,8 @@
 #include "Ship.h"
 #include "System.h"
 #include "Predicates.h"
+#include "Species.h"
+#include "Condition.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -33,11 +35,7 @@ namespace {
         return 1.0;
     }
 
-    static const std::vector<std::string> FOCI = boost::assign::list_of("FOCUS_FARMING")
-                                                                       ("FOCUS_MINING")
-                                                                       ("FOCUS_INDUSTRY")
-                                                                       ("FOCUS_RESEARCH")
-                                                                       ("FOCUS_TRADE");
+    static const std::string EMPTY_STRING;
 }
 
 
@@ -263,10 +261,32 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
     }
 }
 
-const std::vector<std::string>& Planet::AvailableFoci() const
+std::vector<std::string> Planet::AvailableFoci() const
 {
-    // TODO: Get available Focus settings from species?
-    return FOCI;
+    std::vector<std::string> retval;
+    if (const Species* species = GetSpecies(this->SpeciesName())) {
+        const std::vector<FocusType>& foci = species->Foci();
+        for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
+            const FocusType& focus_type = *it;
+            if (const Condition::ConditionBase* location = focus_type.Location())
+                if (location->Match(this, this))
+                    retval.push_back(focus_type.Name());
+        }
+    }
+    return retval;
+}
+
+const std::string& Planet::FocusIcon(const std::string& focus_name) const
+{
+    if (const Species* species = GetSpecies(this->SpeciesName())) {
+        const std::vector<FocusType>& foci = species->Foci();
+        for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
+            const FocusType& focus_type = *it;
+            if (focus_type.Name() == focus_name)
+                return focus_type.Graphic();
+        }
+    }
+    return EMPTY_STRING;
 }
 
 void Planet::SetType(PlanetType type)

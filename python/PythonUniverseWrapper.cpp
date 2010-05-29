@@ -235,49 +235,47 @@ namespace FreeOrionPython {
         //  ShipDesign  //
         //////////////////
         class_<ShipDesign, noncopyable>("shipDesign", no_init)
-            .add_property("id",                 make_function(&ShipDesign::ID,                  return_value_policy<return_by_value>()))
-            .def("name",                        make_function(&ShipDesign::Name,                return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&ShipDesign::Description,         return_value_policy<copy_const_reference>()))
-            .add_property("designedByEmpireID", make_function(&ShipDesign::DesignedByEmpire,    return_value_policy<return_by_value>()))
-            .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,      return_value_policy<return_by_value>()))
-            .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,         return_value_policy<return_by_value>()))
-            .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,       return_value_policy<return_by_value>()))
-            .add_property("defense",            make_function(&ShipDesign::Defense,             return_value_policy<return_by_value>()))
-            .add_property("attack",             make_function(&ShipDesign::Attack,              return_value_policy<return_by_value>()))
-            .add_property("canColonize",        make_function(&ShipDesign::CanColonize,         return_value_policy<return_by_value>()))
-            .add_property("cost",               make_function(&ShipDesign::Cost,                return_value_policy<return_by_value>()))
-            .add_property("buildTime",          make_function(&ShipDesign::BuildTime,           return_value_policy<return_by_value>()))
-            .add_property("hull",               make_function(&ShipDesign::Hull,                return_value_policy<return_by_value>()))
-            .add_property("parts",              make_function(PartsVoid,                        return_internal_reference<>()))
-            .def("partsInSlotType",             PartsSlotType,                                  return_value_policy<return_by_value>())
-            //.add_property("graphic",            make_function(&ShipDesign::Graphic,             return_value_policy<copy_const_reference>()))
-            //.add_property("model",              make_function(&ShipDesign::Model,               return_value_policy<copy_const_reference>()))
+            .add_property("id",                 make_function(&ShipDesign::ID,              return_value_policy<return_by_value>()))
+            .def("name",                        make_function(&ShipDesign::Name,            return_value_policy<copy_const_reference>()))
+            .add_property("description",        make_function(&ShipDesign::Description,     return_value_policy<copy_const_reference>()))
+            .add_property("designedByEmpireID", make_function(&ShipDesign::DesignedByEmpire,return_value_policy<return_by_value>()))
+            .add_property("designedOnTurn",     make_function(&ShipDesign::DesignedOnTurn,  return_value_policy<return_by_value>()))
+            .add_property("battleSpeed",        make_function(&ShipDesign::BattleSpeed,     return_value_policy<return_by_value>()))
+            .add_property("starlaneSpeed",      make_function(&ShipDesign::StarlaneSpeed,   return_value_policy<return_by_value>()))
+            .add_property("defense",            make_function(&ShipDesign::Defense,         return_value_policy<return_by_value>()))
+            .add_property("attack",             make_function(&ShipDesign::Attack,          return_value_policy<return_by_value>()))
+            .add_property("canColonize",        make_function(&ShipDesign::CanColonize,     return_value_policy<return_by_value>()))
+            .add_property("cost",               make_function(&ShipDesign::Cost,            return_value_policy<return_by_value>()))
+            .add_property("buildTime",          make_function(&ShipDesign::BuildTime,       return_value_policy<return_by_value>()))
+            .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
+            .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
+            .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
             .def("productionLocationForEmpire", &ShipDesign::ProductionLocation)
         ;
         def("validShipDesign",                  ValidDesignHullAndParts);
         def("validShipDesign",                  ValidDesignDesign);
-        def("getShipDesign",                    &GetShipDesign,                                 return_value_policy<reference_existing_object>());
+        def("getShipDesign",                    &GetShipDesign,                             return_value_policy<reference_existing_object>());
 
         class_<PartType, noncopyable>("partType", no_init)
-            .add_property("name",               make_function(&PartType::Name,                  return_value_policy<copy_const_reference>()))
+            .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
         ;
-        def("getPartType",                      &GetPartType,                                   return_value_policy<reference_existing_object>());
+        def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
 
         class_<HullType, noncopyable>("hullType", no_init)
-            .add_property("name",               make_function(&HullType::Name,                  return_value_policy<copy_const_reference>()))
-            .add_property("numSlots",           make_function(NumSlotsTotal,                    return_value_policy<return_by_value>()))
+            .add_property("name",               make_function(&HullType::Name,              return_value_policy<copy_const_reference>()))
+            .add_property("numSlots",           make_function(NumSlotsTotal,                return_value_policy<return_by_value>()))
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
-            .add_property("slots",              make_function(&HullType::Slots,                 return_internal_reference<>()))
+            .add_property("slots",              make_function(&HullType::Slots,             return_internal_reference<>()))
         ;
-        def("getHullType",                      &GetHullType,                                   return_value_policy<reference_existing_object>());
+        def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>());
 
 
         //////////////////
         //   Building   //
         //////////////////
         class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
-            .def("getBuildingType",             &Building::GetBuildingType,                     return_value_policy<reference_existing_object>())
+            .def("getBuildingType",             &Building::GetBuildingType,                 return_value_policy<reference_existing_object>())
             //.add_property("operating",          &Building::Operating)
             .def("planetID",                    &Building::PlanetID)
         ;
@@ -286,22 +284,22 @@ namespace FreeOrionPython {
         // BuildingType //
         //////////////////
         class_<BuildingType, noncopyable>("buildingType", no_init)
-            .add_property("name",               make_function(&BuildingType::Name,              return_value_policy<copy_const_reference>()))
-            .add_property("description",        make_function(&BuildingType::Description,       return_value_policy<copy_const_reference>()))
+            .add_property("name",               make_function(&BuildingType::Name,          return_value_policy<copy_const_reference>()))
+            .add_property("description",        make_function(&BuildingType::Description,   return_value_policy<copy_const_reference>()))
             .add_property("buildCost",          &BuildingType::BuildCost)
             .add_property("buildTime",          &BuildingType::BuildTime)
             .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
         ;
-        def("getBuildingType",                  &GetBuildingType,                               return_value_policy<reference_existing_object>());
+        def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
 
 
         ////////////////////
         // ResourceCenter //
         ////////////////////
         class_<ResourceCenter, noncopyable>("resourceCenter", no_init)
-            .add_property("focus",              make_function(&ResourceCenter::Focus,           return_value_policy<copy_const_reference>()))
-            .add_property("availableFoci",      make_function(&ResourceCenter::AvailableFoci,   return_internal_reference<>()))
+            .add_property("focus",              make_function(&ResourceCenter::Focus,       return_value_policy<copy_const_reference>()))
+            .add_property("availableFoci",      &ResourceCenter::AvailableFoci)
         ;
 
         ///////////////////
@@ -317,7 +315,7 @@ namespace FreeOrionPython {
         class_<Planet, bases<UniverseObject, PopCenter, ResourceCenter>, noncopyable>("planet", no_init)
             .add_property("size",               &Planet::Size)
             .add_property("type",               &Planet::Type)
-            .add_property("buildingIDs",        make_function(&Planet::Buildings,               return_internal_reference<>()))
+            .add_property("buildingIDs",        make_function(&Planet::Buildings,           return_internal_reference<>()))
         ;
 
         //////////////////

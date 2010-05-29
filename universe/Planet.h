@@ -86,14 +86,14 @@ class Planet :
 {
 public:
     /** \name Structors */ //@{
-    Planet();                                                                               ///< default ctor
-    Planet(PlanetType type, PlanetSize size);                                               ///< general ctor taking just the planet's type and size
+    Planet();                                   ///< default ctor
+    Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size
 
     virtual Planet*             Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;                               ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
 
     PlanetType                  Type() const {return m_type;}
     PlanetSize                  Size() const {return m_size;}
@@ -107,12 +107,15 @@ public:
 
     const std::set<int>&        Buildings() const {return m_buildings;}
 
-    double                      AvailableTrade() const;                         ///< returns the trade available at this planet for use in building maintenance
-    double                      BuildingCosts() const;                          ///< returns the cost in trade for the upkeep of all currently-enabled buildings
+    double                      AvailableTrade() const;                 ///< returns the trade available at this planet for use in building maintenance
+    double                      BuildingCosts() const;                  ///< returns the cost in trade for the upkeep of all currently-enabled buildings
 
-    virtual bool                        Contains(int object_id) const;                  ///< returns true iff this Planet contains a building with ID \a id.
-    virtual std::vector<UniverseObject*>FindObjects() const;                            ///< returns objects contained within this object
-    virtual std::vector<int>            FindObjectIDs() const;                          ///< returns ids of objects contained within this object
+    virtual bool                        Contains(int object_id) const;  ///< returns true iff this Planet contains a building with ID \a id.
+    virtual std::vector<UniverseObject*>FindObjects() const;            ///< returns objects contained within this object
+    virtual std::vector<int>            FindObjectIDs() const;          ///< returns ids of objects contained within this object
+
+    virtual std::vector<std::string>    AvailableFoci() const;
+    virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
     bool                        IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
 
@@ -120,9 +123,6 @@ public:
 
     virtual double              CurrentMeterValue(MeterType type) const;
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;
-
-    virtual const std::vector<std::string>&
-                                AvailableFoci() const;
     //@}
 
     /** \name Mutators */ //@{

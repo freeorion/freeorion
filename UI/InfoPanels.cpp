@@ -205,21 +205,6 @@ namespace {
         return retval;
     }
 
-    /** What icon to show for focus options.  Probably to be replaced with something moddable. */
-    boost::shared_ptr<GG::Texture> FocusIcon(const std::string& focus) {
-        if (focus == "FOCUS_FARMING")
-            return ClientUI::MeterIcon(METER_FARMING);
-        else if (focus == "FOCUS_MINING")
-            return ClientUI::MeterIcon(METER_MINING);
-        else if (focus == "FOCUS_INDUSTRY")
-            return ClientUI::MeterIcon(METER_INDUSTRY);
-        else if (focus == "FOCUS_RESEARCH")
-            return ClientUI::MeterIcon(METER_RESEARCH);
-        else if (focus == "FOCUS_TRADE")
-            return ClientUI::MeterIcon(METER_TRADE);
-        else
-            return ClientUI::MeterIcon(INVALID_METER_TYPE);
-    }
 }
 
 /////////////////////////////////////
@@ -515,7 +500,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     const std::vector<std::string>& available_foci = res->AvailableFoci();
     m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
     for (std::vector<std::string>::const_iterator it = available_foci.begin(); it != available_foci.end(); ++it) {
-        boost::shared_ptr<GG::Texture> texture = FocusIcon(*it);
+        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / res->FocusIcon(*it), true);
         graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
         row->push_back(dynamic_cast<GG::Control*>(graphic));

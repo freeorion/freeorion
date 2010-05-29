@@ -13,7 +13,6 @@ class Empire;
 class Meter;
 class UniverseObject;
 
-
 /** The ResourceCenter class is an abstract base class for anything in the
   * FreeOrion gamestate that generates resources (food, minerals, etc.).  Most
   * likely, such an object will also be a subclass of UniverseObject.
@@ -32,12 +31,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  Focus() const;              ///< current focus to which this ResourceCenter is set
-    virtual const std::vector<std::string>&
-                        AvailableFoci() const;      ///< focus settings available to this ResourceCenter
+    const std::string&              Focus() const;                                  ///< current focus to which this ResourceCenter is set
+    virtual std::vector<std::string>AvailableFoci() const;                          ///< focus settings available to this ResourceCenter
+    virtual const std::string&      FocusIcon(const std::string& focus_name) const; ///< icon representing focus with name \a focus_name for this ResourceCenter
 
-    virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should return the current value of the specified meter \a type
-    virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+    virtual double  CurrentMeterValue(MeterType type) const = 0;            ///< implementation should return the current value of the specified meter \a type
+    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;    ///< implementation should return an estimate of the next turn's current value of the specified meter \a type
 
     mutable boost::signal<void ()> ResourceCenterChangedSignal;             ///< the state changed signal object for this ResourceCenter
     //@}
