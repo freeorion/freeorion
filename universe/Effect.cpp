@@ -549,15 +549,34 @@ SetShipPartMeter::~SetShipPartMeter()
 
 void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (Ship* ship = universe_object_cast<Ship*>(target)) {
-        for (std::size_t i = 0; i < ship->Design()->Parts().size(); ++i) {
-            if (Meter* meter = ship->GetMeter(m_meter, m_part_name)) {
-                const PartType* part = GetPartType(ship->Design()->Parts()[i]);
-                if (PartMatchesEffect(*part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
-                    double val = m_value->Eval(source, target, meter->Current());
-                    meter->SetCurrent(val);
-                }
-            }
+    if (!target) {
+        Logger().debugStream() << "SetShipPartMeter::Execute passed null target pointer";
+        return;
+    }
+
+    Ship* ship = universe_object_cast<Ship*>(target);
+    if (!ship) {
+        Logger().errorStream() << "SetShipPartMeter::Execute acting on non-ship target:";
+        target->Dump();
+        return;
+    }
+
+    for (std::size_t i = 0; i < ship->Design()->Parts().size(); ++i) {
+        Meter* meter = ship->GetMeter(m_meter, m_part_name);
+        if (!meter)
+            continue;
+
+        const PartType* part = GetPartType(ship->Design()->Parts()[i]);
+        if (!part) {
+            Logger().errorStream() << "SetShipPartMeter::Execute acting on target:";
+            ship->Dump();
+            Logger().errorStream() << "Couldn't get part type: " << m_part_name;
+            return;
+        }
+
+        if (PartMatchesEffect(*part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
+            double val = m_value->Eval(source, target, meter->Current());
+            meter->SetCurrent(val);
         }
     }
 }
