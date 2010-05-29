@@ -2440,12 +2440,14 @@ void Empire::CheckProductionProgress()
 
                 // add ship
                 Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id);
-                // start with with maxed meters.  current values will be
-                // clamped to max value after effects are applied to set that
-                // max value appropriately
+                // set active meters that have associated max meters to an
+                // initial very large value, so that when the active meters are
+                // later clamped, they will equal the max meter after effects
+                // have been applied, letting new ships start with maxed
+                // everything that is traced with an associated max meter.
                 ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
                 ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-                ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
+                ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
 
                 int ship_id = universe.Insert(ship);
 

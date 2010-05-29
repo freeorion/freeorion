@@ -46,17 +46,17 @@ public:
     //!@}
 
     /** \name Accessors*/ //!@{
-    int                             Systems() const;      //!< Returns the number of star systems to use in generating the galaxy
-    Shape                           GetShape() const;  //!< Returns the shape of the galaxy
-    Age                             GetAge() const;    //!< Returns the age of the galaxy
-    StarlaneFrequency               GetStarlaneFrequency() const;  //!< Returns the frequency of starlanes in the galaxy
-    PlanetDensity                   GetPlanetDensity() const;      //!< Returns the density of planets within systems
-    SpecialsFrequency               GetSpecialsFrequency() const;  //!< Returns the rarity of planetary and system specials
+    int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
+    Shape                           GetShape() const;               //!< Returns the shape of the galaxy
+    Age                             GetAge() const;                 //!< Returns the age of the galaxy
+    StarlaneFrequency               GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
+    PlanetDensity                   GetPlanetDensity() const;       //!< Returns the density of planets within systems
+    SpecialsFrequency               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
 
-    boost::shared_ptr<GG::Texture>  PreviewImage() const;  //!< Returns the current preview image texture
+    boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
-    mutable SettingsChangedSignalType SettingsChangedSignal; ///< the settings changed signal object for this GalaxySetupPanel
-    mutable ImageChangedSignalType    ImageChangedSignal;    ///< the image changed signal object for this GalaxySetupPanel
+    mutable SettingsChangedSignalType SettingsChangedSignal;        ///< the settings changed signal object for this GalaxySetupPanel
+    mutable ImageChangedSignalType    ImageChangedSignal;           ///< the image changed signal object for this GalaxySetupPanel
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -75,12 +75,12 @@ private:
     void SettingChanged(GG::ListBox::iterator);
     void ShapeChanged(GG::ListBox::iterator it);
 
-    CUISpin<int>*         m_stars_spin;          //!< The number of stars to include in the galaxy
-    CUIDropDownList*      m_galaxy_shapes_list;  //!< The possible shapes for the galaxy
-    CUIDropDownList*      m_galaxy_ages_list;    //!< The possible ages for the galaxy
-    CUIDropDownList*      m_starlane_freq_list;  //!< The frequency of starlanes in the galaxy
-    CUIDropDownList*      m_planet_density_list; //!< The density of planets in each system
-    CUIDropDownList*      m_specials_freq_list;  //!< The frequency of specials in systems and on planets
+    CUISpin<int>*       m_stars_spin;           //!< The number of stars to include in the galaxy
+    CUIDropDownList*    m_galaxy_shapes_list;   //!< The possible shapes for the galaxy
+    CUIDropDownList*    m_galaxy_ages_list;     //!< The possible ages for the galaxy
+    CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
+    CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
+    CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
 
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };

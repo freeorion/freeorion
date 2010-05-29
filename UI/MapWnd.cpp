@@ -4064,7 +4064,7 @@ void MapWnd::UpdateMetersAndResourcePools(const std::vector<int>& objects_vec)
 
 void MapWnd::UpdateMetersAndResourcePools(int object_id, bool update_contained_objects)
 {
-    std::cout << "MapWnd::UpdateMetersAndResourcePools(" << object_id << ", " << update_contained_objects << ")" << std::endl;
+    //std::cout << "MapWnd::UpdateMetersAndResourcePools(" << object_id << ", " << update_contained_objects << ")" << std::endl;
     UpdateMeterEstimates(object_id, update_contained_objects);
     UpdateEmpireResourcePools();
 }
