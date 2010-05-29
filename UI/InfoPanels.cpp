@@ -491,27 +491,15 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     GG::Connect(m_expand_button->ClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
 
-    GG::DropDownList::Row* row;
-    boost::shared_ptr<GG::Texture> texture;
-    GG::StaticGraphic* graphic;
-
-
-    // focus-selection droplists
-    const std::vector<std::string>& available_foci = res->AvailableFoci();
-    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*19/2);
-    for (std::vector<std::string>::const_iterator it = available_foci.begin(); it != available_foci.end(); ++it) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / res->FocusIcon(*it), true);
-        graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2, texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-        row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
-        row->push_back(dynamic_cast<GG::Control*>(graphic));
-        m_focus_drop->Insert(row);
-    }
-    AttachChild(m_focus_drop);
-
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+
+
+    // focus-selection droplist
+    m_focus_drop = new CUIDropDownList(GG::X0, GG::Y0, MeterIconSize().x*4, MeterIconSize().y*3/2, MeterIconSize().y*7/2);
+    AttachChild(m_focus_drop);
+    GG::Connect(m_focus_drop->SelChangedSignal, &ResourcePanel::FocusDropListSelectionChanged,  this);
     m_focus_drop->SetBrowseModeTime(tooltip_delay);
 
-    m_drop_changed_connections[m_focus_drop] =  GG::Connect(m_focus_drop->SelChangedSignal, &ResourcePanel::FocusDropListSelectionChanged,  this);
 
     // small resource indicators - for use when panel is collapsed
     m_farming_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FARMING),
@@ -572,11 +560,6 @@ ResourcePanel::~ResourcePanel() {
     delete m_industry_stat;
     delete m_research_stat;
     delete m_trade_stat;
-
-    // get rid of held connections
-    for (std::map<CUIDropDownList*, boost::signals::connection>::iterator it = m_drop_changed_connections.begin(); it != m_drop_changed_connections.end(); ++it)
-        it->second.disconnect();
-    m_drop_changed_connections.clear();
 
     delete m_focus_drop;
 
@@ -832,10 +815,23 @@ void ResourcePanel::Update()
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, METER_CONSTRUCTION, METER_TARGET_CONSTRUCTION));
     m_multi_icon_value_indicator->SetToolTip(METER_CONSTRUCTION, browse_wnd);
 
-    // focus droplists
+
+    // focus droplist
+    const std::vector<std::string>& available_foci = res->AvailableFoci();
+    // refresh items in list
+    m_focus_drop->Clear();
+    for (std::vector<std::string>::const_iterator it = available_foci.begin(); it != available_foci.end(); ++it) {
+        boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(ClientUI::ArtDir() / res->FocusIcon(*it), true);
+        GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, MeterIconSize().x*3/2, MeterIconSize().y*3/2,
+                                                           texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "");
+        row->push_back(dynamic_cast<GG::Control*>(graphic));
+        m_focus_drop->Insert(row);
+    }
+    m_focus_drop->SetDropHeight(static_cast<int>(available_foci.size()) * MeterIconSize().y*3/2 + GG::Y(5));
+    // set browse text and select appropriate focus in droplist
     std::string focus_text;
     if (!res->Focus().empty()) {
-        const std::vector<std::string>& available_foci = res->AvailableFoci();
         for (unsigned int i = 0; i < available_foci.size(); ++i) {
             if (available_foci[i] == res->Focus()) {
                 m_focus_drop->Select(i);

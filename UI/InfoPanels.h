@@ -117,13 +117,11 @@ private:
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates resource production and construction meter
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values
 
-    CUIDropDownList*            m_focus_drop;   ///< displays and allows selection of primary focus
-    std::map<CUIDropDownList*, boost::signals::connection>
-        m_drop_changed_connections;                     ///< signals connecting selection changed signals from drop lists to responses.  blocked when programmatically changing focus selection, to avoid recursive signal emission
+    CUIDropDownList*            m_focus_drop;                   ///< displays and allows selection of primary focus
 
-    GG::Button*                 m_expand_button;        ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
+    GG::Button*                 m_expand_button;                ///< at top right of panel, toggles the panel open/closed to show details or minimal summary
 
-    static std::map<int, bool>  s_expanded_map;         ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
+    static std::map<int, bool>  s_expanded_map;                 ///< map indexed by popcenter ID indicating whether the PopulationPanel for each object is expanded (true) or collapsed (false)
 };
 
 /** Shows military-related meters including stealth, detection, shields, defense; with meter bars */
