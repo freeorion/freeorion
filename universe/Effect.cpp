@@ -561,20 +561,26 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
         return;
     }
 
-    for (std::size_t i = 0; i < ship->Design()->Parts().size(); ++i) {
-        Meter* meter = ship->GetMeter(m_meter, m_part_name);
-        if (!meter)
-            continue;
+    // loop through all parts in the ship design, applying effect to each if appropriate
+    const std::vector<std::string>& design_parts = ship->Design()->Parts();
+    for (std::size_t i = 0; i < design_parts.size(); ++i) {
+        const std::string& target_part_name = design_parts[i];
+        if (target_part_name.empty())
+            continue;   // slots in a design may be empty... this isn't an error
 
-        const PartType* part = GetPartType(ship->Design()->Parts()[i]);
-        if (!part) {
-            Logger().errorStream() << "SetShipPartMeter::Execute acting on target:";
-            ship->Dump();
-            Logger().errorStream() << "Couldn't get part type: " << m_part_name;
-            return;
+        Meter* meter = ship->GetMeter(m_meter, target_part_name);
+        if (!meter)
+            continue;   // some parts may not have the requested meter.  this isn't an error
+
+        const PartType* target_part = GetPartType(target_part_name);
+        if (!target_part) {
+            Logger().errorStream() << "SetShipPartMeter::Execute couldn't get part type: " << target_part_name;
+            continue;
         }
 
-        if (PartMatchesEffect(*part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
+        // verify that found part matches the target part type information for
+        // this effect: same name, same class and slot type, or same fighter type
+        if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
             double val = m_value->Eval(source, target, meter->Current());
             meter->SetCurrent(val);
         }
