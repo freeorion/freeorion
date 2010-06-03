@@ -8,14 +8,14 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 ########################################
 project(FreeOrion)
 
-set(FREEORION_VERSION 0.3.13)
+set(FREEORION_VERSION 0.3.15)
 set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 include(Config)
 include(Util)
 
-set(MINIMUM_BOOST_VERSION 1.36.0)
+set(MINIMUM_BOOST_VERSION 1.42.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
 
 set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
@@ -85,6 +85,8 @@ endif ()
 
 find_package(Subversion)
 set(svn_revision_number ???)
+set(tmpLANG $ENV{LANG})
+set(ENV{LANG} "C")
 if (Subversion_FOUND)
    execute_process(
        COMMAND ${Subversion_SVN_EXECUTABLE} info
@@ -101,6 +103,7 @@ configure_file(
     ${CMAKE_BINARY_DIR}/util/Version.cpp
     @ONLY
 )
+set($ENV{LANG} ${tmpLANG})
 
 
 ########################################
