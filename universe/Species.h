@@ -76,9 +76,9 @@ public:
 private:
     std::string             m_name;
     std::string             m_description;
+    std::vector<FocusType>  m_foci;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                             m_effects;
-    std::vector<FocusType>  m_foci;
     std::string             m_graphic;
 
     friend class boost::serialization::access;

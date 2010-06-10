@@ -197,6 +197,7 @@ Gemroy
 Giacconi
 Giausar
 Gienah
+Gimboid
 Girtab
 Glade
 Gladiolus
@@ -458,6 +459,7 @@ Situla
 Skadi
 Skat
 Slipher
+Smeg
 Soma
 Sopota
 Sowilo

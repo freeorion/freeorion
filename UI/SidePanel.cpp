@@ -1360,8 +1360,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
-    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
-        (*it)->Refresh();
+    RefreshAllPlanetPanels();
 }
 
 std::vector<int> SidePanel::PlanetPanelContainer::PlanetIDs() const

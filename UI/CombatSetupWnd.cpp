@@ -108,7 +108,7 @@ namespace {
             if (map_it != effect_accounting_map.end())
                 meter_map = &(map_it->second);
 
-            for (int i = 0; i < meters.size(); ++i) {
+            for (size_t i = 0; i < meters.size(); ++i) {
                 const MeterType METER_TYPE = meters[i];
                 const MeterType ASSOCIATED_METER_TYPE = associated_meters[i];
 

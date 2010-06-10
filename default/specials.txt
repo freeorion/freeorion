@@ -9,6 +9,7 @@ Special
                 SetTargetPopulation Value + 2
                 SetTargetFarming Value + Target.Population * 1.0
                 SetTargetIndustry Value + Target.Population * 1.0
+                SetTargetMining Value + Target.Population * 0.2
                 SetTargetTrade Value + Target.Population * 0.2
                 SetTargetResearch Value + Target.Population * 0.2
                 SetTargetConstruction Value + 10
