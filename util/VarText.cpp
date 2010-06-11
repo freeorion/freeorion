@@ -61,9 +61,17 @@ namespace {
                 token == VarText::FLEET_ID_TAG ||
                 token == VarText::BUILDING_ID_TAG)
             {
-                int object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                int object_id = UniverseObject::INVALID_OBJECT_ID;
+                try {
+                    object_id = boost::lexical_cast<int>(token_elem.Attribute("value"));
+                } catch (const std::exception&) {
+                    Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for object ID.";
+                    m_str += UserString("ERROR");
+                    return;
+                }
                 const UniverseObject* obj = objects.Object(object_id);
                 if (!obj) {
+                    Logger().errorStream() << "SubstituteAndAppend couldn't get object with ID " << object_id;
                     m_str += UserString("ERROR");
                     return;
                 }
