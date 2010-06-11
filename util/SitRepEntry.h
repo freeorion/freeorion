@@ -65,7 +65,7 @@ private:
 /** Sitrep constructors for each SitRep type */
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
-SitRepEntry* CreateBuildingBuiltSitRep(const std::string& building_name, int planet_id);
+SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id);
 SitRepEntry* CreateCombatSitRep(int system_id);
 SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, const std::string& empire_name);
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);

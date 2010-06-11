@@ -2412,7 +2412,7 @@ void Empire::CheckProductionProgress()
 
                 planet->AddBuilding(building_id);
 
-                SitRepEntry* entry = CreateBuildingBuiltSitRep(m_production_queue[i].item.name, planet->ID());
+                SitRepEntry* entry = CreateBuildingBuiltSitRep(building_id, planet->ID());
                 AddSitRepEntry(entry);
                 //Logger().debugStream() << "New Building created on turn: " << building->CreationTurn();
                 break;
