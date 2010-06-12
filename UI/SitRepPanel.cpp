@@ -81,7 +81,8 @@ void SitRepPanel::Update()
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
-        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText(), font, format, ClientUI::TextColor());
+        LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText() + " ", font, format, ClientUI::TextColor());
+        //link_text->SetMinSize(true);
         GG::ListBox::Row *row = new GG::ListBox::Row(link_text->Width(), link_text->Height(), "");
         row->push_back(link_text);
         m_sitreps_lb->Insert(row);

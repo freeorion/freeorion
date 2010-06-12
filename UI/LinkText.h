@@ -16,8 +16,6 @@ public:
 
 protected:
     void        Render_();
-    void        LButtonDown_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    void        LButtonUp_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     void        LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     void        MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     void        MouseLeave_();
@@ -27,43 +25,43 @@ protected:
     virtual GG::Pt                                  TextUpperLeft() const = 0;
     virtual GG::Pt                                  TextLowerRight() const = 0;
     virtual void                                    SetLinkedText(const std::string& str) = 0;
-    virtual std::string                             Text_() const = 0;
+    virtual const std::string&                      RawText() const = 0;      ///< returns text being displayed before any link formatting is added
 
-    void                                            FindLinks();    ///< finds the links in the text and populates m_links
+    void        FindLinks();                        ///< finds the links in the text, with which to populate m_links
+    void        MarkLinks();                        ///< wraps text for each link in text formatting tags so that the links appear visually distinct from other text
+    int         GetLinkUnderPt(const GG::Pt& pt);   ///< returns the index of the link under screen coordinate \a pt, or -1 if none
 
 private:
     struct Link;
-
-    int     GetLinkUnderPt(const GG::Pt& pt);   ///< returns the index of the link under screen coordinate \a pt, or -1 if none
-    void    ClearOldRollover();
-
     std::vector<Link>   m_links;
-    int                 m_old_sel_link;
-    int                 m_old_rollover_link;
+    int                 m_rollover_link;
 };
 
-/** allows text that the user sees to emit signals when clicked, and indicates to the user visually which text
-    represents a link.  There is one type of signal for each type of ZoomTo*() method in ClientUI.  This allows
-    any text that refers to game elements to be tagged as such and clicked by the user, emitting a signal of the
-    appropriate type.  These signals can be used to ZoomTo*() an appropriate screen, or take some other action
-    The folowig tags are currently supported:
-    \verbatim
-    <planet ID>
-    <system ID>
-    <fleet ID>
-    <ship ID>
-    <building ID>
-    <empire ID>
-    <tech [string]>
-    <buildingtype [string]>
-    <special [string]>
-    <shiphull [string]>
-    <shippart [string]>
-    <encyclopedia [string]>\endverbatim
-    The ID parameters refer to the UniverseObjects that should be zoomed to for each link; encyclopedia entries are refered
-    to by strings.
-    <br><br>Note that for link tags to be correctly handled, they must not overlap each other at all, even though
-    overlap with regular GG::Font tags if fine. */
+/** Allows text that the user sees to emit signals when clicked, and indicates
+  * to the user visually which text represents a link.  There is one type of
+  * signal for each type of ZoomTo*() method in ClientUI.  This allows any text
+  * that refers to game elements to be tagged as such and clicked by the user,
+  * with the appropriate ClientUI response function called.
+  * The followig tags are currently supported:
+  * \verbatim
+  * <planet ID>
+  * <system ID>
+  * <fleet ID>
+  * <ship ID>
+  * <building ID>
+  * <empire ID>
+  * <tech [string]>
+  * <buildingtype [string]>
+  * <special [string]>
+  * <shiphull [string]>
+  * <shippart [string]>
+  * <species [string]>
+  * <encyclopedia [string]>\endverbatim
+  * The ID parameters refer to the UniverseObjects that should be zoomed to for
+  * each link.  Encyclopedia entries and content items are referred to by strings.
+  * <br><br>Note that for link tags to be correctly handled, they must not
+  * overlap each other at all, even though overlap with regular GG::Font tags
+  * is fine. */
 class LinkText : public GG::TextControl, public TextLinker
 {
 public:
@@ -82,17 +80,14 @@ public:
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
-    virtual std::string                             Text_() const;
+    virtual const std::string&                      RawText() const;          ///< returns text displayed before link formatting is added
     //@}
 
     /** \name Mutators */ //@{
     virtual void    Render();
-    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
-
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type
@@ -103,6 +98,8 @@ public:
 
 private:
     virtual void    SetLinkedText(const std::string& str);
+
+    std::string     m_raw_text;
 };
 
 #endif // _LinkText_h_

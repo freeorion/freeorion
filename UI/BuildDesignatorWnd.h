@@ -75,6 +75,8 @@ public:
     void            ShowAvailability(bool available, bool refresh_list = true);
     void            HideAvailability(bool available, bool refresh_list = true);
     void            ToggleAvailabilitly(bool available, bool refresh_list = true);
+
+    void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
     //@}
 
     mutable boost::signal<void (BuildType, const std::string&, int, int)>

@@ -324,13 +324,11 @@ public:
     virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
     virtual GG::Pt                                  TextUpperLeft() const;
     virtual GG::Pt                                  TextLowerRight() const;
-    virtual std::string                             Text_() const;
+    virtual const std::string&                      RawText() const;
     //@}
 
     /** \name Mutators */ //@{
     virtual void    Render();
-    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
@@ -344,7 +342,9 @@ public:
 
 private:
     virtual void    SetLinkedText(const std::string& str);
+
     bool            m_already_setting_text_so_dont_link;
+    std::string     m_raw_text;
 };
 
 /** a FreeOrion slider, much feared in the forums */

@@ -498,7 +498,7 @@ bool ClientUI::ZoomToShip(int id)
 bool ClientUI::ZoomToBuilding(int id)
 {
     if (const Building* building = GetMainObjectMap().Object<Building>(id))
-        return ZoomToPlanet(building->PlanetID());
+        return ZoomToBuildingType(building->BuildingTypeName());
     return false;
 }
 
@@ -538,9 +538,28 @@ bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
     return true;
 }
 
+bool ClientUI::ZoomToSpecial(const std::string& special_name)
+{
+    return true;
+}
+
+bool ClientUI::ZoomToShipHull(const std::string& hull_name)
+{
+    return true;
+}
+
+bool ClientUI::ZoomToShipPart(const std::string& part_name)
+{
+    return true;
+}
+
+bool ClientUI::ZoomToSpecies(const std::string& species_name)
+{
+    return true;
+}
+
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 {
-    // TODO: Zooming code
     return false;
 }
 

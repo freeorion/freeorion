@@ -344,6 +344,11 @@ void ProductionWnd::Update()
     m_build_designator_wnd->Update();
 }
 
+void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
+{
+    m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(building_type);
+}
+
 void ProductionWnd::CenterOnBuild(int queue_idx)
 {
     m_build_designator_wnd->CenterOnBuild(queue_idx);

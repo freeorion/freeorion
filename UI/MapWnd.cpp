@@ -2357,9 +2357,9 @@ void MapWnd::ShowTech(const std::string& tech_name)
 
 void MapWnd::ShowBuildingType(const std::string& building_type_name)
 {
-    //if (!m_production_wnd->Visible())
-    //    ToggleProduction();
-    //m_production_wnd->building_type_name);
+    if (!m_production_wnd->Visible())
+        ToggleProduction();
+    m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
 }
 
 void MapWnd::CenterOnObject(int id)
@@ -4150,6 +4150,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
          if (planet->Owners().empty()) {
              unowned_planets.insert(planet);
              planet->AddOwner(player_id);
+             planet->SetSpecies("SP_HUMAN");
          }
     }
 
@@ -4157,8 +4158,10 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     GetUniverse().UpdateMeterEstimates(objects_vec);
 
     // remove temporary ownership added above
-    for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
+    for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
         (*it)->RemoveOwner(player_id);
+        (*it)->Reset();
+    }
     Universe::InhibitUniverseObjectSignals(false);
 }
 

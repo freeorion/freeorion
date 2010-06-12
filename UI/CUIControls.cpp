@@ -802,8 +802,12 @@ CUILinkTextMultiEdit::CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, c
                                            GG::Clr interior, GG::Flags<GG::WndFlag> flags) :
     CUIMultiEdit(x, y, w, h, str, style, font, border_color, text_color, interior, flags),
     TextLinker(),
-    m_already_setting_text_so_dont_link(false)
-{}
+    m_already_setting_text_so_dont_link(false),
+    m_raw_text(str)
+{
+    FindLinks();
+    MarkLinks();
+}
 
 const std::vector<GG::Font::LineData>& CUILinkTextMultiEdit::GetLineData() const
 {
@@ -825,27 +829,15 @@ GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
     return CUIMultiEdit::TextLowerRight();
 }
 
-std::string CUILinkTextMultiEdit::Text_() const
+const std::string& CUILinkTextMultiEdit::RawText() const
 {
-    return CUIMultiEdit::Text();
+    return m_raw_text;
 }
 
 void CUILinkTextMultiEdit::Render()
 {
     CUIMultiEdit::Render();
     TextLinker::Render_();
-}
-
-void CUILinkTextMultiEdit::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    CUIMultiEdit::LButtonDown(pt, mod_keys);
-    TextLinker::LButtonDown_(pt, mod_keys);
-}
-
-void CUILinkTextMultiEdit::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    CUIMultiEdit::LButtonUp(pt, mod_keys);
-    TextLinker::LButtonUp_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -876,8 +868,10 @@ void CUILinkTextMultiEdit::SetText(const std::string& str)
     // lowest on stack, or first) call to SetText
     if (!m_already_setting_text_so_dont_link) {
         m_already_setting_text_so_dont_link = true;
-        CUIMultiEdit::SetText(str);
+        m_raw_text = str;
+        CUIMultiEdit::SetText(m_raw_text);  // so that line data is updated for use in FindLinks
         FindLinks();
+        MarkLinks();
         m_already_setting_text_so_dont_link = false;
         return;
     } else {

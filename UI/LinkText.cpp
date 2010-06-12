@@ -14,10 +14,19 @@ namespace {
 
     static const std::string ENCYCLOPEDIA_TAG = "encyclopedia";
 
+    // format tag to use when a link is not moused over, to indicate it is a link as distinct from normal text
+    static const std::string LINK_DEFAULT_FORMAT_TAG = "<rgba 80 255 128 255>";
+    static const std::string LINK_DEFAULT_FORMAT_CLOSE = "</rgba>";
+    // format tag to use when a link is moused over, to respond to the user and indicate that the link is clickable
+    static const std::string LINK_ROLLOVER_FORMAT_TAG = "<rgba 192 80 255 255>";
+    static const std::string LINK_ROLLOVER_FORMAT_CLOSE = "</rgba>";
+
     static bool link_tags_registered = false;
     void RegisterLinkTags() {
         if (link_tags_registered)
             return;
+        link_tags_registered = true;
+
         // need to register the tags that link text uses so GG::Font will know how to (not) render them
         GG::Font::RegisterKnownTag(VarText::PLANET_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::SYSTEM_ID_TAG);
@@ -32,31 +41,34 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::SPECIAL_TAG);
         GG::Font::RegisterKnownTag(VarText::SHIP_HULL_TAG);
         GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
-        //GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
+        GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
 
         GG::Font::RegisterKnownTag(ENCYCLOPEDIA_TAG);
-        link_tags_registered = true;
     }
 }
 
 ///////////////////////////////////////
 // LinkText
 ///////////////////////////////////////
-LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     GG::TextControl(x, y, w, GG::Y1, str, font, color, format, flags),
-    TextLinker()
+    TextLinker(),
+    m_raw_text(str)
 {
     Resize(TextLowerRight() - TextUpperLeft());
     FindLinks();
+    MarkLinks();
 }
 
 LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
-                   GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
+                   GG::Clr color/* = GG::CLR_BLACK*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
     GG::TextControl(x, y, str, font, color, GG::FORMAT_NONE, flags),
-    TextLinker()
+    TextLinker(),
+    m_raw_text(str)
 {
     FindLinks();
+    MarkLinks();
 }
 
 void LinkText::Render()
@@ -67,23 +79,15 @@ void LinkText::Render()
 
 void LinkText::SetText(const std::string& str)
 {
-    GG::TextControl::SetText(str);
+    m_raw_text = str;
+    GG::TextControl::SetText(m_raw_text);   // so that line data is updated for use in FindLinks
     FindLinks();
+    MarkLinks();
 }
 
 void LinkText::SetLinkedText(const std::string& str)
 {
     GG::TextControl::SetText(str);
-}
-
-void LinkText::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::LButtonDown_(pt, mod_keys);
-}
-
-void LinkText::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    TextLinker::LButtonUp_(pt, mod_keys);
 }
 
 GG::Pt LinkText::TextUpperLeft() const
@@ -106,9 +110,9 @@ const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
     return GG::TextControl::GetFont();
 }
 
-std::string LinkText::Text_() const
+const std::string& LinkText::RawText() const
 {
-    return GG::TextControl::Text();
+    return m_raw_text;
 }
 
 void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -143,8 +147,7 @@ struct TextLinker::Link
 // TextLinker
 ///////////////////////////////////////
 TextLinker::TextLinker() : 
-    m_old_sel_link(-1),
-    m_old_rollover_link(-1)
+    m_rollover_link(-1)
 {
     RegisterLinkTags();
 }
@@ -170,59 +173,61 @@ void TextLinker::Render_()
     }
 }
 
-void TextLinker::LButtonDown_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_old_sel_link = GetLinkUnderPt(pt);
-}
-
-void TextLinker::LButtonUp_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_old_sel_link = -1;
-    ClearOldRollover();
-}
-
 void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
-    if (sel_link == m_old_sel_link && sel_link != -1) {
-        if (m_links[sel_link].type == "planet") {
-            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(m_links[sel_link].data));
-        } else if (m_links[sel_link].type == "system") {
-            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(m_links[sel_link].data));
-        } else if (m_links[sel_link].type == "fleet") {
-            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(m_links[sel_link].data));
-        } else if (m_links[sel_link].type == "ship") {
-            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(m_links[sel_link].data));
-        } else if (m_links[sel_link].type == "tech") {
-            ClientUI::GetClientUI()->ZoomToTech(m_links[sel_link].data);
-        } else if (m_links[sel_link].type == "building") {
-            ClientUI::GetClientUI()->ZoomToBuildingType(m_links[sel_link].data);
-        } else if (m_links[sel_link].type == "encyclopedia") {
-            ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(m_links[sel_link].data);
-        }
+    if (sel_link == -1)
+        return;
+    if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
+        Logger().errorStream() << "TextLinker::LClick_ found out of bounds sel_link!";
+        return;
     }
-    m_old_sel_link = -1;
+
+    const std::string& LINK_TYPE = m_links[sel_link].type;
+
+    if (LINK_TYPE == VarText::PLANET_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(m_links[sel_link].data));
+    } else if (LINK_TYPE == VarText::SYSTEM_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(m_links[sel_link].data));
+    } else if (LINK_TYPE == VarText::FLEET_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(m_links[sel_link].data));
+    } else if (LINK_TYPE == VarText::SHIP_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(m_links[sel_link].data));
+    } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
+        ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(m_links[sel_link].data));
+
+    } else if (LINK_TYPE == VarText::TECH_TAG) {
+        ClientUI::GetClientUI()->ZoomToTech(m_links[sel_link].data);
+    } else if (LINK_TYPE == VarText::BUILDING_TYPE_TAG) {
+        ClientUI::GetClientUI()->ZoomToBuildingType(m_links[sel_link].data);
+    } else if (LINK_TYPE == VarText::SPECIAL_TAG) {
+        ClientUI::GetClientUI()->ZoomToSpecial(m_links[sel_link].data);
+    } else if (LINK_TYPE == VarText::SHIP_HULL_TAG) {
+        ClientUI::GetClientUI()->ZoomToShipHull(m_links[sel_link].data);
+    } else if (LINK_TYPE == VarText::SHIP_PART_TAG) {
+        ClientUI::GetClientUI()->ZoomToShipPart(m_links[sel_link].data);
+    } else if (LINK_TYPE == VarText::SPECIES_TAG) {
+        ClientUI::GetClientUI()->ZoomToSpecies(m_links[sel_link].data);
+
+    } else if (LINK_TYPE == ENCYCLOPEDIA_TAG) {
+        ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(m_links[sel_link].data);
+    }
 }
 
 void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     int rollover_link = GetLinkUnderPt(pt);
-    if (rollover_link != m_old_rollover_link) {
-        ClearOldRollover();
-        if (rollover_link != -1) {
-            std::string text = Text_();
-            text.insert(m_links[rollover_link].text_posn.first, "<u>");
-            text.insert(m_links[rollover_link].text_posn.second + 3, "</u>");
-            SetLinkedText(text);
-            m_old_rollover_link = rollover_link;
-        }
+    if (rollover_link != m_rollover_link) {
+        m_rollover_link = rollover_link;
+        MarkLinks();
     }
 }
 
 void TextLinker::MouseLeave_()
 {
-    ClearOldRollover();
+    m_rollover_link = -1;
+    MarkLinks();
 }
 
 void TextLinker::FindLinks()
@@ -259,7 +264,7 @@ void TextLinker::FindLinks()
                     tag->tag_name == VarText::SPECIAL_TAG ||
                     tag->tag_name == VarText::SHIP_HULL_TAG ||
                     tag->tag_name == VarText::SHIP_PART_TAG ||
-//                    tag->tag_name == VarText::SPECIES_TAG ||
+                    tag->tag_name == VarText::SPECIES_TAG ||
                     tag->tag_name == ENCYCLOPEDIA_TAG)
                 {
                     link.type = tag->tag_name;
@@ -305,15 +310,55 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
     return retval;
 }
 
-void TextLinker::ClearOldRollover()
+void TextLinker::MarkLinks()
 {
-    if (m_old_rollover_link != -1) {
-        std::string text = Text_();
-        std::string::size_type pos = text.find("<u>", m_links[m_old_rollover_link].text_posn.first);
-        text.erase(pos, 3);
-        pos = text.find("</u>", m_links[m_old_rollover_link].text_posn.first);
-        text.erase(pos, 4);
-        SetLinkedText(text);
+    const std::string& raw_text = RawText();
+
+    if (m_links.empty()) {
+        SetLinkedText(raw_text);
+        return;
     }
-    m_old_rollover_link = -1;
+
+    //std::cout << "TextLinker::MarkLinks:" << std::endl;
+    //std::cout << "raw text:" << raw_text << std::endl;
+
+    int copy_start_index = 0;
+    std::string::const_iterator raw_text_start_it = raw_text.begin();
+
+    std::string marked_text;
+
+    // copy text from current copy_start_index up to just before start of next link
+    for (size_t i = 0; i < m_links.size(); ++i) {
+        const Link& link = m_links[i];
+        int link_start_index = link.text_posn.first;
+        int link_end_index = link.text_posn.second;
+
+        // copy raw text up to start of first link
+        std::copy(raw_text_start_it + copy_start_index, raw_text_start_it + link_start_index, std::back_inserter(marked_text));
+
+        // add link markup open tag
+        if (i == m_rollover_link)
+            marked_text += LINK_ROLLOVER_FORMAT_TAG;
+        else
+            marked_text += LINK_DEFAULT_FORMAT_TAG;
+
+        // copy link text itself
+        std::copy(raw_text_start_it + link_start_index, raw_text_start_it + link_end_index, std::back_inserter(marked_text));
+
+        // add link markup close tag
+        if (i == m_rollover_link)
+            marked_text += LINK_ROLLOVER_FORMAT_CLOSE;
+         else
+            marked_text += LINK_DEFAULT_FORMAT_CLOSE;
+
+        // update copy point for following text
+        copy_start_index = link_end_index;
+    }
+
+    // copy remaining text after last link
+    std::copy(raw_text_start_it + copy_start_index, raw_text.end(), std::back_inserter(marked_text));
+
+    // set underlying UI control text
+    SetLinkedText(marked_text);
+    //std::cout << "marktext:" << marked_text << std::endl << std::endl;
 }
