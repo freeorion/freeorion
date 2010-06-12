@@ -1235,13 +1235,16 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 0) EffectsGroups from Species
     // get PopCenters
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
+        Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
         const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
         if (!pc) continue;
         const std::string& species_name = pc->SpeciesName();
+        Logger().debugStream() << "... ... PopCenter species: " << species_name;
         if (species_name.empty())
             continue;
         const Species* species = GetSpecies(species_name);

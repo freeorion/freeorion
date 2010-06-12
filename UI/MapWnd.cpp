@@ -4136,6 +4136,8 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     // planets the player owns (so as to not improve enemy planets if a player
     // reseraches a tech that should only benefit him/herself)
 
+    Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
+
     int player_id = HumanClientApp::GetApp()->PlayerID();
     ObjectMap& objects = GetUniverse().Objects();
 
@@ -4150,7 +4152,8 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
          if (planet->Owners().empty()) {
              unowned_planets.insert(planet);
              planet->AddOwner(player_id);
-             planet->SetSpecies("SP_HUMAN");
+             planet->SetSpecies("SP_HUMAN");    // todo: determine appropriate species to set here based on selected colonization species, and only add that species to this planet if the species can reside on the planet
+             Logger().debugStream() << "... Set planet(" << planet->ID() << "): " << planet->Name() << " species to SP_HUMAN";
          }
     }
 
@@ -4160,7 +4163,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     // remove temporary ownership added above
     for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
         (*it)->RemoveOwner(player_id);
-        (*it)->Reset();
+        (*it)->SetSpecies("");
     }
     Universe::InhibitUniverseObjectSignals(false);
 }

@@ -425,11 +425,8 @@ public:
 private:
     void                    DoLayout();
 
-    void                    SetFocus  (const std::string& focus);   ///< set the focus of the planet to \a focus
-
-    void                    ClickColonize();                        ///< called if colonize button is pressed
-
-    Planet*                 GetPlanet() const;                      ///< returns the planet with ID m_planet_id
+    void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
+    void                    ClickColonize();                    ///< called if colonize button is pressed
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
@@ -714,7 +711,9 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 {
     SetName(UserString("PLANET_PANEL"));
 
-    const Planet* planet = GetPlanet();
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (!planet)
+        planet = GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!planet) {
         Logger().errorStream() << "SidePanel::PlanetPanel::PlanetPanel couldn't get latest known planet with ID " << m_planet_id;
         return;
@@ -879,14 +878,6 @@ SidePanel::PlanetPanel::~PlanetPanel()
     delete m_specials_panel;
 }
 
-Planet* SidePanel::PlanetPanel::GetPlanet() const
-{
-    if (Planet* planet = GetObject<Planet>(m_planet_id))
-        return planet;
-    else
-        return GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
-}
-
 void SidePanel::PlanetPanel::DoLayout()
 {
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
@@ -945,7 +936,9 @@ void SidePanel::PlanetPanel::DoLayout()
 
 void SidePanel::PlanetPanel::Refresh()
 {
-    const Planet* planet = GetPlanet();
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (!planet)
+        planet = GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1058,8 +1051,11 @@ void SidePanel::PlanetPanel::Refresh()
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus)
 {
-    if (Planet* planet = GetPlanet())
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus)));
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        return;
+    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+        new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus)));
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
@@ -1105,11 +1101,9 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    const Planet *planet = GetPlanet();
-
+    const Planet* planet = GetObject<Planet>(m_planet_id);
     if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         return;
-
 
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
@@ -1245,8 +1239,8 @@ void SidePanel::PlanetPanel::ClickColonize()
     // order or cancel colonization, depending on whether it has previosuly
     // been ordered
 
-    const Planet* planet = GetPlanet();
-    if (!planet)
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (!planet || !planet->Unowned())
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();

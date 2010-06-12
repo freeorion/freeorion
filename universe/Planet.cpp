@@ -150,6 +150,12 @@ const std::string& Planet::TypeName() const
     return UserString("PLANET");
 }
 
+void Planet::Dump() const
+{
+    UniverseObject::Dump();
+    Logger().debugStream() << " ... (Planet " << this->ID() << ": " << this->Name() << "): species: " << PopCenter::SpeciesName();
+}
+
 void Planet::Init() {
     AddMeter(METER_SUPPLY);
     AddMeter(METER_SHIELD);
