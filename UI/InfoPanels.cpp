@@ -874,8 +874,8 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
         return;
     }
 
-    int i = static_cast<int>(m_focus_drop->IteratorToIndex(selected));
-    if (i >= res->AvailableFoci().size() || i < 0) {
+    std::size_t i = m_focus_drop->IteratorToIndex(selected);
+    if (i >= res->AvailableFoci().size()) {
         Logger().errorStream() << "ResourcePanel::FocusDropListSelectionChanged got invalid focus selected index: " << i;
         return;
     }
@@ -2560,7 +2560,20 @@ void MeterBrowseWnd::Initialize() {
         // both primary and secondary meter exist.  display a current value
         // summary at top with current and next turn values
 
-        std::string summary_title_text = MeterToUserString(m_primary_meter_type);
+        // special case for meters: use species name
+        std::string summary_title_text;
+        if (m_primary_meter_type == METER_POPULATION) {
+            std::string human_readable_species_name;
+            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(obj)) {
+                const std::string& species_name = pop->SpeciesName();
+                if (!species_name.empty())
+                    human_readable_species_name = UserString(species_name);
+            }
+            summary_title_text = boost::io::str(FlexibleFormat(UserString("TT_SPECIES_POPULATION")) % human_readable_species_name);
+        } else {
+            summary_title_text = MeterToUserString(m_primary_meter_type);
+        }
+
         m_summary_title = new GG::TextControl(GG::X0, top, TOTAL_WIDTH - EDGE_PAD, m_row_height,
                                               summary_title_text, font_bold, ClientUI::TextColor(), GG::FORMAT_RIGHT | GG::FORMAT_VCENTER);
         AttachChild(m_summary_title);
