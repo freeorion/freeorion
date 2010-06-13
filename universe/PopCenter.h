@@ -38,10 +38,10 @@ public:
     /** \name Mutators */ //@{
     void            Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void            SetSpecies(const std::string& species_name) {m_species_name = species_name;}    ///< sets the species of the population to \a species_name
-    void            SetAllocatedFood(double allocated_food)     {m_allocated_food = allocated_food;}///< sets the amount of food which is currently available
+    void            SetSpecies(const std::string& species_name);///< sets the species of the population to \a species_name
+    void            SetAllocatedFood(double allocated_food);    ///< sets the amount of food which is currently available
 
-    void            Reset();                                ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
+    void            Reset();                                    ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
     //@}
 
     static const double MINIMUM_POP_CENTER_POPULATION;      ///< below this population, planet is considered unpopulated and reset to uncolonized state

@@ -1565,6 +1565,9 @@ Ship Class
 FW_UNKNOWN_DESIGN_NAME
 Unknown Design
 
+FW_SPECIES_SHIP_DESIGN_LABEL
+(%2%) %1%
+
 # the name of the new fleet icon in the fleet listbox
 FW_NEW_FLEET_LABEL
 <i>New Fleet</i>

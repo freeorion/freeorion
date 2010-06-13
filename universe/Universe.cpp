@@ -4253,6 +4253,8 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
 
         Logger().debugStream() << "creating empire named: " << empire_name;
 
+        std::string empire_starting_species = "SP_HUMAN";
+
         int home_planet_id = homeworld_planet_ids[i];
 
         // create new Empire object through empire manager
@@ -4272,7 +4274,7 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                                << ") to be home system for Empire " << empire_id;
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
-        home_planet->SetSpecies("SP_HUMAN");
+        home_planet->SetSpecies(empire_starting_species);
         home_planet->SetFocus("FOCUS_FARMING");
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
 
@@ -4328,6 +4330,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                         Logger().errorStream() << "unable to create new ship!";
                         break;
                     }
+
+                    if (ship->CanColonize())
+                        ship->SetSpecies(empire_starting_species);
 
                     ship->Rename(empire->NewShipName());
                     int ship_id = Insert(ship);

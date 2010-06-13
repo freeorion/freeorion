@@ -11,6 +11,9 @@
 
 const double PopCenter::MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 0.1 when showing only two digits
 
+class Species;
+const Species* GetSpecies(const std::string& name);
+
 PopCenter::PopCenter(const std::string& species_name) :
     m_species_name(species_name), m_allocated_food(0.0)
 {
@@ -208,3 +211,18 @@ void PopCenter::Reset()
     m_species_name.clear();
     m_allocated_food = 0.0;
 }
+
+void PopCenter::SetSpecies(const std::string& species_name)
+{
+    const Species* species = GetSpecies(species_name);
+    if (!species) {
+        Logger().errorStream() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
+    }
+    m_species_name = species_name;
+}
+
+void PopCenter::SetAllocatedFood(double allocated_food)
+{
+    m_allocated_food = allocated_food;
+}
+

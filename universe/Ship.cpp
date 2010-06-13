@@ -23,6 +23,9 @@ namespace {
     }
 }
 
+class Species;
+const Species* GetSpecies(const std::string& name);
+
 Ship::Ship() :
     m_design_id(INVALID_OBJECT_ID),
     m_fleet_id(INVALID_OBJECT_ID),
@@ -144,6 +147,7 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
                  ++it) {
                 this->m_part_meters[it->first];
             }
+            this->m_species_name =          copied_ship->m_species_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =  copied_ship->m_ordered_scrapped;
@@ -184,6 +188,10 @@ bool Ship::CanColonize() const {
         return design->CanColonize();
     else
         return false;
+}
+
+const std::string& Ship::SpeciesName() const {
+    return m_species_name;
 }
 
 double Ship::Speed() const {
@@ -285,6 +293,13 @@ void Ship::RemoveMissiles(const std::string& part_name, std::size_t n)
 {
     assert(m_missiles[part_name].second < n);
     m_missiles[part_name].second -= n;
+}
+
+void Ship::SetSpecies(const std::string& species_name)
+{
+    if (!GetSpecies(species_name))
+        Logger().errorStream() << "Ship::SetSpecies couldn't get species with name " << species_name;
+    m_species_name = species_name;
 }
 
 void Ship::MoveTo(double x, double y)

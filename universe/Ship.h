@@ -21,7 +21,7 @@ public:
     Ship();                                         ///< default ctor
     Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
 
-    virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Ship
+    virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
     //@}
 
     /** \name Accessors */ //@{
@@ -35,6 +35,7 @@ public:
 
     bool                        IsArmed() const;
     bool                        CanColonize() const;
+    const std::string&          SpeciesName() const;
     double                      Speed() const;
 
     const ConsumablesMap&       Fighters() const;
@@ -60,6 +61,8 @@ public:
     void            RemoveFighters(const std::string& part_name, std::size_t n);
     void            RemoveMissiles(const std::string& part_name, std::size_t n);
 
+    void            SetSpecies(const std::string& species_name);
+
     virtual void    MoveTo(double x, double y);
 
     void            SetOrderedScrapped(bool b = true);                      ///< flags ship for scrapping
@@ -79,6 +82,7 @@ private:
     ConsumablesMap  m_fighters;
     ConsumablesMap  m_missiles;
     PartMeters      m_part_meters;
+    std::string     m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>

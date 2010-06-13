@@ -153,7 +153,8 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
         & BOOST_SERIALIZATION_NVP(m_fighters)
         & BOOST_SERIALIZATION_NVP(m_missiles)
-        & BOOST_SERIALIZATION_NVP(m_part_meters);
+        & BOOST_SERIALIZATION_NVP(m_part_meters)
+        & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe)
