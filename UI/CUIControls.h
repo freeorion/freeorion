@@ -428,14 +428,32 @@ public:
 private:
 };
 
+/** A control used to pick from at list of species names. */
+class SpeciesSelector : public CUIDropDownList
+{
+public:
+    /** \name Structors */ //@{
+    SpeciesSelector();                              ///< populates with all species in SpeciesManager
+    //@}
+
+    /** \name Accessors */ //@{
+    const std::string&  CurrentSpeciesName() const; ///< returns the name of the species that is currently selected
+    //@}
+
+    /** \name Mutators */ //@{
+    void SelectSpecies(const std::string& species_name);
+    //@}
+
+    mutable boost::signal<void (const std::string&)> SpeciesChangedSignal;
+
+private:
+    void SelectionChanged(GG::DropDownList::iterator it);
+};
+
 /** A control used to pick from the empire colors returned by EmpireColors(). */
 class EmpireColorSelector : public CUIDropDownList
 {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (const GG::Clr&)> ColorChangedSignalType;
-    //@}
-
     /** \name Structors */ //@{
     EmpireColorSelector(GG::Y h);
     //@}
@@ -446,9 +464,9 @@ public:
 
     /** \name Mutators */ //@{
     void SelectColor(const GG::Clr& clr);
-
-    mutable ColorChangedSignalType ColorChangedSignal;
     //@}
+
+    mutable boost::signal<void (const GG::Clr&)> ColorChangedSignal;
 
 private:
     void SelectionChanged(GG::DropDownList::iterator it);
@@ -458,10 +476,6 @@ private:
 class ColorSelector : public GG::Control
 {
 public:
-    /** \name Signal Types */ //@{
-    typedef boost::signal<void (const GG::Clr&)> ColorChangedSignalType;
-    //@}
-
     /** \name Structors */ //@{
     ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color);
     //@}
@@ -472,7 +486,7 @@ public:
     virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     //@}
 
-    mutable ColorChangedSignalType ColorChangedSignal;
+    mutable boost::signal<void (const GG::Clr&)> ColorChangedSignal;
 
 private:
     GG::Clr m_default_color;

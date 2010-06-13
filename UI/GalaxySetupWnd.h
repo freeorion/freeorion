@@ -2,17 +2,9 @@
 #ifndef _GalaxySetupWnd_h_
 #define _GalaxySetupWnd_h_
 
-#ifndef _Universe_h_
 #include "../universe/Universe.h"
-#endif
-
-#ifndef _CUIWnd_h_
 #include "CUIWnd.h"
-#endif
-
-#ifndef _CUISpin_h_
 #include "CUISpin.h"
-#endif
 
 namespace GG {
     class RadioButtonGroup;
@@ -102,6 +94,7 @@ public:
     const GalaxySetupPanel& Panel()      const  {return *m_galaxy_setup_panel;}
     std::string             EmpireName() const;
     GG::Clr                 EmpireColor() const;
+    std::string             StartingSpeciesName() const;
     int                     NumberAIs() const;
     //!@}
 
@@ -122,20 +115,22 @@ private:
 
     bool m_ended_with_ok;    //!< indicates whether or not we ended the dialog with OK or not
 
-    GalaxySetupPanel*     m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
-    GG::TextControl*      m_player_name_label;
-    CUIEdit*              m_player_name_edit;
-    GG::TextControl*      m_empire_name_label;
-    CUIEdit*              m_empire_name_edit;
-    GG::TextControl*      m_empire_color_label;
-    EmpireColorSelector*  m_empire_color_selector;
-    GG::TextControl*      m_number_ais_label;
-    CUISpin<int>*         m_number_ais_spin;
-    GG::StaticGraphic*    m_preview_image;         //!< The galaxy shape preview image
-    CUIButton*            m_ok;                    //!< OK button
-    CUIButton*            m_cancel;                //!< Cancel button
+    GalaxySetupPanel*       m_galaxy_setup_panel;    //!< The GalaxySetupPanel that does most of the work of the dialog
+    GG::TextControl*        m_player_name_label;
+    CUIEdit*                m_player_name_edit;
+    GG::TextControl*        m_empire_name_label;
+    CUIEdit*                m_empire_name_edit;
+    GG::TextControl*        m_empire_color_label;
+    EmpireColorSelector*    m_empire_color_selector;
+    SpeciesSelector*        m_starting_secies_selector;
+    GG::TextControl*        m_starting_species_label;
+    GG::TextControl*        m_number_ais_label;
+    CUISpin<int>*           m_number_ais_spin;
+    GG::StaticGraphic*      m_preview_image;         //!< The galaxy shape preview image
+    CUIButton*              m_ok;                    //!< OK button
+    CUIButton*              m_cancel;                //!< Cancel button
 
-    GG::Pt                m_preview_ul;
+    GG::Pt                  m_preview_ul;
 };
 
 #endif // _GalaxySetupWnd_h_

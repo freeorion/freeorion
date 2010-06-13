@@ -7,6 +7,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../universe/Species.h"
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
@@ -63,31 +64,42 @@ namespace {
 // class CUIButton
 ///////////////////////////////////////
 namespace {
+    static const std::string EMPTY_STRING("");
+
     const int CUIBUTTON_ANGLE_OFFSET = 5;
+
     const GG::X COLOR_SELECTOR_WIDTH(75);
     const GG::Y COLOR_SQUARE_HEIGHT(10);
-
     // row type used in the EmpireColorSelector
-    struct ColorRow : public GG::ListBox::Row
-    {
-        struct ColorSquare : GG::Control
-        {
-            ColorSquare(const GG::Clr& color, GG::Y h) : 
+    struct ColorRow : public GG::ListBox::Row {
+        struct ColorSquare : GG::Control {
+            ColorSquare(const GG::Clr& color, GG::Y h) :
                 GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
             {
                 SetColor(color);
             }
-
-            virtual void Render()
-            {
+            virtual void Render() {
                 GG::Pt ul = UpperLeft(), lr = LowerRight();
                 GG::FlatRectangle(ul, lr, Color(), GG::CLR_ZERO, 0);
             }
         };
-
-        ColorRow(const GG::Clr& color, GG::Y h = COLOR_SQUARE_HEIGHT)
-        {
+        ColorRow(const GG::Clr& color, GG::Y h = COLOR_SQUARE_HEIGHT) {
             push_back(new ColorSquare(color, h));
+        }
+    };
+
+    const GG::X SPECIES_SELECTOR_WIDTH(150);
+    const GG::Y SPECIES_SELECTOR_HEIGHT(16);
+    // row type used in the SpeciesSelector
+    struct SpeciesRow : public GG::ListBox::Row {
+        SpeciesRow(const Species* species) {
+            if (!species)
+                return;
+            GG::Wnd::SetName(species->Name());
+            const boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(species->Graphic(), true);
+            if (icon)
+                push_back(GG::SubTexture(icon, GG::X0, GG::Y0, icon->DefaultWidth(), icon->DefaultHeight()));
+            push_back(UserString(species->Name()), ClientUI::GetFont());
         }
     };
 }
@@ -1082,6 +1094,55 @@ void CUIToolBar::Render()
 }
 
 ///////////////////////////////////////
+// class SpeciesSelector
+///////////////////////////////////////
+SpeciesSelector::SpeciesSelector() :
+    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, GG::Y(ClientUI::Pts() * 2), GG::Y(ClientUI::Pts() * 10))
+{
+    const SpeciesManager& sm = GetSpeciesManager();
+    for (SpeciesManager::iterator it = sm.begin(); it != sm.end(); ++it)
+        Insert(new SpeciesRow(it->second));
+    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
+}
+
+const std::string& SpeciesSelector::CurrentSpeciesName() const
+{
+    CUIDropDownList::iterator row_it = this->CurrentItem();
+    if (row_it == this->end()) {
+        Logger().errorStream() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to out of range iterator";
+        return EMPTY_STRING;
+    }
+    const CUIDropDownList::Row* row = *row_it;
+    if (!row) {
+        Logger().errorStream() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to invalid Row pointer";
+        return EMPTY_STRING;
+    }
+    return row->Name();
+}
+
+void SpeciesSelector::SelectSpecies(const std::string& species_name)
+{
+    const SpeciesManager& sm = GetSpeciesManager();
+    iterator list_it = this->begin();
+    for (SpeciesManager::iterator species_it = sm.begin(); species_it != sm.end() && list_it != this->end(); ++species_it, ++list_it) {
+        if (species_it->first == species_name) {
+            Select(list_it);
+            return;
+        }
+    }
+    Logger().errorStream() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
+}
+
+void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it)
+{
+    const GG::ListBox::Row* row = *it;
+    if (row)
+        SpeciesChangedSignal(row->Name());
+    else
+        Logger().errorStream() << "SpeciesSelector::SelectionChanged had trouble getting species name from row!";
+}
+
+///////////////////////////////////////
 // class EmpireColorSelector
 ///////////////////////////////////////
 EmpireColorSelector::EmpireColorSelector(GG::Y h) : 
@@ -1101,23 +1162,23 @@ GG::Clr EmpireColorSelector::CurrentColor() const
 
 void EmpireColorSelector::SelectColor(const GG::Clr& clr)
 {
-    Select(begin());
-    const std::vector<GG::Clr>& colors = EmpireColors();
-    iterator it = begin();
-    for (unsigned int i = 0; i < colors.size(); ++i, ++it) {
-        if (colors[i] == clr) {
-            Select(it);
-            break;
-        } else if (i == colors.size() - 1) {
-            assert(!"EmpireColorSelector::SelectColor() : No such color!");
+    for (iterator list_it = begin(); list_it != end(); ++list_it) {
+        const GG::ListBox::Row* row = *list_it;
+        if (row && !row->empty() && (*row)[0]->Color() == clr) {
+            Select(list_it);
+            return;
         }
     }
+    Logger().errorStream() << "EmpireColorSelector::SelectColor was unable to find a requested color!";
 }
 
 void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it)
 {
-    const std::vector<GG::Clr>& colors = EmpireColors();
-    ColorChangedSignal(colors[std::distance(begin(), it)]);
+    const GG::ListBox::Row* row = *it;
+    if (row && !row->empty())
+        ColorChangedSignal((*row)[0]->Color());
+    else
+        Logger().errorStream() << "EmpireColorSelector::SelectionChanged had trouble getting colour from row!";
 }
 
 ///////////////////////////////////////
