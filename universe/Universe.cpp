@@ -4285,8 +4285,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
         if (!available_foci.empty())
             home_planet->SetFocus(*available_foci.begin());
 
-        home_planet->AddSpecial("HOMEWORLD_SPECIAL");
-
 
         // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
         Building* building = new Building(empire_id, "BLD_SHIPYARD_BASE", UniverseObject::INVALID_OBJECT_ID);
@@ -4297,6 +4295,9 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
+        building = new Building(empire_id, "BLD_CULTURE_ARCHIVES", UniverseObject::INVALID_OBJECT_ID);
+        building_id = Insert(building);
+        home_planet->AddBuilding(building_id);
 
         // give new empire items and ship designs it should start with
         starting_unlocked_items.AddItemsToEmpire(empire);

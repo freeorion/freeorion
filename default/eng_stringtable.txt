@@ -3820,6 +3820,12 @@ BLD_OBSERVATORY_DESC
 Gives +10 to Detection to all friendly planets within distance 200.
 Decreases Stealth on planet where built by 10.'''
 
+BLD_CULTURE_ARCHIVES
+Cultural Archives
+
+BLD_CULTURE_ARCHIVES_DESC
+Stores the sum accumulated knowledge from thousands of years of life on this planet, giving bonuses to many aspects of planetary productivity.
+
 BLD_IMPERIAL_PALACE
 Imperial Palace
 

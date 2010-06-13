@@ -1,3 +1,24 @@
+BuildingType
+    name = "BLD_CULTURE_ARCHIVES"
+    description = "BLD_CULTURE_ARCHIVES_DESC"
+    buildcost = 2000
+    buildtime = 200
+    maintenancecost = 1
+    location = Not All
+    effectsgroups =
+        EffectsGroup
+            scope = Contains Source
+            activation = Source
+            effects = [
+                SetTargetResearch Value + 5
+                SetTargetTrade Value + 10
+                SetTargetFarming Value + Target.Population * 1.0
+                SetTargetMining Value + Target.Population * 0.5
+                SetTargetIndustry Value + Target.Population * 1.0
+                SetTargetConstruction Value + 8
+                SetDetection Value + 5
+            ]
+    graphic = ""
 
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
@@ -46,6 +67,11 @@ BuildingType
     buildtime = 1
     maintenancecost = 1
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Contains Source
+            activation = Source
+            effects = SetSupply Value + 2
     graphic = ""
 
 BuildingType

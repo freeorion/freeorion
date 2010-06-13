@@ -206,6 +206,11 @@ Species
 
         EffectsGroup
             scope = Source
+            activation = Source
+            effects = SetTargetIndustry Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
             activation = Focus type = "FOCUS_FARMING"
             effects =
                 SetTargetFarming Value + Target.Population * 1.0
