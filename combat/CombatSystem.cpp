@@ -425,7 +425,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         const std::vector<int>& valid_target_ids = target_vec_it->second;
 
 
-        Logger().debugStream() << "Attacker: " << attacker->Name() << "(" << attacker->ID() << ")";
+        Logger().debugStream() << "Attacker: " << attacker->Name() << " (" << attacker->ID() << ")";
 
         SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object from the vector
 
@@ -446,7 +446,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             continue;
         }
 
-        Logger().debugStream() << "Target: " << target->Name() << "(" << target->ID() << ")";
+        Logger().debugStream() << "Target: " << target->Name() << " (" << target->ID() << ")";
 
         // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {
@@ -466,7 +466,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         // check for destruction of ships
         if (universe_object_cast<Ship*>(target)) {
-            if (target->UniverseObject::GetMeter(METER_HEALTH)->Current() <= 0.0) {
+            if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0) {
                 // object id destroyed
                 combat_info.destroyed_object_ids.insert(target_id);
                 // all empires in battle know object was destroyed
@@ -479,7 +479,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
             if (planet->Unowned())
                 continue;
-            if (target->UniverseObject::GetMeter(METER_CONSTRUCTION)->Current() <= 0.0) {
+            if (target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0) {
                 const std::set<int>& attacker_owners = attacker->Owners();
                 if (attacker_owners.size() == 1) {
                     int attacker_owner = *attacker_owners.begin();
