@@ -4272,10 +4272,19 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
 
         Logger().debugStream() << "Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
+
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
+
         home_planet->SetSpecies(empire_starting_species);
-        home_planet->SetFocus("FOCUS_FARMING");
+        // find a focus to give planets by default.  use first defined available focus.
+        // the planet's AvailableFoci function should return a vector of all names of
+        // available foci, although this might be buggy since the universe isn't fully
+        // created yet at this point in unverse generation.
+        std::vector<std::string> available_foci = home_planet->AvailableFoci();
+        if (!available_foci.empty())
+            home_planet->SetFocus(*available_foci.begin());
+
         home_planet->AddSpecial("HOMEWORLD_SPECIAL");
 
 
