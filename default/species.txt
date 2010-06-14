@@ -247,3 +247,31 @@ Species
 
     ]
     graphic = "icons/meter/pop.png"
+
+Species
+    name = "SP_TEST"
+    description = "SP_TEST_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/meter/farming.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/meter/supply.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Planet
+            effects = [
+                SetTargetPopulation Value + 18
+                SetTargetHealth Value + 25
+                SetTargetFarming Value + 30
+            ]
+    ]
+    graphic = "icons/meter/construction.png"

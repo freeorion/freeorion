@@ -561,6 +561,9 @@ The name used in the game to represent the player.
 OPTIONS_DB_GAMESETUP_EMPIRE_COLOR
 The color used in the game for your empire.
 
+OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME
+The species on your homeworld at the start of the game.
+
 OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS
 The number of AI opponents you will play in the game.
 
@@ -825,6 +828,9 @@ Empire Name
 
 GSETUP_EMPIRE_COLOR
 Empire Color
+
+GSETUP_SPECIES
+Staring Species
 
 GSETUP_NUMBER_AIS
 Number of AI Players

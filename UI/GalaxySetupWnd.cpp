@@ -21,7 +21,7 @@ namespace {
     const GG::Y PANEL_CONTROL_SPACING(33);
     const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 6);
     const GG::X GAL_SETUP_WND_WD(645);
-    const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 5) + GAL_SETUP_PANEL_HT);
+    const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
     const int MAX_AI_PLAYERS = 12;
@@ -340,14 +340,25 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_empire_name_label->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_label->Height()) / 2));
     m_empire_name_edit->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_empire_name_edit->Height()) / 2));
 
+    const GG::Y AUTO_CONTROL_HEIGHT = m_empire_name_edit->Height();
+
     // empire color
     ypos += PANEL_CONTROL_SPACING;
     m_empire_color_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_EMPIRE_COLOR"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
-    m_empire_color_selector = new EmpireColorSelector(GG::Y(ClientUI::Pts() + 4));
+    m_empire_color_selector = new EmpireColorSelector(AUTO_CONTROL_HEIGHT);
     m_empire_color_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_empire_color_selector->Height()) / 2));
     m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
+
+    // starting species
+    ypos += PANEL_CONTROL_SPACING;
+    m_starting_species_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIES"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
+    m_starting_secies_selector = new SpeciesSelector(AUTO_CONTROL_HEIGHT);
+    m_starting_secies_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_starting_secies_selector->Height()) / 2));
+    m_starting_secies_selector->SelectSpecies(GetOptionsDB().Get<std::string>("GameSetup.starting-species"));
 
     // number of AIs
     ypos += PANEL_CONTROL_SPACING;
@@ -426,6 +437,8 @@ void GalaxySetupWnd::AttachSignalChildren()
     AttachChild(m_empire_name_edit);
     AttachChild(m_empire_color_label);
     AttachChild(m_empire_color_selector);
+    AttachChild(m_starting_species_label);
+    AttachChild(m_starting_secies_selector);
     AttachChild(m_number_ais_label);
     AttachChild(m_number_ais_spin);
     AttachChild(m_preview_image);
@@ -481,6 +494,7 @@ void GalaxySetupWnd::OkClicked()
     GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
+    GetOptionsDB().Set("GameSetup.starting-species",    m_starting_secies_selector->CurrentSpeciesName());
     GetOptionsDB().Set("GameSetup.ai-players",          m_number_ais_spin->Value());
 
     // Save the changes:

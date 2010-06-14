@@ -433,7 +433,7 @@ class SpeciesSelector : public CUIDropDownList
 {
 public:
     /** \name Structors */ //@{
-    SpeciesSelector();                              ///< populates with all species in SpeciesManager
+    SpeciesSelector(GG::Y h);                       ///< populates with all species in SpeciesManager
     //@}
 
     /** \name Accessors */ //@{

@@ -64,44 +64,7 @@ namespace {
 // class CUIButton
 ///////////////////////////////////////
 namespace {
-    static const std::string EMPTY_STRING("");
-
     const int CUIBUTTON_ANGLE_OFFSET = 5;
-
-    const GG::X COLOR_SELECTOR_WIDTH(75);
-    const GG::Y COLOR_SQUARE_HEIGHT(10);
-    // row type used in the EmpireColorSelector
-    struct ColorRow : public GG::ListBox::Row {
-        struct ColorSquare : GG::Control {
-            ColorSquare(const GG::Clr& color, GG::Y h) :
-                GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
-            {
-                SetColor(color);
-            }
-            virtual void Render() {
-                GG::Pt ul = UpperLeft(), lr = LowerRight();
-                GG::FlatRectangle(ul, lr, Color(), GG::CLR_ZERO, 0);
-            }
-        };
-        ColorRow(const GG::Clr& color, GG::Y h = COLOR_SQUARE_HEIGHT) {
-            push_back(new ColorSquare(color, h));
-        }
-    };
-
-    const GG::X SPECIES_SELECTOR_WIDTH(150);
-    const GG::Y SPECIES_SELECTOR_HEIGHT(16);
-    // row type used in the SpeciesSelector
-    struct SpeciesRow : public GG::ListBox::Row {
-        SpeciesRow(const Species* species) {
-            if (!species)
-                return;
-            GG::Wnd::SetName(species->Name());
-            const boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(species->Graphic(), true);
-            if (icon)
-                push_back(GG::SubTexture(icon, GG::X0, GG::Y0, icon->DefaultWidth(), icon->DefaultHeight()));
-            push_back(UserString(species->Name()), ClientUI::GetFont());
-        }
-    };
 }
 
 CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font/* = boost::shared_ptr<GG::Font>()*/,
@@ -1096,13 +1059,35 @@ void CUIToolBar::Render()
 ///////////////////////////////////////
 // class SpeciesSelector
 ///////////////////////////////////////
-SpeciesSelector::SpeciesSelector() :
-    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, GG::Y(ClientUI::Pts() * 2), GG::Y(ClientUI::Pts() * 10))
+namespace {
+    static const std::string EMPTY_STRING("");
+    const GG::X SPECIES_SELECTOR_WIDTH(150);
+
+    // row type used in the SpeciesSelector
+    struct SpeciesRow : public GG::ListBox::Row {
+        SpeciesRow(const Species* species, GG::Y h) :
+            GG::ListBox::Row(GG::X1, h, "SpeciesRow")
+        {
+            if (!species)
+                return;
+            GG::Wnd::SetName(species->Name());
+            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
+            push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()),
+                                          ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
+            SetColWidth(0, GG::X(Value(h)));
+            SetColWidth(1, SPECIES_SELECTOR_WIDTH - GG::X(Value(h)));
+        }
+    };
+}
+SpeciesSelector::SpeciesSelector(GG::Y h) :
+    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, h - 8, 12 * h)
 {
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::iterator it = sm.begin(); it != sm.end(); ++it)
-        Insert(new SpeciesRow(it->second));
+        Insert(new SpeciesRow(it->second, h - 4));
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
+    if (!this->Empty())
+        Select(this->begin());
 }
 
 const std::string& SpeciesSelector::CurrentSpeciesName() const
@@ -1145,12 +1130,35 @@ void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it)
 ///////////////////////////////////////
 // class EmpireColorSelector
 ///////////////////////////////////////
+namespace {
+    const GG::X COLOR_SELECTOR_WIDTH(75);
+
+    // row type used in the EmpireColorSelector
+    struct ColorRow : public GG::ListBox::Row {
+        struct ColorSquare : GG::Control {
+            ColorSquare(const GG::Clr& color, GG::Y h) :
+                GG::Control(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH - 40, h, GG::Flags<GG::WndFlag>())
+            {
+                SetColor(color);
+            }
+            virtual void Render() {
+                GG::Pt ul = UpperLeft(), lr = LowerRight();
+                GG::FlatRectangle(ul, lr, Color(), GG::CLR_ZERO, 0);
+            }
+        };
+        ColorRow(const GG::Clr& color, GG::Y h) :
+            GG::ListBox::Row(GG::X(Value(h)), h, "ColorRow")
+        {
+            push_back(new ColorSquare(color, h));
+        }
+    };
+}
 EmpireColorSelector::EmpireColorSelector(GG::Y h) : 
-    CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h, 12 * h)
+    CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h - 8, 12 * h)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
     for (unsigned int i = 0; i < colors.size(); ++i) {
-        Insert(new ColorRow(colors[i], h - 2));
+        Insert(new ColorRow(colors[i], h - 4));
     }
     GG::Connect(SelChangedSignal, &EmpireColorSelector::SelectionChanged, this);
 }
