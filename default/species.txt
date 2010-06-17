@@ -246,17 +246,41 @@ Species
                 SetTargetConstruction Value + 12
 
     ]
-    graphic = "icons/meter/pop.png"
+    graphic = "icons/species/human.png"
 
 Species
-    name = "SP_TEST"
-    description = "SP_TEST_DESC"
+    name = "SP_GYISACHE"
+    description = "SP_GYISACHE"
     foci = [
         Focus
             name = "FOCUS_FARMING"
             description = "FOCUS_FARMING_DESC"
             location = Planet
             graphic = "icons/meter/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Planet
+            graphic = "icons/meter/mining.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Planet
+            graphic = "icons/meter/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/meter/research.png"
+
+        Focus
+            name = "FOCUS_TRADE"
+            description = "FOCUS_TRADE_DESC"
+            location = Planet
+            graphic = "icons/meter/trade.png"
 
         Focus
             name = "FOCUS_LOGISTICS"
@@ -267,11 +291,210 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Planet
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
             effects = [
                 SetTargetPopulation Value + 18
                 SetTargetHealth Value + 25
-                SetTargetFarming Value + 30
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 12
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 8
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 12
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 8
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 6
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Poor
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetIndustry Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_FARMING"
+            effects =
+                SetTargetFarming Value + Target.Population * 1.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_MINING"
+            effects =
+                SetTargetMining Value + Target.Population * 1.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects =
+                SetTargetIndustry Value + Target.Population * 1.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects =
+                SetTargetResearch Value + Target.Population * 1.0
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_TRADE"
+            effects =
+                SetTargetTrade Value + Target.Population * 1.0
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects =
+                SetTargetConstruction Value + 12
+
     ]
-    graphic = "icons/meter/construction.png"
+    graphic = "icons/species/gyisache.png"
+    

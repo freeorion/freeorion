@@ -2050,6 +2050,12 @@ Human
 SP_HUMAN_DESC
 The usual.
 
+SP_GYISACHE
+Gyisache
+
+SP_GYISACHE_DESC
+Cowardly, sheep-like herbivores.
+
 ####################
 # Specials         #
 ####################
