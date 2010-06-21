@@ -382,7 +382,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     Init();
 }
 
-std::string GalaxySetupWnd::EmpireName() const
+const std::string& GalaxySetupWnd::EmpireName() const
 {
     return m_empire_name_edit->Text();
 }
@@ -390,6 +390,11 @@ std::string GalaxySetupWnd::EmpireName() const
 GG::Clr GalaxySetupWnd::EmpireColor() const
 {
     return m_empire_color_selector->CurrentColor();
+}
+
+const std::string& GalaxySetupWnd::StartingSpeciesName() const
+{
+    return m_starting_secies_selector->CurrentSpeciesName();
 }
 
 int GalaxySetupWnd::NumberAIs() const
@@ -419,11 +424,11 @@ void GalaxySetupWnd::Init()
 {
     AttachSignalChildren();
 
-    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal, &GalaxySetupWnd::PreviewImageChanged, this);
-    GG::Connect(m_player_name_edit->EditedSignal, &GalaxySetupWnd::PlayerNameChanged, this);
-    GG::Connect(m_empire_name_edit->EditedSignal, &GalaxySetupWnd::EmpireNameChanged, this);
-    GG::Connect(m_ok->ClickedSignal, &GalaxySetupWnd::OkClicked, this);
-    GG::Connect(m_cancel->ClickedSignal, &GalaxySetupWnd::CancelClicked, this);
+    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,   &GalaxySetupWnd::PreviewImageChanged, this);
+    GG::Connect(m_player_name_edit->EditedSignal,           &GalaxySetupWnd::PlayerNameChanged, this);
+    GG::Connect(m_empire_name_edit->EditedSignal,           &GalaxySetupWnd::EmpireNameChanged, this);
+    GG::Connect(m_ok->ClickedSignal,                        &GalaxySetupWnd::OkClicked, this);
+    GG::Connect(m_cancel->ClickedSignal,                    &GalaxySetupWnd::CancelClicked, this);
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
