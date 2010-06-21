@@ -106,7 +106,7 @@ void AIClientApp::Run()
     }
 
     // join game
-    Networking().SendMessage(JoinGameMessage(PlayerName()));
+    Networking().SendMessage(JoinGameMessage(PlayerName(), Networking::CLIENT_TYPE_AI_PLAYER));
 
     // respond to messages until disconnected
     while (1) {
@@ -127,8 +127,8 @@ void AIClientApp::HandleMessage(const Message& msg)
     //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
     case Message::JOIN_GAME: {
-        if (msg.SendingPlayer() == -1) {
-            if (PlayerID() == -1) {
+        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
+            if (PlayerID() == Networking::INVALID_PLAYER_ID) {
                 SetPlayerID(msg.ReceivingPlayer());
                 Logger().debugStream() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
             } else {
@@ -139,7 +139,7 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::GAME_START: {
-        if (msg.SendingPlayer() == -1) {
+        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; "
                 "starting AI turn...";
             bool single_player_game;        // note that this is ignored
@@ -171,7 +171,7 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::TURN_UPDATE: {
-        if (msg.SendingPlayer() == -1) {
+        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
             ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info);
             //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";

@@ -20,6 +20,7 @@
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../universe/Planet.h"
+#include "../../universe/Species.h"
 #include "../../util/Process.h"
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
@@ -302,41 +303,73 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
 
         if (!failed) {
             SinglePlayerSetupData setup_data;
-            if (quickstart) {
-                // get values stored in options from previous time game was run
 
-                setup_data.m_size = GetOptionsDB().Get<int>("GameSetup.stars");
-                setup_data.m_shape = GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
-                setup_data.m_age = GetOptionsDB().Get<Age>("GameSetup.galaxy-age");
-
-                // GalaxySetupWnd doesn't allow LANES_NON, but I'll assume the value in the OptionsDB is valid here
-                // since this is quickstart, and should be based on previous acceptable value stored, unless
-                // the options file has be corrupted or edited
-                setup_data.m_starlane_freq = GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency");
-
-                setup_data.m_planet_density = GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density");
-                setup_data.m_specials_freq = GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency");
-                setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
-
-                // DB stores index into array of available colours, so need to get that array to look up value of index.
-                // if stored value is invalid, use a default colour
-                const std::vector<GG::Clr>& empire_colours = EmpireColors();
-                int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
-                if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
-                    setup_data.m_empire_color = empire_colours[colour_index];
-                else
-                    setup_data.m_empire_color = GG::CLR_GREEN;
-
-                setup_data.m_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
-
-            } else {
-                galaxy_wnd.Panel().GetSetupData(setup_data);
-                setup_data.m_empire_name = galaxy_wnd.EmpireName();
-                setup_data.m_empire_color = galaxy_wnd.EmpireColor();
-                setup_data.m_AIs = galaxy_wnd.NumberAIs();
-            }
             setup_data.m_new_game = true;
-            setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
+            setup_data.m_filename.clear();  // not used for new game
+
+
+            // get values stored in options from previous time game was run or
+            // from just having run GalaxySetupWnd
+
+            // GalaxySetupData
+            setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
+            setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
+            setup_data.m_age =              GetOptionsDB().Get<Age>("GameSetup.galaxy-age");
+            setup_data.m_starlane_freq =    GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency");
+            setup_data.m_planet_density =   GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density");
+            setup_data.m_specials_freq =    GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency");
+
+
+            // SinglePlayerSetupData contains a map of PlayerSetupData, for
+            // the human and AI players.  Need to compile this information
+            // from the specified human options and number of requested AIs
+
+            // Human player setup data first
+
+            PlayerSetupData human_player_setup_data;
+            human_player_setup_data.m_player_id =   Networking::HOST_PLAYER_ID;
+            human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
+            human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+
+            // DB stores index into array of available colours, so need to get that array to look up value of index.
+            // if stored value is invalid, use a default colour
+            const std::vector<GG::Clr>& empire_colours = EmpireColors();
+            int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
+            if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
+                human_player_setup_data.m_empire_color = empire_colours[colour_index];
+            else
+                human_player_setup_data.m_empire_color = GG::CLR_GREEN;
+
+            human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+            if (!GetSpecies(human_player_setup_data.m_starting_species_name)) {
+                const SpeciesManager& sm = GetSpeciesManager();
+                if (sm.empty())
+                    human_player_setup_data.m_starting_species_name.clear();
+                else
+                    human_player_setup_data.m_starting_species_name = sm.begin()->first;
+             }
+
+            human_player_setup_data.m_save_game_empire_id = -1; // not used for new games
+            human_player_setup_data.m_client_type =         Networking::CLIENT_TYPE_HUMAN_PLAYER;
+
+            // add to setup data players
+            setup_data.m_players[human_player_setup_data.m_player_id] = human_player_setup_data;
+
+            // AI player setup data.  One entry for each requested AI
+
+            int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
+            for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
+                PlayerSetupData& ai_setup_data = setup_data.m_players[ai_i];
+
+                ai_setup_data.m_player_id = ai_i;
+                ai_setup_data.m_player_name = "AI_" + boost::lexical_cast<std::string>(ai_i);
+                ai_setup_data.m_empire_name.clear();            // leave blank, to be set by server in Universe::GenerateEmpires
+                ai_setup_data.m_empire_color = GG::CLR_ZERO;    // to be set by server
+                ai_setup_data.m_starting_species_name.clear();  // leave blank, to be set by server
+                ai_setup_data.m_save_game_empire_id = -1;       // not used for new games
+                ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+            }
+
             Networking().SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }
@@ -387,7 +420,7 @@ void HumanClientApp::MulitplayerGame()
             Networking().SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
             m_fsm->process_event(HostMPGameRequested());
         } else {
-            Networking().SendMessage(JoinGameMessage(server_connect_wnd.Result().first));
+            Networking().SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
             m_fsm->process_event(JoinMPGameRequested());
         }
         m_connected = true;
@@ -462,7 +495,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         SinglePlayerSetupData setup_data;
         setup_data.m_new_game = false;
         setup_data.m_filename = filename;
-        setup_data.m_host_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
+        setup_data.m_players.clear();   // if not starting a new game, don't need to specify PlayerSetupData
+
         Networking().SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
     }

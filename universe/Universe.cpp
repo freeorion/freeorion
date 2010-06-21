@@ -22,9 +22,6 @@
 #include "Parser.h"
 #include "ParserUtil.h"
 
-#ifdef FREEORION_BUILD_SERVER
-#include "../server/ServerApp.h"
-#endif
 
 #include <boost/filesystem/fstream.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -2338,7 +2335,6 @@ int Universe::GenerateDesignID()
 //////////////////////////////////////////
 //  Server-Only Galaxy Setup Functions  //
 //////////////////////////////////////////
-#ifdef FREEORION_BUILD_SERVER
 namespace {
     const double        MIN_SYSTEM_SEPARATION       = 35.0;                         // in universe units [0.0, s_universe_width]
     const double        MIN_HOME_SYSTEM_SEPARATION  = 200.0;                        // in universe units [0.0, s_universe_width]
@@ -3710,12 +3706,9 @@ namespace {
     }
 }
 
-#endif  // FREEORION_BUILD_SERVER  (although the following functions should also only be used on the server)
 void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
-                              SpecialsFrequency specials_freq, int players, int ai_players,
-                              const std::map<int, PlayerSetupData>& player_setup_data)
+                              SpecialsFrequency specials_freq, const std::map<int, PlayerSetupData>& player_setup_data)
 {
-#ifdef FREEORION_BUILD_SERVER
 #ifdef FREEORION_RELEASE
     ClockSeed();
 #endif
@@ -3725,15 +3718,17 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
 
-    // ensure there are enough systems to give all players homeworlds
-    int total_players = players + ai_players;
+    int total_players = player_setup_data.size();
+
+
+    // ensure there are enough systems to give all players adequately-separated homeworlds
     const int MIN_SYSTEMS_PER_PLAYER = 3;
     if (size < total_players*MIN_SYSTEMS_PER_PLAYER) {
         Logger().debugStream() << "Universe creation requested with " << size << " systems, but this is too few for " << total_players << " players.  Creating a universe with " << total_players*MIN_SYSTEMS_PER_PLAYER << " systems instead";
-        size = total_players*MIN_SYSTEMS_PER_PLAYER;
+        size = total_players * MIN_SYSTEMS_PER_PLAYER;
     }
 
-    Logger().debugStream() << "Creating universe with " << size << " stars, " << players << " human players and " << ai_players << " AI players";
+    Logger().debugStream() << "Creating universe with " << size << " stars and " << total_players << " players";
 
     std::vector<int> homeworld_planet_ids;
 
@@ -3780,7 +3775,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     InitializeSystemGraph();
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
-    GenerateEmpires(total_players, homeworld_planet_ids, player_setup_data);
+    GenerateEmpires(homeworld_planet_ids, player_setup_data);
 
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
 
@@ -3805,16 +3800,12 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     m_objects.Dump();
 
     UpdateEmpireObjectVisibilities();
-
-#else
-    Logger().errorStream() << "Non-server called Universe::CreateUniverse; only server should call this while creating the universe";
-#endif
 }
 
 void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
 {
     Logger().debugStream() << "PopulateSystems";
-#ifdef FREEORION_BUILD_SERVER
+
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
 
     if (sys_vec.empty())
@@ -3897,14 +3888,10 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
             planet->SetOrbitalPeriod(orbit, tidal_lock);
         }
     }
-#else
-    Logger().errorStream() << "Non-server called Universe::PopulateSystems; only server should call this while creating the universe";
-#endif
 }
 
 void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
 {
-#ifdef FREEORION_BUILD_SERVER
     if (freq == LANES_NONE)
         return;
 
@@ -4071,14 +4058,10 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
     //        laneSetIter++;
     //    } // end while
     //} // end for n
-#else
-        Logger().errorStream() << "Non-server called Universe::GenerateStarlanes; only server should call this while creating the universe";
-#endif
 }
 
 void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_planet_ids)
 {
-#ifdef FREEORION_BUILD_SERVER
     homeworld_planet_ids.clear();
 
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
@@ -4158,14 +4141,10 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
 
         homeworld_planet_ids.push_back(planet_id);
     }
-#else
-    Logger().errorStream() << "Non-server called Universe::GenerateHomeworlds; only server should call this while creating the universe";
-#endif
 }
 
 void Universe::NamePlanets()
 {
-#ifdef FREEORION_BUILD_SERVER
     std::vector<System*> sys_vec = Objects().FindObjects<System>();
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -4186,15 +4165,11 @@ void Universe::NamePlanets()
             }
         }
     }
-#else
-    Logger().errorStream() << "Non-server called Universe::NamePlanets; only server should call this while creating the universe";
-#endif
 }
 
-void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
+void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
 {
-#ifdef FREEORION_BUILD_SERVER
-    Logger().debugStream() << "Generating " << players << " empires";
+    Logger().debugStream() << "Generating " << player_setup_data.size() << " empires";
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
     // load empire names
@@ -4202,41 +4177,50 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
     if (empire_names.empty())
         LoadEmpireNames(empire_names);
 
-    std::size_t i = 0;
+    std::vector<GG::Clr> colors = EmpireColors();   // copy, not reference, so that individual colours can be removed after they're used
 
-    std::vector<GG::Clr> colors = EmpireColors();
+    const SpeciesManager&               species_manager =           GetSpeciesManager();
 
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
     const ItemSpecManager&              starting_unlocked_items =   GetItemSpecManager();
 
-    for (ServerNetworking::const_established_iterator it = ServerApp::GetApp()->Networking().established_begin(); it != ServerApp::GetApp()->Networking().established_end(); ++it, ++i) {
-        std::string empire_name = "";
+    // create empire and starting conditions for each player
+    int player_i = 0;
+    for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
+         setup_data_it != player_setup_data.end(); ++setup_data_it, ++player_i)
+    {
+        int         empire_id =                 setup_data_it->first;   // use player ID for empire ID for lack of a reason to make them different
+        std::string player_name =               setup_data_it->second.m_player_name;
+        std::string empire_name =               setup_data_it->second.m_empire_name;
+        GG::Clr     empire_colour =             setup_data_it->second.m_empire_color;
+        std::string empire_starting_species =   setup_data_it->second.m_starting_species_name;
 
-        GG::Clr color;
-        std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.find((*it)->ID());
-        if (setup_data_it != player_setup_data.end()) {
-            // use user-assigned name and colour
-            empire_name = setup_data_it->second.m_empire_name;
-            color = setup_data_it->second.m_empire_color;
+        int         homeworld_id =              homeworld_planet_ids[player_i];
 
-            // ensure no other empire gets auto-assigned this colour
-            std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), color);
-            if (color_it != colors.end())
-                colors.erase(color_it);
+        // validate or generate name/colour/species
 
-        } else {
-            // automatically assign colour
+        // ensure no other empire gets auto-assigned this colour automatically
+        std::vector<GG::Clr>::iterator color_it = std::find(colors.begin(), colors.end(), empire_colour);
+        if (color_it != colors.end())
+            colors.erase(color_it);
+
+
+        // if no colour already set, do so automatically
+        if (empire_colour == GG::CLR_ZERO) {
             if (!colors.empty()) {
                 // a list of colours is available.  pick a colour
                 int color_idx = RandInt(0, colors.size() - 1);
-                color = colors[color_idx];
+                empire_colour = colors[color_idx];
                 colors.erase(colors.begin() + color_idx);
             } else {
-                // as a last resort, make up a color
-                color = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+                // as a last resort, make up a colour
+                empire_colour = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
             }
+        }
 
+        // if no empire name already set, do so automatically
+        if (empire_name.empty()) {
             // automatically pick a name
             if (!empire_names.empty()) {
                 // pick a name from the list of empire names
@@ -4247,23 +4231,37 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
                 empire_names.erase(it);
             } else {
                 // use a generic name
-                empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(i);
+                empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(player_i);
             }
         }
 
-        Logger().debugStream() << "creating empire named: " << empire_name;
+        // if no empire starting species already set, do so automatically
+        if (empire_starting_species.empty()) {
+            // automatically pick a species
+            if (species_manager.empty()) {
+                Logger().errorStream() << "Universe::GenerateEmpires found an empty species manager!  Can't assign species to empires.";
+            } else {
+                int species_name_idx = 0;
+                if (species_manager.NumSpecies() > 1)
+                    species_name_idx = RandSmallInt(0, species_manager.NumSpecies() - 1);
+                SpeciesManager::iterator it = species_manager.begin();
+                std::advance(it, species_name_idx);
+                empire_starting_species = it->first;
+            }
+        }
 
-        std::string empire_starting_species = "SP_HUMAN";
-
-        int home_planet_id = homeworld_planet_ids[i];
+        Logger().debugStream() << "creating empire named: " << empire_name
+                               << " starting with species: " << empire_starting_species
+                               << " for player: " << player_name
+                               << " at homeworld id: " << homeworld_id
+                               << " and empire id: " << empire_id;
 
         // create new Empire object through empire manager
-        Empire* empire = Empires().CreateEmpire((*it)->ID(), empire_name, (*it)->PlayerName(), color, home_planet_id);
-        int empire_id = empire->EmpireID();
+        Empire* empire = Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, homeworld_id);
 
 
         // set ownership of home planet
-        Planet* home_planet = GetObject<Planet>(homeworld_planet_ids[i]);
+        Planet* home_planet = GetObject<Planet>(homeworld_id);
         System* home_system = GetObject<System>(home_planet->SystemID());
         if (!home_planet || !home_system) {
             Logger().errorStream() << "Couldn't get homeworld or system for generated empire...";
@@ -4355,9 +4353,6 @@ void Universe::GenerateEmpires(int players, std::vector<int>& homeworld_planet_i
             }
         }
     }
-#else
-    Logger().errorStream() << "Non-server called Universe::GenerateEmpires; only server should call this while creating the universe";
-#endif
 }
 
 ///////////////////////////////////////////////////////////

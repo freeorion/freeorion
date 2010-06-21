@@ -414,15 +414,6 @@ GalaxySetupData::GalaxySetupData():
 
 
 /////////////////////////////////////////////////////
-// SinglePlayerSetupData
-/////////////////////////////////////////////////////
-SinglePlayerSetupData::SinglePlayerSetupData():
-    m_new_game(true),
-    m_AIs(0)
-{}
-
-
-/////////////////////////////////////////////////////
 // SaveGameEmpireData
 /////////////////////////////////////////////////////
 SaveGameEmpireData::SaveGameEmpireData():
@@ -435,13 +426,26 @@ SaveGameEmpireData::SaveGameEmpireData():
 /////////////////////////////////////////////////////
 PlayerSetupData::PlayerSetupData() :
     m_player_id(-1),
-    m_empire_name("Humans"),
-    m_empire_color(GG::Clr(127, 127, 127, 255)),
-    m_save_game_empire_id(ALL_EMPIRES)
+    m_player_name(),
+    m_empire_name(),
+    m_empire_color(GG::CLR_ZERO),
+    m_starting_species_name(),
+    m_save_game_empire_id(ALL_EMPIRES),
+    m_client_type(Networking::INVALID_CLIENT_TYPE)
 {}
 
 
 /////////////////////////////////////////////////////
+// SinglePlayerSetupData
+/////////////////////////////////////////////////////
+SinglePlayerSetupData::SinglePlayerSetupData():
+    m_new_game(true),
+    m_filename(),
+    m_players()
+{}
+
+
+////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////
 // static(s)
@@ -449,34 +453,33 @@ const std::string MultiplayerLobbyData::MP_SAVE_FILE_EXTENSION = ".mps";
 
 MultiplayerLobbyData::MultiplayerLobbyData() :
     m_new_game(true),
-    m_save_file_index(-1),
-    m_empire_colors(EmpireColors())
+    m_save_file_index(-1)
 {}
 
 MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     m_new_game(true),
-    m_save_file_index(-1),
-    m_empire_colors(EmpireColors())
+    m_save_file_index(-1)
 {
-    if (build_save_game_list) {
-        // build a list of save files
-        fs::path save_dir(GetUserDir() / "save");
-        fs::directory_iterator end_it;
-        for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
-            try {
-                if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
-                    std::string filename = it->filename();
-                    // disallow filenames that begin with a dot, and filenames with spaces in them
-                    if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
-                        filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
-                        m_save_games.push_back(filename);
-                    }
+    if (!build_save_game_list)
+        return;
+
+    // build a list of save files
+    fs::path save_dir(GetUserDir() / "save");
+    fs::directory_iterator end_it;
+    for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
+        try {
+            if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
+                std::string filename = it->filename();
+                // disallow filenames that begin with a dot, and filenames with spaces in them
+                if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
+                    filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
+                    m_save_games.push_back(filename);
                 }
-            } catch (const fs::filesystem_error& e) {
-                // ignore files for which permission is denied, and rethrow other exceptions
-                if (e.code() != boost::system::posix_error::permission_denied)
-                    throw;
             }
+        } catch (const fs::filesystem_error& e) {
+            // ignore files for which permission is denied, and rethrow other exceptions
+            if (e.code() != boost::system::posix_error::permission_denied)
+                throw;
         }
     }
 }
@@ -488,14 +491,14 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 PlayerInfo::PlayerInfo() :
     name(""),
     empire_id(ALL_EMPIRES),
-    AI(false),
+    client_type(Networking::INVALID_CLIENT_TYPE),
     host(false)
 {}
 
-PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_, bool host_) :
+PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, Networking::ClientType client_type_, bool host_) :
     name(player_name_),
     empire_id(empire_id_),
-    AI(AI_),
+    client_type(client_type_),
     host(host_)
 {}
 

@@ -160,7 +160,7 @@ public:
 
     /** Returns the ID of the player associated with this connection, if
         any. */
-    int ID() const;
+    int PlayerID() const;
 
     /** Returns the name of the player associated with this connection, if
         any. */
@@ -169,6 +169,10 @@ public:
     /** Returns true iff the player associated with this connection, if any,
         is the host of the current game. */
     bool Host() const;
+
+    /** Returns the type of client associated with this connection (AI client,
+      * human client, ...) */
+    Networking::ClientType GetClientType() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -180,7 +184,7 @@ public:
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
-    void EstablishPlayer(int id, const std::string& player_name, bool host);
+    void EstablishPlayer(int id, const std::string& player_name, bool host, Networking::ClientType client_type);
     //@}
 
     mutable boost::signal<void (const NullaryFn&)> EventSignal;
@@ -205,13 +209,14 @@ private:
                                  std::size_t bytes_transferred);
     void AsyncReadMessage();
 
-    boost::asio::ip::tcp::socket m_socket;
-    MessageHeaderBuffer          m_incoming_header_buffer;
-    Message                      m_incoming_message;
-    int                          m_ID;
-    std::string                  m_player_name;
-    bool                         m_host;
-    bool                         m_new_connection;
+    boost::asio::ip::tcp::socket    m_socket;
+    MessageHeaderBuffer             m_incoming_header_buffer;
+    Message                         m_incoming_message;
+    int                             m_ID;
+    std::string                     m_player_name;
+    bool                            m_host;
+    bool                            m_new_connection;
+    Networking::ClientType          m_client_type;
 
     MessageAndConnectionFn m_nonplayer_message_callback;
     MessageAndConnectionFn m_player_message_callback;

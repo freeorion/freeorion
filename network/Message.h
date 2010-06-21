@@ -2,6 +2,8 @@
 #ifndef _Message_h_
 #define _Message_h_
 
+#include "Networking.h"
+
 #include <boost/shared_array.hpp>
 
 #if defined(_MSC_VER) && defined(int64_t)
@@ -164,8 +166,8 @@ Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
 /** creates a minimal HOST_MP_GAME message used to initiate multiplayer "lobby" setup*/
 Message HostMPGameMessage(const std::string& host_player_name);
 
-/** creates a JOIN_GAME message.  The sender's player name is sent in the message.*/
-Message JoinGameMessage(const std::string& player_name);
+/** creates a JOIN_GAME message.  The sender's player name and client type are sent in the message.*/
+Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
@@ -323,6 +325,8 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
                         OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string);
+
+void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 

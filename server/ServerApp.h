@@ -9,6 +9,7 @@
 #include "../network/ServerNetworking.h"
 #include "../universe/Universe.h"
 #include "../util/MultiplayerCommon.h"
+#include "ServerFSM.h"
 
 #include <set>
 #include <vector>
@@ -30,13 +31,15 @@ struct PlayerSaveGameData
 {
     PlayerSaveGameData(); ///< default ctor
     PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders,
-        const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string); ///< ctor
+                       const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
+                       Networking::ClientType client_type); ///< ctor
 
     std::string                         m_name;
     Empire*                             m_empire;
     boost::shared_ptr<OrderSet>         m_orders;
     boost::shared_ptr<SaveGameUIData>   m_ui_data;
     std::string                         m_save_state_string;
+    Networking::ClientType              m_client_type;
 
 private:
     friend class boost::serialization::access;
@@ -84,10 +87,9 @@ public:
     /** \name Mutators */ //@{
     void                operator()();               ///< external interface to Run()
     void                Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
-    log4cpp::Category&  Logger();                   ///< returns the debug logging object for the app
 
     /** creates an AI client child process for each element of \a AIs*/
-    void                CreateAIClients(const std::vector<PlayerSetupData>& AIs, std::set<std::string>& expected_ai_player_names);
+    void                CreateAIClients(const std::map<int, PlayerSetupData>& player_setup_data);
 
     /**  Adds an existing empire to turn processing. The position the empire is
       * in the vector is it's position in the turn processing.*/
@@ -204,14 +206,11 @@ private:
     CombatData*                     m_current_combat;
     ServerNetworking                m_networking;
 
-    log4cpp::Category&              m_log_category;         ///< reference to the log4cpp object used to log events to file
-
     ServerFSM*                      m_fsm;
 
     int                             m_current_turn;         ///< current turn number
 
-    std::map<std::string, Process>  m_ai_clients;           ///< AI client child processes
-    std::set<int>                   m_ai_IDs;               ///< player IDs of AI clients
+    std::map<int, Process>          m_ai_clients;           ///< map of AI client child processes, indexed by AI player ID
 
     bool                            m_single_player_game;   ///< true when the game being played is single-player
 
@@ -249,7 +248,8 @@ void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_empire)
         & BOOST_SERIALIZATION_NVP(m_orders)
         & BOOST_SERIALIZATION_NVP(m_ui_data)
-        & BOOST_SERIALIZATION_NVP(m_save_state_string);
+        & BOOST_SERIALIZATION_NVP(m_save_state_string)
+        & BOOST_SERIALIZATION_NVP(m_client_type);
 }
 
 template <class Archive>

@@ -1,8 +1,6 @@
 #include "ServerNetworking.h"
 
-#include "Networking.h"
 #include "../util/AppInterface.h"
-#include "../util/MultiplayerCommon.h"
 
 #include <GG/SignalsAndSlots.h>
 
@@ -48,7 +46,7 @@ namespace {
     {
         PlayerID(int id) : m_id(id) {}
         bool operator()(const PlayerConnectionPtr& player_connection)
-            { return player_connection->ID() == m_id; }
+            { return player_connection->PlayerID() == m_id; }
     private:
         int m_id;
     };
@@ -57,7 +55,7 @@ namespace {
     {
         typedef bool result_type;
         bool operator()(const PlayerConnectionPtr& lhs, const PlayerConnectionPtr& rhs)
-            { return lhs->ID() < rhs->ID(); }
+            { return lhs->PlayerID() < rhs->PlayerID(); }
     };
 }
 
@@ -72,6 +70,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
     m_ID(INVALID_PLAYER_ID),
     m_host(false),
     m_new_connection(true),
+    m_client_type(Networking::INVALID_CLIENT_TYPE),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),
     m_disconnected_callback(disconnected_callback)
@@ -83,7 +82,7 @@ PlayerConnection::~PlayerConnection()
 bool PlayerConnection::EstablishedPlayer() const
 { return m_ID != INVALID_PLAYER_ID; }
 
-int PlayerConnection::ID() const
+int PlayerConnection::PlayerID() const
 { return m_ID; }
 
 const std::string& PlayerConnection::PlayerName() const
@@ -92,23 +91,42 @@ const std::string& PlayerConnection::PlayerName() const
 bool PlayerConnection::Host() const
 { return m_host; }
 
+Networking::ClientType PlayerConnection::GetClientType() const
+{ return m_client_type; }
+
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
 void PlayerConnection::SendMessage(const Message& message)
 { WriteMessage(m_socket, message); }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, bool host)
+void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, bool host, Networking::ClientType client_type)
 {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                               << id << ", " << player_name << ", " << host << ")";
-    assert(m_ID == INVALID_PLAYER_ID && m_player_name == "");
-    assert(0 <= id);
-    assert(player_name != "");
+                               << id << ", " << player_name << ", " << host << ", " << client_type << ")";
+    // ensure that this connection isn't already established
+    if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
+        Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
+        return;
+    }
+
+    if (id < 0) {
+        Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to establish a player with an invalid id: " << id;
+        return;
+    }
+    if (player_name.empty()) {
+        Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to establish a player with an empty name";
+        return;
+    }
+    if (client_type == Networking::INVALID_CLIENT_TYPE || client_type >= NUM_CLIENT_TYPES) {
+        Logger().errorStream() << "PlayerConnection::EstablishPlayer passed invalid client type: " << client_type;
+        return;
+    }
     m_ID = id;
     m_player_name = player_name;
     m_host = host;
+    m_client_type = client_type;
 }
 
 PlayerConnectionPtr
@@ -288,7 +306,7 @@ int ServerNetworking::GreatestPlayerID() const
     PlayerConnections::const_iterator it =
         std::max_element(m_player_connections.begin(), m_player_connections.end(),
                          PlayerIDLess());
-    int retval = it == m_player_connections.end() ? HOST_PLAYER_ID : (*it)->ID();
+    int retval = it == m_player_connections.end() ? HOST_PLAYER_ID : (*it)->PlayerID();
     if (retval == INVALID_PLAYER_ID)
         retval = HOST_PLAYER_ID;
     return retval;
@@ -311,7 +329,7 @@ void ServerNetworking::SendMessage(const Message& message)
         return;
     }
     PlayerConnectionPtr player = *it;
-    if (player->ID() != message.ReceivingPlayer()) {
+    if (player->PlayerID() != message.ReceivingPlayer()) {
         Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
         return;
     }
@@ -330,8 +348,8 @@ void ServerNetworking::Disconnect(int id)
         return;
     }
     PlayerConnectionPtr player = *it;
-    if (player->ID() != id) {
-        Logger().errorStream() << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->ID() << ") to what was requrested (" << id << ")";
+    if (player->PlayerID() != id) {
+        Logger().errorStream() << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requrested (" << id << ")";
         return;
     }
     Disconnect(player);
@@ -430,7 +448,7 @@ void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection)
 {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "ServerNetworking::DisconnectImpl : disconnecting player "
-                               << player_connection->ID();
+                               << player_connection->PlayerID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);
 }

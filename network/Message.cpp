@@ -33,6 +33,7 @@
 namespace {
     const std::string MESSAGE_SCOPE_PREFIX = "Message::";
     const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
+    const std::string ACKNOWLEDGEMENT = "ACK";
     std::string StripMessageScoping(const std::string& str)
     {
         return boost::algorithm::starts_with(str, MESSAGE_SCOPE_PREFIX) ?
@@ -234,17 +235,23 @@ Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(setup_data);
     }
-    return Message(Message::HOST_SP_GAME, -1, -1, os.str());
+    return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message HostMPGameMessage(const std::string& host_player_name)
 {
-    return Message(Message::HOST_MP_GAME, -1, -1, host_player_name);
+    return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, host_player_name);
 }
 
-Message JoinGameMessage(const std::string& player_name)
+Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type)
 {
-    return Message(Message::JOIN_GAME, -1, -1, player_name);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(player_name)
+           << BOOST_SERIALIZATION_NVP(client_type);
+    }
+    return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
@@ -264,7 +271,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         oa << BOOST_SERIALIZATION_NVP(players)
            << BOOST_SERIALIZATION_NVP(loaded_game_data);
     }
-    return Message(Message::GAME_START, -1, player_id, os.str());
+    return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
@@ -292,7 +299,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         bool save_state_string_available = false;
         oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
-    return Message(Message::GAME_START, -1, player_id, os.str());
+    return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
@@ -320,22 +327,22 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         if (save_state_string_available)
             oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
     }
-    return Message(Message::GAME_START, -1, player_id, os.str());
+    return Message(Message::GAME_START, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message HostSPAckMessage(int player_id)
 {
-    return Message(Message::HOST_SP_GAME, -1, player_id, "ACK");
+    return Message(Message::HOST_SP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
 }
 
 Message HostMPAckMessage(int player_id)
 {
-    return Message(Message::HOST_MP_GAME, -1, player_id, "ACK");
+    return Message(Message::HOST_MP_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
 }
 
 Message JoinAckMessage(int player_id)
 {
-    return Message(Message::JOIN_GAME, -1, player_id, "ACK");
+    return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, player_id, ACKNOWLEDGEMENT);
 }
 
 Message TurnOrdersMessage(int sender, const OrderSet& orders)
@@ -345,7 +352,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders)
         FREEORION_OARCHIVE_TYPE oa(os);
         Serialize(oa, orders);
     }
-    return Message(Message::TURN_ORDERS, sender, -1, os.str());
+    return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
@@ -356,7 +363,7 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
         oa << BOOST_SERIALIZATION_NVP(phase_id)
            << BOOST_SERIALIZATION_NVP(empire_id);
     }
-    return Message(Message::TURN_PROGRESS, -1, player_id, os.str());
+    return Message(Message::TURN_PROGRESS, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
@@ -372,7 +379,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
         Serialize(oa, universe);
         oa << BOOST_SERIALIZATION_NVP(players);
     }
-    return Message(Message::TURN_UPDATE, -1, player_id, os.str());
+    return Message(Message::TURN_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders,
@@ -388,7 +395,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders,
            << BOOST_SERIALIZATION_NVP(ui_data)
            << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, os.str());
+    return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders,
@@ -404,7 +411,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders,
            << BOOST_SERIALIZATION_NVP(save_state_string_available)
            << BOOST_SERIALIZATION_NVP(save_state_string);
     }
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, os.str());
+    return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders)
@@ -418,44 +425,44 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders)
         oa << BOOST_SERIALIZATION_NVP(ui_data_available)
            << BOOST_SERIALIZATION_NVP(save_state_string_available);
     }
-    return Message(Message::CLIENT_SAVE_DATA, sender, -1, os.str());
+    return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message RequestNewObjectIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, -1, DUMMY_EMPTY_MESSAGE);
+    return Message(Message::REQUEST_NEW_OBJECT_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
 }
 
 Message DispatchObjectIDMessage(int player_id, int new_id)
 {
-    return Message(Message::DISPATCH_NEW_OBJECT_ID, -1, player_id,
+    return Message(Message::DISPATCH_NEW_OBJECT_ID, Networking::INVALID_PLAYER_ID, player_id,
                    boost::lexical_cast<std::string>(new_id), true);
 }
 
 Message RequestNewDesignIDMessage(int sender)
 {
-    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, -1, DUMMY_EMPTY_MESSAGE, true);
+    return Message(Message::REQUEST_NEW_DESIGN_ID, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE, true);
 }
 
 Message DispatchDesignIDMessage(int player_id, int new_id)
 {
-    return Message(Message::DISPATCH_NEW_DESIGN_ID, -1, player_id,
+    return Message(Message::DISPATCH_NEW_DESIGN_ID, Networking::INVALID_PLAYER_ID, player_id,
                    boost::lexical_cast<std::string>(new_id), true);
 }
 
 Message HostSaveGameMessage(int sender, const std::string& filename)
 {
-    return Message(Message::SAVE_GAME, sender, -1, filename);
+    return Message(Message::SAVE_GAME, sender, Networking::INVALID_PLAYER_ID, filename);
 }
 
 Message ServerSaveGameMessage(int receiver, bool synchronous_response)
 {
-    return Message(Message::SAVE_GAME, -1, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
+    return Message(Message::SAVE_GAME, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE, synchronous_response);
 }
 
 Message GlobalChatMessage(int sender, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_CHAT, sender, -1, msg);
+    return Message(Message::HUMAN_PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg);
 }
 
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg)
@@ -473,7 +480,7 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
            << BOOST_SERIALIZATION_NVP(reason_string)
            << BOOST_SERIALIZATION_NVP(empire_id);
     }
-    return Message(Message::VICTORY_DEFEAT, -1, receiver, os.str());
+    return Message(Message::VICTORY_DEFEAT, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name)
@@ -484,7 +491,7 @@ Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& 
         oa << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(empire_name);
     }
-    return Message(Message::PLAYER_ELIMINATED, -1, receiver, os.str());
+    return Message(Message::PLAYER_ELIMINATED, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 Message EndGameMessage(int receiver, Message::EndGameReason reason,
@@ -496,7 +503,7 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
         oa << BOOST_SERIALIZATION_NVP(reason)
            << BOOST_SERIALIZATION_NVP(reason_player_name);
     }
-    return Message(Message::END_GAME, -1, receiver, os.str());
+    return Message(Message::END_GAME, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 
@@ -512,7 +519,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
-    return Message(Message::LOBBY_UPDATE, sender, -1, os.str());
+    return Message(Message::LOBBY_UPDATE, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data)
@@ -522,7 +529,7 @@ Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(lobby_data);
     }
-    return Message(Message::LOBBY_UPDATE, -1, receiver, os.str());
+    return Message(Message::LOBBY_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 Message LobbyChatMessage(int sender, int receiver, const std::string& data)
@@ -537,17 +544,17 @@ Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data
 
 Message LobbyHostAbortMessage(int sender)
 {
-    return Message(Message::LOBBY_HOST_ABORT, sender, -1, DUMMY_EMPTY_MESSAGE);
+    return Message(Message::LOBBY_HOST_ABORT, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerLobbyHostAbortMessage(int receiver)
 {
-    return Message(Message::LOBBY_HOST_ABORT, -1, receiver, DUMMY_EMPTY_MESSAGE);
+    return Message(Message::LOBBY_HOST_ABORT, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE);
 }
 
 Message LobbyExitMessage(int sender)
 {
-    return Message(Message::LOBBY_EXIT, sender, -1, DUMMY_EMPTY_MESSAGE);
+    return Message(Message::LOBBY_EXIT, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerLobbyExitMessage(int sender, int receiver)
@@ -557,7 +564,7 @@ Message ServerLobbyExitMessage(int sender, int receiver)
 
 Message StartMPGameMessage(int player_id)
 {
-    return Message(Message::START_MP_GAME, player_id, -1, DUMMY_EMPTY_MESSAGE);
+    return Message(Message::START_MP_GAME, player_id, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
 }
 
 Message ServerCombatStartMessage(int receiver, int empire_id,
@@ -573,7 +580,7 @@ Message ServerCombatStartMessage(int receiver, int empire_id,
            << BOOST_SERIALIZATION_NVP(setup_groups)
            << BOOST_SERIALIZATION_NVP(foreign_designs);
     }
-    return Message(Message::COMBAT_START, -1, receiver, os.str());
+    return Message(Message::COMBAT_START, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData& combat_data)
@@ -584,11 +591,11 @@ Message ServerCombatUpdateMessage(int receiver, int empire_id, const CombatData&
         Universe::s_encoding_empire = empire_id;
         oa << BOOST_SERIALIZATION_NVP(combat_data);
     }
-    return Message(Message::COMBAT_TURN_UPDATE, -1, receiver, os.str());
+    return Message(Message::COMBAT_TURN_UPDATE, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
 Message ServerCombatEndMessage(int receiver)
-{ return Message(Message::COMBAT_END, -1, receiver, DUMMY_EMPTY_MESSAGE); }
+{ return Message(Message::COMBAT_END, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE); }
 
 Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 {
@@ -597,7 +604,7 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
         FREEORION_OARCHIVE_TYPE oa(os);
         oa << BOOST_SERIALIZATION_NVP(combat_orders);
     }
-    return Message(Message::COMBAT_TURN_ORDERS, sender, -1, os.str());
+    return Message(Message::COMBAT_TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
 ////////////////////////////////////////////////
@@ -611,8 +618,8 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(lobby_data);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
-                  << "lobby_data) failed!  Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
+                               << "lobby_data) failed!  Message:\n" << msg.Text();
         throw;
     }
 }
@@ -656,13 +663,28 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
             save_state_string_available = false;
         }
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
-                  << "int& current_turn, EmpireManager& empires, Universe& universe, "
-                  << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
-                  << "bool& loaded_game_data, bool& ui_data_available, "
-                  << "SaveGameUIData& ui_data, bool& save_state_string_available, "
-                  << "std::string& save_state_string) failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
+                               << "int& current_turn, EmpireManager& empires, Universe& universe, "
+                               << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
+                               << "bool& loaded_game_data, bool& ui_data_available, "
+                               << "SaveGameUIData& ui_data, bool& save_state_string_available, "
+                               << "std::string& save_state_string) failed!  Message:\n"
+                               << msg.Text();
+        throw;
+    }
+}
+
+void ExtractMessageData(const Message& msg, std::string& player_name, Networking::ClientType& client_type)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(player_name)
+           >> BOOST_SERIALIZATION_NVP(client_type);
+    } catch (const boost::archive::archive_exception) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& player_name, "
+                               << "Networking::ClientType client_type)) failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -674,8 +696,8 @@ void ExtractMessageData(const Message& msg, OrderSet& orders)
         FREEORION_IARCHIVE_TYPE ia(is);
         Deserialize(ia, orders);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
-                  << "Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
+                               << "Message:\n" << msg.Text();
         throw;
     }
 }
@@ -693,10 +715,10 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
         Deserialize(ia, universe);
         ia >> BOOST_SERIALIZATION_NVP(players);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, int empire_id, int& "
-                  << "current_turn, EmpireManager& empires, Universe& universe, "
-                  << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, int& "
+                               << "current_turn, EmpireManager& empires, Universe& universe, "
+                               << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -716,11 +738,11 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
         if (save_state_string_available)
             ia >> BOOST_SERIALIZATION_NVP(save_state_string);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, OrderSet& orders, "
-                  << "bool& ui_data_available, SaveGameUIData& ui_data, "
-                  << "bool& save_state_string_available, std::string& save_state_string) "
-                  << "failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
+                               << "bool& ui_data_available, SaveGameUIData& ui_data, "
+                               << "bool& save_state_string_available, std::string& save_state_string) "
+                               << "failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -734,9 +756,9 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
         ia >> BOOST_SERIALIZATION_NVP(phase_id)
            >> BOOST_SERIALIZATION_NVP(empire_id);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
-                  << "phase_id, int& empire_id) failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
+                               << "phase_id, int& empire_id) failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -748,8 +770,8 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(setup_data);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
-                  << "setup_data) failed!  Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
+                               << "setup_data) failed!  Message:\n" << msg.Text();
         throw;
     }
 }
@@ -763,9 +785,9 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
         ia >> BOOST_SERIALIZATION_NVP(reason)
            >> BOOST_SERIALIZATION_NVP(reason_player_name);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
-                  << "std::string& reason_player_name) failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
+                               << "std::string& reason_player_name) failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -778,8 +800,8 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
         ia >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(empire_name);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
-                  << "empire_name) failed!  Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
+                               << "empire_name) failed!  Message:\n" << msg.Text();
         throw;
     }
 }
@@ -794,9 +816,9 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
            >> BOOST_SERIALIZATION_NVP(reason_string)
            >> BOOST_SERIALIZATION_NVP(empire_id);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
-                  << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
-                  << "Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
+                               << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
+                               << "Message:\n" << msg.Text();
         throw;
     }
 }
@@ -812,10 +834,10 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
            >> BOOST_SERIALIZATION_NVP(setup_groups)
            >> BOOST_SERIALIZATION_NVP(foreign_designs);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, CombatData& "
-                  << "combat_data, std::vector<CombatSetupGroup>& setup_groups, "
-                  << "ShipDesignMap& foreign_designs) failed!  Message:\n"
-                  << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
+                               << "combat_data, std::vector<CombatSetupGroup>& setup_groups, "
+                               << "ShipDesignMap& foreign_designs) failed!  Message:\n"
+                               << msg.Text();
         throw;
     }
 }
@@ -827,8 +849,8 @@ void ExtractMessageData(const Message& msg, CombatOrderSet& order_set)
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(order_set);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, CombatOrderSet& "
-                  << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatOrderSet& "
+                               << "combat_data) failed!  Message:\n" << msg.Text();
         throw;
     }
 }
@@ -840,8 +862,8 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data)
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(combat_data);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, CombatData& "
-                  << "combat_data) failed!  Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
+                               << "combat_data) failed!  Message:\n" << msg.Text();
         throw;
     }
 }
@@ -855,9 +877,9 @@ void ExtractMessageData(const Message& msg, System*& system,
         ia >> BOOST_SERIALIZATION_NVP(system);
         Deserialize(ia, combat_universe);
     } catch (const boost::archive::archive_exception) {
-        std::cerr << "ExtractMessageData(const Message& msg, System*& "
-                  << "system, std::map<int, UniverseObject*>& combat_universe) failed!  "
-                  << "Message:\n" << msg.Text() << std::endl;
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, System*& "
+                               << "system, std::map<int, UniverseObject*>& combat_universe) failed!  "
+                               << "Message:\n" << msg.Text();
         throw;
     }
 }

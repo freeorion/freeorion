@@ -6,8 +6,10 @@
 #include "XMLDoc.h"
 #include "../combat/OpenSteer/PathingEngine.h"
 #include "../universe/Enums.h"
+#include "../network/Networking.h"
 
 #include <GG/Clr.h>
+#include <GG/Enum.h>
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -18,6 +20,7 @@
 
 
 class System;
+
 
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
@@ -69,28 +72,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** The data needed to establish a new single player game.  If \a m_new_game is true, a new game is to be started, using
-    the remaining members besides \a m_filename.  Otherwise, the saved game \a m_filename will be loaded instead. */
-struct SinglePlayerSetupData : public GalaxySetupData
-{
-    /** \name Structors */ //@{
-    SinglePlayerSetupData(); ///< default ctor.
-    //@}
-
-    bool              m_new_game;
-    std::string       m_host_player_name;
-    std::string       m_empire_name;
-    GG::Clr           m_empire_color;
-    int               m_AIs;
-    std::string       m_filename;
-
-private:
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Contains the UI data that must be saved in save game files in order to restore games to the users' last views. */
+/** Contains the UI data that must be saved in save game files in order to
+  * restore games to the users' last views. */
 struct SaveGameUIData
 {
     int     map_top;
@@ -121,18 +104,41 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** The data structure used to represent a single player's setup options for a multiplayer game (in the multiplayer lobby screen). */
+/** The data structure used to represent a single player's setup options for a
+  * multiplayer game (in the multiplayer lobby screen). */
 struct PlayerSetupData
 {
     /** \name Structors */ //@{
     PlayerSetupData(); ///< default ctor.
     //@}
 
-    int         m_player_id;           ///< the player's id, assigned by the server
-    std::string m_player_name;         ///< the player's name
-    std::string m_empire_name;         ///< the name of the player's empire
-    GG::Clr     m_empire_color;        ///< the color used to represent this player's empire.
-    int         m_save_game_empire_id; ///< when an MP save game is being loaded, this is the id of the empire that this player will play
+    int                     m_player_id;            ///< the player's id, assigned by the server
+    std::string             m_player_name;          ///< the player's name
+    std::string             m_empire_name;          ///< the name of the player's empire
+    GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire.
+    std::string             m_starting_species_name;///< name of the species with which the player starts
+    int                     m_save_game_empire_id;  ///< when an MP save game is being loaded, this is the id of the empire that this player will play
+    Networking::ClientType  m_client_type;          ///< is this player an AI, human player or...?
+
+private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The data needed to establish a new single player game.  If \a m_new_game
+  * is true, a new game is to be started, using the remaining members besides
+  * \a m_filename.  Otherwise, the saved game \a m_filename will be loaded
+  * instead. */
+struct SinglePlayerSetupData : public GalaxySetupData
+{
+    /** \name Structors */ //@{
+    SinglePlayerSetupData(); ///< default ctor.
+    //@}
+
+    bool                            m_new_game;
+    std::string                     m_filename;
+    std::map<int, PlayerSetupData>  m_players; // indexed by player_id
 
 private:
     friend class boost::serialization::access;
@@ -155,10 +161,8 @@ struct MultiplayerLobbyData : public GalaxySetupData
     bool                              m_new_game;
     int                               m_save_file_index;
     std::map<int, PlayerSetupData>    m_players; // indexed by player_id
-    std::set<int>                     m_AI_player_ids;
 
     std::vector<std::string>          m_save_games;
-    std::vector<GG::Clr>              m_empire_colors;
     std::map<int, SaveGameEmpireData> m_save_game_empire_data; // indexed by empire_id
 
     static const std::string MP_SAVE_FILE_EXTENSION;
@@ -173,12 +177,12 @@ private:
 struct PlayerInfo
 {
     PlayerInfo();   ///< default ctor
-    PlayerInfo(const std::string& player_name_, int empire_id_, bool AI_, bool host_);
+    PlayerInfo(const std::string& player_name_, int empire_id_, Networking::ClientType client_type_, bool host_);
 
-    std::string name;       ///< name of this player (not the same as the empire name)
-    int         empire_id;  ///< id of the player's empire
-    bool        AI;         ///< true iff this is an AI (not a human player)
-    bool        host;       ///< true iff this is the host player
+    std::string             name;           ///< name of this player (not the same as the empire name)
+    int                     empire_id;      ///< id of the player's empire
+    Networking::ClientType  client_type;    ///< is this a human player, AI player, or observer?
+    bool                    host;           ///< true iff this is the host player
 
     friend class boost::serialization::access;
     template <class Archive>

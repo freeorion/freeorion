@@ -25,11 +25,8 @@ void SinglePlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(GalaxySetupData)
         & BOOST_SERIALIZATION_NVP(m_new_game)
-        & BOOST_SERIALIZATION_NVP(m_host_player_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_color)
-        & BOOST_SERIALIZATION_NVP(m_AIs)
-        & BOOST_SERIALIZATION_NVP(m_filename);
+        & BOOST_SERIALIZATION_NVP(m_filename)
+        & BOOST_SERIALIZATION_NVP(m_players);
 }
 
 template void SinglePlayerSetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
@@ -65,7 +62,9 @@ void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_empire_color)
-        & BOOST_SERIALIZATION_NVP(m_save_game_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_starting_species_name)
+        & BOOST_SERIALIZATION_NVP(m_save_game_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_client_type);
 }
 
 template void PlayerSetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
@@ -78,9 +77,7 @@ void MultiplayerLobbyData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_new_game)
         & BOOST_SERIALIZATION_NVP(m_save_file_index)
         & BOOST_SERIALIZATION_NVP(m_players)
-        // NOTE: We are not serializing the AIs on purpose; they are supposed to be server-side entities only.
         & BOOST_SERIALIZATION_NVP(m_save_games)
-        & BOOST_SERIALIZATION_NVP(m_empire_colors)
         & BOOST_SERIALIZATION_NVP(m_save_game_empire_data);
 }
 
@@ -92,7 +89,7 @@ void PlayerInfo::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(name)
         & BOOST_SERIALIZATION_NVP(empire_id)
-        & BOOST_SERIALIZATION_NVP(AI)
+        & BOOST_SERIALIZATION_NVP(client_type)
         & BOOST_SERIALIZATION_NVP(host);
 }
 

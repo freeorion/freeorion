@@ -395,7 +395,7 @@ public:
       * predefined galaxy shapes. */
     void            CreateUniverse(int size, Shape shape, Age age,
                                    StarlaneFrequency starlane_freq, PlanetDensity planet_density,
-                                   SpecialsFrequency specials_freq, int players, int ai_players,
+                                   SpecialsFrequency specials_freq,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Clears main ObjectMap, empires' latest known objects map, and
@@ -595,7 +595,7 @@ private:
 
     /** Will create empire objects, assign them homeworlds, setup the homeworld
       * population, industry, and starting fleets. */
-    void    GenerateEmpires(int players, std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
+    void    GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.
     EmpireObjectMap                 m_empire_latest_known_objects;      ///< map from empire id to (map from object id to latest known information about each object by that empire)
