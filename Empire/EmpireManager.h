@@ -54,10 +54,12 @@ public:
       * state info not relevant to an eliminated empire. */
     void            EliminateEmpire(int id);
 
-    /** Creates and inserts an empire with the specified properties and returns a pointer to it.  \a planet_ID is the ID
-        of the planet which is the empire's homeworld the empire will be created.  This will only set up the data in
-        Empire.  It is the caller's responsibility to make sure that universe updates planet ownership. */
-    Empire*         CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID);
+    /** Creates and inserts an empire with the specified properties and returns
+      * a pointer to it.  This will only set up the data in Empire.  It is the
+      * caller's responsibility to make sure that universe updates planet
+      * ownership. */
+    Empire*         CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
+                                 const GG::Clr& color, int homeworld_id);
 
     /** Adds the given empire to the manager. */
     void            InsertEmpire(Empire* empire);

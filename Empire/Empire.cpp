@@ -931,8 +931,8 @@ Empire::Empire() :
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 }
 
-Empire::Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id) :
-    m_id(ID),
+Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color, int homeworld_id) :
+    m_id(empire_id),
     m_name(name),
     m_player_name(player_name),
     m_color(color),
@@ -942,6 +942,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int ID, 
     m_population_pool(),
     m_maintenance_total_cost(0)
 {
+    Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour, " << homeworld_id << ")";
     m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
     m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));

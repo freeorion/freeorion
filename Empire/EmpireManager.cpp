@@ -66,17 +66,18 @@ void EmpireManager::EliminateEmpire(int id)
     }
 }
 
-Empire* EmpireManager::CreateEmpire(int id, const std::string& name, const std::string& player_name, const GG::Clr& color, int planet_ID)
+Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
+                                    const GG::Clr& color, int homeworld_id)
 {
-    Empire* empire = new Empire(name, player_name, id, color, planet_ID);
+    Empire* empire = new Empire(name, player_name, empire_id, color, homeworld_id);
 
     const ObjectMap& objects = GetUniverse().Objects();
-    if (const Planet* planet = objects.Object<Planet>(planet_ID)) {
+    if (const Planet* planet = objects.Object<Planet>(homeworld_id)) {
         int sys_id = planet->SystemID();
         if (sys_id != UniverseObject::INVALID_OBJECT_ID)
             empire->AddExploredSystem(sys_id);
     } else {
-        Logger().errorStream() << "EmpireManager::CreateEmpire passed invalid planet id (" << planet_ID << ")";
+        Logger().errorStream() << "EmpireManager::CreateEmpire passed invalid homeworld planet id (" << homeworld_id << ")";
     }
 
     InsertEmpire(empire);
@@ -86,10 +87,19 @@ Empire* EmpireManager::CreateEmpire(int id, const std::string& name, const std::
 
 void EmpireManager::InsertEmpire(Empire* empire)
 {
-    if (empire) {
-        assert(!m_empire_map[empire->EmpireID()]);
-        m_empire_map[empire->EmpireID()] = empire;
+    if (!empire) {
+        Logger().errorStream() << "EmpireManager::InsertEmpire passed null empire";
+        return;
     }
+
+    int empire_id = empire->EmpireID();
+
+    if (m_empire_map.find(empire_id) != m_empire_map.end()) {
+        Logger().errorStream() << "EmpireManager::InsertEmpire passed empire with id (" << empire_id << ") for which there already is an empire.";
+        return;
+    }
+
+    m_empire_map[empire_id] = empire;
 }
 
 void EmpireManager::Clear()
