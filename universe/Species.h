@@ -104,6 +104,12 @@ public:
     /** iterator to the last + 1th building type */
     iterator                end() const;
 
+    /** returns true iff this SpeciesManager is empty. */
+    bool                    empty() const;
+
+    /** returns the number of species stored in this manager. */
+    int                     NumSpecies() const;
+
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
     static SpeciesManager&  GetSpeciesManager();

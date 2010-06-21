@@ -211,6 +211,14 @@ SpeciesManager::iterator SpeciesManager::end() const {
     return m_species.end();
 }
 
+bool SpeciesManager::empty() const {
+    return m_species.empty();
+}
+
+int SpeciesManager::NumSpecies() const {
+    return m_species.size();
+}
+
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
