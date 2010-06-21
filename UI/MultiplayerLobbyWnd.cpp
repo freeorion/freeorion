@@ -34,19 +34,15 @@ namespace {
     const GG::Y ROW_HEIGHT_PAD(6);
     const GG::X EMPIRE_NAME_WIDTH(170);
 
-    struct PlayerRow : GG::ListBox::Row
-    {
-        typedef boost::signal<void ()> DataChangedSignalType;
-
+    struct PlayerRow : GG::ListBox::Row {
         PlayerRow() {}
         PlayerRow(const PlayerSetupData& player_data) : m_player_data(player_data) {}
 
-        PlayerSetupData       m_player_data;
-        DataChangedSignalType DataChangedSignal;
+        PlayerSetupData         m_player_data;
+        boost::signal<void ()>  DataChangedSignal;
     };
 
-    struct NewGamePlayerRow : PlayerRow
-    {
+    struct NewGamePlayerRow : PlayerRow {
         NewGamePlayerRow(const PlayerSetupData& player_data, bool disabled) :
             PlayerRow(player_data)
         {
@@ -77,13 +73,11 @@ namespace {
         }
 
     private:
-        void NameChanged(const std::string& str)
-        {
+        void NameChanged(const std::string& str) {
             m_player_data.m_empire_name = str;
             DataChangedSignal();
         }
-        void ColorChanged(const GG::Clr& clr)
-        {
+        void ColorChanged(const GG::Clr& clr) {
             m_player_data.m_empire_color = clr;
             DataChangedSignal();
         }
