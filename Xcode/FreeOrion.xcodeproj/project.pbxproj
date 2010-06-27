@@ -149,6 +149,7 @@
 		34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */; };
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
 		34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5CA60F4E18680002B5DB /* libOIS.a */; };
+		34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34D3CE8A11D7DA03007C1E78 /* Species.cpp */; };
 		34DD943A11360C0000265AF9 /* main.nib in Resources */ = {isa = PBXBuildFile; fileRef = 34DD943911360BFA00265AF9 /* main.nib */; };
 		34DD944711360CDD00265AF9 /* Plugin_CgProgramManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */; };
 		34DD944811360CDD00265AF9 /* Plugin_OctreeSceneManager.dylib in Copy Ogre Plugins */ = {isa = PBXBuildFile; fileRef = 34DD944211360CBE00265AF9 /* Plugin_OctreeSceneManager.dylib */; };
@@ -1121,6 +1122,8 @@
 		34CA5AF70F4DDF690002B5DB /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = dep/local/lib/libpng.dylib; sourceTree = "<group>"; };
 		34CA5CA60F4E18680002B5DB /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOIS.a; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		34D3CE8A11D7DA03007C1E78 /* Species.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Species.cpp; sourceTree = "<group>"; };
+		34D3CE8B11D7DA03007C1E78 /* Species.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Species.h; sourceTree = "<group>"; };
 		34DD943911360BFA00265AF9 /* main.nib */ = {isa = PBXFileReference; lastKnownFileType = file.bplist; path = main.nib; sourceTree = "<group>"; };
 		34DD944011360CBE00265AF9 /* Plugin_BSPSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_BSPSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944111360CBE00265AF9 /* Plugin_CgProgramManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_CgProgramManager.dylib; sourceTree = "<group>"; };
@@ -2996,6 +2999,8 @@
 		471D5CE40A98A3F900DA9C21 /* universe */ = {
 			isa = PBXGroup;
 			children = (
+				34D3CE8A11D7DA03007C1E78 /* Species.cpp */,
+				34D3CE8B11D7DA03007C1E78 /* Species.h */,
 				471D5CE50A98A3F900DA9C21 /* Building.cpp */,
 				471D5CE60A98A3F900DA9C21 /* Building.h */,
 				471D5CE70A98A3F900DA9C21 /* Condition.cpp */,
@@ -3396,6 +3401,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34D3CE8C11D7DA11007C1E78 /* Species.cpp in Sources */,
 				34F909BF118B1BA0003A9EF1 /* Vec3Utilities.cpp in Sources */,
 				34C4495E1182716E0071E09A /* Math.cpp in Sources */,
 				34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */,
