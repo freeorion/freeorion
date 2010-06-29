@@ -4207,7 +4207,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
 
 
         // if no colour already set, do so automatically
-        if (empire_colour == GG::CLR_ZERO) {
+        if (empire_colour == GG::Clr(0, 0, 0, 0)) {
             if (!colors.empty()) {
                 // a list of colours is available.  pick a colour
                 int color_idx = RandInt(0, colors.size() - 1);

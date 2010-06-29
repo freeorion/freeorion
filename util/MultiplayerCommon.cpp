@@ -428,7 +428,7 @@ PlayerSetupData::PlayerSetupData() :
     m_player_id(-1),
     m_player_name(),
     m_empire_name(),
-    m_empire_color(GG::CLR_ZERO),
+    m_empire_color(GG::Clr(0, 0, 0, 0)),
     m_starting_species_name(),
     m_save_game_empire_id(ALL_EMPIRES),
     m_client_type(Networking::INVALID_CLIENT_TYPE)
