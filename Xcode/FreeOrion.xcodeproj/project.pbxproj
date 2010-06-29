@@ -145,6 +145,7 @@
 		34C449611182716E0071E09A /* SerializeOrderSet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44959118271590071E09A /* SerializeOrderSet.cpp */; };
 		34C449621182716E0071E09A /* SerializePathingEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C4495A118271590071E09A /* SerializePathingEngine.cpp */; };
 		34C449631182716E0071E09A /* SerializeUniverse.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C4495B118271590071E09A /* SerializeUniverse.cpp */; };
+		34C9B34511DA2EA0003695F4 /* ClrConstants.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C9B34311DA2E95003695F4 /* ClrConstants.cpp */; };
 		34CA5AF80F4DDF690002B5DB /* libpng.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 34CA5AF70F4DDF690002B5DB /* libpng.dylib */; };
 		34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */; };
 		34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */; };
@@ -163,7 +164,6 @@
 		4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023930CEF3AAC00A7DF2B /* Base.cpp */; };
 		4710240C0CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */; };
 		4710240D0CEF3AAC00A7DF2B /* Button.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023950CEF3AAC00A7DF2B /* Button.cpp */; };
-		4710240E0CEF3AAC00A7DF2B /* Clr.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023960CEF3AAC00A7DF2B /* Clr.cpp */; };
 		4710240F0CEF3AAC00A7DF2B /* Control.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023970CEF3AAC00A7DF2B /* Control.cpp */; };
 		471024100CEF3AAC00A7DF2B /* Cursor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023980CEF3AAC00A7DF2B /* Cursor.cpp */; };
 		471024110CEF3AAC00A7DF2B /* ColorDlg.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4710239A0CEF3AAC00A7DF2B /* ColorDlg.cpp */; };
@@ -1119,6 +1119,8 @@
 		34C4495B118271590071E09A /* SerializeUniverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeUniverse.cpp; sourceTree = "<group>"; };
 		34C4495C118271590071E09A /* SerializeUniverseExports.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerializeUniverseExports.ipp; sourceTree = "<group>"; };
 		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Version.cpp.in; sourceTree = "<group>"; };
+		34C9B34311DA2E95003695F4 /* ClrConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClrConstants.cpp; sourceTree = "<group>"; };
+		34C9B34711DA2ECA003695F4 /* ClrConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClrConstants.h; sourceTree = "<group>"; };
 		34CA5AF70F4DDF690002B5DB /* libpng.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libpng.dylib; path = dep/local/lib/libpng.dylib; sourceTree = "<group>"; };
 		34CA5CA60F4E18680002B5DB /* libOIS.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libOIS.a; sourceTree = "<group>"; };
 		34CA5D8F0F4E2B0C0002B5DB /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
@@ -1217,7 +1219,6 @@
 		471023930CEF3AAC00A7DF2B /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrowseInfoWnd.cpp; sourceTree = "<group>"; };
 		471023950CEF3AAC00A7DF2B /* Button.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Button.cpp; sourceTree = "<group>"; };
-		471023960CEF3AAC00A7DF2B /* Clr.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Clr.cpp; sourceTree = "<group>"; };
 		471023970CEF3AAC00A7DF2B /* Control.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Control.cpp; sourceTree = "<group>"; };
 		471023980CEF3AAC00A7DF2B /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
 		4710239A0CEF3AAC00A7DF2B /* ColorDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDlg.cpp; sourceTree = "<group>"; };
@@ -2485,6 +2486,7 @@
 		4710233E0CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
+				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
 				34BAB0C40FC5CF9E00EF792E /* adobe */,
 				34BAB0C10FC5CDC400EF792E /* AdamGlue.h */,
 				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
@@ -2603,6 +2605,7 @@
 		471023900CEF3AAC00A7DF2B /* src */ = {
 			isa = PBXGroup;
 			children = (
+				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
 				34BAB21C0FC5D06000EF792E /* adobe */,
 				34BAB1AF0FC5CFE500EF792E /* GIL */,
 				34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */,
@@ -2611,7 +2614,6 @@
 				471023930CEF3AAC00A7DF2B /* Base.cpp */,
 				471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */,
 				471023950CEF3AAC00A7DF2B /* Button.cpp */,
-				471023960CEF3AAC00A7DF2B /* Clr.cpp */,
 				471023970CEF3AAC00A7DF2B /* Control.cpp */,
 				471023980CEF3AAC00A7DF2B /* Cursor.cpp */,
 				471023990CEF3AAC00A7DF2B /* dialogs */,
@@ -3471,6 +3473,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				34C9B34511DA2EA0003695F4 /* ClrConstants.cpp in Sources */,
 				34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */,
 				34CA5EC20F4F4CEA0002B5DB /* OgreGUIInputPlugin.cpp in Sources */,
 				34CA5EC10F4F4CDB0002B5DB /* OISInput.cpp in Sources */,
@@ -3478,7 +3481,6 @@
 				4710240B0CEF3AAC00A7DF2B /* Base.cpp in Sources */,
 				4710240C0CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp in Sources */,
 				4710240D0CEF3AAC00A7DF2B /* Button.cpp in Sources */,
-				4710240E0CEF3AAC00A7DF2B /* Clr.cpp in Sources */,
 				4710240F0CEF3AAC00A7DF2B /* Control.cpp in Sources */,
 				471024100CEF3AAC00A7DF2B /* Cursor.cpp in Sources */,
 				471024110CEF3AAC00A7DF2B /* ColorDlg.cpp in Sources */,
