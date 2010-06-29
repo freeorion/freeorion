@@ -651,34 +651,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="GG"
-			>
-			<Filter
-				Name="GG"
-				>
-				<File
-					RelativePath="..\..\..\GG\GG\Clr.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\GG\GG\PtRect.h"
-					>
-				</File>
-			</Filter>
-			<Filter
-				Name="src"
-				>
-				<File
-					RelativePath="..\..\..\GG\src\Clr.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\..\GG\src\PtRect.cpp"
-					>
-				</File>
-			</Filter>
-		</Filter>
-		<Filter
 			Name="log4cpp"
 			>
 			<Filter

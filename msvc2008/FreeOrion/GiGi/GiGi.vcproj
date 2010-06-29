@@ -131,6 +131,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\ClrConstants.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\Control.h"
 					>
 				</File>
@@ -295,7 +299,7 @@
 					>
 				</File>
 				<File
-					RelativePath="..\..\..\GG\src\Clr.cpp"
+					RelativePath="..\..\..\GG\src\ClrConstants.cpp"
 					>
 				</File>
 				<File
