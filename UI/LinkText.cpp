@@ -328,7 +328,7 @@ void TextLinker::MarkLinks()
     std::string marked_text;
 
     // copy text from current copy_start_index up to just before start of next link
-    for (size_t i = 0; i < m_links.size(); ++i) {
+    for (int i = 0; i < static_cast<int>(m_links.size()); ++i) {
         const Link& link = m_links[i];
         int link_start_index = link.text_posn.first;
         int link_end_index = link.text_posn.second;

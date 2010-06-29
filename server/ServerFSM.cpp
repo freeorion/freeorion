@@ -160,9 +160,6 @@ sc::result Idle::react(const HostSPGame& msg)
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     ExtractMessageData(message, *single_player_setup_data);
 
-    int host_player_id = Networking::HOST_PLAYER_ID;
-
-
     // get host player's name from setup data or saved file
     std::string host_player_name;
 
