@@ -132,7 +132,8 @@ namespace {
 
 
             std::vector<PlayerSaveGameData> player_save_game_data;
-            LoadPlayerSaveGameData(single_player_setup_data.m_filename, player_save_game_data);
+            LoadPlayerSaveGameData(single_player_setup_data.m_filename,
+                                   player_save_game_data);
 
             // find which player was the human (and thus the host) in the saved game
             for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
@@ -385,8 +386,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         }
 
         // refresh save game empire data
-        const std::string& file_name = m_lobby_data->m_save_games[new_file_index];
-        LoadEmpireSaveGameData(file_name, m_lobby_data->m_save_game_empire_data);
+        boost::filesystem::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+        const std::string& save_filename = m_lobby_data->m_save_games[new_file_index];
+        LoadEmpireSaveGameData((save_dir / save_filename).file_string(),
+                               m_lobby_data->m_save_game_empire_data);
     }
 
 
@@ -494,7 +497,9 @@ sc::result MPLobby::react(const StartMPGame& msg)
             int expected_players = m_player_save_game_data.size();
             int needed_AI_clients = expected_players - server.m_networking.NumEstablishedPlayers();
             if (needed_AI_clients < 1) {
-                server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+                server.LoadMPGameInit(*m_lobby_data,
+                                      m_player_save_game_data,
+                                      m_server_save_game_data);
                 return transit<PlayingGame>();
             }
             // othewrise, transit to waiting for mp joiners
@@ -548,7 +553,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         }
 
         std::vector<PlayerSaveGameData> player_save_game_data;
-        LoadPlayerSaveGameData(m_single_player_setup_data->m_filename, player_save_game_data);
+        LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
+                               player_save_game_data);
 
         // add player setup data for each player in saved gamed
         for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
@@ -645,7 +651,8 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
                      m_player_save_game_data,
                      GetUniverse(),
                      Empires());
-            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
+            server.LoadSPGameInit(m_player_save_game_data,
+                                  m_server_save_game_data);
         }
         return transit<PlayingGame>();
     }
@@ -667,7 +674,8 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
                      m_player_save_game_data,
                      GetUniverse(),
                      Empires());
-            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
+            server.LoadSPGameInit(m_player_save_game_data,
+                                  m_server_save_game_data);
         }
         return transit<PlayingGame>();
     }
@@ -687,6 +695,9 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
+    context<ServerFSM>().m_lobby_data.reset();
+    context<ServerFSM>().m_player_save_game_data.clear();
+    context<ServerFSM>().m_server_save_game_data.reset();
     ServerApp& server = Server();
 
     m_num_expected_players = m_lobby_data->m_players.size();
@@ -760,7 +771,9 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         if (m_player_save_game_data.empty())
             server.NewMPGameInit(*m_lobby_data);
         else
-            server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+            server.LoadMPGameInit(*m_lobby_data,
+                                  m_player_save_game_data,
+                                  m_server_save_game_data);
         return transit<PlayingGame>();
     }
 
