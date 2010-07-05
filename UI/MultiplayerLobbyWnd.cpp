@@ -35,16 +35,23 @@ namespace {
     const GG::X EMPIRE_NAME_WIDTH(170);
 
     struct PlayerRow : GG::ListBox::Row {
-        PlayerRow() {}
-        PlayerRow(const PlayerSetupData& player_data) : m_player_data(player_data) {}
+        PlayerRow() :
+            m_player_data(),
+            m_player_id(Networking::INVALID_PLAYER_ID)
+        {}
+        PlayerRow(const PlayerSetupData& player_data, int player_id) :
+            m_player_data(player_data),
+            m_player_id(player_id)
+        {}
 
         PlayerSetupData         m_player_data;
+        int                     m_player_id;
         boost::signal<void ()>  DataChangedSignal;
     };
 
     struct NewGamePlayerRow : PlayerRow {
-        NewGamePlayerRow(const PlayerSetupData& player_data, bool disabled) :
-            PlayerRow(player_data)
+        NewGamePlayerRow(const PlayerSetupData& player_data, int player_id, bool disabled) :
+            PlayerRow(player_data, player_id)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
 
@@ -67,8 +74,8 @@ namespace {
                 edit->Disable();
                 color_selector->Disable();
             } else {
-                Connect(edit->EditedSignal, &NewGamePlayerRow::NameChanged, this);
-                Connect(color_selector->ColorChangedSignal, &NewGamePlayerRow::ColorChanged, this);
+                Connect(edit->EditedSignal,                 &NewGamePlayerRow::NameChanged,     this);
+                Connect(color_selector->ColorChangedSignal, &NewGamePlayerRow::ColorChanged,    this);
             }
         }
 
@@ -85,8 +92,8 @@ namespace {
 
     struct LoadGamePlayerRow : PlayerRow
     {
-        LoadGamePlayerRow(const PlayerSetupData& player_data, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool host, bool disabled) :
-            PlayerRow(player_data),
+        LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled) :
+            PlayerRow(player_data, player_id),
             m_empire_list(0),
             m_save_game_empire_data(save_game_empire_data)
         {
@@ -100,15 +107,20 @@ namespace {
             m_empire_list->SetStyle(GG::LIST_NOSORT);
             std::map<int, SaveGameEmpireData>::const_iterator save_game_empire_it = m_save_game_empire_data.end();
             for (std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin(); it != m_save_game_empire_data.end(); ++it) {
-                m_empire_list->Insert(new CUISimpleDropDownListRow(it->second.m_name));
-                // Note that this logic will select based on empire id first.  Only when such a match fails does it
-                // attempt to match the current player name to the one in the save game.  Note also that only the host
-                // attempts a name match; the other clients just take whatever they're given.
-                if (it->first == m_player_data.m_save_game_empire_id || (host && it->second.m_player_name == m_player_data.m_player_name)) {
+                // insert row into droplist of empires for this player row
+                m_empire_list->Insert(new CUISimpleDropDownListRow(it->second.m_empire_name));
+
+                // attempt to choose a default empire to be selected in this
+                // player row.  if this empire row matches this player data's
+                // save gamge empire id, or if this empire row's player name
+                // matches this player data's player name, select the row
+                if ((it->first == m_player_data.m_save_game_empire_id) ||
+                    (it->second.m_player_name == m_player_data.m_player_name))
+                {
                     m_empire_list->Select(--m_empire_list->end());
-                    m_player_data.m_empire_name = it->second.m_name;
-                    m_player_data.m_empire_color = it->second.m_color;
-                    m_player_data.m_save_game_empire_id = it->second.m_id;
+                    m_player_data.m_empire_name =           it->second.m_empire_name;
+                    m_player_data.m_empire_color =          it->second.m_color;
+                    m_player_data.m_save_game_empire_id =   it->second.m_empire_id;
                     save_game_empire_it = it;
                 }
             }
@@ -137,9 +149,9 @@ namespace {
             assert(selected_it != m_empire_list->end());
             std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
-            m_player_data.m_empire_name = it->second.m_name;
-            m_player_data.m_empire_color = it->second.m_color;
-            m_player_data.m_save_game_empire_id = it->second.m_id;
+            m_player_data.m_empire_name =           it->second.m_empire_name;
+            m_player_data.m_empire_color =          it->second.m_color;
+            m_player_data.m_save_game_empire_id =   it->second.m_empire_id;
             m_color_selector->SelectColor(m_player_data.m_empire_color);
             boost::polymorphic_downcast<GG::TextControl*>(operator[](3))->SetText(it->second.m_player_name);
             DataChangedSignal();
@@ -162,12 +174,13 @@ namespace {
     const int           PREVIEW_MARGIN = 3;
 }
 
-MultiplayerLobbyWnd::MultiplayerLobbyWnd(
-    bool host,
-    const CUIButton::ClickedSignalType::slot_type& start_game_callback,
-    const CUIButton::ClickedSignalType::slot_type& cancel_callback) : 
-    CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"), (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2, 
-           (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2, LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT, 
+MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
+                                         const CUIButton::ClickedSignalType::slot_type& start_game_callback,
+                                         const CUIButton::ClickedSignalType::slot_type& cancel_callback) :
+    CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
+           (GG::GUI::GetGUI()->AppWidth() - LOBBY_WND_WIDTH) / 2,
+           (GG::GUI::GetGUI()->AppHeight() - LOBBY_WND_HEIGHT) / 2,
+           LOBBY_WND_WIDTH, LOBBY_WND_HEIGHT,
            GG::ONTOP | GG::INTERACTIVE),
     m_host(host),
     m_chat_box(0),
@@ -413,7 +426,7 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
     m_lobby_data.m_players.clear();
     for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
         const PlayerRow* row = boost::polymorphic_downcast<const PlayerRow*>(*it);
-        m_lobby_data.m_players[row->m_player_data.m_player_id] = row->m_player_data;
+        m_lobby_data.m_players[row->m_player_id] = row->m_player_data;
     }
     if (m_host)
         m_start_game_bn->Disable(!CanStart());
@@ -422,30 +435,37 @@ void MultiplayerLobbyWnd::PlayerDataChanged()
 
 bool MultiplayerLobbyWnd::PopulatePlayerList()
 {
-    bool retval = false;
+    bool send_update_back_retval = false;
 
     m_players_lb->Clear();
 
-    for (unsigned int i = 0; i < m_lobby_data.m_players.size(); ++i) {
-        int id = m_lobby_data.m_players[i].m_player_id;
+    // repopulate list with rows built from current lobby data
+    for (std::map<int, PlayerSetupData>::iterator player_setup_it = m_lobby_data.m_players.begin();
+         player_setup_it != m_lobby_data.m_players.end(); ++player_setup_it)
+    {
+        int data_player_id = player_setup_it->first;
+        PlayerSetupData& psd = player_setup_it->second;
+
         if (m_lobby_data.m_new_game) {
-            NewGamePlayerRow* row =
-                new NewGamePlayerRow(m_lobby_data.m_players[id],
-                                     !m_host && id != HumanClientApp::GetApp()->PlayerID());
+            bool immutable_row = !m_host && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row
+            NewGamePlayerRow* row = new NewGamePlayerRow(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
+
         } else {
-            bool disable = !m_host && id != HumanClientApp::GetApp()->PlayerID() ||
-                m_lobby_data.m_save_game_empire_data.empty();
-            LoadGamePlayerRow* row =
-                new LoadGamePlayerRow(m_lobby_data.m_players[id],
-                                      m_lobby_data.m_save_game_empire_data,
-                                      m_host, disable);
+            bool immutable_row = (!m_host && (data_player_id != HumanClientApp::GetApp()->PlayerID())) || m_lobby_data.m_save_game_empire_data.empty();
+            LoadGamePlayerRow* row = new LoadGamePlayerRow(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiplayerLobbyWnd::PlayerDataChanged, this);
-            if (row->m_player_data.m_save_game_empire_id != m_lobby_data.m_players[id].m_save_game_empire_id) {
-                m_lobby_data.m_players[id] = row->m_player_data;
-                retval = true;
+
+            // if the player setup data in the row is different from the player
+            // setup data in this lobby wnd's lobby data (which may have
+            // happened because the LoadGamePlayerRow constructor selects an
+            // empire row for the droplist in the player row) then the change
+            // needs to be sent to other players
+            if (row->m_player_data.m_save_game_empire_id != psd.m_save_game_empire_id) {
+                psd = row->m_player_data;
+                send_update_back_retval = true;
             }
         }
     }
@@ -463,13 +483,13 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
     if (m_host)
         m_start_game_bn->Disable(!CanStart());
 
-    return retval;
+    return send_update_back_retval;
 }
 
 void MultiplayerLobbyWnd::SendUpdate()
 {
     int player_id = HumanClientApp::GetApp()->PlayerID();
-    if (player_id != -1)
+    if (player_id != Networking::INVALID_PLAYER_ID)
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
 }
 

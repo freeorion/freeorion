@@ -36,6 +36,10 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         GetShipDesignsToSerialize(          ship_designs,                       s_encoding_empire);
     }
 
+    if (Archive::is_loading::value) {
+        Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
+    }
+
     ar  & BOOST_SERIALIZATION_NVP(s_universe_width)
         & BOOST_SERIALIZATION_NVP(ship_designs)
         & BOOST_SERIALIZATION_NVP(m_empire_known_ship_design_ids)

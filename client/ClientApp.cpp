@@ -14,7 +14,7 @@ ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() :
     m_universe(),
-    m_player_id(-1),
+    m_player_id(Networking::INVALID_PLAYER_ID),
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
 {

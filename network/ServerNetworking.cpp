@@ -13,7 +13,7 @@ using boost::asio::ip::udp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 }
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
@@ -280,7 +280,7 @@ ServerNetworking::const_iterator ServerNetworking::begin() const
 ServerNetworking::const_iterator ServerNetworking::end() const 
 { return m_player_connections.end(); }
 
-std::size_t ServerNetworking::NumPlayers() const
+std::size_t ServerNetworking::NumEstablishedPlayers() const
 { return std::distance(established_begin(), established_end()); }
 
 ServerNetworking::const_established_iterator ServerNetworking::GetPlayer(int id) const

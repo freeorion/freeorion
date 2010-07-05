@@ -18,15 +18,8 @@
 #include <fstream>
 
 namespace {
-    void Options(OptionsDB& db)
-    {
-        db.Add<std::string>('S', "save-dir", "OPTIONS_DB_SAVE_DIR", (GetUserDir() / "save").directory_string());
-    }
-    bool foo_bool = RegisterOptions(&Options);
-
     const GG::X IN_GAME_OPTIONS_WIDTH(150);
     const GG::Y IN_GAME_OPTIONS_HEIGHT(280);
-
 }
 
 
@@ -83,7 +76,7 @@ void InGameMenu::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flag
 
 void InGameMenu::Save()
 {
-    const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? ".sav" : ".mps";
+    const std::string SAVE_GAME_EXTENSION = HumanClientApp::GetApp()->SinglePlayerGame() ? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION;
 
     std::vector<std::pair<std::string, std::string> > save_file_types;
     save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*" + SAVE_GAME_EXTENSION));

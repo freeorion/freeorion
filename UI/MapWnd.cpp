@@ -1539,6 +1539,11 @@ void MapWnd::InitTurn(int turn_number)
 
 
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    // DEBUG
+    for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it)
+        Logger().debugStream() << "MapWnd::InitTurn: empire id: " << empire_it->first << " named: " << empire_it->second->Name();
+    // END DEBUG
+
     Empire* this_client_empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!this_client_empire) {
         Logger().errorStream() << "MapWnd::InitTurn couldn't get an empire!";

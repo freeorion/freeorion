@@ -46,8 +46,8 @@ template void SaveGameUIData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCH
 template <class Archive>
 void SaveGameEmpireData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name)
+    ar  & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
 }
@@ -58,8 +58,7 @@ template void SaveGameEmpireData::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_I
 template <class Archive>
 void PlayerSetupData::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_player_id)
-        & BOOST_SERIALIZATION_NVP(m_player_name)
+    ar  & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_empire_name)
         & BOOST_SERIALIZATION_NVP(m_empire_color)
         & BOOST_SERIALIZATION_NVP(m_starting_species_name)

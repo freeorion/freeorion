@@ -34,79 +34,79 @@ namespace {
             m_recv_buf(),
             m_receive_successful(false),
             m_server_name()
-            {}
+        {}
 
         const ServerList& Servers() const
-            { return m_servers; }
+        { return m_servers; }
 
         void DiscoverServers()
-            {
-                using namespace boost::asio::ip;
-                udp::resolver resolver(*m_io_service);
-                udp::resolver::query query(udp::v4(), "255.255.255.255",
-                                           boost::lexical_cast<std::string>(DISCOVERY_PORT),
-                                           resolver_query_base::address_configured |
-                                           resolver_query_base::numeric_service);
-                udp::resolver::iterator end_it;
-                for (udp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-                    udp::endpoint receiver_endpoint = *it;
+        {
+            using namespace boost::asio::ip;
+            udp::resolver resolver(*m_io_service);
+            udp::resolver::query query(udp::v4(), "255.255.255.255",
+                                       boost::lexical_cast<std::string>(DISCOVERY_PORT),
+                                       resolver_query_base::address_configured |
+                                       resolver_query_base::numeric_service);
+            udp::resolver::iterator end_it;
+            for (udp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+                udp::endpoint receiver_endpoint = *it;
 
-                    m_socket.close();
-                    m_socket.open(udp::v4());
-                    m_socket.set_option(boost::asio::socket_base::broadcast(true));
+                m_socket.close();
+                m_socket.open(udp::v4());
+                m_socket.set_option(boost::asio::socket_base::broadcast(true));
 
-                    m_socket.send_to(boost::asio::buffer(DISCOVERY_QUESTION),
-                                     receiver_endpoint);
+                m_socket.send_to(boost::asio::buffer(DISCOVERY_QUESTION),
+                                 receiver_endpoint);
 
-                    m_socket.async_receive_from(
-                        boost::asio::buffer(m_recv_buf),
-                        m_sender_endpoint,
-                        boost::bind(&ServerDiscoverer::HandleReceive,
-                                    this,
-                                    boost::asio::placeholders::error,
-                                    boost::asio::placeholders::bytes_transferred));
-                    m_timer.expires_from_now(boost::posix_time::seconds(2));
-                    m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
-                    m_io_service->run();
-                    m_io_service->reset();
-                    if (m_receive_successful) {
-                        boost::asio::ip::address address = m_server_name == "localhost" ?
-                            boost::asio::ip::address::from_string("127.0.0.1") :
-                            m_sender_endpoint.address();
-                        m_servers.push_back(std::make_pair(address, m_server_name));
-                    }
-                    m_receive_successful = false;
-                    m_server_name = "";
+                m_socket.async_receive_from(
+                    boost::asio::buffer(m_recv_buf),
+                    m_sender_endpoint,
+                    boost::bind(&ServerDiscoverer::HandleReceive,
+                                this,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred));
+                m_timer.expires_from_now(boost::posix_time::seconds(2));
+                m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
+                m_io_service->run();
+                m_io_service->reset();
+                if (m_receive_successful) {
+                    boost::asio::ip::address address = m_server_name == "localhost" ?
+                        boost::asio::ip::address::from_string("127.0.0.1") :
+                        m_sender_endpoint.address();
+                    m_servers.push_back(std::make_pair(address, m_server_name));
                 }
+                m_receive_successful = false;
+                m_server_name = "";
             }
+        }
 
     private:
         void HandleReceive(const boost::system::error_code& error, std::size_t length)
-            {
-                if (error == boost::asio::error::message_size) {
-                    m_socket.async_receive_from(
-                        boost::asio::buffer(m_recv_buf),
-                        m_sender_endpoint,
-                        boost::bind(&ServerDiscoverer::HandleReceive,
-                                    this,
-                                    boost::asio::placeholders::error,
-                                    boost::asio::placeholders::bytes_transferred));
-                } else if (!error) {
-                    std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
-                    if (boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
-                        m_receive_successful = true;
-                        m_server_name =
-                            boost::algorithm::erase_first_copy(buffer_string, DISCOVERY_ANSWER);
-                        if (m_server_name == boost::asio::ip::host_name())
-                            m_server_name = "localhost";
-                        m_timer.cancel();
-                        m_socket.close();
-                    }
+        {
+            if (error == boost::asio::error::message_size) {
+                m_socket.async_receive_from(
+                    boost::asio::buffer(m_recv_buf),
+                    m_sender_endpoint,
+                    boost::bind(&ServerDiscoverer::HandleReceive,
+                                this,
+                                boost::asio::placeholders::error,
+                                boost::asio::placeholders::bytes_transferred));
+            } else if (!error) {
+                std::string buffer_string(m_recv_buf.begin(), m_recv_buf.begin() + length);
+                if (boost::algorithm::starts_with(buffer_string, DISCOVERY_ANSWER)) {
+                    m_receive_successful = true;
+                    m_server_name =
+                        boost::algorithm::erase_first_copy(buffer_string, DISCOVERY_ANSWER);
+                    if (m_server_name == boost::asio::ip::host_name())
+                        m_server_name = "localhost";
+                    m_timer.cancel();
+                    m_socket.close();
                 }
             }
+        }
 
         void CloseSocket()
-            { m_socket.close(); }
+        { m_socket.close(); }
 
         boost::asio::io_service*       m_io_service;
         boost::asio::deadline_timer    m_timer;

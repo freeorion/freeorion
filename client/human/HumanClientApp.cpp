@@ -327,7 +327,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
             // Human player setup data first
 
             PlayerSetupData human_player_setup_data;
-            human_player_setup_data.m_player_id =   Networking::HOST_PLAYER_ID;
             human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
             human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
 
@@ -350,24 +349,25 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
              }
 
             human_player_setup_data.m_save_game_empire_id = -1; // not used for new games
-            human_player_setup_data.m_client_type =         Networking::CLIENT_TYPE_HUMAN_PLAYER;
+            human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
             // add to setup data players
-            setup_data.m_players[human_player_setup_data.m_player_id] = human_player_setup_data;
+            setup_data.m_players.push_back(human_player_setup_data);
 
             // AI player setup data.  One entry for each requested AI
 
             int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
             for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
-                PlayerSetupData& ai_setup_data = setup_data.m_players[ai_i];
+                PlayerSetupData ai_setup_data;
 
-                ai_setup_data.m_player_id = ai_i;
                 ai_setup_data.m_player_name = "AI_" + boost::lexical_cast<std::string>(ai_i);
                 ai_setup_data.m_empire_name.clear();            // leave blank, to be set by server in Universe::GenerateEmpires
                 ai_setup_data.m_empire_color = GG::CLR_ZERO;    // to be set by server
                 ai_setup_data.m_starting_species_name.clear();  // leave blank, to be set by server
                 ai_setup_data.m_save_game_empire_id = -1;       // not used for new games
                 ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
+
+                setup_data.m_players.push_back(ai_setup_data);
             }
 
             Networking().SendMessage(HostSPGameMessage(setup_data));
@@ -462,10 +462,11 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         }
     }
 
-    if (filename != "") {
+    if (!filename.empty()) {
+        // end any currently-playing game before loading new one
         if (m_game_started) {
             EndGame();
-            Sleep(1500);    // to make sure old game is cleaned up before attempting to start a new one
+            Sleep(1500);    // delay to make sure old game is fully cleaned up before attempting to start a new one
         } else {
             Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
         }
@@ -493,9 +494,11 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         SetEmpireID(ALL_EMPIRES);
 
         SinglePlayerSetupData setup_data;
+        // leving GalaxySetupData information default / blank : not used when loading a game
         setup_data.m_new_game = false;
         setup_data.m_filename = filename;
-        setup_data.m_players.clear();   // if not starting a new game, don't need to specify PlayerSetupData
+        // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
+
 
         Networking().SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
@@ -633,9 +636,11 @@ void HumanClientApp::StartGame()
 {
     m_game_started = true;
     Orders().Reset();
-    for (Empire::SitRepItr it = Empires().Lookup(EmpireID())->SitRepBegin(); it != Empires().Lookup(EmpireID())->SitRepEnd(); ++it) {
-        m_ui->GenerateSitRepText(*it);
-    }
+    if (const Empire* empire = Empires().Lookup(EmpireID()))
+        for (Empire::SitRepItr it = empire->SitRepBegin(); it != empire->SitRepEnd(); ++it)
+            m_ui->GenerateSitRepText(*it);
+    else
+        Logger().errorStream() << "HumanClientApp::StartGame couldn't get empire with id " << EmpireID();
 }
 
 void HumanClientApp::Autosave(bool new_game)
@@ -669,11 +674,11 @@ void HumanClientApp::Autosave(bool new_game)
         // select filename extension
         std::string extension;
         if (m_single_player_game)
-            extension = "sav";
+            extension = SP_SAVE_FILE_EXTENSION;
         else
-            extension = "mps";
+            extension = MP_SAVE_FILE_EXTENSION;
 
-        std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d.%s") % player_name % empire_name % CurrentTurn() % extension);
+        std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
 
         namespace fs = boost::filesystem;
         fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));

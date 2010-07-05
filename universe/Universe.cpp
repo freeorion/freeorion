@@ -674,6 +674,7 @@ void Universe::Clear()
         it->second.Clear();
     m_empire_latest_known_objects.clear();
 
+    // clean up ship designs
     for (ShipDesignMap::iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it)
         delete it->second;
     m_ship_designs.clear();
@@ -3715,6 +3716,10 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     m_objects.Clear();  // wipe out anything present in the object map
 
+    // these happen to be equal to INVALID_OBJECT_ID and INVALID_DESIGN_ID,
+    // but the point here is that the latest used ID is incremented before
+    // being assigned, so using -1 here means the first assigned ID will be 0,
+    // which is a valid ID
     m_last_allocated_object_id = -1;
     m_last_allocated_design_id = -1;
 
@@ -4172,7 +4177,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
     Logger().debugStream() << "Generating " << player_setup_data.size() << " empires";
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one
 
-    // load empire names
+    // load default empire names
     static std::list<std::string> empire_names;
     if (empire_names.empty())
         LoadEmpireNames(empire_names);
@@ -4190,7 +4195,13 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
     for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
          setup_data_it != player_setup_data.end(); ++setup_data_it, ++player_i)
     {
-        int         empire_id =                 setup_data_it->first;   // use player ID for empire ID for lack of a reason to make them different
+        int         player_id =                 setup_data_it->first;
+        if (player_id == Networking::INVALID_PLAYER_ID)
+            Logger().errorStream() << "Universe::GenerateEmpires player id (" << player_id << ") is invalid";
+        // use player ID for empire ID so that the calling code can get the
+        // correct empire for each player ID  in player_setup_data
+        int         empire_id =                 player_id;
+
         std::string player_name =               setup_data_it->second.m_player_name;
         std::string empire_name =               setup_data_it->second.m_empire_name;
         GG::Clr     empire_colour =             setup_data_it->second.m_empire_color;
@@ -4250,11 +4261,10 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
             }
         }
 
-        Logger().debugStream() << "creating empire named: " << empire_name
+        Logger().debugStream() << "Universe::GenerateEmpires creating empire named: " << empire_name
+                               << " with empire id: " << empire_id << " for player: " << player_name << " (with player id: " << player_id << ")"
                                << " starting with species: " << empire_starting_species
-                               << " for player: " << player_name
-                               << " at homeworld id: " << homeworld_id
-                               << " and empire id: " << empire_id;
+                               << " at homeworld id: " << homeworld_id;
 
         // create new Empire object through empire manager
         Empire* empire = Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, homeworld_id);
@@ -4268,7 +4278,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
             continue;
         }
 
-        Logger().debugStream() << "Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
+        Logger().debugStream() << "Universe::GenerateEmpires Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
 
         home_planet->AddOwner(empire_id);

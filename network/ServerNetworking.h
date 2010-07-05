@@ -64,7 +64,7 @@ public:
     const_iterator end() const;
 
     /** Returns the number of established-player PlayerConnections. */
-    std::size_t NumPlayers() const;
+    std::size_t NumEstablishedPlayers() const;
 
     /** Returns an iterator to the established PlayerConnection object with ID
         \a id, or end() if none is found. */

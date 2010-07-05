@@ -55,12 +55,12 @@ private:
     void            SaveGameChanged(GG::DropDownList::iterator it);
     void            PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void            PlayerDataChanged();
-    bool            PopulatePlayerList();
+    bool            PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
     void            SendUpdate();
     bool            PlayerDataAcceptable() const;
     bool            CanStart() const;
 
-    MultiplayerLobbyData    m_lobby_data; // a copy of the most recently received lobby update
+    MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
 
     bool                    m_host;
 

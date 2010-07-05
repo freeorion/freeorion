@@ -24,8 +24,8 @@ struct MultiplayerLobbyData;
 class ServerApp;
 struct SinglePlayerSetupData;
 class PlayerConnection;
-class PlayerSaveGameData;
-class ServerSaveGameData;
+struct PlayerSaveGameData;
+struct ServerSaveGameData;
 class System;
 typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 
@@ -126,10 +126,10 @@ struct ServerFSM : sc::state_machine<ServerFSM, Idle>
     ServerApp& Server();
     void HandleNonLobbyDisconnection(const Disconnection& d);
 
-    boost::shared_ptr<MultiplayerLobbyData>  m_lobby_data;
-    boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
-    std::vector<PlayerSaveGameData>          m_player_save_game_data;
-    boost::shared_ptr<ServerSaveGameData>    m_server_save_game_data;
+    boost::shared_ptr<MultiplayerLobbyData>     m_lobby_data;
+    boost::shared_ptr<SinglePlayerSetupData>    m_single_player_setup_data;
+    std::vector<PlayerSaveGameData>             m_player_save_game_data;
+    boost::shared_ptr<ServerSaveGameData>       m_server_save_game_data;
 
 private:
     ServerApp& m_server;
@@ -202,7 +202,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM>
     sc::result react(const JoinGame& msg);
     sc::result react(const CheckStartConditions& u);
 
-    boost::shared_ptr<SinglePlayerSetupData> m_setup_data;
+    boost::shared_ptr<SinglePlayerSetupData> m_single_player_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
     boost::shared_ptr<ServerSaveGameData>    m_server_save_game_data;
     std::set<std::string>                    m_expected_ai_player_names;

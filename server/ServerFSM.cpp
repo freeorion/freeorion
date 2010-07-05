@@ -8,31 +8,13 @@
 #include "../universe/System.h"
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
+#include "../util/OptionsDB.h"
+
+#include <boost/filesystem/path.hpp>
 
 
 namespace {
     const bool TRACE_EXECUTION = true;
-
-    void RebuildSaveGameEmpireData(std::map<int, SaveGameEmpireData>& save_game_empire_data, const std::string& save_game_filename)
-    {
-        save_game_empire_data.clear();
-        std::vector<PlayerSaveGameData> player_save_game_data;
-        ServerSaveGameData server_data;
-        Universe universe;
-
-        LoadGame((GetUserDir() / "save" / save_game_filename).file_string().c_str(),
-                 server_data, player_save_game_data, universe);
-
-        for (unsigned int i = 0; i < player_save_game_data.size(); ++i) {
-            Empire* empire = player_save_game_data[i].m_empire;
-            SaveGameEmpireData& data = save_game_empire_data[empire->EmpireID()];
-            data.m_id = empire->EmpireID();
-            data.m_name = empire->Name();
-            data.m_player_name = empire->PlayerName();
-            data.m_color = empire->Color();
-            delete empire;
-        }
-    }
 }
 
 ////////////////////////////////////////////////////////////
@@ -116,7 +98,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
     // TODO: Add a way to have AIs play without humans... for AI debugging purposes
 
     // independently of everything else, if there are no humans left, it's time to terminate
-    if (m_server.m_networking.empty() || m_server.m_ai_clients.size() == m_server.m_networking.NumPlayers()) {
+    if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {
         Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
         Sleep(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         m_server.Exit(1);
@@ -127,6 +109,44 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 ////////////////////////////////////////////////////////////
 // Idle
 ////////////////////////////////////////////////////////////
+namespace {
+    std::string GetHostNameFromSinglePlayerSetupData(const SinglePlayerSetupData& single_player_setup_data) {
+        if (single_player_setup_data.m_new_game) {
+            // for new games, get host player's name from PlayerSetupData for the
+            // (should be only) human player
+            for (std::vector<PlayerSetupData>::const_iterator setup_data_it = single_player_setup_data.m_players.begin();
+                 setup_data_it != single_player_setup_data.m_players.end(); ++setup_data_it)
+            {
+                // In a single player game, the host player is always the human player, so
+                // this is just a matter of finding which player setup data is for
+                // a human player, and assigning that setup data to the host player id
+                const PlayerSetupData& psd = *setup_data_it;
+                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psd.m_player_name;
+            }
+
+        } else {
+            // for loading saved games, get host / human player's name from save file
+            if (!single_player_setup_data.m_players.empty())
+                Logger().errorStream() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
+
+
+            std::vector<PlayerSaveGameData> player_save_game_data;
+            LoadPlayerSaveGameData(single_player_setup_data.m_filename, player_save_game_data);
+
+            // find which player was the human (and thus the host) in the saved game
+            for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
+                 save_data_it != player_save_game_data.end(); ++save_data_it)
+            {
+                const PlayerSaveGameData& psgd = *save_data_it;
+                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psgd.m_name;
+            }
+        }
+        return "";
+    }
+}
+
 Idle::Idle(my_context c) :
     my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle"; }
@@ -142,10 +162,22 @@ sc::result Idle::react(const HostMPGame& msg)
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     std::string host_player_name = message.Text();
-    int player_id = Networking::HOST_PLAYER_ID;
-    player_connection->EstablishPlayer(player_id, host_player_name, true, Networking::CLIENT_TYPE_HUMAN_PLAYER);
-    player_connection->SendMessage(HostMPAckMessage(player_id));
+    // validate host name (was found and wasn't empty)
+    if (host_player_name.empty()) {
+        Logger().errorStream() << "Idle::react(const HostMPGame& msg) got an empty host player name";
+        return discard_event();
+    }
+
+    Logger().debugStream() << "Idle::react(HostMPGame) about to establish host";
+
+    // establish host player with hard-coded host-player ID and as a human player.  todo: allow non-player hosts?
+    player_connection->EstablishPlayer(Networking::HOST_PLAYER_ID, host_player_name, true, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    Logger().debugStream() << "Idle::react(HostMPGame) about to send acknowledgement to host";
+    player_connection->SendMessage(HostMPAckMessage(Networking::HOST_PLAYER_ID));
+
     server.m_single_player_game = false;
+
+    Logger().debugStream() << "Idle::react(HostMPGame) about to transit to MPLobby";
 
     return transit<MPLobby>();
 }
@@ -160,51 +192,22 @@ sc::result Idle::react(const HostSPGame& msg)
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     ExtractMessageData(message, *single_player_setup_data);
 
+
     // get host player's name from setup data or saved file
-    std::string host_player_name;
-
-    if (single_player_setup_data->m_new_game) {
-        // for new games, get host player's name from PlayerSetupData for host
-        std::map<int, PlayerSetupData>& player_setup_data = single_player_setup_data->m_players;
-        std::map<int, PlayerSetupData>::const_iterator host_player_setup_data_it = player_setup_data.find(Networking::HOST_PLAYER_ID);
-        if (host_player_setup_data_it == player_setup_data.end()) {
-            Logger().errorStream() << "Idle::react(const HostSPGame& msg) couldn't find player setup data for host player with id " << Networking::HOST_PLAYER_ID;
-            return discard_event();
-        }
-        host_player_name = host_player_setup_data_it->second.m_player_name;
-
-    } else {
-        // for loading saved games, get host / human player's name from save file
-        if (!single_player_setup_data->m_players.empty())
-            Logger().errorStream() << "Idle::react(const HostSPGame& msg) got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
-
-
-        ServerSaveGameData ignored;
-        std::vector<PlayerSaveGameData> player_save_game_data;
-        LoadGamePlayerSetupData(single_player_setup_data->m_filename, ignored, player_save_game_data);
-
-        // find which player was the human (and thus the host) in the saved game
-        for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
-             save_data_it != player_save_game_data.end(); ++save_data_it)
-        {
-            const PlayerSaveGameData& psgd = *save_data_it;
-            if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                host_player_name = psgd.m_name;
-                break;
-            }
-        }
-    }
-
+    std::string host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
+    // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
-        Logger().errorStream() << "Idle::react(const HostSPGame& msg) got an empty host player name...?  Defaulting to \"Host\"";
-        host_player_name = "Host";
+        Logger().errorStream() << "Idle::react(const HostSPGame& msg) got an empty host player name or couldn't find a human player";
+        return discard_event();
     }
+
 
     player_connection->EstablishPlayer(Networking::HOST_PLAYER_ID, host_player_name, true, Networking::CLIENT_TYPE_HUMAN_PLAYER);
     player_connection->SendMessage(HostSPAckMessage(Networking::HOST_PLAYER_ID));
+
     server.m_single_player_game = true;
 
-    context<ServerFSM>().m_setup_data = single_player_setup_data;
+    context<ServerFSM>().m_single_player_setup_data = single_player_setup_data;
 
     return transit<WaitingForSPGameJoiners>();
 }
@@ -220,14 +223,19 @@ MPLobby::MPLobby(my_context c) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
-    int player_id = Networking::HOST_PLAYER_ID;
-    const PlayerConnectionPtr& player_connection = *server.m_networking.GetPlayer(player_id);
-    PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
-    player_setup_data.m_player_id = player_id;
-    player_setup_data.m_player_name = player_connection->PlayerName();
-    player_setup_data.m_empire_color = EmpireColors().at(0);
-    player_setup_data.m_empire_name = player_setup_data.m_player_name;
-    server.m_networking.SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
+    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(Networking::HOST_PLAYER_ID));
+
+    // assign host player info from connection to lobby data players list
+    PlayerSetupData& player_setup_data = m_lobby_data->m_players[Networking::HOST_PLAYER_ID];
+
+    player_setup_data.m_player_name =           player_connection->PlayerName();
+    player_setup_data.m_empire_name =           player_connection->PlayerName();    // default empire name to same as player name, for lack of a better choice
+    player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
+    // leaving starting species name as default
+    // leaving save game empire id as default
+    player_setup_data.m_client_type =           player_connection->GetClientType();
+
+    server.m_networking.SendMessage(ServerLobbyUpdateMessage(Networking::HOST_PLAYER_ID, *m_lobby_data));
 }
 
 MPLobby::~MPLobby()
@@ -258,7 +266,7 @@ sc::result MPLobby::react(const Disconnection& d)
         }
 
         // independently of everything else, if there are no humans left, it's time to terminate
-        if (server.m_networking.empty() || server.m_ai_clients.size() == server.m_networking.NumPlayers()) {
+        if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
             Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
             server.Exit(1);
         }
@@ -279,14 +287,15 @@ sc::result MPLobby::react(const JoinGame& msg)
     ExtractMessageData(message, player_name, client_type);
     // TODO: check if player name is unique.  If not, modify it slightly to be unique.
 
+    // assign unique player ID to newly connected player
     int player_id = server.m_networking.GreatestPlayerID() + 1;
 
+    // establish player with requested client type and acknowldge via connection
     player_connection->EstablishPlayer(player_id, player_name, false, client_type);
-
     player_connection->SendMessage(JoinAckMessage(player_id));
 
+    // assign player info from connection to lobby data players list
     PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
-    player_setup_data.m_player_id = player_id;
     player_setup_data.m_player_name = player_name;
     player_setup_data.m_client_type = client_type;
 
@@ -336,32 +345,61 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     MultiplayerLobbyData incoming_lobby_data;
     ExtractMessageData(message, incoming_lobby_data);
 
-    // NOTE: The client is only allowed to update certain of these, so those are the only ones we'll copy into m_lobby_data.
-    m_lobby_data->m_new_game = incoming_lobby_data.m_new_game;
-    m_lobby_data->m_size = incoming_lobby_data.m_size;
-    m_lobby_data->m_shape = incoming_lobby_data.m_shape;
-    m_lobby_data->m_age = incoming_lobby_data.m_age;
+    // extract and store incoming lobby data.  clients can only change some of
+    // this information (galaxy setup data, whether it is a new game and what
+    // save file index to load) directly, so other data is skipped (list of
+    // save files, save game empire data from the save file, player data)
+    // during this copying and is updated below from the save file(s)
+
+    // GalaxySetupData
+    m_lobby_data->m_size =          incoming_lobby_data.m_size;
+    m_lobby_data->m_shape =         incoming_lobby_data.m_shape;
+    m_lobby_data->m_age =           incoming_lobby_data.m_age;
     m_lobby_data->m_starlane_freq = incoming_lobby_data.m_starlane_freq;
-    m_lobby_data->m_planet_density = incoming_lobby_data.m_planet_density;
+    m_lobby_data->m_planet_density =incoming_lobby_data.m_planet_density;
     m_lobby_data->m_specials_freq = incoming_lobby_data.m_specials_freq;
 
-    bool new_save_file_selected = false;
-    if (incoming_lobby_data.m_save_file_index != m_lobby_data->m_save_file_index &&
-        0 <= incoming_lobby_data.m_save_file_index &&
-        incoming_lobby_data.m_save_file_index < static_cast<int>(m_lobby_data->m_save_games.size())) {
-        m_lobby_data->m_save_file_index = incoming_lobby_data.m_save_file_index;
-        RebuildSaveGameEmpireData(m_lobby_data->m_save_game_empire_data, m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]);
-        // reset the current choice of empire for each player, since the new save game's empires may not have the same IDs
-        for (unsigned int i = 0; i < m_lobby_data->m_players.size(); ++i) {
-            m_lobby_data->m_players[i].m_save_game_empire_id = ALL_EMPIRES;
-        }
-        new_save_file_selected = true;
-    }
-    m_lobby_data->m_players = incoming_lobby_data.m_players;
+    // directly configurable lobby data
+    m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;
+    m_lobby_data->m_players =       incoming_lobby_data.m_players;
 
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if ((*it)->PlayerID() != message.SendingPlayer() || new_save_file_selected)
-            (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data));
+    // to determine if a new save file was selected, check if the selected file
+    // index is different, and the new file index is in the valid range
+    bool new_save_file_selected = false;
+    int new_file_index = incoming_lobby_data.m_save_file_index;
+    const int NUM_FILE_INDICES = static_cast<int>(m_lobby_data->m_save_games.size());
+    if (new_file_index != m_lobby_data->m_save_file_index &&
+        new_file_index >= 0 &&
+        new_file_index < NUM_FILE_INDICES)
+    {
+        new_save_file_selected = true;
+
+        // update selected file index
+        m_lobby_data->m_save_file_index = new_file_index;
+
+        // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
+        for (std::map<int, PlayerSetupData>::iterator player_setup_it = m_lobby_data->m_players.begin();
+             player_setup_it != m_lobby_data->m_players.end(); ++player_setup_it)
+        {
+            player_setup_it->second.m_save_game_empire_id = ALL_EMPIRES;
+        }
+
+        // refresh save game empire data
+        const std::string& file_name = m_lobby_data->m_save_games[new_file_index];
+        LoadEmpireSaveGameData(file_name, m_lobby_data->m_save_game_empire_data);
+    }
+
+
+
+    // propegate lobby changes to players, so everyone has the latest updated
+    // version of the lobby data
+    for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
+         player_connection_it != server.m_networking.established_end(); ++player_connection_it)
+    {
+        PlayerConnectionPtr player_connection = *player_connection_it;
+        int player_id = player_connection->PlayerID();
+        if (new_save_file_selected || player_id != message.SendingPlayer()) // new save file update needs to be sent to everyone, but otherwise messages can just go to players who didn't send the message that this function is responding to
+            player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
     }
 
     return discard_event();
@@ -432,21 +470,34 @@ sc::result MPLobby::react(const StartMPGame& msg)
 
     if (player_connection->Host()) {
         if (m_lobby_data->m_new_game) {
+            // if all expected player already connected, can skip waiting for
+            // MP joiners and go directly to playing game
             int expected_players = m_lobby_data->m_players.size();
-            if (expected_players == static_cast<int>(server.m_networking.NumPlayers())) {
-                server.NewGameInit(m_lobby_data);
+            if (expected_players == static_cast<int>(server.m_networking.NumEstablishedPlayers())) {
+                server.NewMPGameInit(*m_lobby_data);
                 return transit<PlayingGame>();
             }
+            // otherwise, transit to waiting for MP joiners
+
         } else {
-            LoadGame((GetUserDir() / "save" / m_lobby_data->m_save_games[m_lobby_data->m_save_file_index]).file_string(),
-                     *m_server_save_game_data, m_player_save_game_data, GetUniverse());
+            // Load game...
+            boost::filesystem::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+            std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
+
+            LoadGame((save_dir / save_filename).file_string(),
+                     *m_server_save_game_data,
+                     m_player_save_game_data,
+                     GetUniverse(),
+                     Empires());
+
+            // if no AI clients need to be started, can go directly to playing game
             int expected_players = m_player_save_game_data.size();
-            int needed_AI_clients = expected_players - server.m_networking.NumPlayers();
-            if (!needed_AI_clients) {
-                // have all needed AIs, so don't need to wait for MP Joiners, and can immediately start game
-                server.LoadGameInit(m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+            int needed_AI_clients = expected_players - server.m_networking.NumEstablishedPlayers();
+            if (needed_AI_clients < 1) {
+                server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
                 return transit<PlayingGame>();
             }
+            // othewrise, transit to waiting for mp joiners
         }
     } else {
         Logger().errorStream() << "(ServerFSM) MPLobby.StartMPGame : Player #" << message.SendingPlayer()
@@ -469,23 +520,63 @@ sc::result MPLobby::react(const StartMPGame& msg)
 ////////////////////////////////////////////////////////////
 WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     my_base(c),
-    m_setup_data(context<ServerFSM>().m_setup_data),
+    m_single_player_setup_data(context<ServerFSM>().m_single_player_setup_data),
     m_server_save_game_data(new ServerSaveGameData()),
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners";
 
-    context<ServerFSM>().m_setup_data.reset();
+    context<ServerFSM>().m_single_player_setup_data.reset();
     ServerApp& server = Server();
+    std::vector<PlayerSetupData>& players = m_single_player_setup_data->m_players;
 
-    m_num_expected_players = m_setup_data->m_players.size();
 
+    if (m_single_player_setup_data->m_new_game) {
+        // DO NOTHING
+
+        // for new games, single player setup data contains full m_players
+        // vector, so can just use the contents of that to create AI
+        // clients
+
+    } else {
+        // for loaded games, all that is specified is the filename, and the
+        // server needs to populate single player setup data's m_players
+        // with data from the save file.
+        if (!players.empty()) {
+            Logger().errorStream() << "WaitingForSPGameJoiners::WaitingForSPGameJoiners got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
+            players.clear();
+        }
+
+        std::vector<PlayerSaveGameData> player_save_game_data;
+        LoadPlayerSaveGameData(m_single_player_setup_data->m_filename, player_save_game_data);
+
+        // add player setup data for each player in saved gamed
+        for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
+             save_data_it != player_save_game_data.end(); ++save_data_it)
+        {
+            const PlayerSaveGameData& psgd = *save_data_it;
+            if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            {
+                PlayerSetupData psd;
+                psd.m_player_name =         psgd.m_name;
+                //psd.m_empire_name // left default
+                //psd.m_empire_color // left default
+                //psd.m_starting_species_name // left default
+                psd.m_save_game_empire_id = psgd.m_empire_id;
+                psd.m_client_type =         psgd.m_client_type;
+                players.push_back(psd);
+            }
+        }
+    }
+
+    m_num_expected_players = players.size();
     m_expected_ai_player_names.clear();
-    for (std::map<int, PlayerSetupData>::const_iterator it = m_setup_data->m_players.begin(); it != m_setup_data->m_players.end(); ++it)
-        if (it->second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(it->second.m_player_name);
+    for (std::vector<PlayerSetupData>::const_iterator it = players.begin(); it != players.end(); ++it)
+        if (it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_player_names.insert(it->m_player_name);
 
-    server.CreateAIClients(m_setup_data->m_players);
+    server.CreateAIClients(players);    // also disconnects any currently-connected AI clients
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -528,7 +619,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumPlayers();
+        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             Logger().errorStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
@@ -544,11 +635,18 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
     }
 
     // if all expected players have connected, proceed to start new or load game
-    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
-        if (m_setup_data->m_new_game)
-            server.NewGameInit(m_setup_data);
-        else
-            server.LoadGameInit(m_player_save_game_data, m_server_save_game_data);
+    if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        Logger().debugStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): all " << m_num_expected_players << " joined.  starting game...";
+        if (m_single_player_setup_data->m_new_game) {
+            server.NewSPGameInit(*m_single_player_setup_data);
+        } else {
+            LoadGame(m_single_player_setup_data->m_filename,
+                     *m_server_save_game_data,
+                     m_player_save_game_data,
+                     GetUniverse(),
+                     Empires());
+            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
+        }
         return transit<PlayingGame>();
     }
 
@@ -560,17 +658,22 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
-    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
-        if (m_setup_data->m_new_game)
-            server.NewGameInit(m_setup_data);
-        else
-            server.LoadGameInit(m_player_save_game_data, m_server_save_game_data);
+    if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
+        if (m_single_player_setup_data->m_new_game) {
+            server.NewSPGameInit(*m_single_player_setup_data);
+        } else {
+            LoadGame(m_single_player_setup_data->m_filename,
+                     *m_server_save_game_data,
+                     m_player_save_game_data,
+                     GetUniverse(),
+                     Empires());
+            server.LoadSPGameInit(m_player_save_game_data, m_server_save_game_data);
+        }
         return transit<PlayingGame>();
     }
 
     return discard_event();
 }
-
 
 
 ////////////////////////////////////////////////////////////
@@ -584,19 +687,22 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     m_num_expected_players(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners";
-    context<ServerFSM>().m_lobby_data.reset();
-    context<ServerFSM>().m_player_save_game_data.clear();
-    context<ServerFSM>().m_server_save_game_data.reset();
     ServerApp& server = Server();
 
     m_num_expected_players = m_lobby_data->m_players.size();
 
+    std::vector<PlayerSetupData> player_setup_data;
     m_expected_ai_player_names.clear();
-    for (std::map<int, PlayerSetupData>::const_iterator it = m_lobby_data->m_players.begin(); it != m_lobby_data->m_players.end(); ++it)
+
+    for (std::map<int, PlayerSetupData>::const_iterator it = m_lobby_data->m_players.begin();
+         it != m_lobby_data->m_players.end(); ++it)
+    {
+        player_setup_data.push_back(it->second);
         if (it->second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             m_expected_ai_player_names.insert(it->second.m_player_name);
+    }
 
-    server.CreateAIClients(m_lobby_data->m_players);
+    server.CreateAIClients(player_setup_data);
 }
 
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
@@ -634,7 +740,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumPlayers();
+        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             Logger().errorStream() << "WaitingForSPGameJoiners.JoinGame : A human player attempted to join the game but there was not enough room.  Terminating connection.";
@@ -650,11 +756,11 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
     }
 
     // if all expected players have connected, proceed to start new or load game
-    if (static_cast<int>(server.m_networking.NumPlayers()) == m_num_expected_players) {
+    if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         if (m_player_save_game_data.empty())
-            server.NewGameInit(m_lobby_data);
+            server.NewMPGameInit(*m_lobby_data);
         else
-            server.LoadGameInit(m_lobby_data, m_player_save_game_data, m_server_save_game_data);
+            server.LoadMPGameInit(*m_lobby_data, m_player_save_game_data, m_server_save_game_data);
         return transit<PlayingGame>();
     }
 
@@ -700,15 +806,15 @@ sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    boost::shared_ptr<SinglePlayerSetupData> setup_data(new SinglePlayerSetupData);
-    ExtractMessageData(message, *setup_data);
+    boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
+    ExtractMessageData(message, *single_player_setup_data);
 
-    if (player_connection->Host() && !setup_data->m_new_game) {
+    if (player_connection->Host() && !single_player_setup_data->m_new_game) {
         Empires().Clear();
         player_connection->SendMessage(HostSPAckMessage(player_connection->PlayerID()));
         player_connection->SendMessage(JoinAckMessage(player_connection->PlayerID()));
         server.m_single_player_game = true;
-        context<ServerFSM>().m_setup_data = setup_data;
+        context<ServerFSM>().m_single_player_setup_data = single_player_setup_data;
         return transit<WaitingForSPGameJoiners>();
     }
 
@@ -717,7 +823,7 @@ sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
                                << " attempted to initiate a new game or game load, but is not the host. "
                                << "Terminating connection.";
     }
-    if (setup_data->m_new_game) {
+    if (single_player_setup_data->m_new_game) {
         Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
                                << " attempted to start a new game without ending the current one. "
                                << "Terminating connection.";
@@ -847,7 +953,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
     OrderSet received_orders;
     boost::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
     bool ui_data_available = false;
-    std::string save_state_string = "";
+    std::string save_state_string;
     bool save_state_string_available = false;
 
     ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
@@ -872,18 +978,18 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
     if (!ui_data_available)
         ui_data.reset();
 
-    // if none is available, use sentinel value for save state string.  TODO: would this cause a crash if this value was retreived later...?
-    if (!save_state_string_available)
-        save_state_string = "ServerFSM: No save state string sent from player " + player_connection->PlayerID();
-
     // what type of client is this?
     Networking::ClientType client_type = player_connection->GetClientType();
 
 
     // pack data into struct
     m_player_save_game_data.push_back(
-        PlayerSaveGameData(player_connection->PlayerName(), server.GetPlayerEmpire(message.SendingPlayer()),
-                           order_set, ui_data, save_state_string, client_type));
+        PlayerSaveGameData(player_connection->PlayerName(),
+                           server.PlayerEmpireID(message.SendingPlayer()),
+                           order_set,
+                           ui_data,
+                           save_state_string,
+                           client_type));
 
 
     // if all players have responded, proceed with save and continue game
@@ -891,9 +997,16 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
     if (m_players_responded == m_needed_reponses) {
         ServerSaveGameData server_data(server.m_current_turn, server.m_victors);
 
-        std::string save_filename = context<WaitingForTurnEnd>().m_save_filename;   // retreive requested save name from Base state, which should have been set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+        // retreive requested save name from Base state, which should have been
+        // set in WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
+        const std::string& save_filename = context<WaitingForTurnEnd>().m_save_filename;
 
-        SaveGame(save_filename, server_data, m_player_save_game_data, GetUniverse());
+        // save game...
+        SaveGame(save_filename,
+                 server_data,
+                 m_player_save_game_data,
+                 GetUniverse(),
+                 Empires());
 
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();

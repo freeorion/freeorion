@@ -30,12 +30,12 @@ struct ServerFSM;
 struct PlayerSaveGameData
 {
     PlayerSaveGameData(); ///< default ctor
-    PlayerSaveGameData(const std::string& name, Empire* empire, const boost::shared_ptr<OrderSet>& orders,
+    PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
                        const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
                        Networking::ClientType client_type); ///< ctor
 
     std::string                         m_name;
-    Empire*                             m_empire;
+    int                                 m_empire_id;
     boost::shared_ptr<OrderSet>         m_orders;
     boost::shared_ptr<SaveGameUIData>   m_ui_data;
     std::string                         m_save_state_string;
@@ -52,10 +52,10 @@ private:
 struct ServerSaveGameData
 {
     ServerSaveGameData();                               ///< default ctor
-    ServerSaveGameData(const int& current_turn, const std::map<int, std::set<std::string> >& victors);
+    ServerSaveGameData(int current_turn, const std::map<int, std::set<std::string> >& victors);
 
     int                                     m_current_turn;
-    std::map<int, std::set<std::string> >   m_victors;  ///< for each player id, the victory types that player has achived
+    std::map<int, std::set<std::string> >   m_victors;  ///< for each empire id, the victory types that player has achived
 
 private:
     friend class boost::serialization::access;
@@ -79,9 +79,11 @@ public:
       * ID \a player_id is playing */
     Empire*             GetPlayerEmpire(int player_id) const;
 
-    /** Returns the player ID for the player playing the empire with
-      * ID \a empire_id */
-    int                 GetEmpirePlayerID(int empire_id) const;
+    /** Returns the empire ID for the player with ID \a player_id */
+    int                 PlayerEmpireID(int player_id) const;
+
+    /** Returns the player ID for the player controlling the empire with id \a empire_id */
+    int                 EmpirePlayerID(int empire_id) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -89,7 +91,7 @@ public:
     void                Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
 
     /** creates an AI client child process for each element of \a AIs*/
-    void                CreateAIClients(const std::map<int, PlayerSetupData>& player_setup_data);
+    void                CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data);
 
     /**  Adds an existing empire to turn processing. The position the empire is
       * in the vector is it's position in the turn processing.*/
@@ -146,24 +148,24 @@ public:
 
     bool CombatTerminated();
 
-    /** Intializes game universe, sends out initial game state to clients, and
-      * signals clients to start first turn */
-    void                NewGameInit(boost::shared_ptr<SinglePlayerSetupData> setup_data);
+    /** Intializes single player game universe, sends out initial game state to
+      * clients, and signals clients to start first turn */
+    void                NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
 
-    /** Restores saved game universe, sends out game state and saved pending
-      * orders to clients, and signals clients to finish current turn. */
-    void                LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                     boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+    /** Intializes multi player game universe, sends out initial game state to
+      * clients, and signals clients to start first turn */
+    void                NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data);
 
-    /** Intializes game universe, sends out initial game state to clients, and
-      * signals clients to start first turn */
-    void                NewGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data);
+    /** Restores saved single player gamestate and human and AI client state
+      * information. */
+    void                LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
+                                       boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
-    /** Restores saved game universe, sends out game state and saved pending
-      * orders to clients, and signals clients to finish current turn. */
-    void                LoadGameInit(boost::shared_ptr<MultiplayerLobbyData> lobby_data,
-                                     const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                     boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+    /** Restores saved multiplayer gamestate and human and AI client state
+      * information. */
+    void                LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
+                                       const std::vector<PlayerSaveGameData>& player_save_game_data,
+                                       boost::shared_ptr<ServerSaveGameData> server_save_game_data);
     //@}
 
     static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
@@ -178,15 +180,26 @@ private:
 
     void                Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
-    void                NewGameInit(int size, Shape shape, Age age, StarlaneFrequency starlane_freq,
-                                    PlanetDensity planet_density, SpecialsFrequency specials_freq,
-                                    const std::map<int, PlayerSetupData>& player_setup_data);
+
+    /** Clears any old game stored orders, victors or eliminated players, ads
+      * empires to turn processing list, does start-of-turn empire supply and
+      * resource pool determination, and compiles and sends out basic
+      * information about players in game for all other players as part of the
+      * game start messages sent to players. */
+    void                NewGameInit(const GalaxySetupData& galaxy_setup_data,
+                                    const std::map<int, PlayerSetupData>& player_id_setup_data);
+
+    /** Clears any old game stored orders, victors or eliminated players, ads
+      * empires to turn processing list, does start-of-turn empire supply and
+      * resource pool determination, regenerates pathfinding graphc, restores
+      * any UI or AI state information players had saved, and compiles info
+      * about all players to send out to all other players are part of game
+      * start messages. */
     void                LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                                      const std::map<int, int>& player_id_to_save_game_data_index,
-                                     std::set<int>& unused_save_game_data,
                                      boost::shared_ptr<ServerSaveGameData> server_save_game_data);
 
-    void                CleanupAIs();   ///< cleans up AI processes
+    void                CleanupAIs();   ///< cleans up AI processes: kills the process and empties the container of AI processes
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
@@ -208,9 +221,11 @@ private:
 
     ServerFSM*                      m_fsm;
 
+    std::map<int, int>              m_player_empire_ids;    ///< map from player id to empire id that the player controls.
+
     int                             m_current_turn;         ///< current turn number
 
-    std::map<int, Process>          m_ai_clients;           ///< map of AI client child processes, indexed by AI player ID
+    std::vector<Process>            m_ai_client_processes;  ///< AI client child processes
 
     bool                            m_single_player_game;   ///< true when the game being played is single-player
 
@@ -245,7 +260,7 @@ template <class Archive>
 void PlayerSaveGameData::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_empire)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_orders)
         & BOOST_SERIALIZATION_NVP(m_ui_data)
         & BOOST_SERIALIZATION_NVP(m_save_state_string)

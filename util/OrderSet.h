@@ -19,8 +19,8 @@ private:
     typedef std::map<int, OrderPtr> OrderMap;
 
 public:
-    typedef OrderMap::const_iterator const_iterator;    ///< defines a public const_iterator type for OrderSet
-    typedef std::vector<OrderPtr >   OrderVec;          ///< the return type of FindOrders()
+    typedef OrderMap::const_iterator    const_iterator;    ///< defines a public const_iterator type for OrderSet
+    typedef std::vector<OrderPtr>       OrderVec;          ///< the return type of FindOrders()
 
     /** \name Structors */ //@{
     OrderSet();

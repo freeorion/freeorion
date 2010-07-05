@@ -81,8 +81,10 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_player_name)
         & BOOST_SERIALIZATION_NVP(m_color);
+
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire) {
+        Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire)
+    {
         ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
             & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
@@ -109,6 +111,10 @@ template void Empire::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE
 template <class Archive>
 void EmpireManager::serialize(Archive& ar, const unsigned int version)
 {
+    if (Archive::is_loading::value) {
+        Clear();    // clean up any existing dynamically allocated contents before replacing containers with deserialized data
+    }
+
     ar  & BOOST_SERIALIZATION_NVP(m_empire_map)
         & BOOST_SERIALIZATION_NVP(m_eliminated_empires);
 }

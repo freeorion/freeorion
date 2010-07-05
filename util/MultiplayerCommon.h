@@ -9,7 +9,6 @@
 #include "../network/Networking.h"
 
 #include <GG/Clr.h>
-#include <GG/Enum.h>
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -21,6 +20,8 @@
 
 class System;
 
+extern const std::string MP_SAVE_FILE_EXTENSION;
+extern const std::string SP_SAVE_FILE_EXTENSION;
 
 /** The colors that are available for use for empires in the game. */
 const std::vector<GG::Clr>& EmpireColors();
@@ -91,10 +92,11 @@ struct SaveGameEmpireData
 {
     /** \name Structors */ //@{
     SaveGameEmpireData(); ///< default ctor.
+    SaveGameEmpireData(int empire_id, const std::string& empire_name, const std::string& player_name, const GG::Clr& colour);
     //@}
 
-    int         m_id;
-    std::string m_name;
+    int         m_empire_id;
+    std::string m_empire_name;
     std::string m_player_name;
     GG::Clr     m_color;
 
@@ -112,12 +114,14 @@ struct PlayerSetupData
     PlayerSetupData(); ///< default ctor.
     //@}
 
-    int                     m_player_id;            ///< the player's id, assigned by the server
     std::string             m_player_name;          ///< the player's name
-    std::string             m_empire_name;          ///< the name of the player's empire
-    GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire.
-    std::string             m_starting_species_name;///< name of the species with which the player starts
-    int                     m_save_game_empire_id;  ///< when an MP save game is being loaded, this is the id of the empire that this player will play
+
+    std::string             m_empire_name;          ///< the name of the player's empire when starting a new game
+    GG::Clr                 m_empire_color;         ///< the color used to represent this player's empire when starting a new game
+    std::string             m_starting_species_name;///< name of the species with which the player starts when starting a new game
+
+    int                     m_save_game_empire_id;  ///< when loading a game, the ID of the empire that this player will control
+
     Networking::ClientType  m_client_type;          ///< is this player an AI, human player or...?
 
 private:
@@ -136,9 +140,9 @@ struct SinglePlayerSetupData : public GalaxySetupData
     SinglePlayerSetupData(); ///< default ctor.
     //@}
 
-    bool                            m_new_game;
-    std::string                     m_filename;
-    std::map<int, PlayerSetupData>  m_players; // indexed by player_id
+    bool                                m_new_game;
+    std::string                         m_filename;
+    std::vector<PlayerSetupData>        m_players;
 
 private:
     friend class boost::serialization::access;
@@ -154,18 +158,12 @@ struct MultiplayerLobbyData : public GalaxySetupData
     explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
     //@}
 
-    /** \name Mutators */ //@{
-    void RebuildSaveGameEmpireData(); ///< Rebuilds m_save_game_empire_data by reading player/Empire data from the current save file.
-    //@}
+    bool                                m_new_game;
+    int                                 m_save_file_index;
+    std::map<int, PlayerSetupData>      m_players;              // indexed by player id
 
-    bool                              m_new_game;
-    int                               m_save_file_index;
-    std::map<int, PlayerSetupData>    m_players; // indexed by player_id
-
-    std::vector<std::string>          m_save_games;
-    std::map<int, SaveGameEmpireData> m_save_game_empire_data; // indexed by empire_id
-
-    static const std::string MP_SAVE_FILE_EXTENSION;
+    std::vector<std::string>            m_save_games;
+    std::map<int, SaveGameEmpireData>   m_save_game_empire_data;// indexed by empire_id
 
 private:
     friend class boost::serialization::access;

@@ -593,8 +593,11 @@ private:
     /** Names the planets in each system, based on the system's name. */
     void    NamePlanets();
 
-    /** Will create empire objects, assign them homeworlds, setup the homeworld
-      * population, industry, and starting fleets. */
+    /** Creates Empires objects for each entry in \a player_setup_data with
+      * empire id equal to the specified player ids (so that the calling code
+      * can know which empire belongs to which player).  Homeworlds are
+      * associated with the empires, and starting buildings and fleets are
+      * created, and empire starting ship designs are created and added. */
     void    GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data);
 
     ObjectMap                       m_objects;                          ///< map from object id to UniverseObjects in the universe.  for the server: all of them, up to date and true information about object is stored;  for clients, only limited information based on what the client knows about is sent.

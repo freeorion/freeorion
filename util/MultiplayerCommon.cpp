@@ -25,12 +25,16 @@
 #include <boost/thread/xtime.hpp>
 
 
+const std::string MP_SAVE_FILE_EXTENSION = ".mps";
+const std::string SP_SAVE_FILE_EXTENSION = ".sav";
+
 namespace fs = boost::filesystem;
 
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
         db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          (GetRootDataDir() / "default").directory_string());
+        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              (GetUserDir() / "save").directory_string());
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
         db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  "eng_stringtable.txt");
         db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
@@ -416,8 +420,19 @@ GalaxySetupData::GalaxySetupData():
 /////////////////////////////////////////////////////
 // SaveGameEmpireData
 /////////////////////////////////////////////////////
-SaveGameEmpireData::SaveGameEmpireData():
-    m_id(-1)
+SaveGameEmpireData::SaveGameEmpireData() :
+    m_empire_id(ALL_EMPIRES),
+    m_empire_name(),
+    m_player_name(),
+    m_color()
+{}
+
+SaveGameEmpireData::SaveGameEmpireData(int empire_id, const std::string& empire_name,
+                                       const std::string& player_name, const GG::Clr& colour) :
+    m_empire_id(empire_id),
+    m_empire_name(empire_name),
+    m_player_name(player_name),
+    m_color(colour)
 {}
 
 
@@ -425,7 +440,7 @@ SaveGameEmpireData::SaveGameEmpireData():
 // PlayerSetupData
 /////////////////////////////////////////////////////
 PlayerSetupData::PlayerSetupData() :
-    m_player_id(-1),
+    //m_player_id(Networking::INVALID_PLAYER_ID),
     m_player_name(),
     m_empire_name(),
     m_empire_color(GG::Clr(0, 0, 0, 0)),
@@ -448,30 +463,38 @@ SinglePlayerSetupData::SinglePlayerSetupData():
 ////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////
-// static(s)
-const std::string MultiplayerLobbyData::MP_SAVE_FILE_EXTENSION = ".mps";
-
 MultiplayerLobbyData::MultiplayerLobbyData() :
     m_new_game(true),
-    m_save_file_index(-1)
+    m_save_file_index(-1),
+    m_players(),
+    m_save_games(),
+    m_save_game_empire_data()
 {}
 
 MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     m_new_game(true),
-    m_save_file_index(-1)
+    m_save_file_index(-1),
+    m_players(),
+    m_save_games(),
+    m_save_game_empire_data()
 {
     if (!build_save_game_list)
         return;
 
+    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData(true)";
+
     // build a list of save files
-    fs::path save_dir(GetUserDir() / "save");
+    Logger().debugStream() << "... save dir: " << GetOptionsDB().Get<std::string>("save-dir");
+
+    fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << save_dir.native_file_string();
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
         try {
             if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
                 std::string filename = it->filename();
                 // disallow filenames that begin with a dot, and filenames with spaces in them
-                if (filename.find('.') != 0 && filename.find(' ') == std::string::npos && 
+                if (filename.find('.') != 0 && filename.find(' ') == std::string::npos &&
                     filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
                     m_save_games.push_back(filename);
                 }

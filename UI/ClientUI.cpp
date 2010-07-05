@@ -598,7 +598,7 @@ ClientUI* ClientUI::GetClientUI()
 
 void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/)
 {
-    GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), message,GetFont(Pts()+2),
+    GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
                            WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)

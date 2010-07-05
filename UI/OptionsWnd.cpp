@@ -841,7 +841,7 @@ void OptionsWnd::Init()
 
     // Directories tab
     BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());
+    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name
     DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetRootDataDir());
     EndPage();
 

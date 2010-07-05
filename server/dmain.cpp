@@ -2,6 +2,9 @@
 
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/XMLDoc.h"
+
+#include <boost/filesystem/fstream.hpp>
 
 int main(int argc, char* argv[])
 {
@@ -9,7 +12,19 @@ int main(int argc, char* argv[])
 
     try {
         GetOptionsDB().AddFlag('h', "help", "Print this help message.");
+
+        // read config.xml and set options entries from it, if present
+        XMLDoc doc;
+        {
+            boost::filesystem::ifstream ifs(GetConfigPath());
+            if (ifs) {
+                doc.ReadDoc(ifs);
+                GetOptionsDB().SetFromXML(doc);
+            }
+        }
+
         GetOptionsDB().SetFromCommandLine(argc, argv);
+
         if (GetOptionsDB().Get<bool>("help")) {
             GetOptionsDB().GetUsage(std::cerr);
             return 0;

@@ -322,7 +322,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
         Serialize(oa, orders);
         bool ui_data_available = false;
         oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-        bool save_state_string_available = save_state_string;
+        bool save_state_string_available = save_state_string;   // save_state_string pointer may be 0
         oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
         if (save_state_string_available)
             oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
