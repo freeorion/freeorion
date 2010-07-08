@@ -1282,8 +1282,8 @@ void MultiIconValueIndicator::Update()
                 Logger().errorStream() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
                 continue;
             }
-            Logger().debugStream() << "MultiIconValueIndicator::Update object:";
-            obj->Dump();
+            //Logger().debugStream() << "MultiIconValueIndicator::Update object:";
+            //obj->Dump();
             sum += obj->NextTurnCurrentMeterValue(m_meter_types[i].first);
         }
         m_icons[i]->SetValue(sum);
