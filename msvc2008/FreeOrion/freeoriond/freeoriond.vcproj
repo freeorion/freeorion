@@ -194,14 +194,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\util\binreloc.c"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\util\binreloc.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\util\DataTable.cpp"
 				>
 			</File>
