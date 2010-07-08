@@ -345,6 +345,8 @@ namespace ValueRef {
         } else if (boost::iequals(property_name, "Defense")) {
             retval = object->InitialMeterValue(METER_DEFENSE);
 
+        } else if (boost::iequals(property_name, "FoodConsumption")) {
+            retval = object->InitialMeterValue(METER_FOOD_CONSUMPTION);
         } else if (boost::iequals(property_name, "Supply")) {
             retval = object->InitialMeterValue(METER_SUPPLY);
         } else if (boost::iequals(property_name, "Stealth")) {

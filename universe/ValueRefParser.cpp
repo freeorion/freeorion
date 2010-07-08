@@ -144,6 +144,7 @@ namespace {
             | "shield"
             | "maxdefense"
             | "defense"
+            | "foodconsumption"
             | "tradestockpile"
             | "mineralstockpile"
             | "foodstockpile";
