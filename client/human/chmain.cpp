@@ -120,7 +120,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
             GetOptionsDB().Set<std::string>("resource-dir", (GetRootDataDir() / "default").directory_string());
 #endif
 
-        // did the playe request generation of config.xml, saving the default (or current) options to disk?
+        // did the player request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
             boost::filesystem::ofstream ofs(GetConfigPath());
             if (ofs) {

@@ -245,6 +245,11 @@ Species
             effects =
                 SetTargetConstruction Value + 12
 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects =
+                SetFoodConsumption Value + Target.Population * 1.0
     ]
     graphic = "icons/species/human.png"
 
@@ -495,6 +500,11 @@ Species
             effects =
                 SetTargetConstruction Value + 12
 
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects =
+                SetFoodConsumption Value + Target.Population * 1.0
     ]
     graphic = "icons/species/gyisache.png"
     

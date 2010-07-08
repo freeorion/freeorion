@@ -617,10 +617,10 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(lobby_data);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, MultiplayerLobbyData& "
                                << "lobby_data) failed!  Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -662,7 +662,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
             ui_data_available = false;
             save_state_string_available = false;
         }
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, "
                                << "int& current_turn, EmpireManager& empires, Universe& universe, "
                                << "std::map<int, PlayerInfo>& players, OrderSet& orders, "
@@ -670,7 +670,7 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
                                << "SaveGameUIData& ui_data, bool& save_state_string_available, "
                                << "std::string& save_state_string) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -681,11 +681,11 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(player_name)
            >> BOOST_SERIALIZATION_NVP(client_type);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& player_name, "
                                << "Networking::ClientType client_type)) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -695,10 +695,10 @@ void ExtractMessageData(const Message& msg, OrderSet& orders)
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         Deserialize(ia, orders);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders) failed!  "
                                << "Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -714,12 +714,12 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
            >> BOOST_SERIALIZATION_NVP(empires);
         Deserialize(ia, universe);
         ia >> BOOST_SERIALIZATION_NVP(players);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, int& "
                                << "current_turn, EmpireManager& empires, Universe& universe, "
                                << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -737,13 +737,13 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
         ia >> BOOST_SERIALIZATION_NVP(save_state_string_available);
         if (save_state_string_available)
             ia >> BOOST_SERIALIZATION_NVP(save_state_string);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, OrderSet& orders, "
                                << "bool& ui_data_available, SaveGameUIData& ui_data, "
                                << "bool& save_state_string_available, std::string& save_state_string) "
                                << "failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -755,11 +755,11 @@ void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(phase_id)
            >> BOOST_SERIALIZATION_NVP(empire_id);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
                                << "phase_id, int& empire_id) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -769,10 +769,10 @@ void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data)
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(setup_data);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, SinglePlayerSetupData& "
                                << "setup_data) failed!  Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -784,11 +784,11 @@ void ExtractMessageData(const Message& msg, Message::EndGameReason& reason,
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(reason)
            >> BOOST_SERIALIZATION_NVP(reason_player_name);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::EndGameReason& reason, "
                                << "std::string& reason_player_name) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -799,10 +799,10 @@ void ExtractMessageData(const Message& msg, int& empire_id, std::string& empire_
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(empire_id)
            >> BOOST_SERIALIZATION_NVP(empire_name);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, std::string& "
                                << "empire_name) failed!  Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -815,11 +815,11 @@ void ExtractMessageData(const Message& msg, Message::VictoryOrDefeat& victory_or
         ia >> BOOST_SERIALIZATION_NVP(victory_or_defeat)
            >> BOOST_SERIALIZATION_NVP(reason_string)
            >> BOOST_SERIALIZATION_NVP(empire_id);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::VictoryOrDefeat "
                                << "victory_or_defeat, std::string& reason_string, int& empire_id) failed!  "
                                << "Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -833,12 +833,12 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data,
         ia >> BOOST_SERIALIZATION_NVP(combat_data)
            >> BOOST_SERIALIZATION_NVP(setup_groups)
            >> BOOST_SERIALIZATION_NVP(foreign_designs);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
                                << "combat_data, std::vector<CombatSetupGroup>& setup_groups, "
                                << "ShipDesignMap& foreign_designs) failed!  Message:\n"
                                << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -848,10 +848,10 @@ void ExtractMessageData(const Message& msg, CombatOrderSet& order_set)
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(order_set);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatOrderSet& "
                                << "combat_data) failed!  Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -861,10 +861,10 @@ void ExtractMessageData(const Message& msg, CombatData& combat_data)
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(combat_data);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, CombatData& "
                                << "combat_data) failed!  Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }
 
@@ -876,10 +876,10 @@ void ExtractMessageData(const Message& msg, System*& system,
         FREEORION_IARCHIVE_TYPE ia(is);
         ia >> BOOST_SERIALIZATION_NVP(system);
         Deserialize(ia, combat_universe);
-    } catch (const boost::archive::archive_exception) {
+    } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, System*& "
                                << "system, std::map<int, UniverseObject*>& combat_universe) failed!  "
                                << "Message:\n" << msg.Text();
-        throw;
+        throw err;
     }
 }

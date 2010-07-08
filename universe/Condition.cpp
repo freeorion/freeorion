@@ -1228,6 +1228,7 @@ std::string Condition::MeterValue::Dump() const
     case METER_SHIELD:              retval += "Shield";             break;
     case METER_STRUCTURE:           retval += "Structure";          break;
     case METER_DEFENSE:             retval += "Defense";            break;
+    case METER_FOOD_CONSUMPTION:    retval += "FoodConsumption";    break;
     case METER_SUPPLY:              retval += "Supply";             break;
     case METER_STEALTH:             retval += "Stealth";            break;
     case METER_DETECTION:           retval += "Detection";          break;

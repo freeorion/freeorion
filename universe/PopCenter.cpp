@@ -52,13 +52,14 @@ void PopCenter::Init()
     AddMeter(METER_TARGET_POPULATION);
     AddMeter(METER_HEALTH);
     AddMeter(METER_TARGET_HEALTH);
+    AddMeter(METER_FOOD_CONSUMPTION);
 }
 
 double PopCenter::CurrentMeterValue(MeterType type) const
 {
     const Meter* meter = GetMeter(type);
     if (!meter) {
-        throw std::invalid_argument("UniverseObject::PreviousMeterValue was passed a MeterType that this UniverseObject does not have");
+        throw std::invalid_argument("PopCenter::CurrentMeterValue was passed a MeterType that this PopCenter does not have");
     }
     return meter->Current();
 }
@@ -67,17 +68,37 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
 {
     const Meter* meter = GetMeter(meter_type);
     if (!meter) {
-        throw std::invalid_argument("ResourceCenter::ResourceCenterNextTurnMeterValue passed meter type that the ResourceCenter does not have.");
+        throw std::invalid_argument("PopCenter::PopCenterNextTurnMeterValue passed meter type that the PopCenter does not have.");
     }
 
     if (meter_type == METER_HEALTH) {
         const Meter* target_meter = GetMeter(METER_TARGET_HEALTH);
         return std::min(target_meter->Current(), meter->Current() + 1.0);
+
     } else if (meter_type == METER_POPULATION) {
         return meter->Current() + NextTurnPopGrowth();
+
+    } else if (meter_type == METER_FOOD_CONSUMPTION) {
+        // guesstimate food consumption next turn, and for full population
+        // growth, as a proportional increase in food consumption to the
+        // fractional increase in population that is possible.  this could
+        // be an inaccurate estimate of next turn's food consumption, but
+        // it's the best estimate that can be made
+        double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
+        Logger().debugStream() << "PP: ntmpg: " << next_turn_max_pop_growth;
+        double current_pop = std::max(0.1, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
+        Logger().debugStream() << "PP: curpop: " << current_pop;
+        double fractional_growth = next_turn_max_pop_growth / current_pop;
+        Logger().debugStream() << "PP: fracgro: " << fractional_growth;
+        double expected_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_growth);
+        Logger().debugStream() << "PP: curfdco: " << this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
+        Logger().debugStream() << "PP: ntefco: " << expected_next_turn_food_consumption;
+        return expected_next_turn_food_consumption;
+
     } else if (meter_type == METER_TARGET_HEALTH || meter_type == METER_TARGET_POPULATION) {
         Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue passed valid but unusual (TARGET) meter_type.  Returning meter->Current()";
         return meter->Current();
+
     } else {
         Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0;
@@ -176,6 +197,9 @@ void PopCenter::PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type)
 
     if (meter_type == INVALID_METER_TYPE || meter_type == METER_HEALTH)
         GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
+
+    if (meter_type == INVALID_METER_TYPE || meter_type == METER_FOOD_CONSUMPTION)
+        GetMeter(METER_FOOD_CONSUMPTION)->ResetCurrent();
 }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase()

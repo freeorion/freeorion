@@ -112,7 +112,7 @@ ServerApp::ServerApp() :
 
 ServerApp::~ServerApp()
 {
-    log4cpp::Category::shutdown();
+    CleanupAIs();
     delete m_fsm;
 }
 
@@ -195,20 +195,14 @@ ServerNetworking& ServerApp::Networking()
 
 void ServerApp::Run()
 {
-    try {
-        Logger().debugStream() << "FreeOrion server waiting for network events";
-        std::cout << "FreeOrion server waiting for network events" << std::endl;
-        while (1) {
-            if (m_io_service.run_one())
-                m_networking.HandleNextEvent();
-            else
-                break;
-        }
-    } catch (...) {
-        CleanupAIs();
-        throw;
+    Logger().debugStream() << "FreeOrion server waiting for network events";
+    std::cout << "FreeOrion server waiting for network events" << std::endl;
+    while (1) {
+        if (m_io_service.run_one())
+            m_networking.HandleNextEvent();
+        else
+            break;
     }
-    CleanupAIs();
 }
 
 void ServerApp::CleanupAIs()

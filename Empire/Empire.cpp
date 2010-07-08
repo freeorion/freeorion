@@ -2866,7 +2866,7 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
-            double need = pc->CurrentMeterValue(METER_POPULATION);  // basic need is current population - prevents starvation
+            double need = pc->CurrentMeterValue(METER_FOOD_CONSUMPTION);
             double prod = food_production[pc];                      // preferential allocation for food producers
 
             // allocate food to this PopCenter, deduct from pool, add to total food distribution tally
@@ -2884,7 +2884,7 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
-            double need = pc->CurrentMeterValue(METER_POPULATION);    // basic need is current population - prevents starvation
+            double need = pc->CurrentMeterValue(METER_FOOD_CONSUMPTION);
             double has = pc->AllocatedFood();
             double addition = std::min(std::max(need - has, 0.0), food_available);
             double new_allocation = has + addition;
@@ -2901,8 +2901,10 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
+            double most_needed_to_grow = pc->NextTurnCurrentMeterValue(METER_FOOD_CONSUMPTION);
             double has = pc->AllocatedFood();
-            double addition = std::min(std::max(pc->NextTurnPopGrowthMax(), 0.0), food_available);
+            double extra_needed_for_max_growth = most_needed_to_grow - has;
+            double addition = std::min(std::max(extra_needed_for_max_growth, 0.0), food_available);
             double new_allocation = has + addition;
 
             //Logger().debugStream() << "allocating " << new_allocation << " food to " << pop_center_objects[pc]->Name() << " to allow max possible growth";

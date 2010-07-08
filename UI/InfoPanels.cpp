@@ -2238,15 +2238,15 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     std::string resource_text = "";
     switch (m_resource_type) {
     case RE_FOOD:
-        resource_text = UserString("RP_FOOD");              break;
+        resource_text = UserString("FOOD_PRODUCTION");      break;
     case RE_MINERALS:
-        resource_text = UserString("RP_MINERALS");          break;
+        resource_text = UserString("MINERALS_PRODUCTION");  break;
     case RE_INDUSTRY:
-        resource_text = UserString("RP_INDUSTRY");          break;
+        resource_text = UserString("INDUSTRY_PRODUCTION");  break;
     case RE_RESEARCH:
-        resource_text = UserString("RP_RESEARCH");          break;
+        resource_text = UserString("RESEARCH_PRODUCTION");  break;
     case RE_TRADE:
-        resource_text = UserString("RP_TRADE");             break;
+        resource_text = UserString("TRADE_PRODUCTION");     break;
     default:
         resource_text = UserString("UNKNOWN_VALUE_SYMBOL"); break;
     }

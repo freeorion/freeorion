@@ -1427,6 +1427,17 @@ System %1%: %2%
 RESOURCE_ALLOCATION_TOOLTIP
 System %1%: %2%
 
+FOOD_PRODUCTION
+Food Production
+MINERALS_PRODUCTION
+Minerals Production
+INDUSTRY_PRODUCTION
+Industrial Production
+RESEARCH_PRODUCTION
+Research Production
+TRADE_PRODUCTION
+Trade Production
+
 FOOD_CONSUMPTION
 Food Consumption
 MINERALS_CONSUMPTION

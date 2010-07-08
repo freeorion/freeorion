@@ -207,6 +207,7 @@ namespace {
            | str_p("shield")[meter_value.meter =            val(METER_SHIELD)]
            | str_p("structure")[meter_value.meter =         val(METER_STRUCTURE)]
            | str_p("defense")[meter_value.meter =           val(METER_DEFENSE)]
+           | str_p("foodconsumption")[meter_value.meter =   val(METER_FOOD_CONSUMPTION)]
            | str_p("supply")[meter_value.meter =            val(METER_SUPPLY)]
            | str_p("stealth")[meter_value.meter =           val(METER_STEALTH)]
            | str_p("detection")[meter_value.meter =         val(METER_DETECTION)]

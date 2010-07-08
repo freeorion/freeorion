@@ -246,6 +246,7 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
     case METER_TARGET_HEALTH:
     case METER_POPULATION:
     case METER_HEALTH:
+    case METER_FOOD_CONSUMPTION:
         return PopCenterNextTurnMeterValue(type);
         break;
     case METER_TARGET_FARMING:

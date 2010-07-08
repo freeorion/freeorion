@@ -58,24 +58,34 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     empire_manager.Clear();
     universe.Clear();
 
-    std::ifstream ifs(filename.c_str(), std::ios_base::binary);
-    FREEORION_IARCHIVE_TYPE ia(ifs);
-    ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
-    ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
-    ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-    ia >> BOOST_SERIALIZATION_NVP(empire_manager);
-    Deserialize(ia, universe);
+    try {
+        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        FREEORION_IARCHIVE_TYPE ia(ifs);
+        ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
+        ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
+        ia >> BOOST_SERIALIZATION_NVP(empire_manager);
+        Deserialize(ia, universe);
+    } catch (const boost::archive::archive_exception err) {
+        Logger().errorStream() << "LoadGame(...) failed!";
+        throw err;
+    }
 }
 
 void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveGameData>& player_save_game_data)
 {
     ServerSaveGameData ignored_server_save_game_data;
 
-    std::ifstream ifs(filename.c_str(), std::ios_base::binary);
-    FREEORION_IARCHIVE_TYPE ia(ifs);
-    ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-    ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
-    // skipping additional deserialization which is not needed for this function
+    try {
+        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        FREEORION_IARCHIVE_TYPE ia(ifs);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+        ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+        // skipping additional deserialization which is not needed for this function
+    } catch (const boost::archive::archive_exception err) {
+        Logger().errorStream() << "LoadPlayerSaveGameData(...) failed!";
+        throw err;
+    }
 }
 
 void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameEmpireData>& empire_save_game_data)
@@ -83,11 +93,16 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
     ServerSaveGameData              ignored_server_save_game_data;
     std::vector<PlayerSaveGameData> ignored_player_save_game_data;
 
-    std::ifstream ifs(filename.c_str(), std::ios_base::binary);
-    FREEORION_IARCHIVE_TYPE ia(ifs);
-    ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
-    ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
-    ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
-    // skipping additional deserialization which is not needed for this function
+    try {
+        std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        FREEORION_IARCHIVE_TYPE ia(ifs);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
+        ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
+        ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
+        // skipping additional deserialization which is not needed for this function
+    } catch (const boost::archive::archive_exception err) {
+        Logger().errorStream() << "LoadEmpireSaveGameData(...) failed!";
+        throw err;
+    }
 }
 
