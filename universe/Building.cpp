@@ -54,10 +54,10 @@ Building::Building() :
     m_ordered_scrapped(false)
 {}
 
-Building::Building(int empire_id, const std::string& building_type, int planet_id) :
+Building::Building(int empire_id, const std::string& building_type) :
     UniverseObject(),
     m_building_type(building_type),
-    m_planet_id(planet_id),
+    m_planet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false)
 {
     AddOwner(empire_id);

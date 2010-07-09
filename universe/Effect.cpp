@@ -899,7 +899,7 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
         return;
     }
 
-    Building* building = new Building(ALL_EMPIRES, m_type, location->ID());
+    Building* building = new Building(ALL_EMPIRES, m_type);
     if (!building) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
         return;

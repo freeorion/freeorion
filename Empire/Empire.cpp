@@ -2417,7 +2417,7 @@ void Empire::CheckProductionProgress()
                     continue;
                 }
 
-                Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
+                Building* building = new Building(m_id, m_production_queue[i].item.name);
 
                 int building_id = universe.Insert(building);
 
