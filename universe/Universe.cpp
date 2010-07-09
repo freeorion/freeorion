@@ -4267,7 +4267,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
                                << " at homeworld id: " << homeworld_id;
 
         // create new Empire object through empire manager
-        Empire* empire = Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour, homeworld_id);
+        Empire* empire = Empires().CreateEmpire(empire_id, empire_name, player_name, empire_colour);
 
 
         // set ownership of home planet
@@ -4307,6 +4307,10 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
+        building = new Building(empire_id, "BLD_IMPERIAL_PALACE", UniverseObject::INVALID_OBJECT_ID);
+        building_id = Insert(building);
+        home_planet->AddBuilding(building_id);
+
         // give new empire items and ship designs it should start with
         starting_unlocked_items.AddItemsToEmpire(empire);
 
@@ -4343,14 +4347,11 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
                     }
 
                     // create new ship
-                    Ship* ship = new Ship(empire_id, design_id);
+                    Ship* ship = new Ship(empire_id, design_id, empire_starting_species);
                     if (!ship) {
                         Logger().errorStream() << "unable to create new ship!";
                         break;
                     }
-
-                    if (ship->CanColonize())
-                        ship->SetSpecies(empire_starting_species);
 
                     ship->Rename(empire->NewShipName());
                     int ship_id = Insert(ship);

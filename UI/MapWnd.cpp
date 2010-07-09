@@ -4188,7 +4188,7 @@ void MapWnd::UpdateEmpireResourcePools()
 
 bool MapWnd::ZoomToHomeSystem()
 {
-    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->HomeworldID();
+    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitolID();
 
     if (id != UniverseObject::INVALID_OBJECT_ID) {
         const UniverseObject *object = GetObject(id);

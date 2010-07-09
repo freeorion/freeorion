@@ -27,18 +27,22 @@ class Species;
 const Species* GetSpecies(const std::string& name);
 
 Ship::Ship() :
-    m_design_id(INVALID_OBJECT_ID),
+    m_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false)
 {}
 
-Ship::Ship(int empire_id, int design_id) :
+Ship::Ship(int empire_id, int design_id, const std::string& species_name) :
     m_design_id(design_id),
     m_fleet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false)
+    m_ordered_scrapped(false),
+    m_species_name(species_name)
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
+
+    if (!GetSpecies(m_species_name))
+        Logger().debugStream() << "Ship with id " << this->ID() << " created with invalid species name: " << m_species_name;
 
     AddOwner(empire_id);
 

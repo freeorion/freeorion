@@ -59,7 +59,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     Empire*         CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
-                                 const GG::Clr& color, int homeworld_id);
+                                 const GG::Clr& color);
 
     /** Adds the given empire to the manager. */
     void            InsertEmpire(Empire* empire);

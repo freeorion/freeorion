@@ -966,6 +966,10 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
+    std::string species_name;
+    if (const Planet* capitol_planet = GetObject<Planet>(empire->CapitolID()))
+        species_name = capitol_planet->SpeciesName();
+
     //// possible future modification: try to put new ship into existing fleet if
     //// ownership with target object's fleet works out (if target is a ship)
     //// attempt to find a
@@ -975,7 +979,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     //        fleet = ship->FleetID();
     //// etc.
 
-    Ship* ship = new Ship(empire_id, design_id);
+    Ship* ship = new Ship(empire_id, design_id, species_name);
     if (!ship) {
         Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
         return;

@@ -437,12 +437,12 @@ std::string Condition::Homeworld::Dump() const
 
 bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    // check if any empire's homeworld's ID is that target object's id.  if it is, the target object is a homeworld.
+    // TODO: check if any species' homeworld ID is the target object's ID.  if it is, the target object is a homeworld.
     int target_id = target->ID();
-    const EmpireManager& empires = Empires();
-    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
-        if (it->second->HomeworldID() == target_id)
-            return true;
+    //const EmpireManager& empires = Empires();
+    //for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
+    //    if (it->second->HomeworldID() == target_id)
+    //        return true;
     return false;
 }
 

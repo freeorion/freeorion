@@ -76,7 +76,6 @@ namespace FreeOrionPython {
             .add_property("playerName",             make_function(&Empire::PlayerName,              return_value_policy<copy_const_reference>()))
 
             .add_property("empireID",               &Empire::EmpireID)
-            .add_property("homeworldID",            &Empire::HomeworldID)
             .add_property("capitolID",              &Empire::CapitolID)
 
             .def("buildingTypeAvailable",           &Empire::BuildingTypeAvailable)

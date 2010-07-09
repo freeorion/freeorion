@@ -19,7 +19,7 @@ public:
 
     /** \name Structors */ //@{
     Ship();                                         ///< default ctor
-    Ship(int empire_id, int design_id);             ///< general ctor taking ship's empire and design id; from this the design can be looked up and used to create the ship
+    Ship(int empire_id, int design_id, const std::string& species_name);    ///< general ctor taking ship's empire and design id, and species name.
 
     virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
     //@}

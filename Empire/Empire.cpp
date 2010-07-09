@@ -939,7 +939,6 @@ void ProductionQueue::clear()
 ////////////
 Empire::Empire() :
     m_id(-1),
-    m_homeworld_id(UniverseObject::INVALID_OBJECT_ID),
     m_capitol_id(UniverseObject::INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
@@ -952,18 +951,17 @@ Empire::Empire() :
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 }
 
-Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color, int homeworld_id) :
+Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color) :
     m_id(empire_id),
     m_name(name),
     m_player_name(player_name),
     m_color(color),
-    m_homeworld_id(homeworld_id),
-    m_capitol_id(homeworld_id),
+    m_capitol_id(UniverseObject::INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
 {
-    Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour, " << homeworld_id << ")";
+    Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour)";
     m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
     m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
@@ -994,11 +992,6 @@ int Empire::EmpireID() const
 const GG::Clr& Empire::Color() const
 {
     return m_color;
-}
-
-int Empire::HomeworldID() const
-{
-    return m_homeworld_id;
 }
 
 int Empire::CapitolID() const
@@ -2425,10 +2418,6 @@ void Empire::CheckProductionProgress()
                 }
 
                 Building* building = new Building(m_id, m_production_queue[i].item.name, planet->ID());
-                // start with max stealth to ensure new building won't be
-                // visisble to other empires on first turn if it shouldn't be.
-                // current value will be clamped to max meter value after
-                // effects are applied
 
                 int building_id = universe.Insert(building);
 
@@ -2446,7 +2435,10 @@ void Empire::CheckProductionProgress()
                 if (!system && build_location)
                     system = objects.Object<System>(build_location->SystemID());
                 // TODO: account for shipyards and/or other ship production sites that are in interstellar space, if needed
-                assert(system);
+                if (!system) {
+                    Logger().errorStream() << "Empire::CheckProductionProgress couldn't get system for building new ship";
+                    continue;
+                }
 
                 // create new fleet with new ship
                 Fleet* fleet = new Fleet("", system->X(), system->Y(), m_id);
@@ -2460,8 +2452,24 @@ void Empire::CheckProductionProgress()
                 system->Insert(fleet);
                 Logger().debugStream() << "New Fleet created on turn: " << fleet->CreationTurn();
 
+
+                // get species for this ship.  use popcenter species if build
+                // location is a popcenter, or use ship species if build
+                // location is a ship, or use empire capitol species if there
+                // is a valid capitol, or otherwise ???
+                // TODO: Add more fallbacks if necessary
+                std::string species_name;
+                if (const PopCenter* location_pop_center = dynamic_cast<const PopCenter*>(build_location))
+                    species_name = location_pop_center->SpeciesName();
+                else if (const Ship* location_ship = universe_object_cast<const Ship*>(build_location))
+                    species_name = location_ship->SpeciesName();
+                else if (const Planet* capitol_planet = objects.Object<Planet>(this->CapitolID()))
+                    species_name = capitol_planet->SpeciesName();
+                // else give up...
+
+
                 // add ship
-                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id);
+                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name);
                 // set active meters that have associated max meters to an
                 // initial very large value, so that when the active meters are
                 // later clamped, they will equal the max meter after effects

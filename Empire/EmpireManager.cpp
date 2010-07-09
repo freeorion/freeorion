@@ -67,21 +67,10 @@ void EmpireManager::EliminateEmpire(int id)
 }
 
 Empire* EmpireManager::CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
-                                    const GG::Clr& color, int homeworld_id)
+                                    const GG::Clr& color)
 {
-    Empire* empire = new Empire(name, player_name, empire_id, color, homeworld_id);
-
-    const ObjectMap& objects = GetUniverse().Objects();
-    if (const Planet* planet = objects.Object<Planet>(homeworld_id)) {
-        int sys_id = planet->SystemID();
-        if (sys_id != UniverseObject::INVALID_OBJECT_ID)
-            empire->AddExploredSystem(sys_id);
-    } else {
-        Logger().errorStream() << "EmpireManager::CreateEmpire passed invalid homeworld planet id (" << homeworld_id << ")";
-    }
-
+    Empire* empire = new Empire(name, player_name, empire_id, color);
     InsertEmpire(empire);
-
     return empire;
 }
 

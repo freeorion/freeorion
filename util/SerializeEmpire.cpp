@@ -85,8 +85,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     if (Universe::ALL_OBJECTS_VISIBLE ||
         Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire)
     {
-        ar  & BOOST_SERIALIZATION_NVP(m_homeworld_id)
-            & BOOST_SERIALIZATION_NVP(m_capitol_id)
+        ar  & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
             & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)

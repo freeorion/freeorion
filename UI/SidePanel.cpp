@@ -773,22 +773,26 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     //    Bold for capitol(s)
     //    Underline for shipyard(s), and
     bool capitol = false, homeworld = false, has_shipyard = false;
-    // need to check all empires for homeworld or capitols
 
+    // need to check all empires for capitols
     const EmpireManager& manager = Empires();
     for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-        if (capitol && homeworld)
-            break;  // don't need to check any more empires if already have both possible true results
         const Empire* empire = empire_it->second;
         if (!empire) {
             Logger().errorStream() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
             continue;
         }
-        if (empire->HomeworldID() == m_planet_id)
-            homeworld = true;
-        if (empire->CapitolID() == m_planet_id)
+        if (empire->CapitolID() == m_planet_id) {
             capitol = true;
+            break;
+        }
     }
+
+    // need to check all species for homeworlds
+
+    // TODO: THIS, once species have homeworlds
+
+
     // check for shipyard
     const std::set<int>& buildings = planet->Buildings();
     for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {

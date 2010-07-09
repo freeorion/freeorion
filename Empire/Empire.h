@@ -262,7 +262,7 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color, int homeworld_id);    ///< basic constructor
+    Empire(const std::string& name, const std::string& player_name, int ID, const GG::Clr& color);  ///< basic constructor
     ~Empire();
     //@}
 
@@ -274,7 +274,6 @@ public:
 
     const GG::Clr&          Color() const;                                          ///< Returns the Empire's color
 
-    int                     HomeworldID() const;                                    ///< Returns the numeric ID of the empire's homeworld
     int                     CapitolID() const;                                      ///< Returns the numeric ID of the empire's capitol
     int                     StockpileID(ResourceType res = INVALID_RESOURCE_TYPE) const;    ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
@@ -506,7 +505,6 @@ private:
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
-    int                             m_homeworld_id;             ///< the ID of the empire's homeworld
     int                             m_capitol_id;               ///< the ID of the empire's capitol planet
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects

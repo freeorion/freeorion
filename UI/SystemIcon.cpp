@@ -78,10 +78,12 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
 
             // is planet a homeworld?
             if (!homeworld) {
-                for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
-                    if (empire_it->second->HomeworldID() == planet->ID())
-                        homeworld = true;
-                }
+                // TODO: check species to see if this system contains a homeworld
+
+                //for (EmpireManager::const_iterator empire_it = manager.begin(); empire_it != manager.end(); ++empire_it) {
+                //    if (empire_it->second->HomeworldID() == planet->ID())
+                //        homeworld = true;
+                //}
             }
 
             // does planet contain a shipyard?
