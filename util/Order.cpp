@@ -5,6 +5,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OrderSet.h"
 #include "../universe/Predicates.h"
+#include "../universe/Species.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
 #include "../universe/Ship.h"
@@ -405,13 +406,34 @@ void FleetColonizeOrder::ServerExecute() const
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
-    // get colonist capacity of ship: sum of capacities of parts
-    double colonist_capacity = 0.0;
+
+    Planet* planet = objects.Object<Planet>(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "Empire attempted to colonize a nonexistant planet";
+        return;
+    }
     const Ship* ship = objects.Object<Ship>(m_ship);
     if (!ship) {
         Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship with id " << m_ship;
         return;
     }
+
+
+    // get species to colonize with: species of ship
+    const std::string& species_name = ship->SpeciesName();
+    if (species_name.empty()) {
+        Logger().errorStream() << "FleetColonizeOrder::ServerExecute ship has no species";
+        return;
+    }
+    const Species* species = GetSpecies(species_name);
+    if (!species) {
+        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't get species with name: " << species_name;
+        return;
+    }
+
+
+    // get colonist capacity of ship: sum of capacities of parts
+    double colonist_capacity = 0.0;
     const ShipDesign* design = ship->Design();
     if (!design) {
         Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship's design!";
@@ -431,23 +453,19 @@ void FleetColonizeOrder::ServerExecute() const
             colonist_capacity += boost::get<double>(part_type->Stats());
         }
     }
-
-    universe.Destroy(m_ship);
-
     if (colonist_capacity <= 0.0) {
         Logger().debugStream() << "colonize order executed by ship with zero colonist capacity!";
         return;
     }
 
-    Planet* planet = objects.Object<Planet>(m_planet);
-    if (!planet) {
-        Logger().errorStream() << "Empire attempted to colonize a nonexistant planet";
-        return;
-    }
+
+    // all checks passed.  proceed with colonization.
+
+    universe.Destroy(m_ship);
 
     planet->Reset();
+    planet->SetSpecies(species_name);
 
-    planet->SetSpecies("SP_HUMAN");
 
     // find a focus to give planets by default.  use first defined available focus.
     // the planet's AvailableFoci function should return a vector of all names of
