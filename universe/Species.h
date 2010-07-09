@@ -8,6 +8,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <set>
 
 namespace Condition {
     struct ConditionBase;
@@ -66,6 +67,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&              Name() const;       ///< returns the unique name for this type of species
     const std::string&              Description() const;///< returns a text description of this type of species
+    const std::set<int>&            Homeworlds() const; ///< returns the ids of objects that are homeworlds for this species
     std::string                     Dump() const;       ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const;       ///< returns the focus types this species can use, indexed by name
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
@@ -73,17 +75,20 @@ public:
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
     //@}
 
+    /** \name Mutators */ //@{
+    void                            AddHomeworld(int homeworld_id);
+    void                            RemoveHomeworld(int homeworld_id);
+    void                            SetHomeworlds(const std::set<int>& homeworld_ids);
+    //@}
+
 private:
     std::string             m_name;
     std::string             m_description;
+    std::set<int>           m_homeworlds;
     std::vector<FocusType>  m_foci;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                             m_effects;
     std::string             m_graphic;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 
@@ -119,9 +124,21 @@ private:
     SpeciesManager();
     ~SpeciesManager();
 
+    /** sets the homeworld ids of species in this SpeciesManager to those
+      * specified in \a species_homeworld_ids */
+    void                                    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
+
+    /** returns a map from species name to a set of object IDs that are the
+      * homeworld(s) of that species in the current game. */
+    std::map<std::string, std::set<int> >   GetSpeciesHomeworldsMap() const;
+
     std::map<std::string, Species*> m_species;
 
     static SpeciesManager* s_instance;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** returns the singleton species manager */
@@ -133,12 +150,22 @@ const Species* GetSpecies(const std::string& name);
 
 // template implementations
 template <class Archive>
-void Species::serialize(Archive& ar, const unsigned int version)
+void SpeciesManager::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
+    // Don't need to send all the data about species, as this is derived from
+    // content data files in species.txt that should be available to any
+    // client or server.  Instead, just need to send the gamestate portion of
+    // species: their homeworlds in the current game
+    if (Archive::is_saving::value) {
+        std::map<std::string, std::set<int> > species_homeworlds_map = GetSpeciesHomeworldsMap();
+        ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+    }
+
+    if (Archive::is_loading::value) {
+        std::map<std::string, std::set<int> > species_homeworlds_map;
+        ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+        SetSpeciesHomeworlds(species_homeworlds_map);
+    }
 }
 
 #endif // _Species_h_
