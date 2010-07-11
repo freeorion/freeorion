@@ -484,9 +484,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData(true)";
 
     // build a list of save files
-    Logger().debugStream() << "... save dir: " << GetOptionsDB().Get<std::string>("save-dir");
-
-    fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+    fs::path save_dir(GetSaveDir());
     Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << save_dir.native_file_string();
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(save_dir); it != end_it; ++it) {

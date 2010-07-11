@@ -85,11 +85,13 @@ std::string FocusType::Dump() const {
 /////////////////////////////////////////////////
 Species::Species(const std::string& name, const std::string& description,
                  const std::vector<FocusType>& foci,
+                 const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_foci(foci),
+    m_planet_environments(planet_environments),
     m_effects(effects),
     m_graphic(graphic)
 {}
@@ -104,6 +106,35 @@ const std::string& Species::Description() const {
 
 const std::set<int>& Species::Homeworlds() const {
     return m_homeworlds;
+}
+
+namespace {
+    std::string PlanetTypeToString(PlanetType type) {
+        switch (type) {
+        case PT_SWAMP:      return "Swamp";
+        case PT_TOXIC:      return "Toxic";
+        case PT_INFERNO:    return "Inferno";
+        case PT_RADIATED:   return "Radiated";
+        case PT_BARREN:     return "Barren";
+        case PT_TUNDRA:     return "Tundra";
+        case PT_DESERT:     return "Desert";
+        case PT_TERRAN:     return "Terran";
+        case PT_OCEAN:      return "Ocean";
+        case PT_ASTEROIDS:  return "Asteroids";
+        case PT_GASGIANT:   return "GasGiant";
+        default:            return "?";
+        }
+    }
+    std::string PlanetEnvironmentToString(PlanetEnvironment env) {
+        switch (env) {
+        case PE_UNINHABITABLE:  return "Uninhabitable";
+        case PE_HOSTILE:        return "Hostile";
+        case PE_POOR:           return "Poor";
+        case PE_ADEQUATE:       return "Adequate";
+        case PE_GOOD:           return "Good";
+        default:                return "?";
+        }
+    }
 }
 
 std::string Species::Dump() const {
@@ -137,6 +168,24 @@ std::string Species::Dump() const {
         --g_indent;
         retval += DumpIndent() + "]\n";
     }
+    if (m_planet_environments.size() == 1) {
+        retval += DumpIndent() + "environments =\n";
+        ++g_indent;
+        retval += DumpIndent() + "type = " + PlanetTypeToString(m_planet_environments.begin()->first)
+                               + " environment = " + PlanetEnvironmentToString(m_planet_environments.begin()->second)
+                               + "\n";
+        --g_indent;
+    } else {
+        retval += DumpIndent() + "environments = [\n";
+        ++g_indent;
+        for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.begin(); it != m_planet_environments.end(); ++it) {
+            retval += DumpIndent() + "type = " + PlanetTypeToString(it->first)
+                                   + " environment = " + PlanetEnvironmentToString(it->second)
+                                   + "\n";
+        }
+        --g_indent;
+        retval += DumpIndent() + "]\n";
+    }
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
@@ -149,6 +198,18 @@ const std::vector<FocusType>& Species::Foci() const
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Species::Effects() const {
     return m_effects;
+}
+
+const std::map<PlanetType, PlanetEnvironment>& Species::PlanetEnvironments() const {
+    return m_planet_environments;
+}
+
+PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
+    std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.find(planet_type);
+    if (it == m_planet_environments.end())
+        return PE_UNINHABITABLE;
+    else
+        return it->second;
 }
 
 const std::string& Species::Graphic() const {

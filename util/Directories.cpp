@@ -266,7 +266,7 @@ void InitDirs(const std::string& argv0) {
     if (!exists(local_dir))
         fs::create_directories(local_dir);
 
-    fs::path p = GetUserDir() / "save";
+    fs::path p(GetSaveDir());
     if (!exists(p))
         fs::create_directories(p);
 
@@ -304,7 +304,7 @@ void InitBinDir(const std::string& argv0) {
 #  error Neither FREEORION_LINUX nor FREEORION_WIN32 set
 #endif
 
-const boost::filesystem::path GetResourceDir() {
+const fs::path GetResourceDir() {
     return fs::path(GetOptionsDB().Get<std::string>("resource-dir"));
 }
 
@@ -313,14 +313,18 @@ const fs::path GetConfigPath() {
     return p;
 }
 
-boost::filesystem::path RelativePath(const boost::filesystem::path& from, const boost::filesystem::path& to) {
-    boost::filesystem::path retval;
-    boost::filesystem::path from_abs = boost::filesystem::complete(from);
-    boost::filesystem::path to_abs = boost::filesystem::complete(to);
-    boost::filesystem::path::iterator from_it = from_abs.begin();
-    boost::filesystem::path::iterator end_from_it = from_abs.end();
-    boost::filesystem::path::iterator to_it = to_abs.begin();
-    boost::filesystem::path::iterator end_to_it = to_abs.end();
+const fs::path GetSaveDir() {
+    return fs::path(GetOptionsDB().Get<std::string>("save-dir"));
+}
+
+fs::path RelativePath(const fs::path& from, const fs::path& to) {
+    fs::path retval;
+    fs::path from_abs = fs::complete(from);
+    fs::path to_abs = fs::complete(to);
+    fs::path::iterator from_it = from_abs.begin();
+    fs::path::iterator end_from_it = from_abs.end();
+    fs::path::iterator to_it = to_abs.begin();
+    fs::path::iterator end_to_it = to_abs.end();
     while (from_it != end_from_it && to_it != end_to_it && *from_it == *to_it) {
         ++from_it;
         ++to_it;

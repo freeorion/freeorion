@@ -453,7 +453,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
             std::vector<std::pair<std::string, std::string> > save_file_types;
             save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
 
-            FileDlg dlg(GetOptionsDB().Get<std::string>("save-dir"), "", false, false, save_file_types);
+            FileDlg dlg(GetSaveDir().native_file_string(), "", false, false, save_file_types);
             dlg.Run();
             if (!dlg.Result().empty())
                 filename = *dlg.Result().begin();
@@ -681,7 +681,7 @@ void HumanClientApp::Autosave(bool new_game)
         std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
 
         namespace fs = boost::filesystem;
-        fs::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+        fs::path save_dir(GetSaveDir());
 
         SaveGame((save_dir / save_filename).file_string());
     }

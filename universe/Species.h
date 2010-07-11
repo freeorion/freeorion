@@ -2,6 +2,8 @@
 #ifndef _Species_h_
 #define _Species_h_
 
+#include "Enums.h"
+
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -60,6 +62,7 @@ public:
     /** basic ctor */
     Species(const std::string& name, const std::string& description,
             const std::vector<FocusType>& foci,
+            const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
             const std::string& graphic);
     //@}
@@ -70,6 +73,9 @@ public:
     const std::set<int>&            Homeworlds() const; ///< returns the ids of objects that are homeworlds for this species
     std::string                     Dump() const;       ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const;       ///< returns the focus types this species can use, indexed by name
+    const std::map<PlanetType, PlanetEnvironment>&
+                                    PlanetEnvironments() const;                         ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const; ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
@@ -82,13 +88,14 @@ public:
     //@}
 
 private:
-    std::string             m_name;
-    std::string             m_description;
-    std::set<int>           m_homeworlds;
-    std::vector<FocusType>  m_foci;
+    std::string                             m_name;
+    std::string                             m_description;
+    std::set<int>                           m_homeworlds;
+    std::vector<FocusType>                  m_foci;
+    std::map<PlanetType, PlanetEnvironment> m_planet_environments;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                            m_effects;
-    std::string             m_graphic;
+                                            m_effects;
+    std::string                             m_graphic;
 };
 
 

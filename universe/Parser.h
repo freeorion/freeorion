@@ -129,7 +129,7 @@ struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*
 };
 
 struct SpeciesClosure : boost::spirit::classic::closure<SpeciesClosure, Species*, std::string, std::string,
-                                                        std::vector<FocusType>,
+                                                        std::vector<FocusType>, std::map<PlanetType, PlanetEnvironment>,
                                                         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                         std::string>
 {
@@ -137,8 +137,9 @@ struct SpeciesClosure : boost::spirit::classic::closure<SpeciesClosure, Species*
     member2 name;
     member3 description;
     member4 foci;
-    member5 effects_groups;
-    member6 graphic;
+    member5 environments;
+    member6 effects_groups;
+    member7 graphic;
 };
 
 struct CategoryClosure : boost::spirit::classic::closure<CategoryClosure, TechCategory*, std::string, std::string, GG::Clr>

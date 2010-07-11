@@ -22,21 +22,53 @@ struct ParamLabel : public boost::spirit::classic::grammar<ParamLabel>
 struct push_back_impl
 {
     template <class Container, class Item>
-    struct result {typedef void type;};
+    struct result
+    {
+        typedef void type;
+    };
+
     template <class Container, class Item>
-    void operator()(Container& c, const Item& item) const {c.push_back(item);}
+    void operator()(Container& c, const Item& item) const
+    {
+        c.push_back(item);
+    }
 };
 extern const phoenix::function<push_back_impl> push_back_;
 
 struct insert_impl
 {
     template <class Container, class Item>
-    struct result {typedef std::pair<typename Container::iterator, bool> type;};
+    struct result
+    {
+        typedef std::pair<typename Container::iterator, bool> type;
+    };
+
     template <class Container, class Item>
     std::pair<typename Container::iterator, bool>
-    operator()(Container& c, const Item& item) const {return c.insert(item);}
+    operator()(Container& c, const Item& item) const
+    {
+        return c.insert(item);
+    };
 };
 extern const phoenix::function<insert_impl> insert_;
+
+struct make_pair_impl
+{
+    template <class Key, class Value>
+    struct result
+    {
+        typedef std::pair<Key, Value> type;
+    };
+
+    template <class Key, class Value>
+    std::pair<Key, Value>
+    operator()(const Key& k, const Value& v) const
+    {
+        return std::pair<Key, Value>(k, v);
+    }
+};
+extern const phoenix::function<make_pair_impl> make_pair_;
+
 
 extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     name_p;
 extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     file_name_p;

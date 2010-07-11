@@ -4226,7 +4226,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
                 colors.erase(colors.begin() + color_idx);
             } else {
                 // as a last resort, make up a colour
-                empire_colour = GG::FloatClr(RandZeroToOne(), RandZeroToOne(), RandZeroToOne(), 1.0);
+                empire_colour = GG::FloatClr(static_cast<float>(RandZeroToOne()), static_cast<float>(RandZeroToOne()),
+                                             static_cast<float>(RandZeroToOne()), 1.0f);
             }
         }
 

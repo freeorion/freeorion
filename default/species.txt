@@ -251,6 +251,19 @@ Species
             effects =
                 SetFoodConsumption Value + Target.Population * 1.0
     ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Adequate
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
     graphic = "icons/species/human.png"
 
 Species
@@ -506,5 +519,17 @@ Species
             effects =
                 SetFoodConsumption Value + Target.Population * 1.0
     ]
+    environments = [
+        Swamp       Poor
+        Toxic       Hostile
+        Inferno     Hostile
+        Radiated    Hostile
+        Barren      Hostile
+        Tundra      Poor
+        Desert      Adequate
+        Terran      Good
+        Ocean       Adequate
+        Asteroids   Uninhabitable
+        Gasgiant    Uninhabitable
+    ]
     graphic = "icons/species/gyisache.png"
-    

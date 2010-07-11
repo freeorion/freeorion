@@ -9,21 +9,23 @@
 #include "Condition.h"
 #include "ShipDesign.h"
 
+#include <boost/spirit/include/classic_insert_at_actor.hpp>
+
 using namespace boost::spirit::classic;
 using namespace phoenix;
 
-rule<Scanner, BuildingTypeClosure::context_t>   building_type_p;
-rule<Scanner, SpecialClosure::context_t>        special_p;
-rule<Scanner, SpeciesClosure::context_t>        species_p;
-rule<Scanner, TechClosure::context_t>           tech_p;
-rule<Scanner, ItemSpecClosure::context_t>       item_spec_p;
-rule<Scanner, CategoryClosure::context_t>       category_p;
-rule<Scanner, PartStatsClosure::context_t>      part_stats_p;
-rule<Scanner, PartClosure::context_t>           part_p;
-rule<Scanner, HullStatsClosure::context_t>      hull_stats_p;
-rule<Scanner, HullClosure::context_t>           hull_p;
-rule<Scanner, ShipDesignClosure::context_t>     ship_design_p;
-rule<Scanner, FleetPlanClosure::context_t>      fleet_plan_p;
+rule<Scanner, BuildingTypeClosure::context_t>           building_type_p;
+rule<Scanner, SpecialClosure::context_t>                special_p;
+rule<Scanner, SpeciesClosure::context_t>                species_p;
+rule<Scanner, TechClosure::context_t>                   tech_p;
+rule<Scanner, ItemSpecClosure::context_t>               item_spec_p;
+rule<Scanner, CategoryClosure::context_t>               category_p;
+rule<Scanner, PartStatsClosure::context_t>              part_stats_p;
+rule<Scanner, PartClosure::context_t>                   part_p;
+rule<Scanner, HullStatsClosure::context_t>              hull_stats_p;
+rule<Scanner, HullClosure::context_t>                   hull_p;
+rule<Scanner, ShipDesignClosure::context_t>             ship_design_p;
+rule<Scanner, FleetPlanClosure::context_t>              fleet_plan_p;
 
 struct EffectsGroupClosure : boost::spirit::classic::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                              Condition::ConditionBase*, Condition::ConditionBase*,
@@ -74,14 +76,23 @@ struct FocusTypeVecClosure : boost::spirit::classic::closure<FocusTypeVecClosure
     member1 this_;
 };
 
+struct PlanetTypeEnvironmentMapClosure : boost::spirit::classic::closure<PlanetTypeEnvironmentMapClosure, std::map<PlanetType, PlanetEnvironment>,
+                                                                         PlanetType, PlanetEnvironment>
+{
+    member1 this_;
+    member2 type;
+    member3 env;
+};
+
 namespace {
-    rule<Scanner, EffectsGroupClosure::context_t>       effects_group_p;
-    rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
-    rule<Scanner, SlotClosure::context_t>               slot_p;
-    rule<Scanner, SlotVecClosure::context_t>            slot_vec_p;
-    rule<Scanner, ShipSlotTypeVecClosure::context_t>    ship_slot_type_vec_p;
-    rule<Scanner, FocusTypeClosure::context_t>          focus_type_p;
-    rule<Scanner, FocusTypeVecClosure::context_t>       focus_type_vec_p;
+    rule<Scanner, EffectsGroupClosure::context_t>               effects_group_p;
+    rule<Scanner, EffectsGroupVecClosure::context_t>            effects_group_vec_p;
+    rule<Scanner, SlotClosure::context_t>                       slot_p;
+    rule<Scanner, SlotVecClosure::context_t>                    slot_vec_p;
+    rule<Scanner, ShipSlotTypeVecClosure::context_t>            ship_slot_type_vec_p;
+    rule<Scanner, FocusTypeClosure::context_t>                  focus_type_p;
+    rule<Scanner, FocusTypeVecClosure::context_t>               focus_type_vec_p;
+    rule<Scanner, PlanetTypeEnvironmentMapClosure::context_t>   planet_type_environment_map_p;
 
     ParamLabel scope_label("scope");
     ParamLabel activation_label("activation");
@@ -102,6 +113,8 @@ namespace {
     ParamLabel prerequisites_label("prerequisites");
     ParamLabel unlock_label("unlock");
     ParamLabel type_label("type");
+    ParamLabel environment_label("environment");
+    ParamLabel environments_label("environments");
     ParamLabel foci_label("foci");
     ParamLabel location_label("location");
     ParamLabel partclass_label("class");
@@ -188,15 +201,29 @@ namespace {
             focus_type_p[push_back_(focus_type_vec_p.this_, arg1)]
             | ('[' >> +(focus_type_p[push_back_(focus_type_vec_p.this_, arg1)]) >> ']');
 
+        planet_type_environment_map_p =
+            (type_label >>                  planet_type_p[planet_type_environment_map_p.type = arg1]
+             >> environment_label >>        planet_environment_type_p[planet_type_environment_map_p.env = arg1])
+            [insert_(planet_type_environment_map_p.this_,
+                     make_pair_(planet_type_environment_map_p.type,
+                                planet_type_environment_map_p.env))]
+            | ('[' >> +((type_label >>                  planet_type_p[planet_type_environment_map_p.type = arg1]
+                         >> environment_label >>        planet_environment_type_p[planet_type_environment_map_p.env = arg1])
+                        [insert_(planet_type_environment_map_p.this_,
+                                 make_pair_(planet_type_environment_map_p.type,
+                                            planet_type_environment_map_p.env))])
+            >> ']');
+
         species_p =
             (str_p("species")
              >> name_label >>               name_p[species_p.name = arg1]
              >> description_label >>        name_p[species_p.description = arg1]
              >> foci_label >>               focus_type_vec_p[species_p.foci = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[species_p.effects_groups = arg1])
+             >> !(environments_label >>     planet_type_environment_map_p[species_p.environments = arg1])
              >> graphic_label >>            file_name_p[species_p.graphic = arg1])
             [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.foci,
-                                             species_p.effects_groups, species_p.graphic)];
+                                             species_p.environments, species_p.effects_groups, species_p.graphic)];
 
         item_spec_p =
             (str_p("item")

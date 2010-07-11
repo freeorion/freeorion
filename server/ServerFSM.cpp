@@ -386,7 +386,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         }
 
         // refresh save game empire data
-        boost::filesystem::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+        boost::filesystem::path save_dir(GetSaveDir());
         const std::string& save_filename = m_lobby_data->m_save_games[new_file_index];
         LoadEmpireSaveGameData((save_dir / save_filename).file_string(),
                                m_lobby_data->m_save_game_empire_data);
@@ -484,7 +484,7 @@ sc::result MPLobby::react(const StartMPGame& msg)
 
         } else {
             // Load game...
-            boost::filesystem::path save_dir(GetOptionsDB().Get<std::string>("save-dir"));
+            boost::filesystem::path save_dir(GetSaveDir());
             std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
 
             LoadGame((save_dir / save_filename).file_string(),
