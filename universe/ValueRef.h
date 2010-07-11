@@ -20,8 +20,9 @@ namespace detail {
     std::vector<std::string> TokenizeDottedReference(const std::string& str);
 }
 
-/** this namespace contains ValueRefBase and its subclasses.  The ValueRefBase subclasses represent expression trees that may be 
-    evaluated at various times, and which refer to both constant and variable values. */
+/** This namespace contains ValueRefBase and its subclasses.  The ValueRefBase
+  * subclasses represent expression trees that may be evaluated at various
+  * times, and which refer to both constant and variable values. */
 namespace ValueRef {
     template <class T> struct ValueRefBase;
     template <class T> struct Constant;
@@ -38,7 +39,8 @@ namespace ValueRef {
     template <class T> bool ConstantExpr(const ValueRefBase<T>* expr);
 }
 
-/** the base class for all ValueRef classes.  This class provides the public interface for a ValueRef expression tree. */
+/** The base class for all ValueRef classes.  This class provides the public
+  * interface for a ValueRef expression tree. */
 template <class T>
 struct ValueRef::ValueRefBase
 {
@@ -80,12 +82,14 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** the variable value ValueRef class.  The value returned by this node is taken from either the \a source or \a target parameters to Eval. */
+/** The variable value ValueRef class.  The value returned by this node is
+  * taken from either the \a source or \a target parameters to Eval. */
 template <class T>
 struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
-    /** basic ctor.  If \a source_ref is true, the field corresponding to \a property_name is read from the 
-        \a source parameter of Eval; otherwise, the same field is read from Eval's \a target parameter. */
+    /** basic ctor.  If \a source_ref is true, the field corresponding to
+      * \a property_name is read from the \a source parameter of Eval;
+      * otherwise, the same field is read from Eval's \a target parameter. */
     Variable(bool source_ref, const std::string& property_name);
 
     bool SourceRef() const;
@@ -108,8 +112,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** the variable static_cast class.  The value returned by this node is taken from the ctor \a value_ref parameter's FromType value,
-    static_cast to ToType. */
+/** The variable static_cast class.  The value returned by this node is taken
+  * from the ctor \a value_ref parameter's FromType value, static_cast to
+  * ToType. */
 template <class FromType, class ToType>
 struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
 {
@@ -129,8 +134,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** an arithmetic operation node ValueRef class.  One of addition, subtraction, mutiplication, division, or unary negation is 
-    performed on the child(ren) of this node, and the result is returned. */
+/** An arithmetic operation node ValueRef class.  One of addition, subtraction,
+  * mutiplication, division, or unary negation is performed on the child(ren)
+  * of this node, and the result is returned. */
 template <class T>
 struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
 {
@@ -157,8 +163,9 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** A function that returns the correct amount of spacing for the current indentation level during a dump.  Note that
-    this function is used by several units (Condition.cpp, Effect.cpp, etc.), not just this one. */
+/** A function that returns the correct amount of spacing for the current
+  * indentation level during a dump.  Note that this function is used by
+  * several units (Condition.cpp, Effect.cpp, etc.), not just this one. */
 std::string DumpIndent();
 
 
@@ -206,6 +213,9 @@ namespace ValueRef {
     std::string Constant<double>::Description() const;
 
     template <>
+    std::string Constant<std::string>::Description() const;
+
+    template <>
     std::string Constant<PlanetSize>::Dump() const;
 
     template <>
@@ -225,6 +235,9 @@ namespace ValueRef {
 
     template <>
     std::string Constant<int>::Dump() const;
+
+    template <>
+    std::string Constant<std::string>::Dump() const;
 }
 
 template <class T>
@@ -435,6 +448,12 @@ T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObjec
             throw std::runtime_error("ValueRef evaluated with an unknown OpType.");
             break;
     }
+}
+
+namespace ValueRef {
+    template <>
+    std::string Operation<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                             const boost::any& current_value) const;
 }
 
 template <class T>

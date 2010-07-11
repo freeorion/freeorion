@@ -7,6 +7,7 @@
 using namespace boost::spirit::classic;
 using namespace phoenix;
 
+StringValueRefRule              string_expr_p;
 IntValueRefRule                 int_expr_p;
 DoubleValueRefRule              double_expr_p;
 PlanetSizeValueRefRule          planetsize_expr_p;
@@ -20,11 +21,11 @@ namespace {
     class ValueRefParserDefinition
     {
     public:
-        typedef ValueRef::ValueRefBase<T> RefBase;
-        typedef ValueRef::Constant<T> RefConst;
-        typedef ValueRef::Variable<T> RefVar;
-        typedef ValueRef::Variable<int> IntRefVar;
-        typedef ValueRef::Operation<T> RefOp;
+        typedef ValueRef::ValueRefBase<T>   RefBase;
+        typedef ValueRef::Constant<T>       RefConst;
+        typedef ValueRef::Variable<T>       RefVar;
+        typedef ValueRef::Variable<int>     IntRefVar;
+        typedef ValueRef::Operation<T>      RefOp;
 
         typedef typename ValueRefRule<T>::type Rule;
 
@@ -47,6 +48,7 @@ namespace {
         Rule minus_expr;
     };
 
+    ValueRefParserDefinition<std::string>           string_value_ref_def(string_expr_p);
     ValueRefParserDefinition<int>                   int_value_ref_def(int_expr_p);
     ValueRefParserDefinition<double>                double_value_ref_def(double_expr_p);
     ValueRefParserDefinition<PlanetSize>            planetsize_value_ref_def(planetsize_expr_p);
@@ -62,7 +64,15 @@ namespace {
             str_p("owner")
             | "id"
             | "creationturn"
-            | "age";
+            | "age"
+            | "designid"
+            | "fleetid"
+            | "planetid"
+            | "systemid"
+            | "finaldestinationid"
+            | "nextsystemid"
+            | "previoussystemid"
+            | "numships";
 
         SpecializedInit();
 
@@ -99,6 +109,19 @@ namespace {
             | plus_expr[minus_expr.this_ = arg1];
 
         expr = minus_expr[expr.this_ = arg1];
+    }
+
+    template <>
+    void ValueRefParserDefinition<std::string>::SpecializedInit()
+    {
+        constant =
+            name_p[constant.this_ = new_<RefConst>(arg1)];
+
+        variable_final =
+            str_p("name")
+            | "species"
+            | "buildingtype"
+            | "focus";
     }
 
     template <>

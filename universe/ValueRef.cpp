@@ -78,6 +78,12 @@ namespace ValueRef {
     }
 
     template <>
+    std::string Constant<std::string>::Description() const
+    {
+        return m_value;
+    }
+
+    template <>
     std::string Constant<PlanetSize>::Dump() const
     {
         switch (m_value) {
@@ -162,6 +168,12 @@ namespace ValueRef {
 
     template <>
     std::string Constant<double>::Dump() const
+    {
+        return Description();
+    }
+
+    template <>
+    std::string Constant<std::string>::Dump() const
     {
         return Description();
     }
@@ -411,15 +423,50 @@ namespace ValueRef {
             if (object->Owners().size() == 1)
                 retval = *object->Owners().begin();
             else
-                retval = -1;
+                retval = ALL_EMPIRES;
         } else if (boost::iequals(property_name, "ID")) {
             retval = object->ID();
-        } else if (boost::iequals(property_name, "CurrentTurn")) {
-            retval = CurrentTurn();
         } else if (boost::iequals(property_name, "CreationTurn")) {
             retval = object->CreationTurn();
         } else if (boost::iequals(property_name, "Age")) {
             retval = object->AgeInTurns();
+        } else if (boost::iequals(property_name, "DesignID")) {
+            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+                retval = ship->DesignID();
+            else
+                retval = ShipDesign::INVALID_DESIGN_ID;
+        } else if (boost::iequals(property_name, "FleetID")) {
+            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+                retval = ship->FleetID();
+            else
+                retval = UniverseObject::INVALID_OBJECT_ID;
+        } else if (boost::iequals(property_name, "PlanetID")) {
+            if (const Building* building = universe_object_cast<const Building*>(object))
+                retval = building->PlanetID();
+            else
+                retval = UniverseObject::INVALID_OBJECT_ID;
+        } else if (boost::iequals(property_name, "SystemID")) {
+            retval = object->SystemID();
+        } else if (boost::iequals(property_name, "FinalDestinationID")) {
+            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+                retval = fleet->FinalDestinationID();
+            else
+                retval = UniverseObject::INVALID_OBJECT_ID;
+        } else if (boost::iequals(property_name, "NextSystemID")) {
+            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+                retval = fleet->NextSystemID();
+            else
+                retval = UniverseObject::INVALID_OBJECT_ID;
+        } else if (boost::iequals(property_name, "PreviousSystemID")) {
+            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+                retval = fleet->PreviousSystemID();
+            else
+                retval = UniverseObject::INVALID_OBJECT_ID;
+        } else if (boost::iequals(property_name, "NumShips")) {
+            if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
+                retval = fleet->NumShips();
+            else
+                retval = 0;
         } else if (boost::iequals(property_name, "CurrentTurn")) {
             retval = CurrentTurn();
         } else {
@@ -429,8 +476,64 @@ namespace ValueRef {
         return retval;
     }
 
+    template <>
+    std::string Variable<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                    const boost::any& current_value) const
+    {
+        std::string retval;
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        std::string property_name = m_property_name.back();
+        IF_CURRENT_VALUE_ELSE(std::string)
+        if (boost::iequals(property_name, "Name")) {
+            retval = object->Name();
+        } else if (boost::iequals(property_name, "Species")) {
+            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                retval = planet->SpeciesName();
+            else if (const Ship* ship = universe_object_cast<const Ship*>(object))
+                retval = ship->SpeciesName();
+        } else if (boost::iequals(property_name, "BuildingType")) {
+            if (const Building* building = universe_object_cast<const Building*>(object))
+                retval = building->BuildingTypeName();
+        } else if (boost::iequals(property_name, "Focus")) {
+            if (const Planet* planet = universe_object_cast<const Planet*>(object))
+                retval = planet->Focus();
+        } else {
+            throw std::runtime_error("Attempted to read a non-string value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type std::string.");
+        }
+
+        return retval;
+    }
+
 #undef IF_CURRENT_VALUE_ELSE
 }
+
+///////////////////////////////////////////////////////////
+// Operation                                             //
+///////////////////////////////////////////////////////////
+namespace ValueRef {
+    template <>
+    std::string Operation<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                             const boost::any& current_value) const
+    {
+        std::string op_link;
+        switch (m_op_type) {
+            case PLUS:      op_link = " + ";    break;
+            case MINUS:     op_link = " - ";    break;
+            case TIMES:     op_link = " * ";    break;
+            case DIVIDES:   op_link = " / ";    break;
+            case NEGATE:
+                return "-" + m_operand1->Eval(source, target, current_value);
+                break;
+            default:
+                throw std::runtime_error("std::string ValueRef evaluated with an unknown OpType.");
+                break;
+        }
+        return m_operand1->Eval(source, target, current_value)
+               + op_link +
+               m_operand2->Eval(source, target, current_value);
+    }
+}
+
 
 std::string DumpIndent()
 {
