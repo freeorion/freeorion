@@ -27,6 +27,7 @@ namespace Effect {
     class SetEmpireCapitol;
     class SetPlanetType;
     class SetPlanetSize;
+    class SetSpecies;
     class AddOwner;
     class RemoveOwner;
     class CreatePlanet;
@@ -243,9 +244,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the planet size of the target to \a size.  This has no effect on non-Planet targets.  Note that changing the
-    size of a PT_ASTEROID or PT_GASGIANT planet will also change its type to PT_BARREN.  Similarly, changing size to
-    SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID or PT_GASGIANT, respectively. */
+/** Sets the planet size of the target to \a size.  This has no effect on non-
+  * Planet targets.  Note that changing the size of a PT_ASTEROID or PT_GASGIANT
+  * planet will also change its type to PT_BARREN.  Similarly, changing size to
+  * SZ_ASTEROID or SZ_GASGIANT will also cause the type to change to PT_ASTEROID
+  * or PT_GASGIANT, respectively. */
 class Effect::SetPlanetSize : public Effect::EffectBase
 {
 public:
@@ -264,7 +267,29 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Adds empire \a empire_id as an owner of the target.  This has no effect if \a empire_id was already an owner of the target object. */
+/** Sets the species on the target to \a species_name.  This works on planets
+  * and ships, but has no effect on other objects. */
+class Effect::SetSpecies : public Effect::EffectBase
+{
+public:
+    SetSpecies(const ValueRef::ValueRefBase<std::string>* species);
+    virtual ~SetSpecies();
+
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<std::string>* m_species_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Adds empire \a empire_id as an owner of the target.  This has no effect if
+  * \a empire_id was already an owner of the target object. */
 class Effect::AddOwner : public Effect::EffectBase
 {
 public:
@@ -283,7 +308,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Removes empire \a empire_id as an owner of the target.  This has no effect if \a empire_id was not already an owner of the target object. */
+/** Removes empire \a empire_id as an owner of the target.  This has no effect
+  * if \a empire_id was not already an owner of the target object. */
 class Effect::RemoveOwner : public Effect::EffectBase
 {
 public:
@@ -302,7 +328,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Creates a new Planet with specified \a type and \a size at the system with specified \a location_id */
+/** Creates a new Planet with specified \a type and \a size at the system with
+  * specified \a location_id */
 class Effect::CreatePlanet : public Effect::EffectBase
 {
 public:
@@ -358,9 +385,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Destroys the target object.  When executed on objects that contain other objects (such as Fleets and Planets), all
-    contained objects are destroyed as well.  Has no effect on System objects.  Destroy effects are executed after all
-    other effects. */
+/** Destroys the target object.  When executed on objects that contain other
+  * objects (such as Fleets and Planets), all contained objects are destroyed
+  * as well.  Has no effect on System objects.  Destroy effects are executed
+  * after all other effects. */
 class Effect::Destroy : public Effect::EffectBase
 {
 public:
@@ -394,8 +422,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Removes the Special with the name \a name to the target object.  This has no effect if no such Special was already
-    attached to the target object. */
+/** Removes the Special with the name \a name to the target object.  This has
+  * no effect if no such Special was already attached to the target object. */
 class Effect::RemoveSpecial : public Effect::EffectBase
 {
 public:
@@ -413,7 +441,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the star type of the target to \a type.  This has no effect on non-System targets. */
+/** Sets the star type of the target to \a type.  This has no effect on
+  * non-System targets. */
 class Effect::SetStarType : public Effect::EffectBase
 {
 public:
@@ -432,8 +461,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Moves an UniverseObject to a location of another UniverseObject with id \a object_id.  If there are are no objects
-    id that id, nothing is done. */
+/** Moves an UniverseObject to a location of another UniverseObject with id
+  * \a object_id.  If there are are no objects id that id, nothing is done. */
 class Effect::MoveTo : public Effect::EffectBase
 {
 public:
@@ -452,7 +481,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Causes the owner empire of the target object to win the game.  If the target object has multiple owners, nothing is done. */
+/** Causes the owner empire of the target object to win the game.  If the
+  * target object has multiple owners, nothing is done. */
 class Effect::Victory : public Effect::EffectBase
 {
 public:
@@ -470,9 +500,12 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the availability of tech \a tech_name to empire \a empire_id.  If \a include_tech is true, the tech is fully available, just as if it were
-    researched normally; otherwise, only the items that the tech includes are made available.  Note that this means this Effect is intended also to
-    be used to unlock buildings, ships, etc.  The tech and/or its items are made available if \a available is true, or unavailable otherwise. */
+/** Sets the availability of tech \a tech_name to empire \a empire_id.  If
+  * \a include_tech is true, the tech is fully available, just as if it were
+  * researched normally; otherwise, only the items that the tech includes are
+  * made available.  Note that this means this Effect is intended also to
+  * be used to unlock buildings, ships, etc.  The tech and/or its items are
+  * made available if \a available is true, or unavailable otherwise. */
 class Effect::SetTechAvailability : public Effect::EffectBase
 {
 public:
@@ -574,6 +607,13 @@ void Effect::SetPlanetSize::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_size);
+}
+
+template <class Archive>
+void Effect::SetSpecies::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
 template <class Archive>

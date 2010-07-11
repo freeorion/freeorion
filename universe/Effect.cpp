@@ -752,6 +752,41 @@ std::string SetPlanetSize::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// SetSpecies                                            //
+///////////////////////////////////////////////////////////
+SetSpecies::SetSpecies(const ValueRef::ValueRefBase<std::string>* species) :
+    m_species_name(species)
+{}
+
+SetSpecies::~SetSpecies()
+{
+    delete m_species_name;
+}
+
+void SetSpecies::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    if (Planet* p = universe_object_cast<Planet*>(target)) {
+        std::string species_name = m_species_name->Eval(source, target, p->SpeciesName());
+        p->SetSpecies(species_name);
+    } else if (Ship* s = universe_object_cast<Ship*>(target)) {
+        std::string species_name = m_species_name->Eval(source, target, s->SpeciesName());
+        s->SetSpecies(species_name);
+    }
+}
+
+std::string SetSpecies::Description() const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_species_name) ? UserString(m_species_name->Eval(0, 0, boost::any())) : m_species_name->Description();
+    return str(FlexibleFormat(UserString("DESC_SET_SPECIES")) % value_str);
+}
+
+std::string SetSpecies::Dump() const
+{
+    return DumpIndent() + "SetSpecies name = " + m_species_name->Dump() + "\n";
+}
+
+
+///////////////////////////////////////////////////////////
 // AddOwner                                              //
 ///////////////////////////////////////////////////////////
 AddOwner::AddOwner(const ValueRef::ValueRefBase<int>* empire_id) :

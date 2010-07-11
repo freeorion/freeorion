@@ -2637,6 +2637,9 @@ Changes the planet's type to %1%
 DESC_SET_PLANET_SIZE
 Changes the planet's size to %1%
 
+DESC_SET_SPECIES
+Changes the object's species to %1%
+
 DESC_ADD_OWNER
 Adds ownership by empire %1% to object
 
