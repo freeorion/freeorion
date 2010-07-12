@@ -165,8 +165,24 @@ void Planet::Init() {
     AddMeter(METER_DETECTION);
 }
 
-PlanetEnvironment Planet::Environment() const
-{ return Environment(m_type); }
+PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const
+{
+    const Species* species = 0;
+    if (species_name.empty()) {
+        species = GetSpecies(this->SpeciesName());
+        if (!species) {
+            Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get own species with name \"" << this->SpeciesName() << "\"";
+            return PE_UNINHABITABLE;
+        }
+    } else {
+        species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
+            return PE_UNINHABITABLE;
+        }
+    }
+    return species->GetPlanetEnvironment(m_type);
+}
 
 Year Planet::OrbitalPeriod() const
 { return m_orbital_period; }
@@ -603,25 +619,6 @@ void Planet::ClampMeters()
     UniverseObject::ClampMeters();
     ResourceCenterClampMeters();
     PopCenterClampMeters();
-}
-
-PlanetEnvironment Planet::Environment(PlanetType type)
-{
-    switch (type)
-    {
-    case PT_INFERNO:
-    case PT_RADIATED:
-    case PT_TOXIC:
-    case PT_BARREN:     return PE_HOSTILE;      // 3 or more away from EP
-    case PT_SWAMP:
-    case PT_TUNDRA:     return PE_POOR;         // 2 away from EP
-    case PT_DESERT:
-    case PT_OCEAN:      return PE_ADEQUATE;     // 1 away form EP
-    case PT_TERRAN:     return PE_GOOD;         // EP
-    case PT_ASTEROIDS:
-    case PT_GASGIANT:
-    default:            return PE_UNINHABITABLE;// out of the loop
-    }
 }
 
 std::set<int> Planet::VisibleContainedObjects(int empire_id) const

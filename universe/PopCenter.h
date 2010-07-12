@@ -19,43 +19,43 @@ class PopCenter
 {
 public:
     /** \name Structors */ //@{
-    PopCenter();                                            ///< default ctor
-    explicit PopCenter(const std::string& species_name);    ///< basic ctor
-    virtual ~PopCenter();                                   ///< dtor
+    PopCenter();                                        ///< default ctor
+    explicit PopCenter(const std::string& species_name);///< basic ctor
+    virtual ~PopCenter();                               ///< dtor
     //@}
 
     /** \name Accessors */ //@{
-    std::string     SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
-    double          AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
+    const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
+    double              AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
 
-    double          NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
-    double          NextTurnPopGrowthMax() const;                       ///< maximum possible pop growth next turn, not accounting for limits due to food
+    double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
+    double              NextTurnPopGrowthMax() const;                       ///< maximum possible pop growth next turn, not accounting for limits due to food
 
-    virtual double  CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
-    virtual double  NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+    virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
+    virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
     //@}
 
     /** \name Mutators */ //@{
-    void            Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void    Copy(const PopCenter* copied_object, Visibility vis = VIS_FULL_VISIBILITY);
 
-    void            SetSpecies(const std::string& species_name);///< sets the species of the population to \a species_name
-    void            SetAllocatedFood(double allocated_food);    ///< sets the amount of food which is currently available
+    void    SetSpecies(const std::string& species_name);///< sets the species of the population to \a species_name
+    void    SetAllocatedFood(double allocated_food);    ///< sets the amount of food which is currently available
 
-    void            Reset();                                    ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
+    void    Reset();                                    ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
     //@}
 
-    static const double MINIMUM_POP_CENTER_POPULATION;      ///< below this population, planet is considered unpopulated and reset to uncolonized state
+    static const double MINIMUM_POP_CENTER_POPULATION;  ///< below this population, planet is considered unpopulated and reset to uncolonized state
 
 protected:
-    void            Init();                                 ///< initialization that needs to be called by derived class after derived class is constructed
+    void    Init();                                     ///< initialization that needs to be called by derived class after derived class is constructed
 
-    double          NextTurnHealthGrowth() const;           ///< returns change in actual health for next turn.
+    double  NextTurnHealthGrowth() const;               ///< returns change in actual health for next turn.
 
-    double          PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
-    void            PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
-    void            PopCenterClampMeters();
+    double  PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
+    void    PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    void    PopCenterClampMeters();
 
-    void            PopCenterPopGrowthProductionResearchPhase();
+    void    PopCenterPopGrowthProductionResearchPhase();
 
 private:
     virtual Meter*          GetMeter(MeterType type) = 0;       ///< implementation should return the requested Meter, or 0 if no such Meter of that type is found in this object

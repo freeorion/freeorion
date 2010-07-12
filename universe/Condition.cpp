@@ -937,7 +937,81 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
     }
     if (planet) {
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(source, target, boost::any()) == planet->Environment())
+            if (m_environments[i]->Eval(source, target, boost::any()) == planet->EnvironmentForSpecies())
+                return true;
+        }
+    }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// Species                                              //
+///////////////////////////////////////////////////////////
+Condition::Species::Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    m_names(names)
+{}
+
+Condition::Species::~Species()
+{
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        delete m_names[i];
+    }
+}
+
+std::string Condition::Species::Description(bool negated/* = false*/) const
+{
+    std::string values_str;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_names[i]) ? UserString(lexical_cast<std::string>(m_names[i]->Eval(0, 0, boost::any()))) : m_names[i]->Description();
+        if (2 <= m_names.size() && i < m_names.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_names.size() - 2) {
+            values_str += m_names.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
+    std::string description_str = "DESC_SPECIES";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
+}
+
+std::string Condition::Species::Dump() const
+{
+    std::string retval = DumpIndent() + "Species name = ";
+    if (m_names.size() == 1) {
+        retval += m_names[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            retval += m_names[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
+}
+
+bool Condition::Species::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    const ObjectMap& objects = GetMainObjectMap();
+    // is it a planet or a building on a planet?
+    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const ::Building* building = 0;
+    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+        planet = objects.Object<Planet>(building->PlanetID());
+    }
+    if (planet) {
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            if (m_names[i]->Eval(source, target, boost::any()) == planet->SpeciesName())
+                return true;
+        }
+    }
+    // is it a ship?
+    const Ship* ship = universe_object_cast<const Ship*>(target);
+    if (ship) {
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            if (m_names[i]->Eval(source, target, boost::any()) == ship->SpeciesName())
                 return true;
         }
     }

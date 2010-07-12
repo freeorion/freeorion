@@ -17,6 +17,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Building.h"
+#include "../universe/Species.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
@@ -631,7 +632,24 @@ namespace {
     }
 
     std::string GetPlanetEnvironmentName(const Planet &planet) {
-        return UserString(lexical_cast<std::string>(planet.Environment()));
+        // get a species... for now, use human player's empire's capitol's species.
+        // TODO: Use species of selected colony ship...?
+        const Empire* human_player_empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+        int capitol_id = UniverseObject::INVALID_OBJECT_ID;
+        if (human_player_empire)
+            capitol_id = human_player_empire->CapitolID();
+        const Planet* human_empire_capitol = GetMainObjectMap().Object<Planet>(capitol_id);
+        std::string species_name;
+        if (human_empire_capitol) {
+            species_name = human_empire_capitol->SpeciesName();
+        } else {
+            // if no capitol species available, use first defined species in manager
+            const SpeciesManager& manager = GetSpeciesManager();
+            if (!manager.empty())
+                species_name = manager.begin()->first;
+        }
+
+        return UserString(lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
     }
 
     Ship*       FindColonyShip(int system_id) {

@@ -98,7 +98,8 @@ public:
 
     PlanetType                  Type() const {return m_type;}
     PlanetSize                  Size() const {return m_size;}
-    PlanetEnvironment           Environment() const;
+
+    PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
 
     Year                        OrbitalPeriod() const;
     Radian                      InitialOrbitalPosition() const;
@@ -158,8 +159,6 @@ public:
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     //@}
-
-    static PlanetEnvironment    Environment(PlanetType type);           ///< returns the environment that corresponds to each planet type
 
 private:
     void Init();

@@ -32,6 +32,7 @@ namespace Condition {
     struct PlanetSize;
     struct PlanetType;
     struct PlanetEnvironment;
+    struct Species;
     struct FocusType;
     struct StarType;
     struct DesignHasHull;
@@ -341,6 +342,25 @@ struct Condition::PlanetEnvironment : Condition::ConditionBase
 
 private:
     std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> m_environments;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all planets or ships that have one of the species in \a species. 
+  * Note that all Building object which are on matching planets are also
+  * matched. */
+struct Condition::Species : Condition::ConditionBase
+{
+    Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    virtual ~Species();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+
+private:
+    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -750,6 +770,13 @@ void Condition::PlanetEnvironment::serialize(Archive& ar, const unsigned int ver
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_environments);
+}
+
+template <class Archive>
+void Condition::Species::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>

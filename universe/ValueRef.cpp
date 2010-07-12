@@ -244,7 +244,7 @@ namespace ValueRef {
         if (boost::iequals(property_name, "PlanetEnvironment")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
             if (const Planet* p = universe_object_cast<const Planet*>(object))
-                retval = p->Environment();
+                retval = p->EnvironmentForSpecies();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetEnvironment.");
         }
