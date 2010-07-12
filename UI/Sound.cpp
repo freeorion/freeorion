@@ -197,7 +197,7 @@ void Sound::StopMusic()
 
 void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
 {
-    if (is_ui_sound && (UISoundsTemporarilyDisabled() || !GetOptionsDB().Get<bool>("UI.sound.enabled")))
+    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
     std::string filename = path.file_string();

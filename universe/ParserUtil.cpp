@@ -12,9 +12,10 @@ using namespace phoenix;
 
 const Skip skip_p;
 
-const function<push_back_impl> push_back_ = push_back_impl();
-const function<insert_impl> insert_ =       insert_impl();
-const function<make_pair_impl> make_pair_ = make_pair_impl();
+const function<push_back_impl> push_back_ =             push_back_impl();
+const function<insert_impl> insert_ =                   insert_impl();
+const function<make_pair_impl> make_pair_ =             make_pair_impl();
+const function<enum_to_string_impl> enum_to_string_ =   enum_to_string_impl();
 
 rule<Scanner, NameClosure::context_t>   name_p;
 rule<Scanner, NameClosure::context_t>   file_name_p;

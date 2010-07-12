@@ -57,7 +57,7 @@ namespace {
             member2 size;
         };
 
-        struct SetSpeciesClosure : boost::spirit::classic::closure<SetSpeciesClosure, Effect::EffectBase*, ValueRef::ValueRefBase<std::string>*>
+        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
             member2 name;
@@ -121,7 +121,7 @@ namespace {
         typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
-        typedef rule<Scanner, SetSpeciesClosure::context_t>             SetSpeciesRule;
+        typedef rule<Scanner, NameRefParamClosure::context_t>           NameRefParamRule;
         typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
         typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
@@ -137,7 +137,7 @@ namespace {
         Rule                    set_owner_capitol;
         SetPlanetTypeRule       set_planet_type;
         SetPlanetSizeRule       set_planet_size;
-        SetSpeciesRule          set_species;
+        NameRefParamRule        set_species;
         EmpireParamRule         add_owner;
         EmpireParamRule         remove_owner;
         CreatePlanetRule        create_planet;
@@ -355,6 +355,7 @@ namespace {
             | set_owner_capitol[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]
             | set_planet_size[effect_p.this_ = arg1]
+            | set_species[effect_p.this_ = arg1]
             | add_owner[effect_p.this_ = arg1]
             | remove_owner[effect_p.this_ = arg1]
             | create_planet[effect_p.this_ = arg1]

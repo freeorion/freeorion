@@ -115,7 +115,25 @@ namespace {
     void ValueRefParserDefinition<std::string>::SpecializedInit()
     {
         constant =
-            name_p[constant.this_ = new_<RefConst>(arg1)];
+            // quote-enclosed string
+            name_p[constant.this_ = new_<RefConst>(arg1)]
+
+            // parser enum names, not in quotes, like Swamp, Terran, Asteroids,
+            // which are converted to enum values, and then converted to text
+            // representations of the enums, like PT_SWAMP, PT_TERRAN,
+            // PT_ASTEROIDS, which can be looked up in the stringtable
+            | planet_size_p[constant.this_ =                new_<RefConst>(enum_to_string_(static_cast_<PlanetSize>(arg1)))]
+            | planet_type_p[constant.this_ =                new_<RefConst>(enum_to_string_(static_cast_<PlanetType>(arg1)))]
+            | planet_environment_type_p[constant.this_ =    new_<RefConst>(enum_to_string_(static_cast_<PlanetEnvironment>(arg1)))]
+            | universe_object_type_p[constant.this_ =       new_<RefConst>(enum_to_string_(static_cast_<UniverseObjectType>(arg1)))]
+            | star_type_p[constant.this_ =                  new_<RefConst>(enum_to_string_(static_cast_<StarType>(arg1)))]
+
+            // raw constant number, not in quotes, which are left as the raw
+            // text, just as if they had been written enclosed in quotes.  this
+            // is done to maintain the requirement that an int is always a
+            // valid ValueRef value in the parser
+            | (real_p >> eps_p) [constant.this_ =           new_<RefConst>(construct_<std::string>(arg1, arg2))]
+            | (int_p >> eps_p)[constant.this_ =             new_<RefConst>(construct_<std::string>(arg1, arg2))];
 
         variable_final =
             str_p("name")

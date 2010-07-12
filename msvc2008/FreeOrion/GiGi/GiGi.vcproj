@@ -215,6 +215,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\Spin.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\StaticGraphic.h"
 					>
 				</File>

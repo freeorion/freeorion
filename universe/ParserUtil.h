@@ -69,6 +69,23 @@ struct make_pair_impl
 };
 extern const phoenix::function<make_pair_impl> make_pair_;
 
+struct enum_to_string_impl
+{
+    template <typename EnumType>
+    struct result
+    {
+        typedef const std::string& type;
+    };
+
+    template <typename EnumType>
+    const std::string&
+    operator()(EnumType e) const
+    {
+        return GG::GetEnumMap<EnumType>().FromEnum(e);
+    };
+};
+extern const phoenix::function<enum_to_string_impl> enum_to_string_;
+
 
 extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     name_p;
 extern boost::spirit::classic::rule<Scanner, NameClosure::context_t>     file_name_p;

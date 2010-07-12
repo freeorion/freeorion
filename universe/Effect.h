@@ -275,7 +275,6 @@ public:
     SetSpecies(const ValueRef::ValueRefBase<std::string>* species);
     virtual ~SetSpecies();
 
-
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
