@@ -178,15 +178,20 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches planets that are a homeworld. */
+/** Matches planets that are a homeworld for any of the species specified in
+  * \a names.  If \a names is empty, matches any planet that is a homeworld for
+  * any species in the current game Universe. */
 struct Condition::Homeworld : Condition::ConditionBase
 {
-    Homeworld();
+    Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    virtual ~Homeworld();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
 
 private:
+    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -222,16 +227,18 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all Building objects of the sort specified by \a name. */
+/** Matches all Building objects that are one of the building types specified
+  * in \a names. */
 struct Condition::Building : Condition::ConditionBase
 {
-    Building(const std::string& name);
+    Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    virtual ~Building();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
 
 private:
-    std::string m_name;
+    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -348,7 +355,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all planets or ships that have one of the species in \a species. 
+/** Matches all planets or ships that have one of the species in \a species.
   * Note that all Building object which are on matching planets are also
   * matched. */
 struct Condition::Species : Condition::ConditionBase
@@ -370,13 +377,14 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct Condition::FocusType : Condition::ConditionBase
 {
-    FocusType(const std::string& focus);
+    FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    virtual ~FocusType();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
     virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
 
 private:
-    const std::string   m_focus;
+    std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -707,7 +715,8 @@ void Condition::Self::serialize(Archive& ar, const unsigned int version)
 template <class Archive>
 void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
@@ -727,7 +736,7 @@ template <class Archive>
 void Condition::Building::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>
@@ -783,7 +792,7 @@ template <class Archive>
 void Condition::FocusType::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_focus);
+        & BOOST_SERIALIZATION_NVP(m_names);
 }
 
 template <class Archive>

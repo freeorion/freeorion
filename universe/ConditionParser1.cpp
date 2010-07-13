@@ -50,6 +50,13 @@ namespace {
             member2 name;
         };
 
+        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Condition::ConditionBase*,
+                                                                     std::vector<const ValueRef::ValueRefBase<std::string>*> >
+        {
+            member1 this_;
+            member2 names;
+        };
+
         struct PlanetTypeClosure : boost::spirit::classic::closure<PlanetTypeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> >
         {
             member1 this_;
@@ -94,8 +101,15 @@ namespace {
             member2 condition;
         };
 
+        struct StringRefVectorClosure : boost::spirit::classic::closure<StringRefVectorClosure,
+                                                                        std::vector<const ValueRef::ValueRefBase<std::string>*> >
+        {
+            member1 this_;
+        };
+
         typedef rule<Scanner, OwnedByClosure::context_t>            OwnedByRule;
         typedef rule<Scanner, NameParamClosure::context_t>          NameParamRule;
+        typedef rule<Scanner, NameRefParamClosure::context_t>       NameRefParamRule;
         typedef rule<Scanner, PlanetTypeClosure::context_t>         PlanetTypeRule;
         typedef rule<Scanner, PlanetSizeClosure::context_t>         PlanetSizeRule;
         typedef rule<Scanner, PlanetEnvironmentClosure::context_t>  PlanetEnvironmentRule;
@@ -103,26 +117,34 @@ namespace {
         typedef rule<Scanner, MeterValueClosure::context_t>         MeterValueRule;
         typedef rule<Scanner, AndOrClosure::context_t>              AndOrRule;
         typedef rule<Scanner, NotClosure::context_t>                NotRule;
+        typedef rule<Scanner, StringRefVectorClosure::context_t>    StringRefVectorRule;
 
         Rule                    all;
         OwnedByRule             owned_by;
         Rule                    source;
-        Rule                    homeworld;
+        NameRefParamRule        homeworld;
         Rule                    capitol;
-        NameParamRule           building;
+        NameRefParamRule        building;
+        NameRefParamRule        species;
         PlanetTypeRule          planet_type;
         PlanetSizeRule          planet_size;
         PlanetEnvironmentRule   planet_environment;
         ObjectTypeRule          object_type;
-        NameParamRule           focus_type;
+        NameRefParamRule        focus_type;
         MeterValueRule          meter_value;
         AndOrRule               and_;
         AndOrRule               or_;
         NotRule                 not_;
+        StringRefVectorRule     string_ref_vector;
     };
 
     ConditionParser1Definition::ConditionParser1Definition()
     {
+        // not a condition parser, but a utility function for parsing a list of ValueRef
+        string_ref_vector =
+            (string_expr_p[push_back_(string_ref_vector.this_, arg1)])
+            | ('[' >> +(string_expr_p[push_back_(string_ref_vector.this_, arg1)]) >> ']');
+
         all =
             str_p("all")
             [all.this_ = new_<Condition::All>()];
@@ -139,16 +161,22 @@ namespace {
 
         homeworld =
             str_p("homeworld")
-            [homeworld.this_ = new_<Condition::Homeworld>()];
+            >> !(name_label >> string_ref_vector[homeworld.names = arg1])
+            [homeworld.this_ = new_<Condition::Homeworld>(homeworld.names)];
 
         capitol =
             str_p("capitol")
             [capitol.this_ = new_<Condition::Capitol>()];
 
         building =
-            (str_p("building")
-             >> name_label >> name_p[building.name = arg1])
-            [building.this_ = new_<Condition::Building>(building.name)];
+            str_p("building")
+            >> !(name_label >> string_ref_vector[building.names = arg1])
+            [building.this_ = new_<Condition::Building>(building.names)];
+
+        species =
+            str_p("species")
+            >> !(name_label >> string_ref_vector[species.names = arg1])
+            [species.this_ = new_<Condition::Species>(species.names)];
 
         planet_type =
             (str_p("planet")
@@ -178,9 +206,15 @@ namespace {
             [object_type.this_ = new_<Condition::Type>(object_type.type)];
 
         focus_type =
-            (str_p("focus")
-             >> type_label >> name_p[focus_type.name = arg1])
-            [focus_type.this_ = new_<Condition::FocusType>(focus_type.name)];
+            str_p("focus")
+            >> !(type_label >> string_ref_vector[focus_type.names = arg1])
+            [focus_type.this_ = new_<Condition::FocusType>(focus_type.names)];
+
+        // non-vectorized string valueref version of focus_type
+        //focus_type =
+        //    str_p("focus")
+        //    >> !(type_label >> string_expr_p[push_back_(focus_type.names, arg1)])
+        //    [focus_type.this_ = new_<Condition::FocusType>(focus_type.names)];
 
         meter_value =
            ((str_p("targetpopulation")[meter_value.meter =  val(METER_TARGET_POPULATION)]
@@ -232,12 +266,14 @@ namespace {
         condition1_p =
             all[condition1_p.this_ = arg1]
             | source[condition1_p.this_ = arg1]
+            | focus_type[condition1_p.this_ = arg1]
+            | homeworld[condition1_p.this_ = arg1]
             | building[condition1_p.this_ = arg1]
+            | species[condition1_p.this_ = arg1]
             | planet_type[condition1_p.this_ = arg1]
             | planet_size[condition1_p.this_ = arg1]
             | planet_environment[condition1_p.this_ = arg1]
             | object_type[condition1_p.this_ = arg1]
-            | focus_type[condition1_p.this_ = arg1]
             | meter_value[condition1_p.this_ = arg1]
             | owned_by[condition1_p.this_ = arg1]
             | and_[condition1_p.this_ = arg1]

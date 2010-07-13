@@ -57,12 +57,6 @@ namespace {
             member2 size;
         };
 
-        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<std::string>*>
-        {
-            member1 this_;
-            member2 name;
-        };
-
         struct EmpireParamClosure : boost::spirit::classic::closure<EmpireParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
@@ -70,6 +64,12 @@ namespace {
         };
 
         struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Effect::EffectBase*, std::string>
+        {
+            member1 this_;
+            member2 name;
+        };
+
+        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
             member2 name;
@@ -121,9 +121,9 @@ namespace {
         typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
-        typedef rule<Scanner, NameRefParamClosure::context_t>           NameRefParamRule;
         typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
         typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, NameRefParamClosure::context_t>           NameRefParamRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
         typedef rule<Scanner, CreatePlanetClosure::context_t>           CreatePlanetRule;

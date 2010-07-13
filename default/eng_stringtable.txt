@@ -2726,10 +2726,10 @@ DESC_SELF_NOT
  that is not the source object
 
 DESC_HOMEWORLD
- that is a homeworld
+ that is a homeworld of species %1%
 
 DESC_HOMEWORLD_NOT
- that is not a homeworld
+ that is not a homeworld of species %1%
 
 DESC_CAPITOL
  that is an empire's capitol planet
@@ -2778,6 +2778,12 @@ DESC_PLANET_ENVIRONMENT
 
 DESC_PLANET_ENVIRONMENT_NOT
  that is not a %1% planet
+
+DESC_SPECIES
+ that has species %1%
+
+DESC_SPECIES_NOT
+ that does not contain species %1%
 
 DESC_FOCUS_TYPE
  that has focus %1%

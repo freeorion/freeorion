@@ -1,17 +1,17 @@
 #include "Condition.h"
 
 #include "../util/AppInterface.h"
+#include "../util/Random.h"
 #include "UniverseObject.h"
 #include "Building.h"
 #include "Fleet.h"
 #include "Ship.h"
 #include "Planet.h"
+#include "System.h"
+#include "Species.h"
 #include "Meter.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-
-#include "../util/Random.h"
-#include "System.h"
 
 using boost::io::str;
 using boost::lexical_cast;
@@ -419,30 +419,87 @@ bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Condition::Homeworld::Homeworld()
+Condition::Homeworld::Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    m_names(names)
 {}
+
+Condition::Homeworld::~Homeworld()
+{
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        delete m_names[i];
+    }
+}
 
 std::string Condition::Homeworld::Description(bool negated/* = false*/) const
 {
+    std::string values_str;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_names[i]) ? UserString(lexical_cast<std::string>(m_names[i]->Eval(0, 0, boost::any()))) : m_names[i]->Description();
+        if (2 <= m_names.size() && i < m_names.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_names.size() - 2) {
+            values_str += m_names.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
     std::string description_str = "DESC_HOMEWORLD";
     if (negated)
         description_str += "_NOT";
-    return UserString(description_str);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::Homeworld::Dump() const
 {
-    return DumpIndent() + "Homeworld\n";
+    std::string retval = DumpIndent() + "HomeWorld name = ";
+    if (m_names.size() == 1) {
+        retval += m_names[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            retval += m_names[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
 }
 
 bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    // TODO: check if any species' homeworld ID is the target object's ID.  if it is, the target object is a homeworld.
-    int target_id = target->ID();
-    //const EmpireManager& empires = Empires();
-    //for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
-    //    if (it->second->HomeworldID() == target_id)
-    //        return true;
+    const ObjectMap& objects = GetMainObjectMap();
+    // is it a planet or a building on a planet?
+    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const ::Building* building = 0;
+    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+        planet = objects.Object<Planet>(building->PlanetID());
+    }
+    if (!planet)
+        return false;
+
+    int planet_id = planet->ID();
+
+    if (m_names.empty()) {
+        // match homeworlds for any species
+        const SpeciesManager& manager = GetSpeciesManager();
+        for (SpeciesManager::iterator species_it = manager.begin(); species_it != manager.end(); ++species_it) {
+            if (const ::Species* species = species_it->second) {
+                const std::set<int>& homeworld_ids = species->Homeworlds();
+                if (homeworld_ids.find(planet_id) != homeworld_ids.end())
+                    return true;
+            }
+        }
+
+    } else {
+        // match any of the species specified
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            std::string species_name = m_names[i]->Eval(source, target, boost::any());
+            if (const ::Species* species = GetSpecies(species_name)) {
+                const std::set<int>& homeworld_ids = species->Homeworlds();
+                if (homeworld_ids.find(planet_id) != homeworld_ids.end())
+                    return true;
+            }
+        }
+    }
     return false;
 }
 
@@ -545,27 +602,63 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Condition::Building::Building(const std::string& name) :
-    m_name(name)
+Condition::Building::Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    m_names(names)
 {}
+
+Condition::Building::~Building()
+{
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        delete m_names[i];
+    }
+}
 
 std::string Condition::Building::Description(bool negated/* = false*/) const
 {
+    std::string values_str;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_names[i]) ? UserString(lexical_cast<std::string>(m_names[i]->Eval(0, 0, boost::any()))) : m_names[i]->Description();
+        if (2 <= m_names.size() && i < m_names.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_names.size() - 2) {
+            values_str += m_names.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
     std::string description_str = "DESC_BUILDING";
     if (negated)
         description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::Building::Dump() const
 {
-    return DumpIndent() + "Building name = \"" + m_name + "\"\n";
+    std::string retval = DumpIndent() + "Building name = ";
+    if (m_names.size() == 1) {
+        retval += m_names[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            retval += m_names[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+    return retval;
 }
 
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
+    const ObjectMap& objects = GetMainObjectMap();
+    // is it a building?
     const ::Building* building = universe_object_cast<const ::Building*>(target);
-    return building && building->BuildingTypeName() == m_name;
+    if (building) {
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            if (m_names[i]->Eval(source, target, boost::any()) == building->BuildingTypeName())
+                return true;
+        }
+    }
+    return false;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1021,49 +1114,67 @@ bool Condition::Species::Match(const UniverseObject* source, const UniverseObjec
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-Condition::FocusType::FocusType(const std::string& focus) :
-    m_focus(focus)
+Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+    m_names(names)
 {}
+
+Condition::FocusType::~FocusType()
+{
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        delete m_names[i];
+    }
+}
 
 std::string Condition::FocusType::Description(bool negated/* = false*/) const
 {
+    std::string values_str;
+    for (unsigned int i = 0; i < m_names.size(); ++i) {
+        values_str += ValueRef::ConstantExpr(m_names[i]) ? UserString(lexical_cast<std::string>(m_names[i]->Eval(0, 0, boost::any()))) : m_names[i]->Description();
+        if (2 <= m_names.size() && i < m_names.size() - 2) {
+            values_str += ", ";
+        } else if (i == m_names.size() - 2) {
+            values_str += m_names.size() < 3 ? " " : ", ";
+            values_str += UserString("OR");
+            values_str += " ";
+        }
+    }
     std::string description_str = "DESC_FOCUS_TYPE";
     if (negated)
         description_str += "_NOT";
-
-    std::string focus_name = UserString(m_focus);
-
-    return str(FlexibleFormat(UserString(description_str)) % focus_name);
+    return str(FlexibleFormat(UserString(description_str)) % values_str);
 }
 
 std::string Condition::FocusType::Dump() const
 {
-    std::string retval = DumpIndent();
-    retval += "Focus type = \"" + m_focus + "\"\n";
+    std::string retval = DumpIndent() + "Focus name = ";
+    if (m_names.size() == 1) {
+        retval += m_names[0]->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            retval += m_names[i]->Dump() + " ";
+        }
+        retval += "]\n";
+    }
     return retval;
 }
 
 bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-
-    // first check if target is a resource center.  if so, check its focus directly
+    // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
     const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(target);
-    if (res_center)
-        return (m_focus == res_center->Focus());
-
-    // if target isn't a resource center, check if it is a building, and if so, check the building's planet's focus
-    const ::Building* building = universe_object_cast<const ::Building*>(target);
-    if (building) {
-        const Planet* planet = objects.Object<Planet>(building->PlanetID());
-        if (!planet) {
-            Logger().errorStream() << "Condition::FocusType::Match couldn't find a planet with id " << building->PlanetID();
-            return false;
-        }
-        return (m_focus == planet->Focus());
+    const ::Building* building = 0;
+    if (!res_center && (building = universe_object_cast<const ::Building*>(target))) {
+        if (const Planet* planet = objects.Object<Planet>(building->PlanetID()))
+            res_center = dynamic_cast<const ResourceCenter*>(planet);
     }
-
-    // target is neither a resource center nor a building.
+    if (res_center) {
+        for (unsigned int i = 0; i < m_names.size(); ++i) {
+            if (m_names[i]->Eval(source, target, boost::any()) == res_center->Focus())
+                return true;
+        }
+    }
     return false;
 }
 
