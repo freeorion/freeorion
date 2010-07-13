@@ -219,7 +219,7 @@ const std::string& Species::Graphic() const {
 void Species::AddHomeworld(int homeworld_id) {
     if (!GetMainObjectMap().Object(homeworld_id))
         Logger().debugStream() << "Species asked to add homeworld id " << homeworld_id << " but there is no such object in the Universe";
-    if (m_homeworlds.find(homeworld_id) == m_homeworlds.end())
+    if (m_homeworlds.find(homeworld_id) != m_homeworlds.end())
         return;
     m_homeworlds.insert(homeworld_id);
     // TODO if needed: StateChangedSignal();
@@ -332,7 +332,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
     }
 }
 
-std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap() const {
+std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(int encoding_empire/* = ALL_EMPIRES*/) const {
     std::map<std::string, std::set<int> > retval;
     for (iterator it = begin(); it != end(); ++it) {
         const std::string species_name = it->first;

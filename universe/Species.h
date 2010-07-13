@@ -3,6 +3,7 @@
 #define _Species_h_
 
 #include "Enums.h"
+#include "Universe.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -138,7 +139,7 @@ private:
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int> >   GetSpeciesHomeworldsMap() const;
+    std::map<std::string, std::set<int> >   GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
 
     std::map<std::string, Species*> m_species;
 
@@ -164,14 +165,16 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     // content data files in species.txt that should be available to any
     // client or server.  Instead, just need to send the gamestate portion of
     // species: their homeworlds in the current game
+
+    std::map<std::string, std::set<int> > species_homeworlds_map;
+
     if (Archive::is_saving::value) {
-        std::map<std::string, std::set<int> > species_homeworlds_map = GetSpeciesHomeworldsMap();
-        ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+        species_homeworlds_map = GetSpeciesHomeworldsMap(Universe::s_encoding_empire);
     }
 
+    ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
+
     if (Archive::is_loading::value) {
-        std::map<std::string, std::set<int> > species_homeworlds_map;
-        ar  & BOOST_SERIALIZATION_NVP(species_homeworlds_map);
         SetSpeciesHomeworlds(species_homeworlds_map);
     }
 }
