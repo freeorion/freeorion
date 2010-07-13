@@ -288,6 +288,11 @@ const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     return it != m_species.end() ? it->second : 0;
 }
 
+Species* SpeciesManager::GetSpecies(const std::string& name) {
+    std::map<std::string, Species*>::iterator it = m_species.find(name);
+    return it != m_species.end() ? it->second : 0;
+}
+
 SpeciesManager& SpeciesManager::GetSpeciesManager() {
     static SpeciesManager manager;
     return manager;

@@ -4184,7 +4184,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
 
     std::vector<GG::Clr> colors = EmpireColors();   // copy, not reference, so that individual colours can be removed after they're used
 
-    const SpeciesManager&               species_manager =           GetSpeciesManager();
+    SpeciesManager&                     species_manager =           GetSpeciesManager();
 
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
@@ -4286,6 +4286,11 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
         //home_system->AddOwner(empire_id);   // should be redundant
 
         home_planet->SetSpecies(empire_starting_species);
+        if (Species* species = species_manager.GetSpecies(empire_starting_species))
+            species->AddHomeworld(homeworld_id);
+        else
+            Logger().errorStream() << "Universe::GenerateEmpires Couldn't get species \"" << empire_starting_species << "\" to set with homeworld id " << homeworld_id;
+
         // find a focus to give planets by default.  use first defined available focus.
         // the planet's AvailableFoci function should return a vector of all names of
         // available foci, although this might be buggy since the universe isn't fully

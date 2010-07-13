@@ -109,6 +109,7 @@ public:
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
     const Species*          GetSpecies(const std::string& name) const;
+    Species*                GetSpecies(const std::string& name);
 
     /** iterator to the first building type */
     iterator                begin() const;
@@ -133,7 +134,7 @@ private:
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
-    void                                    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
+    void                    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
