@@ -11,6 +11,7 @@
 #include "../universe/Predicates.h"
 #include "../universe/Special.h"
 #include "../universe/System.h"
+#include "../universe/Species.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
@@ -491,6 +492,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
                                                         m_current_turn,
                                                         m_empires,
                                                         m_universe,
+                                                        GetSpeciesManager(),
                                                         player_info_map));
     }
 }
@@ -752,11 +754,13 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                 sss = &psgd.m_save_state_string;
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
+                                                            GetSpeciesManager(),
                                                             player_info_map, *orders, sss));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
+                                                            GetSpeciesManager(),
                                                             player_info_map, *orders, psgd.m_ui_data.get()));
 
         } else {
@@ -1502,25 +1506,42 @@ void ServerApp::PostCombatProcessTurns()
 
 
     // indicate that the clients are waiting for their new Universes
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it)
+    {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING, -1));
     }
 
 
     // compile map of PlayerInfo, indexed by player ID
     std::map<int, PlayerInfo> players;
-    for (ServerNetworking::const_established_iterator it = m_networking.established_begin(); it != m_networking.established_end(); ++it) {
-        PlayerConnectionPtr player = *it;
-        players[player->PlayerID()] = PlayerInfo(player->PlayerName(),
-                                                 GetPlayerEmpire(player->PlayerID())->EmpireID(),
-                                                 player->GetClientType(),
-                                                 player->Host());
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player = *player_it;
+        int player_id = player->PlayerID();
+        players[player_id] = PlayerInfo(player->PlayerName(),
+                                        PlayerEmpireID(player_id),
+                                        player->GetClientType(),
+                                        player->Host());
     }
 
     // send new-turn updates to all players
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        int empire_id = GetPlayerEmpire((*player_it)->PlayerID())->EmpireID();
-        (*player_it)->SendMessage(TurnUpdateMessage((*player_it)->PlayerID(), empire_id, m_current_turn, m_empires, m_universe, players));
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player = *player_it;
+        int player_id = player->PlayerID();
+        player->SendMessage(TurnUpdateMessage(player_id,
+                                              PlayerEmpireID(player_id),
+                                              m_current_turn,
+                                              m_empires,
+                                              m_universe,
+                                              GetSpeciesManager(),
+                                              players));
     }
 }
 

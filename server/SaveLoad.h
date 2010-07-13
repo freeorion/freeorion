@@ -11,20 +11,23 @@ struct ServerSaveGameData;
 struct SaveGameEmpireData;
 class Universe;
 class EmpireManager;
+class SpeciesManager;
 
 /** Saves the provided data to savefile \a filename. */
 void SaveGame(const std::string& filename,
               const ServerSaveGameData& server_save_game_data,
               const std::vector<PlayerSaveGameData>& player_save_game_data,
               const Universe& universe,
-              const EmpireManager& empire_manager);
+              const EmpireManager& empire_manager,
+              const SpeciesManager& species_manager);
 
 /** Loads the indicated data from savefile \a filename. */
 void LoadGame(const std::string& filename,
               ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data,
               Universe& universe,
-              EmpireManager& empire_manager);
+              EmpireManager& empire_manager,
+              SpeciesManager& species_manager);
 
 /** Loads from a savefile \a filename various non-gamestate information that is
   * needed when resuming a saved game.  This includes some player setup

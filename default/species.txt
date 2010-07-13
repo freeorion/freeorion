@@ -268,7 +268,7 @@ Species
 
 Species
     name = "SP_GYISACHE"
-    description = "SP_GYISACHE"
+    description = "SP_GYISACHE_DESC"
     foci = [
         Focus
             name = "FOCUS_FARMING"

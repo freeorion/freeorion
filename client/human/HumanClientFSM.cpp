@@ -3,6 +3,7 @@
 #include "HumanClientApp.h"
 #include "../../Empire/Empire.h"
 #include "../../universe/System.h"
+#include "../../universe/Species.h"
 #include "../../network/Networking.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../UI/ChatWnd.h"
@@ -431,10 +432,18 @@ boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
 boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnUpdate";
-    ExtractMessageData(msg.m_message, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info);
-    for (Empire::SitRepItr sitrep_it = Empires().Lookup(Client().EmpireID())->SitRepBegin(); sitrep_it != Empires().Lookup(Client().EmpireID())->SitRepEnd(); ++sitrep_it) {
+
+    ExtractMessageData(msg.m_message,   Client().EmpireIDRef(), Client().CurrentTurnRef(),
+                       Empires(),       GetUniverse(),          GetSpeciesManager(),
+                       Client().m_player_info);
+
+    for (Empire::SitRepItr sitrep_it = Empires().Lookup(Client().EmpireID())->SitRepBegin();
+         sitrep_it != Empires().Lookup(Client().EmpireID())->SitRepEnd();
+         ++sitrep_it)
+    {
         Client().m_ui->GenerateSitRepText(*sitrep_it);
     }
+
     if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
         Client().Autosave(false);
     return transit<PlayingTurn>();
@@ -458,7 +467,13 @@ boost::statechart::result WaitingForTurnData::react(const GameStart& msg)
     bool save_state_string_available;
     std::string save_state_string; // ignored - used by AI but not by human client
     OrderSet orders;
-    ExtractMessageData(msg.m_message, Client().m_single_player_game, Client().EmpireIDRef(), Client().CurrentTurnRef(), Empires(), GetUniverse(), Client().m_player_info, orders, loaded_game_data, ui_data_available, ui_data, save_state_string_available, save_state_string);
+
+    ExtractMessageData(msg.m_message,               Client().m_single_player_game,      Client().EmpireIDRef(),
+                       Client().CurrentTurnRef(),   Empires(),                          GetUniverse(),
+                       GetSpeciesManager(),         Client().m_player_info,             orders,
+                       loaded_game_data,            ui_data_available,                  ui_data,
+                       save_state_string_available, save_state_string);
+
     Client().StartGame();
     std::swap(Client().Orders(), orders); // bring back orders planned in the current turn, they will be applied later, after some basic turn initialization
     if (loaded_game_data && ui_data_available)

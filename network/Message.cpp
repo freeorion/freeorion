@@ -8,6 +8,7 @@
 #include "../universe/Meter.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
+#include "../universe/Species.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
 
@@ -223,11 +224,9 @@ void HeaderToBuffer(const Message& message, int* header_buf)
     header_buf[4] = message.Size();
 }
 
-
 ////////////////////////////////////////////////
 // Message named ctors
 ////////////////////////////////////////////////
-
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
 {
     std::ostringstream os;
@@ -256,7 +255,8 @@ Message JoinGameMessage(const std::string& player_name, Networking::ClientType c
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
-                         const Universe& universe, const std::map<int, PlayerInfo>& players)
+                         const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
     {
@@ -265,7 +265,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(empires);
+        oa << BOOST_SERIALIZATION_NVP(empires)
+           << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
         bool loaded_game_data = false;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -276,7 +277,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
-                         const Universe& universe, const std::map<int, PlayerInfo>& players,
+                         const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const SaveGameUIData* ui_data)
 {
     std::ostringstream os;
@@ -286,7 +288,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(empires);
+        oa << BOOST_SERIALIZATION_NVP(empires)
+           << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -304,7 +307,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
-                         const Universe& universe, const std::map<int, PlayerInfo>& players,
+                         const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players,
                          const OrderSet& orders, const std::string* save_state_string)
 {
     std::ostringstream os;
@@ -314,7 +318,8 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
            << BOOST_SERIALIZATION_NVP(empire_id)
            << BOOST_SERIALIZATION_NVP(current_turn);
         Universe::s_encoding_empire = empire_id;
-        oa << BOOST_SERIALIZATION_NVP(empires);
+        oa << BOOST_SERIALIZATION_NVP(empires)
+           << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
         bool loaded_game_data = true;
         oa << BOOST_SERIALIZATION_NVP(players)
@@ -368,14 +373,15 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
 
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
                           const EmpireManager& empires, const Universe& universe,
-                          const std::map<int, PlayerInfo>& players)
+                          const SpeciesManager& species, const std::map<int, PlayerInfo>& players)
 {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
         Universe::s_encoding_empire = empire_id;
         oa << BOOST_SERIALIZATION_NVP(current_turn)
-           << BOOST_SERIALIZATION_NVP(empires);
+           << BOOST_SERIALIZATION_NVP(empires)
+           << BOOST_SERIALIZATION_NVP(species);
         Serialize(oa, universe);
         oa << BOOST_SERIALIZATION_NVP(players);
     }
@@ -506,12 +512,9 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
     return Message(Message::END_GAME, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
-
-
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
-
 Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data)
 {
     std::ostringstream os;
@@ -610,7 +613,6 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
-
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
 {
     try {
@@ -626,7 +628,7 @@ void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
 
 void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id,
                         int& current_turn, EmpireManager& empires, Universe& universe,
-                        std::map<int, PlayerInfo>& players, OrderSet& orders,
+                        SpeciesManager& species, std::map<int, PlayerInfo>& players, OrderSet& orders,
                         bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string)
@@ -642,6 +644,8 @@ void ExtractMessageData(const Message& msg, bool& single_player_game, int& empir
         boost::timer deserialize_timer;
         ia >> BOOST_SERIALIZATION_NVP(empires);
         Logger().debugStream() << "ExtractMessage empire deserialization time " << (deserialize_timer.elapsed() * 1000.0);
+
+        ia >> BOOST_SERIALIZATION_NVP(species);
 
         deserialize_timer.restart();
         Deserialize(ia, universe);
@@ -704,14 +708,15 @@ void ExtractMessageData(const Message& msg, OrderSet& orders)
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
                         EmpireManager& empires, Universe& universe,
-                        std::map<int, PlayerInfo>& players)
+                        SpeciesManager& species, std::map<int, PlayerInfo>& players)
 {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
         Universe::s_encoding_empire = empire_id;
         ia >> BOOST_SERIALIZATION_NVP(current_turn)
-           >> BOOST_SERIALIZATION_NVP(empires);
+           >> BOOST_SERIALIZATION_NVP(empires)
+           >> BOOST_SERIALIZATION_NVP(species);
         Deserialize(ia, universe);
         ia >> BOOST_SERIALIZATION_NVP(players);
     } catch (const boost::archive::archive_exception err) {

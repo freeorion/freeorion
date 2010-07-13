@@ -13,6 +13,7 @@
 #include <log4cpp/FileAppender.hh>
 
 #include "../../universe/System.h"
+#include "../../universe/Species.h"
 #include "../../universe/Universe.h"
 #include "../../util/OrderSet.h"
 #include "../../util/Order.h"
@@ -148,7 +149,13 @@ void AIClientApp::HandleMessage(const Message& msg)
             SaveGameUIData ui_data;         // ignored
             bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
             std::string save_state_string;
-            ExtractMessageData(msg, single_player_game, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info, Orders(), loaded_game_data, ui_data_available, ui_data, state_string_available, save_state_string);
+
+            ExtractMessageData(msg,                     single_player_game,     EmpireIDRef(),
+                               CurrentTurnRef(),        Empires(),              GetUniverse(),
+                               GetSpeciesManager(),     m_player_info,          Orders(),
+                               loaded_game_data,        ui_data_available,      ui_data,
+                               state_string_available,  save_state_string);
+
             Logger().debugStream() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
             if (loaded_game_data) {
                 Logger().debugStream() << "Message::GAME_START save_state_string: " << save_state_string;
@@ -173,7 +180,13 @@ void AIClientApp::HandleMessage(const Message& msg)
     case Message::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //Logger().debugStream() << "AIClientApp::HandleMessage : extracting turn update message data";
-            ExtractMessageData(msg, EmpireIDRef(), CurrentTurnRef(), Empires(), GetUniverse(), m_player_info);
+            ExtractMessageData(msg,
+                               EmpireIDRef(),
+                               CurrentTurnRef(),
+                               Empires(),
+                               GetUniverse(),
+                               GetSpeciesManager(),
+                               m_player_info);
             //Logger().debugStream() << "AIClientApp::HandleMessage : generating orders";
             m_AI->GenerateOrders();
             //Logger().debugStream() << "AIClientApp::HandleMessage : done handling turn update message";

@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Species.h"
 #include "../util/OrderSet.h"
 #include "../util/Serialize.h"
 
@@ -32,7 +33,8 @@ namespace {
 
 void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
               const std::vector<PlayerSaveGameData>& player_save_game_data,
-              const Universe& universe, const EmpireManager& empire_manager)
+              const Universe& universe, const EmpireManager& empire_manager,
+              const SpeciesManager& species_manager)
 {
     Universe::s_encoding_empire = ALL_EMPIRES;
 
@@ -44,12 +46,13 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
     oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
     oa << BOOST_SERIALIZATION_NVP(empire_manager);
+    oa << BOOST_SERIALIZATION_NVP(species_manager);
     Serialize(oa, universe);
 }
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
               std::vector<PlayerSaveGameData>& player_save_game_data,
-              Universe& universe, EmpireManager& empire_manager)
+              Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager)
 {
     Universe::s_encoding_empire = ALL_EMPIRES;
 
@@ -65,6 +68,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
         ia >> BOOST_SERIALIZATION_NVP(empire_manager);
+        ia >> BOOST_SERIALIZATION_NVP(species_manager);
         Deserialize(ia, universe);
     } catch (const boost::archive::archive_exception err) {
         Logger().errorStream() << "LoadGame(...) failed!";

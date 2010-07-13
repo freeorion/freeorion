@@ -3,9 +3,10 @@
 #include "SaveLoad.h"
 #include "ServerApp.h"
 #include "../Empire/Empire.h"
+#include "../universe/System.h"
+#include "../universe/Species.h"
 #include "../network/ServerNetworking.h"
 #include "../network/Message.h"
-#include "../universe/System.h"
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 #include "../util/OptionsDB.h"
@@ -491,7 +492,8 @@ sc::result MPLobby::react(const StartMPGame& msg)
                      *m_server_save_game_data,
                      m_player_save_game_data,
                      GetUniverse(),
-                     Empires());
+                     Empires(),
+                     GetSpeciesManager());
 
             // if no AI clients need to be started, can go directly to playing game
             int expected_players = m_player_save_game_data.size();
@@ -650,7 +652,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
                      *m_server_save_game_data,
                      m_player_save_game_data,
                      GetUniverse(),
-                     Empires());
+                     Empires(),
+                     GetSpeciesManager());
+
             server.LoadSPGameInit(m_player_save_game_data,
                                   m_server_save_game_data);
         }
@@ -673,7 +677,9 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
                      *m_server_save_game_data,
                      m_player_save_game_data,
                      GetUniverse(),
-                     Empires());
+                     Empires(),
+                     GetSpeciesManager());
+
             server.LoadSPGameInit(m_player_save_game_data,
                                   m_server_save_game_data);
         }
@@ -1019,7 +1025,8 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
                  server_data,
                  m_player_save_game_data,
                  GetUniverse(),
-                 Empires());
+                 Empires(),
+                 GetSpeciesManager());
 
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();

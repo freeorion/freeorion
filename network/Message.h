@@ -18,6 +18,7 @@ struct CombatData;
 class CombatOrder;
 struct CombatSetupGroup;
 class EmpireManager;
+class SpeciesManager;
 class Message;
 struct MultiplayerLobbyData;
 class OrderSet;
@@ -171,19 +172,20 @@ Message JoinGameMessage(const std::string& player_name, Networking::ClientType c
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
-                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players);
+                         const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes data
     loaded from a saved game. */
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
-                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players,
-                         const OrderSet& orders, const SaveGameUIData* ui_data);
+                         const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players, const OrderSet& orders, const SaveGameUIData* ui_data);
 
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.  Also includes
     state string loaded from a saved game. */
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
-                         const EmpireManager& empires, const Universe& universe, const std::map<int, PlayerInfo>& players,
-                         const OrderSet& orders, const std::string* save_state_string);
+                         const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
+                         const std::map<int, PlayerInfo>& players, const OrderSet& orders, const std::string* save_state_string);
 
 /** creates a HOST_SP_GAME acknowledgement message.  The \a player_id is the ID of the receiving player.  This message
    should only be sent by the server.*/
@@ -205,7 +207,8 @@ Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, 
 
 /** creates a TURN_UPDATE message. */
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
-                          const Universe& universe, const std::map<int, PlayerInfo>& players);
+                          const Universe& universe, const SpeciesManager& species,
+                          const std::map<int, PlayerInfo>& players);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -321,8 +324,9 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 
 void ExtractMessageData(const Message& msg, bool& single_player_game, int& empire_id, int& current_turn,
-                        EmpireManager& empires, Universe& universe, std::map<int, PlayerInfo>& players,
-                        OrderSet& orders, bool& loaded_game_data, bool& ui_data_available,
+                        EmpireManager& empires, Universe& universe, SpeciesManager& species,
+                        std::map<int, PlayerInfo>& players, OrderSet& orders,
+                        bool& loaded_game_data, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string);
 
@@ -331,8 +335,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
 void ExtractMessageData(const Message& msg, OrderSet& orders);
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
-                        Universe& universe,
-                        std::map<int, PlayerInfo>& players);
+                        Universe& universe, SpeciesManager& species, std::map<int, PlayerInfo>& players);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,
