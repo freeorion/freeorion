@@ -224,6 +224,7 @@ void PopCenter::PopCenterClampMeters()
     GetMeter(METER_TARGET_POPULATION)->ClampCurrentToRange();
     GetMeter(METER_HEALTH)->ClampCurrentToRange();
     GetMeter(METER_TARGET_HEALTH)->ClampCurrentToRange();
+    GetMeter(METER_FOOD_CONSUMPTION)->ClampCurrentToRange();
 }
 
 void PopCenter::Reset()
@@ -232,6 +233,7 @@ void PopCenter::Reset()
     GetMeter(METER_TARGET_POPULATION)->Reset();
     GetMeter(METER_HEALTH)->Reset();
     GetMeter(METER_TARGET_HEALTH)->Reset();
+    GetMeter(METER_FOOD_CONSUMPTION)->Reset();
     m_species_name.clear();
     m_allocated_food = 0.0;
 }

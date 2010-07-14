@@ -1358,14 +1358,18 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
+        // get set of target objects for this effects group from potential targets specified
+        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
+
+        // abort if no targets
+        if (target_set.empty())
+            continue;
+
         // combine effects group and source object id into a sourced effects group
         SourcedEffectsGroup sourced_effects_group(source_object_id, effects_group);
 
         // combine cause type and specific cause into effect cause
         EffectCause effect_cause(effect_cause_type, specific_cause_name);
-
-        // get set of target objects for this effects group from potential targets specified
-        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
 
         // combine target set and effect cause
         EffectTargetAndCause target_and_cause(target_set, effect_cause);
