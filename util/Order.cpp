@@ -461,10 +461,11 @@ void FleetColonizeOrder::ServerExecute() const
 
     // all checks passed.  proceed with colonization.
 
-    universe.Destroy(m_ship);
 
     planet->Reset();
-    planet->SetSpecies(species_name);
+    planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
+
+    universe.Destroy(m_ship);
 
 
     // find a focus to give planets by default.  use first defined available focus.

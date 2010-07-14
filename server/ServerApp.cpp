@@ -1449,6 +1449,13 @@ void ServerApp::PostCombatProcessTurns()
         empire->CheckGrowthFoodProgress();
     }
 
+    // store any changes in objects from various progress functions, such as
+    // starvation of planets, before updating visibility again, so that if the
+    // visibility update removes an empires ability to detect an object, the
+    // empire will still know the latest state (eg. 0 population planet) on the
+    // turn when the empire did have detection ability for the object
+    m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+
 
     Logger().debugStream() << "ServerApp::ProcessTurns post-production effects and meter updates";
 
