@@ -4186,6 +4186,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
     std::vector<GG::Clr> colors = EmpireColors();   // copy, not reference, so that individual colours can be removed after they're used
 
     SpeciesManager&                     species_manager =           GetSpeciesManager();
+    species_manager.ClearSpeciesHomeworlds();
 
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();

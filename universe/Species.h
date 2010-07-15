@@ -129,6 +129,13 @@ public:
     static SpeciesManager&  GetSpeciesManager();
     //@}
 
+    /** \name Mutators */ //@{
+    /** sets all species to have no homeworlds.  this is useful when generating
+      * a new game, when any homeworlds species had in the previous game should
+      * be removed before the new game's homeworlds are added. */
+    void                    ClearSpeciesHomeworlds();
+    //@}
+
 private:
     SpeciesManager();
     ~SpeciesManager();

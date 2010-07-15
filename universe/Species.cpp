@@ -314,7 +314,13 @@ int SpeciesManager::NumSpecies() const {
     return m_species.size();
 }
 
+void SpeciesManager::ClearSpeciesHomeworlds() {
+    for (std::map<std::string, Species*>::iterator it = m_species.begin(); it != m_species.end(); ++it)
+        it->second->SetHomeworlds(std::set<int>());
+}
+
 void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids) {
+    ClearSpeciesHomeworlds();
     for (std::map<std::string, std::set<int> >::const_iterator it = species_homeworld_ids.begin(); it != species_homeworld_ids.end(); ++it) {
         const std::string& species_name = it->first;
         const std::set<int>& homeworlds = it->second;
