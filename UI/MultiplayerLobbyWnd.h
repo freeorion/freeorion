@@ -73,7 +73,7 @@ private:
     GG::TextControl*        m_players_lb_player_name_column_label;
     GG::TextControl*        m_players_lb_empire_name_column_label;
     GG::TextControl*        m_players_lb_empire_colour_column_label;
-    GG::TextControl*        m_players_lb_empire_original_name_label;
+    GG::TextControl*        m_players_lb_species_or_original_player_label;
     CUIListBox*             m_players_lb;
     CUIButton*              m_start_game_bn;
     CUIButton*              m_cancel_bn;

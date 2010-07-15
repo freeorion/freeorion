@@ -1061,7 +1061,7 @@ void CUIToolBar::Render()
 ///////////////////////////////////////
 namespace {
     static const std::string EMPTY_STRING("");
-    const GG::X SPECIES_SELECTOR_WIDTH(150);
+    const GG::X SPECIES_SELECTOR_WIDTH(130);
 
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {

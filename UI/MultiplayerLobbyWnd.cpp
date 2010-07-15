@@ -32,7 +32,7 @@
 namespace {
     const GG::Y PLAYER_ROW_HEIGHT(22);
     const GG::Y ROW_HEIGHT_PAD(6);
-    const GG::X EMPIRE_NAME_WIDTH(170);
+    const GG::X EMPIRE_NAME_WIDTH(150);
 
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
@@ -59,7 +59,8 @@ namespace {
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
             // empire name editable text
-            CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name, ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
+            CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
+                                        ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
 
             // empire colour selector
@@ -67,15 +68,17 @@ namespace {
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
 
-            // empty text for spacing consistency with LoadGamePlayerRow
-            push_back("", ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            SpeciesSelector* species_selector = new SpeciesSelector(PLAYER_ROW_HEIGHT);
+            push_back(species_selector);
 
             if (disabled) {
                 edit->Disable();
                 color_selector->Disable();
+                species_selector->Disable();
             } else {
-                Connect(edit->EditedSignal,                 &NewGamePlayerRow::NameChanged,     this);
-                Connect(color_selector->ColorChangedSignal, &NewGamePlayerRow::ColorChanged,    this);
+                Connect(edit->EditedSignal,                     &NewGamePlayerRow::NameChanged,     this);
+                Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,    this);
+                Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,  this);
             }
         }
 
@@ -86,6 +89,10 @@ namespace {
         }
         void ColorChanged(const GG::Clr& clr) {
             m_player_data.m_empire_color = clr;
+            DataChangedSignal();
+        }
+        void SpeciesChanged(const std::string& str) {
+            m_player_data.m_starting_species_name = str;
             DataChangedSignal();
         }
     };
@@ -192,7 +199,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     m_players_lb_player_name_column_label(0),
     m_players_lb_empire_name_column_label(0),
     m_players_lb_empire_colour_column_label(0),
-    m_players_lb_empire_original_name_label(0),
+    m_players_lb_species_or_original_player_label(0),
     m_players_lb(0),
     m_start_game_bn(0),
     m_cancel_bn(0),
@@ -241,20 +248,19 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
 
     m_players_lb_empire_colour_column_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
                                                                   UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"),
-                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
 
-    m_players_lb_empire_original_name_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
-                                                                  UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
-                                                                  ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_RIGHT);
+    m_players_lb_species_or_original_player_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+                                                                        UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
+                                                                        ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
 
     GG::Layout* layout = new GG::Layout(x, y, ClientWidth() - CONTROL_MARGIN - x, TEXT_HEIGHT, 1, 4);
     layout->SetMinimumRowHeight(0, TEXT_HEIGHT);
-    layout->Add(m_players_lb_player_name_column_label, 0, 0);
-    layout->Add(m_players_lb_empire_name_column_label, 0, 1);
-    layout->Add(m_players_lb_empire_colour_column_label, 0, 2);
-    layout->Add(m_players_lb_empire_original_name_label, 0, 3);
+    layout->Add(m_players_lb_player_name_column_label,          0, 0);
+    layout->Add(m_players_lb_empire_name_column_label,          0, 1);
+    layout->Add(m_players_lb_empire_colour_column_label,        0, 2);
+    layout->Add(m_players_lb_species_or_original_player_label,  0, 3);
     AttachChild(layout);
-    m_players_lb_empire_original_name_label->Hide();
 
     y += TEXT_HEIGHT + CONTROL_MARGIN;
     x = CHAT_WIDTH + CONTROL_MARGIN;
@@ -301,12 +307,12 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     }
 
     if (m_host) {
-        Connect(m_new_load_game_buttons->ButtonChangedSignal, &MultiplayerLobbyWnd::NewLoadClicked, this);
-        Connect(m_galaxy_setup_panel->SettingsChangedSignal, &MultiplayerLobbyWnd::GalaxySetupPanelChanged, this);
-        Connect(m_saved_games_list->SelChangedSignal, &MultiplayerLobbyWnd::SaveGameChanged, this);
+        Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiplayerLobbyWnd::NewLoadClicked,           this);
+        Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiplayerLobbyWnd::GalaxySetupPanelChanged,  this);
+        Connect(m_saved_games_list->SelChangedSignal,           &MultiplayerLobbyWnd::SaveGameChanged,          this);
         GG::Connect(m_start_game_bn->ClickedSignal, start_game_callback);
     }
-    Connect(m_galaxy_setup_panel->ImageChangedSignal, &MultiplayerLobbyWnd::PreviewImageChanged, this);
+    Connect(m_galaxy_setup_panel->ImageChangedSignal,           &MultiplayerLobbyWnd::PreviewImageChanged,      this);
     GG::Connect(m_cancel_bn->ClickedSignal, cancel_callback);
 }
 
@@ -471,13 +477,12 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
     }
 
     m_players_lb->SetNumCols(4);
-    m_players_lb->SetColAlignment(2, GG::ALIGN_RIGHT);
     m_players_lb->SetColAlignment(3, GG::ALIGN_RIGHT);
 
     if (m_lobby_data.m_new_game) {
-        m_players_lb_empire_original_name_label->Hide();
+        m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES"));
     } else {
-        m_players_lb_empire_original_name_label->Show();
+        m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"));
     }
 
     if (m_host)
