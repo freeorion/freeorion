@@ -1215,12 +1215,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
 void Universe::BackPropegateObjectMeters()
 {
     // copy current meter values to initial values
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         if (UniverseObject* obj = it->second)
-            for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
-                if (Meter* meter = obj->GetMeter(i))
-                    meter->BackPropegate();
-    }
+            obj->BackPropegateMeters();
 }
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)

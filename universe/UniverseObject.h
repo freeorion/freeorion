@@ -130,6 +130,7 @@ public:
 
 
     Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
+    void                    BackPropegateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
 
     virtual void            AddOwner(int id);                       ///< adds the Empire with ID \a id to the list of owners of this object
     virtual void            RemoveOwner(int id);                    ///< removes the Empire with ID \a id to the list of owners of this object

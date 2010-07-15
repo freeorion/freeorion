@@ -1125,12 +1125,6 @@ void ServerApp::PreCombatProcessTurns()
         }
     }
 
-    // re-execute all meter-related effects after orders, so that new
-    // UniverseObjects created during order execution (eg. new fleets) will
-    // have effects applied to them this turn, ensuring (eg.) new fleets will
-    // have the appropriate stealth level on the turn they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
-
 
     Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
     // filter FleetColonizeOrder for later processing
@@ -1260,6 +1254,15 @@ void ServerApp::PreCombatProcessTurns()
     }
 
 
+    // re-execute all meter-related effects after orders, so that new
+    // UniverseObjects created during order execution (eg. new fleets) and
+    // newly colonized planets will have effects applied to them this turn,
+    // ensuring (eg.) new fleets will have the appropriate stealth level on
+    // the turn they are created, and planets will have appropriate "initial"
+    // population, from which to calculate food allocation.
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
+
+
     Logger().debugStream() << "ServerApp::ProcessTurns movement";
     // process movement phase
 
@@ -1381,7 +1384,6 @@ void ServerApp::ProcessCombats()
     CreateCombatSitReps(system_combat_info);
 
     CleanupSystemCombatInfo(system_combat_info);
-
 }
 
 void ServerApp::PostCombatProcessTurns()

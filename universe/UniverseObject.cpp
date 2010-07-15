@@ -319,6 +319,13 @@ Meter* UniverseObject::GetMeter(MeterType type)
     return 0;
 }
 
+void UniverseObject::BackPropegateMeters()
+{
+    for (MeterType i = MeterType(0); i != NUM_METER_TYPES; i = MeterType(i + 1))
+        if (Meter* meter = this->GetMeter(i))
+            meter->BackPropegate();
+}
+
 void UniverseObject::AddOwner(int id)
 {
     if (id != ALL_EMPIRES && m_owners.find(id) == m_owners.end()) {

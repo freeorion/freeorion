@@ -478,6 +478,7 @@ void FleetColonizeOrder::ServerExecute() const
     planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
     planet->GetMeter(METER_FARMING)->SetCurrent(planet->GetMeter(METER_POPULATION)->Current());
     planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
+    planet->BackPropegateMeters();
 
     planet->AddOwner(EmpireID());
 
