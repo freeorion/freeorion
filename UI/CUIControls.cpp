@@ -1066,19 +1066,20 @@ namespace {
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
         SpeciesRow(const Species* species, GG::Y h) :
-            GG::ListBox::Row(GG::X1, h, "SpeciesRow")
+            GG::ListBox::Row(GG::X1, h, "SpeciesRow", GG::ALIGN_VCENTER, 0)
         {
             if (!species)
                 return;
             GG::Wnd::SetName(species->Name());
-            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h)), h, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
+            push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
             push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()),
                                           ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
-            SetColWidth(0, GG::X(Value(h)));
+            SetColWidth(0, GG::X(Value(h) - 6));
             SetColWidth(1, SPECIES_SELECTOR_WIDTH - GG::X(Value(h)));
         }
     };
 }
+
 SpeciesSelector::SpeciesSelector(GG::Y h) :
     CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, h - 8, 12 * h)
 {
