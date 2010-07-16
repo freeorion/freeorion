@@ -16,7 +16,80 @@
 
 namespace {
     const bool TRACE_EXECUTION = true;
+
+    void SendMessageToAllPlayers(const Message& message) {
+        ServerApp* server = ServerApp::GetApp();
+        if (!server) {
+            Logger().errorStream() << "SendMessageToAllPlayers couldn't get server.";
+            return;
+        }
+        ServerNetworking& networking = server->Networking();
+
+        for (ServerNetworking::const_established_iterator player_it = networking.established_begin();
+             player_it != networking.established_end();
+             ++player_it)
+        {
+            PlayerConnectionPtr player = *player_it;
+            player->SendMessage(message);
+        }
+    }
+
+    void SendMessageToHost(const Message& message) {
+        ServerApp* server = ServerApp::GetApp();
+        if (!server) {
+            Logger().errorStream() << "SendMessageToHost couldn't get server.";
+            return;
+        }
+        ServerNetworking& networking = server->Networking();
+
+        ServerNetworking::established_iterator host_it = networking.GetPlayer(Networking::HOST_PLAYER_ID);
+        if (host_it == networking.established_end()) {
+            Logger().errorStream() << "SendMessageToHost couldn't get host player.";
+            return;
+        }
+
+        PlayerConnectionPtr host = *host_it;
+        host->SendMessage(message);
+    }
+
+    std::string GetHostNameFromSinglePlayerSetupData(const SinglePlayerSetupData& single_player_setup_data) {
+        if (single_player_setup_data.m_new_game) {
+            // for new games, get host player's name from PlayerSetupData for the
+            // (should be only) human player
+            for (std::vector<PlayerSetupData>::const_iterator setup_data_it = single_player_setup_data.m_players.begin();
+                 setup_data_it != single_player_setup_data.m_players.end(); ++setup_data_it)
+            {
+                // In a single player game, the host player is always the human player, so
+                // this is just a matter of finding which player setup data is for
+                // a human player, and assigning that setup data to the host player id
+                const PlayerSetupData& psd = *setup_data_it;
+                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psd.m_player_name;
+            }
+
+        } else {
+            // for loading saved games, get host / human player's name from save file
+            if (!single_player_setup_data.m_players.empty())
+                Logger().errorStream() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
+
+
+            std::vector<PlayerSaveGameData> player_save_game_data;
+            LoadPlayerSaveGameData(single_player_setup_data.m_filename,
+                                   player_save_game_data);
+
+            // find which player was the human (and thus the host) in the saved game
+            for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
+                 save_data_it != player_save_game_data.end(); ++save_data_it)
+            {
+                const PlayerSaveGameData& psgd = *save_data_it;
+                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    return psgd.m_name;
+            }
+        }
+        return "";
+    }
 }
+
 
 ////////////////////////////////////////////////////////////
 // ResolveCombat
@@ -110,45 +183,6 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 ////////////////////////////////////////////////////////////
 // Idle
 ////////////////////////////////////////////////////////////
-namespace {
-    std::string GetHostNameFromSinglePlayerSetupData(const SinglePlayerSetupData& single_player_setup_data) {
-        if (single_player_setup_data.m_new_game) {
-            // for new games, get host player's name from PlayerSetupData for the
-            // (should be only) human player
-            for (std::vector<PlayerSetupData>::const_iterator setup_data_it = single_player_setup_data.m_players.begin();
-                 setup_data_it != single_player_setup_data.m_players.end(); ++setup_data_it)
-            {
-                // In a single player game, the host player is always the human player, so
-                // this is just a matter of finding which player setup data is for
-                // a human player, and assigning that setup data to the host player id
-                const PlayerSetupData& psd = *setup_data_it;
-                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    return psd.m_player_name;
-            }
-
-        } else {
-            // for loading saved games, get host / human player's name from save file
-            if (!single_player_setup_data.m_players.empty())
-                Logger().errorStream() << "GetHostNameFromSinglePlayerSetupData got single player setup data to load a game, but also player setup data for a new game.  Ignoring player setup data";
-
-
-            std::vector<PlayerSaveGameData> player_save_game_data;
-            LoadPlayerSaveGameData(single_player_setup_data.m_filename,
-                                   player_save_game_data);
-
-            // find which player was the human (and thus the host) in the saved game
-            for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
-                 save_data_it != player_save_game_data.end(); ++save_data_it)
-            {
-                const PlayerSaveGameData& psgd = *save_data_it;
-                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    return psgd.m_name;
-            }
-        }
-        return "";
-    }
-}
-
 Idle::Idle(my_context c) :
     my_base(c)
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) Idle"; }
@@ -196,7 +230,14 @@ sc::result Idle::react(const HostSPGame& msg)
 
 
     // get host player's name from setup data or saved file
-    std::string host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
+    std::string host_player_name;
+    try {
+        host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
+    } catch (const std::exception& e) {
+        PlayerConnectionPtr& player_connection = msg.m_player_connection;
+        player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+        return discard_event();
+    }
     // validate host name (was found and wasn't empty)
     if (host_player_name.empty()) {
         Logger().errorStream() << "Idle::react(const HostSPGame& msg) got an empty host player name or couldn't find a human player";
@@ -369,11 +410,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     // index is different, and the new file index is in the valid range
     bool new_save_file_selected = false;
     int new_file_index = incoming_lobby_data.m_save_file_index;
+    int old_file_index = m_lobby_data->m_save_file_index;
     const int NUM_FILE_INDICES = static_cast<int>(m_lobby_data->m_save_games.size());
-    if (new_file_index != m_lobby_data->m_save_file_index &&
-        new_file_index >= 0 &&
-        new_file_index < NUM_FILE_INDICES)
-    {
+    if (new_file_index != old_file_index  &&  new_file_index >= 0  &&  new_file_index < NUM_FILE_INDICES) {
         new_save_file_selected = true;
 
         // update selected file index
@@ -389,10 +428,17 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         // refresh save game empire data
         boost::filesystem::path save_dir(GetSaveDir());
         const std::string& save_filename = m_lobby_data->m_save_games[new_file_index];
-        LoadEmpireSaveGameData((save_dir / save_filename).file_string(),
-                               m_lobby_data->m_save_game_empire_data);
+        try {
+            LoadEmpireSaveGameData((save_dir / save_filename).file_string(),
+                                   m_lobby_data->m_save_game_empire_data);
+        } catch (const std::exception&) {
+            // inform player who attempted to change the save file that there was a problem
+            PlayerConnectionPtr& player_connection = msg.m_player_connection;
+            player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+            // revert to old save file
+            m_lobby_data->m_save_file_index = old_file_index;
+        }
     }
-
 
 
     // propegate lobby changes to players, so everyone has the latest updated
@@ -488,12 +534,17 @@ sc::result MPLobby::react(const StartMPGame& msg)
             boost::filesystem::path save_dir(GetSaveDir());
             std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
 
-            LoadGame((save_dir / save_filename).file_string(),
-                     *m_server_save_game_data,
-                     m_player_save_game_data,
-                     GetUniverse(),
-                     Empires(),
-                     GetSpeciesManager());
+            try {
+                LoadGame((save_dir / save_filename).file_string(),
+                         *m_server_save_game_data,
+                         m_player_save_game_data,
+                         GetUniverse(),
+                         Empires(),
+                         GetSpeciesManager());
+            } catch (const std::exception&) {
+                SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                return discard_event();
+            }
 
             // if no AI clients need to be started, can go directly to playing game
             int expected_players = m_player_save_game_data.size();
@@ -555,8 +606,14 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         }
 
         std::vector<PlayerSaveGameData> player_save_game_data;
-        LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
-                               player_save_game_data);
+        try {
+            LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
+                                   player_save_game_data);
+        } catch (const std::exception& e) {
+            SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+            post_event(LoadSaveFileFailed());
+            return;
+        }
 
         // add player setup data for each player in saved gamed
         for (std::vector<PlayerSaveGameData>::const_iterator save_data_it = player_save_game_data.begin();
@@ -648,12 +705,17 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         if (m_single_player_setup_data->m_new_game) {
             server.NewSPGameInit(*m_single_player_setup_data);
         } else {
-            LoadGame(m_single_player_setup_data->m_filename,
-                     *m_server_save_game_data,
-                     m_player_save_game_data,
-                     GetUniverse(),
-                     Empires(),
-                     GetSpeciesManager());
+            try {
+                LoadGame(m_single_player_setup_data->m_filename,
+                         *m_server_save_game_data,
+                         m_player_save_game_data,
+                         GetUniverse(),
+                         Empires(),
+                         GetSpeciesManager());
+            } catch (const std::exception&) {
+                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                return transit<Idle>();
+            }
 
             server.LoadSPGameInit(m_player_save_game_data,
                                   m_server_save_game_data);
@@ -673,12 +735,17 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
         if (m_single_player_setup_data->m_new_game) {
             server.NewSPGameInit(*m_single_player_setup_data);
         } else {
-            LoadGame(m_single_player_setup_data->m_filename,
-                     *m_server_save_game_data,
-                     m_player_save_game_data,
-                     GetUniverse(),
-                     Empires(),
-                     GetSpeciesManager());
+            try {
+                LoadGame(m_single_player_setup_data->m_filename,
+                         *m_server_save_game_data,
+                         m_player_save_game_data,
+                         GetUniverse(),
+                         Empires(),
+                         GetSpeciesManager());
+            } catch (const std::exception&) {
+                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                return transit<Idle>();
+            }
 
             server.LoadSPGameInit(m_player_save_game_data,
                                   m_server_save_game_data);
@@ -687,6 +754,12 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
     }
 
     return discard_event();
+}
+
+sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.LoadSaveFileFailed";
+    return transit<Idle>();
 }
 
 
@@ -950,9 +1023,15 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSaveData";
 
     ServerApp& server = Server();
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        (*it)->SendMessage(ServerSaveGameMessage((*it)->PlayerID(), (*it)->PlayerID() == Networking::HOST_PLAYER_ID));
-        m_needed_reponses.insert((*it)->PlayerID());
+    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player = *player_it;
+        int player_id = player->PlayerID();
+        bool host = (player_id == Networking::HOST_PLAYER_ID);
+        player->SendMessage(ServerSaveGameMessage(player_id, host));
+        m_needed_reponses.insert(player_id);
     }
 }
 
@@ -975,8 +1054,13 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
     std::string save_state_string;
     bool save_state_string_available = false;
 
-    ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
-
+    try {
+        ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
+    } catch (const std::exception& e) {
+        Logger().debugStream() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
+        player_connection->SendMessage(ErrorMessage("INVALID_CLIENT_SAVE_DATA_RECEIVED"));
+        // use whatever portion of message data was extracted, and leave the rest as defaults.
+    }
 
     // store recieved orders or already existing orders.  I'm not sure what's
     // going on here with the two possible sets of orders.  apparently the
@@ -1021,12 +1105,16 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
         const std::string& save_filename = context<WaitingForTurnEnd>().m_save_filename;
 
         // save game...
-        SaveGame(save_filename,
-                 server_data,
-                 m_player_save_game_data,
-                 GetUniverse(),
-                 Empires(),
-                 GetSpeciesManager());
+        try {
+            SaveGame(save_filename,
+                     server_data,
+                     m_player_save_game_data,
+                     GetUniverse(),
+                     Empires(),
+                     GetSpeciesManager());
+        } catch (const std::exception&) {
+            SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE"));
+        }
 
         context<WaitingForTurnEnd>().m_save_filename = "";
         return transit<WaitingForTurnEndIdle>();

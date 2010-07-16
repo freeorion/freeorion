@@ -99,10 +99,14 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         // read config.xml and set options entries from it, if present
         XMLDoc doc;
         {
-            boost::filesystem::ifstream ifs(GetConfigPath());
-            if (ifs) {
-                doc.ReadDoc(ifs);
-                GetOptionsDB().SetFromXML(doc);
+            try {
+                boost::filesystem::ifstream ifs(GetConfigPath());
+                if (ifs) {
+                    doc.ReadDoc(ifs);
+                    GetOptionsDB().SetFromXML(doc);
+                }
+            } catch (const std::exception& e) {
+                std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML") << std::endl;
             }
         }
 
@@ -122,12 +126,16 @@ int mainConfigOptionsSetup(int argc, char* argv[])
 
         // did the player request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
-            boost::filesystem::ofstream ofs(GetConfigPath());
-            if (ofs) {
-                GetOptionsDB().GetXML().WriteDoc(ofs);
-            } else {
+            try {
+                boost::filesystem::ofstream ofs(GetConfigPath());
+                if (ofs) {
+                    GetOptionsDB().GetXML().WriteDoc(ofs);
+                } else {
+                    std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+                    std::cerr << GetConfigPath().file_string() << std::endl;
+                }
+            } catch (const std::exception& e) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                std::cerr << GetConfigPath().file_string() << std::endl;
             }
         }
 

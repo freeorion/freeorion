@@ -314,12 +314,12 @@ void OptionsDB::SetFromCommandLine(int argc, char* argv[])
         std::string current_token(argv[i]);
         if (current_token.find("--") == 0) {
             std::string option_name = current_token.substr(2);
-            
+
             std::map<std::string, Option>::iterator it = m_options.find(option_name);
-            
+
             if (it == m_options.end())
                 throw std::runtime_error("Option \"" + current_token + "\", could not be found.");
-            
+
             Option& option = it->second;
             if (option.value.empty())
                 throw std::runtime_error("The value member of option \"--" + option.name + "\" is undefined.");

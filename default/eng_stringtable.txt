@@ -118,6 +118,7 @@ Planet
 BUILDING
 Building
 
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -170,6 +171,7 @@ Home Fleet
 FN_BATTLE_FLEET
 Battle Fleet
 
+
 ##########################
 # Status Update Messages #
 ##########################
@@ -181,9 +183,7 @@ LOADING
 Loading ...
 
 SERVER_WONT_START
-'''The server could not be started.
-
-Note for Linux: The server executable is presently expected to be in the working directory.  If freeorion was run from somewhere other than the directory in which the main freeorion binary is located, you might need to quit and restart from that directory.'''
+The server could not be started.
 
 SERVER_TIMEOUT
 The server is not responding.
@@ -209,6 +209,22 @@ Unknown Empire
 LAST_OPPONENT_DEFEATED_VICTORY
 Your last opponent has been defeated and you are victorious!
 
+INVALID_CLIENT_SAVE_DATA_RECEIVED
+The server received invalid client save data.  Some may be ignored.
+
+UNABLE_TO_WRITE_CONFIG_XML
+Error when writing config.xml file.  Unable to save options.
+
+UNABLE_TO_READ_CONFIG_XML
+Error when reading config.xml file.  Using default options.
+
+UNABLE_TO_WRITE_SAVE_FILE
+Error when writing save file.
+
+UNABLE_TO_READ_SAVE_FILE
+Error when reading save file.
+
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
@@ -224,9 +240,6 @@ Print this help message.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
-
-UNABLE_TO_WRITE_CONFIG_XML
-Unable to write config.xml file
 
 OPTIONS_DB_MUSIC_OFF
 Disables music in the game.
@@ -592,7 +605,7 @@ OPTIONS_DB_AUTOSAVE_MULTIPLAYER
 If true, autosaves will occur during multiplayer games.
 
 OPTIONS_DB_AUTOSAVE_TURNS
-Sets the number of turns that should elapse between autosaves.
+Sets the number of turns between autosaves.
 
 OPTIONS_DB_MUSIC_VOLUME
 The volume (0 to 255) at which music should be played.
@@ -2052,7 +2065,6 @@ has achieved a technological victory.
 
 ALL_ENEMIES_ELIMINATED_VICTORY
 has achieved a sole-survivor victory.
-
 
 ####################
 # Species          #

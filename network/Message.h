@@ -2,6 +2,12 @@
 #ifndef _Message_h_
 #define _Message_h_
 
+#ifdef FREEORION_WIN32
+#  ifdef ERROR
+#    undef ERROR
+#  endif
+#endif
+
 #include "Networking.h"
 
 #include <boost/shared_array.hpp>
@@ -48,54 +54,55 @@ public:
     /** Represents the type of the message */
     enum MessageType {
         UNDEFINED,
-        DEBUG,                   ///< used to send special messages used for debugging purposes
-        HOST_SP_GAME,            ///< sent when a client wishes to establish a single player game at the server
-        HOST_MP_GAME,            ///< sent when a client wishes to establish a multiplayer game at the server
-        JOIN_GAME,               ///< sent when a client wishes to join a game being established at the server
-        LOBBY_UPDATE,            ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
-        LOBBY_CHAT,              ///< used to send chat messages in the multiplayer lobby
-        LOBBY_HOST_ABORT,        ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
-        LOBBY_EXIT,              ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
-        START_MP_GAME,           ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
-        SAVE_GAME,               ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
-        LOAD_GAME,               ///< sent to server (by the "host" client only) when a game is to be loaded
-        GAME_START,              ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
-        TURN_UPDATE,             ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
-        TURN_ORDERS,             ///< sent to the server by a client that has orders to be processed at the end of a turn
-        TURN_PROGRESS,           ///< sent to clients to display a turn progress message
-        CLIENT_SAVE_DATA,        ///< sent to the server in response to a server request for the data needed to create a save file
-        COMBAT_START,            ///< sent to clients when a combat is about to start
+        DEBUG,                  ///< used to send special messages used for debugging purposes
+        ERROR,                  ///< used to communicate errors between server and clients
+        HOST_SP_GAME,           ///< sent when a client wishes to establish a single player game at the server
+        HOST_MP_GAME,           ///< sent when a client wishes to establish a multiplayer game at the server
+        JOIN_GAME,              ///< sent when a client wishes to join a game being established at the server
+        LOBBY_UPDATE,           ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
+        LOBBY_CHAT,             ///< used to send chat messages in the multiplayer lobby
+        LOBBY_HOST_ABORT,       ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
+        LOBBY_EXIT,             ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
+        START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
+        SAVE_GAME,              ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
+        LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
+        GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
+        TURN_UPDATE,            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
+        TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
+        TURN_PROGRESS,          ///< sent to clients to display a turn progress message
+        CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
+        COMBAT_START,           ///< sent to clients when a combat is about to start
         COMBAT_TURN_UPDATE,     ///< sent to clients when a combat round has been resolved
-        COMBAT_TURN_ORDERS,      ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
-        COMBAT_END,              ///< sent to clients when a combat is concluded
-        HUMAN_PLAYER_CHAT,       ///< sent when one player sends a chat message to another in multiplayer
-        REQUEST_NEW_OBJECT_ID,   ///< sent by client to server requesting a new object ID.
-        DISPATCH_NEW_OBJECT_ID,  ///< sent by server to client with the new object ID.
-        REQUEST_NEW_DESIGN_ID,   ///< sent by client to server requesting a new design ID.
-        DISPATCH_NEW_DESIGN_ID,  ///< sent by server to client with the new design ID.
-        VICTORY_DEFEAT,          ///< sent by server to all clients when one or more players have met victory or defeat conditions
-        PLAYER_ELIMINATED,       ///< sent by server to all clients (except the eliminated player) when a player is eliminated
-        END_GAME                 ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
+        COMBAT_TURN_ORDERS,     ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
+        COMBAT_END,             ///< sent to clients when a combat is concluded
+        HUMAN_PLAYER_CHAT,      ///< sent when one player sends a chat message to another in multiplayer
+        REQUEST_NEW_OBJECT_ID,  ///< sent by client to server requesting a new object ID.
+        DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
+        REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
+        DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
+        VICTORY_DEFEAT,         ///< sent by server to all clients when one or more players have met victory or defeat conditions
+        PLAYER_ELIMINATED,      ///< sent by server to all clients (except the eliminated player) when a player is eliminated
+        END_GAME                ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
     };
 
     enum TurnProgressPhase {
-        FLEET_MOVEMENT,          ///< fleet movement turn progress message
-        COMBAT,                  ///< combat turn progress message
-        EMPIRE_PRODUCTION,       ///< empire production turn progress message
-        WAITING_FOR_PLAYERS,     ///< waiting for other to end their turn
-        PROCESSING_ORDERS,       ///< processing orders
-        DOWNLOADING              ///< downloading new game state from server
+        FLEET_MOVEMENT,         ///< fleet movement turn progress message
+        COMBAT,                 ///< combat turn progress message
+        EMPIRE_PRODUCTION,      ///< empire production turn progress message
+        WAITING_FOR_PLAYERS,    ///< waiting for other to end their turn
+        PROCESSING_ORDERS,      ///< processing orders
+        DOWNLOADING             ///< downloading new game state from server
     };
 
     enum EndGameReason {
-        HOST_DISCONNECTED,       ///< the host player suddenly lost connection to the server
-        NONHOST_DISCONNECTED,    ///< a non-host player suddenly lost connection to the server
-        YOU_ARE_ELIMINATED       ///< the receiving player is eliminated from the game
+        HOST_DISCONNECTED,      ///< the host player suddenly lost connection to the server
+        NONHOST_DISCONNECTED,   ///< a non-host player suddenly lost connection to the server
+        YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
     };
 
     enum VictoryOrDefeat {
-        VICTORY,                 ///< a player or players have met a victory condition
-        DEFEAT                   ///< a player or players have met a defeat condition
+        VICTORY,                ///< a player or players have met a victory condition
+        DEFEAT                  ///< a player or players have met a defeat condition
     };
 
     /** \name Structors */ //@{
@@ -160,6 +167,9 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 // Message named ctors
 ////////////////////////////////////////////////
+
+/** creates an ERROR message*/
+Message ErrorMessage(const std::string& problem);
 
 /** creates a HOST_SP_GAME message*/
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);

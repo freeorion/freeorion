@@ -38,6 +38,7 @@ struct Disconnection : sc::event<Disconnection>
     PlayerConnectionPtr& m_player_connection;
 };
 
+struct LoadSaveFileFailed : sc::event<LoadSaveFileFailed>                {};
 struct CheckStartConditions : sc::event<CheckStartConditions>            {};
 struct ProcessTurn : sc::event<ProcessTurn>                              {};
 
@@ -193,7 +194,8 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM>
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection, ServerFSM, &ServerFSM::HandleNonLobbyDisconnection>,
         sc::custom_reaction<JoinGame>,
-        sc::custom_reaction<CheckStartConditions>
+        sc::custom_reaction<CheckStartConditions>,
+        sc::custom_reaction<LoadSaveFileFailed>
     > reactions;
 
     WaitingForSPGameJoiners(my_context c);
@@ -201,6 +203,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM>
 
     sc::result react(const JoinGame& msg);
     sc::result react(const CheckStartConditions& u);
+    sc::result react(const LoadSaveFileFailed& u);
 
     boost::shared_ptr<SinglePlayerSetupData> m_single_player_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;

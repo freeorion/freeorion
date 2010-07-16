@@ -431,7 +431,10 @@ void HumanClientApp::SaveGame(const std::string& filename)
 {
     Message response_msg;
     Networking().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
-    assert(response_msg.Type() == Message::SAVE_GAME);
+    if (response_msg.Type() != Message::SAVE_GAME) {
+        Logger().errorStream() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
+        throw std::exception("HumanClientApp::SaveGame synchronous message received invalid response message type");
+    }
     HandleSaveGameDataRequest();
 }
 
@@ -599,24 +602,25 @@ void HumanClientApp::HandleMessage(Message& msg)
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
-    case Message::HOST_MP_GAME:          m_fsm->process_event(HostMPGame(msg)); break;
-    case Message::HOST_SP_GAME:          m_fsm->process_event(HostSPGame(msg)); break;
-    case Message::JOIN_GAME:             m_fsm->process_event(JoinGame(msg)); break;
-    case Message::LOBBY_UPDATE:          m_fsm->process_event(LobbyUpdate(msg)); break;
-    case Message::LOBBY_CHAT:            m_fsm->process_event(LobbyChat(msg)); break;
-    case Message::LOBBY_HOST_ABORT:      m_fsm->process_event(LobbyHostAbort(msg)); break;
-    case Message::LOBBY_EXIT:            m_fsm->process_event(LobbyNonHostExit(msg)); break;
-    case Message::SAVE_GAME:             m_fsm->process_event(::SaveGame(msg)); break;
-    case Message::GAME_START:            m_fsm->process_event(GameStart(msg)); break;
-    case Message::TURN_UPDATE:           m_fsm->process_event(TurnUpdate(msg)); break;
-    case Message::TURN_PROGRESS:         m_fsm->process_event(TurnProgress(msg)); break;
-    case Message::COMBAT_START:          m_fsm->process_event(CombatStart(msg)); break;
-    case Message::COMBAT_TURN_UPDATE:    m_fsm->process_event(CombatRoundUpdate(msg)); break;
-    case Message::COMBAT_END:            m_fsm->process_event(CombatEnd(msg)); break;
-    case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg)); break;
-    case Message::VICTORY_DEFEAT :       m_fsm->process_event(VictoryDefeat(msg)); break;
-    case Message::PLAYER_ELIMINATED:     m_fsm->process_event(PlayerEliminated(msg)); break;
-    case Message::END_GAME:              m_fsm->process_event(::EndGame(msg)); break;
+    case Message::ERROR:                ClientUI::MessageBox(UserString(msg.Text()), true);
+    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg)); break;
+    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg)); break;
+    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg)); break;
+    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg)); break;
+    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg)); break;
+    case Message::LOBBY_HOST_ABORT:     m_fsm->process_event(LobbyHostAbort(msg)); break;
+    case Message::LOBBY_EXIT:           m_fsm->process_event(LobbyNonHostExit(msg)); break;
+    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg)); break;
+    case Message::GAME_START:           m_fsm->process_event(GameStart(msg)); break;
+    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg)); break;
+    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg)); break;
+    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg)); break;
+    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg)); break;
+    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg)); break;
+    case Message::HUMAN_PLAYER_CHAT:    m_fsm->process_event(PlayerChat(msg)); break;
+    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg)); break;
+    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg)); break;
+    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg)); break;
     default:
         Logger().errorStream() << "HumanClientApp::HandleMessage : Received an unknown message type \""
                                << msg.Type() << "\".";
@@ -645,45 +649,59 @@ void HumanClientApp::StartGame()
 
 void HumanClientApp::Autosave(bool new_game)
 {
-    if (((m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player")) ||
-         (!m_single_player_game && GetOptionsDB().Get<bool>("autosave.multiplayer"))) &&
-        (m_turns_since_autosave++ % GetOptionsDB().Get<int>("autosave.turns")) == 0)
-    {
-        const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
+    // autosave only on appropriate turn numbers, and when enabled for current
+    // game type (single vs. multiplayer)
+    int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
+    if (autosave_turns < 1)
+        return;     // avoid divide by zero
+    if (CurrentTurn() % autosave_turns != 0)
+        return;     // turns divisible by autosave_turns have autosaves done
+    if (m_single_player_game && !GetOptionsDB().Get<bool>("autosave.single-player"))
+        return;
+    if (!m_single_player_game && !GetOptionsDB().Get<bool>("autosave.multiplayer"))
+        return;
 
-        // get empire name, filtered for filename acceptability
-        std::string empire_name = Empires().Lookup(EmpireID())->Name();
-        std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
-        if (first_good_empire_char == std::string::npos) {
-            empire_name = "";
-        } else {
-            std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
-            empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
-        }
+    const char* legal_chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_";
 
-        // get player name, also filtered
-        std::string player_name = Empires().Lookup(EmpireID())->PlayerName();
-        std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
-        if (first_good_player_char == std::string::npos) {
-            player_name = "";
-        } else {
-            std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
-            player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
-        }
+    // get empire name, filtered for filename acceptability
+    std::string empire_name = Empires().Lookup(EmpireID())->Name();
+    std::string::size_type first_good_empire_char = empire_name.find_first_of(legal_chars);
+    if (first_good_empire_char == std::string::npos) {
+        empire_name = "";
+    } else {
+        std::string::size_type first_bad_empire_char = empire_name.find_first_not_of(legal_chars, first_good_empire_char);
+        empire_name = empire_name.substr(first_good_empire_char, first_bad_empire_char - first_good_empire_char);
+    }
 
-        // select filename extension
-        std::string extension;
-        if (m_single_player_game)
-            extension = SP_SAVE_FILE_EXTENSION;
-        else
-            extension = MP_SAVE_FILE_EXTENSION;
+    // get player name, also filtered
+    std::string player_name = Empires().Lookup(EmpireID())->PlayerName();
+    std::string::size_type first_good_player_char = player_name.find_first_of(legal_chars);
+    if (first_good_player_char == std::string::npos) {
+        player_name = "";
+    } else {
+        std::string::size_type first_bad_player_char = player_name.find_first_not_of(legal_chars, first_good_player_char);
+        player_name = player_name.substr(first_good_player_char, first_bad_player_char - first_good_player_char);
+    }
 
-        std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
+    // select filename extension
+    std::string extension;
+    if (m_single_player_game)
+        extension = SP_SAVE_FILE_EXTENSION;
+    else
+        extension = MP_SAVE_FILE_EXTENSION;
 
-        namespace fs = boost::filesystem;
-        fs::path save_dir(GetSaveDir());
+    std::string save_filename = boost::io::str(boost::format("FreeOrion_%s_%s_%04d%s") % player_name % empire_name % CurrentTurn() % extension);
 
+    namespace fs = boost::filesystem;
+    fs::path save_dir(GetSaveDir());
+
+    Logger().debugStream() << "Autosaving to: " << (save_dir / save_filename).file_string();
+
+    try {
         SaveGame((save_dir / save_filename).file_string());
+    } catch (const std::exception& e) {
+        Logger().errorStream() << "Autosave failed";
+        std::cerr << "Autosave failed" << std::endl;
     }
 }
 

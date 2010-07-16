@@ -127,6 +127,11 @@ void AIClientApp::HandleMessage(const Message& msg)
 {
     //Logger().debugStream() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
+    case Message::ERROR : {
+        Logger().errorStream() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
+        break;
+    }
+
     case Message::JOIN_GAME: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
@@ -141,9 +146,8 @@ void AIClientApp::HandleMessage(const Message& msg)
 
     case Message::GAME_START: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; "
-                "starting AI turn...";
-            bool single_player_game;        // note that this is ignored
+            Logger().debugStream() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
+            bool single_player_game;        // ignored
             bool loaded_game_data;
             bool ui_data_available;         // ignored
             SaveGameUIData ui_data;         // ignored

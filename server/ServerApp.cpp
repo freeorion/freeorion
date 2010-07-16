@@ -242,9 +242,9 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     // TODO: For prototyping only.
     case Message::COMBAT_END:            m_fsm->process_event(CombatComplete()); break;
 
-#ifndef FREEORION_RELEASE
+    case Message::ERROR:
     case Message::DEBUG:                 break;
-#endif
+
     default:
         Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
         m_networking.Disconnect(player_connection);

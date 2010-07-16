@@ -32,18 +32,9 @@
 #include <GG/Scroll.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-#include <boost/cast.hpp>
+#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/fstream.hpp>
-
-#include <fstream>
-
-using boost::lexical_cast;
-
-class PopulationPanel;
-class ResourcePanel;
-class BuildingsPanel;
-class SpecialsPanel;
 
 namespace {
     const int       EDGE_PAD(3);
@@ -62,9 +53,9 @@ namespace {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
 
-            planet_type = lexical_cast<PlanetType>(elem.Child("planet_type").Text());
+            planet_type = boost::lexical_cast<PlanetType>(elem.Child("planet_type").Text());
             filename = elem.Child("filename").Text();
-            shininess = lexical_cast<double>(elem.Child("shininess").Text());
+            shininess = boost::lexical_cast<double>(elem.Child("shininess").Text());
 
             // ensure proper bounds
             shininess = std::max(0.0, std::min(shininess, 128.0));
@@ -72,9 +63,9 @@ namespace {
 
         XMLElement  XMLEncode() const {
             XMLElement retval("RotatingPlanetData");
-            retval.AppendChild(XMLElement("planet_type", lexical_cast<std::string>(planet_type)));
+            retval.AppendChild(XMLElement("planet_type", boost::lexical_cast<std::string>(planet_type)));
             retval.AppendChild(XMLElement("filename", filename));
-            retval.AppendChild(XMLElement("shininess", lexical_cast<std::string>(shininess)));
+            retval.AppendChild(XMLElement("shininess", boost::lexical_cast<std::string>(shininess)));
             return retval;
         }
 
@@ -90,7 +81,7 @@ namespace {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
                 filename = elem.Child("filename").Text();
-                alpha = lexical_cast<int>(elem.Child("alpha").Text());
+                alpha = boost::lexical_cast<int>(elem.Child("alpha").Text());
                 alpha = std::max(0, std::min(alpha, 255));
             }
 
@@ -118,9 +109,13 @@ namespace {
         static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
         if (data.empty()) {
             XMLDoc doc;
-            boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
-            doc.ReadDoc(ifs);
-            ifs.close();
+            try {
+                boost::filesystem::ifstream ifs(ClientUI::ArtDir() / "planets" / "planets.xml");
+                doc.ReadDoc(ifs);
+                ifs.close();
+            } catch (const std::exception& e) {
+                Logger().errorStream() << "GetRotatingPlanetData: error reading artdir/planets/planets.xml: " << e.what();
+            }
 
             if (doc.root_node.ContainsChild("GLPlanets")) {
                 const XMLElement& elem = doc.root_node.Child("GLPlanets");
@@ -162,7 +157,7 @@ namespace {
             ifs.close();
 
             if (doc.root_node.ContainsChild("asteroids_fps"))
-                retval = lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
+                retval = boost::lexical_cast<double>(doc.root_node.Child("asteroids_fps").Text());
             else
                 retval = 15.0;
 
@@ -181,7 +176,7 @@ namespace {
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("ambient_intensity"))
-                retval = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
+                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("ambient_intensity").Text());
             else
                 retval = 0.5;
 
@@ -202,7 +197,7 @@ namespace {
             ifs.close();
 
             if (doc.root_node.ContainsChild("GLPlanets") && doc.root_node.Child("GLPlanets").ContainsChild("diffuse_intensity"))
-                retval = lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
+                retval = boost::lexical_cast<double>(doc.root_node.Child("GLPlanets").Child("diffuse_intensity").Text());
             else
                 retval = 0.5;
 
@@ -249,9 +244,9 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            retval[0] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
-            retval[1] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
-            retval[2] = lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
+            retval[0] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("x").Text());
+            retval[1] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("y").Text());
+            retval[2] = boost::lexical_cast<GLfloat>(doc.root_node.Child("GLPlanets").Child("light_pos").Child("z").Text());
         }
 
         return retval;
@@ -268,7 +263,7 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
                 for (XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
-                    std::vector<float>& color_vec = light_colors[lexical_cast<StarType>(it->Child("star_type").Text())];
+                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
                     GG::Clr color(XMLToClr(it->Child("GG::Clr")));
                     color_vec.push_back(color.r / 255.0f);
                     color_vec.push_back(color.g / 255.0f);
@@ -624,11 +619,11 @@ namespace {
     std::string GetPlanetSizeName(const Planet &planet) {
         if (planet.Size() == SZ_ASTEROIDS || planet.Size() == SZ_GASGIANT)
             return "";
-        return UserString(lexical_cast<std::string>(planet.Size()));
+        return UserString(boost::lexical_cast<std::string>(planet.Size()));
     }
 
     std::string GetPlanetTypeName(const Planet &planet) {
-        return UserString(lexical_cast<std::string>(planet.Type()));
+        return UserString(boost::lexical_cast<std::string>(planet.Type()));
     }
 
     std::string GetPlanetEnvironmentName(const Planet &planet) {
@@ -649,7 +644,7 @@ namespace {
                 species_name = manager.begin()->first;
         }
 
-        return UserString(lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
+        return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
     }
 
     Ship*       FindColonyShip(int system_id) {

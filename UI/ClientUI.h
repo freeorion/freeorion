@@ -2,6 +2,12 @@
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
+#ifdef FREEORION_WIN32
+#  ifdef Message
+#    undef Message
+#  endif
+#endif
+
 #include "../universe/Enums.h"
 #include "../util/Random.h"
 #include "../util/SitRepEntry.h"

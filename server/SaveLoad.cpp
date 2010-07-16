@@ -40,14 +40,21 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
 
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
 
-    std::ofstream ofs(filename.c_str(), std::ios_base::binary);
-    FREEORION_OARCHIVE_TYPE oa(ofs);
-    oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
-    oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
-    oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
-    oa << BOOST_SERIALIZATION_NVP(empire_manager);
-    oa << BOOST_SERIALIZATION_NVP(species_manager);
-    Serialize(oa, universe);
+    try {
+        std::ofstream ofs(filename.c_str(), std::ios_base::binary);
+        if (!ofs)
+            throw std::exception("Unable to open file");
+        FREEORION_OARCHIVE_TYPE oa(ofs);
+        oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
+        oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+        oa << BOOST_SERIALIZATION_NVP(empire_save_game_data);
+        oa << BOOST_SERIALIZATION_NVP(empire_manager);
+        oa << BOOST_SERIALIZATION_NVP(species_manager);
+        Serialize(oa, universe);
+    } catch (const std::exception& e) {
+        Logger().errorStream() << UserString("UNABLE_TO_WRITE_SAVE_FILE") << " SaveGame exception: " << ": " << e.what();
+        throw e;
+    }
 }
 
 void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_data,
@@ -63,6 +70,8 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        if (!ifs)
+            throw std::exception("Unable to open file");
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -70,9 +79,9 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
         ia >> BOOST_SERIALIZATION_NVP(empire_manager);
         ia >> BOOST_SERIALIZATION_NVP(species_manager);
         Deserialize(ia, universe);
-    } catch (const boost::archive::archive_exception err) {
-        Logger().errorStream() << "LoadGame(...) failed!";
-        throw err;
+    } catch (const std::exception& e) {
+        Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadGame exception: " << ": " << e.what();
+        throw e;
     }
 }
 
@@ -82,13 +91,15 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
 
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        if (!ifs)
+            throw std::exception("Unable to open file");
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
         // skipping additional deserialization which is not needed for this function
-    } catch (const boost::archive::archive_exception err) {
-        Logger().errorStream() << "LoadPlayerSaveGameData(...) failed!";
-        throw err;
+    } catch (const std::exception& e) {
+        Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadPlayerSaveGameData exception: " << ": " << e.what();
+        throw e;
     }
 }
 
@@ -99,14 +110,16 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
 
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
+        if (!ifs)
+            throw std::exception("Unable to open file");
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(empire_save_game_data);
         // skipping additional deserialization which is not needed for this function
-    } catch (const boost::archive::archive_exception err) {
-        Logger().errorStream() << "LoadEmpireSaveGameData(...) failed!";
-        throw err;
+    } catch (const std::exception& e) {
+        Logger().errorStream() << UserString("UNABLE_TO_READ_SAVE_FILE") << " LoadEmpireSaveGameData exception: " << ": " << e.what();
+        throw e;
     }
 }
 
