@@ -238,6 +238,16 @@ boost::statechart::result MPLobby::react(const LobbyNonHostExit& msg)
     return discard_event();
 }
 
+boost::statechart::result MPLobby::react(const Error& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Error";
+    const Message& message = msg.m_message;
+    ClientUI::MessageBox(UserString(message.Text()), true);
+    Logger().errorStream() << "MPLobby::react(const Error& msg) error: " << message.Text();
+    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // HostMPLobby
