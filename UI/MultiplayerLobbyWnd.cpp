@@ -68,7 +68,7 @@ namespace {
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
 
-            SpeciesSelector* species_selector = new SpeciesSelector(PLAYER_ROW_HEIGHT);
+            SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT);
             push_back(species_selector);
 
             if (disabled) {

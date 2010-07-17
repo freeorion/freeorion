@@ -1061,12 +1061,11 @@ void CUIToolBar::Render()
 ///////////////////////////////////////
 namespace {
     static const std::string EMPTY_STRING("");
-    const GG::X SPECIES_SELECTOR_WIDTH(130);
 
     // row type used in the SpeciesSelector
     struct SpeciesRow : public GG::ListBox::Row {
-        SpeciesRow(const Species* species, GG::Y h) :
-            GG::ListBox::Row(GG::X1, h, "SpeciesRow", GG::ALIGN_VCENTER, 0)
+        SpeciesRow(const Species* species, GG::X w, GG::Y h) :
+            GG::ListBox::Row(w, h, "SpeciesRow", GG::ALIGN_VCENTER, 0)
         {
             if (!species)
                 return;
@@ -1074,46 +1073,36 @@ namespace {
             push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
             push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()),
                                           ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
-            SetColWidth(0, GG::X(Value(h) - 6));
-            SetColWidth(1, SPECIES_SELECTOR_WIDTH - GG::X(Value(h)));
+            GG::X first_col_width(Value(h) - 6);
+            SetColWidth(0, first_col_width);
+            SetColWidth(1, w - first_col_width);
         }
     };
 }
 
-SpeciesSelector::SpeciesSelector(GG::Y h) :
-    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, h - 8, 12 * h)
+SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
+    CUIDropDownList(GG::X0, GG::Y0, w, h - 8, 6 * h)
 {
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::iterator it = sm.begin(); it != sm.end(); ++it)
-        Insert(new SpeciesRow(it->second, h - 4));
-    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
+        Insert(new SpeciesRow(it->second, w, h - 4));
     if (!this->Empty())
         Select(this->begin());
+    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
-SpeciesSelector::SpeciesSelector(GG::Y h, const std::vector<std::string>& species_names) :
-    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, h - 8, 12 * h)
+SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names) :
+    CUIDropDownList(GG::X0, GG::Y0, w, h - 8, 6 * h)
 {
-    const SpeciesManager& sm = GetSpeciesManager();
-    for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
-        const std::string& species_name = *it;
-        if (const Species* species = GetSpecies(species_name))
-            Insert(new SpeciesRow(species, h - 4));
-        else
-            Logger().errorStream() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
-    }
+    SetSpecies(species_names);
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
-    if (!this->Empty())
-        Select(this->begin());
 }
 
 const std::string& SpeciesSelector::CurrentSpeciesName() const
 {
     CUIDropDownList::iterator row_it = this->CurrentItem();
-    if (row_it == this->end()) {
-        Logger().errorStream() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to out of range iterator";
+    if (row_it == this->end())
         return EMPTY_STRING;
-    }
     const CUIDropDownList::Row* row = *row_it;
     if (!row) {
         Logger().errorStream() << "SpeciesSelector::CurrentSpeciesName couldn't get current item due to invalid Row pointer";
@@ -1136,13 +1125,40 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name)
     Logger().errorStream() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;
 }
 
+void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names)
+{
+    const std::string& previous_selection = CurrentSpeciesName();
+    bool selection_changed = (previous_selection == "");
+
+    Clear();
+
+    const SpeciesManager& sm = GetSpeciesManager();
+
+    for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
+        const std::string& species_name = *it;
+        if (const Species* species = GetSpecies(species_name)) {
+            CUIDropDownList::iterator it = Insert(new SpeciesRow(species, this->Width(), this->Height() - 4));
+            if (species_name == previous_selection) {
+                Select(it);
+                selection_changed = false;
+            }
+        } else {
+            Logger().errorStream() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
+        }
+    }
+    if (selection_changed)
+        SelectionChanged(this->CurrentItem());
+}
+
 void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it)
 {
-    const GG::ListBox::Row* row = *it;
+    const GG::ListBox::Row* row = 0;
+    if (it != this->end())
+        row = *it;
     if (row)
         SpeciesChangedSignal(row->Name());
     else
-        Logger().errorStream() << "SpeciesSelector::SelectionChanged had trouble getting species name from row!";
+        SpeciesChangedSignal(EMPTY_STRING);
 }
 
 ///////////////////////////////////////
@@ -1160,8 +1176,7 @@ namespace {
                 SetColor(color);
             }
             virtual void Render() {
-                GG::Pt ul = UpperLeft(), lr = LowerRight();
-                GG::FlatRectangle(ul, lr, Color(), GG::CLR_ZERO, 0);
+                GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0);
             }
         };
         ColorRow(const GG::Clr& color, GG::Y h) :

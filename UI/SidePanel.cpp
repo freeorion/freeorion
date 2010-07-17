@@ -428,6 +428,7 @@ private:
     GG::TextControl*        m_planet_name;              ///< planet name
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
+    SpeciesSelector*        m_species_selector;         ///< droplist to pick which species to colonize with
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
@@ -712,6 +713,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_planet_name(0),
     m_env_size(0),
     m_button_colonize(0),
+    m_species_selector(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
@@ -875,8 +877,10 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
-
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+
+    m_species_selector = new SpeciesSelector(GG::X(MAX_PLANET_DIAMETER), m_button_colonize->Height()/*, std::vector<std::string>()*/);
+    m_species_selector->MoveTo(GG::Pt(m_button_colonize->LowerRight().x + GG::X(EDGE_PAD), m_button_colonize->UpperLeft().y));
 
 
     if (m_planet_graphic)
@@ -926,6 +930,13 @@ void SidePanel::PlanetPanel::DoLayout()
 
     if (m_button_colonize && m_button_colonize->Parent() == this) {
         m_button_colonize->MoveTo(GG::Pt(left, y));
+
+        if (m_species_selector && m_species_selector->Parent() == this) {
+            GG::X ss_left = left + m_button_colonize->Width() + GG::X(EDGE_PAD);
+            GG::Y ss_height = m_button_colonize->Height();
+            m_species_selector->SizeMove(GG::Pt(ss_left, y), GG::Pt(right, y + ss_height));
+        }
+
         y += m_button_colonize->Height() + EDGE_PAD;
     }
 
@@ -986,6 +997,9 @@ void SidePanel::PlanetPanel::Refresh()
 
         DetachChild(m_button_colonize);
         delete m_button_colonize;   m_button_colonize = 0;
+
+        DetachChild(m_species_selector);
+        delete m_species_selector;  m_species_selector = 0;
 
         DetachChild(m_specials_panel);
         delete m_specials_panel;    m_specials_panel = 0;
@@ -1054,13 +1068,18 @@ void SidePanel::PlanetPanel::Refresh()
         if (m_button_colonize)
             m_button_colonize->SetText(colonize_text);
 
+        AttachChild(m_species_selector);
+        // TODO: find available species and populate selector with those
+
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
         if (m_button_colonize)
             m_button_colonize->SetText(UserString("CANCEL"));
+        DetachChild(m_species_selector);
 
     } else {
         DetachChild(m_button_colonize);
+        DetachChild(m_species_selector);
     }
 
 

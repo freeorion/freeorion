@@ -433,8 +433,8 @@ class SpeciesSelector : public CUIDropDownList
 {
 public:
     /** \name Structors */ //@{
-    explicit SpeciesSelector(GG::Y h);                                      ///< populates with all species in SpeciesManager
-    SpeciesSelector(GG::Y h, const std::vector<std::string>& species_names);///< populates with the species in \a species_names
+    explicit SpeciesSelector(GG::X w, GG::Y h);                                         ///< populates with all species in SpeciesManager
+    SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names);   ///< populates with the species in \a species_names
     //@}
 
     /** \name Accessors */ //@{
@@ -443,6 +443,7 @@ public:
 
     /** \name Mutators */ //@{
     void SelectSpecies(const std::string& species_name);
+    void SetSpecies(const std::vector<std::string>& species_names);         ///< sets the species that can be selected
     //@}
 
     mutable boost::signal<void (const std::string&)> SpeciesChangedSignal;

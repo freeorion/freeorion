@@ -356,7 +356,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_starting_species_label = new GG::TextControl(CONTROL_MARGIN, ypos, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_SPECIES"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
-    m_starting_secies_selector = new SpeciesSelector(AUTO_CONTROL_HEIGHT);
+    m_starting_secies_selector = new SpeciesSelector(LABELS_WIDTH, AUTO_CONTROL_HEIGHT);
     m_starting_secies_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_starting_secies_selector->Height()) / 2));
     m_starting_secies_selector->SelectSpecies(GetOptionsDB().Get<std::string>("GameSetup.starting-species"));
 
