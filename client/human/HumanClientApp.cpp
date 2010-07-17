@@ -602,7 +602,7 @@ void HumanClientApp::HandleMessage(Message& msg)
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR:                ClientUI::MessageBox(UserString(msg.Text()), true);
+    case Message::ERROR:                m_fsm->process_event(Error(msg)); break;
     case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg)); break;
     case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg)); break;
     case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg)); break;
@@ -700,8 +700,8 @@ void HumanClientApp::Autosave(bool new_game)
     try {
         SaveGame((save_dir / save_filename).file_string());
     } catch (const std::exception& e) {
-        Logger().errorStream() << "Autosave failed";
-        std::cerr << "Autosave failed" << std::endl;
+        Logger().errorStream() << "Autosave failed: " << e.what();
+        std::cerr << "Autosave failed: " << e.what() << std::endl;
     }
 }
 

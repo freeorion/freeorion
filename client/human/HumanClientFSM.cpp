@@ -17,7 +17,7 @@
 
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     struct MPLobbyCancelForwarder
     {
@@ -133,6 +133,16 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
     Client().SetPlayerID(msg.m_message.ReceivingPlayer());
     Client().m_ui->GetMapWnd()->Sanitize();
     return transit<PlayingGame>();
+}
+
+boost::statechart::result WaitingForSPHostAck::react(const Error& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.Error";
+    const Message& message = msg.m_message;
+    ClientUI::MessageBox(UserString(message.Text()), true);
+    Logger().errorStream() << "WaitingForSPHostAck::react(const Error& msg) error: " << message.Text();
+    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
+    return transit<IntroMenu>();
 }
 
 
@@ -381,6 +391,16 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
 boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
+    return transit<IntroMenu>();
+}
+
+boost::statechart::result PlayingGame::react(const Error& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Error";
+    const Message& message = msg.m_message;
+    ClientUI::MessageBox(UserString(message.Text()), true);
+    Logger().errorStream() << "PlayingGame::react(const Error& msg) error: " << message.Text();
+    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
     return transit<IntroMenu>();
 }
 

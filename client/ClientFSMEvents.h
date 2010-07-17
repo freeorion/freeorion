@@ -22,25 +22,26 @@ struct MessageEventBase
 };
 
 // Define Boost.Preprocessor list of all Message events
-#define MESSAGE_EVENTS                             \
-    (HostMPGame)                                   \
-        (HostSPGame)                               \
-        (JoinGame)                                 \
-        (LobbyUpdate)                              \
-        (LobbyChat)                                \
-        (LobbyHostAbort)                           \
-        (LobbyNonHostExit)                         \
-        (SaveGame)                                 \
-        (GameStart)                                \
-        (TurnUpdate)                               \
-        (TurnProgress)                             \
-        (CombatStart)                              \
-        (CombatRoundUpdate)                        \
-        (CombatEnd)                                \
-        (PlayerChat)                               \
-        (VictoryDefeat)                            \
-        (PlayerEliminated)                         \
-        (EndGame)
+#define MESSAGE_EVENTS                         \
+    (Error)                                    \
+    (HostMPGame)                               \
+    (HostSPGame)                               \
+    (JoinGame)                                 \
+    (LobbyUpdate)                              \
+    (LobbyChat)                                \
+    (LobbyHostAbort)                           \
+    (LobbyNonHostExit)                         \
+    (SaveGame)                                 \
+    (GameStart)                                \
+    (TurnUpdate)                               \
+    (TurnProgress)                             \
+    (CombatStart)                              \
+    (CombatRoundUpdate)                        \
+    (CombatEnd)                                \
+    (PlayerChat)                               \
+    (VictoryDefeat)                            \
+    (PlayerEliminated)                         \
+    (EndGame)
 
 
 #define DECLARE_MESSAGE_EVENT(r, data, name)                            \

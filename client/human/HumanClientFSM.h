@@ -57,16 +57,16 @@ struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
 // Posted by PlayingTurn's ctor when --auto-advance-first-turn is in use.
 struct AutoAdvanceFirstTurn : boost::statechart::event<AutoAdvanceFirstTurn> {};
 
-// This is a Boost.Preprocessor list of all the events above.  As new events are added above, they should be added to
-// this list as well.
-#define HUMAN_CLIENT_FSM_EVENTS                                    \
-    (StartMPGameClicked)                                           \
-        (CancelMPGameClicked)                                      \
-        (HostSPGameRequested)                                      \
-        (HostMPGameRequested)                                      \
-        (JoinMPGameRequested)                                      \
-        (TurnEnded)                                                \
-        (ResetToIntroMenu)
+// This is a Boost.Preprocessor list of all the events above.  As new events
+// are added above, they should be added to this list as well.
+#define HUMAN_CLIENT_FSM_EVENTS                                 \
+    (StartMPGameClicked)                                        \
+    (CancelMPGameClicked)                                       \
+    (HostSPGameRequested)                                       \
+    (HostMPGameRequested)                                       \
+    (JoinMPGameRequested)                                       \
+    (TurnEnded)                                                 \
+    (ResetToIntroMenu)
 
 // Top-level human client states
 struct IntroMenu;
@@ -168,13 +168,15 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
     typedef boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<HostSPGame>
+        boost::statechart::custom_reaction<HostSPGame>,
+        boost::statechart::custom_reaction<Error>
     > reactions;
 
     WaitingForSPHostAck();
     ~WaitingForSPHostAck();
 
     boost::statechart::result react(const HostSPGame& a);
+    boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
 };
@@ -300,7 +302,8 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
         boost::statechart::custom_reaction<VictoryDefeat>,
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
-        boost::statechart::custom_reaction<ResetToIntroMenu>
+        boost::statechart::custom_reaction<ResetToIntroMenu>,
+        boost::statechart::custom_reaction<Error>
     > reactions;
 
     PlayingGame();
@@ -311,6 +314,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const EndGame& msg);
     boost::statechart::result react(const ResetToIntroMenu& msg);
+    boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
 };
