@@ -1091,6 +1091,22 @@ SpeciesSelector::SpeciesSelector(GG::Y h) :
         Select(this->begin());
 }
 
+SpeciesSelector::SpeciesSelector(GG::Y h, const std::vector<std::string>& species_names) :
+    CUIDropDownList(GG::X0, GG::Y0, SPECIES_SELECTOR_WIDTH, h - 8, 12 * h)
+{
+    const SpeciesManager& sm = GetSpeciesManager();
+    for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
+        const std::string& species_name = *it;
+        if (const Species* species = GetSpecies(species_name))
+            Insert(new SpeciesRow(species, h - 4));
+        else
+            Logger().errorStream() << "SpeciesSelector::SpeciesSelector couldn't find species with name: " << species_name;
+    }
+    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
+    if (!this->Empty())
+        Select(this->begin());
+}
+
 const std::string& SpeciesSelector::CurrentSpeciesName() const
 {
     CUIDropDownList::iterator row_it = this->CurrentItem();
@@ -1108,12 +1124,13 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const
 
 void SpeciesSelector::SelectSpecies(const std::string& species_name)
 {
-    const SpeciesManager& sm = GetSpeciesManager();
-    iterator list_it = this->begin();
-    for (SpeciesManager::iterator species_it = sm.begin(); species_it != sm.end() && list_it != this->end(); ++species_it, ++list_it) {
-        if (species_it->first == species_name) {
-            Select(list_it);
-            return;
+    for (CUIDropDownList::iterator row_it = this->begin(); row_it != this->end(); ++row_it) {
+        CUIDropDownList::Row* row = *row_it;
+        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row)) {
+            if (species_row->Name() == species_name) {
+                Select(row_it);
+                return;
+            }
         }
     }
     Logger().errorStream() << "SpeciesSelector::SelectSpecies was unable to find a species in the list with name " << species_name;

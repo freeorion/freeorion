@@ -433,7 +433,8 @@ class SpeciesSelector : public CUIDropDownList
 {
 public:
     /** \name Structors */ //@{
-    SpeciesSelector(GG::Y h);                       ///< populates with all species in SpeciesManager
+    explicit SpeciesSelector(GG::Y h);                                      ///< populates with all species in SpeciesManager
+    SpeciesSelector(GG::Y h, const std::vector<std::string>& species_names);///< populates with the species in \a species_names
     //@}
 
     /** \name Accessors */ //@{
