@@ -514,7 +514,7 @@ CombatSetupWnd::CombatSetupWnd(
 
             // TODO: Temporary!  Serialization of CombatData currently sends
             // everything to everyone.  Fix this.
-            if (ship.Owners().find(HumanClientApp::GetApp()->PlayerID()) == ship.Owners().end())
+            if (ship.Owners().find(HumanClientApp::GetApp()->EmpireID()) == ship.Owners().end())
                 continue;
 
             Ogre::SceneNode* node = GetShipNode(ship);

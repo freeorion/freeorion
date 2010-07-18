@@ -1305,7 +1305,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
             // explicitly attack ships and fighters with ships and fighters.
             if (const CombatObjectPtr* target = Ogre::any_cast<CombatObjectPtr>(&node->getUserAny())) {
                 // TODO: use friends/enemies considerations later
-                bool attack = (*target)->Owner() != HumanClientApp::GetApp()->PlayerID();
+                bool attack = (*target)->Owner() != HumanClientApp::GetApp()->EmpireID();
                 for (std::map<Ogre::MovableObject*, SelectedObject>::iterator it =
                          m_current_selections.begin();
                      it != m_current_selections.end();
@@ -1318,7 +1318,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                     // TODO: Handle planets (really, their defenses) attacking
                     // objects.  For now, one can only explicitly attack ships
                     // and fighters with ships and fighters.
-                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->PlayerID())
+                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->EmpireID())
                         continue;
 
                     // don't defend yourself
@@ -1366,7 +1366,7 @@ void CombatWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
                     const CombatObjectPtr* combat_object_ =
                         Ogre::any_cast<CombatObjectPtr>(&node->getUserAny());
 
-                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->PlayerID())
+                    if (!combat_object_ || (*combat_object_)->Owner() != HumanClientApp::GetApp()->EmpireID())
                         continue;
 
                     CombatObjectPtr combat_object = *combat_object_;
