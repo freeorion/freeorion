@@ -317,6 +317,18 @@ std::size_t FleetUIManager::OpenDetailWnds(FleetWnd* fleet_wnd) const {
     return retval;
 }
 
+int FleetUIManager::SelectedShipID() const
+{
+    if (!m_active_fleet_wnd)
+        return UniverseObject::INVALID_OBJECT_ID;
+
+    std::set<int> selected_ship_ids = m_active_fleet_wnd->SelectedShipIDs();
+    if (selected_ship_ids.size() != 1)
+        return UniverseObject::INVALID_OBJECT_ID;
+
+    return *selected_ship_ids.begin();
+}
+
 FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids, bool read_only,
                                       int selected_fleet_id/* = UniverseObject::INVALID_OBJECT_ID*/,
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE*/)
@@ -396,15 +408,19 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
     if (fleet_wnd == m_active_fleet_wnd)
         return;
 
-    // disconnect old active FleetWnd signal
-    if (m_active_fleet_wnd)
-        m_active_fleet_wnd_signal.disconnect();
+    // disconnect old active FleetWnd signals
+    if (m_active_fleet_wnd) {
+        for (std::vector<boost::signals::connection>::iterator it = m_active_fleet_wnd_signals.begin(); it != m_active_fleet_wnd_signals.end(); ++it)
+            it->disconnect();
+        m_active_fleet_wnd_signals.clear();
+    }
 
     // set new active FleetWnd
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_active_fleet_wnd_signal = GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal, ActiveFleetWndSelectedFleetsChangedSignal);
+    m_active_fleet_wnd_signals.push_back(GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal,   ActiveFleetWndSelectedFleetsChangedSignal));
+    m_active_fleet_wnd_signals.push_back(GG::Connect(m_active_fleet_wnd->SelectedShipsChangedSignal,    ActiveFleetWndSelectedShipsChangedSignal));
 
     ActiveFleetWndChangedSignal();
 }
@@ -1700,9 +1716,13 @@ public:
 
     Fleet*          GetFleet() const;           ///< returns the currently-displayed fleet  may be 0
     int             FleetID() const;
+    std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
+
     void            SetFleet(int fleet_id);     ///< sets the currently-displayed Fleet.  setting to UniverseObject::INVALID_OBJECT_ID shows no fleet
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+    mutable boost::signal<void (const ShipsListBox::SelectionSet&)> SelectedShipsChangedSignal; ///< emitted when the set of selected ships changes
 
 private:
     int             GetShipIDOfListRow(GG::ListBox::iterator it) const; ///< returns the ID number of the ship in row \a row_idx of the ships listbox
@@ -1712,6 +1732,7 @@ private:
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            ShipBrowsed(GG::ListBox::iterator it);
     void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    int             ShipInRow(GG::ListBox::iterator it) const;
 
     int                         m_fleet_id;
     const bool                  m_read_only;
@@ -1793,6 +1814,20 @@ int FleetDetailPanel::FleetID() const
     return m_fleet_id;
 }
 
+std::set<int> FleetDetailPanel::SelectedShipIDs() const
+{
+    std::set<int> retval;
+    for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
+        if (!m_ships_lb->Selected(it))
+            continue;
+
+        int selected_ship_id = ShipInRow(it);
+        if (selected_ship_id != UniverseObject::INVALID_OBJECT_ID)
+            retval.insert(selected_ship_id);
+    }
+    return retval;
+}
+
 void FleetDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     const GG::Pt old_size = Size();
@@ -1833,6 +1868,7 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
         ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((**it)[0]);
         ship_panel->Select(rows.find(it) != rows.end());
     }
+    SelectedShipsChangedSignal(rows);
 }
 
 void FleetDetailPanel::ShipBrowsed(GG::ListBox::iterator it)
@@ -1910,6 +1946,16 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 }
 
+int FleetDetailPanel::ShipInRow(GG::ListBox::iterator it) const
+{
+    if (it == m_ships_lb->end())
+        return UniverseObject::INVALID_OBJECT_ID;
+
+    if (ShipRow* ship_row = dynamic_cast<ShipRow*>(*it))
+        return ship_row->ShipID();
+
+    return UniverseObject::INVALID_OBJECT_ID;
+}
 
 ////////////////////////////////////////////////
 // FleetDetailWnd
@@ -2083,14 +2129,15 @@ void FleetWnd::Init(int selected_fleet_id)
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_read_only);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
-    GG::Connect(m_fleets_lb->SelChangedSignal,      &FleetWnd::FleetSelectionChanged,   this);
-    GG::Connect(m_fleets_lb->LeftClickedSignal,     &FleetWnd::FleetLeftClicked,        this);
-    GG::Connect(m_fleets_lb->RightClickedSignal,    &FleetWnd::FleetRightClicked,       this);
-    GG::Connect(m_fleets_lb->DoubleClickedSignal,   &FleetWnd::FleetDoubleClicked,      this);
+    GG::Connect(m_fleets_lb->SelChangedSignal,                      &FleetWnd::FleetSelectionChanged,   this);
+    GG::Connect(m_fleets_lb->LeftClickedSignal,                     &FleetWnd::FleetLeftClicked,        this);
+    GG::Connect(m_fleets_lb->RightClickedSignal,                    &FleetWnd::FleetRightClicked,       this);
+    GG::Connect(m_fleets_lb->DoubleClickedSignal,                   &FleetWnd::FleetDoubleClicked,      this);
     AttachChild(m_fleets_lb);
 
     // create fleet detail panel
     m_fleet_detail_panel = new FleetDetailPanel(GG::X1, GG::Y1, 0, m_read_only);
+    GG::Connect(m_fleet_detail_panel->SelectedShipsChangedSignal,   &FleetWnd::ShipSelectionChanged,    this);
     AttachChild(m_fleet_detail_panel);
 
 
@@ -2126,12 +2173,12 @@ void FleetWnd::Init(int selected_fleet_id)
 
 
     // random other signals... deletion and state changes
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal,               &FleetWnd::UniverseObjectDeleted,   this);
+    GG::Connect(GetUniverse().UniverseObjectDeleteSignal,           &FleetWnd::UniverseObjectDeleted,   this);
 
     if (const System* system = GetObject<System>(m_system_id)) {
-        GG::Connect(system->StateChangedSignal,                         &FleetWnd::SystemChangedSlot,       this);
-        GG::Connect(system->FleetRemovedSignal,                         &FleetWnd::SystemFleetRemovedSlot,  this);
-        GG::Connect(system->FleetInsertedSignal,                        &FleetWnd::SystemFleetInsertedSlot, this);
+        GG::Connect(system->StateChangedSignal,                     &FleetWnd::SystemChangedSlot,       this);
+        GG::Connect(system->FleetRemovedSignal,                     &FleetWnd::SystemFleetRemovedSlot,  this);
+        GG::Connect(system->FleetInsertedSignal,                    &FleetWnd::SystemFleetInsertedSlot, this);
     }
 
 
@@ -2378,6 +2425,11 @@ std::set<int> FleetWnd::SelectedFleetIDs() const
     return retval;
 }
 
+std::set<int> FleetWnd::SelectedShipIDs() const
+{
+    return m_fleet_detail_panel->SelectedShipIDs();
+}
+
 void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows)
 {
     // show appropriate fleet in detail panel.  if one fleet is selected, show
@@ -2559,6 +2611,11 @@ std::string FleetWnd::TitleText() const
 void FleetWnd::CreateNewFleetFromDrops(const std::vector<int>& ship_ids)
 {
     CreateNewFleetFromShips(ship_ids);
+}
+
+void FleetWnd::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows)
+{
+    SelectedShipsChangedSignal();
 }
 
 void FleetWnd::UniverseObjectDeleted(const UniverseObject *obj)

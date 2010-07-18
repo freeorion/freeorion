@@ -39,6 +39,7 @@ public:
     FleetWnd*       ActiveFleetWnd() const;
     FleetWnd*       WndForFleet(const Fleet* fleet) const;
     std::size_t     OpenDetailWnds(FleetWnd* fleet_wnd) const;
+    int             SelectedShipID() const;
     //@}
 
     //! \name Mutators //@{
@@ -61,6 +62,7 @@ public:
 
     mutable boost::signal<void ()> ActiveFleetWndChangedSignal;                 //!< emitted when the selected FleetWnd changes
     mutable boost::signal<void ()> ActiveFleetWndSelectedFleetsChangedSignal;   //!< emitted when the selected fleets in the active FleetWnd change
+    mutable boost::signal<void ()> ActiveFleetWndSelectedShipsChangedSignal;    //!< emitted when the selected ships in the active FleetWnd change
 
     static FleetUIManager& GetFleetUIManager();
 
@@ -74,10 +76,10 @@ private:
 
     typedef std::map<FleetWnd*, std::set<FleetDetailWnd*> > FleetWndMap;
 
-    std::set<FleetWnd*>         m_fleet_wnds;
-    FleetWndMap                 m_fleet_and_detail_wnds;
-    FleetWnd*                   m_active_fleet_wnd;
-    boost::signals::connection  m_active_fleet_wnd_signal;
+    std::set<FleetWnd*>                     m_fleet_wnds;
+    FleetWndMap                             m_fleet_and_detail_wnds;
+    FleetWnd*                               m_active_fleet_wnd;
+    std::vector<boost::signals::connection> m_active_fleet_wnd_signals;
 };
 
 /** This is the top level Fleet UI element.  It shows a list of fleets, a
@@ -96,6 +98,7 @@ public:
     bool                    ContainsFleet(int fleet_id) const;  ///< returns true if fleet with ID \a fleet_id is shown in this FleetWnd
     const std::set<int>&    FleetIDs() const;                   ///< returns IDs of all fleets shown in this FleetWnd
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
+    std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
     //@}
 
     //! \name Mutators //@{
@@ -109,6 +112,7 @@ public:
     static const GG::Pt&    LastSize();                         ///< returns the last size ... ''
 
     mutable boost::signal<void ()>          SelectedFleetsChangedSignal;
+    mutable boost::signal<void ()>          SelectedShipsChangedSignal;
     mutable boost::signal<void (FleetWnd*)> ClickedSignal;
 
 protected:
@@ -142,6 +146,8 @@ private:
     int             FleetInRow(GG::ListBox::iterator it) const;
     std::string     TitleText() const;
     void            CreateNewFleetFromDrops(const std::vector<int>& ship_ids);
+
+    void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
 
     void            UniverseObjectDeleted(const UniverseObject *obj);
 
