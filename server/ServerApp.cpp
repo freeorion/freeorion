@@ -656,7 +656,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
 
         // add empires to turn processing, and restore saved orders and UI data or save state data
-        if (Empire* empire = Empires().Lookup(empire_id)) {
+        if (Empires().Lookup(empire_id)) {
             AddEmpireTurn(empire_id);
         } else {
             Logger().errorStream() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing";

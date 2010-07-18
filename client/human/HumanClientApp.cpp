@@ -433,7 +433,7 @@ void HumanClientApp::SaveGame(const std::string& filename)
     Networking().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
     if (response_msg.Type() != Message::SAVE_GAME) {
         Logger().errorStream() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
-        throw std::exception("HumanClientApp::SaveGame synchronous message received invalid response message type");
+        throw std::runtime_error("HumanClientApp::SaveGame synchronous message received invalid response message type");
     }
     HandleSaveGameDataRequest();
 }
