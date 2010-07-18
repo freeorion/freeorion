@@ -1570,12 +1570,6 @@ Rename Planet
 SP_ENTER_NEW_PLANET_NAME
 Enter new planet name
 
-SP_USE_DEPARTING_COLONY_SHIPS_QUESTION
-'''All colony ships in this system have been
-given orders to leave the system.
-
-Use one of the departing colony ships?'''
-
 #################
 # Fleet Window  #
 #################

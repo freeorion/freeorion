@@ -647,57 +647,6 @@ namespace {
 
         return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
     }
-
-    Ship*       FindColonyShip(int system_id) {
-        const System* system = GetObject<System>(system_id);
-        if (!system) return 0;
-
-        std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-
-        // check all fleets in this system...
-        for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
-            Fleet* fleet = GetObject<Fleet>(*it);
-            if (!fleet) {
-                Logger().errorStream() << "FindColonyShip couldn't get fleet with id " << *it;
-                continue;
-            }
-
-            // reject fleets not owned by this empire
-            if (fleet->Owners().find(empire_id) == fleet->Owners().end()) continue;
-
-            // reject fleets that are moving
-            if (!fleet->Accept(StationaryFleetVisitor(*fleet->Owners().begin()))) continue;
-
-            // check if any of the ship in this fleet is a colony ship
-            for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
-                Ship* s = GetObject<Ship>(*it);
-                if (!s) {
-                    Logger().errorStream() << "coudln't find ship with id: " << *it;
-                    continue;
-                }
-
-                //Logger().debugStream() << "FindColonyShip examining ship " << s->Name();
-
-                const ShipDesign* design = s->Design();
-
-                if (!design) {
-                    Logger().errorStream() << "coudln't get ship design of ship " << *it << " with design id: " << s->DesignID();
-                    continue;
-                }
-
-                //Logger().debugStream() << "... ship design name " << design->Name();
-
-                if (design->CanColonize()) {
-                    //Logger().debugStream() << "SidePanel:FindcolonyShip returning " << s->Name();
-                    return s;
-                }
-            }
-        }
-        //Logger().debugStream() << "FindcolonyShip returning null";
-        return 0;   // no ships found...
-    }
 }
 
 ////////////////////////////////////////////////
@@ -970,16 +919,16 @@ void SidePanel::PlanetPanel::DoLayout()
 }
 
 namespace {
-    bool ValidColonyShipSelected(int system_id) {
+    const Ship* ValidSelectedColonyShip(int system_id) {
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
-            return false;
+            return 0;
 
         // is there a valid single selected ship in the active FleetWnd?
         int ship_id = FleetUIManager::GetFleetUIManager().SelectedShipID();
         const Ship* ship = GetUniverse().Objects().Object<Ship>(ship_id);
         if (!ship)
-            return false;
+            return 0;
 
         // is selected ship: a colony ship, owned by this client's player,
         // in the right system, and does it have a valid species?
@@ -988,10 +937,10 @@ namespace {
             !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()) ||
             ship->SpeciesName().empty())
         {
-            return false;
+            return 0;
         }
 
-        return true;
+        return ship;
     }
 }
 
@@ -1086,7 +1035,7 @@ void SidePanel::PlanetPanel::Refresh()
         owner == OS_NONE &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
         !planet->IsAboutToBeColonized() &&
-        ValidColonyShipSelected(SidePanel::SystemID()))
+        ValidSelectedColonyShip(SidePanel::SystemID()))
     {
         AttachChild(m_button_colonize);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
@@ -1318,26 +1267,19 @@ void SidePanel::PlanetPanel::ClickColonize()
 
     // colonize
     if (it == pending_colonization_orders.end()) {
-        Ship* ship = FindColonyShip(planet->SystemID());
+        const Ship* ship = ValidSelectedColonyShip(planet->SystemID());
         if (!ship) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize ship not found!";
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
             return;
         }
-
+        if (!ship->OwnedBy(empire_id) || ship->Owners().size() > 1) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by just this client's player.";
+            return;
+        }
         const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
         if (!fleet) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize fleet not found!";
             return;
-        }
-        if (!fleet->Accept(StationaryFleetVisitor(*fleet->Owners().begin()))) {
-            GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), UserString("SP_USE_DEPARTING_COLONY_SHIPS_QUESTION"),
-                                   ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::CtrlBorderColor(),
-                                   ClientUI::WndColor(), ClientUI::TextColor(), 2,
-                                   UserString("YES"), UserString("NO"));
-            dlg.Run();
-
-            if (dlg.Result() != 0)
-                return;
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship->ID(), planet->ID())));
