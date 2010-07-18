@@ -879,8 +879,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_species_selector = new SpeciesSelector(GG::X(MAX_PLANET_DIAMETER), m_button_colonize->Height()/*, std::vector<std::string>()*/);
-    m_species_selector->MoveTo(GG::Pt(m_button_colonize->LowerRight().x + GG::X(EDGE_PAD), m_button_colonize->UpperLeft().y));
+    //m_species_selector = new SpeciesSelector(GG::X(MAX_PLANET_DIAMETER), m_button_colonize->Height()/*, std::vector<std::string>()*/);
+    //m_species_selector->MoveTo(GG::Pt(m_button_colonize->LowerRight().x + GG::X(EDGE_PAD), m_button_colonize->UpperLeft().y));
 
 
     if (m_planet_graphic)
@@ -931,11 +931,11 @@ void SidePanel::PlanetPanel::DoLayout()
     if (m_button_colonize && m_button_colonize->Parent() == this) {
         m_button_colonize->MoveTo(GG::Pt(left, y));
 
-        if (m_species_selector && m_species_selector->Parent() == this) {
-            GG::X ss_left = left + m_button_colonize->Width() + GG::X(EDGE_PAD);
-            GG::Y ss_height = m_button_colonize->Height();
-            m_species_selector->SizeMove(GG::Pt(ss_left, y), GG::Pt(right, y + ss_height));
-        }
+        //if (m_species_selector && m_species_selector->Parent() == this) {
+        //    GG::X ss_left = left + m_button_colonize->Width() + GG::X(EDGE_PAD);
+        //    GG::Y ss_height = m_button_colonize->Height();
+        //    m_species_selector->SizeMove(GG::Pt(ss_left, y), GG::Pt(right, y + ss_height));
+        //}
 
         y += m_button_colonize->Height() + EDGE_PAD;
     }
@@ -967,6 +967,32 @@ void SidePanel::PlanetPanel::DoLayout()
     Resize(GG::Pt(Width(), std::max(y, min_height)));
 
     ResizedSignal();
+}
+
+namespace {
+    bool ValidColonyShipSelected(int system_id) {
+        // if not looking in a valid system, no valid colony ship can be available
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            return false;
+
+        // is there a valid single selected ship in the active FleetWnd?
+        int ship_id = FleetUIManager::GetFleetUIManager().SelectedShipID();
+        const Ship* ship = GetUniverse().Objects().Object<Ship>(ship_id);
+        if (!ship)
+            return false;
+
+        // is selected ship: a colony ship, owned by this client's player,
+        // in the right system, and does it have a valid species?
+        if (ship->SystemID() != system_id ||
+            !ship->CanColonize() ||
+            !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()) ||
+            ship->SpeciesName().empty())
+        {
+            return false;
+        }
+
+        return true;
+    }
 }
 
 void SidePanel::PlanetPanel::Refresh()
@@ -1060,7 +1086,7 @@ void SidePanel::PlanetPanel::Refresh()
         owner == OS_NONE &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
         !planet->IsAboutToBeColonized() &&
-        FindColonyShip(planet->SystemID()))
+        ValidColonyShipSelected(SidePanel::SystemID()))
     {
         AttachChild(m_button_colonize);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
@@ -1068,8 +1094,7 @@ void SidePanel::PlanetPanel::Refresh()
         if (m_button_colonize)
             m_button_colonize->SetText(colonize_text);
 
-        AttachChild(m_species_selector);
-        // TODO: find available species and populate selector with those
+        //AttachChild(m_species_selector);
 
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
