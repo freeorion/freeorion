@@ -29,6 +29,7 @@ namespace {
             retval[it->first] = SaveGameEmpireData(it->first, it->second->Name(), it->second->PlayerName(), it->second->Color());
         return retval;
     }
+    const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
 }
 
 void SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
@@ -43,7 +44,7 @@ void SaveGame(const std::string& filename, const ServerSaveGameData& server_save
     try {
         std::ofstream ofs(filename.c_str(), std::ios_base::binary);
         if (!ofs)
-            throw std::exception("Unable to open file");
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_OARCHIVE_TYPE oa(ofs);
         oa << BOOST_SERIALIZATION_NVP(server_save_game_data);
         oa << BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -71,7 +72,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
         if (!ifs)
-            throw std::exception("Unable to open file");
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -92,7 +93,7 @@ void LoadPlayerSaveGameData(const std::string& filename, std::vector<PlayerSaveG
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
         if (!ifs)
-            throw std::exception("Unable to open file");
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
@@ -111,7 +112,7 @@ void LoadEmpireSaveGameData(const std::string& filename, std::map<int, SaveGameE
     try {
         std::ifstream ifs(filename.c_str(), std::ios_base::binary);
         if (!ifs)
-            throw std::exception("Unable to open file");
+            throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         FREEORION_IARCHIVE_TYPE ia(ifs);
         ia >> BOOST_SERIALIZATION_NVP(ignored_server_save_game_data);
         ia >> BOOST_SERIALIZATION_NVP(ignored_player_save_game_data);
