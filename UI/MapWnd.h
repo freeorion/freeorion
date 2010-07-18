@@ -307,6 +307,7 @@ private:
     void            ShowAllPopups();
 
     void            SelectedFleetsChanged();
+    void            SelectedShipsChanged();
 
     void            HandleEmpireElimination(int empire_id);             //!< cleans up internal storage of now-invalidated empire ID
 
@@ -316,6 +317,7 @@ private:
     std::vector<double>                             m_bg_scroll_rate;   //!< array, the rates at which each background scrolls
 
     std::set<int>               m_selected_fleet_ids;
+    std::set<int>               m_selected_ship_ids;
 
     double                      m_zoom_steps_in;    //!< number of zoom steps in.  each 1.0 step increases display scaling by the same zoom step factor
     SidePanel*                  m_side_panel;       //!< planet view panel on the side of the main map

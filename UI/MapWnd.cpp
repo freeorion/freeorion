@@ -490,6 +490,7 @@ MapWnd::MapWnd() :
     m_backgrounds(),
     m_bg_scroll_rate(),
     m_selected_fleet_ids(),
+    m_selected_ship_ids(),
     m_zoom_steps_in(0.0),
     m_side_panel(0),
     m_system_icons(),
@@ -778,6 +779,8 @@ MapWnd::MapWnd() :
             &MapWnd::SelectedFleetsChanged,     this);
     Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedFleetsChangedSignal,
             &MapWnd::SelectedFleetsChanged,     this);
+    Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedShipsChangedSignal,
+            &MapWnd::SelectedShipsChanged,      this);
 }
 
 MapWnd::~MapWnd()
@@ -3466,6 +3469,30 @@ void MapWnd::SelectedFleetsChanged()
     RefreshFleetButtonSelectionIndicators();
 }
 
+void MapWnd::SelectedShipsChanged()
+{
+    // get selected ships
+    std::set<int> selected_ship_ids;
+    if (const FleetWnd* fleet_wnd = FleetUIManager::GetFleetUIManager().ActiveFleetWnd())
+        selected_ship_ids = fleet_wnd->SelectedShipIDs();
+
+    // if old and new sets of selected fleets are the same, don't need to change anything
+    if (selected_ship_ids == m_selected_fleet_ids)
+        return;
+
+    // set new selected fleets
+    m_selected_ship_ids = selected_ship_ids;
+
+    // refresh meters of objects in currently selected system, as changing selected fleets
+    // may have changed which species a planet should have population estimates shown for
+    int sidepanel_system_id = SidePanel::SystemID();
+    if (sidepanel_system_id == UniverseObject::INVALID_OBJECT_ID)
+        return;
+
+    UpdateMeterEstimates(sidepanel_system_id, true);
+    SidePanel::Update();
+}
+
 void MapWnd::RefreshFleetButtonSelectionIndicators()
 {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
@@ -3567,6 +3594,7 @@ void MapWnd::Sanitize()
     m_design_wnd->Sanitize();
 
     m_selected_fleet_ids.clear();
+    m_selected_ship_ids.clear();
 
     m_starlane_endpoints.clear();
 
@@ -4143,7 +4171,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
     Logger().debugStream() << "MapWnd::UpdateMeterEstimates";
 
-    int player_id = HumanClientApp::GetApp()->PlayerID();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
     ObjectMap& objects = GetUniverse().Objects();
 
     // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
@@ -4151,15 +4179,36 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     std::set<Planet*> unowned_planets;
     Universe::InhibitUniverseObjectSignals(true);
     for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-         Planet* planet = objects.Object<Planet>(*it);
-         if (!planet)
-             continue;
-         if (planet->Owners().empty()) {
-             unowned_planets.insert(planet);
-             planet->AddOwner(player_id);
-             planet->SetSpecies("SP_HUMAN");    // todo: determine appropriate species to set here based on selected colonization species, and only add that species to this planet if the species can reside on the planet
-             Logger().debugStream() << "... Set planet(" << planet->ID() << "): " << planet->Name() << " species to SP_HUMAN";
-         }
+        int planet_id = *it;
+        Planet* planet = objects.Object<Planet>(planet_id);
+        if (!planet || !planet->Unowned())
+            continue;
+
+        int system_id = planet->SystemID();
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            continue;
+
+        int ship_id = FleetUIManager::GetFleetUIManager().SelectedShipID();
+        const Ship* ship = objects.Object<Ship>(ship_id);
+        if (!ship)
+            continue;
+
+        // is selected ship a colony ship that is owned by this client's player and is in the right system?
+        if (ship->SystemID() != system_id || !ship->CanColonize() || !ship->OwnedBy(empire_id))
+            continue;
+
+        const std::string& species_name = ship->SpeciesName();
+        if (species_name.empty())
+            continue;
+
+        // found a single colony ship selected and owned by this client's player.
+        // use its species to estimate planet's projected population target if
+        // it were colonized
+
+        unowned_planets.insert(planet);
+        planet->AddOwner(empire_id);
+        planet->SetSpecies(species_name);
+        Logger().debugStream() << "... Set planet(" << planet->ID() << "): " << planet->Name() << " species to " << species_name;
     }
 
     // update meter estimates with temporary ownership
@@ -4167,7 +4216,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
 
     // remove temporary ownership added above
     for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
-        (*it)->RemoveOwner(player_id);
+        (*it)->RemoveOwner(empire_id);
         (*it)->SetSpecies("");
     }
     Universe::InhibitUniverseObjectSignals(false);
