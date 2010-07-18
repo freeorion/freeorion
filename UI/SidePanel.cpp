@@ -428,7 +428,7 @@ private:
     GG::TextControl*        m_planet_name;              ///< planet name
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
-    SpeciesSelector*        m_species_selector;         ///< droplist to pick which species to colonize with
+    GG::TextControl*        m_colonize_instruction;     ///< text that tells the player to pick a colony ship to colonize
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
@@ -627,24 +627,7 @@ namespace {
         return UserString(boost::lexical_cast<std::string>(planet.Type()));
     }
 
-    std::string GetPlanetEnvironmentName(const Planet &planet) {
-        // get a species... for now, use human player's empire's capitol's species.
-        // TODO: Use species of selected colony ship...?
-        const Empire* human_player_empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-        int capitol_id = UniverseObject::INVALID_OBJECT_ID;
-        if (human_player_empire)
-            capitol_id = human_player_empire->CapitolID();
-        const Planet* human_empire_capitol = GetMainObjectMap().Object<Planet>(capitol_id);
-        std::string species_name;
-        if (human_empire_capitol) {
-            species_name = human_empire_capitol->SpeciesName();
-        } else {
-            // if no capitol species available, use first defined species in manager
-            const SpeciesManager& manager = GetSpeciesManager();
-            if (!manager.empty())
-                species_name = manager.begin()->first;
-        }
-
+    std::string GetPlanetEnvironmentName(const Planet &planet, const std::string& species_name) {
         return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
     }
 }
@@ -662,7 +645,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_planet_name(0),
     m_env_size(0),
     m_button_colonize(0),
-    m_species_selector(0),
+    m_colonize_instruction(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
@@ -793,7 +776,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                             font, ClientUI::TextColor());
     AttachChild(m_planet_name);
 
-    std::string env_size_text = GetPlanetSizeName(*planet) + " " + GetPlanetTypeName(*planet) + " (" + GetPlanetEnvironmentName(*planet) + ")";
 
     // create info panels and attach signals
     GG::X panel_width = w - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
@@ -818,18 +800,20 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_specials_panel = new SpecialsPanel(panel_width, m_planet_id);
     AttachChild(m_specials_panel);
 
+    std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE")) % GetPlanetSizeName(*planet) % GetPlanetTypeName(*planet));
     m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
-    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*8),
+    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*10),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    //m_species_selector = new SpeciesSelector(GG::X(MAX_PLANET_DIAMETER), m_button_colonize->Height()/*, std::vector<std::string>()*/);
-    //m_species_selector->MoveTo(GG::Pt(m_button_colonize->LowerRight().x + GG::X(EDGE_PAD), m_button_colonize->UpperLeft().y));
+    m_colonize_instruction = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0,
+                                                 UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
+                                                 ClientUI::GetFont(), ClientUI::TextColor());
 
 
     if (m_planet_graphic)
@@ -847,6 +831,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
     delete m_button_colonize;
+    delete m_colonize_instruction;
     delete m_env_size;
     delete m_population_panel;
     delete m_resource_panel;
@@ -877,15 +862,11 @@ void SidePanel::PlanetPanel::DoLayout()
         y += m_env_size->Height() + EDGE_PAD;
     }
 
-    if (m_button_colonize && m_button_colonize->Parent() == this) {
+    if (m_colonize_instruction && m_colonize_instruction->Parent() == this) {
+        m_colonize_instruction->MoveTo(GG::Pt(left, y));
+        y += m_colonize_instruction->Height() + EDGE_PAD;
+    } else if (m_button_colonize && m_button_colonize->Parent() == this) {
         m_button_colonize->MoveTo(GG::Pt(left, y));
-
-        //if (m_species_selector && m_species_selector->Parent() == this) {
-        //    GG::X ss_left = left + m_button_colonize->Width() + GG::X(EDGE_PAD);
-        //    GG::Y ss_height = m_button_colonize->Height();
-        //    m_species_selector->SizeMove(GG::Pt(ss_left, y), GG::Pt(right, y + ss_height));
-        //}
-
         y += m_button_colonize->Height() + EDGE_PAD;
     }
 
@@ -942,42 +923,93 @@ namespace {
 
         return ship;
     }
+
+    bool OwnedColonyShipsInSystem(int empire_id, int system_id) {
+        const ObjectMap& objects = GetUniverse().Objects();
+
+        if (!objects.Object<System>(system_id))
+            return false;
+
+        std::vector<const Ship*> system_ships = objects.FindObjects<Ship>();
+        for (std::vector<const Ship*>::const_iterator it = system_ships.begin(); it != system_ships.end(); ++it) {
+            const Ship* ship = *it;
+            if (ship->SystemID() == system_id &&
+                ship->OwnedBy(empire_id) &&
+                ship->CanColonize())
+            {
+                return true;
+                break;
+            }
+        }
+        return false;
+    }
+
+    double ColonyShipCapacity(const Ship* ship) {
+        if (!ship)
+            return 0.0;
+
+        const ShipDesign* design = ship->Design();
+        if (!design) {
+            Logger().errorStream() << "ColonyShipCapacity couldn't find ship's design!";
+            return 0.0;
+        }
+
+        double colonist_capacity = 0.0;
+
+        const std::vector<std::string>& parts = design->Parts();
+        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+            const std::string& part_name = *it;
+            if (part_name.empty())
+                continue;
+            const PartType* part_type = GetPartType(part_name);
+            if (!part_type) {
+                Logger().errorStream() << "ColonyShipCapacity couldn't find ship part type: " << part_name;
+                continue;
+            }
+            if (part_type->Class() == PC_COLONY) {
+                colonist_capacity += boost::get<double>(part_type->Stats());
+            }
+        }
+        return colonist_capacity;
+    }
 }
 
 void SidePanel::PlanetPanel::Refresh()
 {
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
     const Planet* planet = GetObject<Planet>(m_planet_id);
     if (!planet)
-        planet = GetEmpireKnownObject<Planet>(m_planet_id, HumanClientApp::GetApp()->EmpireID());
+        planet = GetEmpireKnownObject<Planet>(m_planet_id, empire_id);
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
         DetachChild(m_planet_name);
-        delete m_planet_name;       m_planet_name = 0;
+        delete m_planet_name;           m_planet_name = 0;
 
         DetachChild(m_env_size);
-        delete m_env_size;          m_env_size = 0;
+        delete m_env_size;              m_env_size = 0;
 
         DetachChild(m_population_panel);
-        delete m_population_panel;  m_population_panel = 0;
+        delete m_population_panel;      m_population_panel = 0;
 
         DetachChild(m_resource_panel);
-        delete m_resource_panel;    m_resource_panel = 0;
+        delete m_resource_panel;        m_resource_panel = 0;
 
         DetachChild(m_military_panel);
-        delete m_military_panel;    m_military_panel = 0;
+        delete m_military_panel;        m_military_panel = 0;
 
         DetachChild(m_buildings_panel);
-        delete m_buildings_panel;   m_buildings_panel = 0;
+        delete m_buildings_panel;       m_buildings_panel = 0;
 
         DetachChild(m_button_colonize);
-        delete m_button_colonize;   m_button_colonize = 0;
+        delete m_button_colonize;       m_button_colonize = 0;
 
-        DetachChild(m_species_selector);
-        delete m_species_selector;  m_species_selector = 0;
+        DetachChild(m_colonize_instruction);
+        delete m_colonize_instruction;  m_colonize_instruction = 0;
 
         DetachChild(m_specials_panel);
-        delete m_specials_panel;    m_specials_panel = 0;
+        delete m_specials_panel;        m_specials_panel = 0;
 
         DoLayout();
         return;
@@ -1011,13 +1043,11 @@ void SidePanel::PlanetPanel::Refresh()
     // set up planet panel differently for owned and unowned planets...
     if (owner == OS_NONE && !SHOW_ALL_PLANET_PANELS) {
         // show only the environment and size information and (if applicable) buildings and specials
-        AttachChild(m_env_size);
         DetachChild(m_population_panel);
         DetachChild(m_resource_panel);
         DetachChild(m_military_panel);
     } else {
         // show population, resource and military panels, but hide environement / size indicator that's used only for uncolonized planets
-        DetachChild(m_env_size);
         AttachChild(m_population_panel);
         if (m_population_panel)
             m_population_panel->Refresh();
@@ -1029,31 +1059,63 @@ void SidePanel::PlanetPanel::Refresh()
             m_military_panel->Refresh();
     }
 
+    const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
 
     // create colonize or cancel button, if appropriate (a ship is in the system that can colonize, or the planet has been ordered to be colonized already this turn)
     if (!Disabled() &&
         owner == OS_NONE &&
-        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
+        ship &&
         !planet->IsAboutToBeColonized() &&
-        ValidSelectedColonyShip(SidePanel::SystemID()))
+        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
     {
         AttachChild(m_button_colonize);
+        std::string initial_pop = DoubleToString(ColonyShipCapacity(ship), 2, false);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
-        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % target_pop);
+        std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
         if (m_button_colonize)
             m_button_colonize->SetText(colonize_text);
+        DetachChild(m_colonize_instruction);
 
-        //AttachChild(m_species_selector);
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet)
+                                                   % GetPlanetEnvironmentName(*planet, ship->SpeciesName()));
+        m_env_size->SetText(env_size_text);
+
+    } else if (!Disabled() &&
+               owner == OS_NONE &&
+               !planet->IsAboutToBeColonized() &&
+               !ValidSelectedColonyShip(SidePanel::SystemID()) &&
+               OwnedColonyShipsInSystem(empire_id, SidePanel::SystemID()))
+    {
+        AttachChild(m_colonize_instruction);
+        DetachChild(m_button_colonize);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet));
+        m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
         AttachChild(m_button_colonize);
         if (m_button_colonize)
             m_button_colonize->SetText(UserString("CANCEL"));
-        DetachChild(m_species_selector);
+        DetachChild(m_colonize_instruction);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet)
+                                                   % GetPlanetEnvironmentName(*planet, planet->SpeciesName()));
+        m_env_size->SetText(env_size_text);
 
     } else {
         DetachChild(m_button_colonize);
-        DetachChild(m_species_selector);
+        DetachChild(m_colonize_instruction);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet));
+        m_env_size->SetText(env_size_text);
     }
 
 
