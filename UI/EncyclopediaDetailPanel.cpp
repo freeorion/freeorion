@@ -327,14 +327,22 @@ void EncyclopediaDetailPanel::Refresh() {
         name = m_design->Name();
         texture = ClientUI::ShipIcon(m_design->ID());
         turns = m_design->BuildTime();
-        cost = m_design->Cost();
+        cost = m_design->PerTurnCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_DESIGN");
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % m_design->Description()
-            % m_design->Attack()
-            % m_design->Defense()
-            % m_design->StarlaneSpeed());
+            % static_cast<int>(m_design->SRWeapons().size())
+            % static_cast<int>(m_design->LRWeapons().size())
+            % static_cast<int>(m_design->FWeapons().size())
+            % static_cast<int>(m_design->PDWeapons().size())
+            % m_design->Structure()
+            % m_design->Shields()
+            % m_design->Detection()
+            % m_design->BattleSpeed()
+            % m_design->StarlaneSpeed()
+            % m_design->Fuel()
+            % m_design->ColonyCapacity());
     } else if (m_special) {
         // Specials
         name = UserString(m_special->Name());

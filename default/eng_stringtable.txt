@@ -1927,9 +1927,18 @@ ENC_EFFECTS_STR
 ENC_SHIP_DESIGN_DESCRIPTION_STR
 '''%1%
 
-Attack: %2%
-Defense: %3%
-Speed: %4%'''
+Direct Fire Parts: %2%
+Missile Parts: %3%
+Fighter Bays: %4%
+Point Defense Parts: %5%
+Structure: %6%
+Shields: %7%
+Detection Strength: %8%
+Battle Speed: %9%
+Starlane Speed: %10%
+Fuel Capacity: %11%
+Colonization Capacity: %12%
+'''
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''

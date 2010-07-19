@@ -494,6 +494,11 @@ PartType::PartType(
     case PC_ARMOUR:
         m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
         break;
+    case PC_BATTLE_SPEED:
+        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   boost::get<double>(m_stats)));
+        break;
+    case PC_STARLANE_SPEED:
+        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<double>(m_stats)));
     default:
         break;
     }
@@ -701,8 +706,24 @@ double HullType::Fuel() const {
     return m_fuel;
 }
 
+double HullType::Stealth() const {
+    return m_stealth;
+}
+
 double HullType::Structure() const {
     return m_structure;
+}
+
+double HullType::Shields() const {
+    return 0.0; // as of this writing, hulls don't have a shields stat
+}
+
+double HullType::ColonyCapacity() const {
+    return 0.0; // as of this writing, hulls don't have colonist capacity
+}
+
+double HullType::Detection() const {
+    return 0.0; // as of this writing, hulls don't have detection ability
 }
 
 double HullType::Cost() const {
@@ -776,8 +797,7 @@ HullTypeManager::HullTypeManager() {
         ReportError(input.c_str(), result);
 }
 
-HullTypeManager::~HullTypeManager()
-{
+HullTypeManager::~HullTypeManager() {
     for (std::map<std::string, HullType*>::iterator it = m_hulls.begin(); it != m_hulls.end(); ++it) {
         delete it->second;
     }
@@ -788,8 +808,7 @@ const HullType* HullTypeManager::GetHullType(const std::string& name) const {
     return it != m_hulls.end() ? it->second : 0;
 }
 
-const HullTypeManager& HullTypeManager::GetHullTypeManager()
-{
+const HullTypeManager& HullTypeManager::GetHullTypeManager() {
     static HullTypeManager manager;
     return manager;
 }
@@ -821,7 +840,13 @@ ShipDesign::ShipDesign() :
     m_3D_model(""),
     m_name_desc_in_stringtable(false),
     m_is_armed(false),
-    m_can_colonize(false),
+    m_detection(0.0),
+    m_colony_capacity(0.0),
+    m_fuel(0.0),
+    m_shields(0.0),
+    m_structure(0.0),
+    m_battle_speed(0.0),
+    m_starlane_speed(0.0),
     m_build_cost(0.0),
     m_build_turns(0),
     m_min_SR_range(DBL_MAX),
@@ -850,7 +875,13 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
-    m_can_colonize(false),
+    m_detection(0.0),
+    m_colony_capacity(0.0),
+    m_fuel(0.0),
+    m_shields(0.0),
+    m_structure(0.0),
+    m_battle_speed(0.0),
+    m_starlane_speed(0.0),
     m_build_cost(0.0),
     m_build_turns(0),
     m_min_SR_range(DBL_MAX),
@@ -881,34 +912,29 @@ int ShipDesign::ID() const {
     return m_id;
 }
 
-const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const
-{
+const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
     else
         return m_name;
 }
 
-const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const
-{
+const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_description);
     else
         return m_description;
 }
 
-int ShipDesign::DesignedByEmpire() const
-{
+int ShipDesign::DesignedByEmpire() const {
     return m_designed_by_empire_id;
 }
 
-void ShipDesign::SetID(int id)
-{
+void ShipDesign::SetID(int id) {
     m_id = id;
 }
 
-void ShipDesign::Rename(const std::string& name)
-{
+void ShipDesign::Rename(const std::string& name) {
     m_name = name;
 }
 
@@ -920,11 +946,15 @@ int ShipDesign::DesignedOnTurn() const {
     return m_designed_on_turn;
 }
 
-double ShipDesign::Cost() const {
+double ShipDesign::TotalCost() const {
     if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
         return m_build_cost;
     else
         return 1.0;
+}
+
+double ShipDesign::PerTurnCost() const {
+    return TotalCost() / std::max(1, BuildTime());
 }
 
 int ShipDesign::BuildTime() const {
@@ -934,23 +964,26 @@ int ShipDesign::BuildTime() const {
         return 1;
 }
 
-double ShipDesign::StarlaneSpeed() const {
-    if (const HullType* hull_type = GetHull()) {
-        return hull_type->StarlaneSpeed();
-    } else {
-        Logger().errorStream() << "ShipDesign::StarlaneSpeed couldn't get HullType (named: " << m_hull << ")";
-        return 0.0;
-    }
-}
+double ShipDesign::StarlaneSpeed() const
+{ return m_starlane_speed; }
 
-double ShipDesign::BattleSpeed() const {
-    if (const HullType* hull_type = GetHull()) {
-        return hull_type->BattleSpeed();
-    } else {
-        Logger().errorStream() << "ShipDesign::BattleSpeed couldn't get HullType (named: " << m_hull << ")";
-        return 0.0;
-    }
-}
+double ShipDesign::BattleSpeed() const
+{ return m_battle_speed; }
+
+double ShipDesign::Structure() const
+{ return m_structure; }
+
+double ShipDesign::Shields() const
+{ return m_shields; }
+
+double ShipDesign::Fuel() const
+{ return m_fuel; }
+
+double ShipDesign::Detection() const
+{ return m_detection; }
+
+double ShipDesign::ColonyCapacity() const
+{ return m_colony_capacity; }
 
 const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
 { return m_SR_weapons; }
@@ -960,6 +993,9 @@ const std::multimap<double, const PartType*>& ShipDesign::LRWeapons() const
 
 const std::multimap<double, const PartType*>& ShipDesign::PDWeapons() const
 { return m_PD_weapons; }
+
+const std::vector<const PartType*>& ShipDesign::FWeapons() const
+{ return m_F_weapons; }
 
 double ShipDesign::MinSRRange() const
 { return m_min_SR_range; }
@@ -1027,7 +1063,7 @@ double ShipDesign::Attack() const {
 //// END TEMPORARY
 
 bool ShipDesign::CanColonize() const {
-    return m_can_colonize;
+    return (m_colony_capacity > 0.0);
 }
 
 bool ShipDesign::IsArmed() const {
@@ -1169,8 +1205,15 @@ void ShipDesign::BuildStatCaches()
         return;
     }
 
-    m_build_turns = hull->BuildTime();
-    m_build_cost = hull->Cost() * hull->BuildTime();
+    m_build_turns =     hull->BuildTime();
+    m_build_cost =      hull->Cost();
+    m_detection =       hull->Detection();
+    m_colony_capacity = hull->ColonyCapacity();
+    m_fuel =            hull->Fuel();
+    m_shields =         hull->Shields();
+    m_structure =       hull->Structure();
+    m_battle_speed =    hull->BattleSpeed();
+    m_starlane_speed =  hull->StarlaneSpeed();
 
     for (std::vector<std::string>::const_iterator it = m_parts.begin(); it != m_parts.end(); ++it) {
         if (it->empty())
@@ -1211,6 +1254,7 @@ void ShipDesign::BuildStatCaches()
             break;
         }
         case PC_FIGHTERS:
+            m_F_weapons.push_back(part);
             m_is_armed = true;
             break;
         case PC_POINT_DEFENSE: {
@@ -1224,7 +1268,25 @@ void ShipDesign::BuildStatCaches()
             break;
         }
         case PC_COLONY:
-            m_can_colonize = true;
+            m_colony_capacity += boost::get<double>(part->Stats());
+            break;
+        case PC_BATTLE_SPEED:
+            m_battle_speed += boost::get<double>(part->Stats());
+            break;
+        case PC_STARLANE_SPEED:
+            m_starlane_speed += boost::get<double>(part->Stats());
+            break;
+        case PC_SHIELD:
+            m_shields += boost::get<double>(part->Stats());
+            break;
+        case PC_FUEL:
+            m_fuel += boost::get<double>(part->Stats());
+            break;
+        case PC_ARMOUR:
+            m_structure += boost::get<double>(part->Stats());
+            break;
+        case PC_DETECTION:
+            m_detection += boost::get<double>(part->Stats());
             break;
         default:
             break;

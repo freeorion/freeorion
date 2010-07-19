@@ -285,10 +285,12 @@ public:
 
     double              BattleSpeed() const;    ///< returns battle speed of hull
     double              StarlaneSpeed() const;  ///< returns starlane speed of hull
-
     double              Fuel() const;           ///< returns fuel capacity of hull
     double              Stealth() const;        ///< returns stealth of hull
     double              Structure() const;      ///< returns structure of hull
+    double              Shields() const;        ///< returns shields of hull
+    double              ColonyCapacity() const; ///< returns colonist capacity of hull
+    double              Detection() const;      ///< returns detection ability of hull
 
     double              Cost() const;           ///< returns total cost of hull
     int                 BuildTime() const;      ///< returns base build time for this hull, before parts are added
@@ -394,41 +396,51 @@ public:
     int                             DesignedByEmpire() const;   ///< returns id of empire that created design
     int                             DesignedOnTurn() const;     ///< returns turn on which design was created
 
-    double                          Cost() const;               ///< returns the cost per turn to build a ship of this design
+    double                          TotalCost() const;          ///< returns the total cost to build a ship of this design
+    double                          PerTurnCost() const;        ///< returns the maximum per-turn number of production points that can be spent on building a ship of this design
     int                             BuildTime() const;          ///< returns the time in turns it takes to build a ship of this design
 
     double                          BattleSpeed() const;        ///< returns design speed on the battle map
     double                          StarlaneSpeed() const;      ///< returns design speed along starlanes
+
+    double                          Structure() const;          ///< returns the max structure of this design
+    double                          Shields() const;            ///< returns the max shields of this design
+    double                          Fuel() const;               ///< returns the max fuel capacity of this design
+    double                          Detection() const;          ///< returns the detection ability of this design
+    double                          ColonyCapacity() const;     ///< returns the colonization capacity of this design
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
 
     /** Returns a map from ranges to stats for only the SR weapons in this
         design. */
-    const std::multimap<double, const PartType*>& SRWeapons() const;
+    const std::multimap<double, const PartType*>&   SRWeapons() const;
 
     /** Returns a map from ranges to stats for only the LR weapons in this
         design. */
-    const std::multimap<double, const PartType*>& LRWeapons() const;
+    const std::multimap<double, const PartType*>&   LRWeapons() const;
 
     /** Returns a map from ranges to stats for only the PD weapons in this
         design. */
-    const std::multimap<double, const PartType*>& PDWeapons() const;
+    const std::multimap<double, const PartType*>&   PDWeapons() const;
 
-    double MinSRRange() const;
-    double MaxSRRange() const;
-    double MinLRRange() const;
-    double MaxLRRange() const;
-    double MinPDRange() const;
-    double MaxPDRange() const;
-    double MinWeaponRange() const;
-    double MaxWeaponRange() const;
-    double MinNonPDWeaponRange() const;
-    double MaxNonPDWeaponRange() const;
+    /** Returns the set of Fighter weapons in this design. */
+    const std::vector<const PartType*>&             FWeapons() const;
+
+    double  MinSRRange() const;
+    double  MaxSRRange() const;
+    double  MinLRRange() const;
+    double  MaxLRRange() const;
+    double  MinPDRange() const;
+    double  MaxPDRange() const;
+    double  MinWeaponRange() const;
+    double  MaxWeaponRange() const;
+    double  MinNonPDWeaponRange() const;
+    double  MaxNonPDWeaponRange() const;
 
     /////// TEMPORARY ///////
-    double      Defense() const;
-    double      Attack() const;
+    double  Defense() const;
+    double  Attack() const;
     /////// TEMPORARY ///////
 
     const std::string&              Hull() const;                           ///< returns name of hull on which design is based
@@ -480,23 +492,30 @@ private:
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
-    bool m_is_armed;
-    bool m_can_colonize;
-    double m_build_cost;
-    int m_build_turns;
-    std::multimap<double, const PartType*> m_SR_weapons;
-    std::multimap<double, const PartType*> m_LR_weapons;
-    std::multimap<double, const PartType*> m_PD_weapons;
-    double m_min_SR_range;
-    double m_max_SR_range;
-    double m_min_LR_range;
-    double m_max_LR_range;
-    double m_min_PD_range;
-    double m_max_PD_range;
-    double m_min_weapon_range;
-    double m_max_weapon_range;
-    double m_min_non_PD_weapon_range;
-    double m_max_non_PD_weapon_range;
+    bool    m_is_armed;
+    double  m_detection;
+    double  m_colony_capacity;
+    double  m_fuel;
+    double  m_shields;
+    double  m_structure;
+    double  m_battle_speed;
+    double  m_starlane_speed;
+    double  m_build_cost;
+    int     m_build_turns;
+    std::multimap<double, const PartType*>  m_SR_weapons;
+    std::multimap<double, const PartType*>  m_LR_weapons;
+    std::multimap<double, const PartType*>  m_PD_weapons;
+    std::vector<const PartType*>            m_F_weapons;
+    double  m_min_SR_range;
+    double  m_max_SR_range;
+    double  m_min_LR_range;
+    double  m_max_LR_range;
+    double  m_min_PD_range;
+    double  m_max_PD_range;
+    double  m_min_weapon_range;
+    double  m_max_weapon_range;
+    double  m_min_non_PD_weapon_range;
+    double  m_max_non_PD_weapon_range;
 
     friend class boost::serialization::access;
     template <class Archive>

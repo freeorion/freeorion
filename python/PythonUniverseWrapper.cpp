@@ -245,7 +245,7 @@ namespace FreeOrionPython {
             .add_property("defense",            make_function(&ShipDesign::Defense,         return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,          return_value_policy<return_by_value>()))
             .add_property("canColonize",        make_function(&ShipDesign::CanColonize,     return_value_policy<return_by_value>()))
-            .add_property("cost",               make_function(&ShipDesign::Cost,            return_value_policy<return_by_value>()))
+            .add_property("cost",               make_function(&ShipDesign::TotalCost,       return_value_policy<return_by_value>()))
             .add_property("buildTime",          make_function(&ShipDesign::BuildTime,       return_value_policy<return_by_value>()))
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
