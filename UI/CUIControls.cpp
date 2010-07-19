@@ -1132,8 +1132,6 @@ void SpeciesSelector::SetSpecies(const std::vector<std::string>& species_names)
 
     Clear();
 
-    const SpeciesManager& sm = GetSpeciesManager();
-
     for (std::vector<std::string>::const_iterator it = species_names.begin(); it != species_names.end(); ++it) {
         const std::string& species_name = *it;
         if (const Species* species = GetSpecies(species_name)) {
