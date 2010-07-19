@@ -541,8 +541,10 @@ enum ShipPartClass {
     PC_ARMOUR,              ///< defensive material on hull of ship
     PC_DETECTION,           ///< range of vision and seeing through stealth
     PC_STEALTH,             ///< hiding from enemies
-    PC_FUEL,                ///< increases range away from resupply
+    PC_FUEL,                ///< distance that can be traveled away from resupply
     PC_COLONY,              ///< transports colonists and allows ships to make new colonies
+    PC_BATTLE_SPEED,        ///< affects ship speed in battle
+    PC_STARLANE_SPEED,      ///< affects ship speed on starlanes
     NUM_SHIP_PART_CLASSES
 };
 
@@ -559,6 +561,8 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PC_STEALTH)
     GG_ENUM_MAP_INSERT(PC_FUEL)
     GG_ENUM_MAP_INSERT(PC_COLONY)
+    GG_ENUM_MAP_INSERT(PC_BATTLE_SPEED)
+    GG_ENUM_MAP_INSERT(PC_STARLANE_SPEED)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(ShipPartClass)

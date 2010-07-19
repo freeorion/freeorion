@@ -124,16 +124,18 @@ namespace {
             ("bomber",      BOMBER);
 
         part_class_p.add
-            ("shortrange",  PC_SHORT_RANGE)
-            ("missiles",    PC_MISSILES)
-            ("fighters",    PC_FIGHTERS)
-            ("pointdefense",PC_POINT_DEFENSE)
-            ("shield",      PC_SHIELD)
-            ("armour",      PC_ARMOUR)
-            ("detection",   PC_DETECTION)
-            ("stealth",     PC_STEALTH)
-            ("fuel",        PC_FUEL)
-            ("colony",      PC_COLONY);
+            ("shortrange",      PC_SHORT_RANGE)
+            ("missiles",        PC_MISSILES)
+            ("fighters",        PC_FIGHTERS)
+            ("pointdefense",    PC_POINT_DEFENSE)
+            ("shield",          PC_SHIELD)
+            ("armour",          PC_ARMOUR)
+            ("detection",       PC_DETECTION)
+            ("stealth",         PC_STEALTH)
+            ("fuel",            PC_FUEL)
+            ("colony",          PC_COLONY)
+            ("battlespeed",     PC_BATTLE_SPEED)
+            ("starlanespeed",   PC_STARLANE_SPEED);
 
         slot_type_p.add
             ("external",    SL_EXTERNAL)

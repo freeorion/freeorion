@@ -2418,6 +2418,10 @@ PC_FUEL
 Fuel
 PC_COLONY
 Colonization
+PC_BATTLE_SPEED
+Battle Speed
+PC_STARLANE_SPEED
+Starlane Speed
 
 
 ################################################
