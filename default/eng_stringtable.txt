@@ -1962,6 +1962,7 @@ Battle Speed: %9%
 Starlane Speed: %10%
 Fuel Capacity: %11%
 Colonization Capacity: %12%
+Stealth: %13%
 '''
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR

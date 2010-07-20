@@ -434,7 +434,8 @@ void EncyclopediaDetailPanel::Refresh() {
             % incomplete_design->BattleSpeed()
             % incomplete_design->StarlaneSpeed()
             % incomplete_design->Fuel()
-            % incomplete_design->ColonyCapacity());
+            % incomplete_design->ColonyCapacity()
+            % incomplete_design->Stealth());
 
     } else if (m_design_id != ShipDesign::INVALID_DESIGN_ID) {
         const ShipDesign* design = GetShipDesign(m_design_id);
@@ -462,7 +463,8 @@ void EncyclopediaDetailPanel::Refresh() {
             % design->BattleSpeed()
             % design->StarlaneSpeed()
             % design->Fuel()
-            % design->ColonyCapacity());
+            % design->ColonyCapacity()
+            % design->Stealth());
 
     } else if (m_object_id != UniverseObject::INVALID_OBJECT_ID) {
         const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);

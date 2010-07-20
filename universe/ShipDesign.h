@@ -408,6 +408,7 @@ public:
     double                          Fuel() const;               ///< returns the max fuel capacity of this design
     double                          Detection() const;          ///< returns the detection ability of this design
     double                          ColonyCapacity() const;     ///< returns the colonization capacity of this design
+    double                          Stealth() const;            ///< returns the stealth of this design
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
@@ -495,6 +496,7 @@ private:
     bool    m_is_armed;
     double  m_detection;
     double  m_colony_capacity;
+    double  m_stealth;
     double  m_fuel;
     double  m_shields;
     double  m_structure;

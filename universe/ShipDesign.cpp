@@ -842,6 +842,7 @@ ShipDesign::ShipDesign() :
     m_is_armed(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
+    m_stealth(0.0),
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
@@ -877,6 +878,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_is_armed(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
+    m_stealth(0.0),
     m_fuel(0.0),
     m_shields(0.0),
     m_structure(0.0),
@@ -984,6 +986,9 @@ double ShipDesign::Detection() const
 
 double ShipDesign::ColonyCapacity() const
 { return m_colony_capacity; }
+
+double ShipDesign::Stealth() const
+{ return m_stealth; }
 
 const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
 { return m_SR_weapons; }
@@ -1209,6 +1214,7 @@ void ShipDesign::BuildStatCaches()
     m_build_cost =      hull->Cost();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
+    m_stealth =         hull->Stealth();
     m_fuel =            hull->Fuel();
     m_shields =         hull->Shields();
     m_structure =       hull->Structure();
@@ -1269,6 +1275,9 @@ void ShipDesign::BuildStatCaches()
         }
         case PC_COLONY:
             m_colony_capacity += boost::get<double>(part->Stats());
+            break;
+        case PC_STEALTH:
+            m_stealth += boost::get<double>(part->Stats());
             break;
         case PC_BATTLE_SPEED:
             m_battle_speed += boost::get<double>(part->Stats());
