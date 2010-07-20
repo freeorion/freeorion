@@ -218,7 +218,7 @@ namespace {
             (str_p("species")
              >> name_label >>               name_p[species_p.name = arg1]
              >> description_label >>        name_p[species_p.description = arg1]
-             >> foci_label >>               focus_type_vec_p[species_p.foci = arg1]
+             >> !(foci_label >>             focus_type_vec_p[species_p.foci = arg1])
              >> !(effectsgroups_label >>    effects_group_vec_p[species_p.effects_groups = arg1])
              >> !(environments_label >>     planet_type_environment_map_p[species_p.environments = arg1])
              >> graphic_label >>            file_name_p[species_p.graphic = arg1])
