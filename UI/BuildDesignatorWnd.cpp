@@ -967,7 +967,7 @@ void BuildDesignatorWnd::ToggleAvailabilitly(bool available, bool refresh_list)
 
 void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
 {
-    m_enc_detail_panel->SetItem(GetBuildingType(building_type));
+    m_enc_detail_panel->SetBuildingType(building_type);
 }
 
 int BuildDesignatorWnd::BuildLocation() const

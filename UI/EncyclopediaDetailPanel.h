@@ -4,12 +4,17 @@
 
 #include "CUIWnd.h"
 
+#include <boost/weak_ptr.hpp>
+
 class Tech;
 class PartType;
 class HullType;
 class BuildingType;
-class ShipDesign;
 class Special;
+class Species;
+class UniverseObject;
+class Empire;
+class ShipDesign;
 class CUIMultiEdit;
 namespace GG {
     class TextControl;
@@ -17,9 +22,8 @@ namespace GG {
     class MultiEdit;
 }
 
-/** UI class that displays in-game encyclopedic information about game content.  Tech, PartType, HullType,
-  * Buildingtype
-  */
+/** UI class that displays in-game encyclopedic information about game
+  * content.  Tech, PartType, HullType, BuildingType, ShipDesign, etc. */
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
@@ -35,12 +39,25 @@ public:
        than being restricted to the client area of a CUIWnd */
     virtual GG::Pt  ClientUpperLeft() const;
 
+    void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
+    void            SetPartType(const std::string& part_name);
     void            SetItem(const PartType* part);
-    void            SetItem(const HullType* hull);
-    void            SetItem(const BuildingType* building);
-    void            SetItem(const ShipDesign* design);
+    void            SetHullType(const std::string& hull_name);
+    void            SetItem(const HullType* hull_type);
+    void            SetBuildingType(const std::string& building_name);
+    void            SetItem(const BuildingType* building_type);
+    void            SetSpecial(const std::string& special_name);
     void            SetItem(const Special* special);
+    void            SetSpecies(const std::string& species_name);
+    void            SetItem(const Species* species);
+    void            SetObject(int object_id);
+    void            SetItem(const UniverseObject* obj);
+    void            SetEmpire(int empire_id);
+    void            SetItem(const Empire* empire);
+    void            SetDesign(int design_id);
+    void            SetItem(const ShipDesign* design);
+    void            SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design);
     void            UnsetAll();
 
     void            Refresh();
@@ -48,14 +65,18 @@ public:
 
 private:
     void DoLayout();
-    bool NothingSet();
+    bool NothingSet() const;
 
-    const Tech*         m_tech;
-    const PartType*     m_part;
-    const HullType*     m_hull;
-    const BuildingType* m_building;
-    const ShipDesign*   m_design;
-    const Special*      m_special;
+    std::string                         m_tech_name;
+    std::string                         m_part_name;
+    std::string                         m_hull_name;
+    std::string                         m_building_name;
+    std::string                         m_special_name;
+    std::string                         m_species_name;
+    int                                 m_design_id;
+    int                                 m_object_id;
+    int                                 m_empire_id;
+    boost::weak_ptr<const ShipDesign>   m_incomplete_design;
 
     GG::TextControl*    m_name_text;        // name
     GG::TextControl*    m_cost_text;        // cost and time to build or research

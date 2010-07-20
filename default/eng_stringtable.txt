@@ -1892,8 +1892,32 @@ Special
 ENC_BUILDING_TYPE
 Building Type
 
+ENC_SPECIES
+Species
+
 ENC_SHIP_DESIGN
 Ship Design
+
+ENC_INCOMPETE_SHIP_DESIGN
+Incomplete Ship Design
+
+ENC_EMPIRE
+Empire
+
+ENC_SHIP
+Ship
+
+ENC_FLEET
+Fleet
+
+ENC_PLANET
+Planet
+
+ENC_BUILDING
+Building
+
+END_SYSTEM
+System
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".

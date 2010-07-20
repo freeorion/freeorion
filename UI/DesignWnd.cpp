@@ -19,6 +19,7 @@
 
 #include <boost/cast.hpp>
 #include <boost/function.hpp>
+#include <boost/timer.hpp>
 
 #include <algorithm>
 
@@ -59,13 +60,31 @@ namespace {
         }
         return ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", true);
     }
+
+    /** Wrapper for boost::timer that outputs time during which this object
+      * existed.  Created in the scope of a function, and passed the appropriate
+      * name, it will output to Logger().debugStream() the time elapsed while
+      * the function was executing. */
+    class ScopedTimer {
+    public:
+        ScopedTimer(const std::string& timed_name = "scoped timer") :
+            m_timer(),
+            m_name(timed_name)
+        {}
+        ~ScopedTimer() {
+            Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+        }
+    private:
+        boost::timer    m_timer;
+        std::string     m_name;
+    };
 }
 
 //////////////////////////////////////////////////
 // PartControl                                  //
 //////////////////////////////////////////////////
-/** UI representation of a ship part.  Displayed in the PartPalette, and can be dragged onto SlotControls to
-  * add parts to the design. */
+/** UI representation of a ship part.  Displayed in the PartPalette, and can be
+  * dragged onto SlotControls to add parts to the design. */
 class PartControl : public GG::Control {
 public:
     /** \name Structors */ //@{
@@ -276,6 +295,8 @@ void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void PartsListBox::Populate() {
+    ScopedTimer scoped_timer("PartsListBox::Populate");
+
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
@@ -422,8 +443,8 @@ void PartsListBox::HideAvailability(bool available, bool refresh_list) {
 //////////////////////////////////////////////////
 // DesignWnd::PartPalette                       //
 //////////////////////////////////////////////////
-/** Contains graphical list of PartControl which can be dragged and dropped onto slots
-  * to assign parts to those slots */
+/** Contains graphical list of PartControl which can be dragged and dropped
+  * onto slots to assign parts to those slots */
 class DesignWnd::PartPalette : public CUIWnd {
 public:
     /** \name Structors */ //@{
@@ -719,8 +740,9 @@ void DesignWnd::PartPalette::Reset() {
 //////////////////////////////////////////////////
 // BasesListBox                                  //
 //////////////////////////////////////////////////
-/** List of starting points for designs, such as empty hulls, existing designs kept by this empire or seen
-  * elsewhere in the universe, design template scripts or saved (on disk) designs from previous games. */
+/** List of starting points for designs, such as empty hulls, existing designs
+  * kept by this empire or seen elsewhere in the universe, design template
+  * scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public CUIListBox {
 public:
     /** \name Structors */ //@{
@@ -938,6 +960,8 @@ GG::Pt BasesListBox::ListRowSize() {
 }
 
 void BasesListBox::PopulateWithEmptyHulls() {
+    ScopedTimer scoped_timer("BasesListBox::PopulateWithEmptyHulls");
+
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
     Logger().debugStream() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
@@ -1009,6 +1033,8 @@ void BasesListBox::PopulateWithEmptyHulls() {
 }
 
 void BasesListBox::PopulateWithCompletedDesigns() {
+    ScopedTimer scoped_timer("BasesListBox::PopulateWithCompletedDesigns");
+
     const bool showing_available = m_availabilities_shown.first;
     const bool showing_unavailable = m_availabilities_shown.second;
     const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
@@ -1254,6 +1280,8 @@ void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void DesignWnd::BaseSelector::Reset() {
+    ScopedTimer scoped_timer("BaseSelector::Reset");
+
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
@@ -1341,8 +1369,9 @@ void DesignWnd::BaseSelector::WndSelected(std::size_t index) {
 //////////////////////////////////////////////////
 // SlotControl                                  //
 //////////////////////////////////////////////////
-/** UI representation and drop-target for slots of a design.  PartControl may be dropped into slots to add
-  * the corresponding parts to the ShipDesign, or the part may be set programmatically with SetPart(). */
+/** UI representation and drop-target for slots of a design.  PartControl may
+  * be dropped into slots to add the corresponding parts to the ShipDesign, or
+  * the part may be set programmatically with SetPart(). */
 class SlotControl : public GG::Control {
 public:
     /** \name Structors */ //@{
@@ -1560,33 +1589,37 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::vector<std::string>  Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
-    const std::string&              Hull() const;               //!< returns name of hull of current shown design
-    const std::string&              DesignName() const;         //!< returns name currently entered for design
-    const std::string&              DesignDescription() const;  //!< returns description currently entered for design
+    const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
+    const std::string&                  Hull() const;               //!< returns name of hull of current shown design
+    const std::string&                  DesignName() const;         //!< returns name currently entered for design
+    const std::string&                  DesignDescription() const;  //!< returns description currently entered for design
+
+    boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    void                            Sanitize();
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void            Sanitize();
 
-    void                            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
-    void                            SetPart(const PartType* part, unsigned int slot);
-    void                            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
-    /** attempts to add the specified part to the design, if possible.  will first attempt to add part to
-      * an empty slot of the appropriate type, and if no appropriate slots are available, may or may not move
-      * other parts around within the design to open up a compatible slot in which to add this part (and then
-      * add it).  may also do nothing. */
-    void                            AddPart(const PartType* part);
-    void                            ClearParts();                                               //!< removes all parts from design.  hull is not altered
-    void                            SetHull(const std::string& hull_name);                      //!< sets the design hull to the specified hull, displaying appropriate background image and creating appropriate SlotControls
-    void                            SetHull(const HullType* hull);
-    void                            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
-    void                            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
-    void                            SetDesignComponents(const std::string& hull,
-                                                        const std::vector<std::string>& parts); //!< sets design hull and parts to those specified
+    void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
+    void            SetPart(const PartType* part, unsigned int slot);
+    void            SetParts(const std::vector<std::string>& parts);            //!< puts specified parts in slots.  attempts to put each part into the slot corresponding to its place in the passed vector.  if a part cannot be placed, it is ignored.  more parts than there are slots available are ignored, and slots for which there are insufficient parts in the passed vector are unmodified
 
-    void                            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
+    /** Attempts to add the specified part to the design, if possible.  will
+      * first attempt to add part to an empty slot of the appropriate type, and
+      * if no appropriate slots are available, may or may not move other parts
+      * around within the design to open up a compatible slot in which to add
+      * this part (and then add it).  may also do nothing. */
+    void            AddPart(const PartType* part);
+
+    void            ClearParts();                                               //!< removes all parts from design.  hull is not altered
+    void            SetHull(const std::string& hull_name);                      //!< sets the design hull to the specified hull, displaying appropriate background image and creating appropriate SlotControls
+    void            SetHull(const HullType* hull);
+    void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
+    void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
+    void            SetDesignComponents(const std::string& hull, const std::vector<std::string>& parts);//!< sets design hull and parts to those specified
+
+    void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
     //@}
 
     mutable boost::signal<void ()>                  DesignChangedSignal;        //!< emitted when the design is changed (by adding or removing parts, not name or description changes)
@@ -1598,22 +1631,22 @@ private:
     typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot);
     static SetPartFuncPtrType const s_set_part_func_ptr;
 
-    void                            Populate();                                 //!< creates and places SlotControls for current hull
-    void                            DoLayout();                                 //!< positions buttons, text entry boxes and SlotControls
-    void                            DesignChanged();                            //!< responds to the design being changed
+    void            Populate();                         //!< creates and places SlotControls for current hull
+    void            DoLayout();                         //!< positions buttons, text entry boxes and SlotControls
+    void            DesignChanged();                    //!< responds to the design being changed
+    void            RefreshIncompleteDesign() const;
 
-    const HullType*             m_hull;
+    const HullType*                         m_hull;
+    std::vector<SlotControl*>               m_slots;
+    mutable boost::shared_ptr<ShipDesign>   m_incomplete_design;
 
-    GG::StaticGraphic*          m_background_image;
-
-    std::vector<SlotControl*>   m_slots;
-
-    GG::TextControl*            m_design_name_label;
-    GG::Edit*                   m_design_name;
-    GG::TextControl*            m_design_description_label;
-    GG::Edit*                   m_design_description;
-    GG::Button*                 m_confirm_button;
-    GG::Button*                 m_clear_button;
+    GG::StaticGraphic*  m_background_image;
+    GG::TextControl*    m_design_name_label;
+    GG::Edit*           m_design_name;
+    GG::TextControl*    m_design_description_label;
+    GG::Edit*           m_design_description;
+    GG::Button*         m_confirm_button;
+    GG::Button*         m_clear_button;
 };
 
 // static
@@ -1622,8 +1655,9 @@ DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_
 DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_hull(0),
-    m_background_image(0),
     m_slots(),
+    m_incomplete_design(),
+    m_background_image(0),
     m_design_name_label(0),
     m_design_name(0),
     m_design_description_label(0),
@@ -1701,6 +1735,11 @@ const std::string& DesignWnd::MainPanel::DesignDescription() const {
         return EMPTY_STRING;
 }
 
+boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() const
+{
+    RefreshIncompleteDesign();
+    return m_incomplete_design;
+}
 
 void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
@@ -1728,7 +1767,7 @@ void DesignWnd::MainPanel::SetPart(const PartType* part, unsigned int slot) {
     DesignChangedSignal();
 }
 
-void  DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
+void DesignWnd::MainPanel::SetParts(const std::vector<std::string>& parts) {
     unsigned int num_parts = std::min(parts.size(), m_slots.size());
     for (unsigned int i = 0; i < num_parts; ++i)
         m_slots[i]->SetPart(parts[i]);
@@ -1923,6 +1962,43 @@ void DesignWnd::MainPanel::DesignChanged() {
         m_confirm_button->Disable(true);
 }
 
+void DesignWnd::MainPanel::RefreshIncompleteDesign() const
+{
+    if (ShipDesign* design = m_incomplete_design.get()) {
+        if (design->Hull() ==           this->Hull() &&
+            design->Name() ==           this->DesignName() &&
+            design->Description() ==    this->DesignDescription() &&
+            design->Parts() ==          this->Parts())
+        {
+            // nothing has changed, so don't need to update
+            return;
+        }
+    }
+
+    // assemble and check info for new design
+    const std::string& hull =           this->Hull();
+    std::vector<std::string> parts =    this->Parts();
+
+    if (!ShipDesign::ValidDesign(hull, parts)) {
+        Logger().errorStream() << "DesignWnd::MainPanel::RefreshIncompleteDesign attempting to create an invalid design.";
+        m_incomplete_design.reset();
+        return;
+    }
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    // make sure name isn't blank.  TODO: prevent duplicate names?
+    std::string name = this->DesignName();
+    if (name == "")
+        name = UserString("DESIGN_NAME_DEFAULT");
+
+    const std::string& description = this->DesignDescription();
+
+    const std::string& graphic = m_hull ? m_hull->Graphic() : EMPTY_STRING;
+
+    // update stored design
+    m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, graphic, "some model"));
+}
 
 //////////////////////////////////////////////////
 // DesignWnd                                    //
@@ -1955,6 +2031,10 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     AttachChild(m_main_panel);
     GG::Connect(m_main_panel->PartTypeClickedSignal,            &EncyclopediaDetailPanel::SetItem,  m_detail_panel);
     GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
+    GG::Connect(m_main_panel->DesignChangedSignal,              boost::bind(&EncyclopediaDetailPanel::SetIncompleteDesign,
+                                                                            m_detail_panel,
+                                                                            boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
+                                                                                        m_main_panel)));
     m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
 
     m_part_palette = new PartPalette(most_panels_width, part_palette_height);
