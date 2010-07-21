@@ -33,10 +33,11 @@ class ShipDesign;
 class UniverseObject;
 class System;
 namespace Condition {
-    typedef std::set<UniverseObject*> ObjectSet;
+    typedef std::set<const UniverseObject*> ObjectSet;
 }
 namespace Effect {
     class EffectsGroup;
+    typedef std::set<UniverseObject*> TargetSet;
 }
 
 
@@ -228,8 +229,8 @@ public:
     /** Combination of targets and cause for an effects group. */
     struct EffectTargetAndCause {
         EffectTargetAndCause();
-        EffectTargetAndCause(const Condition::ObjectSet& target_set_, const EffectCause& effect_cause_);
-        Condition::ObjectSet                            target_set;
+        EffectTargetAndCause(const Effect::TargetSet& target_set_, const EffectCause& effect_cause_);
+        Effect::TargetSet                               target_set;
         EffectCause                                     effect_cause;
     };
     /** Map from (effects group and source object) to target set of for

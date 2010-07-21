@@ -628,7 +628,7 @@ Universe::EffectTargetAndCause::EffectTargetAndCause() :
     effect_cause()
 {}
 
-Universe::EffectTargetAndCause::EffectTargetAndCause(const Condition::ObjectSet& target_set_, const EffectCause& effect_cause_) :
+Universe::EffectTargetAndCause::EffectTargetAndCause(const Effect::TargetSet& target_set_, const EffectCause& effect_cause_) :
     target_set(target_set_),
     effect_cause(effect_cause_)
 {}
@@ -1341,7 +1341,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
                                                     const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
     // transfer target objects from input vector to a set
-    Condition::ObjectSet all_potential_targets;
+    Effect::TargetSet all_potential_targets;
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
         all_potential_targets.insert(m_objects.Object(*it));
 
@@ -1349,8 +1349,8 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
         // create non_targets and targets sets for current effects group
-        Condition::ObjectSet target_set;                                    // initially empty
-        Condition::ObjectSet potential_target_set = all_potential_targets;  // copy again each iteration, so previous iterations don't affect starting potential targets of next iteration
+        Effect::TargetSet target_set;                                    // initially empty
+        Effect::TargetSet potential_target_set = all_potential_targets;  // copy again each iteration, so previous iterations don't affect starting potential targets of next iteration
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
@@ -1380,7 +1380,7 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
 {
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
-    std::map<std::string, Condition::ObjectSet> executed_nonstacking_effects;
+    std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
         // if other EffectsGroups with the same stacking group have affected some of the targets in
@@ -1390,11 +1390,11 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
         const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
         const EffectTargetAndCause& targets_and_cause = targets_it->second;
-        Condition::ObjectSet targets = targets_and_cause.target_set;
+        Effect::TargetSet targets = targets_and_cause.target_set;
 
         std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
-            for (Condition::ObjectSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
+            for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
@@ -1406,8 +1406,8 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
         if (effects_group->StackingGroup() != "") {
-            Condition::ObjectSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
-            for (Condition::ObjectSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
+            Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
+            for (Effect::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
                 affected_targets.insert(*object_it);
             }
         }
@@ -1421,7 +1421,7 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
 void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map)
 {
     //Logger().debugStream() << "Universe::ExecuteMeterEffects";
-    std::map<std::string, Condition::ObjectSet> executed_nonstacking_effects;
+    std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
         // if other EffectsGroups with the same stacking group have affected some of the targets in
@@ -1431,11 +1431,11 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
         const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
 
         const EffectTargetAndCause& targets_and_cause = targets_it->second;
-        Condition::ObjectSet targets = targets_and_cause.target_set;
+        Effect::TargetSet targets = targets_and_cause.target_set;
 
         std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
-            for (Condition::ObjectSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
+            for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
                 targets.erase(*object_it);
             }
         }
@@ -1455,7 +1455,7 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
                 meter_type = meter_effect->GetMeterType();
 
                 // record pre-effect meter values
-                for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                for (Effect::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
                     UniverseObject* target = *target_it;
                     const Meter* meter = target->GetMeter(meter_type);
                     if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
@@ -1477,7 +1477,7 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
 
             if (meter_effect) {
                 // find change in meter due to effect: equal to post-meter minus pre-meter value
-                for (Condition::ObjectSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+                for (Effect::TargetSet::iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
                     UniverseObject* target = *target_it;
                     const Meter* meter = target->GetMeter(meter_type);
                     if (!meter) continue;   // some objects might match target conditions, but not actually have the relevant meter
@@ -1494,8 +1494,8 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
         if (effects_group->StackingGroup() != "") {
-            Condition::ObjectSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
-            for (Condition::ObjectSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it)
+            Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
+            for (Effect::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it)
                 affected_targets.insert(*object_it);
         }
     }

@@ -218,6 +218,19 @@ namespace {
 
         return false;
     }
+
+    Condition::ObjectSet EffectTargetSetToConditionObjectSet(const TargetSet& target_set) {
+        Condition::ObjectSet retval;
+        std::copy(target_set.begin(), target_set.end(), std::inserter(retval, retval.begin()));
+        return retval;
+    }
+
+    TargetSet ConditionObjectSetToEffectTargetSet(const Condition::ObjectSet& object_set) {
+        TargetSet retval;
+        for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
+            retval.insert(const_cast<UniverseObject*>(*it));
+        return retval;
+    }
 }
 
 ///////////////////////////////////////////////////////////
@@ -254,24 +267,30 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
     // evaluate the activation condition only on the source object
     Condition::ObjectSet non_targets;
     non_targets.insert(source);
-    m_activation->Eval(source, targets, non_targets);
+    Condition::ObjectSet matched_targets;
+    m_activation->Eval(source, matched_targets, non_targets);
 
     // if the activation condition did not evaluate to true for the source object, do nothing
-    if (targets.empty())
+    if (matched_targets.empty())
         return;
 
     // remove source object from target set after activation condition check
-    targets.clear();
+    matched_targets.clear();
+
+    // convert potential targets TargetSet to a Condition::ObjectSet so that condition can be applied to it
+    non_targets = EffectTargetSetToConditionObjectSet(potential_targets);
 
     // evaluate the scope condition
-    non_targets = potential_targets;
-    m_scope->Eval(source, targets, non_targets);
+    m_scope->Eval(source, matched_targets, non_targets);
+
+    // convert result back to TargetSet
+    targets = ConditionObjectSetToEffectTargetSet(matched_targets);
 }
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 {
     ObjectMap& objects = GetUniverse().Objects();
-    Condition::ObjectSet potential_targets;
+    TargetSet potential_targets;
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
         potential_targets.insert(it->second);
     GetTargetSet(source_id, targets, potential_targets);
@@ -286,7 +305,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
     }
 
     // execute effects on targets
-    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+    for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (unsigned int i = 0; i < m_effects.size(); ++i)
             m_effects[i]->Execute(source, *it);
@@ -305,7 +324,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_i
     assert(0 <= effect_index && effect_index < static_cast<int>(m_effects.size()));
 
     // execute effect on targets
-    for (Condition::ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
+    for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
         m_effects[effect_index]->Execute(source, *it);
 }
 
@@ -1178,7 +1197,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         return;
 
     // "randomly" pick a destination
-    UniverseObject* destination = *valid_locations.begin();
+    UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
 
 
     // do the moving...

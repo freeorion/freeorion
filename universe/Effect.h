@@ -15,7 +15,7 @@ class UniverseObject;
 
 namespace Condition {
     struct ConditionBase;
-    typedef std::set<UniverseObject*> ObjectSet;
+    typedef std::set<const UniverseObject*> ObjectSet;
 }
 
 namespace Effect {
@@ -41,6 +41,8 @@ namespace Effect {
     class SetEffectTarget;
     class MoveTo;
     class Victory;
+
+    typedef std::set<UniverseObject*> TargetSet;
 }
 
 namespace ValueRef {
@@ -57,8 +59,6 @@ namespace ValueRef {
 class Effect::EffectsGroup
 {
 public:
-    typedef Condition::ObjectSet TargetSet;
-
     struct Description
     {
         std::string scope_description;

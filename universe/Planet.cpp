@@ -291,9 +291,14 @@ std::vector<std::string> Planet::AvailableFoci() const
         const std::vector<FocusType>& foci = species->Foci();
         for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
             const FocusType& focus_type = *it;
-            if (const Condition::ConditionBase* location = focus_type.Location())
-                if (location->Match(this, this))
+            if (const Condition::ConditionBase* location = focus_type.Location()) {
+                const UniverseObject* source = this;
+                Condition::ObjectSet potential_targets; potential_targets.insert(this);
+                Condition::ObjectSet matched_targets;
+                location->Eval(source, matched_targets, potential_targets);
+                if (!matched_targets.empty())
                     retval.push_back(focus_type.Name());
+            }
         }
     }
     return retval;

@@ -1640,7 +1640,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
             // get current object while incrementing main iterator
             ObjectSet::iterator current_non_target_it = non_targets_it++;
-            UniverseObject* non_target_obj = *current_non_target_it;
+            const UniverseObject* non_target_obj = *current_non_target_it;
 
             // see if current object is within required distance of any condition target
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
@@ -1667,7 +1667,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
             // get current object while incrementing main iterator
             ObjectSet::iterator current_initial_target_it = initial_targets_it++;
-            UniverseObject* initial_target_obj = *current_initial_target_it;
+            const UniverseObject* initial_target_obj = *current_initial_target_it;
 
             // see if current object is within required distance of any condition target
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {

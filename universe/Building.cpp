@@ -284,24 +284,25 @@ const std::string& BuildingType::Graphic() const
 }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
-    Condition::ObjectSet locations;
-    Condition::ObjectSet non_locations;
+    const ObjectMap& objects = GetMainObjectMap();
 
-    ObjectMap& objects = GetMainObjectMap();
-
-    UniverseObject* loc = objects.Object(location_id);
+    const UniverseObject* loc = objects.Object(location_id);
     if (!loc) return false;
 
-    Empire* empire = Empires().Lookup(empire_id);
+    const Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().debugStream() << "BuildingType::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
 
-    UniverseObject* source = objects.Object(empire->CapitolID());
+    const UniverseObject* source = objects.Object(empire->CapitolID());
     if (!source) return false;
 
-    return m_location->Match(source, source);
+    Condition::ObjectSet potential_targets; potential_targets.insert(source);
+    Condition::ObjectSet matched_targets;
+    m_location->Eval(source, matched_targets, potential_targets);
+
+    return !matched_targets.empty();
 }
 
 CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,
