@@ -1504,7 +1504,12 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
 namespace {
     /** Sets visibilities for indicated \a empires of object with \a object_id
       * in the passed-in \a empire_vis_map to \a vis */
-    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map, std::map<int, std::set<int> >& empire_known_design_ids, const std::set<int>& empires, int object_id, Visibility vis) {
+    void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map,
+                                   std::map<int, std::set<int> >& empire_known_design_ids,
+                                   const std::set<int>& empires,
+                                   int object_id,
+                                   Visibility vis)
+    {
         for (std::set<int>::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
             int empire_id = *empire_it;
 
@@ -1543,6 +1548,16 @@ void Universe::UpdateEmpireObjectVisibilities()
 {
     //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
     m_empire_object_visibility.clear();
+
+    if (ALL_OBJECTS_VISIBLE) {
+        // set every object visible to all empires
+        std::set<int> all_empire_ids;
+        for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
+            all_empire_ids.insert(empire_it->first);
+        for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it)
+            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, all_empire_ids, obj_it->first, VIS_FULL_VISIBILITY);
+        return;
+    }
 
     // for each detecting object
     for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
