@@ -105,7 +105,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
                     doc.ReadDoc(ifs);
                     GetOptionsDB().SetFromXML(doc);
                 }
-            } catch (const std::exception& e) {
+            } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML") << std::endl;
             }
         }
@@ -134,7 +134,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
                     std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
                     std::cerr << GetConfigPath().file_string() << std::endl;
                 }
-            } catch (const std::exception& e) {
+            } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
             }
         }
