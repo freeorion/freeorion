@@ -245,7 +245,7 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     AttachChild(m_health_stat);
 
     m_food_consumption_stat = new StatisticIcon(2*w/3, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FOOD_CONSUMPTION),
-                                      0, 3, false);
+                                                0, 3, false);
     AttachChild(m_food_consumption_stat);
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
@@ -434,7 +434,7 @@ void PopulationPanel::Update()
     m_health_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
 
-    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_FOOD_CONSUMPTION));
+    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_FOOD_CONSUMPTION, METER_FOOD_CONSUMPTION));
     m_food_consumption_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_FOOD_CONSUMPTION, browse_wnd);
 }
@@ -2035,8 +2035,7 @@ void ShipDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ShipDesignPanel::Render() {}
 
-void ShipDesignPanel::Update() {
-}
+void ShipDesignPanel::Update() {}
 
 
 /////////////////////////////////////
