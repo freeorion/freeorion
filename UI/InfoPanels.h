@@ -66,6 +66,7 @@ private:
 
     StatisticIcon*              m_pop_stat;             ///< icon and number of population
     StatisticIcon*              m_health_stat;          ///< icon and number of health
+    StatisticIcon*              m_food_consumption_stat;///< icon and number of food consumption
 
     MultiIconValueIndicator*    m_multi_icon_value_indicator;   ///< textually / numerically indicates population and health
     MultiMeterStatusBar*        m_multi_meter_status_bar;       ///< graphically indicates meter values

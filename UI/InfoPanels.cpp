@@ -240,20 +240,25 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
                                    0, 3, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(w/2, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
+    m_health_stat = new StatisticIcon(w/3, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false);
     AttachChild(m_health_stat);
 
+    m_food_consumption_stat = new StatisticIcon(2*w/3, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FOOD_CONSUMPTION),
+                                      0, 3, false);
+    AttachChild(m_food_consumption_stat);
 
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
     m_pop_stat->SetBrowseModeTime(tooltip_delay);
     m_health_stat->SetBrowseModeTime(tooltip_delay);
+    m_food_consumption_stat->SetBrowseModeTime(tooltip_delay);
 
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
     meters.push_back(std::make_pair(METER_POPULATION, METER_TARGET_POPULATION));
     meters.push_back(std::make_pair(METER_HEALTH, METER_TARGET_HEALTH));
+    meters.push_back(std::make_pair(METER_FOOD_CONSUMPTION, INVALID_METER_TYPE));
 
     // attach and show meter bars and large resource indicators
     GG::Y top = UpperLeft().y;
@@ -280,6 +285,7 @@ PopulationPanel::~PopulationPanel()
     // manually delete all pointed-to controls that may or may not be attached as a child window at time of deletion
     delete m_pop_stat;
     delete m_health_stat;
+    delete m_food_consumption_stat;
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
@@ -312,11 +318,12 @@ void PopulationPanel::DoExpandCollapseLayout()
 
         AttachChild(m_pop_stat);
         AttachChild(m_health_stat);
+        AttachChild(m_food_consumption_stat);
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
     } else {
         // detach statistic icons
-        DetachChild(m_health_stat); DetachChild(m_pop_stat);
+        DetachChild(m_health_stat); DetachChild(m_pop_stat); DetachChild(m_food_consumption_stat);
 
         AttachChild(m_multi_icon_value_indicator);
         AttachChild(m_multi_meter_status_bar);
@@ -415,6 +422,7 @@ void PopulationPanel::Update()
 
     m_pop_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_POPULATION));
     m_health_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_HEALTH));
+    m_food_consumption_stat->SetValue(pop->NextTurnCurrentMeterValue(METER_FOOD_CONSUMPTION));
 
 
     // tooltips
@@ -425,6 +433,10 @@ void PopulationPanel::Update()
     browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_HEALTH, METER_TARGET_HEALTH));
     m_health_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_HEALTH, browse_wnd);
+
+    browse_wnd.reset(new MeterBrowseWnd(m_popcenter_id, METER_FOOD_CONSUMPTION));
+    m_food_consumption_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_FOOD_CONSUMPTION, browse_wnd);
 }
 
 void PopulationPanel::Refresh()
@@ -1346,7 +1358,7 @@ void MultiMeterStatusBar::Render()
     }
 
 
-    // lines for 20, 40, 60, 80 %
+    // lines for 20, 40, 60, 80
     glDisable(GL_TEXTURE_2D);
     glColor(HALF_GREY);
     glBegin(GL_LINES);
@@ -1367,62 +1379,46 @@ void MultiMeterStatusBar::Render()
     for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
         GG::Clr clr;
 
-        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-        const int BORDER = 1;
-        const GG::Y BAR_BOTTOM = y + BAR_HEIGHT;
+        const GG::Y BAR_TOP = y;
+        const GG::Y BAR_BOTTOM = BAR_TOP + BAR_HEIGHT;
 
         const bool SHOW_INITIAL = (m_initial_values[i] != Meter::INVALID_VALUE);
         const bool SHOW_PROJECTED = (m_projected_values[i] != Meter::INVALID_VALUE);
         const bool SHOW_TARGET_MAX = (m_target_max_values[i] != Meter::INVALID_VALUE);
 
-        // max / target value
+        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
         if (SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT) {
+            // max / target value
             glColor(DarkColor(m_bar_colours[i]));
-            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM));
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM));
+            // black border
+            GG::FlatRectangle(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM), GG::CLR_ZERO, GG::CLR_BLACK, 1);
         }
 
         const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        const GG::Y INITIAL_TOP(BAR_TOP + BAR_HEIGHT / 3);
+        if (SHOW_INITIAL) {
+            // initial value
+            const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+            const GG::Y INITIAL_TOP(BAR_TOP + BAR_HEIGHT / 3);
+            glColor(m_bar_colours[i]);
+            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, INITIAL_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
+            // black border
+            GG::FlatRectangle(GG::Pt(BAR_LEFT, INITIAL_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+        }
+
         const GG::X PROJECTED_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_projected_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-        const GG::Y PROJECTED_TOP = y + 3*EDGE_PAD/2;
-
-        GG::Clr projected_clr = ClientUI::StatIncrColor();
-        if (m_projected_values[i] < m_initial_values[i]) projected_clr = ClientUI::StatDecrColor();
-
-        if (PROJECTED_RIGHT > INITIAL_RIGHT) {
-            glColor(GG::CLR_BLACK);
-            if (SHOW_PROJECTED) {
-                // projected border
-                GG::FlatRectangle(GG::Pt(INITIAL_RIGHT, PROJECTED_TOP),     GG::Pt(PROJECTED_RIGHT + 1, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
-                // projected colour bar
-                GG::FlatRectangle(GG::Pt(INITIAL_RIGHT, PROJECTED_TOP + 1), GG::Pt(PROJECTED_RIGHT,     BAR_BOTTOM), projected_clr, projected_clr, 0);
-            }
-            if (SHOW_INITIAL) {
-                // initial value
-                glColor(m_bar_colours[i]);
-                m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
-                // black border
-                GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(TARGET_MAX_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
-            }
-        } else {
-            if (SHOW_INITIAL) {
-                // initial value
-                glColor(m_bar_colours[i]);
-                m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, y), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
-            }
-            if (SHOW_PROJECTED && PROJECTED_RIGHT < INITIAL_RIGHT) {
-                // projected border
-                glColor(GG::CLR_BLACK);
-                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP),     GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), GG::CLR_BLACK, GG::CLR_BLACK, 0);
-                // projected colour bar
-                glColor(m_bar_colours[i]);
-                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT,     PROJECTED_TOP + 1), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), projected_clr, projected_clr, 0);
-            }
-            if (SHOW_INITIAL) {
-                // black border
-                GG::FlatRectangle(GG::Pt(BAR_LEFT - BORDER, y - BORDER), GG::Pt(INITIAL_RIGHT + BORDER, BAR_BOTTOM + BORDER), GG::CLR_ZERO, GG::CLR_BLACK, 1);
+        const GG::Y PROJECTED_TOP(INITIAL_TOP);
+        if (SHOW_PROJECTED) {
+            // projected colour bar with black border
+            if (PROJECTED_RIGHT > INITIAL_RIGHT) {
+                GG::FlatRectangle(GG::Pt(INITIAL_RIGHT - 1, PROJECTED_TOP), GG::Pt(PROJECTED_RIGHT, BAR_BOTTOM), ClientUI::StatIncrColor(), GG::CLR_BLACK, 1);
+            } else if (PROJECTED_RIGHT < INITIAL_RIGHT) {
+                GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), ClientUI::StatDecrColor(), GG::CLR_BLACK, 1);
             }
         }
 
+        // move down position of next bar, if any
         y += BAR_HEIGHT + BAR_PAD;
     }
 }
