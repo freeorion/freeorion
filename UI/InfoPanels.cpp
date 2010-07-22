@@ -240,11 +240,11 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
                                    0, 3, false);
     AttachChild(m_pop_stat);
 
-    m_health_stat = new StatisticIcon(w/3, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
+    m_health_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_HEALTH),
                                       0, 3, false);
     AttachChild(m_health_stat);
 
-    m_food_consumption_stat = new StatisticIcon(2*w/3, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FOOD_CONSUMPTION),
+    m_food_consumption_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_FOOD_CONSUMPTION),
                                                 0, 3, false);
     AttachChild(m_food_consumption_stat);
 
@@ -316,11 +316,25 @@ void PopulationPanel::DoExpandCollapseLayout()
         DetachChild(m_multi_meter_status_bar);
         DetachChild(m_multi_icon_value_indicator);
 
-        AttachChild(m_pop_stat);
-        AttachChild(m_health_stat);
-        AttachChild(m_food_consumption_stat);
+        std::vector<StatisticIcon*> icons;
+        icons.push_back(m_pop_stat);
+        icons.push_back(m_health_stat);
+        icons.push_back(m_food_consumption_stat);
+
+        // position and reattach icons to be shown
+        for (int n = 0; n < icons.size(); ++n) {
+            GG::X x = MeterIconSize().x*n*7/2;
+
+            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+
+            StatisticIcon* icon = icons[n];
+            AttachChild(icon);
+            icon->MoveTo(GG::Pt(x, GG::Y0));
+            icon->Show();
+        }
 
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
+
     } else {
         // detach statistic icons
         DetachChild(m_health_stat); DetachChild(m_pop_stat); DetachChild(m_food_consumption_stat);
