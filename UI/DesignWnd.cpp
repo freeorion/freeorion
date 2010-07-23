@@ -1067,17 +1067,23 @@ void BasesListBox::PopulateWithCompletedDesigns() {
         // add rows for designs this empire is keeping
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
             int design_id = *it;
-            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-            Insert(row);
-            row->Resize(row_size);
+            bool available = empire->ShipDesignAvailable(design_id);
+            if ((available && showing_available) || (!available && showing_unavailable)) {
+                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+                Insert(row);
+                row->Resize(row_size);
+            }
         }
     } else {
         // add all known / existing designs
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             int design_id = it->first;
-            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-            Insert(row);
-            row->Resize(row_size);
+            bool available = empire->ShipDesignAvailable(design_id);
+            if ((available && showing_available) || (!available && showing_unavailable)) {
+                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+                Insert(row);
+                row->Resize(row_size);
+            }
         }
     }
 }
