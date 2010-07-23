@@ -790,10 +790,13 @@ public:
                                     DesignBrowsedSignal;            //!< a completed design was browsed (clicked once)
     mutable boost::signal<void (const HullType*)>
                                     HullBrowsedSignal;              //!< a hull was browsed (clicked once)
+    mutable boost::signal<void (const ShipDesign*)>
+                                    DesignRightClickedSignal;       //!< a complete design was right-clicked (once)
 
 private:
-    void                            PropagateDoubleClickSignal(GG::ListBox::iterator it);
-    void                            PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt);
+    void                            BaseDoubleClicked(GG::ListBox::iterator it);
+    void                            BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt);
+    void                            BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt);
 
     GG::Pt                          ListRowSize();
 
@@ -921,8 +924,9 @@ BasesListBox::BasesListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false)
 {
-    GG::Connect(DoubleClickedSignal,    &BasesListBox::PropagateDoubleClickSignal,  this);
-    GG::Connect(LeftClickedSignal,      &BasesListBox::PropagateLeftClickSignal,  this);
+    GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
+    GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
+    GG::Connect(RightClickedSignal,     &BasesListBox::BaseRightClicked,    this);
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const {
@@ -958,9 +962,7 @@ void BasesListBox::Populate() {
     //if (!Empty() && !Visible())
     //    return;
 
-    // if empty, clear... I think this is done to ensure layout is done properly?
-    if (Empty())
-        Clear();
+    Logger().debugStream() << "BasesListBox::Populate";
 
     // populate list as appropriate for types of bases shown
     if (m_showing_empty_hulls)
@@ -1055,66 +1057,32 @@ void BasesListBox::PopulateWithCompletedDesigns() {
     const Empire* empire = Empires().Lookup(m_empire_id_shown); // may return 0
     const Universe& universe = GetUniverse();
 
-    // loop through all hulls, determining if they need to be added or removed from list
-    std::set<int> designs_to_add;
-    std::set<int> designs_to_remove;
+    Logger().debugStream() << "BasesListBox::PopulateWithCompletedDesigns for empire " << m_empire_id_shown;
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
 
     if (empire) {
+        // add rows for designs this empire is keeping
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
             int design_id = *it;
-
-            // add or retain in list designs of appropriate availablility retained by current empire
-            if ((showing_available && empire->ShipDesignAvailable(design_id)) ||
-                (showing_unavailable && !empire->ShipDesignAvailable(design_id)))
-            {
-                // add or retain design in list
-                if (m_designs_in_list.find(design_id) == m_designs_in_list.end())
-                    designs_to_add.insert(design_id);
-            } else {
-                // remove or don't add design to list
-                if (m_designs_in_list.find(design_id) != m_designs_in_list.end())
-                    designs_to_remove.insert(design_id);
-            }
+            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+            Insert(row);
+            row->Resize(row_size);
         }
     } else {
-        // all empires / all known designs
+        // add all known / existing designs
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             int design_id = it->first;
-            // add or retain design in list
-            if (m_designs_in_list.find(design_id) == m_designs_in_list.end())
-                designs_to_add.insert(design_id);
+            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+            Insert(row);
+            row->Resize(row_size);
         }
-    }
-
-    // loop through list, removing rows as appropriate
-    for (iterator it = begin(); it != end(); ) {
-        iterator temp_it = it++;
-        //Logger().debugStream() << " row index: " << i;
-        if (const CompletedDesignListBoxRow* row =
-            dynamic_cast<const CompletedDesignListBoxRow*>(*temp_it)) {
-            int current_row_design_id = row->DesignID();
-            //Logger().debugStream() << " current row hull: " << current_row_design_id;
-            if (designs_to_remove.find(current_row_design_id) != designs_to_remove.end()) {
-                //Logger().debugStream() << " ... removing";
-                m_designs_in_list.erase(current_row_design_id);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
-                delete Erase(temp_it);
-            }
-        }
-    }
-
-    // loop through designs to add, adding to list
-    const GG::Pt row_size = ListRowSize();
-    for (std::set<int>::const_iterator it = designs_to_add.begin(); it != designs_to_add.end(); ++it) {
-        int design_id = *it;
-        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-        Insert(row);
-        row->Resize(row_size);
-
-        m_designs_in_list.insert(design_id);
     }
 }
 
-void BasesListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::Pt& pt) {
+void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
     // determine type of row that was clicked, and emit appropriate signal
 
     CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
@@ -1135,7 +1103,41 @@ void BasesListBox::PropagateLeftClickSignal(GG::ListBox::iterator it, const GG::
     }
 }
 
-void BasesListBox::PropagateDoubleClickSignal(GG::ListBox::iterator it) {
+void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt) {
+    // determine type of row that was clicked, and emit appropriate signal
+
+    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (design_row) {
+        int design_id = design_row->DesignID();
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (design)
+            DesignRightClickedSignal(design);
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        Logger().debugStream() << "BasesListBox::BaseRightClicked on design id : " << design_id;
+
+        // create popup menu with a commands in it
+        GG::MenuItem menu_contents;
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_DELETE"), 1, false, false));
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor());
+        if (popup.Run()) {
+            switch (popup.MenuID()) {
+
+            case 1: { // delete design
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ShipDesignOrder(empire_id, design_id, true)));
+                break;
+            }
+
+            default:
+                break;
+            }
+        }
+    }
+}
+
+void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it) {
     // determine type of row that was clicked, and emit appropriate signal
 
     HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);

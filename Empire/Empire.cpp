@@ -2244,7 +2244,7 @@ void Empire::AddShipDesign(int ship_design_id)
         m_ship_designs.insert(ship_design_id);
     } else {
         // design in not valid
-        throw std::invalid_argument("Empire::AddShipDesign(int ship_design_id) was passed a design id that this empire doesn't know about, or that doesn't exist");
+        Logger().errorStream() << "Empire::AddShipDesign(int ship_design_id) was passed a design id that this empire doesn't know about, or that doesn't exist";
     }
     ShipDesignsChangedSignal();
 }
@@ -2287,9 +2287,12 @@ int Empire::AddShipDesign(ShipDesign* ship_design)
 
 void Empire::RemoveShipDesign(int ship_design_id)
 {
-    m_ship_designs.erase(ship_design_id);
-
-    ShipDesignsChangedSignal();
+    if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
+        m_ship_designs.erase(ship_design_id);
+        ShipDesignsChangedSignal();
+    } else {
+        Logger().debugStream() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;
+    }
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)

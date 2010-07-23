@@ -1871,6 +1871,8 @@ Confirm New Design
 DESIGN_WND_CLEAR
 Clear Parts
 
+DESIGN_DELETE
+Delete Design
 
 ####################
 #   Encyclopedia   #
