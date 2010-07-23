@@ -497,8 +497,23 @@ DesignWnd::PartPalette::PartPalette(GG::X w, GG::Y h) :
     GG::Connect(m_parts_list->PartTypeClickedSignal,        PartTypeClickedSignal);
     GG::Connect(m_parts_list->PartTypeDoubleClickedSignal,  PartTypeDoubleClickedSignal);
 
+    const PartTypeManager& part_manager = GetPartTypeManager();
+
     // class buttons
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
+        // are there any parts of this class?
+        bool part_of_this_class_exists = false;
+        for (PartTypeManager::iterator part_it = part_manager.begin(); part_it != part_manager.end(); ++part_it) {
+            if (const PartType* part = part_it->second) {
+                if (part->Class() == part_class) {
+                    part_of_this_class_exists = true;
+                    break;
+                }
+            }
+        }
+        if (!part_of_this_class_exists)
+            continue;
+
         m_class_buttons[part_class] = (new CUIButton(GG::X(10), GG::Y(10), GG::X(10), UserString(boost::lexical_cast<std::string>(part_class))));
         AttachChild(m_class_buttons[part_class]);
         GG::Connect(m_class_buttons[part_class]->ClickedSignal,
