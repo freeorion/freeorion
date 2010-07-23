@@ -1612,9 +1612,12 @@ public:
     const std::string&                  DesignDescription() const;  //!< returns description currently entered for design
 
     boost::shared_ptr<const ShipDesign> GetIncompleteDesign() const;//!< returns a pointer to the design currently being modified (if any).  may return an empty pointer if not currently modifying a design.
+    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Sanitize();
 
@@ -1642,6 +1645,7 @@ public:
     mutable boost::signal<void ()>                  DesignChangedSignal;        //!< emitted when the design is changed (by adding or removing parts, not name or description changes)
     mutable boost::signal<void (const PartType*)>   PartTypeClickedSignal;      //!< propegates signals from contained SlotControls that signal that a part has been clicked
     mutable boost::signal<void ()>                  DesignConfirmedSignal;      //!< emitted when the user clicks the m_confirm_button to add the new design to the player's empire
+    mutable boost::signal<void (int)>               CompleteDesignClickedSignal;//!< emitted when the user clicks on the background of this main panel and a completed design is showing
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
@@ -1655,6 +1659,7 @@ private:
 
     const HullType*                         m_hull;
     std::vector<SlotControl*>               m_slots;
+    int                                     m_complete_design_id;
     mutable boost::shared_ptr<ShipDesign>   m_incomplete_design;
 
     GG::StaticGraphic*  m_background_image;
@@ -1673,6 +1678,7 @@ DesignWnd::MainPanel::MainPanel(GG::X w, GG::Y h) :
     CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"), GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_hull(0),
     m_slots(),
+    m_complete_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_incomplete_design(),
     m_background_image(0),
     m_design_name_label(0),
@@ -1758,6 +1764,19 @@ boost::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() 
     return m_incomplete_design;
 }
 
+int DesignWnd::MainPanel::GetCompleteDesignID() const
+{
+    return m_complete_design_id;
+}
+
+void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    if (m_incomplete_design.get())
+        DesignChangedSignal();
+    else if (m_complete_design_id != ShipDesign::INVALID_DESIGN_ID)
+        CompleteDesignClickedSignal(m_complete_design_id);
+}
+
 void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIWnd::SizeMove(ul, lr);
     DoLayout();
@@ -1831,10 +1850,14 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
 }
 
 void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
+    m_incomplete_design.reset();
+
     if (!ship_design) {
         SetHull(0);
         return;
     }
+
+    m_complete_design_id = ship_design->ID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -1973,10 +1996,12 @@ void DesignWnd::MainPanel::DoLayout() {
 }
 
 void DesignWnd::MainPanel::DesignChanged() {
+    m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
     if (m_hull && !(m_hull->Name()).empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
         m_confirm_button->Disable(false);
     else
         m_confirm_button->Disable(true);
+    RefreshIncompleteDesign();
 }
 
 void DesignWnd::MainPanel::RefreshIncompleteDesign() const
@@ -2052,6 +2077,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
                                                                             m_detail_panel,
                                                                             boost::bind(&DesignWnd::MainPanel::GetIncompleteDesign,
                                                                                         m_main_panel)));
+    GG::Connect(m_main_panel->CompleteDesignClickedSignal,      &EncyclopediaDetailPanel::SetDesign,m_detail_panel);
     m_main_panel->MoveTo(GG::Pt(most_panels_left, main_top));
 
     m_part_palette = new PartPalette(most_panels_width, part_palette_height);
