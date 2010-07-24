@@ -3353,7 +3353,7 @@ ECO_MARKET_ECON
 Market Economics
 
 ECO_MARKET_ECON_DESC
-The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be a effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to exploitation and collusion amongst the privileged and successful, which can negate and undo much of the system's proported benefits.
+The free exchange of goods and services between individuals and groups, whether by simple barter or through a commonly accepted credit currency, can be an effective and dynamic economic system.  In the idealized case, the market is fully self-regulating, with supply and demand forces pushing the economy towards optimally efficient resource use and worker employment.  As well, the opportunity for personal gain in such systems can be a powerful motivator for innovation and worker effort.  Caution must be observed however, as that same motivation can also lead to exploitation and collusion amongst the privileged and successful, which can negate and undo much of the system's proported benefits.
 
 ECO_PLANNED_ECON
 Planned Economics
