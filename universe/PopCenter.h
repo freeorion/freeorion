@@ -28,6 +28,8 @@ public:
     const std::string&  SpeciesName() const {return m_species_name;}        ///< returns the name of the species that populates this planet
     double              AllocatedFood() const {return m_allocated_food;}    ///< returns the amount of food which is currently available
 
+    std::string         Dump() const;
+
     double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
     double              NextTurnPopGrowthMax() const;                       ///< maximum possible pop growth next turn, not accounting for limits due to food
 

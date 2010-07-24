@@ -77,6 +77,13 @@ const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) cons
     return EMPTY_STRING;
 }
 
+std::string ResourceCenter::Dump() const
+{
+    std::stringstream os;
+    os << " focus: " << m_focus;
+    return os.str();
+}
+
 double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
 {
     const Meter* meter = GetMeter(type);

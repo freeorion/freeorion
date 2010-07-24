@@ -500,12 +500,15 @@ void ObjectMap::CopyObjectsToConstObjects()
     m_const_objects.insert(m_objects.begin(), m_objects.end());
 }
 
-void ObjectMap::Dump() const
+std::string ObjectMap::Dump() const
 {
-    Logger().debugStream() << "ObjectMap contains UniverseObjects: ";
+    std::ostringstream os;
+    os << "ObjectMap contains UniverseObjects: " << std::endl;
     for (ObjectMap::const_iterator it = const_begin(); it != const_end(); ++it) {
-        it->second->Dump();
+        os << it->second->Dump() << std::endl;
     }
+    os << std::endl;
+    return os.str();
 }
 
 
@@ -1147,8 +1150,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
     }
 
-    Logger().debugStream() << "UpdateMEterEstimatesImpl after resetting meters";
-    m_objects.Dump();
+    Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters";
+    Logger().debugStream() << m_objects.Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -1158,8 +1161,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
 
-    Logger().debugStream() << "UpdateMEterEstimatesImpl after executing effects";
-    m_objects.Dump();
+    Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
+    Logger().debugStream() << m_objects.Dump();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -1208,8 +1211,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         m_objects.Object(*obj_it)->ClampMeters();
     }
 
-    Logger().debugStream() << "UpdateMEterEstimatesImpl after discrepancies and clamping";
-    m_objects.Dump();
+    Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping";
+    Logger().debugStream() << m_objects.Dump();
 }
 
 void Universe::BackPropegateObjectMeters()
@@ -3817,8 +3820,8 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     BackPropegateObjectMeters();
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! Populationg systems after setting active meters to targes!";
-    m_objects.Dump();
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+    Logger().debugStream() << m_objects.Dump();
 
     UpdateEmpireObjectVisibilities();
 }

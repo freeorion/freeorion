@@ -166,6 +166,42 @@ const std::string& Ship::TypeName() const
     return UserString("SHIP");
 }
 
+std::string Ship::Dump() const
+{
+    std::stringstream os;
+    os << UniverseObject::Dump();
+    os << " design id: " << m_design_id
+       << " fleet id: " << m_fleet_id
+       << " species name: " << m_species_name
+       << " fighters: ";
+    //typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
+    for (ConsumablesMap::const_iterator it = m_fighters.begin(); it != m_fighters.end();) {
+        const std::string& part_name = it->first;
+        int num_consumables_available = it->second.second;
+        ++it;
+        os << part_name << ": " << num_consumables_available << (it == m_fighters.end() ? "" : ", ");
+    }
+    os << " missiles: ";
+    for (ConsumablesMap::const_iterator it = m_missiles.begin(); it != m_missiles.end();) {
+        const std::string& part_name = it->first;
+        int num_consumables_available = it->second.second;
+        ++it;
+        os << part_name << ": " << num_consumables_available << (it == m_missiles.end() ? "" : ", ");
+    }
+    //typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
+    os << " part meters: ";
+    for (PartMeters::const_iterator it = m_part_meters.begin(); it != m_part_meters.end();) {
+        const std::string part_name = it->first.second;
+        MeterType meter_type = it->first.first;
+        const Meter& meter = it->second;
+        ++it;
+        os << UserString(part_name) << " "
+           << UserString(GG::GetEnumMap<MeterType>().FromEnum(meter_type))
+           << ": " << meter.Current() << "  ";
+    }
+    return os.str();
+}
+
 const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);
 }

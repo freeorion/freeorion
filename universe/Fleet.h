@@ -39,6 +39,7 @@ public:
     virtual void                        MovementPhase();
 
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual std::string                 Dump() const;
 
     const_iterator                      begin() const;                      ///< returns the begin const_iterator for the ships in the fleet
     const_iterator                      end() const;                        ///< returns the end const_iterator for the ships in the fleet

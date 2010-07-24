@@ -114,7 +114,7 @@ public:
     const_iterator                      const_begin() const;
     const_iterator                      const_end() const;
 
-    void                                Dump() const;
+    std::string                         Dump() const;
     //@}
 
     /** \name Mutators */ //@{

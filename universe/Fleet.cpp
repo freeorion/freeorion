@@ -133,6 +133,22 @@ const std::string& Fleet::TypeName() const
     return UserString("FLEET");
 }
 
+std::string Fleet::Dump() const
+{
+    std::stringstream os;
+    os << UniverseObject::Dump();
+    os << " moving to: " << m_moving_to
+       << " prev system: " << m_prev_system
+       << " next system: " << m_next_system
+       << " ships: ";
+    for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end();) {
+        int ship_id = *it;
+        ++it;
+        os << ship_id << (it == m_ships.end() ? "" : ", ");
+    }
+    return os.str();
+}
+
 Fleet::const_iterator Fleet::begin() const
 {
     return m_ships.begin();

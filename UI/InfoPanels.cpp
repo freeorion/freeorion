@@ -779,7 +779,7 @@ void ResourcePanel::Update()
 
     //std::cout << "ResourcePanel::Update() object: " << obj->Name() << std::endl;
     //Logger().debugStream() << "ResourcePanel::Update()";
-    //obj->Dump();
+    //Logger().debugStream() << obj->Dump();
 
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
@@ -1309,7 +1309,7 @@ void MultiIconValueIndicator::Update()
                 continue;
             }
             //Logger().debugStream() << "MultiIconValueIndicator::Update object:";
-            //obj->Dump();
+            //Logger().debugStream() << obj->Dump();
             sum += obj->NextTurnCurrentMeterValue(m_meter_types[i].first);
         }
         m_icons[i]->SetValue(sum);

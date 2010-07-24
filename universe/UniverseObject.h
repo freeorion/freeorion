@@ -75,7 +75,7 @@ public:
     const std::set<std::string>&Specials() const;                   ///< returns the set of names of the Specials attached to this object
 
     virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
-    virtual void                Dump() const;                       ///< outputs textual description of object to logger
+    virtual std::string         Dump() const;                       ///< outputs textual description of object to logger
 
     virtual std::vector<int>    FindObjectIDs() const;              ///< returns ids of objects contained within this object
 

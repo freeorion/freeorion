@@ -126,6 +126,30 @@ const std::string& System::TypeName() const
     return UserString("SYSTEM");
 }
 
+std::string System::Dump() const
+{
+    std::stringstream os;
+    os << UniverseObject::Dump();
+    os << " star type: " << m_star
+       << " starlanes: ";
+    //typedef std::map<int, bool> StarlaneMap;
+    for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end();) {
+        int lane_end_id = it->first;
+        ++it;
+        os << lane_end_id << (it == m_starlanes_wormholes.end() ? "" : ", ");
+    }
+    os << " objects: ";
+    //typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
+    for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end();) {
+        int obj_id = it->second;
+        ++it;
+        if (obj_id == UniverseObject::INVALID_OBJECT_ID)
+            continue;
+        os << obj_id << (it == m_objects.end() ? "" : ", ");
+    }
+    return os.str();
+}
+
 StarType System::GetStarType() const
 {
     return m_star;

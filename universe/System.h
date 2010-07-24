@@ -26,7 +26,7 @@ struct UniverseObjectVisitor;
 class System : public UniverseObject
 {
 private:
-    typedef std::multimap<int, int>             ObjectMultimap;
+    typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
 
 public:
     typedef std::map<int, bool>                 StarlaneMap;            ///< the return type of VisibleStarlanesWormholes()
@@ -59,8 +59,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&
-                            TypeName() const;                           ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                           ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual std::string         Dump() const;
 
     StarType                GetStarType() const;                        ///< returns the type of star for this system
     int                     Orbits() const;                             ///< returns the number of orbits in this system

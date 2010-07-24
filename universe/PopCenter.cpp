@@ -55,6 +55,13 @@ void PopCenter::Init()
     AddMeter(METER_FOOD_CONSUMPTION);
 }
 
+std::string PopCenter::Dump() const
+{
+    std::stringstream os;
+    os << " species: " << m_species_name << " allocated food: " << m_allocated_food;
+    return os.str();
+}
+
 double PopCenter::CurrentMeterValue(MeterType type) const
 {
     const Meter* meter = GetMeter(type);
@@ -85,14 +92,14 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         // be an inaccurate estimate of next turn's food consumption, but
         // it's the best estimate that can be made
         double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
-        Logger().debugStream() << "PP: ntmpg: " << next_turn_max_pop_growth;
+        //Logger().debugStream() << "PP: ntmpg: " << next_turn_max_pop_growth;
         double current_pop = std::max(0.1, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
-        Logger().debugStream() << "PP: curpop: " << current_pop;
+        //Logger().debugStream() << "PP: curpop: " << current_pop;
         double fractional_growth = next_turn_max_pop_growth / current_pop;
-        Logger().debugStream() << "PP: fracgro: " << fractional_growth;
+        //Logger().debugStream() << "PP: fracgro: " << fractional_growth;
         double expected_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_growth);
-        Logger().debugStream() << "PP: curfdco: " << this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
-        Logger().debugStream() << "PP: ntefco: " << expected_next_turn_food_consumption;
+        //Logger().debugStream() << "PP: curfdco: " << this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
+        //Logger().debugStream() << "PP: ntefco: " << expected_next_turn_food_consumption;
         return expected_next_turn_food_consumption;
 
     } else if (meter_type == METER_TARGET_HEALTH || meter_type == METER_TARGET_POPULATION) {

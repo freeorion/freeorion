@@ -112,6 +112,14 @@ const std::string& Building::TypeName() const
     return UserString("BUILDING");
 }
 
+std::string Building::Dump() const
+{
+    std::stringstream os;
+    os << UniverseObject::Dump();
+    os << " building type: " << m_building_type;
+    return os.str();
+}
+
 const BuildingType* Building::GetBuildingType() const
 {
     return ::GetBuildingType(m_building_type);

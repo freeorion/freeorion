@@ -150,10 +150,36 @@ const std::string& Planet::TypeName() const
     return UserString("PLANET");
 }
 
-void Planet::Dump() const
+std::string Planet::Dump() const
 {
-    UniverseObject::Dump();
-    Logger().debugStream() << " ... (Planet " << this->ID() << ": " << this->Name() << "): species: " << PopCenter::SpeciesName();
+    std::stringstream os;
+    os << UniverseObject::Dump();
+    os << PopCenter::Dump();
+    os << ResourceCenter::Dump();
+    os << " planet type: " << UserString(GG::GetEnumMap<PlanetType>().FromEnum(m_type))
+       << " size: " << UserString(GG::GetEnumMap<PlanetSize>().FromEnum(m_size))
+       << " buildings: ";
+    for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end();) {
+        int building_id = *it;
+        ++it;
+        os << building_id << (it == m_buildings.end() ? "" : ", ");
+    }
+
+    PlanetType      m_type;
+    PlanetSize      m_size;
+    Year            m_orbital_period;
+    Radian          m_initial_orbital_position;
+    Day             m_rotational_period;
+    Degree          m_axial_tilt;
+
+    std::set<int>   m_buildings;
+    double          m_available_trade;
+
+    bool            m_just_conquered;
+
+    bool            m_is_about_to_be_colonized;
+
+    return os.str();
 }
 
 void Planet::Init() {

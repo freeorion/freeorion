@@ -1008,11 +1008,10 @@ namespace {
             //// DEBUG
             //const System* combat_system = combat_info.GetSystem();
             //Logger().debugStream() << "DisseminateSystemCombatInfo for combat at " << (combat_system ? combat_system->Name() : "(No System)");
-            //Logger().debugStream() << "objects:";
-            //combat_info.objects.Dump();
+            //Logger().debugStream() << combat_info.objects.Dump();
             //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin(); eko_it != combat_info.empire_known_objects.end(); ++eko_it) {
             //    Logger().debugStream() << "known objects for empire " << eko_it->first;
-            //    eko_it->second.Dump();
+            //    Logger().debugStream() << eko_it->second.Dump();
             //}
             //// END DEBUG
 
@@ -1333,11 +1332,10 @@ void ServerApp::ProcessCombats()
         //// DEBUG
         //const System* combat_system = combat_info.GetSystem();
         //Logger().debugStream() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
-        //Logger().debugStream() << "objects:";
-        //combat_info.objects.Dump();
+        //Logger().debugStream() << combat_info.objects.Dump();
         //for (std::map<int, ObjectMap>::const_iterator eko_it = combat_info.empire_known_objects.begin(); eko_it != combat_info.empire_known_objects.end(); ++eko_it) {
         //    Logger().debugStream() << "known objects for empire " << eko_it->first;
-        //    eko_it->second.Dump();
+        //    Logger().debugStream() << eko_it->second.Dump();
         //}
         //// END DEBUG
 
@@ -1408,14 +1406,14 @@ void ServerApp::PostCombatProcessTurns()
 
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!BEFORE TURN PROCESSING EFFECTS APPLICATION";
-    objects.Dump();
+    Logger().debugStream() << objects.Dump();
 
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
-    objects.Dump();
+    Logger().debugStream() << objects.Dump();
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
@@ -1488,7 +1486,7 @@ void ServerApp::PostCombatProcessTurns()
 
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-    objects.Dump();
+    Logger().debugStream() << objects.Dump();
 
 
     // re-execute all meter-related effects after all gamestate changes during

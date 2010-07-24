@@ -25,8 +25,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&
-                            TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual std::string         Dump() const;
 
     /** returns the BuildingType object for this building, specific to the
       * owning empire (or the default version if there is other than exactly
@@ -42,17 +42,17 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
+    virtual void    Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    void                    SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
-    virtual void            MoveTo(double x, double y);
+    void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
+    virtual void    MoveTo(double x, double y);
 
-    void                    Reset();                            ///< resets any building state, and removes owners
-    void                    SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
+    void            Reset();                            ///< resets any building state, and removes owners
+    void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     //@}
 
 private:
-    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void    ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
 
     std::string m_building_type;
     int         m_planet_id;

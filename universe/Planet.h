@@ -94,7 +94,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
-    virtual void                Dump() const;                           ///< outputs textual description of object to logger
+    virtual std::string         Dump() const;
 
     PlanetType                  Type() const {return m_type;}
     PlanetSize                  Size() const {return m_size;}
