@@ -46,7 +46,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_incomplete_design(),
     m_name_text(0),
     m_cost_text(0),
-    m_summary_text(0), 
+    m_summary_text(0),
     m_description_box(0),
     m_icon(0),
     m_other_icon(0)
@@ -95,8 +95,8 @@ void EncyclopediaDetailPanel::DoLayout() {
     m_summary_text->SizeMove(ul, lr);
 
     // main verbose description (fluff, effects, unlocks, ...)
-    ul = GG::Pt(GG::X1, ICON_SIZE + TEXT_MARGIN_Y + 1);
-    lr = ul + GG::Pt(Width() - TEXT_MARGIN_X - BORDER_RIGHT, Height() - BORDER_BOTTOM - ul.y - TEXT_MARGIN_Y);
+    ul = GG::Pt(BORDER_LEFT, ICON_SIZE + TEXT_MARGIN_Y + 1);
+    lr = GG::Pt(Width() - BORDER_RIGHT*2, Height() - BORDER_BOTTOM*2);
     m_description_box->SizeMove(ul, lr);
 
     // icon
@@ -131,7 +131,7 @@ void EncyclopediaDetailPanel::Render() {
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
     const GG::Y ICON_SIZE = m_summary_text->LowerRight().y - m_name_text->UpperLeft().y;
-    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM);
+    GG::Pt cl_ul = ul + GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM); // BORDER_BOTTOM is the size of the border at the bottom of a standard CUIWnd
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
    // use GL to draw the lines
