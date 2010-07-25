@@ -13,14 +13,14 @@
 	<key>CFBundleIconFile</key>
 	<string>FreeOrion</string>
 	<key>CFBundleIdentifier</key>
-	<string>org.FreeOrion</string>
+	<string>org.freeorion.FreeOrion</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleSignature</key>
-	<string>fori</string>
 	<key>CFBundleVersion</key>
-	<string>0.3.14</string>
+	<string>0.3.15</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.3.15</string>
 </dict>
 </plist>
