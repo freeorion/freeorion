@@ -322,7 +322,7 @@ void PopulationPanel::DoExpandCollapseLayout()
         icons.push_back(m_food_consumption_stat);
 
         // position and reattach icons to be shown
-        for (int n = 0; n < icons.size(); ++n) {
+        for (int n = 0; n < static_cast<int>(icons.size()); ++n) {
             GG::X x = MeterIconSize().x*n*7/2;
 
             if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
