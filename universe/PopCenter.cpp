@@ -79,8 +79,7 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
     }
 
     if (meter_type == METER_HEALTH) {
-        const Meter* target_meter = GetMeter(METER_TARGET_HEALTH);
-        return std::min(target_meter->Current(), meter->Current() + 1.0);
+        return meter->Current() + NextTurnHealthGrowth();
 
     } else if (meter_type == METER_POPULATION) {
         return meter->Current() + NextTurnPopGrowth();
@@ -138,7 +137,7 @@ double PopCenter::NextTurnPopGrowthMax() const
 {
     double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 1.0);    // clamping target pop to at least 1 prevents divide by zero cases
     double cur_pop = GetMeter(METER_POPULATION)->Current();
-    double cur_health = std::max(GetMeter(METER_HEALTH)->Current(), 120.0);             // clamping current health to at most 120 prevents weird results with overpopulation decay health-dependence
+    double cur_health = std::min(GetMeter(METER_HEALTH)->Current(), 120.0);             // clamping current health to at most 120 prevents weird results with overpopulation decay health-dependence
 
     // There are several factors that combine to produce the actual growth
     // or loss of population on a planet.
