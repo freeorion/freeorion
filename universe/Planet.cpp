@@ -650,6 +650,14 @@ void Planet::ClampMeters()
     UniverseObject::ClampMeters();
     ResourceCenterClampMeters();
     PopCenterClampMeters();
+
+    UniverseObject::GetMeter(METER_MAX_SHIELD)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_SHIELD)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
+    UniverseObject::GetMeter(METER_MAX_DEFENSE)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_DEFENSE)->ClampCurrentToRange(Meter::DEFAULT_VALUE, UniverseObject::GetMeter(METER_MAX_DEFENSE)->Current());
+
+    UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange();
 }
 
 std::set<int> Planet::VisibleContainedObjects(int empire_id) const
