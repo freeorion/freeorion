@@ -294,8 +294,8 @@ const std::string& BuildingType::Graphic() const
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     const ObjectMap& objects = GetMainObjectMap();
 
-    const UniverseObject* loc = objects.Object(location_id);
-    if (!loc) return false;
+    const UniverseObject* location = objects.Object(location_id);
+    if (!location) return false;
 
     const Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
@@ -306,7 +306,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     const UniverseObject* source = objects.Object(empire->CapitolID());
     if (!source) return false;
 
-    Condition::ObjectSet potential_targets; potential_targets.insert(source);
+    Condition::ObjectSet potential_targets; potential_targets.insert(location);
     Condition::ObjectSet matched_targets;
     m_location->Eval(source, matched_targets, potential_targets);
 
