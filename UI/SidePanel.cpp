@@ -1061,7 +1061,9 @@ void SidePanel::PlanetPanel::Refresh()
 
     const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
 
-    // create colonize or cancel button, if appropriate (a ship is in the system that can colonize, or the planet has been ordered to be colonized already this turn)
+    // create colonize or cancel button, if appropriate (a ship is in the system
+    // that can colonize, or the planet has been ordered to be colonized already
+    // this turn)
     if (!Disabled() &&
         owner == OS_NONE &&
         ship &&
@@ -1102,10 +1104,9 @@ void SidePanel::PlanetPanel::Refresh()
             m_button_colonize->SetText(UserString("CANCEL"));
         DetachChild(m_colonize_instruction);
 
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
                                                    % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet)
-                                                   % GetPlanetEnvironmentName(*planet, planet->SpeciesName()));
+                                                   % GetPlanetTypeName(*planet));
         m_env_size->SetText(env_size_text);
 
     } else {
@@ -1125,7 +1126,8 @@ void SidePanel::PlanetPanel::Refresh()
     if (m_specials_panel)
         m_specials_panel->Update();
 
-    // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal, which should be connected to SidePanel::PlanetPanel::DoLayout
+    // BuildingsPanel::Refresh (and other panels) emit ExpandCollapseSignal,
+    // which should be connected to SidePanel::PlanetPanel::DoLayout
 }
 
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus)
