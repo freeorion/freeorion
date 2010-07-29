@@ -46,8 +46,6 @@ public:
     void    Reset();                                    ///< Sets all meters to 0, clears race name, and sets allocated food to 0.
     //@}
 
-    static const double MINIMUM_POP_CENTER_POPULATION;  ///< below this population, planet is considered unpopulated and reset to uncolonized state
-
 protected:
     void    Init();                                     ///< initialization that needs to be called by derived class after derived class is constructed
 

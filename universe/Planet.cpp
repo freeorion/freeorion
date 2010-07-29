@@ -165,20 +165,6 @@ std::string Planet::Dump() const
         os << building_id << (it == m_buildings.end() ? "" : ", ");
     }
 
-    PlanetType      m_type;
-    PlanetSize      m_size;
-    Year            m_orbital_period;
-    Radian          m_initial_orbital_position;
-    Day             m_rotational_period;
-    Degree          m_axial_tilt;
-
-    std::set<int>   m_buildings;
-    double          m_available_trade;
-
-    bool            m_just_conquered;
-
-    bool            m_is_about_to_be_colonized;
-
     return os.str();
 }
 
@@ -593,12 +579,11 @@ void Planet::PopGrowthProductionResearchPhase()
 
     PopCenterPopGrowthProductionResearchPhase();
 
-    // check for starvation
-    if (GetMeter(METER_POPULATION)->Current() < PopCenter::MINIMUM_POP_CENTER_POPULATION) {
-        Logger().debugStream() << "Planet::PopGrowthProductionResearchPhase Planet " << this->Name() << " " << this->ID() << " is starving!";
-        // starving.
-
-        // generate starvation sitreps
+    // check for planets with zero population.  If they have any owners
+    // then the planet has likely just starved.  Regardless, resetting the
+    // planet keeps things consistent.
+    if (GetMeter(METER_POPULATION)->Current() == 0.0) {
+        // generate starvation sitreps for any empire that owns this depopulated planet
         const std::set<int>& owners = this->Owners();
         for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
             if (Empire* empire = Empires().Lookup(*it))

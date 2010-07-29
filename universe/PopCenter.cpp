@@ -9,7 +9,9 @@
 #include <algorithm>
 #include <stdexcept>
 
-const double PopCenter::MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 0.1 when showing only two digits
+namespace {
+    const double MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 0.1 when showing only two digits
+}
 
 class Species;
 const Species* GetSpecies(const std::string& name);
@@ -91,14 +93,10 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         // be an inaccurate estimate of next turn's food consumption, but
         // it's the best estimate that can be made
         double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
-        //Logger().debugStream() << "PP: ntmpg: " << next_turn_max_pop_growth;
-        double current_pop = std::max(0.1, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
-        //Logger().debugStream() << "PP: curpop: " << current_pop;
+        double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
         double fractional_growth = next_turn_max_pop_growth / current_pop;
-        //Logger().debugStream() << "PP: fracgro: " << fractional_growth;
         double expected_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_growth);
-        //Logger().debugStream() << "PP: curfdco: " << this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
-        //Logger().debugStream() << "PP: ntefco: " << expected_next_turn_food_consumption;
+
         return expected_next_turn_food_consumption;
 
     } else if (meter_type == METER_TARGET_HEALTH || meter_type == METER_TARGET_POPULATION) {
@@ -113,24 +111,39 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
 
 double PopCenter::NextTurnPopGrowth() const
 {
-    double max = GetMeter(METER_TARGET_POPULATION)->Current();
-    double cur = GetMeter(METER_POPULATION)->Current();
     //Logger().debugStream() << "PopCenter::NextTurnPopGrowth  growth max: " << NextTurnPopGrowthMax() << "  allocated food: " << AllocatedFood();
 
-    // growth limited by max possible growth from health and current population
-    // based formula, by allocated food, and to not increase above the target
-    // population
-    // decline limited by current population: can't have negative population.
+    double next_turn_pop_growth_max = NextTurnPopGrowthMax();       // before food considerations
+    double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));    // floor to effective current population, to prevent overflow issues
+    double need_for_stable_population = this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
 
-    double raw_growth = std::max(-cur, std::min(NextTurnPopGrowthMax(), std::min(AllocatedFood(), max) - cur));
+    // if food need for stable population is sufficiently small, ignore any
+    // food allocation requirements when determining growth.  This lets races
+    // that don't require food grow without need to be allocated any, and
+    // avoids any divide by zero issues.
+    //
+    // this may however cause issues when at small populations that need
+    // less than one food per unit of pop, when a population could end up
+    // growing for a few turns until it gets big enough to start needing food,
+    // at which point it could starve...
+    if (need_for_stable_population < MINIMUM_POP_CENTER_POPULATION) {
+        double new_pop = current_pop + next_turn_pop_growth_max;
+        if (new_pop < MINIMUM_POP_CENTER_POPULATION)
+            next_turn_pop_growth_max = -current_pop;
+        return next_turn_pop_growth_max;
+    }
 
-    // if population will fall below minimum threshold, ensure this function
-    // returns actual decrease (although difference would be less than
-    // MINIMUM_POP_CENTER_POPULATION in any case
-    if (cur - raw_growth < MINIMUM_POP_CENTER_POPULATION)
-        return -cur;
+    // determine fraction of required food that was allocated.
+    double allocated_food = AllocatedFood();
+    double food_allocation_fraction = allocated_food / need_for_stable_population;
 
-    return raw_growth;
+    double population_supportable_by_allocated_food = current_pop * food_allocation_fraction;
+
+    double new_pop = std::min(current_pop + next_turn_pop_growth_max, population_supportable_by_allocated_food);
+    if (new_pop < MINIMUM_POP_CENTER_POPULATION)
+        new_pop = 0.0;
+
+    return new_pop - current_pop;
 }
 
 double PopCenter::NextTurnPopGrowthMax() const
@@ -149,7 +162,7 @@ double PopCenter::NextTurnPopGrowthMax() const
     if (cur_health > 20.0 && cur_pop < cur_health) {
         double underpopulation_fraction = ((target_pop + 1.0) - cur_pop) / target_pop;
         //std::cout << "underpop frac: " << underpopulation_fraction << std::endl;
-        double growth_potential = cur_pop * underpopulation_fraction * (cur_health - 20.0) * 0.0005;
+        double growth_potential = cur_pop * underpopulation_fraction * (cur_health - 20.0) * 0.005;
         //std::cout << "grow pot: " << growth_potential << std::endl;
         double max_growth = target_pop - cur_pop;       // most pop can grow is up to target pop
         return std::min(max_growth, growth_potential);
