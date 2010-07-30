@@ -108,27 +108,32 @@ public:
 
     void            DoLayout();
 
-    void            InitTurn(int turn_number);                          //!< called at the start of each turn
-    void            RestoreFromSaveData(const SaveGameUIData& data);    //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
-    void            ShowSystemNames();                                  //!< enables the system name text
-    void            HideSystemNames();                                  //!< disables the system name text
+    void            InitTurn(int turn_number);                              //!< called at the start of each turn
+    void            RestoreFromSaveData(const SaveGameUIData& data);        //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
+    void            ShowSystemNames();                                      //!< enables the system name text
+    void            HideSystemNames();                                      //!< disables the system name text
 
     mutable SystemLeftClickedSignalType     SystemLeftClickedSignal;
     mutable SystemRightClickedSignalType    SystemRightClickedSignal;
     mutable SystemBrowsedSignalType         SystemBrowsedSignal;
     mutable ZoomedSignalType                ZoomedSignal;
 
-    void            CenterOnMapCoord(double x, double y);           //!< centers the map on map position (x, y)
-    void            CenterOnObject(int id);                         //!< centers the map on object with id \a id
-    void            CenterOnObject(const UniverseObject* obj);      //!< centers the map on object \a id
-    void            ShowTech(const std::string& tech_name);                    //!< brings up the research screen and centers the tech tree on \a tech_name
-    void            ShowBuildingType(const std::string& building_type_name);   //!< brings up the production screen and displays info about the buildtype \a type_name
-    void            SelectSystem(int systemID);                     //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
-    void            ReselectLastSystem();                           //!< re-selects the most recently selected system, if a valid one exists
-    void            SelectPlanet(int planetID);                     //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
-    void            SelectFleet(int fleetID);                       //!< programatically selects fleets by ID
-    void            SelectFleet(Fleet* fleet);                      //!< programatically selects fleets
-    void            ReselectLastFleet();                            //!< re-selects the most recent selected fleet, if a valid one exists
+    void            CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
+    void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
+    void            CenterOnObject(const UniverseObject* obj);              //!< centers the map on object \a id
+
+    void            ShowTech(const std::string& tech_name);                 //!< brings up the research screen and centers the tech tree on \a tech_name
+    void            ShowBuildingType(const std::string& building_type_name);//!< brings up the production screen and displays info about the buildtype \a type_name
+    void            ShowPartType(const std::string& part_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name
+    void            ShowHullType(const std::string& hull_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name
+    void            ShowShipDesign(int design_id);                          //!< brings up the production screen and displays info about the buildtype \a type_name
+
+    void            SelectSystem(int systemID);                             //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
+    void            ReselectLastSystem();                                   //!< re-selects the most recently selected system, if a valid one exists
+    void            SelectPlanet(int planetID);                             //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
+    void            SelectFleet(int fleetID);                               //!< programatically selects fleets by ID
+    void            SelectFleet(Fleet* fleet);                              //!< programatically selects fleets
+    void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            SetFleetMovementLine(const FleetButton* fleet_button);  //!< creates fleet movement lines for all fleets in the given FleetButton to indicate where (and whether) they are moving.  Move lines originate from the FleetButton.
     void            SetFleetMovementLine(int fleet_id);                     //!< creates fleet movement line for a single fleet.  Move lines originate from the fleet's button location.

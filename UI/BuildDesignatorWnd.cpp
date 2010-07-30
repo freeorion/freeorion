@@ -970,6 +970,11 @@ void BuildDesignatorWnd::ShowBuildingTypeInEncyclopedia(const std::string& build
     m_enc_detail_panel->SetBuildingType(building_type);
 }
 
+void BuildDesignatorWnd::ShowShipDesignInEncyclopedia(int design_id)
+{
+    m_enc_detail_panel->SetDesign(design_id);
+}
+
 int BuildDesignatorWnd::BuildLocation() const
 {
     return m_side_panel->SelectedPlanetID();

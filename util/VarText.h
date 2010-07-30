@@ -53,6 +53,7 @@ public:
     static const std::string BUILDING_ID_TAG;
 
     static const std::string EMPIRE_ID_TAG;
+    static const std::string DESIGN_ID_TAG;
 
     static const std::string TECH_TAG;
     static const std::string BUILDING_TYPE_TAG;

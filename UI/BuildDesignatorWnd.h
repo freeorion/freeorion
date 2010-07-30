@@ -77,6 +77,7 @@ public:
     void            ToggleAvailabilitly(bool available, bool refresh_list = true);
 
     void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
+    void            ShowShipDesignInEncyclopedia(int design_id);
     //@}
 
     mutable boost::signal<void (BuildType, const std::string&, int, int)>

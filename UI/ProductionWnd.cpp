@@ -194,7 +194,7 @@ namespace {
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
         glEnable(GL_LINE_SMOOTH);
-        glLineWidth(OUTER_LINE_THICKNESS);
+        glLineWidth(static_cast<GLfloat>(OUTER_LINE_THICKNESS));
         Draw(GG::Clr(text_and_border.r, text_and_border.g, text_and_border.b, 127), false);
         glLineWidth(1.0);
         glDisable(GL_LINE_SMOOTH);
@@ -222,7 +222,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     m_build_designator_wnd(0)
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                                                      OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
+                                                      static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
 
     m_queue_lb = new QueueListBox(GG::X(2), m_production_info_panel->LowerRight().y, m_production_info_panel->Width() - 4, ClientSize().y - 4 - m_production_info_panel->Height(), "PRODUCTION_QUEUE_ROW");
     m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
@@ -347,6 +347,11 @@ void ProductionWnd::Update()
 void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
 {
     m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(building_type);
+}
+
+void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
+{
+    m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id);
 }
 
 void ProductionWnd::CenterOnBuild(int queue_idx)

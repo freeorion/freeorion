@@ -17,6 +17,15 @@ public:
     void    Reset();
     void    Sanitize();
     void    Render();
+
+    /** Shows \a part_type in design encyclopedia window */
+    void    ShowPartTypeInEncyclopedia(const std::string& part_type);
+
+    /** Shows \a hull_type in design encyclopedia window */
+    void    ShowHullTypeInEncyclopedia(const std::string& hull_type);
+
+    /** Shows ship design with id \a design_id in design encyclopedia window */
+    void    ShowShipDesignInEncyclopedia(int design_id);
     //@}
 
 private:

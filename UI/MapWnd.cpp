@@ -2370,6 +2370,27 @@ void MapWnd::ShowBuildingType(const std::string& building_type_name)
     m_production_wnd->ShowBuildingTypeInEncyclopedia(building_type_name);
 }
 
+void MapWnd::ShowPartType(const std::string& part_type_name)
+{
+    if (!m_design_wnd->Visible())
+        ToggleDesign();
+    m_design_wnd->ShowPartTypeInEncyclopedia(part_type_name);
+}
+
+void MapWnd::ShowHullType(const std::string& hull_type_name)
+{
+    if (!m_design_wnd->Visible())
+        ToggleDesign();
+    m_design_wnd->ShowHullTypeInEncyclopedia(hull_type_name);
+}
+
+void MapWnd::ShowShipDesign(int design_id)
+{
+    if (!m_production_wnd->Visible())
+        ToggleProduction();
+    m_production_wnd->ShowShipDesignInEncyclopedia(design_id);
+}
+
 void MapWnd::CenterOnObject(int id)
 {
     if (UniverseObject* obj = GetObject(id))

@@ -33,6 +33,9 @@ public:
     /** Shows \a building_type in production encyclopedia window */
     void            ShowBuildingTypeInEncyclopedia(const std::string& building_type);
 
+    /** Shows ShipDesign with id \a design_id in production encyclopedia window */
+    void            ShowShipDesignInEncyclopedia(int design_id);
+
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window. */
     void            CenterOnBuild(int queue_idx);

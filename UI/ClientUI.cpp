@@ -548,17 +548,36 @@ bool ClientUI::ZoomToSpecial(const std::string& special_name)
 
 bool ClientUI::ZoomToShipHull(const std::string& hull_name)
 {
+    if (!GetHullType(hull_name))
+        return false;
+    m_map_wnd->ShowHullType(hull_name);
     return true;
 }
 
 bool ClientUI::ZoomToShipPart(const std::string& part_name)
 {
+    if (!GetPartType(part_name))
+        return false;
+    m_map_wnd->ShowPartType(part_name);
     return true;
 }
 
 bool ClientUI::ZoomToSpecies(const std::string& species_name)
 {
     return true;
+}
+
+bool ClientUI::ZoomToShipDesign(int design_id)
+{
+    if (!GetShipDesign(design_id))
+        return false;
+    m_map_wnd->ShowShipDesign(design_id);
+    return true;
+}
+
+bool ClientUI::ZoomToEmpire(int empire_id)
+{
+    return false;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)

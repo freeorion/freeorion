@@ -123,6 +123,7 @@ namespace {
                 m_str += open_tag + UserString(name) + close_tag;
 
             /* TODO: SPECIES_TAG */
+            /* TODO: DESIGN_ID_TAG */
 
             // empire token
             } else if (token == VarText::EMPIRE_ID_TAG) {
@@ -162,6 +163,7 @@ const std::string VarText::FLEET_ID_TAG = "fleet";
 const std::string VarText::BUILDING_ID_TAG = "building";
 
 const std::string VarText::EMPIRE_ID_TAG = "empire";
+const std::string VarText::DESIGN_ID_TAG = "shipdesign";
 
 const std::string VarText::TECH_TAG = "tech";
 const std::string VarText::BUILDING_TYPE_TAG = "buildingtype";

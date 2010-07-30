@@ -2135,6 +2135,18 @@ void DesignWnd::Render() {
     glEnable(GL_TEXTURE_2D);
 }
 
+void DesignWnd::ShowPartTypeInEncyclopedia(const std::string& part_type) {
+    m_detail_panel->SetPartType(part_type);
+}
+
+void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type) {
+    m_detail_panel->SetHullType(hull_type);
+}
+
+void DesignWnd::ShowShipDesignInEncyclopedia(int design_id) {
+    m_detail_panel->SetDesign(design_id);
+}
+
 void DesignWnd::AddDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = Empires().Lookup(empire_id);

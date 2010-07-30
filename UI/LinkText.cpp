@@ -199,6 +199,11 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(DATA));
 
+        } else if (LINK_TYPE == VarText::DESIGN_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::EMPIRE_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(DATA));
+
         } else if (LINK_TYPE == VarText::TECH_TAG) {
             ClientUI::GetClientUI()->ZoomToTech(DATA);
         } else if (LINK_TYPE == VarText::BUILDING_TYPE_TAG) {
