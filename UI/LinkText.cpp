@@ -185,33 +185,38 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
     const std::string& LINK_TYPE = m_links[sel_link].type;
+    const std::string& DATA = m_links[sel_link].data;
 
-    if (LINK_TYPE == VarText::PLANET_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(m_links[sel_link].data));
-    } else if (LINK_TYPE == VarText::SYSTEM_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(m_links[sel_link].data));
-    } else if (LINK_TYPE == VarText::FLEET_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(m_links[sel_link].data));
-    } else if (LINK_TYPE == VarText::SHIP_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(m_links[sel_link].data));
-    } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
-        ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(m_links[sel_link].data));
+    try {
+        if (LINK_TYPE == VarText::PLANET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::SYSTEM_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::FLEET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::SHIP_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(DATA));
 
-    } else if (LINK_TYPE == VarText::TECH_TAG) {
-        ClientUI::GetClientUI()->ZoomToTech(m_links[sel_link].data);
-    } else if (LINK_TYPE == VarText::BUILDING_TYPE_TAG) {
-        ClientUI::GetClientUI()->ZoomToBuildingType(m_links[sel_link].data);
-    } else if (LINK_TYPE == VarText::SPECIAL_TAG) {
-        ClientUI::GetClientUI()->ZoomToSpecial(m_links[sel_link].data);
-    } else if (LINK_TYPE == VarText::SHIP_HULL_TAG) {
-        ClientUI::GetClientUI()->ZoomToShipHull(m_links[sel_link].data);
-    } else if (LINK_TYPE == VarText::SHIP_PART_TAG) {
-        ClientUI::GetClientUI()->ZoomToShipPart(m_links[sel_link].data);
-    } else if (LINK_TYPE == VarText::SPECIES_TAG) {
-        ClientUI::GetClientUI()->ZoomToSpecies(m_links[sel_link].data);
+        } else if (LINK_TYPE == VarText::TECH_TAG) {
+            ClientUI::GetClientUI()->ZoomToTech(DATA);
+        } else if (LINK_TYPE == VarText::BUILDING_TYPE_TAG) {
+            ClientUI::GetClientUI()->ZoomToBuildingType(DATA);
+        } else if (LINK_TYPE == VarText::SPECIAL_TAG) {
+            ClientUI::GetClientUI()->ZoomToSpecial(DATA);
+        } else if (LINK_TYPE == VarText::SHIP_HULL_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipHull(DATA);
+        } else if (LINK_TYPE == VarText::SHIP_PART_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipPart(DATA);
+        } else if (LINK_TYPE == VarText::SPECIES_TAG) {
+            ClientUI::GetClientUI()->ZoomToSpecies(DATA);
 
-    } else if (LINK_TYPE == ENCYCLOPEDIA_TAG) {
-        ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(m_links[sel_link].data);
+        } else if (LINK_TYPE == ENCYCLOPEDIA_TAG) {
+            ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(DATA);
+        }
+    } catch (const boost::bad_lexical_cast&) {
+        Logger().errorStream() << "TextLiner::LClick_: caught lexical cast exception for link type: " << LINK_TYPE << " and data: " << DATA;
     }
 }
 
