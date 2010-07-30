@@ -594,7 +594,7 @@ bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* 
         return universe_object_cast<const System*>(target);
         break;
     default:
-            break;
+        break;
     }
     return false;
 }

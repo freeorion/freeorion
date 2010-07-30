@@ -170,7 +170,7 @@ namespace {
 
         building =
             str_p("building")
-            >> !(name_label >> string_ref_vector[building.names = arg1])
+            >> (name_label >> string_ref_vector[building.names = arg1])
             [building.this_ = new_<Condition::Building>(building.names)];
 
         species =
