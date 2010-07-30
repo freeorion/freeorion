@@ -1550,17 +1550,32 @@ namespace {
 void Universe::UpdateEmpireObjectVisibilities()
 {
     //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
+
+    // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
+    for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it) {
+        const Empire* empire = empire_it->second;
+        int empire_id = empire_it->first;
+        const std::set<int>& empire_known_ship_designs = empire->ShipDesigns();
+        for (std::set<int>::const_iterator design_it = empire_known_ship_designs.begin(); design_it != empire_known_ship_designs.end(); ++design_it)
+            m_empire_known_ship_design_ids[empire_id].insert(*design_it);
+    }
+
+
     m_empire_object_visibility.clear();
+
 
     if (ALL_OBJECTS_VISIBLE) {
         // set every object visible to all empires
         std::set<int> all_empire_ids;
         for (EmpireManager::iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
             all_empire_ids.insert(empire_it->first);
+
         for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it)
             SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, all_empire_ids, obj_it->first, VIS_FULL_VISIBILITY);
+
         return;
     }
+
 
     // for each detecting object
     for (ObjectMap::const_iterator detector_it = m_objects.const_begin(); detector_it != m_objects.const_end(); ++detector_it) {
@@ -1938,10 +1953,9 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
         return;
     }
 
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
+    if (!Empires().Lookup(empire_id))
         Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called for invalid empire id: " << empire_id;
-    }
+
     m_empire_known_ship_design_ids[empire_id].insert(ship_design_id);
 }
 

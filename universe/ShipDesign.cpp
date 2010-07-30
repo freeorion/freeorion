@@ -1408,6 +1408,10 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
     if (!empire)
         return retval;
 
+    int empire_id = empire->EmpireID();
+
+    Universe& universe = GetUniverse();
+
     for (iterator it = begin(); it != end(); ++it) {
         ShipDesign* d = it->second;
 
@@ -1415,7 +1419,7 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
             Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
         }
 
-        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), empire->EmpireID(),
+        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), empire_id,
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
                                           d->Graphic(), d->Model(), true);
 
@@ -1426,6 +1430,8 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
         } else {
             retval[it->first] = design_id;
+
+            universe.SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
         }
     }
 
