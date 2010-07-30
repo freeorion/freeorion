@@ -335,20 +335,27 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += UserString("ENC_TECH_DETAIL_UNLOCKS_SECTION_STR");
             for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
                 const ItemSpec& item = unlocked_items[i];
-                std::string link = "";
-                if (item.type == UIT_BUILDING)
-                    link = "<building " + item.name + ">" + UserString(item.name) + "</building>";
-                else
-                    link = UserString(item.name);
-                /* TODO: replace this building type linking with linking using generic encyclopedia entry links,
-                         so that clicking one of these links will show the item in the current encyclopedia
-                         window (if one is available) regardless of what screen (tech, design, production)
-                         is currently open. */
 
-                std::string tech_link = ("[tech " + unlocked_items[i].name + "]");
+                std::string TAG;
+                switch (item.type) {
+                case UIT_BUILDING:  TAG = VarText::BUILDING_TYPE_TAG;   break;
+                case UIT_SHIP_PART: TAG = VarText::SHIP_PART_TAG;       break;
+                case UIT_SHIP_HULL: TAG = VarText::SHIP_HULL_TAG;       break;
+                case UIT_TECH:      TAG = VarText::TECH_TAG;            break;
+                }
+
+                std::string link_text;
+                if (!TAG.empty()) {
+                    link_text = "<" + TAG + " " + item.name + ">"
+                                + UserString(item.name)
+                                + "</" + TAG + ">";
+                } else {
+                    link_text = UserString(item.name);
+                }
+
                 detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
-                    % link);
+                    % link_text);
             }
         }
 
