@@ -1,94 +1,82 @@
 Hull
-    name = "SH_EMPTY"
-    description = "SH_STAND_EMPTY_DESC"
-    speed = 120
-    starlaneSpeed = 120
-    fuel = 3
-    stealth = 15
-    structure = 30
-    buildCost = 5
-    buildTime = 2
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_BASE"
-    ]
-    graphic = ""
-
-Hull
-    name = "SH_EMPTY_FARMER"
-    description = "SH_STAND_EMPTY_DESC_FARMER"
-    speed = 40
-    starlaneSpeed = 40
+    name = "SH_XENTRONIUM"
+    description = "SH_XENTRONIUM_DESC"
+    speed = 50
+    starlaneSpeed = 80
     fuel = 3
     stealth = 1
-    structure = 30
-    buildCost = 5
-    buildTime = 2
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_BASE"
+    structure = 100
+    buildCost = 1000
+    buildTime = 10
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
     ]
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = And [
-                Planet
-                Contains Source
-                OwnedBy TheEmpire Source.Owner
-                Focus type = "FOCUS_FARMING"
-            ]
+            scope = Source
             activation = Source
-            stackinggroup = "SH_EMPTY_FARMER_STACK_FARMING"
-            effects = SetTargetFarming Target.TargetFarming + 5
+            effects = SetDetection Value + 5
     graphic = ""
 
 Hull
-    name = "SH_SMALL"
-    description = "SH_SMALL_DESC"
-    speed = 80
-    starlaneSpeed = 80
-    fuel = 3
-    stealth = 10
-    structure = 40
-    buildCost = 10
-    buildTime = 4
-    slots = [
-        Slot type = External position = (0.20, 0.40)
-        Slot type = External position = (0.40, 0.40)
-        Slot type = External position = (0.60, 0.40)
-    ]
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_BASE"
-    ]
-    graphic = "hulls_design/mark1.png"
-
-Hull
-    name = "SH_INT_SMALL"
-    description = "SH_INT_SMALL_DESC"
-    speed = 80
-    starlaneSpeed = 80
-    fuel = 3
-    stealth = 10
-    structure = 40
-    buildCost = 10
-    buildTime = 4
-    slots = Slot type = Internal position = (0.40, 0.40)
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_BASE"
-    ]
+    name = "SH_COLONY_BASE"
+    description = "SH_COLONY_BASE_DESC"
+    speed = 10
+    starlaneSpeed = 0
+    fuel = 0
+    stealth = 0.1
+    structure = 5
+    buildCost = 1
+    buildTime = 1
+    slots = Slot type = Internal position = (0.50, 0.50)
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
     graphic = ""
 
 Hull
-    name = "SH_MEDIUM"
-    description = "SH_MEDIUM_DESC"
+    name = "SH_STANDARD"
+    description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 50
-    fuel = 5
-    stealth = 5
-    structure = 50
-    buildCost = 20
-    buildTime = 5
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 10
+    structure = 20
+    buildCost = 100
+    buildTime = 1
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_ROBOTIC"
+    description = "SH_ROBOTIC_DESC"
+    speed = 60
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 10
+    structure = 15
+    buildCost = 75
+    buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -97,122 +85,1139 @@ Hull
         Slot type = Internal position = (0.40, 0.75)
     ]
     location = And [
+        Contains And [
+            Or [
+                Building "BLD_SHIPYARD_CON_ROBO"
+                Building "BLD_SHIPYARD_CON_NANOROBO"
+            ]
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
         OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStructure Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
     ]
     graphic = ""
 
 Hull
-    name = "SH_COMB_MEDIUM"
-    description = "SH_COMB_MEDIUM_DESC"
-    speed = 50
-    starlaneSpeed = 50
-    fuel = 5
-    stealth = 5
-    structure = 50
-    buildCost = 20
-    buildTime = 5
-    slots = [
-        Slot type = External position = (0.10, 0.40)
-        Slot type = External position = (0.25, 0.40)
-        Slot type = External position = (0.40, 0.40)
-        Slot type = External position = (0.55, 0.40)
-        Slot type = External position = (0.70, 0.40)
-        Slot type = External position = (0.85, 0.40)
-    ]
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
-    ]
-    graphic = ""
-
-Hull
-    name = "SH_INT_MEDIUM"
-    description = "SH_INT_MEDIUM_DESC"
-    speed = 50
-    starlaneSpeed = 50
-    fuel = 5
-    stealth = 5
-    structure = 50
-    buildCost = 20
-    buildTime = 5
-    slots = [
-        Slot type = Internal position = (0.20, 0.40)
-        Slot type = Internal position = (0.40, 0.40)
-        Slot type = Internal position = (0.60, 0.40)
-        Slot type = Internal position = (0.80, 0.40)
-    ]
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
-    ]
-    graphic = ""
-
-Hull
-    name = "SH_BULK_MEDIUM"
-    description = "SH_BULK_MEDIUM_DESC"
-    speed = 30
-    starlaneSpeed = 30
+    name = "SH_SPATIAL_FLUX"
+    description = "SH_SPATIAL_FLUX_DESC"
+    speed = 80
+    starlaneSpeed = 80
     fuel = 3
-    stealth = 5
-    structure = 60
-    buildCost = 25
-    buildTime = 6
+    stealth = 25
+    structure = 5
+    buildCost = 50
+    buildTime = 1
+    slots = [
+        Slot type = External position = (0.40, 0.50)
+        Slot type = External position = (0.60, 0.50)
+    ]
+    location = And [
+        Contains And [
+            Or [
+                Building "BLD_SHIPYARD_CON_ENGINE"
+                Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+            ]
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Not Stationary
+            effects = SetStealth Value - 30
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_SELF_GRAVITATING"
+    description = "SH_SELF_GRAVITATING_DESC"
+    speed = 30
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = -5
+    structure = 50
+    buildCost = 400
+    buildTime = 2
+    slots = [
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = Internal position = (0.20, 1.10)
+        Slot type = Internal position = (0.40, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Or [
+                Building "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
+                Building "BLD_SHIPYARD_CON_GEOINT"
+            ]
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_NANOROBOTIC"
+    description = "SH_NANOROBOTIC_DESC"
+    speed = 70
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 125
+    buildTime = 2
     slots = [
         Slot type = External position = (0.15, 0.15)
         Slot type = External position = (0.30, 0.15)
         Slot type = External position = (0.45, 0.15)
         Slot type = External position = (0.60, 0.15)
         Slot type = External position = (0.75, 0.15)
+        Slot type = External position = (0.90, 0.15)
         Slot type = Internal position = (0.30, 0.75)
-        Slot type = Internal position = (0.50, 0.75)
     ]
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
         OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetStructure Target.MaxStructure
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
     ]
     graphic = ""
 
 Hull
-    name = "SH_LARGE"
-    description = "SH_LARGE_DESC"
-    speed = 40
-    starlaneSpeed = 40
+    name = "SH_TITANIC"
+    description = "SH_TITANIC_DESC"
+    speed = 10
+    starlaneSpeed = 80
     fuel = 3
+    stealth = -30
+    structure = 80
+    buildCost = 400
+    buildTime = 5
+    slots = [
+        Slot type = External position = (0.10, 0.00)
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.30, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.70, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.10, 0.55)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.30, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.70, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = Internal position = (0.10, 1.10)
+        Slot type = Internal position = (0.20, 1.10)
+        Slot type = Internal position = (0.30, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_TRANSSPATIAL"
+    description = "SH_TRANSSPATIAL_DESC"
+    speed = 100
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 50
+    structure = 1
+    buildCost = 50
+    buildTime = 3
+    slots = Slot type = External position = (0.50, 0.50)
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_LOGISTICS_FACILITATOR"
+    description = "SH_LOGISTICS_FACILITATOR_DESC"
+    speed = 25
+    starlaneSpeed = 80
+    fuel = 3
+    stealth = 10
+    structure = 60
+    buildCost = 750
+    buildTime = 15
+    slots = [
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.22, 0.15)
+        Slot type = External position = (0.34, 0.15)
+        Slot type = External position = (0.46, 0.15)
+        Slot type = External position = (0.58, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.82, 0.15)
+        Slot type = Internal position = (0.22, 0.75)
+        Slot type = Internal position = (0.34, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_CON_GEOINT"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_CON_NANOROBO"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Ship
+                Or [
+                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy AllyOf Source.Owner
+                ]
+            ]
+            activation = Source
+            stackinggroup = "FLAGSHIP_EFFECT_LOGISTICS"
+            effects = SetStructure Target.MaxStructure
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_ASTEROID"
+    description = "SH_ASTEROID_DESC"
+    speed = 35
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 5
+    structure = 15
+    buildCost = 50
+    buildTime = 1
+    slots = [
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = External position = (0.50, 1.10)
+        Slot type = Internal position = (0.40, 0.55)
+        Slot type = Internal position = (0.60, 0.55)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_SMALL_ASTEROID"
+    description = "SH_SMALL_ASTEROID_DESC"
+    speed = 70
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 10
+    structure = 5
+    buildCost = 20
+    buildTime = 1
+    slots = [
+        Slot type = External position = (0.50, 0.15)
+        Slot type = Internal position = (0.50, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_HEAVY_ASTEROID"
+    description = "SH_HEAVY_ASTEROID_DESC"
+    speed = 30
+    starlaneSpeed = 60
+    fuel = 4
     stealth = 0
-    structure = 65
+    structure = 40
+    buildCost = 100
+    buildTime = 1
+    slots = [
+        Slot type = External position = (0.12, 0.15)
+        Slot type = External position = (0.24, 0.15)
+        Slot type = External position = (0.36, 0.15)
+        Slot type = External position = (0.48, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.72, 0.15)
+        Slot type = Internal position = (0.12, 0.75)
+        Slot type = Internal position = (0.24, 0.75)
+        Slot type = Internal position = (0.36, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_CAMOUFLAGE_ASTEROID"
+    description = "SH_CAMOUFLAGE_ASTEROID_DESC"
+    speed = 35
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 5
+    structure = 20
+    buildCost = 80
+    buildTime = 2
+    slots = [
+        Slot type = Internal position = (0.15, 0.40)
+        Slot type = Internal position = (0.30, 0.40)
+        Slot type = Internal position = (0.45, 0.40)
+        Slot type = Internal position = (0.60, 0.40)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 80
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
+    description = "SH_SMALL_CAMOUFLAGE_ASTEROID_DESC"
+    speed = 50
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 10
+    structure = 5
+    buildCost = 30
+    buildTime = 2
+    slots = [
+        Slot type = External position = (0.50, 0.15)
+        Slot type = Internal position = (0.50, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 80
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_AGREGATE_ASTEROID"
+    description = "SH_AGREGATE_ASTEROID_DESC"
+    speed = 10
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = -20
+    structure = 20
+    buildCost = 600
+    buildTime = 3
+    slots = [
+        Slot type = External position = (0.10, 0.00)
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.30, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.70, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.90, 0.00)
+        Slot type = External position = (0.10, 0.55)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.30, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = Internal position = (0.70, 0.55)
+        Slot type = Internal position = (0.80, 0.55)
+        Slot type = Internal position = (0.90, 0.55)
+        Slot type = Internal position = (0.10, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST_REF"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_MINIASTEROID_SWARM"
+    description = "SH_MINIASTEROID_SWARM_DESC"
+    speed = 70
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 10
+    structure = 3
+    buildCost = 50
+    buildTime = 3
+    slots = [
+        Slot type = External position = (0.20, 0.40)
+        Slot type = External position = (0.40, 0.40)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST_REF"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_SCATTERED_ASTEROID"
+    description = "SH_SCATTERED_ASTEROID_DESC"
+    speed = 10
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = -20
+    structure = 20
+    buildCost = 500
+    buildTime = 15
+    slots = [
+        Slot type = External position = (0.10, 0.00)
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.30, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.70, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.90, 0.00)
+        Slot type = External position = (0.10, 0.55)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.30, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = Internal position = (0.70, 0.55)
+        Slot type = Internal position = (0.80, 0.55)
+        Slot type = Internal position = (0.90, 0.55)
+        Slot type = Internal position = (0.10, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST_REF"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Ship
+                Or [
+                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy AllyOf Source.Owner
+                ]
+            ]
+            activation = Source
+            stackinggroup = "FLAGSHIP_EFFECT_SCATTERED_ASTEROID"
+            effects = SetMaxShield Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_CRYSTALLIZED_ASTEROID"
+    description = "SH_CRYSTALLIZED_ASTEROID_DESC"
+    speed = 35
+    starlaneSpeed = 60
+    fuel = 4
+    stealth = 5
+    structure = 100
+    buildCost = 100
+    buildTime = 3
+    slots = [
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = External position = (0.50, 1.10)
+        Slot type = Internal position = (0.40, 0.55)
+        Slot type = Internal position = (0.60, 0.55)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_AST_CRYSTAL"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_AST"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Planet type = Asteroids
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = ContainedBy Contains Planet type = Asteroids
+            effects = SetStealth Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_ORGANIC"
+    description = "SH_ORGANIC_DESC"
+    speed = 50
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 15
+    buildCost = 10
+    buildTime = 5
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.20, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_STATIC_MULTICELLULAR"
+    description = "SH_STATIC_MULTICELLULAR_DESC"
+    speed = 75
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 10
+    structure = 5
+    buildCost = 50
+    buildTime = 3
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
+        Slot type = Internal position = (0.60, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_ENDOMORPHIC"
+    description = "SH_ENDOMORPHIC_DESC"
+    speed = 50
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 15
     buildCost = 30
     buildTime = 6
     slots = [
-        Slot type = External position = (0.15, 0.15)
-        Slot type = External position = (0.30, 0.15)
-        Slot type = External position = (0.45, 0.15)
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
         Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.75, 0.15)
-        Slot type = Internal position = (0.30, 0.75)
-        Slot type = Internal position = (0.50, 0.75)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.40, 0.75)
+        Slot type = Internal position = (0.60, 0.75)
+        Slot type = Internal position = (0.80, 0.75)
     ]
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
         OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
     ]
     graphic = ""
 
 Hull
-    name = "SH_HUGE"
-    description = "SH_HUGE_DESC"
-    speed = 30
-    starlaneSpeed = 30
-    fuel = 1
-    stealth = -10
-    structure = 80
-    buildCost = 50
+    name = "SH_SYMBIOTIC"
+    description = "SH_SYMBIOTIC_DESC"
+    speed = 70
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 30
+    buildCost = 20
+    buildTime = 5
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.20, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_PROTOPLASMIC"
+    description = "SH_PROTOPLASMIC_DESC"
+    speed = 50
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 5
+    buildCost = 20
+    buildTime = 7
+    slots = [
+        Slot type = External position = (0.15, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.45, 0.15)
+        Slot type = Internal position = (0.45, 0.75)
+        Slot type = Internal position = (0.60, 0.75)
+        Slot type = Internal position = (0.75, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_ENDOSYMBIOTIC"
+    description = "SH_ENDOSYMBIOTIC_DESC"
+    speed = 60
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 20
+    buildCost = 25
     buildTime = 8
+    slots = [
+        Slot type = External position = (0.15, 0.15)
+        Slot type = External position = (0.30, 0.15)
+        Slot type = External position = (0.45, 0.15)
+        Slot type = Internal position = (0.60, 0.75)
+        Slot type = Internal position = (0.75, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_XENO_FAC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_RAVENOUS"
+    description = "SH_RAVENOUS_DESC"
+    speed = 80
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 0
+    structure = 60
+    buildCost = 30
+    buildTime = 10
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = Internal position = (0.20, 0.75)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFuel Value + 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 15
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_BIOADAPTIVE"
+    description = "SH_BIOADAPTIVE_DESC"
+    speed = 80
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 30
+    structure = 50
+    buildCost = 75
+    buildTime = 15
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.20, 0.75)
+        Slot type = Internal position = (0.40, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_BIONEUR_MOD"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Target.MaxStructure
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 15
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_SENTIENT"
+    description = "SH_SENTIENT_DESC"
+    speed = 30
+    starlaneSpeed = 100
+    fuel = 2
+    stealth = 20
+    structure = 40
+    buildCost = 50
+    buildTime = 30
     slots = [
         Slot type = External position = (0.10, 0.15)
         Slot type = External position = (0.25, 0.15)
@@ -223,11 +1228,284 @@ Hull
         Slot type = Internal position = (0.10, 0.75)
         Slot type = Internal position = (0.25, 0.75)
         Slot type = Internal position = (0.40, 0.75)
-        Slot type = Internal position = (0.55, 0.75)
     ]
     location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_BIONEUR_MOD"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ORG_ORB_INC"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
         OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
-        Contains Building name = "BLD_SHIPYARD_BASE"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetStructure Value + 2
+                SetFuel Value + 0.2
+    ]
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Ship
+                Or [
+                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy AllyOf Source.Owner
+                ]
+            ]
+            activation = Source
+            stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
+            effects = [
+                SetStealth Value + 10
+                SetDetection Value + 10
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 10
+    ]
+    graphic = ""
+
+Hull
+    name = "SH_COMPRESSED_ENERGY"
+    description = "SH_COMPRESSED_ENERGY_DESC"
+    speed = 100
+    starlaneSpeed = 120
+    fuel = 5
+    stealth = 75
+    structure = 3
+    buildCost = 25
+    buildTime = 1
+    slots = Slot type = External position = (0.15, 0.40)
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Star type = [White Blue BlackHole]
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_FRACTAL_ENERGY"
+    description = "SH_FRACTAL_ENERGY_DESC"
+    speed = 50
+    starlaneSpeed = 120
+    fuel = 5
+    stealth = 0
+    structure = 20
+    buildCost = 200
+    buildTime = 5
+    slots = [
+        Slot type = External position = (0.10, 0.00)
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.30, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.70, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.90, 0.00)
+        Slot type = External position = (0.10, 0.55)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.30, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.70, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = External position = (0.90, 0.55)
+        Slot type = External position = (0.10, 1.10)
+        Slot type = External position = (0.20, 1.10)
+        Slot type = External position = (0.30, 1.10)
+        Slot type = External position = (0.40, 1.10)
+        Slot type = External position = (0.50, 1.10)
+        Slot type = External position = (0.60, 1.10)
+        Slot type = External position = (0.70, 1.10)
+        Slot type = External position = (0.80, 1.10)
+        Slot type = External position = (0.90, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_FOCUS"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Star type = [Blue BlackHole]
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_QUANTUM_ENERGY"
+    description = "SH_QUANTUM_ENERGY_DESC"
+    speed = 100
+    starlaneSpeed = 120
+    fuel = 5
+    stealth = -15
+    structure = 80
+    buildCost = 75
+    buildTime = 10
+    slots = [
+        Slot type = External position = (0.10, 0.15)
+        Slot type = External position = (0.22, 0.15)
+        Slot type = External position = (0.34, 0.15)
+        Slot type = External position = (0.46, 0.15)
+        Slot type = External position = (0.58, 0.15)
+        Slot type = External position = (0.70, 0.15)
+        Slot type = External position = (0.82, 0.15)
+        Slot type = Internal position = (0.10, 0.75)
+        Slot type = Internal position = (0.22, 0.75)
+        Slot type = Internal position = (0.34, 0.75)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_FOCUS"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Star type = [Blue BlackHole]
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = ""
+
+Hull
+    name = "SH_SOLAR"
+    description = "SH_SOLAR_DESC"
+    speed = 5
+    starlaneSpeed = 120
+    fuel = 5
+    stealth = -250
+    structure = 100
+    buildCost = 300
+    buildTime = 20
+    slots = [
+        Slot type = External position = (0.10, 0.00)
+        Slot type = External position = (0.20, 0.00)
+        Slot type = External position = (0.30, 0.00)
+        Slot type = External position = (0.40, 0.00)
+        Slot type = External position = (0.50, 0.00)
+        Slot type = External position = (0.60, 0.00)
+        Slot type = External position = (0.70, 0.00)
+        Slot type = External position = (0.80, 0.00)
+        Slot type = External position = (0.90, 0.00)
+        Slot type = External position = (0.10, 0.55)
+        Slot type = External position = (0.20, 0.55)
+        Slot type = External position = (0.30, 0.55)
+        Slot type = External position = (0.40, 0.55)
+        Slot type = External position = (0.50, 0.55)
+        Slot type = External position = (0.60, 0.55)
+        Slot type = External position = (0.70, 0.55)
+        Slot type = External position = (0.80, 0.55)
+        Slot type = External position = (0.90, 0.55)
+        Slot type = Internal position = (0.10, 1.10)
+        Slot type = Internal position = (0.20, 1.10)
+        Slot type = Internal position = (0.30, 1.10)
+        Slot type = Internal position = (0.40, 1.10)
+        Slot type = Internal position = (0.50, 1.10)
+        Slot type = Internal position = (0.60, 1.10)
+        Slot type = Internal position = (0.70, 1.10)
+        Slot type = Internal position = (0.80, 1.10)
+        Slot type = Internal position = (0.90, 1.10)
+    ]
+    location = And [
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_COMP"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_ENRG_SOLAR"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        Contains And [
+            Building "BLD_SHIPYARD_BASE"
+            OwnedBy TheEmpire Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+        Star type = BlackHole
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Star type = [Blue White Yellow Orange Red]
+            effects = SetStealth Value + 500
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Ship
+                Or [
+                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy AllyOf Source.Owner
+                ]
+            ]
+            activation = Source
+            effects = SetFuel Value + 100
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Ship
+                Not Or [
+                    OwnedBy TheEmpire Source.Owner
+                    OwnedBy AllyOf Source.Owner
+                ]
+            ]
+            activation = Source
+            stackinggroup = "FLAGSHIP_EFFECT_SOLAR"
+            effects = SetStealth Value - 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
     ]
     graphic = ""

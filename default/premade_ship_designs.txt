@@ -2,16 +2,16 @@ ShipDesign
     name = "SD_SCOUT"
     description = "SD_SCOUT_DESC"
     lookup_strings = true
-    hull = "SH_SMALL"
-    parts = "DT_OPTICAL_SENSORS"
+    hull = "SH_STANDARD"
+    parts = "DT_OPTICAL_SCANNER"
     graphic = "misc/generic.png"
-    model = "fighter"
+    model = ""
 
 ShipDesign
     name = "SD_COLONY_SHIP"
     description = "SD_COLONY_SHIP_DESC"
     lookup_strings = true
-    hull = "SH_MEDIUM"
+    hull = "SH_STANDARD"
     parts = [
         ""
         ""
@@ -20,60 +20,84 @@ ShipDesign
         "CO_COLONY_POD"
     ]
     graphic = "misc/generic.png"
-    model = "seed"
+    model = ""
+
+ShipDesign
+    name = "SD_COLONY_BASE"
+    description = "SD_COLONY_BASE_DESC"
+    lookup_strings = true
+    hull = "SH_COLONY_BASE"
+    parts = "CO_COLONY_POD"
+    graphic = "misc/generic.png"
+    model = ""
 
 ShipDesign
     name = "SD_MARK1"
     description = "SD_MARK1_DESC"
     lookup_strings = true
-    hull = "SH_SMALL"
+    hull = "SH_STANDARD"
     parts = [
-        "DT_OPTICAL_SENSORS"
+        "DT_OPTICAL_SCANNER"
         "SR_LASER"
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark1.png"
-    model = "mark1"
+    model = ""
 
 ShipDesign
     name = "SD_MARK2"
     description = "SD_MARK2_DESC"
     lookup_strings = true
-    hull = "SH_SMALL"
+    hull = "SH_STANDARD"
     parts = [
-        "DT_OPTICAL_SENSORS"
+        "DT_OPTICAL_SCANNER"
         "SR_ION_CANNON"
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/generic.png"
-    model = "guardian"
+    model = ""
 
 ShipDesign
     name = "SD_MARK3"
     description = "SD_MARK3_DESC"
     lookup_strings = true
-    hull = "SH_MEDIUM"
+    hull = "SH_ROBOTIC"
     parts = [
-        "DT_OPTICAL_SENSORS"
+        "DT_OPTICAL_SCANNER"
         "SR_ION_CANNON"
         "SR_ION_CANNON"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
-    model = "mark1"
+    model = ""
 
 ShipDesign
     name = "SD_MARK4"
     description = "SD_MARK4_DESC"
     lookup_strings = true
-    hull = "SH_LARGE"
+    hull = "SH_SELF_GRAVITATING"
     parts = [
-        "DT_OPTICAL_SENSORS"
-        "SR_ION_CANNON"
-        "SR_ION_CANNON"
-        "SR_ION_CANNON"
+        "DT_OPTICAL_SCANNER"
+        "SR_MASS_DRIVER"
+        "SR_MASS_DRIVER"
+        "SR_MASS_DRIVER"
         "SH_DEFLECTOR"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
-    model = "mark1"
+    model = ""
+
+ShipDesign
+    name = "SD_DRAGON_TOOTH"
+    description = "SD_DRAGON_TOOTH_DESC"
+    lookup_strings = true
+    hull = "SH_XENTRONIUM"
+    parts = [
+        "DT_SENSORS"
+        "SR_DEATH_RAY"
+        "PD_PARTICLE_BEAM"
+        "SH_MULTISPEC"
+        "FU_ZERO_FUEL"
+    ]
+    graphic = "misc/generic.png"
+    model = ""

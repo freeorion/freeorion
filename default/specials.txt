@@ -1,0 +1,50 @@
+Special
+    name = "HOMEWORLD_SPECIAL"
+    description = "HOMEWORLD_SPECIAL_DESCRIPTION"
+    effectsgroups =
+        EffectsGroup
+            scope =
+                Source
+            activation =
+                Source
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetFarming Value + 8
+                SetTargetIndustry Value + 5
+                SetTargetTrade Value + 2
+                SetSupply Value + 2
+            ]
+    graphic = "icons/specials_huge/homeworld.png"
+
+Special
+    name = "GAIA_SPECIAL"
+    description = "GAIA_SPECIAL_DESC"
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation Value * 2
+                SetTargetHealth Value * 2
+                SetTargetFarming Value * 2
+            ]
+    graphic = "icons/specials_huge/gaia.png"
+
+Special
+    name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
+    description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value * 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_RESEARCH"
+            ]
+            activation = Source
+            effects = SetTargetResearch Value * 1.05
+    ]
+    graphic = "icons/specials_huge/ancient_ruins.png"
