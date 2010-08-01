@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="yes"?>
 <install product="freeorion" 
          desc="FreeOrion - A turn-based space empire strategy game" 
-         version="0.3.13" 
+         version="0.3.15" 
          binarypath="/usr/local/bin"
          promptbinaries="yes" 
          express="no"
@@ -18,7 +18,7 @@
   <bool name="has-passwd" script="test -f /etc/passwd" later="yes"/>
   <bool name="env-test" env="TEST_VALUE"/>
 
-  <component name="Default" version="0.3.13" default="yes">
+  <component name="Default" version="0.3.15" default="yes">
    <option install="true" required="true">
     Base Install
     <lang lang="fr">Installation de base</lang>
