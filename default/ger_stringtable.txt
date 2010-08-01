@@ -1346,7 +1346,13 @@ PL_SIZE
 Größe
 
 PL_COLONIZE
-Besiedeln
+Besiedeln (%1% / %2%)
+PL_SELECT_COLONY_SHIP_INSTRUCTION
+Wähle Kolonieschiff zum Kolonisieren.
+PL_TYPE_SIZE
+%1% %2%
+PL_TYPE_SIZE_ENV
+%1% %2% (%3%)
 
 
 ##Population Panel#########
@@ -1919,7 +1925,7 @@ SITREP_PLANET_LOST_STARVED_TO_DEATH
 Die ganze Bevölkerung von %planet% ist verhungert. Der Planet ist verloren!
 
 SITREP_PLANET_COLONIZED
-Der Planet %planet% im System %system% wurde besiedelt.
+Der Planet %planet% wurde besiedelt.
 
 SITREP_FLEET_ARRIVED_AT_DESTINATION
 Die Flotte %fleet% ist im System %system% angekommen und erwartet weitere Befehle.
