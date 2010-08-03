@@ -1021,8 +1021,27 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     }
 
     std::string species_name;
-    if (const Planet* capitol_planet = GetObject<Planet>(empire->CapitolID()))
-        species_name = capitol_planet->SpeciesName();
+    if (const Planet* source_planet = universe_object_cast<const Planet*>(source))
+        species_name = source_planet->SpeciesName();
+    if (species_name.empty())
+        if (const Building* source_building = universe_object_cast<const Building*>(source))
+            if (const Planet* source_planet = GetObject<Planet>(source_building->PlanetID()))
+                species_name = source_planet->SpeciesName();
+    if (species_name.empty())
+        if (const Planet* target_planet = universe_object_cast<const Planet*>(target))
+            species_name = target_planet->SpeciesName();
+    if (species_name.empty())
+        if (const Building* target_building = universe_object_cast<const Building*>(target))
+            if (const Planet* target_planet = GetObject<Planet>(target_building->PlanetID()))
+                species_name = target_planet->SpeciesName();
+    if (species_name.empty())
+        if (const Planet* capitol_planet = GetObject<Planet>(empire->CapitolID()))
+            species_name = capitol_planet->SpeciesName();
+
+    if (species_name.empty()) {
+        Logger().errorStream() << "CreateShip::Execute couldn't find a species with which to create a ship";
+        return;
+    }
 
     //// possible future modification: try to put new ship into existing fleet if
     //// ownership with target object's fleet works out (if target is a ship)
@@ -1041,9 +1060,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     ship->Rename(empire->NewShipName());
     ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
     ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->UniverseObject::GetMeter(METER_DETECTION)->SetCurrent(Meter::LARGE_VALUE);
-    ship->UniverseObject::GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-    ship->UniverseObject::GetMeter(METER_HEALTH)->SetCurrent(Meter::LARGE_VALUE);
+    ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
 
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);
