@@ -477,48 +477,72 @@ Part
     graphic = ""
 
 Part
-    name = "DT_OPTICAL_SCANNER"
-    description = "DT_OPTICAL_SCANNER_DESC"
+    name = "DT_SENSORS"
+    description = "DT_SENSORS_DESC"
     class = Detection
-    capacity = 15
-    buildcost = 4
-    buildtime = 1
+    capacity = 0
+    buildcost = 60
+    buildtime = 5
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/optical_sensors.png"
-
-Part
-    name = "DT_ACTIVE_RADAR"
-    description = "DT_ACTIVE_RADAR_DESC"
-    class = Detection
-    capacity = 35
-    buildcost = 12
-    buildtime = 4
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/active_radar.png"
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "DETECTION_PART_STACK"
+            effects = SetDetection Value + 75
+    graphic = ""
 
 Part
     name = "DT_NEUTRON_SCANNER"
     description = "DT_NEUTRON_SCANNER_DESC"
     class = Detection
-    capacity = 55
+    capacity = 0
     buildcost = 25
     buildtime = 5
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "DETECTION_PART_STACK"
+            effects = SetDetection Value + 55
     graphic = ""
 
 Part
-    name = "DT_SENSORS"
-    description = "DT_SENSORS_DESC"
+    name = "DT_ACTIVE_RADAR"
+    description = "DT_ACTIVE_RADAR_DESC"
     class = Detection
-    capacity = 75
-    buildcost = 60
-    buildtime = 5
+    capacity = 0
+    buildcost = 12
+    buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "DETECTION_PART_STACK"
+            effects = SetDetection Value + 35
+    graphic = "icons/ship_parts/active_radar.png"
+
+Part
+    name = "DT_OPTICAL_SCANNER"
+    description = "DT_OPTICAL_SCANNER_DESC"
+    class = Detection
+    capacity = 0
+    buildcost = 4
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "DETECTION_PART_STACK"
+            effects = SetDetection Value + 15
+    graphic = "icons/ship_parts/optical_sensors.png"
 
 Part
     name = "FU_DEUTERIUM_TANK"
@@ -559,48 +583,72 @@ Part
     graphic = ""
 
 Part
-    name = "ST_EM_DAMPER"
-    description = "ST_EM_DAMPER_DESC"
+    name = "ST_PHASING_CLOAK"
+    description = "ST_PHASING_CLOAK_DESC"
     class = Stealth
-    capacity = 5
-    buildcost = 20
-    buildtime = 3
+    capacity = 0
+    buildcost = 400
+    buildtime = 10
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/electromagnetic_damper.png"
-
-Part
-    name = "ST_ABSORPTION_FIELD"
-    description = "ST_ABSORPTION_FIELD_DESC"
-    class = Stealth
-    capacity = 30
-    buildcost = 50
-    buildtime = 5
-    mountableSlotTypes = Internal
-    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 80
     graphic = ""
 
 Part
     name = "ST_DIM_CLOAK"
     description = "ST_DIM_CLOAK_DESC"
     class = Stealth
-    capacity = 55
+    capacity = 0
     buildcost = 150
     buildtime = 7
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 55
     graphic = ""
 
 Part
-    name = "ST_PHASING_CLOAK"
-    description = "ST_PHASING_CLOAK_DESC"
+    name = "ST_ABSORPTION_FIELD"
+    description = "ST_ABSORPTION_FIELD_DESC"
     class = Stealth
-    capacity = 80
-    buildcost = 400
-    buildtime = 10
+    capacity = 0
+    buildcost = 50
+    buildtime = 5
     mountableSlotTypes = Internal
     location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 30
     graphic = ""
+
+Part
+    name = "ST_EM_DAMPER"
+    description = "ST_EM_DAMPER_DESC"
+    class = Stealth
+    capacity = 0
+    buildcost = 20
+    buildtime = 3
+    mountableSlotTypes = Internal
+    location = OwnedBy TheEmpire Source.Owner
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            stackinggroup = "STEALTH_PART_STACK"
+            effects = SetStealth Value + 5
+    graphic = "icons/ship_parts/electromagnetic_damper.png"
 
 Part
     name = "CO_COLONY_POD"

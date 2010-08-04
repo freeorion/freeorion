@@ -41,7 +41,10 @@ Species
         Focus
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
-            location = TargetPopulation low = 1 high = 999
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
             graphic = "icons/focus/industry.png"
 
         Focus
@@ -141,6 +144,16 @@ Species
             graphic = "icons/focus/distortion.png"
     ]
     effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = Target.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = Target.TargetHealth - 3 high = Target.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
         EffectsGroup
             scope = Source
             activation = And [
@@ -268,6 +281,46 @@ Species
 
         EffectsGroup
             scope = Source
+            activation = Farming low = Target.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = Target.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = Target.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = Target.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = Target.TargetFarming high = Target.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = Target.TargetMining high = Target.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = Target.TargetIndustry high = Target.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = Target.TargetResearch high = Target.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
             activation = And [
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
@@ -340,8 +393,16 @@ Species
 
         EffectsGroup
             scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
             activation = Focus "FOCUS_HEAVY_MINING"
-            effects = SetTargetMining Value + Target.Population * 3
+            effects = SetTargetMining Value + Target.Population * 4
 
         EffectsGroup
             scope = Source
@@ -378,7 +439,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
-            effects = SetSupply Value + 2
+            effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
             scope = OwnedExclusivelyBy TheEmpire Source.Owner
@@ -414,7 +475,7 @@ Species
                 ]
             ]
             activation = Focus "FOCUS_BIOTERROR"
-            effects = SetHealth Value - 2
+            effects = SetHealth Value - 4
 
         EffectsGroup
             scope = And [
@@ -553,7 +614,10 @@ Species
         Focus
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
-            location = TargetPopulation low = 1 high = 999
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
             graphic = "icons/focus/industry.png"
 
         Focus
@@ -653,6 +717,16 @@ Species
             graphic = "icons/focus/distortion.png"
     ]
     effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = Target.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = Target.TargetHealth - 3 high = Target.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
         EffectsGroup
             scope = Source
             activation = And [
@@ -780,6 +854,46 @@ Species
 
         EffectsGroup
             scope = Source
+            activation = Farming low = Target.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = Target.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = Target.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = Target.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = Target.TargetFarming high = Target.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = Target.TargetMining high = Target.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = Target.TargetIndustry high = Target.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = Target.TargetResearch high = Target.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
             activation = And [
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
@@ -852,8 +966,16 @@ Species
 
         EffectsGroup
             scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
             activation = Focus "FOCUS_HEAVY_MINING"
-            effects = SetTargetMining Value + Target.Population * 3
+            effects = SetTargetMining Value + Target.Population * 4
 
         EffectsGroup
             scope = Source
@@ -890,7 +1012,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus "FOCUS_LOGISTICS"
-            effects = SetSupply Value + 2
+            effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
             scope = OwnedExclusivelyBy TheEmpire Source.Owner
@@ -926,7 +1048,7 @@ Species
                 ]
             ]
             activation = Focus "FOCUS_BIOTERROR"
-            effects = SetHealth Value - 1
+            effects = SetHealth Value - 4
 
         EffectsGroup
             scope = And [

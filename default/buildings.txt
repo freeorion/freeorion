@@ -669,8 +669,8 @@ BuildingType
 BuildingType
     name = "BLD_SPACE_ELEVATOR"
     description = "BLD_SPACE_ELEVATOR_DESC"
-    buildcost = 1000
-    buildtime = 1
+    buildcost = 1500
+    buildtime = 5
     maintenancecost = 0
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -1082,13 +1082,13 @@ BuildingType
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
             effects = SetTargetIndustry Value + Target.Population * 2
-    graphic = ""
+    graphic = "icons/building/black_hole_generator.png"
 
 BuildingType
     name = "BLD_REPLICATORS"
     description = "BLD_REPLICATORS_DESC"
-    buildcost = 1
-    buildtime = 1
+    buildcost = 1250
+    buildtime = 4
     maintenancecost = 0
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1189,8 +1189,8 @@ BuildingType
 BuildingType
     name = "BLD_TRANSFORMER"
     description = "BLD_TRANSFORMER_DESC"
-    buildcost = 1
-    buildtime = 1
+    buildcost = 1000
+    buildtime = 15
     maintenancecost = 0
     location = OwnedBy TheEmpire Source.Owner
     graphic = ""
@@ -1314,7 +1314,7 @@ BuildingType
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
             ]
-            activation = Source
+            activation = Focus "FOCUS_INDUSTRY"
             effects = SetTargetIndustry Value + Target.Population * 0.25
     graphic = ""
 

@@ -220,6 +220,26 @@ Tech
             activation = Source
             effects = Victory "TECH_VICTORY"
     graphic = "icons/tech/singularity_of_transcendence.png"
+        
+Tech
+    name = "LRN_AUTOLAB_I"
+    description = "LRN_AUTOLAB_I_DESC"
+    short_description = "RESEARCH_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 250
+    researchturns = 1
+    prerequisites = "LRN_ARTIF_MINDS"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedExclusivelyBy TheEmpire Source.Owner
+                PopulationCenter
+            ]
+            activation = Source
+            effects = SetTargetResearch Value + 5
+    graphic = "icons/tech/basic_autolabs.png"
 
 Tech
     name = "LRN_DISTRIB_THOUGHT"
@@ -244,26 +264,6 @@ Tech
             activation = Source
             effects = SetTargetResearch Value * 1.25
     graphic = ""
-        
-Tech
-    name = "LRN_AUTOLAB_I"
-    description = "LRN_AUTOLAB_I_DESC"
-    short_description = "RESEARCH_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 250
-    researchturns = 1
-    prerequisites = "LRN_ARTIF_MINDS"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            activation = Source
-            effects = SetTargetResearch Value + 5
-    graphic = "icons/tech/basic_autolabs.png"
 
 Tech
     name = "LRN_XENOARCH_RESTORE"
@@ -480,6 +480,45 @@ Tech
     researchturns = 1
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
+    graphic = ""
+
+Tech
+    name = "LRN_RUINS_MOD"
+    description = "LRN_RUINS_MOD_DESC"
+    short_description = "GAME_MAKE_WORK_SHORT_DESC"
+    techtype = Application
+    category = "LEARNING_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    prerequisites = []
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Or [
+                    HasSpecial "ANCIENT_RUINS_SPECIAL"
+                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                ]
+                Focus "FOCUS_RESEARCH"
+            ]
+            activation = Source
+            effects = SetTargetResearch Value * 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_RESEARCH"
+            ]
+            activation = Number low = 1 high = 999 And [
+                Or [
+                    HasSpecial "ANCIENT_RUINS_SPECIAL"
+                    HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                ]
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetTargetResearch Value * 1.05
+    ]
     graphic = ""
 
 Tech
@@ -783,7 +822,7 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 1
+    researchcost = 40
     researchturns = 1
     prerequisites = "GRO_SYMBIOTIC_BIO"
     unlock = []
@@ -926,8 +965,8 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 80
+    researchturns = 3
     prerequisites = "GRO_XENO_GENETICS"
     unlock = []
     effectsgroups = [
@@ -1109,8 +1148,8 @@ Tech
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 320
-    researchturns = 7
+    researchcost = 160
+    researchturns = 5
     prerequisites = "GRO_NANOTECH_MED"
     unlock = Item type = Building name = "BLD_BIOTERROR_PROJECTOR"
     graphic = "icons/tech/bioterror_facilities.png"
@@ -1133,8 +1172,8 @@ Tech
     short_description = "POPULATION_SHORT_DESC"
     techtype = Application
     category = "GROWTH_CATEGORY"
-    researchcost = 1
-    researchturns = 1
+    researchcost = 160
+    researchturns = 5
     prerequisites = "GRO_XENO_HYBRIDS"
     unlock = []
     effectsgroups = [
@@ -1563,7 +1602,7 @@ Tech
 Tech
     name = "PRO_ENERGY_CONV"
     description = "PRO_ENERGY_CONV_DESC"
-    short_description = "DOES_NOTHING_SHORT_DESC"
+    short_description = "THEORY_SHORT_DESC"
     techtype = Theory
     category = "PRODUCTION_CATEGORY"
     researchcost = 2000
@@ -2180,6 +2219,163 @@ Tech
     researchturns = 1
     prerequisites = "CON_ARCH_PSYCH"
     unlock = Item type = Building name = "BLD_CONC_CAMP"
+    graphic = ""
+
+Tech
+    name = "CON_FRC_ENRG_INFRA"
+    description = "CON_FRC_ENRG_INFRA_DESC"
+    short_description = "METER_GROWTH_SHORT_DESC"
+    techtype = Application
+    category = "CONSTRUCTION_CATEGORY"
+    researchcost = 320
+    researchturns = 1
+    prerequisites = "CON_FRC_ENRG_STRC"
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Farming low = 0 high = Target.TargetFarming - 3
+            ]
+            activation = Source
+            effects = SetFarming Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Mining low = 0 high = Target.TargetMining - 3
+            ]
+            activation = Source
+            effects = SetMining Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Industry low = 0 high = Target.TargetIndustry - 3
+            ]
+            activation = Source
+            effects = SetIndustry Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Research low = 0 high = Target.TargetResearch - 3
+            ]
+            activation = Source
+            effects = SetResearch Value + 2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Farming low = Target.TargetFarming - 3 high = Target.TargetFarming
+            ]
+            activation = Source
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Mining low = Target.TargetMining - 3 high = Target.TargetMining
+            ]
+            activation = Source
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Industry low = Target.TargetIndustry - 3 high = Target.TargetIndustry
+            ]
+            activation = Source
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Research low = Target.TargetResearch - 3 high = Target.TargetResearch
+            ]
+            activation = Source
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Farming low = Target.TargetFarming + 5 high = 999
+            ]
+            activation = Source
+            effects = SetFarming Value - 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Mining low = Target.TargetMining + 5 high = 999
+            ]
+            activation = Source
+            effects = SetMining Value - 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Industry low = Target.TargetIndustry + 5 high = 999
+            ]
+            activation = Source
+            effects = SetIndustry Value - 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Research low = Target.TargetResearch + 5 high = 999
+            ]
+            activation = Source
+            effects = SetResearch Value - 3
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Farming low = Target.TargetFarming high = Target.TargetFarming + 5
+            ]
+            activation = Source
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Mining low = Target.TargetMining high = Target.TargetMining + 5
+            ]
+            activation = Source
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Industry low = Target.TargetIndustry high = Target.TargetIndustry + 5
+            ]
+            activation = Source
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Research low = Target.TargetResearch high = Target.TargetResearch + 5
+            ]
+            activation = Source
+            effects = SetResearch Target.TargetResearch
+    ]
     graphic = ""
 
 Tech
@@ -4023,7 +4219,10 @@ Tech
     unlock = []
     effectsgroups =
         EffectsGroup
-            scope = Planet
+            scope = Or [
+                Planet
+                Building
+            ]
             activation = Source
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 14.99
