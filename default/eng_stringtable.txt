@@ -2574,6 +2574,8 @@ planet
 DESC_VAR_SYSTEM
 system
 
+DESC_VAR_FLEET
+
 DESC_VAR_SOURCE
 source
 
@@ -2707,8 +2709,44 @@ age in turns
 DESC_VAR_CREATIONTURN
 turn of creation
 
+DESC_VAR_DESIGNID
+design id
+
+DESC_VAR_FLEETID
+fleet id
+
+DESC_VAR_PLANETID
+planet id
+
+DESC_VAR_SYSTEMID
+system id
+
+DESC_VAR_FINALDESTINATIONID
+final destination id
+
+DESC_VAR_NEXTSYSTEMID
+next system id
+
+DESC_VAR_PREVIOUSSYSTEMID
+previous system id
+
+DESC_VAR_NUMSHIPS
+number of ships
+
 DESC_VAR_CURRENTTURN
 the current turn
+
+DESC_VAR_NAME
+name
+
+DESC_VAR_SPECIES
+species
+
+DESC_VAR_BUILDINGTYPE
+building type name
+
+DESC_VAR_FOCUS
+focus
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -2844,7 +2882,7 @@ DESC_CREATE_BUILDING
 Creates a new %1% building
 
 DESC_CREATE_SHIP
-Creates a new ship of design %1% owned by the %2% empire
+Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 
 # Conditions
 

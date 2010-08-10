@@ -1332,7 +1332,7 @@ BuildingType
         EffectsGroup
             scope = Source
             activation = Source
-            effects = CreateShip "SD_COLONY_BASE" Source.Owner
+            effects = CreateShip "SD_COLONY_BASE" Source.Owner Source.Planet.Species
 
         EffectsGroup
             scope = Source

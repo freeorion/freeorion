@@ -35,14 +35,18 @@ namespace {
         while (first != last) {
             std::string property_name = *first;
             if (boost::iequals(property_name, "Planet")) {
-                if (const Building* b = universe_object_cast<const Building*>(obj)) {
+                if (const Building* b = universe_object_cast<const Building*>(obj))
                     obj = objects.Object<Planet>(b->PlanetID());
-                } else {
+                else
                     obj = 0;
-                }
             } else if (boost::iequals(property_name, "System")) {
                 if (obj)
                     obj = objects.Object<System>(obj->SystemID());
+            } else if (boost::iequals(property_name, "Fleet")) {
+                if (const Ship* s = universe_object_cast<const Ship*>(obj))
+                    obj = objects.Object<Fleet>(s->FleetID());
+                else
+                    obj = 0;
             }
             ++first;
         }

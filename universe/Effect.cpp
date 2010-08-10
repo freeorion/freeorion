@@ -13,6 +13,7 @@
 #include "Fleet.h"
 #include "Ship.h"
 #include "Tech.h"
+#include "Species.h"
 
 #include <cctype>
 
@@ -935,9 +936,14 @@ std::string CreatePlanet::Dump() const
 ///////////////////////////////////////////////////////////
 // CreateBuilding                                        //
 ///////////////////////////////////////////////////////////
-CreateBuilding::CreateBuilding(const std::string& building_type) :
-    m_type(building_type)
+CreateBuilding::CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name) :
+    m_building_type_name(building_type_name)
 {}
+
+CreateBuilding::~CreateBuilding()
+{
+    delete m_building_type_name;
+}
 
 void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* target) const
 {
@@ -947,13 +953,14 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
         return;
     }
 
-    const BuildingType* building_type = GetBuildingType(m_type);
+    std::string building_type_name = m_building_type_name->Eval(source, target, boost::any());
+    const BuildingType* building_type = GetBuildingType(building_type_name);
     if (!building_type) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get building type";
         return;
     }
 
-    Building* building = new Building(ALL_EMPIRES, m_type);
+    Building* building = new Building(ALL_EMPIRES, building_type_name);
     if (!building) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -971,23 +978,44 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
 
 std::string CreateBuilding::Description() const
 {
+    std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ? UserString(lexical_cast<std::string>(m_building_type_name->Eval(0, 0, boost::any()))) : m_building_type_name->Description();
     return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
-               % UserString(m_type));
+               % UserString(type_str));
 }
 
 std::string CreateBuilding::Dump() const
 {
-    return DumpIndent() + "CreateBuilding type = " + m_type + "\n";
+    return DumpIndent() + "CreateBuilding type = " + m_building_type_name->Dump() + "\n";
 }
 
 
 ///////////////////////////////////////////////////////////
 // CreateShip                                            //
 ///////////////////////////////////////////////////////////
-CreateShip::CreateShip(const std::string& predefined_ship_design_name, const ValueRef::ValueRefBase<int>* empire_id) :
+CreateShip::CreateShip(const std::string& predefined_ship_design_name,
+                       const ValueRef::ValueRefBase<int>* empire_id,
+                       const ValueRef::ValueRefBase<std::string>* species_name) :
     m_design_name(predefined_ship_design_name),
-    m_empire_id(empire_id)
+    m_design_id(0),
+    m_empire_id(empire_id),
+    m_species_name(species_name)
 {}
+
+CreateShip::CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
+                       const ValueRef::ValueRefBase<int>* empire_id,
+                       const ValueRef::ValueRefBase<std::string>* species_name) :
+    m_design_name(),
+    m_design_id(ship_design_id),
+    m_empire_id(empire_id),
+    m_species_name(species_name)
+{}
+
+CreateShip::~CreateShip()
+{
+    delete m_design_id;
+    delete m_empire_id;
+    delete m_species_name;
+}
 
 void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) const
 {
@@ -1002,14 +1030,24 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
-    if (!ship_design) {
-        Logger().errorStream() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
-        return;
+    int design_id = ShipDesign::INVALID_DESIGN_ID;
+
+    if (m_design_id) {
+        design_id = m_design_id->Eval(source, target, boost::any());
+        if (!GetShipDesign(design_id)) {
+            Logger().errorStream() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
+            return;
+        }
+    } else {
+        const ShipDesign* ship_design = GetPredefinedShipDesign(m_design_name);
+        if (!ship_design) {
+            Logger().errorStream() << "CreateShip::Execute couldn't get predefined ship design with name " << m_design_name;
+            return;
+        }
+        design_id = ship_design->ID();
     }
-    int design_id = ship_design->ID();
     if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-        Logger().errorStream() << "CreateShip::Execute got design with id -1 from premade ship design name " << m_design_name;
+        Logger().errorStream() << "CreateShip::Execute got invalid ship design id: -1";
         return;
     }
 
@@ -1020,26 +1058,9 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    std::string species_name;
-    if (const Planet* source_planet = universe_object_cast<const Planet*>(source))
-        species_name = source_planet->SpeciesName();
-    if (species_name.empty())
-        if (const Building* source_building = universe_object_cast<const Building*>(source))
-            if (const Planet* source_planet = GetObject<Planet>(source_building->PlanetID()))
-                species_name = source_planet->SpeciesName();
-    if (species_name.empty())
-        if (const Planet* target_planet = universe_object_cast<const Planet*>(target))
-            species_name = target_planet->SpeciesName();
-    if (species_name.empty())
-        if (const Building* target_building = universe_object_cast<const Building*>(target))
-            if (const Planet* target_planet = GetObject<Planet>(target_building->PlanetID()))
-                species_name = target_planet->SpeciesName();
-    if (species_name.empty())
-        if (const Planet* capitol_planet = GetObject<Planet>(empire->CapitolID()))
-            species_name = capitol_planet->SpeciesName();
-
-    if (species_name.empty()) {
-        Logger().errorStream() << "CreateShip::Execute couldn't find a species with which to create a ship";
+    std::string species_name = m_species_name->Eval(source, target, boost::any());
+    if (!GetSpecies(species_name)) {
+        Logger().errorStream() << "CreateShip::Execute couldn't get species with which to create a ship";
         return;
     }
 
@@ -1071,15 +1092,44 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
 
 std::string CreateShip::Description() const
 {
-    std::string owner_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    std::string empire_str = UserString("ERROR");
+    if (ValueRef::ConstantExpr(m_empire_id)) {
+        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval(0, 0, boost::any())))
+            empire_str = empire->Name();
+    } else {
+        empire_str = m_empire_id->Description();
+    }
+
+    std::string design_str = UserString("ERROR");
+    if (m_design_id) {
+        if (ValueRef::ConstantExpr(m_design_id)) {
+            if (const ShipDesign* design = GetShipDesign(m_design_id->Eval(0, 0, boost::any())))
+                design_str = design->Name();
+        } else {
+            design_str = m_design_id->Description();
+        }
+    } else {
+        design_str = UserString(m_design_name);
+    }
+
+    std::string species_str = ValueRef::ConstantExpr(m_species_name) ? UserString(m_species_name->Eval(0, 0, boost::any())) : m_species_name->Description();
+
     return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
-               % UserString(m_design_name)
-               % owner_str);
+               % design_str
+               % empire_str
+               % species_str);
 }
 
 std::string CreateShip::Dump() const
 {
-    return DumpIndent() + "CreateShip predefined_ship_design_name = " + m_design_name + " empire = " + m_empire_id->Dump() + "\n";
+    if (m_design_id)
+        return DumpIndent() + "CreateShip design_id = " + m_design_id->Dump()
+            + " empire = " + m_empire_id->Dump()
+            + " species_name = " + m_species_name->Dump() + "\n";
+    else
+        return DumpIndent() + "CreateShip predefined_ship_design_name = " + m_design_name
+            + " empire = " + m_empire_id->Dump()
+            + " species_name = " + m_species_name->Dump() + "\n";
 }
 
 

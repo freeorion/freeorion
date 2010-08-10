@@ -73,7 +73,7 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = CreateShip "SD_DRAGON_TOOTH" Source.Owner
+            effects = CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Planet.Species
 
         EffectsGroup
             scope = Source

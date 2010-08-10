@@ -351,13 +351,14 @@ private:
 class Effect::CreateBuilding : public Effect::EffectBase
 {
 public:
-    CreateBuilding(const std::string& building_type);
+    CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name);
+    virtual ~CreateBuilding();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
-    const std::string   m_type;
+    const ValueRef::ValueRefBase<std::string>*  m_building_type_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -370,14 +371,22 @@ private:
 class Effect::CreateShip : public Effect::EffectBase
 {
 public:
-    CreateShip(const std::string& predefined_ship_design_name, const ValueRef::ValueRefBase<int>* empire_id);
+    CreateShip(const std::string& predefined_ship_design_name,
+               const ValueRef::ValueRefBase<int>* empire_id,
+               const ValueRef::ValueRefBase<std::string>* species_name);
+    CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
+               const ValueRef::ValueRefBase<int>* empire_id,
+               const ValueRef::ValueRefBase<std::string>* species_name);
+    virtual ~CreateShip();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
-    const std::string                   m_design_name;
-    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    const std::string                           m_design_name;
+    const ValueRef::ValueRefBase<int>*          m_design_id;
+    const ValueRef::ValueRefBase<int>*          m_empire_id;
+    const ValueRef::ValueRefBase<std::string>*  m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>

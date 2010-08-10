@@ -20,14 +20,22 @@ namespace {
         EffectParserDefinition();
 
     private:
-        struct SetMeterClosure : boost::spirit::classic::closure<SetMeterClosure, Effect::EffectBase*, MeterType, ValueRef::ValueRefBase<double>*>
+        struct SetMeterClosure : boost::spirit::classic::closure<SetMeterClosure, Effect::EffectBase*,
+                                                                 MeterType,
+                                                                 ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 meter;
             member3 value;
         };
 
-        struct SetShipPartMeterClosure : boost::spirit::classic::closure<SetShipPartMeterClosure, Effect::EffectBase*, MeterType, ShipPartClass, CombatFighterType, std::string, ValueRef::ValueRefBase<double>*, ShipSlotType>
+        struct SetShipPartMeterClosure : boost::spirit::classic::closure<SetShipPartMeterClosure, Effect::EffectBase*,
+                                                                         MeterType,
+                                                                         ShipPartClass,
+                                                                         CombatFighterType,
+                                                                         std::string,
+                                                                         ValueRef::ValueRefBase<double>*,
+                                                                         ShipSlotType>
         {
             member1 this_;
             member2 meter;
@@ -38,56 +46,66 @@ namespace {
             member7 slot_type;
         };
 
-        struct SetOwnerStockpileClosure : boost::spirit::classic::closure<SetOwnerStockpileClosure, Effect::EffectBase*, ResourceType, ValueRef::ValueRefBase<double>*>
+        struct SetOwnerStockpileClosure : boost::spirit::classic::closure<SetOwnerStockpileClosure, Effect::EffectBase*,
+                                                                          ResourceType,
+                                                                          ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
             member3 value;
         };
 
-        struct SetPlanetTypeClosure : boost::spirit::classic::closure<SetPlanetTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*>
+        struct SetPlanetTypeClosure : boost::spirit::classic::closure<SetPlanetTypeClosure, Effect::EffectBase*,
+                                                                      ValueRef::ValueRefBase< ::PlanetType>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct SetPlanetSizeClosure : boost::spirit::classic::closure<SetPlanetSizeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetSize>*>
+        struct SetPlanetSizeClosure : boost::spirit::classic::closure<SetPlanetSizeClosure, Effect::EffectBase*,
+                                                                      ValueRef::ValueRefBase< ::PlanetSize>*>
         {
             member1 this_;
             member2 size;
         };
 
-        struct EmpireParamClosure : boost::spirit::classic::closure<EmpireParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<int>*>
+        struct EmpireParamClosure : boost::spirit::classic::closure<EmpireParamClosure, Effect::EffectBase*,
+                                                                    ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
             member2 empire;
         };
 
-        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Effect::EffectBase*, std::string>
+        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Effect::EffectBase*,
+                                                                  std::string>
         {
             member1 this_;
             member2 name;
         };
 
-        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*, ValueRef::ValueRefBase<std::string>*>
+        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*,
+                                                                     ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
             member2 name;
         };
 
-        struct ConditionParamClosure : boost::spirit::classic::closure<ConditionParamClosure, Effect::EffectBase*, Condition::ConditionBase*>
+        struct ConditionParamClosure : boost::spirit::classic::closure<ConditionParamClosure, Effect::EffectBase*,
+                                                                       Condition::ConditionBase*>
         {
             member1 this_;
             member2 condition;
         };
 
-        struct SetStarTypeClosure : boost::spirit::classic::closure<SetStarTypeClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::StarType>*>
+        struct SetStarTypeClosure : boost::spirit::classic::closure<SetStarTypeClosure, Effect::EffectBase*,
+                                                                    ValueRef::ValueRefBase< ::StarType>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct CreatePlanetClosure : boost::spirit::classic::closure<CreatePlanetClosure, Effect::EffectBase*, ValueRef::ValueRefBase< ::PlanetType>*,
+        struct CreatePlanetClosure : boost::spirit::classic::closure<CreatePlanetClosure, Effect::EffectBase*,
+                                                                     ValueRef::ValueRefBase< ::PlanetType>*,
                                                                      ValueRef::ValueRefBase< ::PlanetSize>*>
         {
             member1 this_;
@@ -95,20 +113,30 @@ namespace {
             member3 size;
         };
 
-        struct CreateBuildingClosure : boost::spirit::classic::closure<CreateBuildingClosure, Effect::EffectBase*, std::string>
+        struct CreateBuildingClosure : boost::spirit::classic::closure<CreateBuildingClosure, Effect::EffectBase*,
+                                                                       ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct CreateShipClosure : boost::spirit::classic::closure<CreateShipClosure, Effect::EffectBase*, std::string, ValueRef::ValueRefBase<int>*>
+        struct CreateShipClosure : boost::spirit::classic::closure<CreateShipClosure, Effect::EffectBase*,
+                                                                   std::string,
+                                                                   ValueRef::ValueRefBase<int>*,
+                                                                   ValueRef::ValueRefBase<int>*,
+                                                                   ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
-            member2 design_name;
-            member3 empire;
+            member2 predefined_design_name;
+            member3 design_id;
+            member4 empire;
+            member5 species;
         };
 
-        struct SetTechAvailabilityClosure : boost::spirit::classic::closure<SetTechAvailabilityClosure, Effect::EffectBase*, std::string, bool, bool>
+        struct SetTechAvailabilityClosure : boost::spirit::classic::closure<SetTechAvailabilityClosure, Effect::EffectBase*,
+                                                                            std::string,
+                                                                            bool,
+                                                                            bool>
         {
             member1 this_;
             member2 name;
@@ -156,6 +184,7 @@ namespace {
         ParamLabel              planetsize_label;
         ParamLabel              empire_label;
         ParamLabel              name_label;
+        ParamLabel              species_label;
         ParamLabel              design_name_label;
         ParamLabel              part_name_label;
         ParamLabel              destination_label;
@@ -171,6 +200,7 @@ namespace {
         planetsize_label("size"),
         empire_label("empire"),
         name_label("name"),
+        species_label("species"),
         design_name_label("designname"),
         part_name_label("partname"),
         destination_label("destination"),
@@ -302,14 +332,21 @@ namespace {
 
         create_building =
             (str_p("createbuilding")
-             >> name_label >> name_p[create_building.type = arg1])
+             >> name_label >> string_expr_p[create_building.type = arg1])
             [create_building.this_ = new_<Effect::CreateBuilding>(create_building.type)];
 
         create_ship =
-            (str_p("createship")
-             >> design_name_label >> name_p[create_ship.design_name = arg1]
-             >> empire_label >> int_expr_p[create_ship.empire = arg1])
-            [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_name, create_ship.empire)];
+            ( ((str_p("createship")
+                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1]
+                >> empire_label >> int_expr_p[create_ship.empire = arg1]
+                >> species_label >> string_expr_p[create_ship.species = arg1])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name, create_ship.empire, create_ship.species)])
+            | ((str_p("createship")
+                >> design_name_label >> int_expr_p[create_ship.design_id = arg1]
+                >> empire_label >> int_expr_p[create_ship.empire = arg1]
+                >> species_label >> string_expr_p[create_ship.species = arg1])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_id, create_ship.empire, create_ship.species)])
+            );
 
         move_to =
             (str_p("moveto")
