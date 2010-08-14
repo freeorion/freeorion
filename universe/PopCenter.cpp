@@ -87,12 +87,13 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         return meter->Current() + NextTurnPopGrowth();
 
     } else if (meter_type == METER_FOOD_CONSUMPTION) {
-        // guesstimate food consumption next turn, and for full population
-        // growth, as a proportional increase in food consumption to the
-        // fractional increase in population that is possible.  this could
-        // be an inaccurate estimate of next turn's food consumption, but
-        // it's the best estimate that can be made
-        double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
+        // Guesstimate food consumption next turn.
+        // Assume an equal fractional increase in food consumption as the
+        // fractional increase in population that is expected (which depends on
+        // the current food allocation).
+        // this will be an accurate estimate of next turn's food consumption
+        // unless food consumption is not proportional to population
+        double next_turn_max_pop_growth = this->NextTurnPopGrowth();
         double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
         double fractional_growth = next_turn_max_pop_growth / current_pop;
         double expected_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_growth);
