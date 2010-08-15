@@ -275,9 +275,10 @@ namespace FreeOrionPython {
         //   Building   //
         //////////////////
         class_<Building, bases<UniverseObject>, noncopyable>("building", no_init)
-            .def("getBuildingType",             &Building::GetBuildingType,                 return_value_policy<reference_existing_object>())
+            .add_property("buildingType",       make_function(&Building::GetBuildingType,   return_value_policy<reference_existing_object>()))
+            .add_property("buildingTypeName",   make_function(&Building::BuildingTypeName,  return_value_policy<copy_const_reference>()))
             //.add_property("operating",          &Building::Operating)
-            .def("planetID",                    &Building::PlanetID)
+            .add_property("planetID",           make_function(&Building::PlanetID,          return_value_policy<return_by_value>()))
         ;
 
         //////////////////

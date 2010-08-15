@@ -63,7 +63,7 @@ PlayerSaveGameData::PlayerSaveGameData(const std::string& name, int empire_id, c
 // ServerSaveGameData
 ////////////////////////////////////////////////
 ServerSaveGameData::ServerSaveGameData() :
-    m_current_turn(-1)
+    m_current_turn(INVALID_GAME_TURN)
 {}
 
 ServerSaveGameData::ServerSaveGameData(int current_turn, const std::map<int, std::set<std::string> >& victors) :
@@ -1253,7 +1253,7 @@ void ServerApp::PreCombatProcessTurns()
     }
 
 
-    // re-execute all meter-related effects after orders, so that new
+    // Execute all meter-related effects after orders, so that new
     // UniverseObjects created during order execution (eg. new fleets) and
     // newly colonized planets will have effects applied to them this turn,
     // ensuring (eg.) new fleets will have the appropriate stealth level on
@@ -1437,8 +1437,9 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
 
 
-    // Consume distributed resources to planets and on queues, create new objects for completed production and
-    // give techs to empires that have researched them
+    // Consume distributed resources to planets and on queues, create new
+    // objects for completed production and give techs to empires that have
+    // researched them
     for (EmpireManager::iterator it = empires.begin(); it != empires.end(); ++it) {
         if (empires.Eliminated(it->first))
             continue;   // skip eliminated empires
@@ -1448,6 +1449,17 @@ void ServerApp::PostCombatProcessTurns()
         empire->CheckTradeSocialProgress();
         empire->CheckGrowthFoodProgress();
     }
+
+
+    // determine the IDs of new objects created before or during queue processing
+    std::vector<int> new_object_ids;
+    int current_turn = CurrentTurn();   // skip objects created on invalid turns or before this turn
+    if (current_turn >= 0 && current_turn != IMPOSSIBLY_LARGE_TURN) {
+        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
+            if (it->second->CreationTurn() == current_turn)
+                new_object_ids.push_back(it->first);
+    }
+
 
     // store any changes in objects from various progress functions, such as
     // starvation of planets, before updating visibility again, so that if the
@@ -1460,11 +1472,12 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns post-production effects and meter updates";
 
 
-    // re-execute all meter-related effects after production, so that new
-    // UniverseObjects created during production will have effects applied to
-    // them this turn, allowing (for example) ships to have max fuel meters
-    // greater than 0 on the turn they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
+    // Execute meter-related effects on objects created this turn, so that new
+    // UniverseObjects will have effects applied to them this turn, allowing
+    // (for example) ships to have max fuel meters greater than 0 on the turn
+    // they are created.
+    m_universe.ApplyMeterEffectsAndUpdateMeters(new_object_ids);
+    m_universe.BackPropegateObjectMeters(new_object_ids);
 
 
     // post-production and meter-effects visibility update
@@ -1492,7 +1505,6 @@ void ServerApp::PostCombatProcessTurns()
     // re-execute all meter-related effects after all gamestate changes during
     // turn processing that might affect the results.  This final update should
     // be consistent with the meter value breakdowns calculated by clients
-    m_universe.BackPropegateObjectMeters();
     m_universe.ApplyMeterEffectsAndUpdateMeters();
     m_universe.BackPropegateObjectMeters();
 

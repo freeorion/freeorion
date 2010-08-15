@@ -84,6 +84,12 @@ public:
     template <class T>
     T*                                  Object(int id);
 
+    /** Returns a vector containing the objects with ids in \a object_ids */
+    std::vector<const UniverseObject*>  FindObjects(const std::vector<int>& object_ids) const;
+
+    /** Returns a vector containing the objects with ids in \a object_ids */
+    std::vector<UniverseObject*>        FindObjects(const std::vector<int>& object_ids);
+
     /** Returns all the objects that match \a visitor */
     std::vector<const UniverseObject*>  FindObjects(const UniverseObjectVisitor& visitor) const;
 
@@ -403,17 +409,24 @@ public:
       * ShipDesign map. */
     void            Clear();
 
-    /** Determines all effectsgroups' target sets, resets meters and applies
-      * universe table adjustments.  Then executes all effects on all objects
-      * (meter effects and non-meter effects, including destroying objects).
-      * Then clamps meter values so max is within acceptable range, and current
-      * is within range limited by max. */
+    /** Determines all effectsgroups' target sets, then eesets meters and
+      * executes only all effects on all objects whose ids are listed in
+      * \a object_ids.  Then clamps meter values so target and max meters are
+      * within a reasonable range and any current meters with associated max
+      * meters are limited by their max. */
+    void            ApplyAllEffectsAndUpdateMeters(const std::vector<int>& object_ids);
+
+    /** Calls above ApplyAllEffectsAndUpdateMeters() function on all objects.*/
     void            ApplyAllEffectsAndUpdateMeters();
 
-    /** Determines all effectsgroups' target sets, resets meters and applies
-      * universe table adjustments.  then executes only SetMeter effects on all
-      * objects.  then clamps meter values so max is within acceptable range,
-      * and current is within range limited by max. */
+    /** Determines all effectsgroups' target sets, then eesets meters and
+      * executes only SetMeter effects on all objects whose ids are listed in
+      * \a object_ids.  Then clamps meter values so target and max meters are
+      * within a reasonable range and any current meters with associated max
+      * meters are limited by their max. */
+    void            ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids);
+
+    /** Calls above ApplyMeterEffectsAndUpdateMeters() function on all objects.*/
     void            ApplyMeterEffectsAndUpdateMeters();
 
 
@@ -445,6 +458,9 @@ public:
 
     /** Sets all objects' meters' initial values to their current values. */
     void            BackPropegateObjectMeters();
+
+    /** Sets indicated objects' meters' initial values to their current values. */
+    void            BackPropegateObjectMeters(const std::vector<int>& object_ids);
 
     /** Determines which empires can see which objects at what visibility
       * level, based on  */

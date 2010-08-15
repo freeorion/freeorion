@@ -367,6 +367,28 @@ UniverseObject* ObjectMap::Object(int id)
     return (it != m_objects.end() ? it->second : 0);
 }
 
+std::vector<const UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids) const
+{
+    std::vector<const UniverseObject*> retval;
+    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
+        if (const UniverseObject* obj = Object(*it))
+            retval.push_back(obj);
+        else
+            Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+    return retval;
+}
+
+std::vector<UniverseObject*> ObjectMap::FindObjects(const std::vector<int>& object_ids)
+{
+    std::vector<UniverseObject*> retval;
+    for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it)
+        if (UniverseObject* obj = Object(*it))
+            retval.push_back(obj);
+        else
+            Logger().errorStream() << "ObjectMap::FindObjects couldn't find object with id " << *it;
+    return retval;
+}
+
 std::vector<const UniverseObject*> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const
 {
     std::vector<const UniverseObject*> retval;
@@ -936,44 +958,68 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
     return retval;
 }
 
-void Universe::ApplyAllEffectsAndUpdateMeters()
+void Universe::ApplyAllEffectsAndUpdateMeters(const std::vector<int>& object_ids)
 {
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     EffectsTargetsCausesMap targets_causes_map;
     GetEffectsAndTargets(targets_causes_map);
 
-    // reset max meter state that is affected by the application of effects
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ResetTargetMaxUnpairedMeters();
+    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+
+    // revert all current meter values (which are modified by effects) to
+    // their initial state for this turn, so that max/target/unpaired meter
+    // value can be calculated (by accumulating all effects' modifications this
+    // turn) and active meters have the proper baseline from which to
+    // accumulate changes from effects
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        (*it)->ResetTargetMaxUnpairedMeters();
+        (*it)->ResetPairedActiveMeters();
     }
 
     ExecuteEffects(targets_causes_map);
 
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ClampMeters();
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        (*it)->ClampMeters();
     }
 }
 
-void Universe::ApplyMeterEffectsAndUpdateMeters()
+void Universe::ApplyAllEffectsAndUpdateMeters()
+{
+    ApplyAllEffectsAndUpdateMeters(m_objects.FindObjectIDs());
+}
+
+void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids)
 {
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
     EffectsTargetsCausesMap targets_causes_map;
     GetEffectsAndTargets(targets_causes_map);
 
-    // reset max meter state that is affected by the application of effects
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ResetTargetMaxUnpairedMeters();
+    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+
+    // revert all current meter values (which are modified by effects) to
+    // their initial state for this turn, so that max/target/unpaired meter
+    // value can be calculated (by accumulating all effects' modifications this
+    // turn) and active meters have the proper baseline from which to
+    // accumulate changes from effects
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        (*it)->ResetTargetMaxUnpairedMeters();
+        (*it)->ResetPairedActiveMeters();
     }
 
     ExecuteMeterEffects(targets_causes_map);
 
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        it->second->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
+        (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
     }
+}
+
+void Universe::ApplyMeterEffectsAndUpdateMeters()
+{
+    ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs());
 }
 
 void Universe::InitMeterEstimatesAndDiscrepancies()
@@ -1215,12 +1261,18 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     Logger().debugStream() << m_objects.Dump();
 }
 
+void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
+{
+    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
+
+    // copy current meter values to initial values
+    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it)
+        (*it)->BackPropegateMeters();
+}
+
 void Universe::BackPropegateObjectMeters()
 {
-    // copy current meter values to initial values
-    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
-        if (UniverseObject* obj = it->second)
-            obj->BackPropegateMeters();
+    BackPropegateObjectMeters(m_objects.FindObjectIDs());
 }
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)

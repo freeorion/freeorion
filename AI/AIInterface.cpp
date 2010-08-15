@@ -515,6 +515,7 @@ namespace AIInterface {
 
         return 1;
     }
+
     int IssueDequeueTechOrder(const std::string& tech_name) {
         const Tech* tech = GetTech(tech_name);
         if (!tech) {
