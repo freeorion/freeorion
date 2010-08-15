@@ -35,7 +35,7 @@ def getHomeSystemID():
 
     empire = fo.getEmpire()
     universe = fo.getUniverse()
-    homeworld = universe.getPlanet(empire.homeworldID)
+    homeworld = universe.getPlanet(empire.capitolID)
 
     if homeworld:
         return homeworld.systemID
