@@ -387,231 +387,96 @@ void FleetTransferOrder::ExecuteImpl() const
 
 
 ////////////////////////////////////////////////
-// FleetColonizeOrder
+// ColonizeOrder
 ////////////////////////////////////////////////
-FleetColonizeOrder::FleetColonizeOrder() : 
+ColonizeOrder::ColonizeOrder() : 
     Order(),
     m_ship(UniverseObject::INVALID_OBJECT_ID),
     m_planet(UniverseObject::INVALID_OBJECT_ID)
 {}
 
-FleetColonizeOrder::FleetColonizeOrder(int empire, int ship, int planet) :
+ColonizeOrder::ColonizeOrder(int empire, int ship, int planet) :
     Order(empire),
     m_ship(ship),
     m_planet(planet)
 {}
 
-void FleetColonizeOrder::ServerExecute() const
+void ColonizeOrder::ExecuteImpl() const
 {
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
+    ValidateEmpireID();
+    int empire_id = EmpireID();
 
-
-    Planet* planet = objects.Object<Planet>(m_planet);
-    if (!planet) {
-        Logger().errorStream() << "Empire attempted to colonize a nonexistant planet";
-        return;
-    }
-    const Ship* ship = objects.Object<Ship>(m_ship);
+    Ship* ship = GetObject<Ship>(m_ship);
     if (!ship) {
-        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship with id " << m_ship;
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
         return;
     }
-
-
-    // get species to colonize with: species of ship
+    if (!ship->CanColonize()) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that can't colonize";
+        return;
+    }
+    if (!ship->OwnedBy(empire_id)) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        return;
+    }
     const std::string& species_name = ship->SpeciesName();
     if (species_name.empty()) {
-        Logger().errorStream() << "FleetColonizeOrder::ServerExecute ship has no species";
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl got ship with no species";
         return;
     }
     const Species* species = GetSpecies(species_name);
     if (!species) {
-        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't get species with name: " << species_name;
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get species with name " << species_name;
         return;
     }
-
-
-    // get colonist capacity of ship: sum of capacities of parts
-    double colonist_capacity = 0.0;
-    const ShipDesign* design = ship->Design();
-    if (!design) {
-        Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship's design!";
-        return;
-    }
-    const std::vector<std::string>& parts = design->Parts();
-    for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-        const std::string& part_name = *it;
-        if (part_name.empty())
-            continue;
-        const PartType* part_type = GetPartType(part_name);
-        if (!part_type) {
-            Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find ship part type: " << part_name;
-            continue;
-        }
-        if (part_type->Class() == PC_COLONY) {
-            colonist_capacity += boost::get<double>(part_type->Stats());
-        }
-    }
-    if (colonist_capacity <= 0.0) {
-        Logger().debugStream() << "colonize order executed by ship with zero colonist capacity!";
-        return;
-    }
-
-
-    // all checks passed.  proceed with colonization.
-
-
-    planet->Reset();
-    planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
-
-    universe.Destroy(m_ship);
-
-
-    // find a focus to give planets by default.  use first defined available focus.
-    // the planet's AvailableFoci function should return a vector of all names of
-    // available foci.
-    std::vector<std::string> available_foci = planet->AvailableFoci();
-    if (!available_foci.empty())
-        planet->SetFocus(*available_foci.begin());
-
-    planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
-    planet->GetMeter(METER_FARMING)->SetCurrent(planet->GetMeter(METER_POPULATION)->Current());
-    planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
-    planet->BackPropegateMeters();
-
-    planet->AddOwner(EmpireID());
-
-    const std::set<int>& planet_buildings = planet->Buildings();
-    for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
-        if (Building* building = objects.Object<Building>(*it)) {
-            building->ClearOwners();
-            building->AddOwner(EmpireID()); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
-        } else {
-            Logger().errorStream() << "FleetColonizeOrder::ServerExecute couldn't find building with id: " << *it;
-        }
-    }
-
-    //Logger().debugStream() << "colonizing planet " << planet->Name() << " by empire " << EmpireID() << " meters:";
-    //for (MeterType meter_type = MeterType(0); meter_type != NUM_METER_TYPES; meter_type = MeterType(meter_type + 1))
-    //    if (const Meter* meter = planet->GetMeter(meter_type))
-    //        Logger().debugStream() << "type: " << boost::lexical_cast<std::string>(meter_type) << " val: " << meter->Initial();
-}
-
-void FleetColonizeOrder::ExecuteImpl() const
-{
-    ValidateEmpireID();
-
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
-    // look up the ship and fleet in question
-    Ship* ship = objects.Object<Ship>(m_ship);
-    if (!ship) {
-        Logger().errorStream() << "Empire attempted to colonize with a nonexistant ship";
-        return;
-    }
-
-    Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
-    if (!fleet) {
-        Logger().errorStream() << "Empire attempte to colonize with a ship that somehow doesn't have a fleet...?";
-        return;
-    }
-
-    // verify that empire issuing order owns specified fleet
-    if (!fleet->OwnedBy(EmpireID())) {
-        Logger().errorStream() << "Empire attempted to issue colonize order to another's fleet.";
-        return;
-    }
-
-    // verify that planet exists and is un-occupied.
-    Planet* planet = objects.Object<Planet>(m_planet);
+    Planet* planet = GetObject<Planet>(m_planet);
     if (!planet) {
-        Logger().errorStream() << "Colonization order issued with invalid planet id.";
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
-
-    if (!planet->Unowned()) {
-        Logger().errorStream() << "Colonization order issued for owned planet.";
+    int ship_system_id = ship->SystemID();
+    if (ship_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given id of ship not in a system";
         return;
     }
-
-    // verify that planet is in same system as the fleet
-    if (planet->SystemID() != fleet->SystemID() || planet->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
-        Logger().errorStream() << "Fleet specified in colonization order is not in specified system.";
+    int planet_system_id = planet->SystemID();
+    if (ship_system_id != planet_system_id) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        return;
+    }
+    if (planet->IsAboutToBeColonized()) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given id planet that is already being colonized";
         return;
     }
 
     planet->SetIsAboutToBeColonized(true);
-
-    m_colony_fleet_id = fleet->ID(); // record the fleet in which the colony ship started
-    m_colony_fleet_name = fleet->Name();
-
-    // Remove colony ship from fleet; if colony ship is only ship in fleet, destroy the fleet.
-    // This leaves the ship in existence, and in its starting system, but not in any fleet;
-    // this situation will be resolved by either ServerExecute() or UndoImpl().
-    if (fleet->NumShips() == 1) {
-        universe.Destroy(m_colony_fleet_id);
-    } else {
-        fleet->RemoveShip(m_ship);
-    }
+    ship->SetColonizePlanet(m_planet);
 }
 
-bool FleetColonizeOrder::UndoImpl() const
+bool ColonizeOrder::UndoImpl() const
 {
-    // Note that this function does double duty: it serves as a normal client-side undo, but must also
-    // serve as a server-side undo, when more than one empire tries to colonize the same planet at the
-    // same time.
-
-    Universe& universe = GetUniverse();
-    ObjectMap& objects = universe.Objects();
-
-    Planet* planet = objects.Object<Planet>(m_planet);
+    Planet* planet = GetObject<Planet>(m_planet);
     if (!planet) {
-        Logger().errorStream() << "Attempting to undo a fleet colonize order with an invalid planet id";
+        Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get planet with id " << m_planet;
         return false;
     }
-    Fleet* fleet = objects.Object<Fleet>(m_colony_fleet_id);
-    // not having a fleet is OK - it may have been removed if the colony ship was the last ship in the fleet
-    Ship* ship = objects.Object<Ship>(m_ship);
+    if (!planet->IsAboutToBeColonized()) {
+        Logger().errorStream() << "ColonizeOrder::UndoImpl planet is not about to be colonized...";
+        return false;
+    }
+
+    Ship* ship = GetObject<Ship>(m_ship);
     if (!ship) {
-        Logger().errorStream() << "Attempting to under a fleet colonize order with an invalid ship id";
+        Logger().errorStream() << "ColonizeOrder::UndoImpl couldn't get ship with id " << m_ship;
         return false;
     }
-
-    // if the fleet from which the colony ship came no longer exists or has moved, recreate it
-    if (!fleet || fleet->SystemID() != ship->SystemID()) {
-        System* system = objects.Object<System>(planet->SystemID());
-
-        int         new_fleet_id =      m_colony_fleet_id;
-        std::string new_fleet_name =    m_colony_fleet_name;
-
-        if (fleet && (fleet->SystemID() != ship->SystemID())) {
-            // fleet still exists, but it or ship are no longer in the same system, so 
-            // need to create a new fleet for the ship in the system it is in
-
-            // new id for new fleet
-            new_fleet_id = GetNewObjectID();
-            // name for new fleet
-            std::vector<int> ship_ids;  ship_ids.push_back(m_ship);
-            new_fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);  // potential bug?!  Client and Server might be using different languge files, meaning the client will see fleet name in its set language on the turn of the undo, but will see a different language fleet name on the next turn which is permanently set by the server undo
-        }
-
-        fleet = new Fleet(new_fleet_name, system->X(), system->Y(), EmpireID());
-        if (new_fleet_id == UniverseObject::INVALID_OBJECT_ID) {
-            Logger().errorStream() << "FleetColonizeOrder::UndoImpl(): Unable to obtain a new fleet ID";
-            return false;
-        }
-        fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
-
-        universe.InsertID(fleet, new_fleet_id);
-        fleet->AddShip(ship->ID());
-        system->Insert(fleet);
-    } else {
-        fleet->AddShip(ship->ID());
+    if (ship->OrderedColonizePlanet() != m_planet) {
+        Logger().errorStream() << "ColonizeOrder::UndoImpl ship is not about to colonize planet";
+        return false;
     }
 
     planet->SetIsAboutToBeColonized(false);
+    ship->ClearColonizePlanet();
 
     return true;
 }
@@ -970,6 +835,8 @@ bool ScrapOrder::UndoImpl() const
     } else if (Building* building = GetObject<Building>(m_object_id)) {
         if (building->OwnedBy(empire_id))
             building->SetOrderedScrapped(false);
+    } else {
+        return false;
     }
     return true;
 }

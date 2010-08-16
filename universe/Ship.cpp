@@ -29,13 +29,15 @@ const Species* GetSpecies(const std::string& name);
 Ship::Ship() :
     m_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_fleet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false)
+    m_ordered_scrapped(false),
+    m_ordered_colonize_planet_id(INVALID_OBJECT_ID)
 {}
 
 Ship::Ship(int empire_id, int design_id, const std::string& species_name) :
     m_design_id(design_id),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
+    m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_species_name(species_name)
 {
     if (!GetShipDesign(design_id))
@@ -154,8 +156,9 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
             this->m_species_name =          copied_ship->m_species_name;
 
             if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_ordered_scrapped =  copied_ship->m_ordered_scrapped;
-                this->m_part_meters =       copied_ship->m_part_meters;
+                this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
+                this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
+                this->m_part_meters =               copied_ship->m_part_meters;
             }
         }
     }
@@ -278,6 +281,9 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
 bool Ship::OrderedScrapped() const
 { return m_ordered_scrapped; }
 
+int Ship::OrderedColonizePlanet() const
+{ return m_ordered_colonize_planet_id; }
+
 const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
 { return const_cast<Ship*>(this)->GetMeter(type, part_name); }
 
@@ -355,14 +361,29 @@ void Ship::MoveTo(double x, double y)
 
 void Ship::SetOrderedScrapped(bool b)
 {
-    bool initial_status = m_ordered_scrapped;
-    if (b == initial_status) return;
+    if (b == m_ordered_scrapped) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
     if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
         fleet->RecalculateFleetSpeed();
         fleet->StateChangedSignal();
     }
+}
+
+void Ship::SetColonizePlanet(int planet_id)
+{
+    if (planet_id == m_ordered_colonize_planet_id) return;
+    m_ordered_colonize_planet_id = planet_id;
+    StateChangedSignal();
+    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+        fleet->RecalculateFleetSpeed();
+        fleet->StateChangedSignal();
+    }
+}
+
+void Ship::ClearColonizePlanet()
+{
+    SetColonizePlanet(INVALID_OBJECT_ID);
 }
 
 Meter* Ship::GetMeter(MeterType type, const std::string& part_name)

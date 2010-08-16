@@ -419,7 +419,7 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueFleetColonizeOrder(int ship_id, int planet_id) {
+    int IssueColonizeOrder(int ship_id, int planet_id) {
         const Universe& universe = AIClientApp::GetApp()->GetUniverse();
         const ObjectMap& objects = universe.Objects();
         int empire_id = AIClientApp::GetApp()->EmpireID();
@@ -427,49 +427,49 @@ namespace AIInterface {
         // make sure ship_id is a ship...
         const Ship* ship = objects.Object<Ship>(ship_id);
         if (!ship) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : passed an invalid ship_id";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : passed an invalid ship_id";
             return 0;
         }
 
         // get fleet of ship
         const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
         if (!fleet) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : ship with passed ship_id has invalid fleet_id";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : ship with passed ship_id has invalid fleet_id";
             return 0;
         }
 
         // make sure player owns ship and its fleet
         if (!fleet->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : empire does not own fleet of passed ship";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : empire does not own fleet of passed ship";
             return 0;
         }
         if (!ship->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : empire does not own passed ship";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : empire does not own passed ship";
             return 0;
         }
 
         // verify that planet exists and is un-occupied.
         const Planet* planet = objects.Object<Planet>(planet_id);
         if (!planet) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : no planet with passed planet_id";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : no planet with passed planet_id";
             return 0;
         }
         if (!planet->Unowned()) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : planet with passed planet_id is already owned or colonized";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : planet with passed planet_id is already owned or colonized";
             return 0;
         }
 
         // verify that planet is in same system as the fleet
         if (planet->SystemID() != fleet->SystemID()) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : fleet and planet are not in the same system";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : fleet and planet are not in the same system";
             return 0;
         }
         if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
-            Logger().errorStream() << "AIInterface::IssueFleetColonizeOrder : ship is not in a system";
+            Logger().errorStream() << "AIInterface::IssueColonizeOrder : ship is not in a system";
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship_id, planet_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship_id, planet_id)));
 
         return 1;
     }

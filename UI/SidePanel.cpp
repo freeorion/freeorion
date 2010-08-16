@@ -366,7 +366,7 @@ namespace {
             return retval;
         const OrderSet& orders = app->Orders();
         for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<FleetColonizeOrder> order = boost::dynamic_pointer_cast<FleetColonizeOrder>(it->second)) {
+            if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
                 retval[order->PlanetID()] = it->first;
             }
         }
@@ -1327,7 +1327,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
-    std::map<int, int>::const_iterator it = pending_colonization_orders.find(planet->ID());
+    std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
 
     // colonize
     if (it == pending_colonization_orders.end()) {
@@ -1346,7 +1346,7 @@ void SidePanel::PlanetPanel::ClickColonize()
             return;
         }
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetColonizeOrder(empire_id, ship->ID(), planet->ID())));
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
 
     } else {
         // cancel colonization

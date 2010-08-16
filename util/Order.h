@@ -22,7 +22,7 @@
     side.  Subclass-defined UndoImpl() \a must return true, indicating that the call had some effect; the
     default implementation does nothing and returns false. Note that only some Order subclasses define
     UndoImpl(), specifically those that need to be undone before another order of a similar type can be
-    issued. For example, FleetColonizeOrder needs to be undoable; otherwise, once the user clicks the
+    issued. For example, ColonizeOrder needs to be undoable; otherwise, once the user clicks the
     colonize button, she is locked in to this decision. */
 class Order
 {
@@ -237,15 +237,15 @@ private:
 
 
 /////////////////////////////////////////////////////
-// FleetColonizeOrder
+// ColonizeOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents a planet colonization action*/
-class FleetColonizeOrder : public Order
+class ColonizeOrder : public Order
 {
 public:
     /** \name Structors */ //@{
-    FleetColonizeOrder();
-    FleetColonizeOrder(int empire, int ship, int planet);
+    ColonizeOrder();
+    ColonizeOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{
@@ -253,34 +253,23 @@ public:
     int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is colonizing the planet
     //@}
 
-    virtual void    ServerExecute() const;                  ///< called if the server allows the colonization effort
-
 private:
     /**
      *  Preconditions:
-     *     - m_fleet must be the ID of a fleet owned by issuing empire
      *     - m_planet must be the ID of an un-owned planet.
-     *     - the fleet and the planet must have the same x,y coordinates
-     *     - the fleet must contain a colony ship
+     *     - m_ship must be the the ID of a ship owned by the issuing empire
+     *     - m_ship must be the ID of a ship that can colonize and that is in
+     *       the same system as the planet.
      *
      *  Postconditions:
-     *      - a colony ship will be removed from the fleet and deallocated
-     *        if the fleet becomes empty it will be deallocated.
-     *      - the empire issuing the order will be added to the list of owners
-     *            for the planet
-     *      - the planet's population will be increased
-     *      - the planet will be added to the empire's list of owned planets
-     *     
+     *      - The ship with ID m_ship will be marked to colonize the planet with
+     *        id m_planet during the next turn processing.
      */
     virtual void ExecuteImpl() const;
     virtual bool UndoImpl() const;
 
     int                 m_ship;
     int                 m_planet;
-
-    // these are for undoing this order only
-    mutable int         m_colony_fleet_id;   // the fleet from which the colony ship was taken
-    mutable std::string m_colony_fleet_name; // the name of fleet from which the colony ship was taken
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -455,18 +444,21 @@ public:
 private:
     /**
      * Preconditions of execute:
-     *    - For creating a new design, the passed design is a valid reference to a design created by the
-     *      empire issuing the order
-     *    - For remembering an existing ship design, there exists a ship design with the passed id, and
-     *      the empire is aware of this ship design
-     *    - For removing a shipdesign from the empire's set of designs, there empire has a design with the
-     *      passed id in its set of designs
+     *    - For creating a new design, the passed design is a valid reference
+     *      to a design created by the empire issuing the order
+     *    - For remembering an existing ship design, there exists a ship design
+     *      with the passed id, and the empire is aware of this ship design
+     *    - For removing a shipdesign from the empire's set of designs, there
+     *      empire has a design with the passed id in its set of designs
      *
      *  Postconditions:
-     *    - For creating a new ship design, the universe will contain a new ship design, and the creating
-     *      empire will have the new design as of of its designs
-     *    - For remembering a ship design, the empire will have the design's id in its set of design ids
-     *    - For removing a design, the empire will no longer have the design's id in its set of design ids
+     *    - For creating a new ship design, the universe will contain a new ship
+     *      design, and the creating empire will have the new design as of of
+     *      its designs
+     *    - For remembering a ship design, the empire will have the design's id
+     *      in its set of design ids
+     *    - For removing a design, the empire will no longer have the design's
+     *      id in its set of design ids
      */
     virtual void ExecuteImpl() const;
 
@@ -505,7 +497,7 @@ private:
      *     - the object must be scrappable: ships or buildings
      *
      *  Postconditions:
-     *     - the object is deleted
+     *     - the object is marked to be scrapped during the next turn processing.
      */
     virtual void    ExecuteImpl() const;
     virtual bool    UndoImpl() const;

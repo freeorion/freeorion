@@ -17,7 +17,7 @@ BOOST_CLASS_EXPORT(RenameOrder)
 BOOST_CLASS_EXPORT(NewFleetOrder)
 BOOST_CLASS_EXPORT(FleetMoveOrder)
 BOOST_CLASS_EXPORT(FleetTransferOrder)
-BOOST_CLASS_EXPORT(FleetColonizeOrder)
+BOOST_CLASS_EXPORT(ColonizeOrder)
 BOOST_CLASS_EXPORT(DeleteFleetOrder)
 BOOST_CLASS_EXPORT(ChangeFocusOrder)
 BOOST_CLASS_EXPORT(ResearchQueueOrder)
@@ -70,13 +70,11 @@ void FleetTransferOrder::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void FleetColonizeOrder::serialize(Archive& ar, const unsigned int version)
+void ColonizeOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
         & BOOST_SERIALIZATION_NVP(m_ship)
-        & BOOST_SERIALIZATION_NVP(m_planet)
-        & BOOST_SERIALIZATION_NVP(m_colony_fleet_id)
-        & BOOST_SERIALIZATION_NVP(m_colony_fleet_name);
+        & BOOST_SERIALIZATION_NVP(m_planet);
 }
 
 template <class Archive>

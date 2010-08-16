@@ -1094,6 +1094,242 @@ namespace {
     }
 }
 
+namespace {
+    /** Does colonization, with safety checks */
+    bool ColonizePlanet(ObjectMap& objects, int ship_id, int planet_id) {
+        Ship* ship = objects.Object<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "ColonizePlanet couldn't get ship with id " << ship_id;
+            return false;
+        }
+        Planet* planet = objects.Object<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "ColonizePlanet couldn't get planet with id " << planet_id;
+            return false;
+        }
+
+        // get species to colonize with: species of ship
+        const std::string& species_name = ship->SpeciesName();
+        if (species_name.empty()) {
+            Logger().errorStream() << "ColonizePlanet ship has no species";
+            return false;
+        }
+        const Species* species = GetSpecies(species_name);
+        if (!species) {
+            Logger().errorStream() << "ColonizePlanet couldn't get species with name: " << species_name;
+            return false;
+        }
+
+        // get empire to give ownership of planet to
+        const std::set<int>& owners = ship->Owners();
+        if (owners.size() != 1) {
+            Logger().errorStream() << "ColonizePlanet couldn't get an empire to colonize with";
+            return false;
+        }
+        int empire_id = *owners.begin();
+
+        // get colonist capacity of ship: sum of capacities of parts
+        double colonist_capacity = 0.0;
+        const ShipDesign* design = ship->Design();
+        if (!design) {
+            Logger().errorStream() << "ColonizePlanet couldn't find ship's design!";
+            return false;
+        }
+        const std::vector<std::string>& parts = design->Parts();
+        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+            const std::string& part_name = *it;
+            if (part_name.empty())
+                continue;
+            const PartType* part_type = GetPartType(part_name);
+            if (!part_type) {
+                Logger().errorStream() << "ColonizePlanet couldn't find ship part type: " << part_name;
+                continue;
+            }
+            if (part_type->Class() == PC_COLONY) {
+                colonist_capacity += boost::get<double>(part_type->Stats());
+            }
+        }
+        if (colonist_capacity <= 0.0) {
+            Logger().debugStream() << "ColonizePlanet colonize order executed by ship with zero colonist capacity!";
+            return false;
+        }
+
+
+        // all checks passed.  proceed with colonization.
+
+
+        planet->Reset();
+        planet->SetSpecies(species_name);   // do this BEFORE destroying the ship, since species_name is a const reference to Ship::m_species_name
+
+        GetUniverse().Destroy(ship->ID());
+
+
+        // find a focus to give planets by default.  use first defined available focus.
+        // the planet's AvailableFoci function should return a vector of all names of
+        // available foci.
+        std::vector<std::string> available_foci = planet->AvailableFoci();
+        if (!available_foci.empty())
+            planet->SetFocus(*available_foci.begin());
+
+        planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
+        planet->GetMeter(METER_FARMING)->SetCurrent(planet->GetMeter(METER_POPULATION)->Current());
+        planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
+        planet->BackPropegateMeters();
+
+        planet->AddOwner(empire_id);
+
+        const std::set<int>& planet_buildings = planet->Buildings();
+        for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
+            if (Building* building = objects.Object<Building>(*it)) {
+                building->ClearOwners();
+                building->AddOwner(empire_id); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
+            } else {
+                Logger().errorStream() << "ColonizePlanet couldn't find building with id: " << *it;
+            }
+        }
+
+        return true;
+    }
+
+    /** Determines which ships ordered to colonize planet succeed, does
+      * appropriate colonization, and cleans up after colonization orders */
+    void HandleColonization(ObjectMap& objects, EmpireManager& empires) {
+        // collect, for each planet, what ships have been ordered to colonize it
+        std::map<int, std::map<int, std::set<int> > > planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
+        std::vector<Ship*> ships = objects.FindObjects<Ship>();
+        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+            const Ship* ship = *it;
+            if (!ship) {
+                Logger().errorStream() << "HandleColonization couldn't get ship";
+                continue;
+            }
+            int colonize_planet_id = ship->OrderedColonizePlanet();
+            const Planet* planet = objects.Object<Planet>(colonize_planet_id);
+            if (!planet)
+                continue;
+            if (ship->Owners().size() != 1)
+                continue;
+            int owner_empire_id = *ship->Owners().begin();
+            if (owner_empire_id == ALL_EMPIRES)
+                continue;
+            int ship_id = ship->ID();
+            if (ship_id == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            if (ship->SystemID() != planet->SystemID() || ship->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            planet_empire_colonization_ship_ids[colonize_planet_id][owner_empire_id].insert(ship_id);
+        }
+
+        // execute colonization when:
+        // 1) a single empire is colonizing a planet in a system that contains no enemy armed ships
+        // 2) multiple empires try to colonize the same planet, but only one empire has armed ships in the system
+        // otherwise, no colonization happens in the system
+        for (std::map<int, std::map<int, std::set<int> > >::iterator planet_it = planet_empire_colonization_ship_ids.begin();
+             planet_it != planet_empire_colonization_ship_ids.end();
+             ++planet_it)
+        {
+            int planet_id = planet_it->first;
+            Planet* planet = objects.Object<Planet>(planet_id);
+            if (!planet) {
+                Logger().errorStream() << "HandleColonization couldn't get planet with id " << planet_id;
+                continue;
+            }
+            if (!planet->Unowned()) {
+                Logger().errorStream() << "HandleColonization trying to colonize an already-occupied planet!";
+                continue;
+            }
+
+            int system_id = planet->SystemID();
+            const System* system = objects.Object<System>(system_id);
+            if (!system) {
+                Logger().errorStream() << "HandleColonization couldn't get system with id " << system_id;
+                continue;
+            }
+
+            // find which empires have armed ships in system
+            std::set<int> empires_with_armed_ships_in_system;
+            std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
+            for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
+                const Fleet* fleet = objects.Object<Fleet>(*fleet_it);
+                if (fleet->HasArmedShips()) {
+                    const std::set<int>& owners = fleet->Owners();
+                    for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
+                        empires_with_armed_ships_in_system.insert(*owner_it);
+                }
+            }
+
+            // no empires can colonize if there are more than one empire's armed fleets in system
+            if (empires_with_armed_ships_in_system.size() > 1)
+                continue;
+
+            bool planet_colonized = false;
+
+            // check if any of the ships that want to colonize belong to the empire with armed ships
+            std::map<int, std::set<int> >& empire_colonization_ship_map = planet_it->second;
+            for (std::map<int, std::set<int> >::iterator empire_it = empire_colonization_ship_map.begin();
+                 empire_it != empire_colonization_ship_map.end();
+                 ++empire_it)
+            {
+                int empire_id = empire_it->first;
+                if (!empires_with_armed_ships_in_system.empty() &&
+                    empires_with_armed_ships_in_system.find(empire_id) == empires_with_armed_ships_in_system.end())
+                {
+                    // this empire can't colonize here this turn
+                    continue;
+                }
+
+                std::set<int>& colonizing_ships = empire_it->second;
+                if (colonizing_ships.empty()) {
+                    Logger().errorStream() << "HandleColonization got empty set of ships attempting to colonize planet for an empire?!";
+                    continue;
+                }
+
+                // pick the first ship this empire has that is trying to colonize this planet.
+                int ship_id = *colonizing_ships.begin();
+
+
+                // do colonization
+                if (!ColonizePlanet(objects, ship_id, planet_id))
+                    continue;   // skip sitrep if colonization failed
+
+                // record successful colonization
+                planet_colonized = true;
+                // remove ship from ships that wanted to colonize
+                colonizing_ships.erase(ship_id);
+
+                // sitrep about colonization
+                Empire* empire = empires.Lookup(empire_id);
+                if (!empire) {
+                    Logger().errorStream() << "HandleColonization couldn't get empire with id " << empire_id;
+                } else {
+                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet_id));
+                }
+
+                break;  // only one colonization per planet.
+            }
+            planet->ResetIsAboutToBeColonized();
+
+            // if planet was colonized, remove colonize status from any other
+            // ships that wanted to colonize this planet
+            if (planet_colonized) {
+                for (std::map<int, std::set<int> >::iterator empire_it = empire_colonization_ship_map.begin();
+                     empire_it != empire_colonization_ship_map.end();
+                     ++empire_it)
+                {
+                    std::set<int>& colonizing_ships = empire_it->second;
+                    for (std::set<int>::const_iterator ship_it = colonizing_ships.begin(); ship_it != colonizing_ships.end(); ++ship_it)
+                        if (Ship* ship = objects.Object<Ship>(*ship_it))
+                            ship->ClearColonizePlanet();
+                }
+            }
+        }
+
+        // TODO elsewhere: clear colonization planet of ships when that plant
+        //      has been destroyed or become invisible, or if the ship leaves
+        //      the system?
+    }
+}
+
 void ServerApp::PreCombatProcessTurns()
 {
     EmpireManager& empires = Empires();
@@ -1108,6 +1344,7 @@ void ServerApp::PreCombatProcessTurns()
     }
 
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
+
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
         // broadcast UI message to all players
@@ -1118,32 +1355,8 @@ void ServerApp::PreCombatProcessTurns()
         empire->ClearSitRep();
         OrderSet* order_set = it->second;
 
-        // execute order set
-        for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
+        for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it)
             order_it->second->Execute();
-        }
-    }
-
-
-    Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
-    // filter FleetColonizeOrder for later processing
-    typedef std::map<int, std::vector<boost::shared_ptr<FleetColonizeOrder> > > ColonizeOrderMap;
-    ColonizeOrderMap colonize_order_map;
-    for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        OrderSet* order_set = it->second;
-
-        // filter FleetColonizeOrder and sort them per planet
-        boost::shared_ptr<FleetColonizeOrder> order;
-        for (OrderSet::const_iterator order_it = order_set->begin(); order_it != order_set->end(); ++order_it) {
-            if ((order = boost::dynamic_pointer_cast<FleetColonizeOrder>(order_it->second))) {
-                ColonizeOrderMap::iterator it = colonize_order_map.find(order->PlanetID());
-                if (it == colonize_order_map.end()) {
-                    colonize_order_map.insert(std::make_pair(order->PlanetID(),std::vector<boost::shared_ptr<FleetColonizeOrder> >()));
-                    it = colonize_order_map.find(order->PlanetID());
-                }
-                it->second.push_back(order);
-            }
-        }
     }
 
 
@@ -1151,85 +1364,12 @@ void ServerApp::PreCombatProcessTurns()
     ClearEmpireTurnOrders();
 
 
-    // colonization apply be the following rules
-    // 1 - if there is only own empire which tries to colonize a planet, is allowed to do so
-    // 2 - if there are more than one empire then
-    // 2.a - if only one empire which tries to colonize (empire who don't are ignored) is armed, this empire wins the race
-    // 2.b - if more than one empire is armed or all forces are unarmed, no one can colonize the planet
-    for (ColonizeOrderMap::iterator colonize_order_map_it = colonize_order_map.begin(); colonize_order_map_it != colonize_order_map.end(); ++colonize_order_map_it) {
-        Planet* planet = objects.Object<Planet>(colonize_order_map_it->first);
-        if (!planet) {
-            Logger().errorStream() << "ProcessTurns couldn't get planet with id " << colonize_order_map_it->first;
-            continue;
-        }
-        std::vector<boost::shared_ptr<FleetColonizeOrder> >& colonize_orders = colonize_order_map_it->second;
-
-        // only one empire?
-        if (colonize_orders.size() == 1) {
-            colonize_orders[0]->ServerExecute();
-            Empire* empire = empires.Lookup(colonize_orders[0]->EmpireID());
-            empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->ID()));
-        } else {
-            int system_id = planet->SystemID();
-            const System* system = objects.Object<System>(system_id);
-            if (!system) {
-                Logger().errorStream() << "ProcessTurns couldn't get system with ID " << system_id;
-                continue;
-            }
-
-            std::set<int> set_empire_with_military;
-            std::vector<int> fleet_ids = system->FindObjectIDs<Fleet>();
-            for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it) {
-                const Fleet* fleet = GetObject<Fleet>(*it);
-                if (!fleet) {
-                    Logger().errorStream() << "ProcessTurns couldn't get fleet with id " << *it;
-                    continue;
-                }
-
-                for (Fleet::const_iterator ship_it = fleet->begin(); ship_it != fleet->end(); ++ship_it)
-                    if (const Ship* ship = objects.Object<Ship>(*ship_it))
-                        if (ship->IsArmed()) {
-                            set_empire_with_military.insert(*fleet->Owners().begin());
-                            break;
-                        }
-            }
-
-            // set the first empire as winner for now
-            int winner = 0;
-            // is the current winner armed?
-            bool winner_is_armed = set_empire_with_military.find(colonize_orders[0]->EmpireID()) != set_empire_with_military.end();
-            for (unsigned int i = 1; i < colonize_orders.size(); i++)
-                // is this empire armed?
-                if (set_empire_with_military.find(colonize_orders[i]->EmpireID()) != set_empire_with_military.end()) {
-                    // if this empire is armed and the former winner too, noone can win
-                    if (winner_is_armed) {
-                        winner = -1; // no winner!!
-                        break;       // won't find a winner!
-                    }
-                    winner = i; // this empire is the winner for now
-                    winner_is_armed = true; // and has armed forces
-                }
-                else
-                    // this empire isn't armed
-                    if (!winner_is_armed)
-                        winner = -1; // if the current winner isn't armed, a winner must be armed!!!!
-
-            for (int i = 0; i < static_cast<int>(colonize_orders.size()); i++) {
-                if (winner == i) {
-                    colonize_orders[i]->ServerExecute();
-                    Empire* empire = empires.Lookup(colonize_orders[i]->EmpireID());
-                    empire->AddSitRepEntry(CreatePlanetColonizedSitRep(planet->ID()));
-                } else {
-                    colonize_orders[i]->Undo();
-                }
-            }
-        }
-
-        planet->ResetIsAboutToBeColonized();
-    }
+    Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
+    HandleColonization(objects, empires);
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
+
     // scrap orders
     std::vector<int> objects_to_scrap;
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
@@ -1244,6 +1384,7 @@ void ServerApp::PreCombatProcessTurns()
     }
     for (std::vector<int>::const_iterator it = objects_to_scrap.begin(); it != objects_to_scrap.end(); ++it)
         m_universe.Destroy(*it);
+
     // check for empty fleets after scrapping
     std::vector<Fleet*> fleets = objects.FindObjects<Fleet>();
     for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {

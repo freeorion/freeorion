@@ -46,7 +46,8 @@ public:
 
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
-    bool                        OrderedScrapped() const;
+    bool                        OrderedScrapped() const;        ///< returns true iff this ship has been ordered scrapped, or false otherwise
+    int                         OrderedColonizePlanet() const;  ///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
 
     const Meter*                GetMeter(MeterType type, const std::string& part_name) const; ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
@@ -67,6 +68,8 @@ public:
     virtual void    MoveTo(double x, double y);
 
     void            SetOrderedScrapped(bool b = true);                      ///< flags ship for scrapping
+    void            SetColonizePlanet(int planet_id);                       ///< marks ship to colonize the indicated planet
+    void            ClearColonizePlanet();                                  ///< marks ship to colonize no planets
 
     Meter*          GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
@@ -80,6 +83,7 @@ private:
     int             m_design_id;
     int             m_fleet_id;
     bool            m_ordered_scrapped;
+    int             m_ordered_colonize_planet_id;
     ConsumablesMap  m_fighters;
     ConsumablesMap  m_missiles;
     PartMeters      m_part_meters;
