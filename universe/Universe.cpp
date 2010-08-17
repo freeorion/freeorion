@@ -979,6 +979,10 @@ void Universe::ApplyAllEffectsAndUpdateMeters(const std::vector<int>& object_ids
 
     ExecuteEffects(targets_causes_map);
 
+
+    // re-get objects vector so that any destroyed objects won't still be in the list
+    objects = m_objects.FindObjects(object_ids);
+
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
@@ -1468,6 +1472,10 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
         }
     }
 
+    // actually do destroy effect action.  Executing the effect just marks
+    // objects to be destroyed, but doesn't actually do so in order to ensure
+    // no interaction in order of effects and source or target objects being
+    // destroyed / deleted between determining target sets and executing effects
     for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
         RecursiveDestroy(*it);
     }
