@@ -1601,6 +1601,18 @@ public:
     {}
 
     void            Refresh() {
+        // store selected ship rows
+        std::set<int> old_selected_ship_ids;
+        for (ShipsListBox::SelectionSet::const_iterator it = this->Selections().begin(); it != this->Selections().end(); ++it)
+            if (const ShipRow* row = dynamic_cast<const ShipRow*>(**it))
+                old_selected_ship_ids.insert(row->ShipID());
+
+        //Logger().debugStream() << "ShipsListBox::Refresh initial selected ships:";
+        //for (std::set<int>::const_iterator it = old_selected_ship_ids.begin(); it != old_selected_ship_ids.end(); ++it)
+        //    Logger().debugStream() << " ... " << *it;
+
+        // repopulate list with ships in current fleet
+
         Clear();
 
         const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
@@ -1615,12 +1627,26 @@ public:
         SetColWidth(0, GG::X0);
         LockColWidths();
 
+        std::set<int> new_selected_ship_ids;
+
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
-            Insert(row);
+            ShipsListBox::iterator row_it = Insert(row);
             row->Resize(row_size);
+            if (old_selected_ship_ids.find(ship_id) != old_selected_ship_ids.end()) {
+                SelectRow(row_it);  // select in listbox
+                // and mark data panel in row as selected, as would happen if it
+                // was selected by user or programmatically via FleetDetailPanel
+                if (ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>((*row)[0]))
+                    ship_panel->Select(true);
+                //Logger().debugStream() << "ShipsListBox::Refresh re-selecting ship: " << ship_id;
+                new_selected_ship_ids.insert(ship_id);
+            }
         }
+
+        if (new_selected_ship_ids != old_selected_ship_ids)
+            SelChangedSignal(this->Selections());
     }
 
     void            SetFleet(int fleet_id) {
@@ -1730,7 +1756,8 @@ public:
     int             FleetID() const;
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
 
-    void            SetFleet(int fleet_id);     ///< sets the currently-displayed Fleet.  setting to UniverseObject::INVALID_OBJECT_ID shows no fleet
+    void            SetFleet(int fleet_id);                         ///< sets the currently-displayed Fleet.  setting to UniverseObject::INVALID_OBJECT_ID shows no fleet
+    void            SetSelectedShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
@@ -1814,6 +1841,34 @@ void FleetDetailPanel::SetFleet(int fleet_id)
             Logger().debugStream() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
     }
+}
+
+void FleetDetailPanel::SetSelectedShips(const std::set<int>& ship_ids)
+{
+    m_ships_lb->DeselectAll();
+
+    // early exit if nothing to select, since everything has already been deselected above.
+    if (ship_ids.empty()) {
+        ShipSelectionChanged(m_ships_lb->Selections());
+        return;
+    }
+
+    // loop through ships, selecting any indicated
+    for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
+        ShipRow* row = dynamic_cast<ShipRow*>(*it);
+        if (!row) {
+            Logger().errorStream() << "FleetDetailPanel::SetSelectedShips couldn't cast a listbow row to ShipRow?";
+            continue;
+        }
+
+        // if this row's ship should be selected, so so
+        if (ship_ids.find(row->ShipID()) != ship_ids.end()) {
+            m_ships_lb->SelectRow(it);
+            m_ships_lb->BringRowIntoView(it);   // may cause earlier rows brought into view to be brought out of view... oh well
+        }
+    }
+
+    ShipSelectionChanged(m_ships_lb->Selections());
 }
 
 Fleet* FleetDetailPanel::GetFleet() const
@@ -2227,8 +2282,9 @@ void FleetWnd::Refresh()
 {
     const ObjectMap& objects = GetUniverse().Objects(); // objects visisble to this client's empire
 
-    // save selected fleet(s)
+    // save selected fleet(s) and ships(s)
     std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
+    std::set<int> initially_selected_ships = this->SelectedShipIDs();
 
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
@@ -2262,6 +2318,7 @@ void FleetWnd::Refresh()
 
     // reselect previously-selected fleets
     this->SetSelectedFleets(initially_selected_fleets);
+    this->SetSelectedShips(initially_selected_ships);
 }
 
 void FleetWnd::CloseClicked()
@@ -2386,6 +2443,11 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids)
     }
 
     FleetSelectionChanged(m_fleets_lb->Selections());
+}
+
+void FleetWnd::SetSelectedShips(const std::set<int>& ship_ids)
+{
+    m_fleet_detail_panel->SetSelectedShips(ship_ids);
 }
 
 void FleetWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
