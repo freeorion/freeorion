@@ -2420,6 +2420,13 @@ void MapWnd::SelectSystem(int system_id)
         system_id = UniverseObject::INVALID_OBJECT_ID;
     }
 
+
+    if (system) {
+        // ensure meter estimates are up to date, particularly for which ship is selected
+        UpdateMeterEstimates(system_id, true);
+    }
+
+
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
         if (SidePanel::SystemID() != UniverseObject::INVALID_OBJECT_ID) {
@@ -4195,51 +4202,57 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     ObjectMap& objects = GetUniverse().Objects();
 
-    // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
-    // the current player's ownership to all, while remembering which planets this is done to
-    std::set<Planet*> unowned_planets;
+
     Universe::InhibitUniverseObjectSignals(true);
-    for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
-        int planet_id = *it;
-        Planet* planet = objects.Object<Planet>(planet_id);
-        if (!planet || !planet->Unowned())
-            continue;
 
-        int system_id = planet->SystemID();
-        if (system_id == UniverseObject::INVALID_OBJECT_ID)
-            continue;
 
-        int ship_id = FleetUIManager::GetFleetUIManager().SelectedShipID();
-        const Ship* ship = objects.Object<Ship>(ship_id);
-        if (!ship)
-            continue;
+    // if there is a selected colony ship, add temporary species to planets in
+    // order to generate estimates of what their population would be after
+    // colonization by the selected colony ship.
+    std::string         selected_colony_ship_species;
+    std::set<Planet*>   unowned_planets;
 
-        // is selected ship a colony ship that is owned by this client's player and is in the right system?
-        if (ship->SystemID() != system_id || !ship->CanColonize() || !ship->OwnedBy(empire_id))
-            continue;
+    const Ship* ship = objects.Object<Ship>(FleetUIManager::GetFleetUIManager().SelectedShipID());
+    if (ship && ship->CanColonize() &&
+        ship->OwnedBy(empire_id) &&
+        !ship->SpeciesName().empty() &&
+        ship->SystemID() != UniverseObject::INVALID_OBJECT_ID)
+    {
+        // selected ship: exists, is a colony ship, is owned by this client's player
+        //                is in a system, and has a usable species.
 
-        const std::string& species_name = ship->SpeciesName();
-        if (species_name.empty())
-            continue;
-
-        // found a single colony ship selected and owned by this client's player.
-        // use its species to estimate planet's projected population target if
+        // use species to estimate planet's projected population target if
         // it were colonized
+        const std::string& species_name = ship->SpeciesName();
+        int ship_system_id = ship->SystemID();
 
-        unowned_planets.insert(planet);
-        planet->AddOwner(empire_id);
-        planet->SetSpecies(species_name);
-        Logger().debugStream() << "... Set planet(" << planet->ID() << "): " << planet->Name() << " species to " << species_name;
+        // get all planets the player knows about that aren't yet colonized (aren't owned by anyone).  Add this
+        // the current player's ownership to all, while remembering which planets this is done to
+        for (std::vector<int>::const_iterator it = objects_vec.begin(); it != objects_vec.end(); ++it) {
+            int planet_id = *it;
+            Planet* planet = objects.Object<Planet>(planet_id);
+            if (!planet || !planet->Unowned() || planet->SystemID() != ship_system_id)
+                continue;
+
+            unowned_planets.insert(planet);
+            planet->AddOwner(empire_id);
+            planet->SetSpecies(species_name);
+            Logger().debugStream() << "... Set planet(" << planet_id << "): " << planet->Name() << " species to " << species_name;
+        }
     }
+
 
     // update meter estimates with temporary ownership
     GetUniverse().UpdateMeterEstimates(objects_vec);
 
-    // remove temporary ownership added above
+
+    // remove any temporary ownership added above
     for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
         (*it)->RemoveOwner(empire_id);
         (*it)->SetSpecies("");
     }
+
+
     Universe::InhibitUniverseObjectSignals(false);
 }
 
