@@ -1467,14 +1467,19 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
     }
 
     // adjust size of scrollbar to account for panel resizing
-    const int MAX_PLANET_DIAMETER =
-        GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     // hide scrollbar if all panels are visible and fit into the available height
-    if (Value(y - m_planet_panels_top) < available_height + 1) {
+    if (Value(m_planet_panels_top) >= 0 && Value(y - m_planet_panels_top) < available_height + 1) {
         DetachChild(m_vscroll);
     } else {
-        m_vscroll->SizeScroll(0, Value(y - m_planet_panels_top),
-                              MAX_PLANET_DIAMETER, Value(available_height));
+        // need to show scrollbar.
+
+        // if only need scrollbar due to being scrolled down (but would
+        // otherwise fit in available space), make scroll range larger
+        // to allow scrolling back up
+        int scroll_max = std::max(Value(y - m_planet_panels_top), Value(available_height - m_planet_panels_top));
+
+        m_vscroll->SizeScroll(0, scroll_max, MAX_PLANET_DIAMETER, Value(available_height));
         AttachChild(m_vscroll);
         m_vscroll->Show();
     }
