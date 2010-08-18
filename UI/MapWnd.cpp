@@ -13,6 +13,7 @@
 #include "DesignWnd.h"
 #include "ProductionWnd.h"
 #include "ResearchWnd.h"
+#include "EncyclopediaDetailPanel.h"
 #include "SidePanel.h"
 #include "SitRepPanel.h"
 #include "SystemIcon.h"
@@ -498,6 +499,7 @@ MapWnd::MapWnd() :
     m_research_wnd(0),
     m_production_wnd(0),
     m_design_wnd(0),
+    m_pedia_panel(0),
     m_starlane_endpoints(),
     m_stationary_fleet_buttons(),
     m_departing_fleet_buttons(),
@@ -536,6 +538,7 @@ MapWnd::MapWnd() :
     m_btn_research(0),
     m_btn_production(0),
     m_btn_design(0),
+    m_btn_pedia(0),
     m_btn_menu(0),
     m_FPS(0),
     m_scale_line(0),
@@ -573,10 +576,17 @@ MapWnd::MapWnd() :
 
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, (APP_HEIGHT-SITREP_PANEL_HEIGHT)/2, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
     m_sitrep_panel->Hide();
+
+
+    // encyclpedia panel
+    m_pedia_panel = new EncyclopediaDetailPanel(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
+    //GG::Connect(m_pedia_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));    // pedia panel is manually closed by user (not possible?)
+    GG::GUI::GetGUI()->Register(m_pedia_panel);
+    m_pedia_panel->Hide();
 
 
     // research window
@@ -670,15 +680,27 @@ MapWnd::MapWnd() :
     m_btn_menu->SetInWindow(in_window_func);
 
 
+    // Encyclo"pedia" button
+    button_width = font->TextExtent(UserString("MAP_BTN_PEDIA")).x + BUTTON_TOTAL_MARGIN;
+    m_btn_pedia = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width,
+                                                 GG::Y(LAYOUT_MARGIN),
+                                                 button_width, UserString("MAP_BTN_PEDIA") );
+    m_toolbar->AttachChild(m_btn_pedia);
+    GG::Connect(m_btn_pedia->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
+    in_window_func =
+        boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
+                             boost::bind(&WndRight, m_btn_pedia),  boost::bind(&WndBottom, m_btn_pedia),
+                    _1);
+    m_btn_pedia->SetInWindow(in_window_func);
+
+
     // Design button
     button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width,
+    m_btn_design = new SettableInWindowCUIButton(m_btn_pedia->UpperLeft().x-LAYOUT_MARGIN-button_width,
                                                  GG::Y(LAYOUT_MARGIN),
                                                  button_width, UserString("MAP_BTN_DESIGN") );
     m_toolbar->AttachChild(m_btn_design);
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
-    // custom InWindow that extends up to edge of toolbar, but NOT furhter to
-    // right as was done for Menu button
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
                              boost::bind(&WndRight, m_btn_design),  boost::bind(&WndBottom, m_btn_design),
@@ -2391,6 +2413,34 @@ void MapWnd::ShowShipDesign(int design_id)
     m_production_wnd->ShowShipDesignInEncyclopedia(design_id);
 }
 
+void MapWnd::ShowSpecial(const std::string& special_name)
+{
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetSpecial(special_name);
+}
+
+void MapWnd::ShowSpecies(const std::string& species_name)
+{
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetSpecies(species_name);
+}
+
+void MapWnd::ShowEmpire(int empire_id)
+{
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetEmpire(empire_id);
+}
+
+void MapWnd::ShowEncyclopediaEntry(const std::string& str)
+{
+    if (!m_pedia_panel->Visible())
+        TogglePedia();
+    m_pedia_panel->SetText(str);
+}
+
 void MapWnd::CenterOnObject(int id)
 {
     if (UniverseObject* obj = GetObject(id))
@@ -3736,6 +3786,37 @@ bool MapWnd::ToggleSitRep()
         HideSitRep();
     else
         ShowSitRep();
+    return true;
+}
+
+void MapWnd::ShowPedia()
+{
+    ClearProjectedFleetMovementLines();
+
+    // hide other "competing" windows
+    HideResearch();
+    HideProduction();
+    HideDesign();
+
+    m_pedia_panel->Show();
+    m_pedia_panel->Refresh();
+
+    // indicate selection on button
+    m_btn_pedia->MarkSelectedGray();
+}
+
+void MapWnd::HidePedia()
+{
+    m_pedia_panel->Hide();
+    m_btn_pedia->MarkNotSelected();
+}
+
+bool MapWnd::TogglePedia()
+{
+    if (m_pedia_panel->Visible())
+        HidePedia();
+    else
+        ShowPedia();
     return true;
 }
 

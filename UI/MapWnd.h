@@ -18,6 +18,7 @@ class MapWndPopup;
 class DesignWnd;
 class ProductionWnd;
 class ResearchWnd;
+class EncyclopediaDetailPanel;
 struct SaveGameUIData;
 class SidePanel;
 class SitRepPanel;
@@ -127,6 +128,10 @@ public:
     void            ShowPartType(const std::string& part_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name
     void            ShowHullType(const std::string& hull_type_name);        //!< brings up the production screen and displays info about the buildtype \a type_name
     void            ShowShipDesign(int design_id);                          //!< brings up the production screen and displays info about the buildtype \a type_name
+    void            ShowSpecial(const std::string& special_name);           //!< brings up encyclpedia panel and displays info about the special with name \a special_name
+    void            ShowSpecies(const std::string& species_name);           //!< brings up encyclpedia panel and displays info about the species with name \a species_name
+    void            ShowEmpire(int empire_id);                              //!< brings up encyclpedia panel and displays info about the empire with id \a empire_id
+    void            ShowEncyclopediaEntry(const std::string& str);          //!< brings up encyclpedia panel and displays info about the specified string \a str
 
     void            SelectSystem(int systemID);                             //!< programatically selects systems on map, sidepanel, and production screen.  catches signals from these when the user changes the selected system
     void            ReselectLastSystem();                                   //!< re-selects the most recently selected system, if a valid one exists
@@ -264,6 +269,10 @@ private:
     void            ShowSitRep();
     void            HideSitRep();
 
+    bool            TogglePedia();
+    void            ShowPedia();
+    void            HidePedia();
+
     void            HideSidePanel();
     void            RestoreSidePanel();
 
@@ -331,6 +340,7 @@ private:
     ResearchWnd*                m_research_wnd;     //!< research screen
     ProductionWnd*              m_production_wnd;   //!< production screen
     DesignWnd*                  m_design_wnd;       //!< design screen
+    EncyclopediaDetailPanel*    m_pedia_panel;      //!< encyclpedia panel
 
 
     std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
@@ -378,7 +388,7 @@ private:
 
     CUIToolBar*                 m_toolbar;
     StatisticIcon               *m_food, *m_mineral, *m_trade, *m_population, *m_research, *m_industry;
-    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_menu;
+    SettableInWindowCUIButton   *m_btn_siterep, *m_btn_research, *m_btn_production, *m_btn_design, *m_btn_pedia, *m_btn_menu;
     FPSIndicator*               m_FPS;
 
     MapScaleLine*               m_scale_line;       //!< indicates the on-screen distance that reprensents an in-universe distance

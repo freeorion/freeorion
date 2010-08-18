@@ -543,6 +543,9 @@ bool ClientUI::ZoomToBuildingType(const std::string& building_type_name)
 
 bool ClientUI::ZoomToSpecial(const std::string& special_name)
 {
+    if (!GetSpecial(special_name))
+        return false;
+    m_map_wnd->ShowSpecial(special_name);
     return true;
 }
 
@@ -564,6 +567,9 @@ bool ClientUI::ZoomToShipPart(const std::string& part_name)
 
 bool ClientUI::ZoomToSpecies(const std::string& species_name)
 {
+    if (!GetSpecies(species_name))
+        return false;
+    m_map_wnd->ShowSpecies(species_name);
     return true;
 }
 
@@ -577,12 +583,16 @@ bool ClientUI::ZoomToShipDesign(int design_id)
 
 bool ClientUI::ZoomToEmpire(int empire_id)
 {
-    return false;
+    if (!Empires().Lookup(empire_id))
+        return false;
+    m_map_wnd->ShowEmpire(empire_id);
+    return true;
 }
 
 bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str)
 {
-    return false;
+    m_map_wnd->ShowEncyclopediaEntry(str);
+    return true;
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap/* = false*/)

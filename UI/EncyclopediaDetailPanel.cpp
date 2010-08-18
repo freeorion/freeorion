@@ -263,7 +263,11 @@ void EncyclopediaDetailPanel::Refresh() {
     GG::Clr color(GG::CLR_ZERO);
 
     using boost::io::str;
-    if (!m_part_name.empty()) {
+    if (!m_generic_text.empty()) {
+        // plain text... not associated with any specific bit of content or in-game object
+        detailed_description = m_generic_text;
+
+    } else if (!m_part_name.empty()) {
         const PartType* part = GetPartType(m_part_name);
         if (!part) {
             Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << m_part_name;
@@ -524,6 +528,9 @@ void EncyclopediaDetailPanel::Refresh() {
 
         name = empire->Name();
         general_type = UserString("ENC_SHIP");
+    } else {
+        // apparently nothing set.  show index.
+        // TODO: autogenerate this
     }
 
     // Create Icons
@@ -571,6 +578,7 @@ void EncyclopediaDetailPanel::Refresh() {
 }
 
 void EncyclopediaDetailPanel::UnsetAll() {
+    m_generic_text.clear();
     m_tech_name.clear();
     m_part_name.clear();
     m_hull_name.clear();
@@ -581,6 +589,15 @@ void EncyclopediaDetailPanel::UnsetAll() {
     m_object_id = UniverseObject::INVALID_OBJECT_ID;
     m_empire_id = ALL_EMPIRES;
     m_incomplete_design.reset();
+}
+
+void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable)
+{
+    if (text == m_generic_text)
+        return;
+    UnsetAll();
+    m_generic_text = (text.empty() || !lookup_in_stringtable) ? text : UserString(text);
+    Refresh();
 }
 
 void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {

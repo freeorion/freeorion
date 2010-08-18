@@ -39,6 +39,7 @@ public:
        than being restricted to the client area of a CUIWnd */
     virtual GG::Pt  ClientUpperLeft() const;
 
+    void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
     void            SetPartType(const std::string& part_name);
@@ -67,6 +68,7 @@ private:
     void DoLayout();
     bool NothingSet() const;
 
+    std::string                         m_generic_text;
     std::string                         m_tech_name;
     std::string                         m_part_name;
     std::string                         m_hull_name;
