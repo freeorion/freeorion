@@ -32,6 +32,38 @@ namespace {
     const std::string EMPTY_STRING;
 }
 
+namespace {
+    std::string LinkTaggedText(const std::string& tag, const std::string& text) {
+        return "<" + tag + " " + text + ">" + UserString(text) + "</" + tag + ">" + "\n";
+    }
+
+    std::string PediaIndexText() {
+        std::string retval;
+
+        retval += UserString("ENC_SHIP_PART") + "\n\n";
+        const PartTypeManager& part_type_manager = GetPartTypeManager();
+        for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
+            retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first);
+
+        retval += "\n" + UserString("ENC_SHIP_HULL") + "\n\n";
+        const HullTypeManager& hull_type_manager = GetHullTypeManager();
+        for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
+            retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first);
+
+        retval += "\n" + UserString("ENC_TECH") + "\n\n";
+        std::vector<std::string> tech_names = GetTechManager().TechNames();
+        for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
+            retval += LinkTaggedText(VarText::TECH_TAG, *it);
+
+        retval += "\n" + UserString("ENC_BUILDING_TYPE") + "\n\n";
+        const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
+        for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
+            retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first);
+
+        return retval;
+    }
+}
+
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
     m_tech_name(),
@@ -222,16 +254,18 @@ void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Fl
 }
 
 bool EncyclopediaDetailPanel::NothingSet() const {
-    return (m_tech_name.empty() &&
+    return (m_generic_text.empty() &&
             m_part_name.empty() &&
             m_hull_name.empty() &&
+            m_tech_name.empty() &&
             m_building_name.empty() &&
             m_special_name.empty() &&
             m_species_name.empty() &&
+            m_incomplete_design.expired() &&
             m_design_id == ShipDesign::INVALID_DESIGN_ID &&
             m_object_id == UniverseObject::INVALID_OBJECT_ID &&
-            m_empire_id == ALL_EMPIRES &&
-            m_incomplete_design.expired());
+            m_empire_id == ALL_EMPIRES
+            );
 }
 
 void EncyclopediaDetailPanel::Refresh() {
@@ -247,8 +281,6 @@ void EncyclopediaDetailPanel::Refresh() {
     m_summary_text->Clear();
     m_cost_text->Clear();
     m_description_box->Clear();
-    if (NothingSet())
-        return;
 
     // get details of item as applicable in order to set summary, cost, description TextControls
     std::string name = "";
@@ -530,7 +562,8 @@ void EncyclopediaDetailPanel::Refresh() {
         general_type = UserString("ENC_SHIP");
     } else {
         // apparently nothing set.  show index.
-        // TODO: autogenerate this
+        name = UserString("ENC_INDEX");
+        detailed_description = PediaIndexText();
     }
 
     // Create Icons
@@ -555,11 +588,13 @@ void EncyclopediaDetailPanel::Refresh() {
     }
 
     // Set Text
-    m_name_text->SetText(name);
+    if (!name.empty())
+        m_name_text->SetText(name);
 
-    m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
-        % specific_type
-        % general_type));
+    if (!specific_type.empty())
+        m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
+            % specific_type
+            % general_type));
     if (color != GG::CLR_ZERO)
         m_summary_text->SetColor(color);
 
@@ -568,11 +603,10 @@ void EncyclopediaDetailPanel::Refresh() {
             % DoubleToString(cost, 3, false)
             % cost_units
             % turns));
-    } else {
-        m_cost_text->Clear();
     }
 
-    m_description_box->SetText(detailed_description);
+    if (!detailed_description.empty())
+        m_description_box->SetText(detailed_description);
 
     DoLayout();
 }

@@ -1455,6 +1455,9 @@ Production
 MAP_BTN_DESIGN
 Design
 
+MAP_BTN_PEDIA
+Pedia
+
 #################
 # SidePanel     #
 #################
@@ -1948,6 +1951,9 @@ Building
 
 ENC_SYSTEM
 System
+
+ENC_INDEX
+Encyclopedia Index
 
 # type of thing being shown.  %1% is a bit of detail, and %2% is the general type.
 # for example:  %1% = "Point Defence" or "Farming" and %2% = "Ship Part" or "Building".
