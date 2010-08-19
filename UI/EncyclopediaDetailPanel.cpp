@@ -1,6 +1,7 @@
 #include "EncyclopediaDetailPanel.h"
 
 #include "CUIControls.h"
+#include "../universe/Universe.h"
 #include "../universe/Tech.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Building.h"
@@ -33,8 +34,12 @@ namespace {
 }
 
 namespace {
-    std::string LinkTaggedText(const std::string& tag, const std::string& text) {
-        return "<" + tag + " " + text + ">" + UserString(text) + "</" + tag + ">" + "\n";
+    std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry) {
+        return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">" + "\n";
+    }
+
+    std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text) {
+        return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">" + "\n";
     }
 
     std::string PediaIndexText() {
@@ -59,6 +64,27 @@ namespace {
         const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
         for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
             retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first);
+
+        retval += "\n" + UserString("ENC_SPECIAL") + "\n\n";
+        std::vector<std::string> special_names = SpecialNames();
+        for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
+            retval += LinkTaggedText(VarText::SPECIAL_TAG, *it);
+
+        retval += "\n" + UserString("ENC_SPECIES") + "\n\n";
+        const SpeciesManager& species_manager = GetSpeciesManager();
+        for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
+            retval += LinkTaggedText(VarText::SPECIES_TAG, it->first);
+
+        retval += "\n" + UserString("ENC_EMPIRE") + "\n\n";
+        const EmpireManager& empire_manager = Empires();
+        for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
+            retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name());
+
+        const Universe& universe = GetUniverse();
+
+        retval += "\n" + UserString("ENC_SHIP_DESIGN") + "\n\n";
+        for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
+            retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name());
 
         return retval;
     }
@@ -88,9 +114,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
-    m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
-    m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
+    m_name_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
+    m_cost_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
+    m_summary_text =    new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
     m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
@@ -99,6 +125,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
     AttachChild(m_description_box);
+
+    SetChildClippingMode(ClipToClientAndWindowSeparately);
 
     DoLayout();
 }

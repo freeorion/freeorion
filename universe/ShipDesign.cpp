@@ -1149,7 +1149,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         if (!part) {
             Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
-            }
+        }
         part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
         if (locations.empty())
             return false;

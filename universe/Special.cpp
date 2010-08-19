@@ -43,9 +43,24 @@ namespace {
 
         ~SpecialManager()
         {
-            for (std::map<std::string, Special*>::iterator it = m_specials.begin(); it != m_specials.end(); ++it) {
+            for (std::map<std::string, Special*>::iterator it = m_specials.begin();
+                it != m_specials.end();
+                ++it)
+            {
                 delete it->second;
             }
+        }
+
+        std::vector<std::string> SpecialNames() const
+        {
+            std::vector<std::string> retval;
+            for (std::map<std::string, Special*>::const_iterator it = m_specials.begin();
+                it != m_specials.end();
+                ++it)
+            {
+                retval.push_back(it->first);
+            }
+            return retval;
         }
 
         const std::set<std::string>& PlanetSpecialNames() const
@@ -85,7 +100,7 @@ namespace {
                 ReportError(input.c_str(), result);
         }
         std::map<std::string, Special*> m_specials;
-        std::set<std::string> m_planet_special_names;
+        std::set<std::string>           m_planet_special_names;
     };
 
     const SpecialManager& GetSpecialManager()
@@ -93,7 +108,6 @@ namespace {
         static SpecialManager special_manager;
         return special_manager;
     }
-
 }
 
 /////////////////////////////////////////////////
@@ -156,6 +170,11 @@ const std::string& Special::Graphic() const
 const Special* GetSpecial(const std::string& name)
 {
     return GetSpecialManager().GetSpecial(name);
+}
+
+std::vector<std::string> SpecialNames()
+{
+    return SpecialManager().SpecialNames();
 }
 
 const std::set<std::string>& PlanetSpecialNames()

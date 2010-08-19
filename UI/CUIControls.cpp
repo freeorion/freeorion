@@ -796,12 +796,12 @@ const boost::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
 
 GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
 {
-    return CUIMultiEdit::TextUpperLeft();
+    return CUIMultiEdit::TextUpperLeft() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5));
 }
 
 GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
 {
-    return CUIMultiEdit::TextLowerRight();
+    return CUIMultiEdit::TextLowerRight() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5));
 }
 
 const std::string& CUILinkTextMultiEdit::RawText() const
@@ -824,13 +824,24 @@ void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     CUIMultiEdit::MouseHere(pt, mod_keys);
-    TextLinker::MouseHere_(pt + ScrollPosition(), mod_keys);
+    TextLinker::MouseHere_(pt, mod_keys);
 }
 
 void CUILinkTextMultiEdit::MouseLeave()
 {
     CUIMultiEdit::MouseLeave();
     TextLinker::MouseLeave_();
+}
+
+void CUILinkTextMultiEdit::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt lower_right = lr;
+    if (Style() & GG::MULTI_INTEGRAL_HEIGHT)
+        lower_right.y -= ((lr.y - ul.y) - (2 * PIXEL_MARGIN)) % GetFont()->Lineskip();
+    bool resized = lower_right - ul != Size();
+    GG::Edit::SizeMove(ul, lower_right);
+    if (resized)
+        SetText(RawText());
 }
 
 void CUILinkTextMultiEdit::SetText(const std::string& str)

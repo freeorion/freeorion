@@ -35,6 +35,7 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::BUILDING_ID_TAG);
 
         GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
 
         GG::Font::RegisterKnownTag(VarText::TECH_TAG);
         GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
@@ -146,7 +147,7 @@ struct TextLinker::Link
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
-TextLinker::TextLinker() : 
+TextLinker::TextLinker() :
     m_rollover_link(-1)
 {
     RegisterLinkTags();
@@ -199,10 +200,10 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(DATA));
 
-        } else if (LINK_TYPE == VarText::DESIGN_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(DATA));
         } else if (LINK_TYPE == VarText::EMPIRE_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(DATA));
+        } else if (LINK_TYPE == VarText::DESIGN_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(DATA));
 
         } else if (LINK_TYPE == VarText::TECH_TAG) {
             ClientUI::GetClientUI()->ZoomToTech(DATA);
@@ -269,6 +270,7 @@ void TextLinker::FindLinks()
                     tag->tag_name == VarText::FLEET_ID_TAG ||
                     tag->tag_name == VarText::BUILDING_ID_TAG ||
                     tag->tag_name == VarText::EMPIRE_ID_TAG ||
+                    tag->tag_name == VarText::DESIGN_ID_TAG ||
                     tag->tag_name == VarText::TECH_TAG ||
                     tag->tag_name == VarText::BUILDING_TYPE_TAG ||
                     tag->tag_name == VarText::SPECIAL_TAG ||
@@ -307,17 +309,14 @@ void TextLinker::FindLinks()
 
 int TextLinker::GetLinkUnderPt(const GG::Pt& pt)
 {
-    int retval = -1;
     for (unsigned int i = 0; i < m_links.size(); ++i) {
         for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
             GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
-            if (r.Contains(pt)) {
-                retval = i;
-                break;
-            }
+            if (r.Contains(pt))
+                return i;
         }
     }
-    return retval;
+    return -1;  // no link found
 }
 
 void TextLinker::MarkLinks()
