@@ -57,6 +57,7 @@ public:
 
     void                    CenterOnTech(const Tech* tech);
     void                    SetEncyclopediaTech(const Tech* tech);
+    void                    SelectTech(const Tech* tech);
     //@}
 
     static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;

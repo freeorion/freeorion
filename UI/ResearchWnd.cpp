@@ -153,7 +153,7 @@ namespace {
         glDisable(GL_TEXTURE_2D);
         Draw(fill, true);
         glEnable(GL_LINE_SMOOTH);
-        glLineWidth(OUTER_LINE_THICKNESS);
+        glLineWidth(static_cast<GLfloat>(OUTER_LINE_THICKNESS));
         Draw(GG::Clr(text_and_border.r, text_and_border.g, text_and_border.b, 127), false);
         glLineWidth(1.0);
         glDisable(GL_LINE_SMOOTH);
@@ -243,6 +243,13 @@ void ResearchWnd::Update()
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 {
     m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
+}
+
+void ResearchWnd::ShowTech(const std::string& tech_name)
+{
+    m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
+    m_tech_tree_wnd->SetEncyclopediaTech(GetTech(tech_name));
+    m_tech_tree_wnd->SelectTech(GetTech(tech_name));
 }
 
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)

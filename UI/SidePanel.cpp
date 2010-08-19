@@ -452,33 +452,33 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool        InWindow(const GG::Pt& pt) const;
-    virtual void        MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    virtual bool    InWindow(const GG::Pt& pt) const;
+    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
 
     int                     SelectedPlanetID() const    {return m_selected_planet_id;}
-    int                     PlanetPanels() const        {return m_planet_panels.size();}
-    std::vector<int>        PlanetIDs() const;
     const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
+    int                     ScrollPosition() const;
     //@}
 
     /** \name Mutators */ //@{
-    void                Clear();
-    void                SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
-    void                SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
-    void                SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
+    void            Clear();
+    void            SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
+    void            SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
+    void            SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
+    void            ScrollTo(int pos);
 
-    void                RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
+    void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
     //@}
 
     mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when an enabled planet panel is clicked by the user
 
 private:
-    void                DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
+    void            DisableNonSelectionCandidates();    //!< disables planet panels that aren't selection candidates
 
-    void                PlanetPanelClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
-    void                DoPanelsLayout(GG::Y top);          //!< repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
-    void                DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
-    void                VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
+    void            PlanetPanelClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
+    void            DoPanelsLayout(GG::Y top);          //!< repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
+    void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+    void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
     std::vector<PlanetPanel*>   m_planet_panels;
     GG::Y                       m_planet_panels_top;
@@ -1396,11 +1396,31 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (m_vscroll && m_vscroll->Parent() == this) {
+        const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
         if (move < 0)
             m_vscroll->ScrollLineIncr();
         else
             m_vscroll->ScrollLineDecr();
-        GG::SignalScroll(*m_vscroll, true);
+        if (initial_pos != m_vscroll->PosnRange())
+            GG::SignalScroll(*m_vscroll, true);
+    }
+}
+
+int SidePanel::PlanetPanelContainer::ScrollPosition() const
+{
+    if (m_vscroll && m_vscroll->Parent() == this)
+        return m_vscroll->PosnRange().first;
+    else
+        return 0;
+}
+
+void SidePanel::PlanetPanelContainer::ScrollTo(int pos)
+{
+    if (m_vscroll && m_vscroll->Parent() == this) {
+        const std::pair<int, int> initial_pos = m_vscroll->PosnRange();
+        m_vscroll->ScrollTo(pos);
+        if (initial_pos != m_vscroll->PosnRange())
+            GG::SignalScroll(*m_vscroll, true);
     }
 }
 
@@ -1439,15 +1459,6 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
     RefreshAllPlanetPanels();
-}
-
-std::vector<int> SidePanel::PlanetPanelContainer::PlanetIDs() const
-{
-    std::vector<int> retval;
-    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        retval.push_back((*it)->PlanetID());
-    }
-    return retval;
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout()
@@ -1752,17 +1763,23 @@ void SidePanel::RefreshImpl()
     //std::cout << "SidePanel::RefreshImpl" << std::endl;
     Sound::TempUISoundDisabler sound_disabler;
 
+
+    // save initial scroll position so it can be restored after repopulating the planet panel container
+    const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
+
+
+    // clear out current contents
     m_planet_panel_container->Clear();
     m_system_name->Clear();
     delete m_star_graphic;              m_star_graphic = 0;
     delete m_system_resource_summary;   m_system_resource_summary = 0;
 
+
+    // get info with which to repopulate
     int app_empire_id = HumanClientApp::GetApp()->EmpireID();
-
     const ObjectMap& objects = GetUniverse().EmpireKnownObjects(app_empire_id);
-
-    // get system object for this sidepanel.  if there isn't one, abort.
     const System* system = objects.Object<const System>(s_system_id);
+    // if no system object, there is nothing to populate with.  early abort.
     if (!system)
         return;
 
@@ -1848,6 +1865,10 @@ void SidePanel::RefreshImpl()
     m_planet_panel_container->SetPlanets(known_system_planet_ids, system->GetStarType());
 
 
+    // restore planet panel container scroll position from before clearing
+    m_planet_panel_container->ScrollTo(initial_scroll_pos);
+
+
     // populate system resource summary
 
     // get planets owned by player's empire
@@ -1861,11 +1882,11 @@ void SidePanel::RefreshImpl()
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
     std::vector<std::pair<MeterType, MeterType> > meter_types;
-    meter_types.push_back(std::make_pair(METER_FARMING, METER_TARGET_FARMING));
-    meter_types.push_back(std::make_pair(METER_MINING, METER_TARGET_MINING));
-    meter_types.push_back(std::make_pair(METER_INDUSTRY, METER_TARGET_INDUSTRY));
-    meter_types.push_back(std::make_pair(METER_RESEARCH, METER_TARGET_RESEARCH));
-    meter_types.push_back(std::make_pair(METER_TRADE, METER_TARGET_TRADE));
+    meter_types.push_back(std::make_pair(METER_FARMING,     METER_TARGET_FARMING));
+    meter_types.push_back(std::make_pair(METER_MINING,      METER_TARGET_MINING));
+    meter_types.push_back(std::make_pair(METER_INDUSTRY,    METER_TARGET_INDUSTRY));
+    meter_types.push_back(std::make_pair(METER_RESEARCH,    METER_TARGET_RESEARCH));
+    meter_types.push_back(std::make_pair(METER_TRADE,       METER_TARGET_TRADE));
 
     // refresh the system resource summary.
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
@@ -1874,7 +1895,7 @@ void SidePanel::RefreshImpl()
     AttachChild(m_system_resource_summary);
 
 
-    // add tooltips and show system resource summary if it not empty
+    // add tooltips and show system resource summary if it is not empty
     if (m_system_resource_summary->Empty()) {
         DetachChild(m_system_resource_summary);
     } else {

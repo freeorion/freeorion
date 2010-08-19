@@ -87,8 +87,8 @@ namespace {
     const GG::X TECH_PANEL_LAYOUT_WIDTH = THEORY_TECH_PANEL_LAYOUT_WIDTH;
     const GG::Y TECH_PANEL_LAYOUT_HEIGHT = THEORY_TECH_PANEL_LAYOUT_HEIGHT - PROGRESS_PANEL_BOTTOM_EXTRUSION;
 
-    const double OUTER_LINE_THICKNESS = 1.5;
-    const double ARC_THICKNESS = 3.0;
+    const float OUTER_LINE_THICKNESS = 1.5;
+    const float ARC_THICKNESS = 3.0;
 
     const double TECH_NAVIGATOR_ROLLOVER_BRIGHTENING_FACTOR = 1.5;
 
@@ -1218,7 +1218,7 @@ void TechTreeWnd::LayoutPanel::Render()
 
     // first, draw arc with thick, half-alpha line
     glEnable(GL_LINE_SMOOTH);
-    glLineWidth(ARC_THICKNESS * m_scale);
+    glLineWidth(static_cast<GLfloat>(ARC_THICKNESS * m_scale));
     GG::Clr known_half_alpha = ClientUI::KnownTechTextAndBorderColor();
     known_half_alpha.a = 127;
     GG::Clr researchable_half_alpha = ClientUI::ResearchableTechTextAndBorderColor();
@@ -1262,7 +1262,7 @@ void TechTreeWnd::LayoutPanel::Render()
     }
 
     // now retrace the arc with a normal-width, full-alpha line
-    glLineWidth(ARC_THICKNESS * m_scale * 0.5);
+    glLineWidth(static_cast<GLfloat>(ARC_THICKNESS * m_scale * 0.5));
     glDisable(GL_LINE_SMOOTH);
     for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
         GG::Clr arc_color;
@@ -2338,6 +2338,12 @@ void TechTreeWnd::CenterOnTech(const Tech* tech)
 void TechTreeWnd::SetEncyclopediaTech(const Tech* tech)
 {
     m_enc_detail_panel->SetItem(tech);
+}
+
+void TechTreeWnd::SelectTech(const Tech* tech)
+{
+    m_tech_navigator->SetTech(tech);
+    m_layout_panel->ShowTech(tech);
 }
 
 void TechTreeWnd::TechBrowsedSlot(const Tech* tech)

@@ -2382,7 +2382,7 @@ void MapWnd::ShowTech(const std::string& tech_name)
 {
     if (!m_research_wnd->Visible())
         ToggleResearch();
-    m_research_wnd->CenterOnTech(tech_name);
+    m_research_wnd->ShowTech(tech_name);
 }
 
 void MapWnd::ShowBuildingType(const std::string& building_type_name)

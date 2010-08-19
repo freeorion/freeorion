@@ -25,6 +25,7 @@ public:
     void Reset();
     void Update();
     void CenterOnTech(const std::string& tech_name);
+    void ShowTech(const std::string& tech_name);
     void QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void Sanitize();
 
