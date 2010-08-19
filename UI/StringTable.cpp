@@ -25,12 +25,12 @@ StringTable_::StringTable_(const std::string& filename):
 StringTable_::~StringTable_()
 {}
 
-bool StringTable_::StringExists(std::string index) const
+bool StringTable_::StringExists(const std::string& index) const
 {
     return m_strings.find(index) != m_strings.end();
 }
 
-const std::string& StringTable_::operator[] (std::string index) const
+const std::string& StringTable_::operator[] (const std::string& index) const
 {
     static std::string error_retval;
     std::map<std::string, std::string>::const_iterator it = m_strings.find(index);

@@ -64,15 +64,15 @@ public:
     //!@{
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table, or S_ERROR_STRING if it fails
-    const std::string& operator[] (std::string index) const;        //!< Looks up a string at index and returns it.
+    const std::string& operator[] (const std::string& index) const; //!< Looks up a string at index and returns it.
 
     //! @param index The index of the string to check for
     //! @return true iff a string exists with that index, false otherwise
-    bool StringExists(std::string index) const;                     //!< Looks up a string at index and returns if the string is present.
+    bool StringExists(const std::string& index) const;              //!< Looks up a string at index and returns if the string is present.
 
     //! @param index The index of the string to lookup
     //! @return The string found at index in the table
-    inline const std::string& String(std::string index) const { return operator[] (index); }    //!< Interface to operator() \see StringTable_::operator[]
+    inline const std::string& String(const std::string& index) const { return operator[] (index); } //!< Interface to operator() \see StringTable_::operator[]
     inline const std::string& Language() const {return m_language;} //!< Returns the language of this StringTable_
     inline const std::string& Filename() const {return m_filename;} //!< accessor to the filename
     //!@}
