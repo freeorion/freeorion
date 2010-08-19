@@ -1374,11 +1374,21 @@ SidePanel::PlanetPanelContainer::~PlanetPanelContainer()
 
 bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
 {
+    // ensure pt is below top of container
+    if (pt.y < UpperLeft().y)
+        return false;
+
+    // allow point to be within any planet panel that is below top of container
     const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         if ((*it)->InWindow(pt))
             return true;
     }
+
+    // disallow point between containers that is left of solid portion of sidepanel.
+    // this done by restricting InWindow to discard space between left of container
+    // and left of solid portion that wasn't already caught above as being part
+    // of a planet panel.
 
     return UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y0) <= pt && pt < LowerRight();
 }
