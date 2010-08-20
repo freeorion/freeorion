@@ -2,9 +2,7 @@
 #ifndef _LinkText_h_
 #define _LinkText_h_
 
-#ifndef _GG_TextControl_h_
 #include <GG/TextControl.h>
-#endif
 
 class TextLinker
 {
@@ -14,9 +12,18 @@ public:
     virtual ~TextLinker();
     //@}
 
+    ///< link clicked signals: first string is the link type, second string is the specific item clicked
+    mutable boost::signal<void (const std::string&, const std::string&)> LinkClickedSignal;
+    mutable boost::signal<void (const std::string&, const std::string&)> LinkDoubleClickedSignal;
+    mutable boost::signal<void (const std::string&, const std::string&)> LinkRightClickedSignal;
+
+    static const std::string ENCYCLOPEDIA_TAG;
+
 protected:
     void        Render_();
     void        LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void        LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     void        MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     void        MouseLeave_();
 
@@ -86,6 +93,8 @@ public:
     /** \name Mutators */ //@{
     virtual void    Render();
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
 

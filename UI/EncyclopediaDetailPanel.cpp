@@ -117,7 +117,13 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_name_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
     m_cost_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
     m_summary_text =    new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
-    m_description_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+
+    CUILinkTextMultiEdit* desc_box =
+                        new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
+    GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
+    GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
+    m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
 
@@ -294,6 +300,84 @@ bool EncyclopediaDetailPanel::NothingSet() const {
             m_object_id == UniverseObject::INVALID_OBJECT_ID &&
             m_empire_id == ALL_EMPIRES
             );
+}
+
+void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
+    using boost::lexical_cast;
+    try {
+
+        if (link_type == VarText::PLANET_ID_TAG ||
+            link_type == VarText::SYSTEM_ID_TAG ||
+            link_type == VarText::FLEET_ID_TAG  ||
+            link_type == VarText::SHIP_ID_TAG ||
+            link_type == VarText::BUILDING_ID_TAG)
+        {
+            this->SetObject(lexical_cast<int>(data));
+
+        } else if (link_type == VarText::EMPIRE_ID_TAG) {
+            this->SetEmpire(lexical_cast<int>(data));
+        } else if (link_type == VarText::DESIGN_ID_TAG) {
+            this->SetDesign(lexical_cast<int>(data));
+
+        } else if (link_type == VarText::TECH_TAG) {
+            this->SetTech(data);
+        } else if (link_type == VarText::BUILDING_TYPE_TAG) {
+            this->SetBuildingType(data);
+        } else if (link_type == VarText::SPECIAL_TAG) {
+            this->SetSpecial(data);
+        } else if (link_type == VarText::SHIP_HULL_TAG) {
+            this->SetHullType(data);
+        } else if (link_type == VarText::SHIP_PART_TAG) {
+            this->SetPartType(data);
+        } else if (link_type == VarText::SPECIES_TAG) {
+            this->SetSpecies(data);
+
+        } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
+            this->SetText(data);
+        }
+    } catch (const boost::bad_lexical_cast&) {
+        Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+    }
+}
+
+void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type, const std::string& data) {
+    using boost::lexical_cast;
+    try {
+        if (link_type == VarText::PLANET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(data));
+        } else if (link_type == VarText::SYSTEM_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(data));
+        } else if (link_type == VarText::FLEET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(data));
+        } else if (link_type == VarText::SHIP_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(data));
+        } else if (link_type == VarText::BUILDING_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
+
+        } else if (link_type == VarText::EMPIRE_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(data));
+        } else if (link_type == VarText::DESIGN_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
+
+        } else if (link_type == VarText::TECH_TAG) {
+            ClientUI::GetClientUI()->ZoomToTech(data);
+        } else if (link_type == VarText::BUILDING_TYPE_TAG) {
+            ClientUI::GetClientUI()->ZoomToBuildingType(data);
+        } else if (link_type == VarText::SPECIAL_TAG) {
+            ClientUI::GetClientUI()->ZoomToSpecial(data);
+        } else if (link_type == VarText::SHIP_HULL_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipHull(data);
+        } else if (link_type == VarText::SHIP_PART_TAG) {
+            ClientUI::GetClientUI()->ZoomToShipPart(data);
+        } else if (link_type == VarText::SPECIES_TAG) {
+            ClientUI::GetClientUI()->ZoomToSpecies(data);
+
+        } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
+            this->SetText(data);
+        }
+    } catch (const boost::bad_lexical_cast&) {
+        Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+    }
 }
 
 void EncyclopediaDetailPanel::Refresh() {

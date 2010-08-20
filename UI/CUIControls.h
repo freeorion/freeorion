@@ -330,6 +330,8 @@ public:
     /** \name Mutators */ //@{
     virtual void    Render();
     virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void    MouseLeave();
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);

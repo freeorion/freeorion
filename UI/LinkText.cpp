@@ -7,12 +7,8 @@
 #include <GG/DrawUtil.h>
 #include <GG/WndEvent.h>
 
-#include <boost/lexical_cast.hpp>
-
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
-
-    static const std::string ENCYCLOPEDIA_TAG = "encyclopedia";
 
     // format tag to use when a link is not moused over, to indicate it is a link as distinct from normal text
     static const std::string LINK_DEFAULT_FORMAT_TAG = "<rgba 80 255 128 255>";
@@ -44,7 +40,7 @@ namespace {
         GG::Font::RegisterKnownTag(VarText::SHIP_PART_TAG);
         GG::Font::RegisterKnownTag(VarText::SPECIES_TAG);
 
-        GG::Font::RegisterKnownTag(ENCYCLOPEDIA_TAG);
+        GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
     }
 }
 
@@ -121,6 +117,16 @@ void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     TextLinker::LClick_(pt, mod_keys);
 }
 
+void LinkText::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::LDoubleClick_(pt, mod_keys);
+}
+
+void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    TextLinker::RClick_(pt, mod_keys);
+}
+
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     TextLinker::MouseHere_(pt, mod_keys);
@@ -147,6 +153,9 @@ struct TextLinker::Link
 ///////////////////////////////////////
 // TextLinker
 ///////////////////////////////////////
+// static(s)
+const std::string TextLinker::ENCYCLOPEDIA_TAG("encyclopedia");
+
 TextLinker::TextLinker() :
     m_rollover_link(-1)
 {
@@ -176,7 +185,6 @@ void TextLinker::Render_()
 
 void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    using boost::lexical_cast;
     int sel_link = GetLinkUnderPt(pt);
     if (sel_link == -1)
         return;
@@ -188,42 +196,39 @@ void TextLinker::LClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     const std::string& LINK_TYPE = m_links[sel_link].type;
     const std::string& DATA = m_links[sel_link].data;
 
-    try {
-        if (LINK_TYPE == VarText::PLANET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(DATA));
-        } else if (LINK_TYPE == VarText::SYSTEM_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(DATA));
-        } else if (LINK_TYPE == VarText::FLEET_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(DATA));
-        } else if (LINK_TYPE == VarText::SHIP_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(DATA));
-        } else if (LINK_TYPE == VarText::BUILDING_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(DATA));
+    LinkClickedSignal(LINK_TYPE, DATA);
+}
 
-        } else if (LINK_TYPE == VarText::EMPIRE_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(DATA));
-        } else if (LINK_TYPE == VarText::DESIGN_ID_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(DATA));
-
-        } else if (LINK_TYPE == VarText::TECH_TAG) {
-            ClientUI::GetClientUI()->ZoomToTech(DATA);
-        } else if (LINK_TYPE == VarText::BUILDING_TYPE_TAG) {
-            ClientUI::GetClientUI()->ZoomToBuildingType(DATA);
-        } else if (LINK_TYPE == VarText::SPECIAL_TAG) {
-            ClientUI::GetClientUI()->ZoomToSpecial(DATA);
-        } else if (LINK_TYPE == VarText::SHIP_HULL_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipHull(DATA);
-        } else if (LINK_TYPE == VarText::SHIP_PART_TAG) {
-            ClientUI::GetClientUI()->ZoomToShipPart(DATA);
-        } else if (LINK_TYPE == VarText::SPECIES_TAG) {
-            ClientUI::GetClientUI()->ZoomToSpecies(DATA);
-
-        } else if (LINK_TYPE == ENCYCLOPEDIA_TAG) {
-            ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(DATA);
-        }
-    } catch (const boost::bad_lexical_cast&) {
-        Logger().errorStream() << "TextLiner::LClick_: caught lexical cast exception for link type: " << LINK_TYPE << " and data: " << DATA;
+void TextLinker::RClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    int sel_link = GetLinkUnderPt(pt);
+    if (sel_link == -1)
+        return;
+    if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
+        Logger().errorStream() << "TextLinker::RClick_ found out of bounds sel_link!";
+        return;
     }
+
+    const std::string& LINK_TYPE = m_links[sel_link].type;
+    const std::string& DATA = m_links[sel_link].data;
+
+    LinkRightClickedSignal(LINK_TYPE, DATA);
+}
+
+void TextLinker::LDoubleClick_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{
+    int sel_link = GetLinkUnderPt(pt);
+    if (sel_link == -1)
+        return;
+    if (sel_link < 0 || sel_link >= static_cast<int>(m_links.size())) {
+        Logger().errorStream() << "TextLinker::DoubleClick_ found out of bounds sel_link!";
+        return;
+    }
+
+    const std::string& LINK_TYPE = m_links[sel_link].type;
+    const std::string& DATA = m_links[sel_link].data;
+
+    LinkDoubleClickedSignal(LINK_TYPE, DATA);
 }
 
 void TextLinker::MouseHere_(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -277,7 +282,7 @@ void TextLinker::FindLinks()
                     tag->tag_name == VarText::SHIP_HULL_TAG ||
                     tag->tag_name == VarText::SHIP_PART_TAG ||
                     tag->tag_name == VarText::SPECIES_TAG ||
-                    tag->tag_name == ENCYCLOPEDIA_TAG)
+                    tag->tag_name == TextLinker::ENCYCLOPEDIA_TAG)
                 {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
