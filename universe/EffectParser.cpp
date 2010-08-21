@@ -434,7 +434,7 @@ namespace {
             [push_back_(string_and_string_ref_vector.this_,
                         make_pair_(string_and_string_ref_vector.tag,
                                    string_and_string_ref_vector.data))]
-            | ('[' >> +((tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
+            | ('[' >> !((tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
                          >> data_label >> string_expr_p[string_and_string_ref_vector.data = arg1])
                         [push_back_(string_and_string_ref_vector.this_,
                                     make_pair_(string_and_string_ref_vector.tag,

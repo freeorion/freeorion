@@ -482,7 +482,7 @@ namespace ValueRef {
 
     template <>
     std::string Variable<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                    const boost::any& current_value) const
+                                            const boost::any& current_value) const
     {
         std::string retval;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
