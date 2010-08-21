@@ -144,54 +144,83 @@ namespace {
             member4 include_tech;
         };
 
-        typedef rule<Scanner, SetMeterClosure::context_t>               SetMeterRule;
-        typedef rule<Scanner, SetShipPartMeterClosure::context_t>       SetShipPartMeterRule;
-        typedef rule<Scanner, SetOwnerStockpileClosure::context_t>      SetOwnerStockpileRule;
-        typedef rule<Scanner, SetPlanetTypeClosure::context_t>          SetPlanetTypeRule;
-        typedef rule<Scanner, SetPlanetSizeClosure::context_t>          SetPlanetSizeRule;
-        typedef rule<Scanner, EmpireParamClosure::context_t>            EmpireParamRule;
-        typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
-        typedef rule<Scanner, NameRefParamClosure::context_t>           NameRefParamRule;
-        typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
-        typedef rule<Scanner, SetStarTypeClosure::context_t>            SetStarTypeRule;
-        typedef rule<Scanner, CreatePlanetClosure::context_t>           CreatePlanetRule;
-        typedef rule<Scanner, CreateBuildingClosure::context_t>         CreateBuildingRule;
-        typedef rule<Scanner, CreateShipClosure::context_t>             CreateShipRule;
-        typedef rule<Scanner, SetTechAvailabilityClosure::context_t>    SetTechAvailabilityRule;
+        struct GenerateSitRepMessageClosure : boost::spirit::classic::closure<GenerateSitRepMessageClosure, Effect::EffectBase*,
+                                                                              std::string,
+                                                                              std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
+                                                                              ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 template_string;
+            member3 parameters;
+            member4 recipient_empire;
+        };
 
-        SetMeterRule            set_meter;
-        SetShipPartMeterRule    set_ship_part_meter;
-        SetOwnerStockpileRule   set_owner_stockpile;
-        Rule                    set_owner_capitol;
-        SetPlanetTypeRule       set_planet_type;
-        SetPlanetSizeRule       set_planet_size;
-        NameRefParamRule        set_species;
-        EmpireParamRule         add_owner;
-        EmpireParamRule         remove_owner;
-        CreatePlanetRule        create_planet;
-        CreateBuildingRule      create_building;
-        CreateShipRule          create_ship;
-        ConditionParamRule      move_to;
-        Rule                    destroy;
-        NameParamRule           victory;
-        NameParamRule           add_special;
-        NameParamRule           remove_special;
-        SetStarTypeRule         set_star_type;
-        SetTechAvailabilityRule set_tech_availability;
+        struct StringAndStringRefVectorClosure : boost::spirit::classic::closure<StringAndStringRefVectorClosure,
+            std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
+            std::string,
+            const ValueRef::ValueRefBase<std::string>*>
+        {
+            member1 this_;
+            member2 tag;
+            member3 data;
+        };
 
-        ParamLabel              value_label;
-        ParamLabel              type_label;
-        ParamLabel              planetsize_label;
-        ParamLabel              empire_label;
-        ParamLabel              name_label;
-        ParamLabel              species_label;
-        ParamLabel              design_name_label;
-        ParamLabel              part_name_label;
-        ParamLabel              destination_label;
-        ParamLabel              reason_label;
-        ParamLabel              fighter_type_label;
-        ParamLabel              slot_type_label;
-        ParamLabel              part_class_label;
+        typedef rule<Scanner, SetMeterClosure::context_t>                   SetMeterRule;
+        typedef rule<Scanner, SetShipPartMeterClosure::context_t>           SetShipPartMeterRule;
+        typedef rule<Scanner, SetOwnerStockpileClosure::context_t>          SetOwnerStockpileRule;
+        typedef rule<Scanner, SetPlanetTypeClosure::context_t>              SetPlanetTypeRule;
+        typedef rule<Scanner, SetPlanetSizeClosure::context_t>              SetPlanetSizeRule;
+        typedef rule<Scanner, EmpireParamClosure::context_t>                EmpireParamRule;
+        typedef rule<Scanner, NameParamClosure::context_t>                  NameParamRule;
+        typedef rule<Scanner, NameRefParamClosure::context_t>               NameRefParamRule;
+        typedef rule<Scanner, ConditionParamClosure::context_t>             ConditionParamRule;
+        typedef rule<Scanner, SetStarTypeClosure::context_t>                SetStarTypeRule;
+        typedef rule<Scanner, CreatePlanetClosure::context_t>               CreatePlanetRule;
+        typedef rule<Scanner, CreateBuildingClosure::context_t>             CreateBuildingRule;
+        typedef rule<Scanner, CreateShipClosure::context_t>                 CreateShipRule;
+        typedef rule<Scanner, SetTechAvailabilityClosure::context_t>        SetTechAvailabilityRule;
+        typedef rule<Scanner, GenerateSitRepMessageClosure::context_t>      GenerateSitRepMessageRule;
+        typedef rule<Scanner, StringAndStringRefVectorClosure::context_t>   StringAndStringRefVectorRule;
+
+        SetMeterRule                    set_meter;
+        SetShipPartMeterRule            set_ship_part_meter;
+        SetOwnerStockpileRule           set_owner_stockpile;
+        Rule                            set_owner_capitol;
+        SetPlanetTypeRule               set_planet_type;
+        SetPlanetSizeRule               set_planet_size;
+        NameRefParamRule                set_species;
+        EmpireParamRule                 add_owner;
+        EmpireParamRule                 remove_owner;
+        CreatePlanetRule                create_planet;
+        CreateBuildingRule              create_building;
+        CreateShipRule                  create_ship;
+        ConditionParamRule              move_to;
+        Rule                            destroy;
+        NameParamRule                   victory;
+        NameParamRule                   add_special;
+        NameParamRule                   remove_special;
+        SetStarTypeRule                 set_star_type;
+        SetTechAvailabilityRule         set_tech_availability;
+        GenerateSitRepMessageRule       generate_sitrep_message;
+        StringAndStringRefVectorRule    string_and_string_ref_vector;
+
+        ParamLabel  value_label;
+        ParamLabel  type_label;
+        ParamLabel  planetsize_label;
+        ParamLabel  empire_label;
+        ParamLabel  name_label;
+        ParamLabel  species_label;
+        ParamLabel  design_name_label;
+        ParamLabel  part_name_label;
+        ParamLabel  destination_label;
+        ParamLabel  reason_label;
+        ParamLabel  fighter_type_label;
+        ParamLabel  slot_type_label;
+        ParamLabel  part_class_label;
+        ParamLabel  message_label;
+        ParamLabel  parameters_label;
+        ParamLabel  tag_label;
+        ParamLabel  data_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -207,7 +236,11 @@ namespace {
         reason_label("reason"),
         fighter_type_label("fightertype"),
         slot_type_label("slottype"),
-        part_class_label("partclass")
+        part_class_label("partclass"),
+        message_label("message"),
+        parameters_label("parameters"),
+        tag_label("tag"),
+        data_label("data")
     {
         set_meter =
             (str_p("set")
@@ -340,12 +373,16 @@ namespace {
                 >> design_name_label >> name_p[create_ship.predefined_design_name = arg1]
                 >> empire_label >> int_expr_p[create_ship.empire = arg1]
                 >> species_label >> string_expr_p[create_ship.species = arg1])
-               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name, create_ship.empire, create_ship.species)])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name,
+                                                             create_ship.empire,
+                                                             create_ship.species)])
             | ((str_p("createship")
                 >> design_name_label >> int_expr_p[create_ship.design_id = arg1]
                 >> empire_label >> int_expr_p[create_ship.empire = arg1]
                 >> species_label >> string_expr_p[create_ship.species = arg1])
-               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_id, create_ship.empire, create_ship.species)])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_id,
+                                                             create_ship.empire,
+                                                             create_ship.species)])
             );
 
         move_to =
@@ -383,7 +420,37 @@ namespace {
               | str_p("unlocktechitemsforowner")[set_tech_availability.available = val(true), set_tech_availability.include_tech = val(false)]
               | str_p("locktechitemsforowner")[set_tech_availability.available = val(false), set_tech_availability.include_tech = val(false)])
              >> name_label >> name_p[set_tech_availability.name = arg1])
-            [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(set_tech_availability.name, new_<ValueRef::Variable<int> >(false, "Owner"), set_tech_availability.available, set_tech_availability.include_tech)];
+            [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(
+                set_tech_availability.name,
+                new_<ValueRef::Variable<int> >(false, "Owner"),
+                set_tech_availability.available,
+                set_tech_availability.include_tech)
+            ];
+
+        // not an effect parser, but a utility function for parsing a list of string-ValueRef<string> pairs
+        string_and_string_ref_vector =
+            (tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
+             >> data_label >> string_expr_p[string_and_string_ref_vector.data = arg1])
+            [push_back_(string_and_string_ref_vector.this_,
+                        make_pair_(string_and_string_ref_vector.tag,
+                                   string_and_string_ref_vector.data))]
+            | ('[' >> +((tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
+                         >> data_label >> string_expr_p[string_and_string_ref_vector.data = arg1])
+                        [push_back_(string_and_string_ref_vector.this_,
+                                    make_pair_(string_and_string_ref_vector.tag,
+                                               string_and_string_ref_vector.data))])
+               >> ']');
+
+        generate_sitrep_message =
+            (str_p("generatesitrepmessage")
+             >> message_label >> name_p[generate_sitrep_message.template_string = arg1]
+             >> parameters_label >> string_and_string_ref_vector[generate_sitrep_message.parameters = arg1]
+             >> empire_label >> int_expr_p[generate_sitrep_message.recipient_empire = arg1])
+            [generate_sitrep_message.this_ = new_<Effect::GenerateSitRepMessage>(
+                generate_sitrep_message.template_string,
+                generate_sitrep_message.parameters,
+                generate_sitrep_message.recipient_empire)
+            ];
 
         effect_p =
             set_meter[effect_p.this_ = arg1]
@@ -404,7 +471,8 @@ namespace {
             | add_special[effect_p.this_ = arg1]
             | remove_special[effect_p.this_ = arg1]
             | set_star_type[effect_p.this_ = arg1]
-            | set_tech_availability[effect_p.this_ = arg1];
+            | set_tech_availability[effect_p.this_ = arg1]
+            | generate_sitrep_message[effect_p.this_ = arg1];
     }
     EffectParserDefinition effect_parser_def;
 }

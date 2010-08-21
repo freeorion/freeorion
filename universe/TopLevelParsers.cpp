@@ -212,7 +212,7 @@ namespace {
                         [insert_(planet_type_environment_map_p.this_,
                                  make_pair_(planet_type_environment_map_p.type,
                                             planet_type_environment_map_p.env))])
-            >> ']');
+               >> ']');
 
         species_p =
             (str_p("species")
