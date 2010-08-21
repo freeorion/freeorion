@@ -2,61 +2,24 @@
 #ifndef _SitRepEntry_h_
 #define _SitRepEntry_h_
 
-#ifndef BOOST_LEXICAL_CAST_INCLUDED
-#include <boost/lexical_cast.hpp>
-#endif
+#include "VarText.h"
 
 #include <string>
 #include <stdexcept>
 #include <vector>
 
+#include <boost/lexical_cast.hpp>
 
-/** a simple SitRepEntry to be displayed in the SitRep screen. This class describes a sitrep entry, for both the client
-    and server.
- */
-
-#ifndef _VarText_h_
-#include "VarText.h"
-#endif
-
+/** Situation report entry, to be displayed in the SitRep screen. */
 class SitRepEntry : public VarText
 {
 public:
-    /** tag name of sitrep update */
-    static const std::string SITREP_UPDATE_TAG;
-
-    /** An enumeration of the types of sitrep entries.
-      * SitRepEntry::SitRepTemplateString needs to be updated for any new
-      * EntryType that is added. */
-    enum EntryType {
-        INVALID_ENTRY_TYPE = -1,  ///< this is the EntryType for default-constructed SitRepEntrys; no others should have this type
-        SHIP_BUILT,
-        BUILDING_BUILT,
-        TECH_RESEARCHED,
-        COMBAT_SYSTEM,
-        PLANET_CAPTURED,
-        PLANET_LOST_STARVED_TO_DEATH,
-        PLANET_COLONIZED,
-        FLEET_ARRIVED_AT_DESTINATION,
-        EMPIRE_ELIMINATED,
-        VICTORY,
-        NUM_SITREP_TYPES
-    };
-    static const std::string&   SitRepTemplateString(EntryType entry_type);
-
     /** \name Structors */ //@{
     SitRepEntry();  ///< default ctor
-    SitRepEntry(EntryType entry_type);
-    //@}
-
-    /** \name Accessors */ //@{
-    EntryType           GetType() const { return m_type; }
-    const std::string&  TemplateString() const;
+    SitRepEntry(const std::string& template_string);
     //@}
 
 private:
-    EntryType       m_type; ///< the type of SitRep this is
-
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -67,19 +30,20 @@ SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id);
 SitRepEntry* CreateCombatSitRep(int system_id);
-SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, const std::string& empire_name);
+SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
 SitRepEntry* CreatePlanetColonizedSitRep(int planet_id);
 SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id);
-SitRepEntry* CreateEmpireEliminatedSitRep(const std::string& empire_name);
-SitRepEntry* CreateVictorySitRep(const std::string& reason_string, const std::string& empire_name);
+SitRepEntry* CreateEmpireEliminatedSitRep(int empire_id);
+SitRepEntry* CreateVictorySitRep(const std::string& reason_string, int empire_id);
+SitRepEntry* CreateSitRep(const std::string& template_string,
+                          const std::vector<std::pair<std::string, std::string> >& parameters);
 
 // template implementations
 template <class Archive>
 void SitRepEntry::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText)
-        & BOOST_SERIALIZATION_NVP(m_type);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(VarText);
 }
 
 #endif // _SitRepEntry_h_

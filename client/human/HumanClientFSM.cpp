@@ -467,13 +467,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
                        Empires(),       GetUniverse(),          GetSpeciesManager(),
                        Client().m_player_info);
 
-    for (Empire::SitRepItr sitrep_it = Empires().Lookup(Client().EmpireID())->SitRepBegin();
-         sitrep_it != Empires().Lookup(Client().EmpireID())->SitRepEnd();
-         ++sitrep_it)
-    {
-        Client().m_ui->GenerateSitRepText(*sitrep_it);
-    }
-
     if (Client().PlayerID() == Networking::HOST_PLAYER_ID)
         Client().Autosave(false);
     return transit<PlayingTurn>();

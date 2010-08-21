@@ -638,11 +638,6 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
     dlg.Run();
 }
 
-void ClientUI::GenerateSitRepText(SitRepEntry *sit_rep)
-{
-    sit_rep->GenerateVarText(sit_rep->TemplateString());
-}
-
 boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
     boost::shared_ptr<GG::Texture> retval;

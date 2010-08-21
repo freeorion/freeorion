@@ -1127,7 +1127,7 @@ std::string CreateShip::Dump() const
             + " empire = " + m_empire_id->Dump()
             + " species_name = " + m_species_name->Dump() + "\n";
     else
-        return DumpIndent() + "CreateShip predefined_ship_design_name = " + m_design_name
+        return DumpIndent() + "CreateShip predefined_ship_design_name = \"" + m_design_name + "\""
             + " empire = " + m_empire_id->Dump()
             + " species_name = " + m_species_name->Dump() + "\n";
 }
@@ -1474,35 +1474,75 @@ std::string SetTechAvailability::Dump() const
         retval += "UnlockTechItemsForOwner";
     if (!m_available && !m_include_tech)
         retval += "LockTechItemsForOwner";
-    retval += " name = \"" + m_tech_name + "\"\n";
+
+    retval += " name = \"" + m_tech_name + "\""
+            + " empire = " + m_empire_id->Dump() + "\n";
+
     return retval;
 }
 
 
 ///////////////////////////////////////////////////////////
-// SetEffectTarget                                       //
+// GenerateSitRepMessage                                 //
 ///////////////////////////////////////////////////////////
-SetEffectTarget::SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_target_id) :
-    m_effect_target_id(effect_target_id)
+GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
+                                             const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             const ValueRef::ValueRefBase<int>* recipient_empire_id) :
+    m_message_string(message_string),
+    m_message_parameters(message_parameters),
+    m_recipient_empire_id(recipient_empire_id)
 {}
 
-SetEffectTarget::~SetEffectTarget()
+GenerateSitRepMessage::~GenerateSitRepMessage()
 {
-    delete m_effect_target_id;
+    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::iterator it = m_message_parameters.begin();
+         it != m_message_parameters.end();
+         ++it)
+    {
+        delete it->second;
+    }
+    delete m_recipient_empire_id;
 }
 
-void SetEffectTarget::Execute(const UniverseObject* source, UniverseObject* target) const
+void GenerateSitRepMessage::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // TODO: implement after Effect targets are implemented
+    Empire* empire = Empires().Lookup(m_recipient_empire_id->Eval(source, target, boost::any()));
+    if (!empire) return;
+
+    std::vector<std::pair<std::string, std::string> > parameter_tag_values;
+    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::const_iterator it = m_message_parameters.begin();
+         it != m_message_parameters.end();
+         ++it)
+    {
+        parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(source, target, boost::any())));
+    }
+
+    empire->AddSitRepEntry(CreateSitRep(m_message_string, parameter_tag_values));
 }
 
-std::string SetEffectTarget::Description() const
-{
-    // TODO: implement after Effect targets are implemented
-    return "ERROR: SetEffectTarget is currently unimplemented.";
-}
-
-std::string SetEffectTarget::Dump() const
+std::string GenerateSitRepMessage::Description() const
 {
     return "";
 }
+
+std::string GenerateSitRepMessage::Dump() const
+{
+    std::string retval = DumpIndent();
+    retval += "GenerateSitRepMessage message = \"" + m_message_string + "\""
+            + " parameters = ";
+
+    if (m_message_parameters.size() == 1) {
+        retval += "tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
+    } else {
+        retval += "[ ";
+        for (unsigned int i = 0; i < m_message_parameters.size(); ++i) {
+            retval += " tag = " + m_message_parameters[i].first + " data = " + m_message_parameters[i].second->Dump() + " ";
+        }
+        retval += "]\n";
+    }
+
+    retval += " empire = " + m_recipient_empire_id->Dump() + "\n";
+
+    return retval;
+}
+

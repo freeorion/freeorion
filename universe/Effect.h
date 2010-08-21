@@ -38,9 +38,9 @@ namespace Effect {
     class RemoveSpecial;
     class SetStarType;
     class SetTechAvailability;
-    class SetEffectTarget;
     class MoveTo;
     class Victory;
+    class GenerateSitRepMessage;
 
     typedef std::set<UniverseObject*> TargetSet;
 }
@@ -332,7 +332,8 @@ private:
 class Effect::CreatePlanet : public Effect::EffectBase
 {
 public:
-    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const ValueRef::ValueRefBase<PlanetSize>* size);
+    CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type,
+                 const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~CreatePlanet();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -395,8 +396,9 @@ private:
 
 /** Destroys the target object.  When executed on objects that contain other
   * objects (such as Fleets and Planets), all contained objects are destroyed
-  * as well.  Has no effect on System objects.  Destroy effects are executed
-  * after all other effects. */
+  * as well.  Destroy effects delay the desctruction of their targets until
+  * after other all effects have executed, to ensure the source or target of
+  * other effects are present when they execute. */
 class Effect::Destroy : public Effect::EffectBase
 {
 public:
@@ -517,7 +519,10 @@ private:
 class Effect::SetTechAvailability : public Effect::EffectBase
 {
 public:
-    SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech);
+    SetTechAvailability(const std::string& tech_name,
+                        const ValueRef::ValueRefBase<int>* empire_id,
+                        bool available,
+                        bool include_tech);
     virtual ~SetTechAvailability();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -535,18 +540,29 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-class Effect::SetEffectTarget : public Effect::EffectBase
+/** Generates a sitrep message for the empire with id \a recipient_empire_id.
+  * The message text is the user string specified in \a message_string with
+  * string substitutions into the message text as specified in \a message_parameters
+  * which are substituted as string parameters %1%, %2%, %3%, etc. in the order
+  * they are specified.  Extra parameters beyond those needed by \a message_string
+  * are ignored, and missing parameters are left as blank text. */
+class Effect::GenerateSitRepMessage : public Effect::EffectBase
 {
 public:
-    SetEffectTarget(const ValueRef::ValueRefBase<int>* effect_target_id);
-    virtual ~SetEffectTarget();
+    GenerateSitRepMessage(const std::string& message_string,
+                          const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          const ValueRef::ValueRefBase<int>* recipient_empire_id);
+    virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
 private:
-    const ValueRef::ValueRefBase<int>* m_effect_target_id;
+    std::string                                         m_message_string;
+    std::vector<std::pair<std::string,
+        const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
+    const ValueRef::ValueRefBase<int>*                  m_recipient_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -650,7 +666,7 @@ template <class Archive>
 void Effect::CreateBuilding::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_type);
+        & BOOST_SERIALIZATION_NVP(m_building_type_name);
 }
 
 template <class Archive>
@@ -713,10 +729,12 @@ void Effect::SetTechAvailability::serialize(Archive& ar, const unsigned int vers
 }
 
 template <class Archive>
-void Effect::SetEffectTarget::serialize(Archive& ar, const unsigned int version)
+void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_effect_target_id);
+        & BOOST_SERIALIZATION_NVP(m_message_string)
+        & BOOST_SERIALIZATION_NVP(m_message_parameters)
+        & BOOOT_SERIALIZATION_NVP(m_recipient_empire_id);
 }
 
 #endif // _Effect_h_

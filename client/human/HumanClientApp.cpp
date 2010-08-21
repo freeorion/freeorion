@@ -640,11 +640,6 @@ void HumanClientApp::StartGame()
 {
     m_game_started = true;
     Orders().Reset();
-    if (const Empire* empire = Empires().Lookup(EmpireID()))
-        for (Empire::SitRepItr it = empire->SitRepBegin(); it != empire->SitRepEnd(); ++it)
-            m_ui->GenerateSitRepText(*it);
-    else
-        Logger().errorStream() << "HumanClientApp::StartGame couldn't get empire with id " << EmpireID();
 }
 
 void HumanClientApp::Autosave(bool new_game)

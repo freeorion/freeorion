@@ -1834,7 +1834,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
     //        } else {
     //            player_connection->SendMessage(PlayerEliminatedMessage(recipient_player_id, elim_empire_id, elim_empire_name));    // PlayerEliminatedMessage takes the eliminated empire id, not the eliminated player id, for unknown reasons, as of this writing
     //            if (Empire* recipient_empire = GetPlayerEmpire(recipient_player_id))
-    //                recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_name));
+    //                recipient_empire->AddSitRepEntry(CreateEmpireEliminatedSitRep(elim_empire_id));
     //        }
     //    }
     //}

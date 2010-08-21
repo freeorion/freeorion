@@ -97,8 +97,6 @@ public:
         currently enabled, the default alert sound will be played as the message box opens */
     static void MessageBox(const std::string& message, bool play_alert_sound = false);
 
-    static void GenerateSitRepText(SitRepEntry *sit_rep);   //!< generates a SitRep string from \a sit_rep.
-
     /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true; loads default
         missing.png if name isn't found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);

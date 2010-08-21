@@ -12,39 +12,38 @@
 #include <string>
 #include <sstream>
 
-/**
-*   VarText is a string tagged with variable names which are substituded for actual data at runtime
-*   The variables are stored in a XML element tree.
-*   The actual string to substitute using the defined variables is not a member, rather it's
-*   sent into a static function. In this way, UI can use strings provided by a string table when needed.
-*
-*   The format for the VarText template string is as follows:
-*   use % as delimiters for the variable. For example: The planet %planet% has been conlonized will look
-*   through the VarText data for the xml element with the tag name of planet and substitute it's name in
-*   the game universe
-*
-*   An example of VarText implementation are SitReps. They are created by the server which knows nothing about
-*   what the final string will look like. ClientUI.cpp ultimately generates a string form the variables
-*/
-
+/** VarText is a string tagged with variable names which are substituded with
+  * actual data at runtime. The variables are stored in a XML element tree.
+  * 
+  * The format for the VarText template string is as follows:
+  * use % as delimiters for the variable. For example: The planet %planet% has
+  * been conlonized will look through the VarText data for the xml element with
+  * the tag name of "planet" and substitute the name of the planet in the game
+  * universe with the appropriate ID number that is stored in that VarText
+  * entry.
+  *
+  * An example of VarText implementation are SitReps. They are created by the
+  * server which knows nothing about what the final string will look like.
+  * ClientUI.cpp ultimately generates a string from the variables. */
 class VarText
 {
 public:
-    VarText() {};
+    /** \name Structors */ //@{
+    VarText();
+    explicit VarText(const std::string& template_string, bool stringtable_lookup_template = true);
+    //@}
 
-    /** combines the given template with the variables contained in object to create a string with live variables
-        replaced with text will produce exceptions if invalid variables are found ( no not exist in XML data or in
-        universe ) */
-    void GenerateVarText(const std::string& template_str);
+    /** \name Accessors */ //@{
+    const std::string&  GetText() const;
+    //@}
 
-    XMLElement& GetVariables()      { return m_variables; }
-    std::string& GetText()          { return m_text; }
-    void SetText(std::string &text) { m_text = text; }
+    /** \name Mutators */ //@{
+    void                SetTemplateString(const std::string& text, bool stringtable_lookup_template = true);
+    void                AddVariable(const std::string& tag, const std::string& data);
+    //@}
 
+    /** Tag strings that are recognized and replaced in VarText. */
     static const std::string TEXT_TAG;
-
-    static const std::string START_VAR;
-    static const std::string END_VAR;
 
     static const std::string PLANET_ID_TAG;
     static const std::string SYSTEM_ID_TAG;
@@ -63,9 +62,16 @@ public:
     static const std::string SPECIES_TAG;
 
 protected:
-    XMLElement  m_variables; ///< the data describing the sitrep. See class comments for description
-    std::string m_text;      ///< the text, including hyperlinks, that describes this entry. Built from XML data
+    /** Combines the template with the variables contained in object to
+      * create a string with variables replaced with text. */
+    void                GenerateVarText() const;
 
+    std::string         m_template_string;          ///< the template string for this VarText, into which variables are substituted to render the text as user-readable
+    bool                m_stringtable_lookup_flag;  ///< should the template string be looked up in the stringtable prior to substitution for variables?
+    XMLElement          m_variables;                ///< the data about variables to be substitued into the template string to render the VarText
+    mutable std::string m_text;                     ///< the user-readable rendered text with substitutions made
+
+private:
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -75,18 +81,24 @@ protected:
 template <class Archive>
 void VarText::serialize(Archive& ar, const unsigned int version)
 {
-    std::vector<std::pair<std::string, std::string> > variables;
+    ar  & BOOST_SERIALIZATION_NVP(m_template_string)
+        & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag);
+
+
+    std::map<std::string, std::string> variables;
+
     if (Archive::is_saving::value) {
         for (XMLElement::child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it) {
-            variables.push_back(std::make_pair(it->Tag(), it->Attribute("value")));
+            variables[it->Tag()] = it->Attribute("value");
         }
     }
-    ar  & BOOST_SERIALIZATION_NVP(m_text)
-        & BOOST_SERIALIZATION_NVP(variables);
+
+    ar  & BOOST_SERIALIZATION_NVP(variables);
+
     if (Archive::is_loading::value) {
-        for (unsigned int i = 0; i < variables.size(); ++i) {
-            XMLElement elem(variables[i].first);
-            elem.SetAttribute("value", variables[i].second);
+        for (std::map<std::string, std::string>::const_iterator it = variables.begin(); it != variables.end(); ++it) {
+            XMLElement elem(it->first);
+            elem.SetAttribute("value", it->second);
             m_variables.AppendChild(elem);
         }
     }
