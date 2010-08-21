@@ -1522,7 +1522,8 @@ void GenerateSitRepMessage::Execute(const UniverseObject* source, UniverseObject
 
 std::string GenerateSitRepMessage::Description() const
 {
-    return "";
+    std::string empire_str = ValueRef::ConstantExpr(m_recipient_empire_id) ? Empires().Lookup(m_recipient_empire_id->Eval(0, 0, boost::any()))->Name() : m_recipient_empire_id->Description();
+    return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
 }
 
 std::string GenerateSitRepMessage::Dump() const

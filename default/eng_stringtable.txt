@@ -2864,6 +2864,9 @@ Moves the object to the location of an object%1%
 DESC_VICTORY
 Causes the object's owner to win the game
 
+DESC_GENERATE_SITREP
+Generates a SitRep message for empire %1%
+
 # SetTechAvailability
 
 DESC_TECH_AND_ITEMS_AFFECTED

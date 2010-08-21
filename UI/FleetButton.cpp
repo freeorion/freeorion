@@ -99,8 +99,8 @@ namespace {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        double tex_coord_x = Value(1.0 * texture->DefaultWidth() / texture->Width());
-        double tex_coord_y = Value(1.0 * texture->DefaultHeight() / texture->Height());
+        float tex_coord_x = static_cast<float>(Value(1.0 * texture->DefaultWidth() / texture->Width()));
+        float tex_coord_y = static_cast<float>(Value(1.0 * texture->DefaultHeight() / texture->Height()));
 
         // render texture
         glBegin(GL_TRIANGLE_STRIP);
@@ -332,7 +332,7 @@ void FleetButton::RenderUnpressed() {
 
     if (m_selected && m_selection_texture) {
         double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
-        double sel_ind_half_size = Value(Width()) * sel_ind_scale / 2.0;
+        int sel_ind_half_size = static_cast<int>(Value(Width()) * sel_ind_scale / 2.0);
 
         GG::Pt button_mid = GG::Pt(GG::X(midX), GG::Y(midY));
         GG::Pt sel_ul = button_mid - GG::Pt(GG::X(sel_ind_half_size), GG::Y(sel_ind_half_size));

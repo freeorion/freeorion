@@ -85,21 +85,19 @@ void VarText::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_stringtable_lookup_flag);
 
 
-    std::map<std::string, std::string> variables;
+    std::vector<std::pair<std::string, std::string> > variables;
 
     if (Archive::is_saving::value) {
         for (XMLElement::child_iterator it = m_variables.child_begin(); it != m_variables.child_end(); ++it) {
-            variables[it->Tag()] = it->Attribute("value");
+            variables.push_back(std::make_pair(it->Tag(), it->Attribute("value")));
         }
     }
 
     ar  & BOOST_SERIALIZATION_NVP(variables);
 
     if (Archive::is_loading::value) {
-        for (std::map<std::string, std::string>::const_iterator it = variables.begin(); it != variables.end(); ++it) {
-            XMLElement elem(it->first);
-            elem.SetAttribute("value", it->second);
-            m_variables.AppendChild(elem);
+        for (unsigned int i = 0; i < variables.size(); ++i) {
+            AddVariable(variables[i].first, variables[i].second);
         }
     }
 }
