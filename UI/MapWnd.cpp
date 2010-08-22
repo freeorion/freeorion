@@ -50,7 +50,7 @@ namespace {
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
     const GG::X     SITREP_PANEL_WIDTH(400);
-    const GG::Y     SITREP_PANEL_HEIGHT(300);
+    const GG::Y     SITREP_PANEL_HEIGHT(200);
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const GG::Y     SCALE_LINE_HEIGHT(20);
     const GG::X     SCALE_LINE_MAX_WIDTH(200);
@@ -576,7 +576,7 @@ MapWnd::MapWnd() :
 
 
     // situation report window
-    m_sitrep_panel = new SitRepPanel( (APP_WIDTH-SITREP_PANEL_WIDTH)/2, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT );
+    m_sitrep_panel = new SitRepPanel(GG::X0, GG::Y0, SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT);
     GG::Connect(m_sitrep_panel->ClosingSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));    // sitrep panel is manually closed by user
     GG::GUI::GetGUI()->Register(m_sitrep_panel);
     m_sitrep_panel->Hide();
@@ -682,9 +682,9 @@ MapWnd::MapWnd() :
 
     // Encyclo"pedia" button
     button_width = font->TextExtent(UserString("MAP_BTN_PEDIA")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_pedia = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x-LAYOUT_MARGIN-button_width,
-                                                 GG::Y(LAYOUT_MARGIN),
-                                                 button_width, UserString("MAP_BTN_PEDIA") );
+    m_btn_pedia = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x - LAYOUT_MARGIN-button_width,
+                                                GG::Y(LAYOUT_MARGIN),
+                                                button_width, UserString("MAP_BTN_PEDIA") );
     m_toolbar->AttachChild(m_btn_pedia);
     GG::Connect(m_btn_pedia->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
     in_window_func =
@@ -809,6 +809,7 @@ MapWnd::~MapWnd()
 {
     delete m_toolbar;
     delete m_sitrep_panel;
+    delete m_pedia_panel;
     delete m_research_wnd;
     delete m_production_wnd;
     delete m_design_wnd;
@@ -3661,10 +3662,13 @@ void MapWnd::Sanitize()
 
     GG::Pt sp_ul = GG::Pt(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y);
     GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());
-
     m_side_panel->SizeMove(sp_ul, sp_lr);
-    m_sitrep_panel->MoveTo(GG::Pt((APP_WIDTH - SITREP_PANEL_WIDTH) / 2, (APP_HEIGHT - SITREP_PANEL_HEIGHT) / 2));
+
+    m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->LowerRight().y));
     m_sitrep_panel->Resize(GG::Pt(SITREP_PANEL_WIDTH, SITREP_PANEL_HEIGHT));
+
+    m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
+
     MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
     m_zoom_steps_in = 0.0;
     m_research_wnd->Sanitize();
