@@ -25,6 +25,7 @@ namespace {
         typedef ValueRef::Constant<T>       RefConst;
         typedef ValueRef::Variable<T>       RefVar;
         typedef ValueRef::Variable<int>     IntRefVar;
+        typedef ValueRef::Variable<double>  DoubleRefVar;
         typedef ValueRef::Operation<T>      RefOp;
 
         typedef typename ValueRefRule<T>::type Rule;
@@ -39,6 +40,7 @@ namespace {
         Rule variable_container;
         Rule variable_final;
         Rule int_variable_final;
+        Rule double_variable_final;
         Rule variable;
         Rule primary_expr;
         Rule negative_expr;
@@ -73,6 +75,41 @@ namespace {
             | "nextsystemid"
             | "previoussystemid"
             | "numships";
+
+        double_variable_final =
+            str_p("farming")
+            | "targetfarming"
+            | "industry"
+            | "targetindustry"
+            | "research"
+            | "targetresearch"
+            | "trade"
+            | "targettrade"
+            | "mining"
+            | "targetmining"
+            | "construction"
+            | "targetconstruction"
+            | "population"
+            | "targetpopulation"
+            | "health"
+            | "targethealth"
+            | "maxfuel"
+            | "fuel"
+            | "maxshield"
+            | "shield"
+            | "maxdefense"
+            | "defense"
+            | "maxstructure"
+            | "structure"
+            | "supply"
+            | "stealth"
+            | "detection"
+            | "foodconsumption"
+            | "battlespeed"
+            | "starlanespeed"
+            | "tradestockpile"
+            | "mineralstockpile"
+            | "foodstockpile";
 
         SpecializedInit();
 
@@ -129,9 +166,9 @@ namespace {
             | star_type_p[constant.this_ =                  new_<RefConst>(enum_to_string_(static_cast_<StarType>(arg1)))]
 
             // raw constant number, not in quotes, which are left as the raw
-            // text, just as if they had been written enclosed in quotes.  this
-            // is done to maintain the requirement that an int is always a
-            // valid ValueRef value in the parser
+            // text (due to the eps_p), just as if they had been written
+            // enclosed in quotes.  this is done to maintain the requirement
+            // that an int is always a valid ValueRef value in the parser
             | (real_p >> eps_p) [constant.this_ =           new_<RefConst>(construct_<std::string>(arg1, arg2))]
             | (int_p >> eps_p)[constant.this_ =             new_<RefConst>(construct_<std::string>(arg1, arg2))];
 
@@ -159,40 +196,7 @@ namespace {
             real_p[constant.this_ = new_<RefConst>(arg1)]
             | int_p[constant.this_ = new_<RefConst>(static_cast_<double>(arg1))];
 
-        variable_final =
-            str_p("farming")
-            | "targetfarming"
-            | "industry"
-            | "targetindustry"
-            | "research"
-            | "targetresearch"
-            | "trade"
-            | "targettrade"
-            | "mining"
-            | "targetmining"
-            | "construction"
-            | "targetconstruction"
-            | "population"
-            | "targetpopulation"
-            | "health"
-            | "targethealth"
-            | "maxfuel"
-            | "fuel"
-            | "maxshield"
-            | "shield"
-            | "maxdefense"
-            | "defense"
-            | "maxstructure"
-            | "structure"
-            | "supply"
-            | "stealth"
-            | "detection"
-            | "foodconsumption"
-            | "battlespeed"
-            | "starlanespeed"
-            | "tradestockpile"
-            | "mineralstockpile"
-            | "foodstockpile";
+        variable_final = double_variable_final;
     }
 
     template <>
@@ -253,6 +257,32 @@ namespace {
             [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
             | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("value")
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
+    }
+
+    template <>
+    void ValueRefParserDefinition<std::string>::SpecializedVarDefinition()
+    {
+        typedef ValueRef::StringCast<int> CastIntRefVar;
+        typedef ValueRef::StringCast<double> CastDoubleRefVar;
+        variable =
+            str_p("source") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(true), construct_<std::string>(arg1, arg2))]
+            | str_p("source") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
+            [variable.this_ = new_<CastIntRefVar>(new_<IntRefVar>(val(true), construct_<std::string>(arg1, arg2)))]
+            | str_p("source") >> '.' >> (!(variable_container >> ".") >> double_variable_final)
+            [variable.this_ = new_<CastDoubleRefVar>(new_<DoubleRefVar>(val(true), construct_<std::string>(arg1, arg2)))]
+
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> variable_final)
+            [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
+            [variable.this_ = new_<CastIntRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
+            | str_p("target") >> '.' >> (!(variable_container >> ".") >> double_variable_final)
+            [variable.this_ = new_<CastDoubleRefVar>(new_<DoubleRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
+
+            | str_p("currentturn")
+            [variable.this_ = new_<CastIntRefVar>(new_<IntRefVar>(val(false), construct_<std::string>(arg1, arg2)))]
             | str_p("value")
             [variable.this_ = new_<RefVar>(val(false), construct_<std::string>(arg1, arg2))];
     }

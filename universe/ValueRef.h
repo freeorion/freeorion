@@ -28,6 +28,7 @@ namespace ValueRef {
     template <class T> struct Constant;
     template <class T> struct Variable;
     template <class FromType, class ToType> struct StaticCast;
+    template <class FromType> struct StringCast;
     template <class T> struct Operation;
     enum OpType {
         PLUS,
@@ -123,6 +124,28 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
 
     virtual double Eval(const UniverseObject* source, const UniverseObject* target,
                    const boost::any& current_value) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRefBase<FromType>* m_value_ref;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The variable lexical_cast to string class.  The value returned by this node
+  * is taken from the ctor \a value_ref parameter's FromType value,
+  * lexical_cast to std::string */
+template <class FromType>
+struct ValueRef::StringCast : public ValueRef::Variable<std::string>
+{
+    StringCast(const ValueRef::Variable<FromType>* value_ref);
+    ~StringCast();
+
+    virtual std::string Eval(const UniverseObject* source, const UniverseObject* target,
+                             const boost::any& current_value) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -373,6 +396,46 @@ std::string ValueRef::StaticCast<FromType, ToType>::Dump() const
 template <class FromType, class ToType>
 template <class Archive>
 void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
+        & BOOST_SERIALIZATION_NVP(m_value_ref);
+}
+
+///////////////////////////////////////////////////////////
+// StringCast                                            //
+///////////////////////////////////////////////////////////
+template <class FromType>
+ValueRef::StringCast<FromType>::StringCast(const ValueRef::Variable<FromType>* value_ref) :
+    ValueRef::Variable<std::string>(value_ref->SourceRef(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType>
+ValueRef::StringCast<FromType>::~StringCast()
+{ delete m_value_ref; }
+
+template <class FromType>
+std::string ValueRef::StringCast<FromType>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                            const boost::any& current_value) const
+{
+    return boost::lexical_cast<std::string>(m_value_ref->Eval(source, target, current_value));
+}
+
+template <class FromType>
+std::string ValueRef::StringCast<FromType>::Description() const
+{
+    return m_value_ref->Description();
+}
+
+template <class FromType>
+std::string ValueRef::StringCast<FromType>::Dump() const
+{
+    return m_value_ref->Dump();
+}
+
+template <class FromType>
+template <class Archive>
+void ValueRef::StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_value_ref);

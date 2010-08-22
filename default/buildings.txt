@@ -15,6 +15,13 @@ BuildingType
                 SetTargetFarming Value + Target.Population * 1.0
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
+                GenerateSitRepMessage
+                    message = "TEST_EFFECT_MESSAGE"
+                    parameters = [
+                        tag = "species" data = Source.Planet.Species
+                        tag = "buildingtype" data = Source.BuildingType
+                    ]
+                    empire = Source.Owner
             ]
     graphic = ""
 
@@ -39,6 +46,22 @@ BuildingType
             effects = [
                 SetTargetConstruction Value + 10
                 SetOwnerCapitol
+                GenerateSitRepMessage
+                    message = "TEST_EFFECT_MESSAGE2"
+                    parameters = [
+                        tag = "empire" data = Source.Owner
+                        tag = "shipdesign" data = 3
+                        tag = "planet" data = Source.System.ID
+                    ]
+                    empire = Source.Owner
+                GenerateSitRepMessage
+                    message = "TEST_EFFECT_MESSAGE2"
+                    parameters = [
+                        tag = "empire" data = Source.Owner
+                        tag = "shipdesign" data = "9"
+                        tag = "planet" data = 14
+                    ]
+                    empire = Source.Owner
             ]
     graphic = ""
 

@@ -2893,6 +2893,15 @@ Creates a new %1% building
 DESC_CREATE_SHIP
 Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 
+
+# Effect Sitreps
+
+TEST_EFFECT_MESSAGE
+Effect-generated SitRepEntry! species: %species% building: %buildingtype%
+
+TEST_EFFECT_MESSAGE2
+Effect SitRepEntry using int ValueRef! empire: %empire% design: %shipdesign% planet: %planet%
+
 # Conditions
 
 DESC_ALL
