@@ -3881,14 +3881,14 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
 
     // Apply effects for 1st turn.
     ApplyAllEffectsAndUpdateMeters();
-    // Set active meters to targets or maxes after first effects application
+    // Set active meters to targets or maxes after first meter effects application
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 
     BackPropegateObjectMeters();
 
-    // Re-apply effects, so that results depending on meter values can be
+    // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
-    ApplyAllEffectsAndUpdateMeters();
+    ApplyMeterEffectsAndUpdateMeters();
     // Re-set active meters to targets after re-application of effects
     SetActiveMetersToTargetMaxCurrentValues(m_objects);
 

@@ -8,7 +8,10 @@ BuildingType
     location = Not All
     effectsgroups =
         EffectsGroup
-            scope = Contains Source
+            scope = And [
+                Contains Source
+                Planet
+            ]
             activation = Source
             effects = [
                 SetTargetResearch Value + 5
@@ -37,7 +40,10 @@ BuildingType
     ]
     effectsgroups =
         EffectsGroup
-            scope = Contains Source
+            scope = And [
+                Planet
+                Contains Source
+            ]
             activation = Not Number low = 1 high = 999 And [
                 Building "BLD_MEGALITH"
                 OwnedBy TheEmpire Source.Owner
