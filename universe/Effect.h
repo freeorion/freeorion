@@ -734,7 +734,7 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_message_string)
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
-        & BOOOT_SERIALIZATION_NVP(m_recipient_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
 }
 
 #endif // _Effect_h_
