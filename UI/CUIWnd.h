@@ -133,7 +133,7 @@ protected:
     bool                    m_minimized;      //!< true if the window is currently minimized
     GG::Pt                  m_drag_offset;    //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;  //!< keeps track of the size of the window before resizing
-    
+
     CUI_CloseButton*        m_close_button;     //!< the close button
     CUI_MinRestoreButton*   m_minimize_button;  //!< the minimize/restore button
 

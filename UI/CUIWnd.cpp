@@ -283,7 +283,7 @@ bool CUIWnd::InWindow(const GG::Pt& pt) const
     GG::Pt lr = LowerRight();
     GG::Pt dist_from_lr = lr - pt;
     bool inside_lower_right_corner = OUTER_EDGE_ANGLE_OFFSET < Value(dist_from_lr.x) + Value(dist_from_lr.y);
-    return (UpperLeft() <= pt && pt < LowerRight() && inside_lower_right_corner);
+    return (UpperLeft() <= pt && pt < lr && inside_lower_right_corner);
 }
 
 void CUIWnd::InitButtons()

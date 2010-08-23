@@ -20,7 +20,7 @@
 namespace {
     const GG::X RESEARCH_INFO_AND_QUEUE_WIDTH(250);
     const double PI = 3.141594;
-    const double OUTER_LINE_THICKNESS = 2.0;
+    const float OUTER_LINE_THICKNESS = 2.0f;
 
     //////////////////////////////////////////////////
     // QueueRow

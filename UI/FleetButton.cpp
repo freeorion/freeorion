@@ -332,11 +332,10 @@ void FleetButton::RenderUnpressed() {
 
     if (m_selected && m_selection_texture) {
         double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
-        int sel_ind_half_size = static_cast<int>(Value(Width()) * sel_ind_scale / 2.0);
+        double sel_ind_half_size = Value(Width()) * sel_ind_scale / 2.0;
 
-        GG::Pt button_mid = GG::Pt(GG::X(midX), GG::Y(midY));
-        GG::Pt sel_ul = button_mid - GG::Pt(GG::X(sel_ind_half_size), GG::Y(sel_ind_half_size));
-        GG::Pt sel_lr = button_mid + GG::Pt(GG::X(sel_ind_half_size), GG::Y(sel_ind_half_size));
+        GG::Pt sel_ul = GG::Pt(GG::X(static_cast<int>(midX - sel_ind_half_size)), GG::Y(static_cast<int>(midY - sel_ind_half_size)));
+        GG::Pt sel_lr = GG::Pt(GG::X(static_cast<int>(midX + sel_ind_half_size)), GG::Y(static_cast<int>(midY + sel_ind_half_size)));
 
         glColor(GG::CLR_WHITE);
         m_selection_texture->OrthoBlit(sel_ul, sel_lr);

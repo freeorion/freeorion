@@ -110,12 +110,11 @@ void SitRepPanel::CloseClicked()
 
 void SitRepPanel::Update()
 {
-    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    m_sitreps_lb->Clear();
 
+    Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
-
-    m_sitreps_lb->Clear();
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     GG::Flags<GG::TextFormat> format = GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK;
