@@ -326,6 +326,10 @@ namespace {
         glPopAttrib();
     }
 
+    int MaxPlanetDiameter() {
+        return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
+    }
+
     int         PlanetDiameter(PlanetSize size) {
         double scale = 0.0;
         switch (size)
@@ -340,13 +344,12 @@ namespace {
         default           : scale = 3.0/7.0; break;
         }
 
-        const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
         int MIN_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-min-diameter");
         // sanity check
-        if (MIN_PLANET_DIAMETER > MAX_PLANET_DIAMETER)
-            MIN_PLANET_DIAMETER = MAX_PLANET_DIAMETER;
+        if (MIN_PLANET_DIAMETER > MaxPlanetDiameter())
+            MIN_PLANET_DIAMETER = MaxPlanetDiameter();
 
-        return static_cast<int>(MIN_PLANET_DIAMETER + (MAX_PLANET_DIAMETER - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
+        return static_cast<int>(MIN_PLANET_DIAMETER + (MaxPlanetDiameter() - MIN_PLANET_DIAMETER) * scale) - 2 * EDGE_PAD;
     }
 
     /** Adds options related to sidepanel to Options DB. */
@@ -468,6 +471,8 @@ public:
     void            ScrollTo(int pos);
 
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
+
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
     mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when an enabled planet panel is clicked by the user
@@ -478,6 +483,8 @@ private:
     void            PlanetPanelClicked(int planet_id);  //!< responds to user clicking a planet panel.  emits PlanetSelectedSignal
     void            DoPanelsLayout(GG::Y top);          //!< repositions PlanetPanels, positioning the top panel at y position \a top relative to the to of the container.
     void            DoPanelsLayout();                   //!< repositions PlanetPanels, without moving top panel.  Panels below may shift if ones above them have resized.
+    void            DoLayout();
+
     void            VScroll(int pos_top, int pos_bottom, int range_min, int range_max); //!< responds to user scrolling of planet panels list.  all but first parameter ignored
 
     std::vector<PlanetPanel*>   m_planet_panels;
@@ -575,11 +582,11 @@ boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boos
 // SidePanel::PlanetPanel
 ////////////////////////////////////////////////
 namespace {
-    int         SystemNameFontSize() {
+    int SystemNameFontSize() {
         return ClientUI::Pts()*3/2;
     }
 
-    GG::Y       SystemNameTextControlHeight() {
+    GG::Y SystemNameTextControlHeight() {
         return GG::Y(SystemNameFontSize()*4/3);
     }
 
@@ -630,6 +637,16 @@ namespace {
     std::string GetPlanetEnvironmentName(const Planet &planet, const std::string& species_name) {
         return UserString(boost::lexical_cast<std::string>(planet.EnvironmentForSpecies(species_name)));
     }
+
+    const GG::Y PLANET_PANEL_TOP = GG::Y(140);
+
+    GG::X ButtonWidth() {
+        return GG::X(Value(SystemNameTextControlHeight()));
+    }
+
+    GG::Y ButtonHeight() {
+        return SystemNameTextControlHeight();
+    }
 }
 
 ////////////////////////////////////////////////
@@ -666,7 +683,6 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         return;
     }
 
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
 
     if (GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown")) {
         if (planet->Type() == PT_ASTEROIDS) {
@@ -674,7 +690,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
             GetAsteroidTextures(m_planet_id, textures);
             GG::X texture_width = textures[0]->DefaultWidth();
             GG::Y texture_height = textures[0]->DefaultHeight();
-            GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - texture_width / 2 + 3), GG::Y0);
+            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
             m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
                                                       texture_width, texture_height, true,
@@ -687,8 +703,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
         } else if (planet->Type() < NUM_PLANET_TYPES) {
             int planet_image_sz = PlanetDiameter(planet->Size());
-            GG::Pt planet_image_pos(GG::X(MAX_PLANET_DIAMETER / 2 - GG::X(planet_image_sz) / 2 + 3),
-                                    GG::Y(MAX_PLANET_DIAMETER / 2 - GG::Y(planet_image_sz) / 2));
+            GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
+                                    GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
 
             const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
             std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
@@ -772,13 +788,13 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);
 
     // create planet name control
-    m_planet_name = new ShadowedTextControl(GG::X(MAX_PLANET_DIAMETER + EDGE_PAD), GG::Y0, wrapped_planet_name,
+    m_planet_name = new ShadowedTextControl(GG::X(MaxPlanetDiameter() + EDGE_PAD), GG::Y0, wrapped_planet_name,
                                             font, ClientUI::TextColor());
     AttachChild(m_planet_name);
 
 
     // create info panels and attach signals
-    GG::X panel_width = w - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
+    GG::X panel_width = w - MaxPlanetDiameter() - 2*EDGE_PAD;
 
     m_population_panel = new PopulationPanel(panel_width, m_planet_id);
     AttachChild(m_population_panel);
@@ -801,23 +817,26 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_specials_panel);
 
     std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE")) % GetPlanetSizeName(*planet) % GetPlanetTypeName(*planet));
-    m_env_size = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
+    m_env_size = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0, env_size_text, ClientUI::GetFont(), ClientUI::TextColor());
     AttachChild(m_env_size);
 
 
-    m_button_colonize = new CUIButton(GG::X(MAX_PLANET_DIAMETER), GG::Y0, GG::X(ClientUI::Pts()*15),
+    m_button_colonize = new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_colonize_instruction = new GG::TextControl(GG::X(MAX_PLANET_DIAMETER), GG::Y0,
+    m_colonize_instruction = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0,
                                                  UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
                                                  ClientUI::GetFont(), ClientUI::TextColor());
 
 
     if (m_planet_graphic)
         MoveChildDown(m_planet_graphic);
+
+
+    SetChildClippingMode(ClipToWindow);
 
 
     // connecting system's StateChangedSignal to this->Refresh() should be redundant, as
@@ -842,9 +861,8 @@ SidePanel::PlanetPanel::~PlanetPanel()
 
 void SidePanel::PlanetPanel::DoLayout()
 {
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    GG::X left = GG::X0 + MAX_PLANET_DIAMETER + EDGE_PAD;
-    GG::X right = left + Width() - MAX_PLANET_DIAMETER - 2*EDGE_PAD;
+    GG::X left = GG::X0 + MaxPlanetDiameter() + EDGE_PAD;
+    GG::X right = left + Width() - MaxPlanetDiameter() - 2*EDGE_PAD;
     GG::Y y = GG::Y0;
 
     if (m_planet_name) {
@@ -890,7 +908,7 @@ void SidePanel::PlanetPanel::DoLayout()
         y += m_buildings_panel->Height() + EDGE_PAD;
     }
 
-    GG::Y min_height = GG::Y(MAX_PLANET_DIAMETER);
+    GG::Y min_height(MaxPlanetDiameter());
     if (m_planet_graphic)
         min_height = m_planet_graphic->Height();
 
@@ -1145,8 +1163,7 @@ bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const
     if (!(ul <= pt && pt < lr))
         return false;
 
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y(MAX_PLANET_DIAMETER));
+    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y(MaxPlanetDiameter()));
 
     // if pt is to the right of the space where the planet render could be,
     // it doesn't matter whether the render is being shown
@@ -1218,8 +1235,7 @@ void SidePanel::PlanetPanel::Render()
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     GG::Pt name_ul = m_planet_name->UpperLeft() - GG::Pt(GG::X(EDGE_PAD), GG::Y0);
     GG::Pt name_lr = GG::Pt(lr.x, m_planet_name->LowerRight().y);
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y(MAX_PLANET_DIAMETER));
+    GG::Pt planet_box_lr = ul + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y(MaxPlanetDiameter()));
     bool show_planet_box = true;
 
     if (m_rotating_planet_graphic) {
@@ -1362,7 +1378,11 @@ SidePanel::PlanetPanelContainer::PlanetPanelContainer(GG::X x, GG::Y y, GG::X w,
     m_planet_panels(),
     m_planet_panels_top(GG::Y0),
     m_selected_planet_id(UniverseObject::INVALID_OBJECT_ID),
-    m_vscroll(new CUIScroll(Width()-14,GG::Y0,GG::X(14),Height(),GG::VERTICAL))
+    m_vscroll(new CUIScroll(Width() - GG::X(ClientUI::ScrollWidth()),
+                            GG::Y0,
+                            GG::X(ClientUI::ScrollWidth()),
+                            Height(),
+                            GG::VERTICAL))
 {
     SetName("PlanetPanelContainer");
     SetChildClippingMode(ClipToClient);
@@ -1379,7 +1399,6 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
         return false;
 
     // allow point to be within any planet panel that is below top of container
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         if ((*it)->InWindow(pt))
             return true;
@@ -1390,7 +1409,7 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const
     // and left of solid portion that wasn't already caught above as being part
     // of a planet panel.
 
-    return UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y0) <= pt && pt < LowerRight();
+    return UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight();
 }
 
 void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
@@ -1488,7 +1507,6 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
     }
 
     // adjust size of scrollbar to account for panel resizing
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     // hide scrollbar if all panels are visible and fit into the available height
     if (Value(m_planet_panels_top) >= 0 && Value(y - m_planet_panels_top) < available_height + 1) {
         DetachChild(m_vscroll);
@@ -1500,10 +1518,19 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
         // to allow scrolling back up
         int scroll_max = std::max(Value(y - m_planet_panels_top), Value(available_height - m_planet_panels_top));
 
-        m_vscroll->SizeScroll(0, scroll_max, MAX_PLANET_DIAMETER, Value(available_height));
+        m_vscroll->SizeScroll(0, scroll_max, MaxPlanetDiameter(), Value(available_height));
         AttachChild(m_vscroll);
         m_vscroll->Show();
     }
+}
+
+void SidePanel::PlanetPanelContainer::DoLayout()
+{
+    GG::Pt scroll_ul(Width() - ClientUI::ScrollWidth(), GG::Y0);
+    //GG::Pt scroll_ul(ClientLowerRight().x - GG::X(ClientUI::ScrollWidth()), ClientUpperLeft().y);
+    GG::Pt scroll_lr = scroll_ul + GG::Pt(GG::X(ClientUI::ScrollWidth()), Height());
+    m_vscroll->SizeMove(scroll_ul, scroll_lr);
+    DoPanelsLayout();
 }
 
 void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id)
@@ -1585,6 +1612,11 @@ void SidePanel::PlanetPanelContainer::PlanetPanelClicked(int planet_id)
 
 void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int range_min, int range_max)
 {
+    if (pos_bottom > range_max) {
+        // prevent scrolling beyond allowed max
+        int extra = pos_bottom - range_max;
+        pos_top -= extra;
+    }
     DoPanelsLayout(GG::Y(-pos_top));    // scrolling bar down pos_top pixels causes the panels to move up that many pixels
 }
 
@@ -1594,6 +1626,17 @@ void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
 }
+
+void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (Visible() && old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
 
 ////////////////////////////////////////////////
 // SidePanel
@@ -1607,8 +1650,9 @@ boost::signal<void ()>                      SidePanel::ResourceCenterChangedSign
 boost::signal<void (int)>                   SidePanel::PlanetSelectedSignal;
 boost::signal<void (int)>                   SidePanel::SystemSelectedSignal;
 
+
 SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
-    Wnd(x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h, GG::INTERACTIVE),
+    CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE),
     m_system_name(0),
     m_button_prev(0),
     m_button_next(0),
@@ -1617,17 +1661,15 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_resource_summary(0),
     m_selection_enabled(false)
 {
-    const boost::shared_ptr<GG::Font>&  font = ClientUI::GetFont(SystemNameFontSize());
-    const GG::Y     SYSTEM_NAME_TEXT_HEIGHT = SystemNameTextControlHeight();
-    const GG::X     BUTTON_WIDTH = GG::X(Value(SYSTEM_NAME_TEXT_HEIGHT));
-    const GG::X     MAX_PLANET_DIAMETER = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"));
-    const GG::Y     DROP_DISPLAYED_LIST_HEIGHT = GG::Y(10*SystemNameFontSize());
+    const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont(SystemNameFontSize());
+    const GG::Y DROP_DISPLAYED_LIST_HEIGHT = GG::Y(10*SystemNameFontSize());
 
-    m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y(140), Width(), h - 170);
+    m_planet_panel_container = new PlanetPanelContainer(GG::X0, GG::Y0, GG::X1, GG::Y1);
+    AttachChild(m_planet_panel_container);
 
-    m_button_prev = new GG::Button(MAX_PLANET_DIAMETER + EDGE_PAD,      GG::Y(EDGE_PAD),    BUTTON_WIDTH,                   SYSTEM_NAME_TEXT_HEIGHT,    "", font, GG::CLR_WHITE);
-    m_button_next = new GG::Button(Width() - BUTTON_WIDTH - EDGE_PAD,   GG::Y(EDGE_PAD),    BUTTON_WIDTH,                   SYSTEM_NAME_TEXT_HEIGHT,    "", font, GG::CLR_WHITE);
-    m_system_name = new CUIDropDownList(MAX_PLANET_DIAMETER,            GG::Y0,             Width() - MAX_PLANET_DIAMETER,  SYSTEM_NAME_TEXT_HEIGHT,    DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
+    m_button_prev = new GG::Button(GG::X0,      GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
+    m_button_next = new GG::Button(GG::X0,      GG::Y0, ButtonWidth(),  SystemNameTextControlHeight(),  "", font, GG::CLR_WHITE);
+    m_system_name = new CUIDropDownList(GG::X0, GG::Y0, GG::X(40),      SystemNameTextControlHeight(),  DROP_DISPLAYED_LIST_HEIGHT, GG::CLR_ZERO, GG::FloatClr(0.0, 0.0, 0.0, 0.5));
 
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -1636,27 +1678,29 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_name->DisableDropArrow();
     m_system_name->SetStyle(GG::LIST_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
+    AttachChild(m_system_name);
 
     m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_prev->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowclicked.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_prev->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    AttachChild(m_button_prev);
 
     m_button_next->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrownormal.png"  ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_next->SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowclicked.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     m_button_next->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "rightarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
+    AttachChild(m_button_next);
 
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
+    AttachChild(m_system_resource_summary);
 
-
-    AttachChild(m_system_name);
-    AttachChild(m_button_prev);
-    AttachChild(m_button_next);
-    AttachChild(m_planet_panel_container);
 
     GG::Connect(m_system_name->SelChangedSignal,                &SidePanel::SystemSelectionChanged, this);
     GG::Connect(m_button_prev->ClickedSignal,                   &SidePanel::PrevButtonClicked,      this);
     GG::Connect(m_button_next->ClickedSignal,                   &SidePanel::NextButtonClicked,      this);
     GG::Connect(m_planet_panel_container->PlanetSelectedSignal, &SidePanel::PlanetSelected,         this);
+
+    SetMinSize(GG::Pt(GG::X(MaxPlanetDiameter() + BORDER_LEFT + BORDER_RIGHT + 120),
+                      PLANET_PANEL_TOP + GG::Y(MaxPlanetDiameter())));
 
     DoLayout();
     Hide();
@@ -1683,15 +1727,78 @@ SidePanel::~SidePanel()
 
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    return (UpperLeft() + GG::Pt(GG::X(MAX_PLANET_DIAMETER), GG::Y0) <= pt && pt < LowerRight()) || m_planet_panel_container->InWindow(pt);
+    return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
+           || m_planet_panel_container->InWindow(pt)
+           || m_system_resource_summary->InWindow(pt);
+}
+
+GG::Pt SidePanel::ClientUpperLeft() const
+{
+    return GG::Wnd::UpperLeft() + GG::Pt(BORDER_LEFT, BORDER_BOTTOM);
 }
 
 void SidePanel::Render()
 {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    FlatRectangle(GG::Pt(ul.x + MAX_PLANET_DIAMETER, ul.y), lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
+    GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
+    GG::Pt lr = LowerRight();
+
+    GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
+    GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
+
+   // use GL to draw the lines
+    glDisable(GL_TEXTURE_2D);
+    GLint initial_modes[2];
+    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
+
+    // draw background
+    glPolygonMode(GL_BACK, GL_FILL);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::WndColor());
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
+    glEnd();
+
+    // draw outer border on pixel inside of the outer edge of the window
+    glPolygonMode(GL_BACK, GL_LINE);
+    glBegin(GL_POLYGON);
+        glColor(ClientUI::WndOuterBorderColor());
+        glVertex(ul.x, ul.y);
+        glVertex(lr.x, ul.y);
+        glVertex(lr.x, lr.y - OUTER_EDGE_ANGLE_OFFSET);
+        glVertex(lr.x - OUTER_EDGE_ANGLE_OFFSET, lr.y);
+        glVertex(ul.x, lr.y);
+        glVertex(ul.x, ul.y);
+    glEnd();
+
+    // reset this to whatever it was initially
+    glPolygonMode(GL_BACK, initial_modes[1]);
+
+    // draw inner border
+    if (cl_ul.y < cl_lr.y) {
+        glBegin(GL_LINE_STRIP);
+            glColor(ClientUI::WndInnerBorderColor());
+            glVertex(cl_ul.x, cl_ul.y);
+            glVertex(cl_lr.x, cl_ul.y);
+            glVertex(cl_lr.x, cl_lr.y - INNER_BORDER_ANGLE_OFFSET);
+            glVertex(cl_lr.x - INNER_BORDER_ANGLE_OFFSET, cl_lr.y);
+            glVertex(cl_ul.x, cl_lr.y);
+            glVertex(cl_ul.x, cl_ul.y);
+        glEnd();
+    }
+    // resize hash lines
+    glBegin(GL_LINES);
+        glColor(ClientUI::WndInnerBorderColor());
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK1_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK1_OFFSET, cl_lr.y);
+
+        glVertex(cl_lr.x, cl_lr.y - RESIZE_HASHMARK2_OFFSET);
+        glVertex(cl_lr.x - RESIZE_HASHMARK2_OFFSET, cl_lr.y);
+    glEnd();
+    glEnable(GL_TEXTURE_2D);
 }
 
 void SidePanel::Update()
@@ -1889,9 +1996,8 @@ void SidePanel::RefreshImpl()
     meter_types.push_back(std::make_pair(METER_TRADE,       METER_TARGET_TRADE));
 
     // refresh the system resource summary.
-    const int MAX_PLANET_DIAMETER = GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - MAX_PLANET_DIAMETER - 8, owned_planets, meter_types);
-    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MAX_PLANET_DIAMETER + 4), 140 - m_system_resource_summary->Height()));
+    m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8, owned_planets, meter_types);
+    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4), 140 - m_system_resource_summary->Height()));
     AttachChild(m_system_resource_summary);
 
 
@@ -1911,45 +2017,45 @@ void SidePanel::RefreshImpl()
         AttachChild(m_system_resource_summary);
         m_system_resource_summary->Update();
     }
+
+    DoLayout();
 }
 
 void SidePanel::DoLayout()
 {
-    const GG::X MAX_PLANET_DIAMETER(GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"));
-    const GG::Y SYSTEM_NAME_TEXT_HEIGHT = SystemNameTextControlHeight();
-    const GG::Y BUTTON_HEIGHT = SYSTEM_NAME_TEXT_HEIGHT;
-    const GG::X BUTTON_WIDTH = GG::X(Value(BUTTON_HEIGHT));
-    const GG::Y PLANET_PANEL_TOP = GG::Y(140);
-    const GG::Y PLANET_PANEL_BOTTOM_PAD = GG::Y(30);    // makes things line up nice.  accounts for top of sidepanel not being top of screen, I think...
-
-    GG::Pt ul = GG::Pt(MAX_PLANET_DIAMETER + EDGE_PAD, GG::Y(EDGE_PAD));
-    GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    // left button
+    GG::Pt ul(GG::X(MaxPlanetDiameter()) + 2*EDGE_PAD, GG::Y(EDGE_PAD));
+    GG::Pt lr(ul + GG::Pt(ButtonWidth(), ButtonHeight()));
     m_button_prev->SizeMove(ul, lr);
 
-    ul = GG::Pt(Width() - BUTTON_WIDTH - EDGE_PAD, GG::Y(EDGE_PAD));
-    lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
+    // right button
+    ul = GG::Pt(ClientWidth() - ButtonWidth() - 2*EDGE_PAD, GG::Y(EDGE_PAD));
+    lr = ul + GG::Pt(ButtonWidth(), ButtonHeight());
     m_button_next->SizeMove(ul, lr);
 
-    ul = GG::Pt(MAX_PLANET_DIAMETER, GG::Y0);           // no EDGE_PAD-ing for name... not sure why, but it works.
-    lr = ul + GG::Pt(Width() - MAX_PLANET_DIAMETER, m_system_name->Height());   // There's no obvious way to determine what the height of a droplist will be.  It's determined from the height passed to the constructor (not the font passed) but isn't equal to the passed height.
+    // system name / droplist
+    ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
+    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), m_system_name->Height());
     m_system_name->SizeMove(ul, lr);
 
-    ul = GG::Pt(GG::X0, PLANET_PANEL_TOP);
-    lr = GG::Pt(Width(), Height() - PLANET_PANEL_BOTTOM_PAD);
+    // resize planet panel container
+    ul = GG::Pt(BORDER_LEFT, PLANET_PANEL_TOP);
+    lr = GG::Pt(ClientWidth() - 1, ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     m_planet_panel_container->SizeMove(ul, lr);
 
-    ul = GG::Pt(GG::X(EDGE_PAD), m_planet_panel_container->UpperLeft().y - m_system_resource_summary->Height());
-    lr = ul + GG::Pt(Width() - EDGE_PAD*2, m_system_resource_summary->Height());
+    // resize system resource summary
+    ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
+    lr = ul + GG::Pt(ClientWidth() - EDGE_PAD - 1, m_system_resource_summary->Height());
     m_system_resource_summary->SizeMove(ul, lr);
 }
 
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+    GG::Pt old_size = GG::Wnd::Size();
 
     GG::Wnd::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size())
+    if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 

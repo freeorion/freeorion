@@ -3,13 +3,16 @@
 #define _SidePanel_h_
 
 #include "CUIControls.h"
-#include <GG/DynamicGraphic.h>
-#include <GG/Wnd.h>
-#include <GG/SignalsAndSlots.h>
-#include <GG/Texture.h>
+#include "CUIWnd.h"
+
 #include "../universe/ResourceCenter.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
+
+#include <GG/DynamicGraphic.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/Texture.h>
+
 #include <vector>
 
 class CUI_CloseButton;
@@ -25,7 +28,7 @@ namespace GG {
     class TextControl;
 }
 
-class SidePanel : public GG::Wnd
+class SidePanel : public CUIWnd
 {
 public:
     class PlanetPanel;
@@ -37,6 +40,7 @@ public:
 
     /** \name Accessors */ //@{
     virtual bool        InWindow(const GG::Pt& pt) const;
+    virtual GG::Pt      ClientUpperLeft() const;
 
     /** Returns the id of the system shown in the SidePanels, or
       * UniverseObject::INVALID_OBJECT_ID if no system is shown */

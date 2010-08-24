@@ -560,7 +560,7 @@ MapWnd::MapWnd() :
     const GG::X APP_WIDTH(GG::GUI::GetGUI()->AppWidth());
     const GG::Y APP_HEIGHT(GG::GUI::GetGUI()->AppHeight());
 
-    m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT);
+    m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT - m_toolbar->Height());
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
     GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);

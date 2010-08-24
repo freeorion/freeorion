@@ -114,12 +114,11 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     const int COST_PTS = PTS;
     const int SUMMARY_PTS = PTS*4/3;
 
-    m_name_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
-    m_cost_text =       new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
-    m_summary_text =    new GG::TextControl(     GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
+    m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
+    m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
+    m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
 
-    CUILinkTextMultiEdit* desc_box =
-                        new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
+    CUILinkTextMultiEdit* desc_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
     GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
@@ -180,7 +179,7 @@ void EncyclopediaDetailPanel::DoLayout() {
 }
 
 void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+    GG::Pt old_size = GG::Wnd::Size();
 
     // maybe later do something interesting with docking
     GG::Wnd::SizeMove(ul, lr);

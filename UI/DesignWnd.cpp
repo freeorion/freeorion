@@ -279,7 +279,7 @@ const std::pair<bool, bool>& PartsListBox::GetAvailabilitiesShown() const {
 }
 
 void PartsListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
+    GG::Pt old_size = GG::Wnd::Size();
 
     // maybe later do something interesting with docking
     CUIListBox::SizeMove(ul, lr);
