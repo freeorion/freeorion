@@ -214,6 +214,18 @@ namespace {
     bool InRect(GG::X left, GG::Y top, GG::X right, GG::Y bottom, const GG::Pt& pt) {
         return pt.x >= left && pt.y >= top && pt.x < right && pt.y < bottom;  //pt >= ul && pt < lr;
     }
+
+    GG::X AppWidth() {
+        if (HumanClientApp* app = HumanClientApp::GetApp())
+            return app->AppWidth();
+        return GG::X0;
+    }
+
+    GG::Y AppHeight() {
+        if (HumanClientApp* app = HumanClientApp::GetApp())
+            return app->AppHeight();
+        return GG::Y0;
+    }
 }
 
 
@@ -484,9 +496,9 @@ struct MapWnd::FleetButtonClickedFunctor {
 // MapWnd
 ///////////////////////////
 MapWnd::MapWnd() :
-    GG::Wnd(-GG::GUI::GetGUI()->AppWidth(), -GG::GUI::GetGUI()->AppHeight(),
-            static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
-            static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5),
+    GG::Wnd(-AppWidth(), -AppHeight(),
+            static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
+            static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5),
             GG::INTERACTIVE | GG::DRAGABLE),
     m_backgrounds(),
     m_bg_scroll_rate(),
@@ -550,15 +562,15 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::Y(30));
+    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), GG::Y(30));
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
 
     // system-view side panel
     const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const GG::X APP_WIDTH(GG::GUI::GetGUI()->AppWidth());
-    const GG::Y APP_HEIGHT(GG::GUI::GetGUI()->AppHeight());
+    const GG::X APP_WIDTH(AppWidth());
+    const GG::Y APP_HEIGHT(AppHeight());
 
     m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT - m_toolbar->Height());
 
@@ -822,7 +834,7 @@ void MapWnd::DoLayout()
 
 GG::Pt MapWnd::ClientUpperLeft() const
 {
-    return UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    return UpperLeft() + GG::Pt(AppWidth(), AppHeight());
 }
 
 double MapWnd::ZoomFactor() const
@@ -872,7 +884,7 @@ void MapWnd::Render()
 
     RenderStarfields();
 
-    GG::Pt origin_offset = UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+    GG::Pt origin_offset = UpperLeft() + GG::Pt(AppWidth(), AppHeight());
 
     glPushMatrix();
     glLoadIdentity();
@@ -899,7 +911,7 @@ void MapWnd::RenderStarfields()
     glColor3d(1.0, 1.0, 1.0);
 
     GG::Pt origin_offset =
-        UpperLeft() + GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight());
+        UpperLeft() + GG::Pt(AppWidth(), AppHeight());
     glMatrixMode(GL_TEXTURE);
 
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
@@ -1489,7 +1501,7 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     GG::Pt final_move = move_to_pt - ClientUpperLeft();
     m_side_panel->OffsetMove(-final_move);
 
-    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
     m_dragged = true;
 }
 
@@ -1750,8 +1762,8 @@ void MapWnd::InitTurnRendering()
     const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
 
     // adjust size of map window for universe and application size
-    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppWidth() * 1.5),
-                  static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + GG::GUI::GetGUI()->AppHeight() * 1.5)));
+    Resize(GG::Pt(static_cast<GG::X>(Universe::UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
+                  static_cast<GG::Y>(Universe::UniverseWidth() * ZOOM_MAX + AppHeight() * 1.5)));
 
 
     // set up backgrounds on first turn.  if m_backgrounds already contains textures, does nothing
@@ -2343,7 +2355,7 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
 
-    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
 
 void MapWnd::ShowSystemNames()
@@ -2363,8 +2375,8 @@ void MapWnd::HideSystemNames()
 void MapWnd::CenterOnMapCoord(double x, double y)
 {
     GG::Pt ul = ClientUpperLeft();
-    GG::X_d current_x = (GG::GUI::GetGUI()->AppWidth() / 2 - ul.x) / ZoomFactor();
-    GG::Y_d current_y = (GG::GUI::GetGUI()->AppHeight() / 2 - ul.y) / ZoomFactor();
+    GG::X_d current_x = (AppWidth() / 2 - ul.x) / ZoomFactor();
+    GG::Y_d current_y = (AppHeight() / 2 - ul.y) / ZoomFactor();
     GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()), 
                              static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
@@ -2376,7 +2388,7 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
 
-    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
 
 void MapWnd::ShowTech(const std::string& tech_name)
@@ -2661,16 +2673,16 @@ void MapWnd::SelectFleet(Fleet* fleet)
         GG::Pt wnd_position = FleetWnd::LastPosition();
         // unless the user hasn't opened and closed a FleetWnd yet, in which case use the lower-left
         if (wnd_position == GG::Pt())
-            wnd_position = GG::Pt(GG::X(5), GG::GUI::GetGUI()->AppHeight() - fleet_wnd->Height() - 5);
+            wnd_position = GG::Pt(GG::X(5), AppHeight() - fleet_wnd->Height() - 5);
 
         fleet_wnd->MoveTo(wnd_position);
 
 
         // safety check to ensure window is on screen... may be redundant
-        if (GG::GUI::GetGUI()->AppWidth() - 5 < fleet_wnd->LowerRight().x)
-            fleet_wnd->OffsetMove(GG::Pt(GG::GUI::GetGUI()->AppWidth() - 5 - fleet_wnd->LowerRight().x, GG::Y0));
-        if (GG::GUI::GetGUI()->AppHeight() - 5 < fleet_wnd->LowerRight().y)
-            fleet_wnd->OffsetMove(GG::Pt(GG::X0, GG::GUI::GetGUI()->AppHeight() - 5 - fleet_wnd->LowerRight().y));
+        if (AppWidth() - 5 < fleet_wnd->LowerRight().x)
+            fleet_wnd->OffsetMove(GG::Pt(AppWidth() - 5 - fleet_wnd->LowerRight().x, GG::Y0));
+        if (AppHeight() - 5 < fleet_wnd->LowerRight().y)
+            fleet_wnd->OffsetMove(GG::Pt(GG::X0, AppHeight() - 5 - fleet_wnd->LowerRight().y));
     }
 
 
@@ -3245,8 +3257,8 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
 
     // save position offsets and old zoom factors
     GG::Pt                      ul =                    ClientUpperLeft();
-    const GG::X_d               center_x =              GG::GUI::GetGUI()->AppWidth() / 2.0;
-    const GG::Y_d               center_y =              GG::GUI::GetGUI()->AppHeight() / 2.0;
+    const GG::X_d               center_x =              AppWidth() / 2.0;
+    const GG::Y_d               center_y =              AppHeight() / 2.0;
     GG::X_d                     ul_offset_x =           ul.x - center_x;
     GG::Y_d                     ul_offset_y =           ul.y - center_y;
     const double                OLD_ZOOM =              ZoomFactor();
@@ -3293,7 +3305,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     GG::Pt final_move = move_to_pt - ul;
     m_side_panel->OffsetMove(-final_move);
 
-    MoveTo(move_to_pt - GG::Pt(GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight()));
+    MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 
     if (m_scale_line)
         m_scale_line->Update(ZoomFactor());
@@ -3316,8 +3328,8 @@ void MapWnd::StealthSlid(int pos, int low, int high)
 void MapWnd::CorrectMapPosition(GG::Pt &move_to_pt)
 {
     GG::X contents_width(static_cast<int>(ZoomFactor() * Universe::UniverseWidth()));
-    GG::X app_width =  GG::GUI::GetGUI()->AppWidth();
-    GG::Y app_height = GG::GUI::GetGUI()->AppHeight();
+    GG::X app_width =  AppWidth();
+    GG::Y app_height = AppHeight();
     GG::X map_margin_width(app_width / 2.0);
 
     //std::cout << "MapWnd::CorrectMapPosition appwidth: " << Value(app_width) << " appheight: " << Value(app_height)
@@ -3657,8 +3669,8 @@ void MapWnd::Sanitize()
     ClearStarlaneRenderingBuffers();
 
     const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const GG::X APP_WIDTH = GG::GUI::GetGUI()->AppWidth();
-    const GG::Y APP_HEIGHT = GG::GUI::GetGUI()->AppHeight();
+    const GG::X APP_WIDTH = AppWidth();
+    const GG::Y APP_HEIGHT = AppHeight();
 
     GG::Pt sp_ul = GG::Pt(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y);
     GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());

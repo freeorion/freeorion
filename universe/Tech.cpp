@@ -463,7 +463,8 @@ TechManager::TechManager()
         }
         std::string error_str = "ERROR: The following categories were defined in techs.txt, but no "
             "techs were defined that fell within them:" + stream.str();
-        throw std::runtime_error(error_str.c_str());
+        Logger().errorStream() << error_str;
+        std::cerr << error_str << std::endl;
     }
 
     if (!categories_seen_in_techs.empty()) {
@@ -473,7 +474,8 @@ TechManager::TechManager()
         }
         std::string error_str = "ERROR: The following categories were never defined in techs.txt, but some "
             "techs were defined that fell within them:" + stream.str();
-        throw std::runtime_error(error_str.c_str());
+        Logger().errorStream() << error_str;
+        std::cerr << error_str << std::endl;
     }
 
     std::string illegal_dependency_str = FindIllegalDependencies();

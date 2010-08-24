@@ -695,11 +695,9 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(CHILD_WIDTHS, DETAIL_PANEL_HEIGHT);
 
-    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, GG::GUI::GetGUI()->AppHeight());
+    m_side_panel = new SidePanel(Width() - SIDEPANEL_WIDTH, GG::Y0, Height());
     m_side_panel->EnableSelection();
     m_side_panel->Hide();
-
-    m_map_view_hole = GG::Rect(GG::X0, GG::Y0, CHILD_WIDTHS + MAX_PLANET_DIAMETER, h);
 
     m_build_selector = new BuildSelector(CHILD_WIDTHS, BUILD_SELECTOR_HEIGHT);
     m_build_selector->MoveTo(GG::Pt(GG::X0, h - BUILD_SELECTOR_HEIGHT));
@@ -745,23 +743,12 @@ const std::pair<bool, bool>& BuildDesignatorWnd::GetAvailabilitiesShown() const
 
 bool BuildDesignatorWnd::InWindow(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_map_view_hole + UpperLeft();
-    return clip_rect.Contains(pt) ?
-        (m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt)) :
-        Wnd::InClient(pt);
+    return m_enc_detail_panel->InWindow(pt) || m_build_selector->InWindow(pt) || m_side_panel->InWindow(pt);
 }
 
 bool BuildDesignatorWnd::InClient(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_map_view_hole + UpperLeft();
-    return clip_rect.Contains(pt) ?
-        (m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt)) :
-        Wnd::InClient(pt);
-}
-
-GG::Rect BuildDesignatorWnd::MapViewHole() const
-{
-    return m_map_view_hole;
+    return m_enc_detail_panel->InClient(pt) || m_build_selector->InClient(pt) || m_side_panel->InClient(pt);
 }
 
 void BuildDesignatorWnd::CenterOnBuild(int queue_idx)

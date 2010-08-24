@@ -26,8 +26,6 @@ public:
 
     virtual bool    InWindow(const GG::Pt& pt) const;
     virtual bool    InClient(const GG::Pt& pt) const;
-
-    GG::Rect        MapViewHole() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -100,7 +98,6 @@ private:
     EncyclopediaDetailPanel*    m_enc_detail_panel;
     BuildSelector*              m_build_selector;
     SidePanel*                  m_side_panel;
-    GG::Rect                    m_map_view_hole;
     std::map<int, int>          m_system_default_planets;   //!< map from system id to id of planet to auto select when viewing each system
 };
 

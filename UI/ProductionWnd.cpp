@@ -254,60 +254,16 @@ ProductionWnd::~ProductionWnd()
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_build_designator_wnd->InWindow(pt) : GG::Wnd::InWindow(pt);
+    return m_production_info_panel->InWindow(pt) || m_queue_lb->InWindow(pt) || m_build_designator_wnd->InWindow(pt);
 }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
 {
-    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
-    return clip_rect.Contains(pt) ? m_build_designator_wnd->InClient(pt) : GG::Wnd::InClient(pt);
+    return m_production_info_panel->InClient(pt) || m_queue_lb->InClient(pt) || m_build_designator_wnd->InClient(pt);
 }
 
 void ProductionWnd::Render()
-{
-    GG::Rect clip_rect = m_build_designator_wnd->MapViewHole() + m_build_designator_wnd->UpperLeft();
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-
-    // use GL to draw the lines
-    glDisable(GL_TEXTURE_2D);
-    GLint initial_modes[2];
-    glGetIntegerv(GL_POLYGON_MODE, initial_modes);
-
-    // draw background
-    glPolygonMode(GL_BACK, GL_FILL);
-    glColor(ClientUI::WndColor());
-    glBegin(GL_QUADS);
-    glVertex(ul.x, ul.y);
-    glVertex(lr.x, ul.y);
-    glVertex(lr.x, clip_rect.ul.y);
-    glVertex(ul.x, clip_rect.ul.y);
-
-    glVertex(ul.x, clip_rect.ul.y);
-    glVertex(clip_rect.ul.x, clip_rect.ul.y);
-    glVertex(clip_rect.ul.x, clip_rect.lr.y);
-    glVertex(ul.x, clip_rect.lr.y);
-
-    glVertex(clip_rect.lr.x, clip_rect.ul.y);
-    glVertex(lr.x, clip_rect.ul.y);
-    glVertex(lr.x, clip_rect.lr.y);
-    glVertex(clip_rect.lr.x, clip_rect.lr.y);
-    glEnd();
-
-    glBegin(GL_POLYGON);
-    glVertex(ul.x, clip_rect.lr.y);
-    glVertex(lr.x, clip_rect.lr.y);
-    glVertex(lr.x, lr.y);
-    glVertex(ul.x, lr.y);
-    glVertex(ul.x, clip_rect.lr.y);
-    glEnd();
-
-    // reset this to whatever it was initially
-    glPolygonMode(GL_BACK, initial_modes[1]);
-
-    glEnable(GL_TEXTURE_2D);
-}
+{}
 
 void ProductionWnd::Refresh()
 {
