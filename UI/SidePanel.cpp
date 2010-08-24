@@ -599,6 +599,7 @@ namespace {
             m_system_id(system_id)
         {
             SetDragDropDataType("SystemID");
+            push_back(new OwnerColoredSystemName(m_system_id, SystemNameFontSize()));
         }
 
         int SystemID() const { return m_system_id; }
@@ -1693,6 +1694,9 @@ SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
     m_system_name->DisableDropArrow();
     m_system_name->SetStyle(GG::LIST_CENTER);
     m_system_name->SetInteriorColor(GG::Clr(0, 0, 0, 200));
+    m_system_name->SetNumCols(1);
+    m_system_name->SetColWidth(0, GG::X0);
+    m_system_name->LockColWidths();
     AttachChild(m_system_name);
 
     m_button_prev->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "leftarrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -1913,16 +1917,11 @@ void SidePanel::RefreshImpl()
     for (unsigned int i = 0; i < sys_vec.size(); i++) {
         const System* sys = sys_vec[i];
         int sys_id = sys->ID();
-        GG::ListBox::Row* row = new SystemRow(sys_id);
 
-        if (sys->Name().empty() && sys_id != s_system_id) {
-            delete row; // delete rows for systems that aren't known to this client, except the selected system
-            continue;
-        } else {
-            row->push_back(new OwnerColoredSystemName(sys_id, SystemNameFontSize()));
-        }
+        if (sys->Name().empty() && sys_id != s_system_id)
+            continue;   // skip rows for systems that aren't known to this client, except the selected system
 
-        GG::DropDownList::iterator latest_it = m_system_name->Insert(row);
+        GG::DropDownList::iterator latest_it = m_system_name->Insert(new SystemRow(sys_id));
         ++system_names_in_droplist;
 
         if (sys_id == s_system_id)
@@ -2053,6 +2052,11 @@ void SidePanel::DoLayout()
     lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), m_system_name->Height());
     m_system_name->SizeMove(ul, lr);
 
+    // system name droplist rows
+    GG::Pt row_size(ListRowSize());
+    for (GG::ListBox::iterator it = m_system_name->begin(); it != m_system_name->end(); ++it)
+        (*it)->Resize(row_size);
+
     // resize planet panel container
     ul = GG::Pt(BORDER_LEFT, PLANET_PANEL_TOP);
     lr = GG::Pt(ClientWidth() - 1, ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
@@ -2062,6 +2066,10 @@ void SidePanel::DoLayout()
     ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
     lr = ul + GG::Pt(ClientWidth() - EDGE_PAD - 1, m_system_resource_summary->Height());
     m_system_resource_summary->SizeMove(ul, lr);
+}
+
+GG::Pt SidePanel::ListRowSize() const {
+    return GG::Pt(m_system_name->Width() - ClientUI::ScrollWidth() - 5, m_system_name->Height());
 }
 
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)

@@ -91,6 +91,7 @@ private:
     class PlanetPanelContainer;
 
     void                DoLayout();
+    GG::Pt              ListRowSize() const;
 
     void                UpdateImpl();                   ///< updates contents quickly.  to be used when meters or other objects' data changes
     void                RefreshImpl();                  ///< fully refreshes contents.  to be used when objects are created, destroyed or added to system
