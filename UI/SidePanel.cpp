@@ -466,6 +466,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+
     void            Clear();
     void            SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
     void            SelectPlanet(int planet_id);        //!< programatically selects a planet with id \a planet_id
@@ -1436,6 +1438,11 @@ void SidePanel::PlanetPanelContainer::MouseWheel(const GG::Pt& pt, int move, GG:
         if (initial_pos != m_vscroll->PosnRange())
             GG::SignalScroll(*m_vscroll, true);
     }
+}
+
+void SidePanel::PlanetPanelContainer::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+{
+    ForwardEventToParent();
 }
 
 int SidePanel::PlanetPanelContainer::ScrollPosition() const
