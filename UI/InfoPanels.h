@@ -48,6 +48,7 @@ public:
 
     virtual void        Render();
     virtual void        MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -93,6 +94,7 @@ public:
 
     virtual void    Render();
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void            Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void            Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -142,6 +144,7 @@ public:
 
     virtual void            Render();
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                    Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                    Refresh();                      ///< updates, redoes layout, resizes indicator
@@ -186,6 +189,7 @@ public:
 
     virtual void    Render();
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void            Refresh();                              ///< recreates indicators, redoes layout, resizes
 
@@ -242,6 +246,7 @@ public:
     /** \name Mutators */ //@{
     virtual void            Render();
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                    Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
     //@}

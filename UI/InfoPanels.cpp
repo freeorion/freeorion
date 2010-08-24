@@ -263,13 +263,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     // attach and show meter bars and large resource indicators
     GG::Y top = UpperLeft().y;
 
-    m_multi_icon_value_indicator = new MultiIconValueIndicator(Width() - 2*EDGE_PAD, m_popcenter_id, meters);
-    m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), EDGE_PAD - top));
-    m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
-
-    m_multi_meter_status_bar = new MultiMeterStatusBar(Width() - 2*EDGE_PAD, m_popcenter_id, meters);
-    m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
-    m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
+    m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
+    m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
 
 
     // determine if this panel has been created yet.
@@ -295,6 +290,16 @@ PopulationPanel::~PopulationPanel()
 void PopulationPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void PopulationPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoExpandCollapseLayout();
+}
+
 void PopulationPanel::ExpandCollapseButtonPressed()
 {
     ExpandCollapse(!s_expanded_map[m_popcenter_id]);
@@ -310,11 +315,16 @@ void PopulationPanel::ExpandCollapse(bool expanded)
 
 void PopulationPanel::DoExpandCollapseLayout()
 {
+    // initially detach most things.  Some will be reattached later.
+    DetachChild(m_pop_stat);    DetachChild(m_health_stat); DetachChild(m_food_consumption_stat);
+
+    // detach / hide meter bars and large resource indicators
+    DetachChild(m_multi_meter_status_bar);
+    DetachChild(m_multi_icon_value_indicator);
+
+
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_popcenter_id]) {
-        // detach / hide meter bars and large resource indicators
-        DetachChild(m_multi_meter_status_bar);
-        DetachChild(m_multi_icon_value_indicator);
 
         std::vector<StatisticIcon*> icons;
         icons.push_back(m_pop_stat);
@@ -336,14 +346,19 @@ void PopulationPanel::DoExpandCollapseLayout()
         Resize(GG::Pt(Width(), std::max(MeterIconSize().y, m_expand_button->Height())));
 
     } else {
-        // detach statistic icons
-        DetachChild(m_health_stat); DetachChild(m_pop_stat); DetachChild(m_food_consumption_stat);
+        // attach and show meter bars and large resource indicators
+        GG::Y top = UpperLeft().y;
 
         AttachChild(m_multi_icon_value_indicator);
+        m_multi_icon_value_indicator->MoveTo(GG::Pt(GG::X(EDGE_PAD), GG::Y(EDGE_PAD)));
+        m_multi_icon_value_indicator->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_icon_value_indicator->Height()));
+
         AttachChild(m_multi_meter_status_bar);
+        m_multi_meter_status_bar->MoveTo(GG::Pt(GG::X(EDGE_PAD), m_multi_icon_value_indicator->LowerRight().y + EDGE_PAD - top));
+        m_multi_meter_status_bar->Resize(GG::Pt(Width() - 2*EDGE_PAD, m_multi_meter_status_bar->Height()));
+
         MoveChildUp(m_expand_button);
 
-        GG::Y top = UpperLeft().y;
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
 
@@ -669,6 +684,8 @@ void ResourcePanel::DoExpandCollapseLayout() {
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
 
+    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
+
     // update appearance of expand/collapse button
     if (s_expanded_map[m_rescenter_id]) {
         m_expand_button->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "uparrownormal.png"   ), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
@@ -742,6 +759,16 @@ void ResourcePanel::Render()
 
 void ResourcePanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
+
+void ResourcePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoExpandCollapseLayout();
+}
 
 void ResourcePanel::Update()
 {
@@ -1058,6 +1085,16 @@ void MilitaryPanel::Render()
 void MilitaryPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void MilitaryPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoExpandCollapseLayout();
+}
+
 void MilitaryPanel::Update()
 {
     const UniverseObject* obj = GetObject(m_planet_id);
@@ -1172,6 +1209,8 @@ void MilitaryPanel::DoExpandCollapseLayout()
 
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->LowerRight().y + EDGE_PAD - top));
     }
+
+    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     // update appearance of expand/collapse button
     if (s_expanded_map[m_planet_id]) {
@@ -1590,6 +1629,16 @@ void BuildingsPanel::Render()
 void BuildingsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
 
+void BuildingsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoExpandCollapseLayout();
+}
+
 void BuildingsPanel::Update()
 {
     //std::cout << "BuildingsPanel::Update" << std::endl;
@@ -1736,6 +1785,8 @@ void BuildingsPanel::DoExpandCollapseLayout()
     }
 
     Resize(GG::Pt(Width(), height));
+
+    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     // update appearance of expand/collapse button
     if (s_expanded_map[m_planet_id]) {
@@ -1960,6 +2011,16 @@ void SpecialsPanel::Render()
 
 void SpecialsPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 { ForwardEventToParent(); }
+
+void SpecialsPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        Update();
+}
 
 void SpecialsPanel::Update()
 {

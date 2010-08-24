@@ -415,6 +415,8 @@ public:
     virtual void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
     virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
+    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
     void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
     //@}
 
@@ -1148,6 +1150,16 @@ void SidePanel::PlanetPanel::Refresh()
     // which should be connected to SidePanel::PlanetPanel::DoLayout
 }
 
+void SidePanel::PlanetPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
+{
+    GG::Pt old_size = GG::Wnd::Size();
+
+    GG::Wnd::SizeMove(ul, lr);
+
+    if (old_size != GG::Wnd::Size())
+        DoLayout();
+}
+
 void SidePanel::PlanetPanel::SetFocus(const std::string& focus)
 {
     const Planet* planet = GetObject<Planet>(m_planet_id);
@@ -1495,8 +1507,11 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout(GG::Y top)
 
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
         PlanetPanel* panel = *it;
-        panel->MoveTo(GG::Pt(x, y));
-        y += panel->Height() + EDGE_PAD;               // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
+        const GG::Y PANEL_HEIGHT = panel->Height(); // panel height may be different for each panel depending whether that panel has been previously left expanded or collapsed
+        GG::Pt panel_ul(x, y);
+        GG::Pt panel_lr(Width() - m_vscroll->Width(), y + PANEL_HEIGHT);
+        panel->SizeMove(panel_ul, panel_lr);
+        y += PANEL_HEIGHT + EDGE_PAD;
     }
 
     GG::Y available_height = Height();
@@ -1633,7 +1648,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
 
     GG::Wnd::SizeMove(ul, lr);
 
-    if (Visible() && old_size != GG::Wnd::Size())
+    if (old_size != GG::Wnd::Size())
         DoLayout();
 }
 
