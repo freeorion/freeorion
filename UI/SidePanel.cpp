@@ -1769,8 +1769,6 @@ void SidePanel::Render()
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
 
-    std::cout << ul.x << ", " << ul.y << std::endl;
-
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);
 
