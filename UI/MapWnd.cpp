@@ -53,7 +53,7 @@ namespace {
     const GG::Y     SITREP_PANEL_HEIGHT(200);
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);
     const GG::Y     SCALE_LINE_HEIGHT(20);
-    const GG::X     SCALE_LINE_MAX_WIDTH(200);
+    const GG::X     SCALE_LINE_MAX_WIDTH(240);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
     const GG::Y     TOOLBAR_HEIGHT(30);
@@ -243,7 +243,7 @@ public:
     MapScaleLine(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
         m_scale_factor(1.0),
-        m_line_right_x(GG::X1),
+        m_line_length(GG::X1),
         m_label(0),
         m_enabled(false)
     {
@@ -259,9 +259,8 @@ public:
 
         // use GL to draw line and ticks and labels to indicte a length on the map
         GG::Pt ul = UpperLeft();
-        GG::Pt lr = LowerRight();
-        lr.x = m_line_right_x;
-        ul.y = (ul.y + lr.y)/2;
+        GG::Pt lr = ul + GG::Pt(m_line_length, Height());
+
         glColor(GG::CLR_WHITE);
         glLineWidth(2.0);
 
@@ -293,7 +292,6 @@ public:
         // length in universe units that could be shown if full AVAILABLE_WIDTH was used
         double max_shown_length = AVAILABLE_WIDTH / m_scale_factor;
 
-
         // select an actual shown length in universe units by reducing max_shown_length to a nice round number,
         // where nice round numbers are numbers beginning with 1, 2 or 5
 
@@ -308,12 +306,12 @@ public:
             shown_length *= 2.0;
 
         // determine end of drawn scale line
-        m_line_right_x = GG::X(static_cast<int>(shown_length * m_scale_factor));
+        m_line_length = GG::X(static_cast<int>(shown_length * m_scale_factor));
 
         // update text
         std::string label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
                                                 boost::lexical_cast<std::string>(shown_length));
-        m_label->Resize(GG::Pt(GG::X(m_line_right_x), Height()));
+        m_label->Resize(GG::Pt(GG::X(m_line_length), Height()));
         m_label->SetText(label_text);
     }
 private:
@@ -325,7 +323,7 @@ private:
             DetachChild(m_label);
     }
     double              m_scale_factor;
-    GG::X               m_line_right_x;
+    GG::X               m_line_length;
     GG::TextControl*    m_label;
     bool                m_enabled;
 };
@@ -3380,7 +3378,7 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     if (m_scale_line)
         m_scale_line->Update(ZoomFactor());
     if (update_slide && m_zoom_slider)
-        m_zoom_slider->SlideTo(m_zoom_steps_in);
+        m_zoom_slider->SlideTo(static_cast<int>(m_zoom_steps_in));
 
     ZoomedSignal(ZoomFactor());
 }
@@ -3837,7 +3835,6 @@ bool MapWnd::OpenChatWindow()
 bool MapWnd::EndTurn()
 {
     Logger().debugStream() << "MapWnd::EndTurn";
-    Cleanup();
     HumanClientApp::GetApp()->StartTurn();
     return true;
 }
