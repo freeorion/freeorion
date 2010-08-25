@@ -574,6 +574,7 @@ MapWnd::MapWnd() :
 
     // system-view side panel
     m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
+    GG::GUI::GetGUI()->Register(m_side_panel);
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
     GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
@@ -1582,8 +1583,6 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
 {
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
-    GG::Pt final_move = move_to_pt - ClientUpperLeft();
-    m_side_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
     m_dragged = true;
@@ -1601,7 +1600,6 @@ void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys)
     if (!m_dragged && !m_in_production_view_mode) {
         SelectSystem(UniverseObject::INVALID_OBJECT_ID);
         m_side_panel->Hide();
-        DetachChild(m_side_panel);
     }
     m_dragged = false;
 }
@@ -1617,7 +1615,6 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
         if (m_side_panel->Visible()) {
             m_side_panel->Hide();
-            DetachChild(m_side_panel);
             return;
         }
     }
@@ -1750,9 +1747,6 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     RefreshFleetSignals();
-
-
-    MoveChildUp(m_side_panel);
 
 
     // set turn button to current turn
@@ -2431,13 +2425,11 @@ void MapWnd::RestoreFromSaveData(const SaveGameUIData& data)
     GG::Pt map_ul = GG::Pt(GG::X(data.map_left), GG::Y(data.map_top));
     GG::Pt map_move = map_ul - ul;
     OffsetMove(map_move);
-    m_side_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
-    m_side_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
@@ -2464,13 +2456,11 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()), 
                              static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
-    m_side_panel->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
-    m_side_panel->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
 }
@@ -2611,12 +2601,9 @@ void MapWnd::SelectSystem(int system_id)
     if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         // no selected system.  hide sidepanel.
         m_side_panel->Hide();
-        DetachChild(m_side_panel);
 
     } else {
         // selected a valid system, show sidepanel
-        AttachChild(m_side_panel);
-        MoveChildUp(m_side_panel);
         m_side_panel->Show();
     }
 }
@@ -3381,7 +3368,6 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
                     static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
-    m_side_panel->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -3922,7 +3908,6 @@ void MapWnd::HideSidePanel()
 {
     m_sidepanel_open_before_showing_other = m_side_panel->Visible();   // a kludge, so the sidepanel will reappear after opening and closing a full screen wnd
     m_side_panel->Hide();
-    DetachChild(m_side_panel);
 }
 
 void MapWnd::RestoreSidePanel()
@@ -4076,7 +4061,6 @@ bool MapWnd::CloseSystemView()
 {
     SelectSystem(UniverseObject::INVALID_OBJECT_ID);
     m_side_panel->Hide();   // redundant, but safer to keep in case the behavior of SelectSystem changes
-    DetachChild(m_side_panel);
     return true;
 }
 

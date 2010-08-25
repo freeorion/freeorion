@@ -1675,7 +1675,8 @@ boost::signal<void (int)>                   SidePanel::SystemSelectedSignal;
 
 
 SidePanel::SidePanel(GG::X x, GG::Y y, GG::Y h) :
-    CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE),
+    CUIWnd("SidePanel", x, y, GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width")), h,
+           GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP),
     m_system_name(0),
     m_button_prev(0),
     m_button_next(0),
@@ -1767,6 +1768,8 @@ void SidePanel::Render()
 {
     GG::Pt ul = UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), GG::Y0);
     GG::Pt lr = LowerRight();
+
+    std::cout << ul.x << ", " << ul.y << std::endl;
 
     GG::Pt cl_ul = ClientUpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter() + 2), PLANET_PANEL_TOP);
     GG::Pt cl_lr = lr - GG::Pt(BORDER_RIGHT, BORDER_BOTTOM);

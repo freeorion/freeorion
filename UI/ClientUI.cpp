@@ -4,7 +4,6 @@
 #include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
-#include "SidePanel.h"
 #include "Sound.h"
 #include "../util/AppInterface.h"
 
