@@ -646,7 +646,7 @@ MapWnd::MapWnd() :
     // Zoom scale line
     m_scale_line = new MapScaleLine(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
                                     SCALE_LINE_MAX_WIDTH, SCALE_LINE_HEIGHT);
-    m_toolbar->AttachChild(m_scale_line);
+    AttachChild(m_scale_line);
     m_scale_line->Update(ZoomFactor());
 
 
@@ -1582,6 +1582,9 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
 
+    GG::Pt final_move = move_to_pt - ClientUpperLeft();
+    m_scale_line->OffsetMove(-final_move);
+
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
     m_dragged = true;
 }
@@ -1745,6 +1748,9 @@ void MapWnd::InitTurn(int turn_number)
     }
 
     RefreshFleetSignals();
+
+
+    MoveChildUp(m_scale_line);
 
 
     // set turn button to current turn
@@ -2451,9 +2457,10 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt ul = ClientUpperLeft();
     GG::X_d current_x = (AppWidth() / 2 - ul.x) / ZoomFactor();
     GG::Y_d current_y = (AppHeight() / 2 - ul.y) / ZoomFactor();
-    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()), 
+    GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()),
                              static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
+    m_scale_line->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
@@ -2461,6 +2468,7 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt final_move = move_to_pt - ul;
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
+    m_scale_line->OffsetMove(-final_move);
 }
 
 void MapWnd::ShowTech(const std::string& tech_name)
@@ -3366,14 +3374,16 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
                     static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
+    m_scale_line->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
-    m_side_panel->OffsetMove(-final_move);
+    m_scale_line->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
+    m_scale_line->OffsetMove(-final_move);
 
     if (m_scale_line)
         m_scale_line->Update(ZoomFactor());
