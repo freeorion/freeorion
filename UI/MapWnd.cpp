@@ -56,6 +56,7 @@ namespace {
     const GG::X     SCALE_LINE_MAX_WIDTH(200);
     const int       MIN_SYSTEM_NAME_SIZE = 10;
     const int       LAYOUT_MARGIN = 5;
+    const GG::Y     TOOLBAR_HEIGHT(30);
 
     struct ClrLess
     {
@@ -225,6 +226,10 @@ namespace {
         if (HumanClientApp* app = HumanClientApp::GetApp())
             return app->AppHeight();
         return GG::Y0;
+    }
+
+    GG::X SidePanelWidth() {
+        return GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
     }
 }
 
@@ -562,17 +567,13 @@ MapWnd::MapWnd() :
     Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
 
     // toolbar
-    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), GG::Y(30));
+    m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), TOOLBAR_HEIGHT);
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
 
 
     // system-view side panel
-    const GG::X SIDEPANEL_WIDTH(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const GG::X APP_WIDTH(AppWidth());
-    const GG::Y APP_HEIGHT(AppHeight());
-
-    m_side_panel = new SidePanel(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y, APP_HEIGHT - m_toolbar->Height());
+    m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
 
     GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem, this);
     GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet, this);
@@ -602,14 +603,14 @@ MapWnd::MapWnd() :
 
 
     // research window
-    m_research_wnd = new ResearchWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
+    m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
     m_research_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_research_wnd);
     m_research_wnd->Hide();
 
 
     // production window
-    m_production_wnd = new ProductionWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
+    m_production_wnd = new ProductionWnd(AppWidth(), AppHeight() - m_toolbar->Height());
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
@@ -618,7 +619,7 @@ MapWnd::MapWnd() :
 
 
     // design window
-    m_design_wnd = new DesignWnd(APP_WIDTH, APP_HEIGHT - m_toolbar->Height());
+    m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
@@ -815,6 +816,9 @@ MapWnd::MapWnd() :
             &MapWnd::SelectedFleetsChanged,     this);
     Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedShipsChangedSignal,
             &MapWnd::SelectedShipsChanged,      this);
+
+
+    DoLayout();
 }
 
 MapWnd::~MapWnd()
@@ -830,6 +834,86 @@ MapWnd::~MapWnd()
 
 void MapWnd::DoLayout()
 {
+    m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
+
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    const GG::X BUTTON_TOTAL_MARGIN(8);
+    const GG::Y BUTTON_TOP(LAYOUT_MARGIN);
+    const GG::Y BUTTON_BOTTOM(TOOLBAR_HEIGHT - LAYOUT_MARGIN);
+
+
+    // menu button
+    GG::X right = m_toolbar->LowerRight().x - GG::X(LAYOUT_MARGIN);
+    GG::X width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
+    GG::X left = right - width;
+    m_btn_menu->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // Encyclo"pedia" button
+    right = left - GG::X(LAYOUT_MARGIN);
+    width = font->TextExtent(UserString("MAP_BTN_PEDIA")).x + BUTTON_TOTAL_MARGIN;
+    left = right - width;
+    m_btn_pedia->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // Design button
+    right = left - GG::X(LAYOUT_MARGIN);
+    width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
+    left = right - width;
+    m_btn_design->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // Production button
+    right = left - GG::X(LAYOUT_MARGIN);
+    width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
+    left = right - width;
+    m_btn_production->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // Research button
+    right = left - GG::X(LAYOUT_MARGIN);
+    width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
+    left = right - width;
+    m_btn_research->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // SitRep button
+    right = left - GG::X(LAYOUT_MARGIN);
+    width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
+    left = right - width;
+    m_btn_siterep->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+    // Turn button
+    left = GG::X(LAYOUT_MARGIN);
+    std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
+    width = font->TextExtent(turn_button_longest_reasonable_text).x + BUTTON_TOTAL_MARGIN;
+    right = left + width;
+    m_turn_update->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
+
+
+    // resources
+    const GG::X ICON_DUAL_WIDTH(100);
+    const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
+
+
+    //m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    //                                 ClientUI::MeterIcon(METER_POPULATION),
+    //                                 0,0,3,3,false,true);
+
+    //m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
+    //                               ClientUI::MeterIcon(METER_INDUSTRY),
+    //                               0,3,false);
+
+    //m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
+    //                               ClientUI::MeterIcon(METER_RESEARCH),
+    //                               0,3,false);
+
+    //m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    //                            ClientUI::MeterIcon(METER_TRADE),
+    //                            0,0,3,3,false,true);
+
+    //m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    //                              ClientUI::MeterIcon(METER_MINING),
+    //                              0,0,3,3,false,true);
+
+    //m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    //                           ClientUI::MeterIcon(METER_FARMING),
+    //                           0,0,3,3,false,true);
 }
 
 GG::Pt MapWnd::ClientUpperLeft() const
@@ -3620,6 +3704,7 @@ void MapWnd::HandleEmpireElimination(int empire_id)
 
 void MapWnd::UniverseObjectDeleted(const UniverseObject *obj)
 {
+    Logger().debugStream() << "MapWnd::UniverseObjectDeleted";
     if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
         std::map<int, MovementLineData>::iterator it1 = m_fleet_lines.find(fleet->ID());
         if (it1 != m_fleet_lines.end())
@@ -3668,12 +3753,9 @@ void MapWnd::Sanitize()
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
 
-    const GG::X SIDEPANEL_WIDTH = GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const GG::X APP_WIDTH = AppWidth();
-    const GG::Y APP_HEIGHT = AppHeight();
 
-    GG::Pt sp_ul = GG::Pt(APP_WIDTH - SIDEPANEL_WIDTH, m_toolbar->LowerRight().y);
-    GG::Pt sp_lr = sp_ul + GG::Pt(SIDEPANEL_WIDTH, m_side_panel->Height());
+    GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y);
+    GG::Pt sp_lr = sp_ul + GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height());
     m_side_panel->SizeMove(sp_ul, sp_lr);
 
     m_sitrep_panel->MoveTo(GG::Pt(SCALE_LINE_MAX_WIDTH + LAYOUT_MARGIN, m_toolbar->LowerRight().y));
@@ -3681,7 +3763,7 @@ void MapWnd::Sanitize()
 
     m_pedia_panel->MoveTo(GG::Pt(m_sitrep_panel->UpperLeft().x, m_sitrep_panel->LowerRight().y));
 
-    MoveTo(GG::Pt(-APP_WIDTH, -APP_HEIGHT));
+    MoveTo(GG::Pt(-AppWidth(), -AppHeight()));
     m_zoom_steps_in = 0.0;
     m_research_wnd->Sanitize();
     m_production_wnd->Sanitize();

@@ -78,6 +78,9 @@ private:
 
     void            HandleMessage(Message& msg);
     void            HandleSaveGameDataRequest();
+
+    void            HandleWindowResize(GG::X w, GG::Y h);
+
     void            StartGame();
     void            Autosave(bool new_game);            ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
     void            EndGame(bool suppress_FSM_reset);

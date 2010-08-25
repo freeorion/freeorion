@@ -216,6 +216,10 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
+
+    GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
+
+
 #ifdef FREEORION_WIN32
     GLenum error = glewInit();
     assert(error == GLEW_OK);
@@ -636,6 +640,13 @@ void HumanClientApp::HandleSaveGameDataRequest()
     Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
 }
 
+void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
+{
+    if (ClientUI* ui = ClientUI::GetClientUI())
+        if (MapWnd* map_wnd = ui->GetMapWnd())
+            map_wnd->DoLayout();
+}
+
 void HumanClientApp::StartGame()
 {
     m_game_started = true;
@@ -708,8 +719,8 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     m_game_started = false;
     Networking().DisconnectFromServer();
     m_server_process.RequestTermination();
-    SetPlayerID(-1);
-    SetEmpireID(-1);
+    SetPlayerID(Networking::INVALID_PLAYER_ID);
+    SetEmpireID(ALL_EMPIRES);
     m_ui->GetMapWnd()->Sanitize();
 
     m_universe.Clear();

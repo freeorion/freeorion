@@ -326,7 +326,7 @@ namespace {
         glPopAttrib();
     }
 
-    int MaxPlanetDiameter() {
+    int         MaxPlanetDiameter() {
         return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     }
 
