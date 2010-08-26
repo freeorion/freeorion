@@ -421,11 +421,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool InWindow(const GG::Pt& pt) const;
+    virtual bool    InWindow(const GG::Pt& pt) const;
     //@}
 
     /** \name Mutators */ //@{
-    void Render();
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    void            Render();
     //@}
 
 private:

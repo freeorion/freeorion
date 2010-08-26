@@ -1060,7 +1060,7 @@ GG::Clr StatisticIcon::ValueColor(int index) const
 // class CUIToolBar
 ///////////////////////////////////////
 CUIToolBar::CUIToolBar(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-    GG::Control(x, y, w, h, GG::ONTOP | GG::INTERACTIVE)
+    GG::Control(x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE)
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const
@@ -1070,6 +1070,14 @@ bool CUIToolBar::InWindow(const GG::Pt& pt) const
         if ((*it)->InWindow(pt))
             return true;
     return GG::Wnd::InWindow(pt);
+}
+
+void CUIToolBar::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
+{
+    GG::Pt ul = UpperLeft(), lr = LowerRight();
+    GG::Pt final_move(std::max(-ul.x, std::min(move.x, GG::GUI::GetGUI()->AppWidth() - 1 - lr.x)),
+                      std::max(-ul.y, std::min(move.y, GG::GUI::GetGUI()->AppHeight() - 1 - lr.y)));
+    GG::Wnd::LDrag(pt + final_move - move, final_move, mod_keys);
 }
 
 void CUIToolBar::Render()
