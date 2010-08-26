@@ -1763,9 +1763,6 @@ void MapWnd::InitTurn(int turn_number)
 
     // are there any sitreps to show?
     m_sitrep_panel->Update();
-    // HACK! The first time this SitRepPanel gets an update, the report row(s) are misaligned.  I have no idea why, and
-    // I am sick of dealing with it, so I'm forcing another update in order to force it to behave.
-    m_sitrep_panel->Update();
 
     //empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire->NumSitRepEntries() > 0)
@@ -3858,6 +3855,9 @@ void MapWnd::ShowSitRep()
     HideResearch();
     HideProduction();
     HideDesign();
+
+    // update sitrep window
+    m_sitrep_panel->Update();
 
     // show the sitrep window
     m_sitrep_panel->Show();

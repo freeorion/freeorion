@@ -89,7 +89,7 @@ void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Fla
 
 void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
-    GG::Pt old_size = GG::Wnd::Size();
+    GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
     CUIWnd::SizeMove(ul, lr);
     m_sitreps_lb->SizeMove(GG::Pt(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y),

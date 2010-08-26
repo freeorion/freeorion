@@ -545,7 +545,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn";
-    Client().m_ui->ShowMap();
+    Client().m_ui->GetMapWnd()->Show();
     Client().m_ui->InitTurn(Client().CurrentTurn());
     Client().m_ui->GetMapWnd()->ReselectLastSystem();
     //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings

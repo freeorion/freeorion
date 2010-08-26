@@ -457,6 +457,12 @@ Sets UI window background color.
 OPTIONS_DB_UI_TEXT_COLOR
 Sets UI text color.
 
+OPTIONS_DB_UI_DEFAULT_LINK_COLOR
+Sets UI default link color.
+
+OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
+Sets UI rollover link color.
+
 OPTIONS_DB_UI_CTRL_COLOR
 Sets UI control background color.
 
@@ -1308,6 +1314,12 @@ Border
 
 OPTIONS_TEXT_COLOR
 Text
+
+OPTIONS_DEFAULT_LINK_COLOR
+Default links
+
+OPTIONS_ROLLOVER_LINK_COLOR
+Rollover links
 
 OPTIONS_HIGHLIGHT_COLOR
 Selection highlighting

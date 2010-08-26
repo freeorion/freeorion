@@ -368,7 +368,13 @@ OPTIONS_DB_UI_WND_COLOR
 Sets UI window color.
 
 OPTIONS_DB_UI_TEXT_COLOR
-Sets UI text color.
+Textfarbe setzen.
+
+OPTIONS_DB_UI_DEFAULT_LINK_COLOR
+Farbe der Links setzen.
+
+OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
+Farbe der Links beim Maus-Rollover setzen.
 
 OPTIONS_DB_UI_CTRL_COLOR
 Sets UI control color.
@@ -1161,6 +1167,12 @@ Kante
 
 OPTIONS_TEXT_COLOR
 Text
+
+OPTIONS_DEFAULT_LINK_COLOR
+Links
+
+OPTIONS_ROLLOVER_LINK_COLOR
+Links beim Maus-Rollover
 
 OPTIONS_EDIT_COLORS
 Edit Controls

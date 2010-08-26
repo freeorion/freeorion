@@ -306,6 +306,15 @@ OPTIONS_DB_UI_WND_COLOR
 OPTIONS_DB_UI_TEXT_COLOR
 Установить цвет текста интерфейса.
 
+OPTIONS_DB_UI_TEXT_COLOR
+Установить цвет текста интерфейса.
+
+OPTIONS_DB_UI_DEFAULT_LINK_COLOR
+Установить цвет текста ссылок.
+
+OPTIONS_DB_UI_ROLLOVER_LINK_COLOR
+Установить цвет текста ссылок при наведении курсора.
+
 OPTIONS_DB_UI_CTRL_COLOR
 Устновить цвет контроля интерфейса.
 
@@ -1042,6 +1051,12 @@ OPTIONS_BORDER_COLOR
 
 OPTIONS_TEXT_COLOR
 Текст
+
+OPTIONS_DEFAULT_LINK_COLOR
+Ссылки
+
+OPTIONS_ROLLOVER_LINK_COLOR
+Ссылки при наведении курсора
 
 OPTIONS_EDIT_COLORS
 Цвет при редактировании

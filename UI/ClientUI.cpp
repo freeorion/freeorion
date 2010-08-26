@@ -58,6 +58,8 @@ int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
 
 GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr(); }
+GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<StreamableColor>("UI.default-link-color").ToClr(); }
+GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<StreamableColor>("UI.rollover-link-color").ToClr(); }
 
 // windows
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr(); }
@@ -417,6 +419,8 @@ namespace {
         db.Add("UI.state-button-color",         "OPTIONS_DB_UI_STATE_BUTTON_COLOR",         StreamableColor(GG::Clr(0, 127, 0, 255)),       Validator<StreamableColor>());
 
         db.Add("UI.text-color",                 "OPTIONS_DB_UI_TEXT_COLOR",                 StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
+        db.Add("UI.default-link-color",         "OPTIONS_DB_UI_DEFAULT_LINK_COLOR",         StreamableColor(GG::Clr(80, 255, 128, 255)),    Validator<StreamableColor>());
+        db.Add("UI.rollover-link-color",        "OPTIONS_DB_UI_ROLLOVER_LINK_COLOR",        StreamableColor(GG::Clr(192, 80, 255, 255)),    Validator<StreamableColor>());
 
         db.Add("UI.known-tech",                 "OPTIONS_DB_UI_KNOWN_TECH",                 StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
         db.Add("UI.known-tech-border",          "OPTIONS_DB_UI_KNOWN_TECH_BORDER",          StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
@@ -620,9 +624,6 @@ void ClientUI::InitTurn(int turn_number)
 
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 { m_map_wnd->RestoreFromSaveData(ui_data); }
-
-void ClientUI::ShowMap()
-{ m_map_wnd->Show(); }
 
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }

@@ -50,35 +50,33 @@ public:
 
     //! \name Accessors //!@{
     MapWnd* GetMapWnd();                                    //!< Returns the main map window (may be null).
-    void GetSaveGameUIData(SaveGameUIData& data) const;     //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    void    GetSaveGameUIData(SaveGameUIData& data) const;  //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
 
     //! \name Mutators //!@{
-    void InitTurn(int turn_number);                         //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
-    void RestoreFromSaveData(const SaveGameUIData& elem);   //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
+    void    InitTurn(int turn_number);                                  //!< resets all active controls to use the latest data when it has been changed at the beginning of a new turn
+    void    RestoreFromSaveData(const SaveGameUIData& elem);            //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
 
-    void ShowMap();                     //!< Makes the Map Screen visible
+    bool    ZoomToPlanet(int id);                                       //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToSystem(int id);                                       //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
+    bool    ZoomToFleet(int id);                                        //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool    ZoomToShip(int id);                                         //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
+    bool    ZoomToBuilding(int id);                                     //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
 
-    bool ZoomToPlanet(int id);                  //!< Zooms to a particular planet on the galaxy map and opens the sidepanel to show it
-    bool ZoomToSystem(int id);                  //!< Zooms to a particular system on the galaxy map and opens the sidepanel to show it
-    bool ZoomToFleet(int id);                   //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
-    bool ZoomToShip(int id);                    //!< Zooms to a particular ship on the galaxy map and opens its fleet and/or ship window
-    bool ZoomToBuilding(int id);                //!< Zooms to a particular building on the galaxy map and opens the sidepanel to show it
+    void    ZoomToSystem(const System* system);                         //!< Zooms to a particular system on the galaxy map
+    void    ZoomToFleet(const Fleet* fleet);                            //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
-    void ZoomToSystem(const System* system);    //!< Zooms to a particular system on the galaxy map
-    void ZoomToFleet(const Fleet* fleet);       //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    bool    ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
+    bool    ZoomToBuildingType(const std::string& building_type_name); //!< Opens the production screen and presents a description of the given building type
+    bool    ZoomToSpecial(const std::string& special_name);            //!< Opens the ??? screen and presents a description of the given special
+    bool    ZoomToShipHull(const std::string& hull_name);              //!< Opens the design screen and presents a description of the given hull type
+    bool    ZoomToShipPart(const std::string& part_name);              //!< Opens the design screen and presents a description of the given part type
+    bool    ZoomToSpecies(const std::string& species_name);            //!< Opens the ??? screen and presents a description of the given species
 
-    bool ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
-    bool ZoomToBuildingType(const std::string& building_type_name); //!< Opens the production screen and presents a description of the given building type
-    bool ZoomToSpecial(const std::string& special_name);            //!< Opens the ??? screen and presents a description of the given special
-    bool ZoomToShipHull(const std::string& hull_name);              //!< Opens the design screen and presents a description of the given hull type
-    bool ZoomToShipPart(const std::string& part_name);              //!< Opens the design screen and presents a description of the given part type
-    bool ZoomToSpecies(const std::string& species_name);            //!< Opens the ??? screen and presents a description of the given species
+    bool    ZoomToShipDesign(int design_id);                           //!< Opens the design screen and presents a description of the given ship design
+    bool    ZoomToEmpire(int empire_id);                               //!< Opens the ??? screen and presents a description of the given empire
 
-    bool ZoomToShipDesign(int design_id);                           //!< Opens the design screen and presents a description of the given ship design
-    bool ZoomToEmpire(int empire_id);                               //!< Opens the ??? screen and presents a description of the given empire
-
-    bool ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia window and presents the entry for the given term
+    bool    ZoomToEncyclopediaEntry(const std::string& str);           //!< Opens the encyclodedia window and presents the entry for the given term
 
     /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
     boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
@@ -127,6 +125,8 @@ public:
     static int          TitlePts();             //!< default point size to use for window title
 
     static GG::Clr      TextColor();            //!< color of UI text
+    static GG::Clr      DefaultLinkColor();     //!< default color of UI links
+    static GG::Clr      RolloverLinkColor();    //!< rollover color of UI links
 
     // generic UI windows
     static GG::Clr      WndColor();             //!< background color of a UI window

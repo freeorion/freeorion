@@ -789,6 +789,8 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_PAGE_COLORS"));
     BeginSection(UserString("OPTIONS_GENERAL_COLORS"));
     ColorOption("UI.text-color",                    UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption("UI.default-link-color",            UserString("OPTIONS_DEFAULT_LINK_COLOR"));
+    ColorOption("UI.rollover-link-color",           UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
     EndSection();
     BeginSection(UserString("OPTIONS_WINDOW_COLORS"));
     ColorOption("UI.wnd-color",                     UserString("OPTIONS_FILL_COLOR"));

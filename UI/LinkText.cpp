@@ -10,12 +10,17 @@
 namespace {
     static const bool RENDER_DEBUGGING_LINK_RECTS = false;
 
-    // format tag to use when a link is not moused over, to indicate it is a link as distinct from normal text
-    static const std::string LINK_DEFAULT_FORMAT_TAG = "<rgba 80 255 128 255>";
-    static const std::string LINK_DEFAULT_FORMAT_CLOSE = "</rgba>";
-    // format tag to use when a link is moused over, to respond to the user and indicate that the link is clickable
-    static const std::string LINK_ROLLOVER_FORMAT_TAG = "<rgba 192 80 255 255>";
-    static const std::string LINK_ROLLOVER_FORMAT_CLOSE = "</rgba>";
+    // closing format tag
+    static const std::string LINK_FORMAT_CLOSE = "</rgba>";
+
+    std::string LinkDefaultFormatTag() {
+        return GG::RgbaTag(ClientUI::DefaultLinkColor());
+    }
+
+    std::string LinkRolloverFormatTag() {
+        return GG::RgbaTag(ClientUI::RolloverLinkColor());
+    }
+
 
     static bool link_tags_registered = false;
     void RegisterLinkTags() {
@@ -352,18 +357,15 @@ void TextLinker::MarkLinks()
 
         // add link markup open tag
         if (i == m_rollover_link)
-            marked_text += LINK_ROLLOVER_FORMAT_TAG;
+            marked_text += LinkRolloverFormatTag();
         else
-            marked_text += LINK_DEFAULT_FORMAT_TAG;
+            marked_text += LinkDefaultFormatTag();
 
         // copy link text itself
         std::copy(raw_text_start_it + link_start_index, raw_text_start_it + link_end_index, std::back_inserter(marked_text));
 
         // add link markup close tag
-        if (i == m_rollover_link)
-            marked_text += LINK_ROLLOVER_FORMAT_CLOSE;
-         else
-            marked_text += LINK_DEFAULT_FORMAT_CLOSE;
+        marked_text += LINK_FORMAT_CLOSE;
 
         // update copy point for following text
         copy_start_index = link_end_index;
@@ -376,3 +378,4 @@ void TextLinker::MarkLinks()
     SetLinkedText(marked_text);
     //std::cout << "marktext:" << marked_text << std::endl << std::endl;
 }
+
