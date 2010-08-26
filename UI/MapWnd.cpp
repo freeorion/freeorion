@@ -644,8 +644,8 @@ MapWnd::MapWnd() :
 
 
     // Zoom scale line
-    m_scale_line = new MapScaleLine(m_turn_update->UpperLeft().x, m_turn_update->LowerRight().y + GG::Y(LAYOUT_MARGIN),
-                                    SCALE_LINE_MAX_WIDTH, SCALE_LINE_HEIGHT);
+    m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + TOOLBAR_HEIGHT,
+                                    SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
     AttachChild(m_scale_line);
     m_scale_line->Update(ZoomFactor());
 
@@ -835,6 +835,8 @@ void MapWnd::DoLayout()
 {
     m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
 
+    m_scale_line->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN) + TOOLBAR_HEIGHT) - ClientUpperLeft());
+
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X BUTTON_TOTAL_MARGIN(8);
     const GG::Y BUTTON_TOP(LAYOUT_MARGIN);
@@ -842,7 +844,7 @@ void MapWnd::DoLayout()
 
 
     // menu button
-    GG::X right = m_toolbar->LowerRight().x - GG::X(LAYOUT_MARGIN);
+    GG::X right = m_toolbar->LowerRight().x - GG::X(LAYOUT_MARGIN) - m_toolbar->UpperLeft().x;
     GG::X width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
     GG::X left = right - width;
     m_btn_menu->SizeMove(GG::Pt(left, BUTTON_TOP), GG::Pt(right, BUTTON_BOTTOM));
@@ -3380,7 +3382,6 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
     GG::Pt final_move = move_to_pt - ul;
-    m_scale_line->OffsetMove(-final_move);
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
     m_scale_line->OffsetMove(-final_move);
