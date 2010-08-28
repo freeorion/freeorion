@@ -95,7 +95,7 @@ INTERCEPTOR
 Interceptor
 
 DEFAULT_EMPIRE_NAME
-The Terran Imperium
+Terran Imperium
 
 DEFAULT_PLAYER_NAME
 Human_Player
@@ -199,7 +199,7 @@ LOADING
 Loading
 
 RETURN_TO_INTRO
-Returning to Intro Menu
+Returning to Main Menu
 
 SERVER_WONT_START
 The server could not be started.
@@ -2607,6 +2607,7 @@ DESC_VAR_SYSTEM
 system
 
 DESC_VAR_FLEET
+fleet
 
 DESC_VAR_SOURCE
 source
@@ -5460,7 +5461,7 @@ SP_DISTORTION_MODULATOR
 Distortion Modulator
 
 SP_DISTORTION_MODULATOR_DESC
-Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all vessels in the vicinity.  All ships within 0 uus have max stealth reduced by 20.
+Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity.  All objects within 0 uus have max stealth reduced by 20.  The effect is non-stacking.
 
 ##############
 # Ship Hulls #

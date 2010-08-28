@@ -703,10 +703,8 @@ Part
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
         EffectsGroup
-            scope = And [
-                WithinDistance 0 Source
-                Ship
-            ]
+            scope = WithinDistance 0 Source
             activation = Source
+            stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
             effects = SetStealth Value - 20
     graphic = ""
