@@ -109,6 +109,9 @@ public:
 
     void            DoLayout();
 
+    void            DisableOrderIssuing();  //!< disables issuing orders or pressing the turn button.  useful when turn has been pressed and the player must wait for the next turn to start.
+    void            EnableOrderIssuing();   //!< enables order issuing and pressing the turn button.
+
     void            InitTurn(int turn_number);                              //!< called at the start of each turn
     void            RestoreFromSaveData(const SaveGameUIData& data);        //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     void            ShowSystemNames();                                      //!< enables the system name text

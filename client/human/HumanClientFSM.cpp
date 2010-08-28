@@ -424,8 +424,12 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
     if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
         Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("NEW_GAME") + "\n");
+
     else if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_LOADED_GAME)
         Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("LOADING") + "\n");
+
+    else if (context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN)
+        Client().m_ui->GetMapWnd()->DisableOrderIssuing();
 }
 
 WaitingForTurnData::~WaitingForTurnData()
@@ -539,6 +543,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
+    Client().m_ui->GetMapWnd()->EnableOrderIssuing();
 
     if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
         static bool once = true;

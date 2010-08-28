@@ -1634,6 +1634,16 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
         Zoom(move);
 }
 
+void MapWnd::DisableOrderIssuing()
+{
+    m_turn_update->Disable(true);
+}
+
+void MapWnd::EnableOrderIssuing()
+{
+    m_turn_update->Disable(false);
+}
+
 void MapWnd::InitTurn(int turn_number)
 {
     Logger().debugStream() << "Initializing turn " << turn_number;
@@ -3836,9 +3846,16 @@ bool MapWnd::ReturnToMap()
 
 bool MapWnd::OpenChatWindow()
 {
-    ClientUI::GetClientUI()->GetMessageWnd()->Show();
-    ClientUI::GetClientUI()->GetMessageWnd()->OpenForInput();
-    return true;
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
+            if (GG::GUI* gui = GG::GUI::GetGUI()) {
+                gui->Register(msg_wnd); // GG comment for Register says re-registering same Wnd twice is a no-op.
+                msg_wnd->OpenForInput();
+                return true;
+            }
+        }
+    }
+    return false;
 }
 
 bool MapWnd::EndTurn()
