@@ -62,6 +62,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::LOAD_GAME)
     GG_ENUM_MAP_INSERT(Message::GAME_START)
     GG_ENUM_MAP_INSERT(Message::TURN_UPDATE)
+    GG_ENUM_MAP_INSERT(Message::TURN_PARTIAL_UPDATE)
     GG_ENUM_MAP_INSERT(Message::TURN_ORDERS)
     GG_ENUM_MAP_INSERT(Message::TURN_PROGRESS)
     GG_ENUM_MAP_INSERT(Message::CLIENT_SAVE_DATA)
@@ -391,6 +392,17 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
         oa << BOOST_SERIALIZATION_NVP(players);
     }
     return Message(Message::TURN_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
+}
+
+Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        Universe::s_encoding_empire = empire_id;
+        Serialize(oa, universe);
+    }
+    return Message(Message::TURN_PARTIAL_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message ClientSaveDataMessage(int sender, const OrderSet& orders,
@@ -734,6 +746,22 @@ void ExtractMessageData(const Message& msg, int empire_id, int& current_turn,
         Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, int& "
                                << "current_turn, EmpireManager& empires, Universe& universe, "
                                << "std::map<int, PlayerInfo>& players) failed!  Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractMessageData(const Message& msg, int empire_id, Universe& universe)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        Universe::s_encoding_empire = empire_id;
+        Deserialize(ia, universe);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, int empire_id, "
+                               << "Universe& universe) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
         throw err;

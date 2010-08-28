@@ -617,6 +617,7 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg)); break;
     case Message::GAME_START:           m_fsm->process_event(GameStart(msg)); break;
     case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg)); break;
+    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg)); break;
     case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg)); break;
     case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg)); break;
     case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg)); break;

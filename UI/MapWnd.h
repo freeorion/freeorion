@@ -112,7 +112,9 @@ public:
     void            DisableOrderIssuing();  //!< disables issuing orders or pressing the turn button.  useful when turn has been pressed and the player must wait for the next turn to start.
     void            EnableOrderIssuing();   //!< enables order issuing and pressing the turn button.
 
-    void            InitTurn(int turn_number);                              //!< called at the start of each turn
+    void            InitTurn();                                             //!< called at the start of each turn
+    void            MidTurnUpdate();                                        //!< called after receiving updated Universe during turn processing, but not when the full turn update is received
+
     void            RestoreFromSaveData(const SaveGameUIData& data);        //!< restores the UI state that was saved in an earlier call to GetSaveGameUIData().
     void            ShowSystemNames();                                      //!< enables the system name text
     void            HideSystemNames();                                      //!< disables the system name text

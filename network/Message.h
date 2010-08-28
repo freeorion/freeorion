@@ -68,6 +68,7 @@ public:
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
         GAME_START,             ///< sent to each client before the first turn of a new or newly loaded game, instead of a TURN_UPDATE
         TURN_UPDATE,            ///< sent to a client when the server updates the client Universes and Empires, and sends the SitReps each turn; indicates to the receiver that a new turn has begun
+        TURN_PARTIAL_UPDATE,    ///< sent to a client when the server updates part of the client gamestate after partially processing a turn, such as after fleet movement but before the rest of the turn is processed.  Does NOT indicate a new turn has begun.
         TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
         CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
@@ -209,16 +210,19 @@ Message HostMPAckMessage(int player_id);
    should only be sent by the server.*/
 Message JoinAckMessage(int player_id);
 
-/** creates an TURN_ORDERS message. */
+/** creates a TURN_ORDERS message. */
 Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
-/** creates an TURN_PROGRESS message. */
+/** creates a TURN_PROGRESS message. */
 Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
 
 /** creates a TURN_UPDATE message. */
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
                           const Universe& universe, const SpeciesManager& species,
                           const std::map<int, PlayerInfo>& players);
+
+/** create a TURN_PARTIAL_UPDATE message. */
+Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
 Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
@@ -346,6 +350,8 @@ void ExtractMessageData(const Message& msg, OrderSet& orders);
 
 void ExtractMessageData(const Message& msg, int empire_id, int& current_turn, EmpireManager& empires,
                         Universe& universe, SpeciesManager& species, std::map<int, PlayerInfo>& players);
+
+void ExtractMessageData(const Message& msg, int empire_id, Universe& universe);
 
 void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_available,
                         SaveGameUIData& ui_data, bool& save_state_string_available,

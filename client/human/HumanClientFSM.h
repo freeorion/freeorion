@@ -330,6 +330,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<TurnProgress>,
         boost::statechart::custom_reaction<TurnUpdate>,
+        boost::statechart::custom_reaction<TurnPartialUpdate>,
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<SaveGame>,
@@ -343,6 +344,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
 
     boost::statechart::result react(const TurnProgress& msg);
     boost::statechart::result react(const TurnUpdate& msg);
+    boost::statechart::result react(const TurnPartialUpdate& msg);
     boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const SaveGame& msg);

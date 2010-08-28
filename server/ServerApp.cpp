@@ -1441,6 +1441,27 @@ void ServerApp::PreCombatProcessTurns()
     // post-movement visibility update
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
+
+
+    // indicate that the clients are waiting for their new Universes
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it)
+    {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING, -1));
+    }
+
+    // send partial turn updates to all players after orders and movement
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player = *player_it;
+        int player_id = player->PlayerID();
+        player->SendMessage(TurnPartialUpdateMessage(player_id,
+                                                     PlayerEmpireID(player_id),
+                                                     m_universe));
+    }
 }
 
 void ServerApp::ProcessCombats()
@@ -1665,7 +1686,7 @@ void ServerApp::PostCombatProcessTurns()
 
 
 
-    // indicate that the clients are waiting for their new Universes
+    // indicate that the clients are waiting for their new gamestate
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
          player_it != m_networking.established_end();
          ++player_it)

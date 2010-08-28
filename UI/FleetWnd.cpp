@@ -439,6 +439,17 @@ bool FleetUIManager::CloseAll() {
     return retval;
 }
 
+void FleetUIManager::RefreshAll()
+{
+    if (m_fleet_wnds.empty())
+        return;
+
+    std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
+
+    for (std::size_t i = 0; i < vec.size(); ++i)
+        vec[0]->Refresh();
+}
+
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
     static FleetUIManager retval;
     return retval;

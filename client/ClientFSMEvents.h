@@ -34,6 +34,7 @@ struct MessageEventBase
     (SaveGame)                                 \
     (GameStart)                                \
     (TurnUpdate)                               \
+    (TurnPartialUpdate)                        \
     (TurnProgress)                             \
     (CombatStart)                              \
     (CombatRoundUpdate)                        \

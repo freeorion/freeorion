@@ -631,9 +631,6 @@ std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const
     return prefixed_textures_and_dist.first;
 }
 
-void ClientUI::InitTurn(int turn_number)
-{ m_map_wnd->InitTurn(turn_number); }
-
 void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 { m_map_wnd->RestoreFromSaveData(ui_data); }
 

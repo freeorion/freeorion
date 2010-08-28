@@ -198,6 +198,14 @@ void AIClientApp::HandleMessage(const Message& msg)
         break;
     }
 
+    case Message::TURN_PARTIAL_UPDATE:
+        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
+            ExtractMessageData(msg,
+                               EmpireIDRef(),
+                               GetUniverse());
+        }
+        break;
+
     case Message::TURN_PROGRESS:
         break;
 

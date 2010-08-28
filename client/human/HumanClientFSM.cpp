@@ -463,7 +463,7 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnUpdate";
 
-    ExtractMessageData(msg.m_message,   Client().EmpireIDRef(), Client().CurrentTurnRef(),
+    ExtractMessageData(msg.m_message,   Client().EmpireID(),    Client().CurrentTurnRef(),
                        Empires(),       GetUniverse(),          GetSpeciesManager(),
                        Client().m_player_info);
 
@@ -471,6 +471,18 @@ boost::statechart::result WaitingForTurnData::react(const TurnUpdate& msg)
         Client().Autosave(false);
     return transit<PlayingTurn>();
 }
+
+boost::statechart::result WaitingForTurnData::react(const TurnPartialUpdate& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnPartialUpdate";
+
+    ExtractMessageData(msg.m_message,   Client().EmpireID(),    GetUniverse());
+
+    Client().m_ui->GetMapWnd()->MidTurnUpdate();
+
+    return discard_event();
+}
+
 
 boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
@@ -546,9 +558,8 @@ PlayingTurn::PlayingTurn(my_context ctx) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn";
     Client().m_ui->GetMapWnd()->Show();
-    Client().m_ui->InitTurn(Client().CurrentTurn());
-    //Client().m_ui->GetMapWnd()->ReselectLastSystem();
-    //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings
+    Client().m_ui->GetMapWnd()->InitTurn();
+    // TODO: reselect last fleet if stored in save game ui data?
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
     Client().m_ui->GetMapWnd()->EnableOrderIssuing();
