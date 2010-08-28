@@ -75,23 +75,21 @@ namespace {
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
-    std::vector<int>        LeastJumpsPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<int>, int> path = universe->LeastJumpsPath(start_sys, end_sys, empire_id);
+    std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+        std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
         std::vector<int> retval;
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
+    boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
-    boost::function<std::vector<int>(const Universe*, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
-
-    std::vector<int>        ShortestPath(const Universe* universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<int>, int> path = universe->ShortestPath(start_sys, end_sys, empire_id);
+    std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+        std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
         std::vector<int> retval;
         std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
         return retval;
     }
-
-    boost::function<std::vector<int>(const Universe*, int, int, int)> ShortestPathFunc =        &ShortestPath;
+    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 
@@ -165,13 +163,13 @@ namespace FreeOrionPython {
             .def("leastJumpsPath",              make_function(
                                                     LeastJumpsFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ))
 
             .def("shortestPath",                make_function(
                                                     ShortestPathFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe*, int, int, int>()
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
                                                 ))
 
             .def("dump",                        &DumpObjects)
