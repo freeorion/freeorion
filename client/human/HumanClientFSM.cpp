@@ -86,8 +86,10 @@ IntroMenu::IntroMenu(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
     if (GetOptionsDB().Get<bool>("tech-demo"))
         Client().Register(m_combat_wnd);
-    else
+    else {
         Client().Register(m_intro_screen.get());
+        Client().Remove(Client().m_ui->GetMessageWnd());
+    }
 }
 
 IntroMenu::~IntroMenu()
@@ -401,6 +403,9 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
 boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
+
+    Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
     return transit<IntroMenu>();
 }
 
@@ -422,6 +427,9 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
+
+    Client().Register(Client().m_ui->GetMessageWnd());
+
     if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
         Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("NEW_GAME") + "\n");
 

@@ -198,6 +198,9 @@ Generating Universe and AIs
 LOADING
 Loading
 
+RETURN_TO_INTRO
+Returning to Intro Menu
+
 SERVER_WONT_START
 The server could not be started.
 
