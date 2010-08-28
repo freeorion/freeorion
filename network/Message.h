@@ -92,6 +92,7 @@ public:
         EMPIRE_PRODUCTION,      ///< empire production turn progress message
         WAITING_FOR_PLAYERS,    ///< waiting for other to end their turn
         PROCESSING_ORDERS,      ///< processing orders
+        COLONIZE_AND_SCRAP,     ///< enacting colonization and scrapping orders
         DOWNLOADING             ///< downloading new game state from server
     };
 

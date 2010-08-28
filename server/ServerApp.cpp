@@ -1335,13 +1335,6 @@ void ServerApp::PreCombatProcessTurns()
     EmpireManager& empires = Empires();
     ObjectMap& objects = m_universe.Objects();
 
-    //// inform players of impending order execution
-    //for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-    //    // broadcast UI message to all players
-    //    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-    //        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::PROCESSING_ORDERS, it->first));
-    //    }
-    //}
 
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
 
@@ -1360,15 +1353,21 @@ void ServerApp::PreCombatProcessTurns()
     }
 
 
+
+    Logger().debugStream() << "ServerApp::ProcessTurns colonization and scrapping";
+
+    // player notifications
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COLONIZE_AND_SCRAP, -1));
+    }
+
+
     // clean up orders, which are no longer needed
     ClearEmpireTurnOrders();
 
 
-    Logger().debugStream() << "ServerApp::ProcessTurns colonize order filtering";
     HandleColonization(objects, empires);
 
-
-    Logger().debugStream() << "ServerApp::ProcessTurns scrapping";
 
     // scrap orders
     std::vector<int> objects_to_scrap;

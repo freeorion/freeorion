@@ -1854,41 +1854,17 @@ void MapWnd::MidTurnUpdate()
     Logger().debugStream() << "MapWnd::MidTurnUpdate";
     boost::timer turn_init_timer;
 
-    //Universe& universe = GetUniverse();
-    //const ObjectMap& objects = universe.Objects();
-
-    //const ObjectMap& known_objects = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
-
-    //const EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-
-
-    //const Empire* this_client_empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    //if (!this_client_empire) {
-    //    Logger().errorStream() << "MapWnd::MidTurnUpdate couldn't get this client's empire!";
-    //    return;
-    //}
-
-    //boost::timer timer;
-    //const std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
-    //const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire->EmpireID());
-
-    //// get ids of not-destroyed systems known to this empire.
-    //std::set<int> this_client_known_systems;
-    //std::vector<int> all_system_ids = known_objects.FindObjectIDs<System>();
-    //for (std::vector<int>::const_iterator it = all_system_ids.begin(); it != all_system_ids.end(); ++it)
-    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-    //        this_client_known_systems.insert(*it);
-
-    //// get ids of all not-destroyed objects known to this empire.
-    //std::set<int> this_client_known_objects;
-    //std::vector<int> all_object_ids = known_objects.FindObjectIDs();
-    //for (std::vector<int>::const_iterator it = all_object_ids.begin(); it != all_object_ids.end(); ++it)
-    //    if (this_client_known_destroyed_objects.find(*it) == this_client_known_destroyed_objects.end())
-    //        this_client_known_objects.insert(*it);
-
 
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
+
+
+    // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
+    if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
+        HideSystemNames();
+    else
+        ShowSystemNames();
+
 
     Logger().debugStream() << "MapWnd::MidTurnUpdate time: " << (turn_init_timer.elapsed() * 1000.0);
 }

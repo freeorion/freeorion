@@ -193,7 +193,7 @@ Battle Fleet
 ##########################
 
 NEW_GAME
-Generating Universe and AIs
+Generating Universe
 
 LOADING
 Loading
@@ -2086,6 +2086,9 @@ Waiting for Other Players
 
 TURN_PROGRESS_PHASE_ORDERS
 Executing %1% Orders
+
+TURN_PROGRESS_COLONIZE_AND_SCRAP
+Colonization and Scrapping
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Downloading and Unpacking New Gamestate

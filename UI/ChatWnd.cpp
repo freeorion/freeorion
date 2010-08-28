@@ -267,6 +267,9 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, int 
             phase_str = boost::io::str(FlexibleFormat(UserString("TURN_PROGRESS_PHASE_ORDERS")) % wrapped_empire_name);
         }
         break;
+    case Message::COLONIZE_AND_SCRAP:
+        phase_str = UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP");
+        break;
     case Message::DOWNLOADING:
         phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
         break;
