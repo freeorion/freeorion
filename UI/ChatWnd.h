@@ -2,39 +2,50 @@
 #ifndef _ChatWnd_h_
 #define _ChatWnd_h_
 
-#include <GG/Wnd.h>
+#include "CUIWnd.h"
+#include "CUIControls.h"
+#include "../network/Message.h"
 
 #include <deque>
 #include <string>
 
 
 namespace GG { class MultiEdit; }
-class CUIEdit;
+class MessageWndEdit;
 
-class ChatWnd :
-    public GG::Wnd
+class MessageWnd : public CUIWnd
 {
 public:
-    ChatWnd();
+    //! \name Structors //@{
+    MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h);
+    //@}
 
-    void HandlePlayerChatMessage(const std::string& msg);
-    void Clear();
-    bool OpenForInput();
-    void HideEdit();
+    //! \name Mutators //@{
+    void            HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id);
+    void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, int empire_id);
+    void            HandleGameStatusUpdate(const std::string& text);
+    void            HandleLogMessage(const std::string& text);
+    void            Clear();
+    void            OpenForInput();
 
-    virtual void Render();
-    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey>& mod_keys);
+    //@}
 
-    mutable boost::signal<void ()> MessageSentSignal;
+    mutable boost::signal<void ()> TypingSignal;        // emitted when the edit gains focus.  keyboard accelerators elsehwere should be disabled
+    mutable boost::signal<void ()> DoneTypingSignal;    // emitted when the edit loses focus.  not necessary when a message is sent
 
 private:
-    GG::MultiEdit* m_display;
-    CUIEdit* m_edit;
-    int m_display_show_time;
-    std::deque<std::string> m_history;
-    int m_history_position;
-};
+    void            DoLayout();
+    void            MessageEntered();
+    void            MessageHistoryUpRequested();
+    void            MessageHistoryDownRequested();
 
-ChatWnd* GetChatWnd();
+    GG::MultiEdit*          m_display;
+    MessageWndEdit*         m_edit;
+    int                     m_display_show_time;
+    std::deque<std::string> m_history;
+    int                     m_history_position;
+};
 
 #endif

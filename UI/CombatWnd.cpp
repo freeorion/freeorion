@@ -1976,12 +1976,8 @@ void CombatWnd::RemoveCombatShip(const CombatShipPtr& combat_ship)
 
 bool CombatWnd::OpenChatWindow()
 {
-    bool retval = true;
-    if (GetChatWnd()->OpenForInput())
-        DisableAlphaNumAccels();
-    else
-        retval = false;
-    return retval;
+    ClientUI::GetClientUI()->GetMessageWnd()->OpenForInput();
+    return true;
 }
 
 bool CombatWnd::EndTurn()

@@ -96,7 +96,6 @@ struct ResolvingCombat;
 class HumanClientApp;
 class CombatWnd;
 class IntroScreen;
-class TurnProgressWnd;
 class MultiplayerLobbyWnd;
 
 #define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
@@ -347,8 +346,6 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
     boost::statechart::result react(const CombatStart& msg);
     boost::statechart::result react(const GameStart& msg);
     boost::statechart::result react(const SaveGame& msg);
-
-    std::auto_ptr<TurnProgressWnd> m_turn_progress_wnd;
 
     CLIENT_ACCESSOR
 };

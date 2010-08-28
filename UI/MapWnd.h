@@ -307,10 +307,12 @@ private:
     void            SetAccelerators();                          //!< tells the GUI which keypress combinations to track and emit signals for when they occur
     void            RemoveAccelerators();                       //!< tells GUI to stop emitting signals for keypresses
 
-    /** Disables keyboard accelerators that use an alphanumeric key without modifiers. This is useful if a
-     * keyboard input is required, so that the keys aren't interpreted as an accelerator.
-     * @note Repeated calls of DisableAlphaNumAccels have to be followed by the same number of calls to 
-     * EnableAlphaNumAccels to re-enable the accelerators. */
+    /** Disables keyboard accelerators that use an alphanumeric key without
+      * modifiers. This is useful if a keyboard input is required, so that the
+      * keys aren't interpreted as an accelerator.
+      * @note Repeated calls of DisableAlphaNumAccels have to be followed by
+      * the same number of calls to EnableAlphaNumAccels to re-enable the
+      * accelerators. */
     void            DisableAlphaNumAccels();
     void            EnableAlphaNumAccels();                     //!< Re-enable accelerators disabled by DisableAlphaNumAccels
 

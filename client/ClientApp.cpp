@@ -54,6 +54,14 @@ const CombatOrderSet& ClientApp::CombatOrders() const
 const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
+const Empire* ClientApp::GetPlayerEmpire(int player_id) const
+{
+    std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);
+    if (it != m_player_info.end())
+        return m_empires.Lookup(it->second.empire_id);
+    return 0;
+}
+
 Empire* ClientApp::GetPlayerEmpire(int player_id)
 {
     std::map<int, PlayerInfo>::const_iterator it = m_player_info.find(player_id);

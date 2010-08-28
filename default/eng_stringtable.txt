@@ -193,10 +193,10 @@ Battle Fleet
 ##########################
 
 NEW_GAME
-Generating Universe and AIs ...
+Generating Universe and AIs
 
 LOADING
-Loading ...
+Loading
 
 SERVER_WONT_START
 The server could not be started.
@@ -2069,27 +2069,38 @@ COMBAT_LOST
 # TurnProgress     #
 ####################
 
-TURN_PROGRESS_WND
-Turn Progress
-
 TURN_PROGRESS_PHASE_FLEET_MOVEMENT
-Fleet movement ...
+Fleet Movement
 
 TURN_PROGRESS_PHASE_COMBAT
-Resolving combat ...
+Resolving Combat
 
 TURN_PROGRESS_PHASE_EMPIRE_GROWTH
-Production and growth ...
+Production and Growth
 
 TURN_PROGRESS_PHASE_WAITING
-Waiting for players to end turn ...
+Waiting for Other Players
 
 TURN_PROGRESS_PHASE_ORDERS
-Executing Orders ...
+Executing %1% Orders
 
 TURN_PROGRESS_PHASE_DOWNLOADING
-Downloading new game state ...
+Downloading and Unpacking New Gamestate
 
+TURN_BEGIN
+Begin Turn %1%
+
+########################
+# Messages Panel       #
+########################
+
+#Window title####
+
+MESSAGES_PANEL_TITLE
+Messages
+
+MESSAGES_PANEL_INTRO
+Status and Chat Messages
 
 ########################
 # SitRep Panel         #

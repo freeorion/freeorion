@@ -9,7 +9,6 @@
 #include "../../UI/ChatWnd.h"
 #include "../../UI/CombatWnd.h"
 #include "../../UI/IntroScreen.h"
-#include "../../UI/TurnProgressWnd.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/MapWnd.h"
 
@@ -132,6 +131,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.HostSPGame";
     Client().SetPlayerID(msg.m_message.ReceivingPlayer());
     Client().m_ui->GetMapWnd()->Sanitize();
+    Client().m_ui->GetMessageWnd()->Show();
     return transit<PlayingGame>();
 }
 
@@ -419,15 +419,13 @@ boost::statechart::result PlayingGame::react(const Error& msg)
 // WaitingForTurnData
 ////////////////////////////////////////////////////////////
 WaitingForTurnData::WaitingForTurnData(my_context ctx) :
-    Base(ctx),
-    m_turn_progress_wnd(new TurnProgressWnd)
+    Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
-    Client().Register(m_turn_progress_wnd.get());
     if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
-        m_turn_progress_wnd->UpdateTurnProgress(UserString("NEW_GAME"), -1);
+        Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("NEW_GAME") + "\n");
     else if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_LOADED_GAME)
-        m_turn_progress_wnd->UpdateTurnProgress(UserString("LOADING"), -1);
+        Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("LOADING") + "\n");
 }
 
 WaitingForTurnData::~WaitingForTurnData()
@@ -439,23 +437,13 @@ WaitingForTurnData::~WaitingForTurnData()
 boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnProgress";
+
     Message::TurnProgressPhase phase_id;
     int empire_id;
     ExtractMessageData(msg.m_message, phase_id, empire_id);
-    std::string phase_str;
-    if (phase_id == Message::FLEET_MOVEMENT)
-        phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
-    else if (phase_id == Message::COMBAT)
-        phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
-    else if (phase_id == Message::EMPIRE_PRODUCTION)
-        phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
-    else if (phase_id == Message::WAITING_FOR_PLAYERS)
-        phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
-    else if (phase_id == Message::PROCESSING_ORDERS)
-        phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
-    else if (phase_id == Message::DOWNLOADING)
-        phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
-    m_turn_progress_wnd->UpdateTurnProgress(phase_str, empire_id);
+
+    Client().m_ui->GetMessageWnd()->HandleTurnPhaseUpdate(phase_id, empire_id);
+
     return discard_event();
 }
 
@@ -547,8 +535,10 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn";
     Client().m_ui->GetMapWnd()->Show();
     Client().m_ui->InitTurn(Client().CurrentTurn());
-    Client().m_ui->GetMapWnd()->ReselectLastSystem();
+    //Client().m_ui->GetMapWnd()->ReselectLastSystem();
     //Client().m_ui->GetMapWnd()->ReselectLastFleet();  // TODO: Fix this and/or replace with FleetUIManager state saving and restoring or FleetWnd auto-updating over turn endings
+    Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
+        boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
 
     if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
         static bool once = true;
@@ -578,17 +568,12 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg)
 boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.PlayerChat";
-    std::map<int, PlayerInfo>::const_iterator it = Client().Players().find(msg.m_message.SendingPlayer());
-    assert(it != Client().Players().end());
-    std::string sender_name = it->second.name;
-    Empire* sender_empire = Client().GetPlayerEmpire(msg.m_message.SendingPlayer());
-    GG::Clr sender_colour;
-    if (sender_empire)
-        sender_colour = sender_empire->Color();
-    else
-        sender_colour = GG::CLR_WHITE;
-    std::string wrapped_text = RgbaTag(sender_colour) + sender_name + ": " + msg.m_message.Text() + "</rgba>\n";
-    GetChatWnd()->HandlePlayerChatMessage(wrapped_text);
+    const std::string& text = msg.m_message.Text();
+    int sending_player_id = msg.m_message.SendingPlayer();
+    int recipient_player_id = msg.m_message.ReceivingPlayer();
+
+    Client().m_ui->GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, recipient_player_id);
+
     return discard_event();
 }
 
@@ -611,14 +596,12 @@ ResolvingCombat::ResolvingCombat(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ResolvingCombat";
     Client().Register(m_combat_wnd.get());
     Client().m_ui->GetMapWnd()->Hide();
-    context<WaitingForTurnData>().m_turn_progress_wnd->HideAll();
 }
 
 ResolvingCombat::~ResolvingCombat()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~ResolvingCombat";
     Client().m_ui->GetMapWnd()->Show();
-    context<WaitingForTurnData>().m_turn_progress_wnd->ShowAll();
     FreeCombatData(m_previous_combat_data.get());
     FreeCombatData(m_combat_data.get());
 }

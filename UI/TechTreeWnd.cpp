@@ -163,13 +163,13 @@ namespace {
 
         if (show_progress) {
             // progress panel background
-            glColor(ClientUI::TechWndProgressBarBackground());
+            glColor(ClientUI::TechWndProgressBarBackgroundColor());
             PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   true);
 
             GG::X progress_extent((0.0 < progress && progress < 1.0) ? (progress_panel.ul.x + progress * progress_panel.Width() + 0.5) : GG::X_d(0));
             if (progress_extent) {
                 // progress bar
-                glColor(ClientUI::TechWndProgressBar());
+                glColor(ClientUI::TechWndProgressBarColor());
                 GG::BeginScissorClipping(progress_panel.ul, GG::Pt(progress_extent, progress_panel.lr.y));
                 PartlyRoundedRect(progress_panel.ul,    progress_panel.lr,  PROGRESS_PANEL_CORNER_RADIUS,   true,   true,   true,   true,   true);
                 GG::EndScissorClipping();

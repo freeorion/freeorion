@@ -118,8 +118,8 @@ namespace {
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
-                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBar(),
-                                                  ClientUI::TechWndProgressBarBackground(), clr);
+                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBarColor(),
+                                                  ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
         top += m_progress_bar->Height() + MARGIN;

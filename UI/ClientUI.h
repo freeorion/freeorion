@@ -20,6 +20,7 @@ class Combat;
 class Fleet;
 class IntroScreen;
 class MapWnd;
+class MessageWnd;
 class SitRepEntry;
 struct SaveGameUIData;
 class System;
@@ -49,8 +50,10 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    MapWnd* GetMapWnd();                                    //!< Returns the main map window (may be null).
-    void    GetSaveGameUIData(SaveGameUIData& data) const;  //!< populates the relevant UI state that should be restored after a save-and-load cycle
+    MapWnd*     GetMapWnd();                                            //!< Returns the main map window (may be null).
+    MessageWnd* GetMessageWnd();                                        //!< Returns the chat / message window.
+
+    void    GetSaveGameUIData(SaveGameUIData& data) const;              //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
 
     //! \name Mutators //!@{
@@ -175,8 +178,8 @@ public:
     static GG::Clr      ResearchableTechTextAndBorderColor();
     static GG::Clr      UnresearchableTechFillColor();
     static GG::Clr      UnresearchableTechTextAndBorderColor();
-    static GG::Clr      TechWndProgressBarBackground();
-    static GG::Clr      TechWndProgressBar();
+    static GG::Clr      TechWndProgressBarBackgroundColor();
+    static GG::Clr      TechWndProgressBarColor();
 
     static GG::Clr      CategoryColor(const std::string& category_name);
 
@@ -195,11 +198,12 @@ private:
                                                 const std::string& prefix,
                                                 bool mipmap);
 
-    MapWnd*           m_map_wnd;           //!< the galaxy map
+    MapWnd*             m_map_wnd;          //!< the galaxy map
+    MessageWnd*         m_message_wnd;      //!< the messages / chat display
 
-    PrefixedTextures  m_prefixed_textures;
+    PrefixedTextures    m_prefixed_textures;
 
-    static ClientUI*  s_the_UI;            //!< pointer to the one and only ClientUI object
+    static ClientUI*    s_the_UI;           //!< pointer to the one and only ClientUI object
 };
 
 /** This exists as a way of allowing UI colors to be specified on the command

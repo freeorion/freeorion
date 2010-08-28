@@ -30,7 +30,7 @@ public:
     int                     EmpireID() const;         ///< returns the empire ID of this client
     int                     CurrentTurn() const;      ///< returns the current game turn
 
-    Empire*                 GetPlayerEmpire(int player_id);         ///< returns the object for the empire that the player with ID \a player_id is playing
+    const Empire*           GetPlayerEmpire(int player_id) const;   ///< returns the object for the empire that the player with ID \a player_id is playing
     int                     GetEmpirePlayerID(int empire_id) const; ///< returns the player ID for the player playing the empire with ID \a empire_id
 
     const std::map<int, PlayerInfo>& Players() const; ///< returns the map, indexed by player ID, of PlayerInfo structs containing info about players in the game
@@ -47,6 +47,8 @@ public:
     virtual void            StartTurn();         ///< encodes order sets and sends turn orders message
     virtual void            SendCombatSetup();   ///< encodes and sends combat setup orders message
     virtual void            StartCombatTurn();   ///< encodes combat order sets and sends combat turn orders message
+
+    Empire*                 GetPlayerEmpire(int player_id); ///< returns the object for the empire that the player with ID \a player_id is playing
 
     Universe&               GetUniverse();       ///< returns client's local copy of Universe
     EmpireManager&          Empires();           ///< returns the set of known Empires

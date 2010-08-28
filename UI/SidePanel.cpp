@@ -2071,9 +2071,11 @@ void SidePanel::DoLayout()
     m_planet_panel_container->SizeMove(ul, lr);
 
     // resize system resource summary
-    ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
-    lr = ul + GG::Pt(ClientWidth() - EDGE_PAD - 1, m_system_resource_summary->Height());
-    m_system_resource_summary->SizeMove(ul, lr);
+    if (m_system_resource_summary) {
+        ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
+        lr = ul + GG::Pt(ClientWidth() - EDGE_PAD - 1, m_system_resource_summary->Height());
+        m_system_resource_summary->SizeMove(ul, lr);
+    }
 }
 
 GG::Pt SidePanel::ListRowSize() const {

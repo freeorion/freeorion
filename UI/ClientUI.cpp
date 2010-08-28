@@ -4,6 +4,7 @@
 #include "FleetWnd.h"
 #include "IntroScreen.h"
 #include "MapWnd.h"
+#include "ChatWnd.h"
 #include "Sound.h"
 #include "../util/AppInterface.h"
 
@@ -258,8 +259,8 @@ GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptions
 GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<StreamableColor>("UI.researchable-tech-border").ToClr(); }
 GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech").ToClr(); }
 GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr(); }
-GG::Clr     ClientUI::TechWndProgressBarBackground()         { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
-GG::Clr     ClientUI::TechWndProgressBar()                   { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
+GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
+GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name)
 {
@@ -447,23 +448,34 @@ namespace {
 ////////////////////////////////////////////////
 // ClientUI
 ////////////////////////////////////////////////
-//Init and Cleanup//////////////////////////////////////
 ClientUI::ClientUI() :
-    m_map_wnd(new MapWnd)
+    m_map_wnd(0),
+    m_message_wnd(0)
 {
     s_the_UI = this;
+
+    m_message_wnd = new MessageWnd(GG::X0, GG::GUI::GetGUI()->AppHeight() - GG::Y(200), GG::X(320), GG::Y(200));
+    m_map_wnd = new MapWnd();
+
     GG::GUI::GetGUI()->Register(m_map_wnd);
     m_map_wnd->Hide();
+
+    GG::GUI::GetGUI()->Register(m_message_wnd);
+    m_message_wnd->Hide();
 }
 
 ClientUI::~ClientUI()
 {
     delete m_map_wnd;
+    delete m_message_wnd;
     s_the_UI = 0;
 }
 
 MapWnd* ClientUI::GetMapWnd()
 { return m_map_wnd; }
+
+MessageWnd* ClientUI::GetMessageWnd()
+{ return m_message_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { m_map_wnd->GetSaveGameUIData(data); }

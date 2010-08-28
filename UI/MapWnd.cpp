@@ -816,6 +816,11 @@ MapWnd::MapWnd() :
     Connect(FleetUIManager::GetFleetUIManager().ActiveFleetWndSelectedShipsChangedSignal,
             &MapWnd::SelectedShipsChanged,      this);
 
+    Connect(ClientUI::GetClientUI()->GetMessageWnd()->TypingSignal,
+            &MapWnd::DisableAlphaNumAccels,     this);
+    Connect(ClientUI::GetClientUI()->GetMessageWnd()->DoneTypingSignal,
+            &MapWnd::EnableAlphaNumAccels,     this);
+
 
     DoLayout();
 }
@@ -1769,7 +1774,6 @@ void MapWnd::InitTurn(int turn_number)
         ShowSitRep();
 
 
-    GetChatWnd()->HideEdit();
     EnableAlphaNumAccels();
 
 
@@ -3832,12 +3836,9 @@ bool MapWnd::ReturnToMap()
 
 bool MapWnd::OpenChatWindow()
 {
-    bool retval = true;
-    if (GetChatWnd()->OpenForInput())
-        DisableAlphaNumAccels();
-    else
-        retval = false;
-    return retval;
+    ClientUI::GetClientUI()->GetMessageWnd()->Show();
+    ClientUI::GetClientUI()->GetMessageWnd()->OpenForInput();
+    return true;
 }
 
 bool MapWnd::EndTurn()
@@ -4730,6 +4731,8 @@ void MapWnd::DisableAlphaNumAccels()
             (key >= GG::GGK_0 && key <= GG::GGK_9)) {
             m_disabled_accels_list.insert(key);
         }
+        m_disabled_accels_list.insert(GG::GGK_KP_ENTER);
+        m_disabled_accels_list.insert(GG::GGK_RETURN);
     }
     for (std::set<GG::Key>::iterator i = m_disabled_accels_list.begin();
          i != m_disabled_accels_list.end(); ++i) {
@@ -4748,10 +4751,6 @@ void MapWnd::EnableAlphaNumAccels()
 
 void MapWnd::ChatMessageSentSlot()
 {
-    if (!m_disabled_accels_list.empty()) {
-        EnableAlphaNumAccels();
-        GG::GUI::GetGUI()->SetFocusWnd(this);
-    }
 }
 
 void MapWnd::CloseAllPopups()
