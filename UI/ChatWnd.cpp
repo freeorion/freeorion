@@ -165,7 +165,7 @@ MessageWnd::MessageWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         GG::X0, GG::Y0, ClientWidth(), ClientHeight(), "",
         GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY | GG::MULTI_TERMINAL_STYLE | GG::MULTI_INTEGRAL_HEIGHT);
     AttachChild(m_display);
-    m_display->SetMaxLinesOfHistory(100);
+    //m_display->SetMaxLinesOfHistory(100); // executing this line seems to cause crashes in MultiEdit when adding more lines to the control than the history limit
 
     m_edit = new MessageWndEdit(GG::X0, GG::Y0, ClientWidth());
     AttachChild(m_edit);
