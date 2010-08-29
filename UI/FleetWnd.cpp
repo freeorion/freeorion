@@ -2348,13 +2348,13 @@ void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void FleetWnd::DoLayout()
 {
     const GG::X TOTAL_WIDTH = ClientWidth();
-    const GG::X LEFT = GG::X(PAD);
-    const GG::X RIGHT = TOTAL_WIDTH - GG::X(PAD);
+    const GG::X LEFT = GG::X0;
+    const GG::X RIGHT = TOTAL_WIDTH - GG::X0;
 
     const GG::Y TOTAL_HEIGHT = ClientHeight();
-    const GG::Y AVAILABLE_HEIGHT = TOTAL_HEIGHT - 3*GG::Y(PAD); // top and bottom pads, and space between contents pads
+    const GG::Y AVAILABLE_HEIGHT = TOTAL_HEIGHT - GG::Y(4*PAD); // top and bottom pads, and space between contents pads
 
-    const GG::Y LISTBOX_TOP = GG::Y(PAD);
+    const GG::Y LISTBOX_TOP = GG::Y0;
 
     // TODO: If size too small for new fleet drop target or ships panel, don't show them.  keep fleet list visible
     //       as long as possible when height is reduced.
@@ -2380,7 +2380,7 @@ void FleetWnd::DoLayout()
     if (m_new_fleet_drop_target) {
         const GG::Y DROP_TARGET_TOP = LISTBOX_BOTTOM + GG::Y(PAD);
         const GG::Y DROP_TARGET_BOTTOM = DROP_TARGET_TOP + ROW_HEIGHT;
-        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT, DROP_TARGET_TOP),  GG::Pt(RIGHT, DROP_TARGET_BOTTOM));
+        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT, DROP_TARGET_TOP),  GG::Pt(RIGHT - ClientUI::ScrollWidth() - GG::X(PAD), DROP_TARGET_BOTTOM));
     }
 
     m_fleets_lb->SizeMove(                  GG::Pt(LEFT, LISTBOX_TOP),      GG::Pt(RIGHT, LISTBOX_BOTTOM));

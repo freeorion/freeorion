@@ -161,7 +161,7 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     // main verbose description (fluff, effects, unlocks, ...)
     ul = GG::Pt(BORDER_LEFT, ICON_SIZE + TEXT_MARGIN_Y + 1);
-    lr = GG::Pt(Width() - BORDER_RIGHT*2, Height() - BORDER_BOTTOM*2);
+    lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3);
     m_description_box->SizeMove(ul, lr);
 
     // icon

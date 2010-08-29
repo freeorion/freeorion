@@ -13,9 +13,6 @@
 
 
 namespace {
-    const GG::X SITREP_LB_MARGIN_X(5);
-    const GG::Y SITREP_LB_MARGIN_Y(5);
-
     void HandleLinkClick(const std::string& link_type, const std::string& data) {
         using boost::lexical_cast;
         try {
@@ -62,8 +59,7 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     CUIWnd(UserString("SITREP_PANEL_TITLE"), x, y, w, h, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE)
 {
     Sound::TempUISoundDisabler sound_disabler;
-    m_sitreps_lb = new CUIListBox(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y,
-                                  ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y);
+    m_sitreps_lb = new CUIListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET));
     m_sitreps_lb->SetStyle(GG::LIST_NOSORT);
 
     AttachChild(m_sitreps_lb);
@@ -92,9 +88,8 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
     CUIWnd::SizeMove(ul, lr);
-    m_sitreps_lb->SizeMove(GG::Pt(SITREP_LB_MARGIN_X, SITREP_LB_MARGIN_Y),
-                           GG::Pt(ClientWidth() - SITREP_LB_MARGIN_X, ClientHeight() - SITREP_LB_MARGIN_Y));
-    if (Visible() && old_size != GG::Wnd::Size())
+    m_sitreps_lb->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
+    if (old_size != GG::Wnd::Size())
         Update();
 }
 
