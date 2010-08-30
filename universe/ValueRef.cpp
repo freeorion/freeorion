@@ -189,81 +189,101 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
 
-#define IF_CURRENT_VALUE_ELSE(T)                                        \
-    if (boost::iequals(property_name, "Value")) {                       \
-        if (current_value.empty())                                      \
-            throw std::runtime_error(                                   \
+#define IF_CURRENT_VALUE_ELSE(T)                                           \
+    if (boost::iequals(property_name, "Value")) {                          \
+        if (current_value.empty())                                         \
+            throw std::runtime_error(                                      \
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \
-                "because no current value was provided.");              \
-        try {                                                           \
-            retval = boost::any_cast<T>(current_value);                 \
-        } catch (const boost::bad_any_cast&) {                          \
-            throw std::runtime_error(                                   \
+                "because no current value was provided.");                 \
+        try {                                                              \
+            return boost::any_cast<T>(current_value);                      \
+        } catch (const boost::bad_any_cast&) {                             \
+            throw std::runtime_error(                                      \
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \
-                "because the provided current value is not an " #T "."); \
-        }                                                               \
+                "because the provided current value is not an " #T ".");   \
+        }                                                                  \
     } else
 
     template <>
     PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
                                           const boost::any& current_value) const
     {
-        PlanetSize retval = INVALID_PLANET_SIZE;
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(PlanetSize)
+
         if (boost::iequals(property_name, "PlanetSize")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            if (!object) {
+                Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                return INVALID_PLANET_SIZE;
+            }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
-                retval = p->Size();
+                return p->Size();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetSize.");
         }
-        return retval;
+        return INVALID_PLANET_SIZE;
     }
 
     template <>
     PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                           const boost::any& current_value) const
     {
-        PlanetType retval = INVALID_PLANET_TYPE;
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(PlanetType)
+
         if (boost::iequals(property_name, "PlanetType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            if (!object) {
+                Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                return INVALID_PLANET_TYPE;
+            }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
-                retval = p->Type();
+                return p->Type();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetType.");
         }
-        return retval;
+        return INVALID_PLANET_TYPE;
     }
 
     template <>
     PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
                                                         const boost::any& current_value) const
     {
-        PlanetEnvironment retval = INVALID_PLANET_ENVIRONMENT;
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(PlanetEnvironment)
+
         if (boost::iequals(property_name, "PlanetEnvironment")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            if (!object) {
+                Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                return INVALID_PLANET_ENVIRONMENT;
+            }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
-                retval = p->EnvironmentForSpecies();
+                return p->EnvironmentForSpecies();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetEnvironment.");
         }
-        return retval;
+        return INVALID_PLANET_ENVIRONMENT;
     }
 
     template <>
     UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                                           const boost::any& current_value) const
     {
-        UniverseObjectType retval = INVALID_UNIVERSE_OBJECT_TYPE;
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(UniverseObjectType)
+
         if (boost::iequals(property_name, "ObjectType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            if (!object) {
+                Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                return INVALID_UNIVERSE_OBJECT_TYPE;
+            }
             if (universe_object_cast<const Planet*>(object)) {
                 return OBJ_PLANET;
             } else if (universe_object_cast<const System*>(object)) {
@@ -282,230 +302,250 @@ namespace ValueRef {
         } else {
             throw std::runtime_error("Attempted to read a non-ObjectType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type ObjectType.");
         }
-        return retval;
+        return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
     template <>
     StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                       const boost::any& current_value) const
     {
-        StarType retval = INVALID_STAR_TYPE;
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(StarType)
+
         if (boost::iequals(property_name, "StarType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            if (!object) {
+                Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                return INVALID_STAR_TYPE;
+            }
             if (const System* s = universe_object_cast<const System*>(object))
-                retval = s->GetStarType();
+                return s->GetStarType();
         } else {
             throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");
         }
-        return retval;
+        return INVALID_STAR_TYPE;
     }
 
     template <>
     double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,
                                   const boost::any& current_value) const
     {
-        double retval = 0.0;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        if (!object) {
+            Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            return 0.0;
+        }
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(double)
+
         if        (boost::iequals(property_name, "Population")) {
-            retval = object->InitialMeterValue(METER_POPULATION);
+            return object->InitialMeterValue(METER_POPULATION);
         } else if (boost::iequals(property_name, "TargetPopulation")) {
-            retval = object->InitialMeterValue(METER_TARGET_POPULATION);
+            return object->InitialMeterValue(METER_TARGET_POPULATION);
         } else if (boost::iequals(property_name, "Health")) {
-            retval = object->InitialMeterValue(METER_HEALTH);
+            return object->InitialMeterValue(METER_HEALTH);
         } else if (boost::iequals(property_name, "TargetHealth")) {
-            retval = object->InitialMeterValue(METER_TARGET_HEALTH);
+            return object->InitialMeterValue(METER_TARGET_HEALTH);
 
         } else if (boost::iequals(property_name, "Farming")) {
-            retval = object->InitialMeterValue(METER_FARMING);
+            return object->InitialMeterValue(METER_FARMING);
         } else if (boost::iequals(property_name, "TargetFarming")) {
-            retval = object->InitialMeterValue(METER_TARGET_FARMING);
+            return object->InitialMeterValue(METER_TARGET_FARMING);
         } else if (boost::iequals(property_name, "Industry")) {
-            retval = object->InitialMeterValue(METER_INDUSTRY);
+            return object->InitialMeterValue(METER_INDUSTRY);
         } else if (boost::iequals(property_name, "TargetIndustry")) {
-            retval = object->InitialMeterValue(METER_TARGET_INDUSTRY);
+            return object->InitialMeterValue(METER_TARGET_INDUSTRY);
         } else if (boost::iequals(property_name, "Research")) {
-            retval = object->InitialMeterValue(METER_RESEARCH);
+            return object->InitialMeterValue(METER_RESEARCH);
         } else if (boost::iequals(property_name, "TargetResearch")) {
-            retval = object->InitialMeterValue(METER_TARGET_RESEARCH);
+            return object->InitialMeterValue(METER_TARGET_RESEARCH);
         } else if (boost::iequals(property_name, "Trade")) {
-            retval = object->InitialMeterValue(METER_TRADE);
+            return object->InitialMeterValue(METER_TRADE);
         } else if (boost::iequals(property_name, "TargetTrade")) {
-            retval = object->InitialMeterValue(METER_TARGET_TRADE);
+            return object->InitialMeterValue(METER_TARGET_TRADE);
         } else if (boost::iequals(property_name, "Mining")) {
-            retval = object->InitialMeterValue(METER_MINING);
+            return object->InitialMeterValue(METER_MINING);
         } else if (boost::iequals(property_name, "TargetMining")) {
-            retval = object->InitialMeterValue(METER_TARGET_MINING);
+            return object->InitialMeterValue(METER_TARGET_MINING);
         } else if (boost::iequals(property_name, "Construction")) {
-            retval = object->InitialMeterValue(METER_CONSTRUCTION);
+            return object->InitialMeterValue(METER_CONSTRUCTION);
         } else if (boost::iequals(property_name, "TargetConstruction")) {
-            retval = object->InitialMeterValue(METER_TARGET_CONSTRUCTION);
+            return object->InitialMeterValue(METER_TARGET_CONSTRUCTION);
 
         } else if (boost::iequals(property_name, "MaxFuel")) {
-            retval = object->InitialMeterValue(METER_MAX_FUEL);
+            return object->InitialMeterValue(METER_MAX_FUEL);
         } else if (boost::iequals(property_name, "Fuel")) {
-            retval = object->InitialMeterValue(METER_FUEL);
+            return object->InitialMeterValue(METER_FUEL);
         } else if (boost::iequals(property_name, "MaxStructure")) {
-            retval = object->InitialMeterValue(METER_MAX_STRUCTURE);
+            return object->InitialMeterValue(METER_MAX_STRUCTURE);
         } else if (boost::iequals(property_name, "Structure")) {
-            retval = object->InitialMeterValue(METER_STRUCTURE);
+            return object->InitialMeterValue(METER_STRUCTURE);
         } else if (boost::iequals(property_name, "MaxShield")) {
-            retval = object->InitialMeterValue(METER_MAX_SHIELD);
+            return object->InitialMeterValue(METER_MAX_SHIELD);
         } else if (boost::iequals(property_name, "Shield")) {
-            retval = object->InitialMeterValue(METER_SHIELD);
+            return object->InitialMeterValue(METER_SHIELD);
         } else if (boost::iequals(property_name, "MaxDefense")) {
-            retval = object->InitialMeterValue(METER_MAX_DEFENSE);
+            return object->InitialMeterValue(METER_MAX_DEFENSE);
         } else if (boost::iequals(property_name, "Defense")) {
-            retval = object->InitialMeterValue(METER_DEFENSE);
+            return object->InitialMeterValue(METER_DEFENSE);
 
         } else if (boost::iequals(property_name, "FoodConsumption")) {
-            retval = object->InitialMeterValue(METER_FOOD_CONSUMPTION);
+            return object->InitialMeterValue(METER_FOOD_CONSUMPTION);
         } else if (boost::iequals(property_name, "Supply")) {
-            retval = object->InitialMeterValue(METER_SUPPLY);
+            return object->InitialMeterValue(METER_SUPPLY);
         } else if (boost::iequals(property_name, "Stealth")) {
-            retval = object->InitialMeterValue(METER_STEALTH);
+            return object->InitialMeterValue(METER_STEALTH);
         } else if (boost::iequals(property_name, "Detection")) {
-            retval = object->InitialMeterValue(METER_DETECTION);
+            return object->InitialMeterValue(METER_DETECTION);
         } else if (boost::iequals(property_name, "BattleSpeed")) {
-            retval = object->InitialMeterValue(METER_BATTLE_SPEED);
+            return object->InitialMeterValue(METER_BATTLE_SPEED);
         } else if (boost::iequals(property_name, "StarlaneSpeed")) {
-            retval = object->InitialMeterValue(METER_STARLANE_SPEED);
+            return object->InitialMeterValue(METER_STARLANE_SPEED);
 
         } else if (boost::iequals(property_name, "Damage")) {
-            retval = object->InitialMeterValue(METER_DAMAGE);
+            return object->InitialMeterValue(METER_DAMAGE);
         } else if (boost::iequals(property_name, "ROF")) {
-            retval = object->InitialMeterValue(METER_ROF);
+            return object->InitialMeterValue(METER_ROF);
         } else if (boost::iequals(property_name, "Range")) {
-            retval = object->InitialMeterValue(METER_RANGE);
+            return object->InitialMeterValue(METER_RANGE);
         } else if (boost::iequals(property_name, "Speed")) {
-            retval = object->InitialMeterValue(METER_SPEED);
+            return object->InitialMeterValue(METER_SPEED);
         } else if (boost::iequals(property_name, "Capacity")) {
-            retval = object->InitialMeterValue(METER_CAPACITY);
+            return object->InitialMeterValue(METER_CAPACITY);
         } else if (boost::iequals(property_name, "AntiShipDamage")) {
-            retval = object->InitialMeterValue(METER_ANTI_SHIP_DAMAGE);
+            return object->InitialMeterValue(METER_ANTI_SHIP_DAMAGE);
         } else if (boost::iequals(property_name, "AntiFighterDamage")) {
-            retval = object->InitialMeterValue(METER_ANTI_FIGHTER_DAMAGE);
+            return object->InitialMeterValue(METER_ANTI_FIGHTER_DAMAGE);
         } else if (boost::iequals(property_name, "LaunchRate")) {
-            retval = object->InitialMeterValue(METER_LAUNCH_RATE);
+            return object->InitialMeterValue(METER_LAUNCH_RATE);
         } else if (boost::iequals(property_name, "FighterWeaponRange")) {
-            retval = object->InitialMeterValue(METER_FIGHTER_WEAPON_RANGE);
+            return object->InitialMeterValue(METER_FIGHTER_WEAPON_RANGE);
 
         } else if (boost::iequals(property_name, "TradeStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->ResourceStockpile(RE_TRADE);
+                return empire->ResourceStockpile(RE_TRADE);
             }
         } else if (boost::iequals(property_name, "MineralStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->ResourceStockpile(RE_MINERALS);
+                return empire->ResourceStockpile(RE_MINERALS);
             }
         } else if (boost::iequals(property_name, "FoodStockpile")) {
             if (object->Owners().size() == 1) {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
-                retval = empire->ResourceStockpile(RE_FOOD);
+                return empire->ResourceStockpile(RE_FOOD);
             }
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");
         }
 
-        return retval;
+        return 0.0;
     }
 
     template <>
     int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target,
                             const boost::any& current_value) const
     {
-        int retval = 0;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        if (!object) {
+            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            return 0;
+        }
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(int)
+
         if (boost::iequals(property_name, "Owner")) {
             if (object->Owners().size() == 1)
-                retval = *object->Owners().begin();
+                return *object->Owners().begin();
             else
-                retval = ALL_EMPIRES;
+                return ALL_EMPIRES;
         } else if (boost::iequals(property_name, "ID")) {
-            retval = object->ID();
+            return object->ID();
         } else if (boost::iequals(property_name, "CreationTurn")) {
-            retval = object->CreationTurn();
+            return object->CreationTurn();
         } else if (boost::iequals(property_name, "Age")) {
-            retval = object->AgeInTurns();
+            return object->AgeInTurns();
         } else if (boost::iequals(property_name, "DesignID")) {
             if (const Ship* ship = universe_object_cast<const Ship*>(object))
-                retval = ship->DesignID();
+                return ship->DesignID();
             else
-                retval = ShipDesign::INVALID_DESIGN_ID;
+                return ShipDesign::INVALID_DESIGN_ID;
         } else if (boost::iequals(property_name, "FleetID")) {
             if (const Ship* ship = universe_object_cast<const Ship*>(object))
-                retval = ship->FleetID();
+                return ship->FleetID();
             else
-                retval = UniverseObject::INVALID_OBJECT_ID;
+                return UniverseObject::INVALID_OBJECT_ID;
         } else if (boost::iequals(property_name, "PlanetID")) {
             if (const Building* building = universe_object_cast<const Building*>(object))
-                retval = building->PlanetID();
+                return building->PlanetID();
             else
-                retval = UniverseObject::INVALID_OBJECT_ID;
+                return UniverseObject::INVALID_OBJECT_ID;
         } else if (boost::iequals(property_name, "SystemID")) {
-            retval = object->SystemID();
+            return object->SystemID();
         } else if (boost::iequals(property_name, "FinalDestinationID")) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
-                retval = fleet->FinalDestinationID();
+                return fleet->FinalDestinationID();
             else
-                retval = UniverseObject::INVALID_OBJECT_ID;
+                return UniverseObject::INVALID_OBJECT_ID;
         } else if (boost::iequals(property_name, "NextSystemID")) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
-                retval = fleet->NextSystemID();
+                return fleet->NextSystemID();
             else
-                retval = UniverseObject::INVALID_OBJECT_ID;
+                return UniverseObject::INVALID_OBJECT_ID;
         } else if (boost::iequals(property_name, "PreviousSystemID")) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
-                retval = fleet->PreviousSystemID();
+                return fleet->PreviousSystemID();
             else
-                retval = UniverseObject::INVALID_OBJECT_ID;
+                return UniverseObject::INVALID_OBJECT_ID;
         } else if (boost::iequals(property_name, "NumShips")) {
             if (const Fleet* fleet = universe_object_cast<const Fleet*>(object))
-                retval = fleet->NumShips();
+                return fleet->NumShips();
             else
-                retval = 0;
+                return 0;
         } else if (boost::iequals(property_name, "CurrentTurn")) {
-            retval = CurrentTurn();
+            return CurrentTurn();
         } else {
             throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type int.");
         }
 
-        return retval;
+        return 0;
     }
 
     template <>
     std::string Variable<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
                                             const boost::any& current_value) const
     {
-        std::string retval;
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        if (!object) {
+            Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            return "";
+        }
         std::string property_name = m_property_name.back();
+
         IF_CURRENT_VALUE_ELSE(std::string)
+
         if (boost::iequals(property_name, "Name")) {
-            retval = object->Name();
+            return object->Name();
         } else if (boost::iequals(property_name, "Species")) {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
-                retval = planet->SpeciesName();
+                return planet->SpeciesName();
             else if (const Ship* ship = universe_object_cast<const Ship*>(object))
-                retval = ship->SpeciesName();
+                return ship->SpeciesName();
         } else if (boost::iequals(property_name, "BuildingType")) {
             if (const Building* building = universe_object_cast<const Building*>(object))
-                retval = building->BuildingTypeName();
+                return building->BuildingTypeName();
         } else if (boost::iequals(property_name, "Focus")) {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
-                retval = planet->Focus();
+                return planet->Focus();
         } else {
             throw std::runtime_error("Attempted to read a non-string value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type std::string.");
         }
 
-        return retval;
+        return "";
     }
 
 #undef IF_CURRENT_VALUE_ELSE
