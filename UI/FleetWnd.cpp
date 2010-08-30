@@ -2390,7 +2390,7 @@ void FleetWnd::DoLayout()
     if (show_new_fleet_drop_target) {
         AttachChild(m_new_fleet_drop_target);
         m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT + GG::X(PAD), top), GG::Pt(RIGHT - ClientUI::ScrollWidth() - GG::X(PAD), top + ROW_HEIGHT));
-        top += ROW_HEIGHT;
+        top += ROW_HEIGHT + GG::Y(PAD);
     } else {
         if (m_new_fleet_drop_target)
             DetachChild(m_new_fleet_drop_target);
