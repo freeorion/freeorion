@@ -1029,8 +1029,9 @@ bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const Uni
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
+        ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies();
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(source, target, boost::any()) == planet->EnvironmentForSpecies())
+            if (m_environments[i]->Eval(source, target, boost::any()) == env_for_planets_species)
                 return true;
         }
     }

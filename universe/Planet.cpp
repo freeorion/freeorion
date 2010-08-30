@@ -181,6 +181,11 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
 {
     const Species* species = 0;
     if (species_name.empty()) {
+        const std::string& this_planet_species_name = this->SpeciesName();
+
+        if (this_planet_species_name.empty())
+            return PE_UNINHABITABLE;
+
         species = GetSpecies(this->SpeciesName());
         if (!species) {
             Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get own species with name \"" << this->SpeciesName() << "\"";

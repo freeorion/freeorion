@@ -660,6 +660,7 @@ MapWnd::MapWnd() :
                                   ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->SlideTo(static_cast<int>(m_zoom_steps_in));
     GG::GUI::GetGUI()->Register(m_zoom_slider);
+    m_zoom_slider->Hide();
 
 
     // stealth threshold slider
@@ -669,6 +670,7 @@ MapWnd::MapWnd() :
     m_stealth_threshold_slider->SetPageSize(1);
     m_stealth_threshold_slider->SlideTo(GetOptionsDB().Get<int>("UI.detection-range-stealth-threshold"));
     GG::GUI::GetGUI()->Register(m_stealth_threshold_slider);
+    m_stealth_threshold_slider->Hide();
 
 
     GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);

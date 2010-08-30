@@ -1291,7 +1291,6 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
 {
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 0) EffectsGroups from Species
-    // get PopCenters
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
@@ -1311,6 +1310,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 1) EffectsGroups from Specials
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
         const std::set<std::string>& specials = it->second->Specials();
@@ -1327,6 +1327,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 2) EffectsGroups from Techs
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
@@ -1339,6 +1340,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 3) EffectsGroups from Buildings
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     std::vector<Building*> buildings = m_objects.FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         const Building* building = *building_it;
@@ -1357,6 +1359,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
     std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
