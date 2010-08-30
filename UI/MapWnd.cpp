@@ -241,7 +241,7 @@ namespace {
 class MapWnd::MapScaleLine : public GG::Control {
 public:
     MapScaleLine(GG::X x, GG::Y y, GG::X w, GG::Y h) :
-        GG::Control(x, y, w, h, GG::Flags<GG::WndFlag>()),
+        GG::Control(x, y, w, h, GG::ONTOP),
         m_scale_factor(1.0),
         m_line_length(GG::X1),
         m_label(0),
@@ -641,13 +641,15 @@ MapWnd::MapWnd() :
     // FPS indicator
     m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
     m_toolbar->AttachChild(m_FPS);
+    m_FPS->Hide();
 
 
     // Zoom scale line
     m_scale_line = new MapScaleLine(GG::X(LAYOUT_MARGIN),   GG::Y(LAYOUT_MARGIN) + TOOLBAR_HEIGHT,
                                     SCALE_LINE_MAX_WIDTH,   SCALE_LINE_HEIGHT);
-    AttachChild(m_scale_line);
+    GG::GUI::GetGUI()->Register(m_scale_line);
     m_scale_line->Update(ZoomFactor());
+    m_scale_line->Hide();
 
 
     // Zoom slider
@@ -655,18 +657,20 @@ MapWnd::MapWnd() :
               ZOOM_SLIDER_MAX = static_cast<int>(ZOOM_IN_MAX_STEPS);
     m_zoom_slider = new CUISlider(m_turn_update->UpperLeft().x, m_scale_line->LowerRight().y + GG::Y(LAYOUT_MARGIN),
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-                                  ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL);
+                                  ZOOM_SLIDER_MIN, ZOOM_SLIDER_MAX, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_zoom_slider->SlideTo(static_cast<int>(m_zoom_steps_in));
+    GG::GUI::GetGUI()->Register(m_zoom_slider);
+
 
     // stealth threshold slider
     m_stealth_threshold_slider = new CUISlider(m_zoom_slider->UpperLeft().x + GG::X(ClientUI::ScrollWidth()*3), m_zoom_slider->UpperLeft().y,
                                   GG::X(ClientUI::ScrollWidth()), ZOOM_SLIDER_HEIGHT,
-                                  0, 100, GG::VERTICAL);
+                                  0, 100, GG::VERTICAL, GG::INTERACTIVE | GG::ONTOP);
     m_stealth_threshold_slider->SetPageSize(1);
     m_stealth_threshold_slider->SlideTo(GetOptionsDB().Get<int>("UI.detection-range-stealth-threshold"));
+    GG::GUI::GetGUI()->Register(m_stealth_threshold_slider);
 
 
-    RefreshSliders();
     GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
     GG::Connect(m_stealth_threshold_slider->SlidSignal, &MapWnd::StealthSlid,   this);
     GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
@@ -828,6 +832,9 @@ MapWnd::MapWnd() :
 MapWnd::~MapWnd()
 {
     delete m_toolbar;
+    delete m_scale_line;
+    delete m_zoom_slider;
+    delete m_stealth_threshold_slider;
     delete m_sitrep_panel;
     delete m_pedia_panel;
     delete m_research_wnd;
@@ -839,8 +846,6 @@ MapWnd::~MapWnd()
 void MapWnd::DoLayout()
 {
     m_toolbar->Resize(GG::Pt(AppWidth(), TOOLBAR_HEIGHT));
-
-    m_scale_line->MoveTo(GG::Pt(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN) + TOOLBAR_HEIGHT) - ClientUpperLeft());
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X BUTTON_TOTAL_MARGIN(8);
@@ -1589,9 +1594,6 @@ void MapWnd::LDrag(const GG::Pt &pt, const GG::Pt &move, GG::Flags<GG::ModKey> m
     GG::Pt move_to_pt = pt - m_drag_offset;
     CorrectMapPosition(move_to_pt);
 
-    GG::Pt final_move = move_to_pt - ClientUpperLeft();
-    m_scale_line->OffsetMove(-final_move);
-
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
     m_dragged = true;
 }
@@ -1768,9 +1770,6 @@ void MapWnd::InitTurn()
     RefreshFleetSignals();
 
 
-    MoveChildUp(m_scale_line);
-
-
     // set turn button to current turn
     m_turn_update->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
                                           boost::lexical_cast<std::string>(turn_number)));
@@ -1808,6 +1807,8 @@ void MapWnd::InitTurn()
 
     m_toolbar->Show();
     m_FPS->Show();
+    m_scale_line->Show();
+    RefreshSliders();
 
 
     timer.restart();
@@ -2498,15 +2499,12 @@ void MapWnd::CenterOnMapCoord(double x, double y)
     GG::Pt map_move = GG::Pt(static_cast<GG::X>((current_x - x) * ZoomFactor()),
                              static_cast<GG::Y>((current_y - y) * ZoomFactor()));
     OffsetMove(map_move);
-    m_scale_line->OffsetMove(-map_move);
 
     // this correction ensures that the centering doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
-    GG::Pt final_move = move_to_pt - ul;
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
-    m_scale_line->OffsetMove(-final_move);
 }
 
 void MapWnd::ShowTech(const std::string& tech_name)
@@ -3301,17 +3299,17 @@ void MapWnd::RefreshFleetSignals()
 
 void MapWnd::RefreshSliders()
 {
-    if (m_zoom_slider && m_toolbar) {
+    if (m_zoom_slider) {
         if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider"))
-            m_toolbar->AttachChild(m_zoom_slider);
+            m_zoom_slider->Show();
         else
-            m_toolbar->DetachChild(m_zoom_slider);
+            m_zoom_slider->Hide();
     }
-    if (m_stealth_threshold_slider && m_toolbar) {
+    if (m_stealth_threshold_slider) {
         if (GetOptionsDB().Get<bool>("UI.show-stealth-threshold-slider"))
-            m_toolbar->AttachChild(m_stealth_threshold_slider);
+            m_stealth_threshold_slider->Show();
         else
-            m_toolbar->DetachChild(m_stealth_threshold_slider);
+            m_stealth_threshold_slider->Hide();
     }
 }
 
@@ -3412,15 +3410,12 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     GG::Pt map_move(static_cast<GG::X>((center_x + ul_offset_x) - ul.x),
                     static_cast<GG::Y>((center_y + ul_offset_y) - ul.y));
     OffsetMove(map_move);
-    m_scale_line->OffsetMove(-map_move);
 
     // this correction ensures that zooming in doesn't leave too large a margin to the side
     GG::Pt move_to_pt = ul = ClientUpperLeft();
     CorrectMapPosition(move_to_pt);
-    GG::Pt final_move = move_to_pt - ul;
 
     MoveTo(move_to_pt - GG::Pt(AppWidth(), AppHeight()));
-    m_scale_line->OffsetMove(-final_move);
 
     if (m_scale_line)
         m_scale_line->Update(ZoomFactor());
@@ -3770,8 +3765,12 @@ void MapWnd::Cleanup()
     HideProduction();
     HideDesign();
     HideSitRep();
+    HidePedia();
     m_toolbar->Hide();
     m_FPS->Hide();
+    m_scale_line->Hide();
+    m_zoom_slider->Hide();
+    m_stealth_threshold_slider->Hide();
 }
 
 void MapWnd::Sanitize()
