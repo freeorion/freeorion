@@ -36,8 +36,6 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual void                        MovementPhase();
-
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string                 Dump() const;
 
@@ -93,7 +91,10 @@ public:
     /** \name Mutators */ //@{
     virtual void            Copy(const UniverseObject* copied_object, int empire_id = ALL_EMPIRES);
 
-    void                    SetRoute(const std::list<int>& route);          ///< orders the fleet to move through the systems in the list, in order
+    void                    SetRoute(const std::list<int>& route);          ///< sets this fleet to move through the series of systems in the list, in order
+    void                    CalculateRoute() const;                         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to its current destination system
+
+    virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
@@ -116,10 +117,8 @@ public:
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
 private:
-    virtual void            PopGrowthProductionResearchPhase();
     virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
 
-    void                    CalculateRoute() const;                         ///< sets m_travel_route and m_travel_distance to their proper values based on the other member data
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 
     ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id
@@ -133,11 +132,13 @@ private:
     int                         m_prev_system;                              ///< the next system in the route, if any
     int                         m_next_system;                              ///< the previous system in the route, if any 
 
-    /** list of systems on travel route of fleet from current position to destination.  If the fleet is
-      * currently in a system, that will be the first system on the list.  Otherwise, the first system on
-      * the list will be the next system the fleet will reach along its path.  The list may also contain a
-      * single null pointer, which indicates that the route is unknown.  The list may also be empty, which
-      * indicates that it has not yet been caluclated, and CalculateRoute should be called. */
+    /** list of systems on travel route of fleet from current position to
+      * destination.  If the fleet is currently in a system, that will be the
+      * first system on the list.  Otherwise, the first system on the list will
+      * be the next system the fleet will reach along its path.  The list may
+      * also contain a single null pointer, which indicates that the route is
+      * unknown.  The list may also be empty, which indicates that it has not
+      * yet been caluclated, and CalculateRoute should be called. */
     mutable std::list<int>      m_travel_route;
     mutable double              m_travel_distance;
 

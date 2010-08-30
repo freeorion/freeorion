@@ -1336,6 +1336,9 @@ void ServerApp::PreCombatProcessTurns()
     ObjectMap& objects = m_universe.Objects();
 
 
+    m_universe.RebuildEmpireViewSystemGraphs();
+
+
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
 
     // execute orders
@@ -1441,6 +1444,13 @@ void ServerApp::PreCombatProcessTurns()
     m_universe.UpdateEmpireObjectVisibilities();
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
+
+    // update fleet routes after movement
+    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        Fleet* fleet = *it;
+        if (fleet)
+            fleet->CalculateRoute();
+    }
 
     // indicate that the clients are waiting for their new Universes
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
@@ -1646,8 +1656,7 @@ void ServerApp::PostCombatProcessTurns()
 
 
     // regenerate empire system graphs based on latest visibility information.
-    // this is needed for some UniverseObject subclasses'
-    // PopGrowthProductionResearchPhase()
+    // this is used by CalculateRoute and other system connectivity tests
     m_universe.RebuildEmpireViewSystemGraphs();
 
 
@@ -1658,6 +1667,14 @@ void ServerApp::PostCombatProcessTurns()
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
+
+    // update fleet routes after combat, production, growth, effects, etc.
+    std::vector<Fleet*> fleets = objects.FindObjects<Fleet>();
+    for (std::vector<Fleet*>::iterator it = fleets.begin(); it != fleets.end(); ++it) {
+        Fleet* fleet = *it;
+        if (fleet)
+            fleet->CalculateRoute();
+    }
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
     Logger().debugStream() << objects.Dump();
