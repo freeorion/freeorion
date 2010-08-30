@@ -1394,14 +1394,6 @@ PredefinedShipDesignManager::~PredefinedShipDesignManager() {
         delete it->second;
 }
 
-int PredefinedShipDesignManager::GenericUniverseDesignID(const std::string& name) const {
-    std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
-    if (it == m_design_generic_ids.end())
-        return ShipDesign::INVALID_DESIGN_ID;
-    else
-        return it->second;
-}
-
 std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
     std::map<std::string, int> retval;
 
@@ -1531,6 +1523,5 @@ const PredefinedShipDesignManager& GetPredefinedShipDesignManager() {
 }
 
 const ShipDesign* GetPredefinedShipDesign(const std::string& name) {
-    int universe_generic_design_id = GetPredefinedShipDesignManager().GenericUniverseDesignID(name);    // gets id under which the premade ship design of the indicated name was stored generically in the universe.  that is, the id under which the design was stored with no empire creator
-    return GetUniverse().GetShipDesign(universe_generic_design_id); // may return 0
+    return GetUniverse().GetGenericShipDesign(name); // may return 0
 }

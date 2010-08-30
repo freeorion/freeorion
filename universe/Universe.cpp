@@ -785,6 +785,20 @@ const ShipDesign* Universe::GetShipDesign(int ship_design_id) const
     return (it != m_ship_designs.end() ? it->second : 0);
 }
 
+const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const
+{
+    if (name.empty())
+        return 0;
+    for (ship_design_iterator it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
+        const ShipDesign* design = it->second;
+        const std::string& design_name = design->Name(false);
+        int designed_by_empire_id = design->DesignedByEmpire();
+        if (name == design_name && designed_by_empire_id == ALL_EMPIRES)
+            return design;
+    }
+    return 0;
+}
+
 const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const
 {
     std::map<int, std::set<int> >::const_iterator it = m_empire_known_ship_design_ids.find(empire_id);

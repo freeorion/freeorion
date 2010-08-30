@@ -298,6 +298,8 @@ public:
     ship_design_iterator    beginShipDesigns() const   {return m_ship_designs.begin();}     ///< returns the begin iterator for ship designs
     ship_design_iterator    endShipDesigns() const     {return m_ship_designs.end();}       ///< returns the end iterator for ship designs
 
+    const ShipDesign*       GetGenericShipDesign(const std::string& name) const;
+
     /** Returns IDs of ship designs that the Empire with id \a empire_id has
       * seen during the game.  If \a empire_id = ALL_EMPIRES an empty set of
       * ids is returned */

@@ -540,15 +540,6 @@ public:
 
     /** Returns iterator pointing one past last ship design. */
     iterator                            end() const;
-
-    /** Returns ship design id in the universe under which the premade ship
-      * design with the indicated name was stored without an empire creator.
-      * Most designs have an empire that created them, including designs added
-      * to empires with AddShipDesignsToEmpire(), but designs added to the
-      * universe with AddShipDesignsToUniverse() don't have an empire creator
-      * set, and aren't tracked in an Empire object, so to get those generic
-      * creatorless designs, this function can be used. */
-    int                                 GenericUniverseDesignID(const std::string& name) const;
     //@}
 
     /** Adds designs in this manager to the specified \a empire using that
