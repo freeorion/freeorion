@@ -292,6 +292,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\util\SerializeUniverseExports.ipp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\util\SitRepEntry.cpp"
 				>
 			</File>

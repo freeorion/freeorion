@@ -2347,44 +2347,63 @@ void FleetWnd::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void FleetWnd::DoLayout()
 {
-    const GG::X TOTAL_WIDTH = ClientWidth();
-    const GG::X LEFT = GG::X0;
-    const GG::X RIGHT = TOTAL_WIDTH - GG::X0;
+    const GG::X TOTAL_WIDTH(ClientWidth());
+    const GG::X LEFT(GG::X0);
+    const GG::X RIGHT(TOTAL_WIDTH);
 
-    const GG::Y TOTAL_HEIGHT = ClientHeight();
-    const GG::Y AVAILABLE_HEIGHT = TOTAL_HEIGHT - GG::Y(4*PAD); // top and bottom pads, and space between contents pads
+    const GG::Y TOTAL_HEIGHT(ClientHeight());
+    const GG::Y AVAILABLE_HEIGHT(TOTAL_HEIGHT - GG::Y(INNER_BORDER_ANGLE_OFFSET));
 
-    const GG::Y LISTBOX_TOP = GG::Y0;
+    GG::Y top(GG::Y0);
+    const GG::Y BOTTOM(AVAILABLE_HEIGHT);
 
-    // TODO: If size too small for new fleet drop target or ships panel, don't show them.  keep fleet list visible
-    //       as long as possible when height is reduced.
-    const GG::Y DATA_PANEL_BOTTOM = TOTAL_HEIGHT - GG::Y(PAD);
-
-    const GG::Y ROW_HEIGHT = m_fleets_lb->ListRowSize().y;
+    const GG::Y ROW_HEIGHT(m_fleets_lb->ListRowSize().y);
 
 
-    GG::Y       NEW_FLEET_DROP_TARGET_HEIGHT = ROW_HEIGHT + GG::Y(PAD); // space for row, and one more unit of pad space
-    if (!m_new_fleet_drop_target)
-        NEW_FLEET_DROP_TARGET_HEIGHT = GG::Y0;
+    // what parts of FleetWnd to show?
+    bool show_new_fleet_drop_target(true);
+    if (!m_new_fleet_drop_target || AVAILABLE_HEIGHT < 5*ROW_HEIGHT)
+        show_new_fleet_drop_target = false;
+
+    bool show_fleet_detail_panel(true);
+    if (AVAILABLE_HEIGHT < 3*ROW_HEIGHT)
+        show_fleet_detail_panel = false;
 
 
-    // subtract space for new fleet drop target, and divide remainder between list box and fleet data panel
-    const GG::Y DATA_PANEL_HEIGHT = (AVAILABLE_HEIGHT - NEW_FLEET_DROP_TARGET_HEIGHT) / 3 * 2;
-    const GG::Y LIST_BOX_HEIGHT = (AVAILABLE_HEIGHT - NEW_FLEET_DROP_TARGET_HEIGHT) / 3;
+    // how tall to make fleets list?  subtract height for other panels from available height.
+    GG::Y fleets_list_height(AVAILABLE_HEIGHT);
+    if (show_fleet_detail_panel)
+        fleets_list_height *= 0.5;
+    if (show_new_fleet_drop_target)
+        fleets_list_height -= (ROW_HEIGHT + GG::Y(PAD));
 
-    // get other edges of list box and data panel
-    const GG::Y LISTBOX_BOTTOM = LISTBOX_TOP + LIST_BOX_HEIGHT;
-    const GG::Y DATA_PANEL_TOP = DATA_PANEL_BOTTOM - DATA_PANEL_HEIGHT;
+    // how tall to make ships list, if present?
+    GG::Y ship_list_height(AVAILABLE_HEIGHT - fleets_list_height - GG::Y(PAD));
+    if (show_new_fleet_drop_target)
+        ship_list_height -= (ROW_HEIGHT + GG::Y(PAD));
 
-    // if present, use these to set position of drop target.  if not present, list box and data panel will use up the space
-    if (m_new_fleet_drop_target) {
-        const GG::Y DROP_TARGET_TOP = LISTBOX_BOTTOM + GG::Y(PAD);
-        const GG::Y DROP_TARGET_BOTTOM = DROP_TARGET_TOP + ROW_HEIGHT;
-        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT, DROP_TARGET_TOP),  GG::Pt(RIGHT - ClientUI::ScrollWidth() - GG::X(PAD), DROP_TARGET_BOTTOM));
+
+    // position controls
+    m_fleets_lb->SizeMove(                  GG::Pt(LEFT, top),              GG::Pt(RIGHT, top + fleets_list_height));
+    top += fleets_list_height + GG::Y(PAD);
+
+    if (show_new_fleet_drop_target) {
+        AttachChild(m_new_fleet_drop_target);
+        m_new_fleet_drop_target->SizeMove(  GG::Pt(LEFT + GG::X(PAD), top), GG::Pt(RIGHT - ClientUI::ScrollWidth() - GG::X(PAD), top + ROW_HEIGHT));
+        top += ROW_HEIGHT;
+    } else {
+        if (m_new_fleet_drop_target)
+            DetachChild(m_new_fleet_drop_target);
     }
 
-    m_fleets_lb->SizeMove(                  GG::Pt(LEFT, LISTBOX_TOP),      GG::Pt(RIGHT, LISTBOX_BOTTOM));
-    m_fleet_detail_panel->SizeMove(         GG::Pt(LEFT, DATA_PANEL_TOP),   GG::Pt(RIGHT, DATA_PANEL_BOTTOM));
+    if (show_fleet_detail_panel) {
+        AttachChild(m_fleet_detail_panel);
+        m_fleet_detail_panel->SizeMove(     GG::Pt(LEFT, top),              GG::Pt(RIGHT, top + ship_list_height));
+        top += ship_list_height + GG::Y(PAD);
+    } else {
+        if (m_fleet_detail_panel)
+            DetachChild(m_fleet_detail_panel);
+    }
 }
 
 void FleetWnd::AddFleet(int fleet_id)
