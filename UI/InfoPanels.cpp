@@ -1398,10 +1398,10 @@ void MultiMeterStatusBar::Render()
     // outline of whole control
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);
 
-    const GG::X BAR_LEFT = ClientUpperLeft().x + EDGE_PAD;
-    const GG::X BAR_RIGHT = ClientLowerRight().x - EDGE_PAD;
+    const GG::X BAR_LEFT = ClientUpperLeft().x + EDGE_PAD - 1;
+    const GG::X BAR_RIGHT = ClientLowerRight().x - EDGE_PAD + 1;
     const GG::X BAR_MAX_LENGTH = BAR_RIGHT - BAR_LEFT;
-    const GG::Y TOP = ClientUpperLeft().y + EDGE_PAD;
+    const GG::Y TOP = ClientUpperLeft().y + EDGE_PAD - 1;
     GG::Y y = TOP;
 
     for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
@@ -1440,21 +1440,13 @@ void MultiMeterStatusBar::Render()
         const bool SHOW_PROJECTED = (m_projected_values[i] != Meter::INVALID_VALUE);
         const bool SHOW_TARGET_MAX = (m_target_max_values[i] != Meter::INVALID_VALUE);
 
-        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-        if (SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT) {
-            // max / target value
-            glColor(DarkColor(m_bar_colours[i]));
-            m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM));
-            // black border
-            GG::FlatRectangle(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM), GG::CLR_ZERO, GG::CLR_BLACK, 1);
-        }
 
         const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-        const GG::Y INITIAL_TOP(BAR_TOP + BAR_HEIGHT / 3);
+        const GG::Y INITIAL_TOP(BAR_TOP);
         if (SHOW_INITIAL) {
             // initial value
             const GG::X INITIAL_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_initial_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
-            const GG::Y INITIAL_TOP(BAR_TOP + BAR_HEIGHT / 3);
+            const GG::Y INITIAL_TOP(BAR_TOP);
             glColor(m_bar_colours[i]);
             m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, INITIAL_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM));
             // black border
@@ -1470,6 +1462,15 @@ void MultiMeterStatusBar::Render()
             } else if (PROJECTED_RIGHT < INITIAL_RIGHT) {
                 GG::FlatRectangle(GG::Pt(PROJECTED_RIGHT - 1, PROJECTED_TOP), GG::Pt(INITIAL_RIGHT, BAR_BOTTOM), ClientUI::StatDecrColor(), GG::CLR_BLACK, 1);
             }
+        }
+
+        const GG::X TARGET_MAX_RIGHT(BAR_LEFT + BAR_MAX_LENGTH * m_target_max_values[i] / MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE);
+        if (SHOW_TARGET_MAX && TARGET_MAX_RIGHT > BAR_LEFT) {
+            // max / target value
+            //glColor(DarkColor(m_bar_colours[i]));
+            //m_bar_shading_texture->OrthoBlit(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM));
+            // black border
+            GG::FlatRectangle(GG::Pt(BAR_LEFT, BAR_TOP), GG::Pt(TARGET_MAX_RIGHT, BAR_BOTTOM), GG::CLR_ZERO, m_bar_colours[i], 1);
         }
 
         // move down position of next bar, if any
@@ -1520,7 +1521,7 @@ void MultiMeterStatusBar::Update()
     }
 
     // calculate height from number of bars to be shown
-    const GG::Y HEIGHT = num_bars*BAR_HEIGHT + (num_bars - 1)*BAR_PAD + 2*EDGE_PAD;
+    const GG::Y HEIGHT = num_bars*BAR_HEIGHT + (num_bars - 1)*BAR_PAD + 2*EDGE_PAD - 2;
     Resize(GG::Pt(Width(), HEIGHT));
 }
 
