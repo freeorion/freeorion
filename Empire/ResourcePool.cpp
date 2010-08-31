@@ -218,9 +218,9 @@ void ResourcePool::Update() {
             // check all ResourceCenters in this pool to see if any are in this system.
             for (std::map<const ResourceCenter*, const UniverseObject*>::const_iterator obj_it = m_resource_center_objs.begin(); obj_it != m_resource_center_objs.end(); ++obj_it) {
                 if (obj_it->second->SystemID() == system_in_group_id) {
-                    // add this ResourceCenter's production to the group pool
+                    // add this ResourceCenter's output to the group pool
                     const ResourceCenter* rc = obj_it->first;
-                    group_production += rc->NextTurnCurrentMeterValue(meter_type);
+                    group_production += rc->CurrentMeterValue(meter_type);
                     //Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->NextTurnCurrentMeterValue(meter_type);
                 }
             }
@@ -228,7 +228,7 @@ void ResourcePool::Update() {
             // this checks all ResourceCenter against all systems, even if a system has already been found for a ResourceCenter.  Some
             // fancy caching or swapping the inner and outer loops might be a performance improvement... or detriment.
         }
-        //Logger().debugStream() << "... group production: " << group_production;
+        //Logger().debugStream() << "... group output: " << group_production;
     }
 
     ChangedSignal();

@@ -2850,7 +2850,7 @@ void Empire::UpdateFoodDistribution()
             const UniverseObject* obj = pop_center_objects[*pop_it];
             std::map<const UniverseObject*, const ResourceCenter*>::const_iterator res_it = object_resource_centers.find(obj);
             if (res_it != object_resource_centers.end())
-                food_production[*pop_it] = res_it->second->NextTurnCurrentMeterValue(METER_FARMING);
+                food_production[*pop_it] = res_it->second->CurrentMeterValue(METER_FARMING);
             else    // if not a ResourceCenter, produces no food
                 food_production[*pop_it] = 0.0;
 

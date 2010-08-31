@@ -1396,15 +1396,6 @@ void ServerApp::PreCombatProcessTurns()
     }
 
 
-    // Execute all meter-related effects after orders, so that new
-    // UniverseObjects created during order execution (eg. new fleets) and
-    // newly colonized planets will have effects applied to them this turn,
-    // ensuring (eg.) new fleets will have the appropriate stealth level on
-    // the turn they are created, and planets will have appropriate "initial"
-    // population, from which to calculate food allocation.
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
-
-
     Logger().debugStream() << "ServerApp::ProcessTurns movement";
     // process movement phase
 
@@ -1604,6 +1595,9 @@ void ServerApp::PostCombatProcessTurns()
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+    //Logger().debugStream() << objects.Dump();
+    Logger().debugStream() << objects.Object(78)->Dump();
 
     Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
 
@@ -1631,6 +1625,28 @@ void ServerApp::PostCombatProcessTurns()
                 new_object_ids.push_back(it->first);
     }
 
+    // Execute meter-related effects on objects created this turn, so that new
+    // UniverseObjects will have effects applied to them this turn, allowing
+    // (for example) ships to have max fuel meters greater than 0 on the turn
+    // they are created.
+    m_universe.ApplyMeterEffectsAndUpdateMeters(new_object_ids);
+
+
+
+
+
+    // Population growth or loss, health meter growth, resource current meter
+    // growth
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+        it->second->PopGrowthProductionResearchPhase();
+        it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
+    }
+
+
+
+    // store initial values of meters for this turn.
+    m_universe.BackPropegateObjectMeters();
+
 
     // store any changes in objects from various progress functions, such as
     // starvation of planets, before updating visibility again, so that if the
@@ -1639,16 +1655,6 @@ void ServerApp::PostCombatProcessTurns()
     // turn when the empire did have detection ability for the object
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
-
-    Logger().debugStream() << "ServerApp::ProcessTurns post-production effects and meter updates";
-
-
-    // Execute meter-related effects on objects created this turn, so that new
-    // UniverseObjects will have effects applied to them this turn, allowing
-    // (for example) ships to have max fuel meters greater than 0 on the turn
-    // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(new_object_ids);
-    m_universe.BackPropegateObjectMeters(new_object_ids);
 
 
     // post-production and meter-effects visibility update
@@ -1659,13 +1665,6 @@ void ServerApp::PostCombatProcessTurns()
     // this is used by CalculateRoute and other system connectivity tests
     m_universe.RebuildEmpireViewSystemGraphs();
 
-
-    // Population growth or loss, health meter growth, resource current meter
-    // growth
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
-        it->second->PopGrowthProductionResearchPhase();
-        it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
-    }
 
 
     // update fleet routes after combat, production, growth, effects, etc.
@@ -1679,12 +1678,6 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
     Logger().debugStream() << objects.Dump();
 
-
-    // re-execute all meter-related effects after all gamestate changes during
-    // turn processing that might affect the results.  This final update should
-    // be consistent with the meter value breakdowns calculated by clients
-    m_universe.ApplyMeterEffectsAndUpdateMeters();
-    m_universe.BackPropegateObjectMeters();
 
 
     // update current turn number so that following visibility updates and info
