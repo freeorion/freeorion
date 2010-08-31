@@ -1596,11 +1596,10 @@ void ServerApp::PostCombatProcessTurns()
     }
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-    //Logger().debugStream() << objects.Dump();
-    Logger().debugStream() << objects.Object(78)->Dump();
+    Logger().debugStream() << objects.Dump();
+
 
     Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
-
 
     // Consume distributed resources to planets and on queues, create new
     // objects for completed production and give techs to empires that have
@@ -1616,6 +1615,10 @@ void ServerApp::PostCombatProcessTurns()
     }
 
 
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+    Logger().debugStream() << objects.Dump();
+
+
     // determine the IDs of new objects created before or during queue processing
     std::vector<int> new_object_ids;
     int current_turn = CurrentTurn();   // skip objects created on invalid turns or before this turn
@@ -1629,18 +1632,22 @@ void ServerApp::PostCombatProcessTurns()
     // UniverseObjects will have effects applied to them this turn, allowing
     // (for example) ships to have max fuel meters greater than 0 on the turn
     // they are created.
-    m_universe.ApplyMeterEffectsAndUpdateMeters(new_object_ids);
+    m_universe.ApplyMeterEffectsAndUpdateMeters();
 
 
-
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING METERS OF ALL OBJECTS";
+    Logger().debugStream() << objects.Dump();
 
 
     // Population growth or loss, health meter growth, resource current meter
-    // growth
+    // growth, etc.
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         it->second->PopGrowthProductionResearchPhase();
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
+
+    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+    Logger().debugStream() << objects.Dump();
 
 
 
