@@ -480,6 +480,12 @@ void FleetUIManager::FleetWndClicked(FleetWnd* fleet_wnd) {
     SetActiveFleetWnd(fleet_wnd);
 }
 
+void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/)
+{
+    std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
+    for (std::size_t i = 0; i < vec.size(); ++i)
+        vec[0]->EnableOrderIssuing(enable);
+}
 
 namespace {
     ////////////////////////////////////////////////
@@ -2779,3 +2785,6 @@ const GG::Pt& FleetWnd::LastSize()
     return s_last_size;
 }
 
+void FleetWnd::EnableOrderIssuing(bool enable/* = true*/)
+{
+}

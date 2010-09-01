@@ -81,6 +81,9 @@ public:
       * made more configurable, but for now are just those planets owned by
       * this client's empire. */
     void                EnableSelection(bool enable = true);
+
+    /** Enables, or disables if \a enable is false, issuing orders via the SidePanel. */
+    void                EnableOrderIssuing(bool enable = true);
     //@}
 
     static boost::signal<void (int)>    PlanetSelectedSignal;           ///< emitted when a rotating planet in the side panel is clicked by the user

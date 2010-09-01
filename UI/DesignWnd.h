@@ -26,6 +26,9 @@ public:
 
     /** Shows ship design with id \a design_id in design encyclopedia window */
     void    ShowShipDesignInEncyclopedia(int design_id);
+
+    /** Enables, or disables if \a enable is false, issuing orders via this DesignWnd. */
+    void    EnableOrderIssuing(bool enable = true);
     //@}
 
 private:

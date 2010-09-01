@@ -109,8 +109,7 @@ public:
 
     void            DoLayout();
 
-    void            DisableOrderIssuing();  //!< disables issuing orders or pressing the turn button.  useful when turn has been pressed and the player must wait for the next turn to start.
-    void            EnableOrderIssuing();   //!< enables order issuing and pressing the turn button.
+    void            EnableOrderIssuing(bool enable = true);                 //!< enables or disables order issuing and pressing the turn button.
 
     void            InitTurn();                                             //!< called at the start of each turn
     void            MidTurnUpdate();                                        //!< called after receiving updated Universe during turn processing, but not when the full turn update is received

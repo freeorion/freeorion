@@ -418,6 +418,9 @@ public:
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
+
+    /** Enables, or disables if \a enable is false, issuing orders via this PlanetPanel. */
+    void            EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signal<void (int)>   LClickedSignal;     ///< emitted when the planet panel is left clicked by the user.  returns the id of the clicked planet
@@ -437,6 +440,7 @@ private:
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
+    bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
     GG::Clr                 m_empire_colour;            ///< colour to use for empire-specific highlighting.  set based on ownership of planet.
     PopulationPanel*        m_population_panel;         ///< contains info about population and health
     ResourcePanel*          m_resource_panel;           ///< contains info about resources production and focus selection UI
@@ -477,6 +481,10 @@ public:
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+    /** Enables, or disables if \a enable is false, issuing orders via the
+      * PlanetPanels in this PlanetPanelContainer. */
+    void            EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signal<void (int)> PlanetSelectedSignal; ///< emitted when an enabled planet panel is clicked by the user
@@ -671,6 +679,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
     m_selected(false),
+    m_order_issuing_enabled(true),
     m_empire_colour(GG::CLR_ZERO),
     m_population_panel(0),
     m_resource_panel(0),
@@ -1215,7 +1224,7 @@ void SidePanel::PlanetPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     const Planet* planet = GetObject<Planet>(m_planet_id);
-    if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+    if (!planet || !planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) || !m_order_issuing_enabled)
         return;
 
     GG::MenuItem menu_contents;
@@ -1230,7 +1239,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             std::string plt_name = planet->Name();
             CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
             edit_wnd.Run();
-            if (edit_wnd.Result() != "" && edit_wnd.Result() != planet->Name())
+            if (edit_wnd.Result() != "" && edit_wnd.Result() != planet->Name() && m_order_issuing_enabled)
             {
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
                 m_planet_name->SetText(planet->Name());
@@ -1352,7 +1361,7 @@ void SidePanel::PlanetPanel::ClickColonize()
     // been ordered
 
     const Planet* planet = GetObject<Planet>(m_planet_id);
-    if (!planet || !planet->Unowned())
+    if (!planet || !planet->Unowned() || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -1383,6 +1392,19 @@ void SidePanel::PlanetPanel::ClickColonize()
         // cancel colonization
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     }
+}
+
+void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+    m_order_issuing_enabled = enable;
+
+    m_button_colonize->Disable(!enable);
+
+    m_population_panel->EnableOrderIssuing(enable);
+    m_resource_panel->EnableOrderIssuing(enable);
+    m_military_panel->EnableOrderIssuing(enable);
+    m_buildings_panel->EnableOrderIssuing(enable);
+    m_specials_panel->EnableOrderIssuing(enable);
 }
 
 ////////////////////////////////////////////////
@@ -1660,6 +1682,13 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
         DoLayout();
 }
 
+void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/)
+{
+    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
+        PlanetPanel* panel = *it;
+        panel->EnableOrderIssuing(enable);
+    }
+}
 
 ////////////////////////////////////////////////
 // SidePanel
@@ -2200,8 +2229,14 @@ void SidePanel::SetSystem(int system_id)
     Refresh();
 }
 
-void SidePanel::EnableSelection(bool enable)
+void SidePanel::EnableSelection(bool enable/* = true*/)
 {
     //std::cout << "SidePanel::EnableSelection(" << enable << ")" << std::endl;
     m_selection_enabled = enable;
 }
+
+void SidePanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+    m_planet_panel_container->EnableOrderIssuing(enable);
+}
+

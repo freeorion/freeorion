@@ -21,30 +21,33 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void Refresh();
-    void Reset();
-    void Update();
-    void CenterOnTech(const std::string& tech_name);
-    void ShowTech(const std::string& tech_name);
-    void QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
-    void Sanitize();
+    void    Refresh();
+    void    Reset();
+    void    Update();
+    void    CenterOnTech(const std::string& tech_name);
+    void    ShowTech(const std::string& tech_name);
+    void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
+    void    Sanitize();
 
-    void Render();
+    void    Render();
+
+    /** Enables, or disables if \a enable is false, issuing orders via this ResearchWnd. */
+    void    EnableOrderIssuing(bool enable = true);
     //@}
 
 private:
-    void ResearchQueueChangedSlot();
-    void UpdateQueue();
-    void UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)
-    void AddTechToQueueSlot(const Tech* tech);
-    void AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec);
-    void QueueItemDeletedSlot(GG::ListBox::iterator it);
-    void QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
-    void QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
+    void    ResearchQueueChangedSlot();
+    void    UpdateQueue();
+    void    UpdateInfoPanel();     ///< Updates research summary at top left of production screen, and signals that the empire's minerals research pool has changed (propegates to the mapwnd to update indicator)
+    void    AddTechToQueueSlot(const Tech* tech);
+    void    AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec);
+    void    QueueItemDeletedSlot(GG::ListBox::iterator it);
+    void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
+    void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
-    ProductionInfoPanel* m_research_info_panel;
-    QueueListBox*        m_queue_lb;
-    TechTreeWnd*         m_tech_tree_wnd;
+    ProductionInfoPanel*        m_research_info_panel;
+    QueueListBox*               m_queue_lb;
+    TechTreeWnd*                m_tech_tree_wnd;
 
     boost::signals::connection  m_empire_connection;
 };

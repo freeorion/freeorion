@@ -2181,3 +2181,7 @@ void DesignWnd::AddDesign() {
 
     Logger().debugStream() << "Added new design: " << design.Name();
 }
+
+void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
+{
+}

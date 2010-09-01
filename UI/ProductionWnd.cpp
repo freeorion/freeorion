@@ -420,3 +420,8 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
     //std::cout << "ProductionWnd::QueueItemDoubleClickedSlot" << std::endl;
     m_queue_lb->ErasedSignal(it);
 }
+
+void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/)
+{
+}
+

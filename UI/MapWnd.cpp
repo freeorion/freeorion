@@ -1638,14 +1638,14 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
         Zoom(move);
 }
 
-void MapWnd::DisableOrderIssuing()
+void MapWnd::EnableOrderIssuing(bool enable/* = true*/)
 {
-    m_turn_update->Disable(true);
-}
-
-void MapWnd::EnableOrderIssuing()
-{
-    m_turn_update->Disable(false);
+    m_turn_update->Disable(!enable);
+    m_side_panel->EnableOrderIssuing(enable);
+    m_production_wnd->EnableOrderIssuing(enable);
+    m_research_wnd->EnableOrderIssuing(enable);
+    m_design_wnd->EnableOrderIssuing(enable);
+    FleetUIManager::GetFleetUIManager().EnableOrderIssuing(enable);
 }
 
 void MapWnd::InitTurn()

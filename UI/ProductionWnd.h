@@ -53,6 +53,9 @@ public:
     void            SelectDefaultPlanet();
 
     void            Sanitize();
+
+    /** Enables, or disables if \a enable is false, issuing orders via this ProductionWnd. */
+    void            EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signal<void (int)> SystemSelectedSignal; ///< emitted when the user changes the selected system in the production screen

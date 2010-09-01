@@ -492,6 +492,10 @@ const PopCenter* PopulationPanel::GetPopCenter() const
     return pop;
 }
 
+void PopulationPanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+}
+
 
 /////////////////////////////////////
 //         ResourcePanel           //
@@ -938,6 +942,11 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
     FocusChangedSignal(res->AvailableFoci().at(i));
 }
 
+void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+    m_focus_drop->Disable(!enable);
+}
+
 
 /////////////////////////////////////
 //         MilitaryPanel           //
@@ -1224,8 +1233,12 @@ void MilitaryPanel::DoExpandCollapseLayout()
         m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     }
 
-    ExpandCollapseSignal();}
+    ExpandCollapseSignal();
+}
 
+void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+}
 
 
 /////////////////////////////////////
@@ -1805,6 +1818,15 @@ void BuildingsPanel::DoExpandCollapseLayout()
     ExpandCollapseSignal();
 }
 
+void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin();
+         it != m_building_indicators.end();
+         ++it)
+    {
+        (*it)->EnableOrderIssuing(enable);
+    }
+}
 
 
 /////////////////////////////////////
@@ -1815,7 +1837,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     m_graphic(0),
     m_scrap_indicator(0),
     m_progress_bar(0),
-    m_building_id(building_id)
+    m_building_id(building_id),
+    m_order_issuing_enabled(true)
 {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
@@ -1831,7 +1854,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turn
     m_graphic(0),
     m_scrap_indicator(0),
     m_progress_bar(0),
-    m_building_id(UniverseObject::INVALID_OBJECT_ID)
+    m_building_id(UniverseObject::INVALID_OBJECT_ID),
+    m_order_issuing_enabled(true)
 {
     boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
 
@@ -1946,7 +1970,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     Building* building = GetObject<Building>(m_building_id);
-    if (!building || !building->OwnedBy(empire_id)) {
+    if (!building || !building->OwnedBy(empire_id) || !m_order_issuing_enabled) {
         return;
     }
 
@@ -1964,12 +1988,16 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 3: { // scrap building
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ScrapOrder(empire_id, m_building_id)));
+            if (m_order_issuing_enabled)
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ScrapOrder(empire_id, m_building_id)));
             break;
         }
 
         case 4: { // un-scrap building
+            if (!m_order_issuing_enabled)
+                break;
+
             // find order to scrap this building, and recind it
             std::map<int, int> pending_scrap_orders = PendingScrapOrders();
             std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
@@ -1984,6 +2012,12 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         }
     }
 }
+
+void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)
+{
+    m_order_issuing_enabled = enable;
+}
+
 
 /////////////////////////////////////
 //         SpecialsPanel           //
@@ -2088,6 +2122,9 @@ void SpecialsPanel::Update()
     }
 }
 
+void SpecialsPanel::EnableOrderIssuing(bool enable/* = true*/)
+{
+}
 
 
 /////////////////////////////////////

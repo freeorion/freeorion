@@ -358,3 +358,7 @@ void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 {
     m_queue_lb->ErasedSignal(it);
 }
+
+void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/)
+{
+}

@@ -53,8 +53,11 @@ public:
     void                Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                Refresh();                      ///< updates, redoes layout, resizes indicator
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    /** Enables, or disables if \a enable is false, issuing orders via this PopulationPanel. */
+    void                EnableOrderIssuing(bool enable = true);
     //@}
+
+    mutable boost::signal<void ()> ExpandCollapseSignal;
 
 private:
     void                ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -99,9 +102,12 @@ public:
     void            Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void            Refresh();                      ///< updates, redoes layout, resizes indicator
 
+    /** Enables, or disables if \a enable is false, issuing orders via this ResourcePanel. */
+    void            EnableOrderIssuing(bool enable = true);
+    //@}
+
     mutable boost::signal<void ()>                  ExpandCollapseSignal;
     mutable boost::signal<void (const std::string&)>FocusChangedSignal;
-    //@}
 
 private:
     void            ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -149,8 +155,11 @@ public:
     void                    Update();                       ///< updates indicators with values of associated object.  Does not do layout and resizing.
     void                    Refresh();                      ///< updates, redoes layout, resizes indicator
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    /** Enables, or disables if \a enable is false, issuing orders via this MilitaryPanel. */
+    void                    EnableOrderIssuing(bool enable = true);
     //@}
+
+    mutable boost::signal<void ()> ExpandCollapseSignal;
 
 private:
     void                    ExpandCollapseButtonPressed();  ///< toggles panel expanded or collapsed
@@ -193,8 +202,11 @@ public:
 
     void            Refresh();                              ///< recreates indicators, redoes layout, resizes
 
-    mutable boost::signal<void ()> ExpandCollapseSignal;
+    /** Enables, or disables if \a enable is false, issuing orders via this BuildingsPanel. */
+    void            EnableOrderIssuing(bool enable = true);
     //@}
+
+    mutable boost::signal<void ()> ExpandCollapseSignal;
 
 private:
     void            ExpandCollapseButtonPressed();          ///< toggles panel expanded or collapsed
@@ -217,6 +229,7 @@ public:
     BuildingIndicator(GG::X w, const BuildingType& type, int turns_left, int turns_completed,
                       double partial_turn);                 ///< constructor for use when building is partially complete, to show progress bar
 
+    /** \name Mutators */ //@{
     virtual void    Render();
     void            Refresh();
 
@@ -224,11 +237,16 @@ public:
     virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
     virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
 
+    /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
+    void            EnableOrderIssuing(bool enable = true);
+    //@}
+
 private:
     GG::StaticGraphic*          m_graphic;
     GG::StaticGraphic*          m_scrap_indicator;  ///< shown to indicate building was ordered scrapped
     MultiTurnProgressBar*       m_progress_bar;
     int                         m_building_id;
+    bool                        m_order_issuing_enabled;
 };
 
 /** Displays a set of specials attached to an UniverseObject */
@@ -249,6 +267,10 @@ public:
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                    Update();          ///< regenerates indicators according to buildings on planets and on queue on planet and redoes layout
+
+    /** Enables, or disables if \a enable is false, issuing orders via this SpecialsPanel. */
+    void                    EnableOrderIssuing(bool enable = true);
+
     //@}
 
 private:

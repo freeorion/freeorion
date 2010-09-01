@@ -437,7 +437,7 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
         Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("LOADING") + "\n");
 
     else if (context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN)
-        Client().m_ui->GetMapWnd()->DisableOrderIssuing();
+        Client().m_ui->GetMapWnd()->EnableOrderIssuing(false);
 }
 
 WaitingForTurnData::~WaitingForTurnData()

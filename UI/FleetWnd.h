@@ -58,6 +58,9 @@ public:
     void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
     bool            CloseAll();
     void            RefreshAll();
+
+    /** Enables, or disables if \a enable is false, issuing orders via FleetWnds. */
+    void            EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signal<void ()> ActiveFleetWndChangedSignal;                 //!< emitted when the selected FleetWnd changes
@@ -107,6 +110,9 @@ public:
     void                    SetSelectedShips(const std::set<int>& ship_ids);    ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
     virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void                    Refresh();                          ///< regenerates contents
+
+    /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
+    void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     static const GG::Pt&    LastPosition();                     ///< returns the last position of the last FleetWnd that was closed
