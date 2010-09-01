@@ -46,6 +46,7 @@ namespace Condition {
     struct WithinStarlaneJumps;
     struct ExploredByEmpire;
     struct Stationary;
+    struct SupplyLineConnected;
     struct And;
     struct Or;
     struct Not;
@@ -556,9 +557,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are within \a distance units of at least one object that meets \a condition.
-    Warning: this Condition can slow things down considerably if overused.  It is best to use Conditions
-    that yield relatively few matches. */
+/** Matches all objects that are within \a distance units of at least one
+  * object that meets \a condition.  Warning: this Condition can slow things
+  * down considerably if overused.  It is best to use Conditions that yield
+  * relatively few matches. */
 struct Condition::WithinDistance : Condition::ConditionBase
 {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition);
@@ -578,9 +580,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that are within \a jumps starlane jumps of at least one object that meets \a condition.
-    Warning: this Condition can slow things down considerably if overused.  It is best to use Conditions
-    that yield relatively few matches. */
+/** Matches all objects that are within \a jumps starlane jumps of at least one
+  * object that meets \a condition.  Warning: this Condition can slow things
+  * down considerably if overused.  It is best to use Conditions that yield
+  * relatively few matches. */
 struct Condition::WithinStarlaneJumps : Condition::ConditionBase
 {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition);
@@ -628,6 +631,35 @@ struct Condition::Stationary : Condition::ConditionBase
 
 private:
     virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches objects that are connected by starlanes up to \a max_jumps starlane
+  * traversals to any object that matches \a from_object_condition using only 
+  * starlanes that are resource or ship supply passable for empire \a lane_owner */
+struct Condition::SupplyLineConnected : Condition::ConditionBase
+{
+    SupplyLineConnected(const ValueRef::ValueRefBase<int>* lane_owner,
+                        const ValueRef::ValueRefBase<int>* max_jumps,
+                        const ConditionBase* from_object_condition,
+                        bool use_fleet_supply_lines,
+                        bool use_resource_supply_lines);
+    virtual ~SupplyLineConnected();
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    const ValueRef::ValueRefBase<int>*  m_lane_owner;
+    const ValueRef::ValueRefBase<int>*  m_max_jumps;
+    const ConditionBase*                m_from_object_condition;
+    bool                                m_use_fleet_supply_lines;
+    bool                                m_use_resource_supply_lines;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -907,6 +939,17 @@ template <class Archive>
 void Condition::Stationary::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::SupplyLineConnected::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_lane_owner)
+        & BOOST_SERIALIZATION_NVP(m_max_jumps)
+        & BOOST_SERIALIZATION_NVP(m_from_object_condition)
+        & BOOST_SERIALIZATION_NVP(m_use_fleet_supply_lines)
+        & BOOST_SERIALIZATION_NVP(m_use_resource_supply_lines);
 }
 
 template <class Archive>

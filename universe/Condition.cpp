@@ -1949,6 +1949,47 @@ bool Condition::Stationary::Match(const UniverseObject* source, const UniverseOb
 }
 
 ///////////////////////////////////////////////////////////
+// SupplyLineConnected                                   //
+///////////////////////////////////////////////////////////
+Condition::SupplyLineConnected::SupplyLineConnected(const ValueRef::ValueRefBase<int>* lane_owner,
+                                                    const ValueRef::ValueRefBase<int>* max_jumps,
+                                                    const ConditionBase* from_object_condition,
+                                                    bool use_fleet_supply_lines,
+                                                    bool use_resource_supply_lines) :
+    m_lane_owner(lane_owner),
+    m_max_jumps(max_jumps),
+    m_from_object_condition(from_object_condition),
+    m_use_fleet_supply_lines(use_fleet_supply_lines),
+    m_use_resource_supply_lines(use_resource_supply_lines)
+{}
+
+Condition::SupplyLineConnected::~SupplyLineConnected()
+{
+    delete m_lane_owner;
+    delete m_max_jumps;
+    delete m_from_object_condition;
+}
+
+void Condition::SupplyLineConnected::Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+}
+
+std::string Condition::SupplyLineConnected::Description(bool negated/* = false*/) const
+{
+    return "";
+}
+
+std::string Condition::SupplyLineConnected::Dump() const
+{
+    return "";
+}
+
+bool Condition::SupplyLineConnected::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    return false;
+}
+
+///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
 Condition::And::And(const std::vector<const ConditionBase*>& operands) :
