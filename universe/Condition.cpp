@@ -304,7 +304,10 @@ void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, Obje
 
 std::string Condition::All::Description(bool negated/* = false*/) const
 {
-    return UserString("DESC_ALL");
+    std::string description_str = "DESC_ALL";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
 }
 
 std::string Condition::All::Dump() const
@@ -1624,12 +1627,18 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
         condition_non_targets.insert(it->second);
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
+    // special case to save looping later
+    if (condition_targets.empty()) {
+        // nothing matched from objects, so nothing can match overall condition.
+        // if checking NON_TARGETS, don't need to do anything.
+        if (search_domain == NON_TARGETS)
+            return;
 
-    //std::cout << "WithinDistance::Eval: objects meeting operand condition: " << m_condition->Dump() << std::endl;
-    //for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it)
-    //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
-    //std::cout << std::endl;
-
+        // move all objects from non_targets to targets
+        non_targets.insert(targets.begin(), targets.end());
+        targets.clear();
+        return;
+    }
 
     if (search_domain == NON_TARGETS) {
         // to be transferred to targets, object initially in non_targets
@@ -1744,6 +1753,19 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
+    // special case to save looping later
+    if (condition_targets.empty()) {
+        // nothing matched from objects, so nothing can match overall condition.
+        // if checking NON_TARGETS, don't need to do anything.
+        if (search_domain == NON_TARGETS)
+            return;
+
+        // move all objects from non_targets to targets
+        non_targets.insert(targets.begin(), targets.end());
+        targets.clear();
+        return;
+    }
+
     // determine which objects in the Universe are within the specified distance from the objects in condition_targets
     for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
         ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
@@ -1784,7 +1806,7 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
 {
     const ObjectMap& objects = GetMainObjectMap();
     int jump_limit = m_jumps->Eval(source, target, boost::any());
-    if (jump_limit == 0) { // special case, since ShortestPath() doesn't expect the start point to be the end point
+    if (jump_limit == 0) { // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
         double delta_x = source->X() - target->X();
         double delta_y = source->Y() - target->Y();
         return !(delta_x * delta_x + delta_y * delta_y);
@@ -1795,26 +1817,38 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
         const System* target_system = objects.Object<System>(target->SystemID());
         if (!target_system)
             target_system = universe_object_cast<const System*>(target);
+
+        // need various special cases for whether the source and or target
+        // objects are or are in systems.
         if (source_system && target_system) {
-            std::pair<std::list<int>, double> path = GetUniverse().ShortestPath(source_system->ID(), target_system->ID());
+            // both source and target are / in systems.  can just find the
+            // shortest path between the two systems
+            std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(source_system->ID(), target_system->ID());
             if (!path.first.empty()) { // if path.first is empty, no path exists between the systems
                 return (static_cast<int>(path.first.size()) - 1) <= jump_limit;
             }
         } else if (source_system) {
+            // just source is / in a system.  need to check shortest path from
+            // systems on either side of starlane target is on
             if (const Fleet* target_fleet = FleetFromObject(target)) {
-                std::pair<std::list<int>, double> path1 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->PreviousSystemID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().ShortestPath(source_system->ID(), target_fleet->NextSystemID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(source_system->ID(), target_fleet->PreviousSystemID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(source_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
+            // just target is / in a system.  need to check shortest path from
+            // systems on either side of starlane source is on
            if (const Fleet* source_fleet = FleetFromObject(source)) {
-                std::pair<std::list<int>, double> path1 = GetUniverse().ShortestPath(source_fleet->PreviousSystemID(), target_system->ID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().ShortestPath(source_fleet->NextSystemID(), target_system->ID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(source_fleet->PreviousSystemID(), target_system->ID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(source_fleet->NextSystemID(), target_system->ID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1 <= jump_limit;
             }
         } else {
+            // neither source nor target are / in systems.  need to check all
+            // combinations of systems on either sides of starlanes source and
+            // target are on
             const Fleet* source_fleet = FleetFromObject(source);
             const Fleet* target_fleet = FleetFromObject(target);
             if (source_fleet && target_fleet) {
@@ -1972,21 +2006,95 @@ Condition::SupplyLineConnected::~SupplyLineConnected()
 
 void Condition::SupplyLineConnected::Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
+    // get the list of all UniverseObjects that satisfy m_from_object_condition
+    ObjectSet condition_targets;
+    ObjectSet condition_non_targets;
+    ObjectMap& objects = GetUniverse().Objects();
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
+        condition_non_targets.insert(it->second);
+    }
+    m_from_object_condition->Eval(source, condition_targets, condition_non_targets);
+
+    // special case to save looping later
+    if (condition_targets.empty()) {
+        // nothing matched from objects, so nothing can match overall condition.
+        // if checking NON_TARGETS, don't need to do anything.
+        if (search_domain == NON_TARGETS)
+            return;
+
+        // move all objects from non_targets to targets
+        non_targets.insert(targets.begin(), targets.end());
+        targets.clear();
+        return;
+    }
+
+    // determine which objects in the Universe are within the specified number
+    // of jumps on the specified type of starlane
+    for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
+        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
+        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        ObjectSet::iterator it2 = from_set.begin();
+        ObjectSet::iterator end_it2 = from_set.end();
+        for ( ; it2 != end_it2; ) {
+            ObjectSet::iterator temp = it2++;
+            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+    }
 }
 
 std::string Condition::SupplyLineConnected::Description(bool negated/* = false*/) const
 {
-    return "";
+    std::string lane_owner_str = ValueRef::ConstantExpr(m_lane_owner) ? Empires().Lookup(m_lane_owner->Eval(0, 0, boost::any()))->Name() : m_lane_owner->Description();
+    std::string max_jumps_str = ValueRef::ConstantExpr(m_max_jumps) ? Empires().Lookup(m_max_jumps->Eval(0, 0, boost::any()))->Name() : m_max_jumps->Description();
+
+    std::string description_str;
+    if (m_use_fleet_supply_lines && m_use_resource_supply_lines)
+        description_str = "DESC_SUPPLY_CONNECTED_FLEET_RESOURCE";
+    else if (m_use_fleet_supply_lines)
+        description_str = "DESC_SUPPLY_CONNECTED_FLEET";
+    else if (m_use_fleet_supply_lines)
+        description_str = "DESC_SUPPLY_CONNECTED_RESOURCE";
+    else
+        description_str = "DESC_SUPPLY_CONNECTED_NONE";
+
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % lane_owner_str
+               % max_jumps_str
+               % m_from_object_condition->Description());
 }
 
 std::string Condition::SupplyLineConnected::Dump() const
 {
-    return "";
+    std::string retval = DumpIndent() + "SupplyLineConnected lane_owner = " + m_lane_owner->Dump() +
+                                        " max_jumps = " + m_max_jumps->Dump() +
+                                        " use_fleet_supply_lines = " + (m_use_fleet_supply_lines ? "true" : "false") +
+                                        " use_resource_supply_lines = " + (m_use_resource_supply_lines ? "true" : "false") +
+                                        " condition = \n";
+    ++g_indent;
+    retval += m_from_object_condition->Dump();
+    --g_indent;
+    return retval;
 }
 
 bool Condition::SupplyLineConnected::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    return false;
+    const ObjectMap& objects = GetMainObjectMap();
+    int jump_limit = m_max_jumps->Eval(source, target, boost::any());
+
+    if (jump_limit == 0) { // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
+        double delta_x = source->X() - target->X();
+        double delta_y = source->Y() - target->Y();
+        return !(delta_x * delta_x + delta_y * delta_y);
+    } else {
+        // todo
+        return false;
+    }
 }
 
 ///////////////////////////////////////////////////////////
