@@ -799,8 +799,10 @@ void Fleet::MovementPhase()
             {
                 for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it) {
                     if (Ship* ship = GetObject<Ship>(*ship_it))
-                        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                             fuel_meter->AddToCurrent(0.1001);
+                            fuel_meter->BackPropegate();
+                        }
                 }
             }
             return;
@@ -913,8 +915,10 @@ void Fleet::MovementPhase()
     if (fuel_consumed > 0.0) {
         for (const_iterator ship_it = begin(); ship_it != end(); ++ship_it)
             if (Ship* ship = GetObject<Ship>(*ship_it))
-                if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL))
+                if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                     meter->AddToCurrent(-fuel_consumed);
+                    meter->BackPropegate();
+                }
     }
 }
 
