@@ -93,10 +93,17 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         // the current food allocation).
         // this will be an accurate estimate of next turn's food consumption
         // unless food consumption is not proportional to population
-        double next_turn_max_pop_growth = this->NextTurnPopGrowth();
+        double next_turn_pop_growth = this->NextTurnPopGrowth();
         double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
-        double fractional_growth = next_turn_max_pop_growth / current_pop;
+        double fractional_growth = next_turn_pop_growth / current_pop;
         double expected_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_growth);
+
+        //Logger().debugStream() << "PopCenter::PopCenterNextTurnMeterValue(FOOD CONSUMPTION)" <<
+        //    " next turn growth max: " << next_turn_pop_growth <<
+        //    " current pop: " << current_pop <<
+        //    " fractional growth: " << fractional_growth <<
+        //    " current food consumption: " << this->CurrentMeterValue(METER_FOOD_CONSUMPTION) <<
+        //    " expected next turn food consumption: " << expected_next_turn_food_consumption;
 
         return expected_next_turn_food_consumption;
 
@@ -108,6 +115,17 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
         Logger().errorStream() << "PopCenter::PopCenterNextTurnMeterValue dealing with invalid meter type";
         return 0.0;
     }
+}
+
+double PopCenter::FoodAllocationForMaxGrowth() const
+{
+    // the same as PopCenterNextTurnMeterValue(METER_FOOD_ALLOCATION), but
+    // using NextTurnPopGrowhtMax instead of NextTurnPopGrowth
+    double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
+    double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
+    double fractional_max_growth = next_turn_max_pop_growth / current_pop;
+    double max_growth_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_max_growth);
+    return max_growth_next_turn_food_consumption;
 }
 
 double PopCenter::NextTurnPopGrowth() const
@@ -144,6 +162,11 @@ double PopCenter::NextTurnPopGrowth() const
     if (new_pop < MINIMUM_POP_CENTER_POPULATION)
         new_pop = 0.0;
 
+    //Logger().debugStream() << "PopCenter::NextTurnPopGrowth() allocated food: " << allocated_food <<
+    //    " food allocation fraction: " << food_allocation_fraction <<
+    //    " supportable pop: " << population_supportable_by_allocated_food <<
+    //    " new pop: " << new_pop;
+
     return new_pop - current_pop;
 }
 
@@ -162,9 +185,9 @@ double PopCenter::NextTurnPopGrowthMax() const
     // if above 20 health and below target population, population can grow
     if (cur_health > 20.0 && cur_pop < target_pop) {
         double underpopulation_fraction = ((target_pop + 1.0) - cur_pop) / target_pop;
-        //std::cout << "underpop frac: " << underpopulation_fraction << std::endl;
+        Logger().debugStream() << "underpop frac: " << underpopulation_fraction;
         double growth_potential = cur_pop * underpopulation_fraction * (cur_health - 20.0) * 0.005;
-        //std::cout << "grow pot: " << growth_potential << std::endl;
+        Logger().debugStream() << "grow pot: " << growth_potential;
         double max_growth = target_pop - cur_pop;       // most pop can grow is up to target pop
         return std::min(max_growth, growth_potential);
     }
@@ -228,10 +251,22 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase()
     double pop_growth = NextTurnPopGrowth();                        // may be negative
     double new_pop = cur_pop + pop_growth;
 
+    Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
+
     GetMeter(METER_HEALTH)->AddToCurrent(NextTurnHealthGrowth());   // change may be negative
 
     if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
         GetMeter(METER_POPULATION)->AddToCurrent(pop_growth);
+        double new_population = CurrentMeterValue(METER_POPULATION);
+
+        double new_pop_fraction_of_old_pop = new_population / cur_pop;  // cur_pop is now old pop value
+
+        // update food allocation after growth; otherwise current value will be that for pre-growth population
+        if (Meter* food_consumption_meter = GetMeter(METER_FOOD_CONSUMPTION)) {
+            double estimated_new_food_allocation_after_growth = food_consumption_meter->Current() * new_pop_fraction_of_old_pop;
+            food_consumption_meter->SetCurrent(estimated_new_food_allocation_after_growth);
+        }
+
     } else {
         // if population falls below threshold, kill off the remainder
         Reset();

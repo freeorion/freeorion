@@ -2912,7 +2912,7 @@ void Empire::UpdateFoodDistribution()
         for (std::vector<PopCenter*>::iterator pop_it = pop_in_group.begin(); pop_it != pop_in_group.end() && food_available > 0.0; ++pop_it) {
             PopCenter* pc = *pop_it;
 
-            double most_needed_to_grow = pc->NextTurnCurrentMeterValue(METER_FOOD_CONSUMPTION);
+            double most_needed_to_grow = pc->FoodAllocationForMaxGrowth();
             double has = pc->AllocatedFood();
             double extra_needed_for_max_growth = most_needed_to_grow - has;
             double addition = std::min(std::max(extra_needed_for_max_growth, 0.0), food_available);

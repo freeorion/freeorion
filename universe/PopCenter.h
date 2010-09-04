@@ -35,6 +35,8 @@ public:
 
     virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
     virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
+
+    double              FoodAllocationForMaxGrowth() const;                 ///< returns the amount of food that should be allocated to this PopCenter to ensure the maximum possible growth rate
     //@}
 
     /** \name Mutators */ //@{
