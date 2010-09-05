@@ -1036,7 +1036,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
                 queued_tech = true;
             double rps_spent = empire->ResearchStatus(m_tech->Name());
             if (0.0 <= rps_spent) {
-                m_progress = rps_spent / (m_tech->ResearchTurns() * m_tech->ResearchCost());
+                m_progress = rps_spent / (m_tech->ResearchTime() * m_tech->ResearchCost());
                 assert(0.0 <= m_progress && m_progress <= 1.0);
             }
             researchable_tech = empire->ResearchableTech(m_tech->Name());
@@ -1064,7 +1064,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
     if (!known_tech)
         cost_str = boost::io::str(FlexibleFormat(UserString("TECH_TOTAL_COST_STR")) %
                                   static_cast<int>(m_tech->ResearchCost() + 0.5) %
-                                  m_tech->ResearchTurns());
+                                  m_tech->ResearchTime());
     m_tech_cost_text->SetText(cost_str);
 
 
@@ -1819,7 +1819,7 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const Tech* tech) :
     text = new GG::TextControl(GG::X0, GG::Y0, COST_WIDTH, HEIGHT, cost_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     push_back(text);
 
-    std::string time_str = boost::lexical_cast<std::string>(m_tech->ResearchTurns());
+    std::string time_str = boost::lexical_cast<std::string>(m_tech->ResearchTime());
     text = new GG::TextControl(GG::X0, GG::Y0, TIME_WIDTH, HEIGHT, time_str, font, ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
     push_back(text);
 
@@ -2461,7 +2461,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
             } 
             if (status == TS_RESEARCHABLE) {
                 Logger().errorStream() << ".... tech is researchable, adding to map of techs to enqueue";
-                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTurns(), cur_tech));
+                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTime(), cur_tech));
                 continue;
             }
 
@@ -2480,7 +2480,7 @@ void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
             // if all prereqs complete, tech is researchable
             if (all_prereqs_complete) {
                 Logger().errorStream() << "...... all prereqs are complete.  adding tech to map of techs to enqueue";
-                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTurns(), cur_tech));
+                techs_to_add_map.insert(std::pair<double, const Tech*>(cur_tech->ResearchTime(), cur_tech));
             }
         }
 

@@ -65,14 +65,18 @@ namespace {
         queue_index(queue_index_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-        double turn_cost;
-        int turns;
-        boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(build.item);
+        double total_cost;
+        int minimum_turns;
+        boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(build.item);
+        double per_turn_cost = total_cost / std::max(1, minimum_turns);
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueBuildPanel(w, build, build.allocated_pp, turns, build.remaining, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueBuildPanel(w, build,
+                                                 build.allocated_pp, minimum_turns, build.remaining,
+                                                 static_cast<int>(progress / per_turn_cost),
+                                                 std::fmod(progress, per_turn_cost));
         Resize(panel->Size());
         push_back(panel);
 
@@ -82,7 +86,9 @@ namespace {
     //////////////////////////////////////////////////
     // QueueBuildPanel implementation
     //////////////////////////////////////////////////
-    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build, double turn_spending, int turns, int number, int turns_completed, double partially_complete_turn) :
+    QueueBuildPanel::QueueBuildPanel(GG::X w, const ProductionQueue::Element& build,
+                                     double turn_spending, int turns, int number,
+                                     int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_build(build),
         m_name_text(0),

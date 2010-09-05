@@ -92,10 +92,10 @@ namespace {
         if (next_techs.empty())
             return 0;
 
-        double min_price = next_techs[0]->ResearchCost() * next_techs[0]->ResearchTurns();
+        double min_price = next_techs[0]->ResearchCost() * next_techs[0]->ResearchTime();
         int min_index = 0;
         for (unsigned int i = 0; i < next_techs.size(); ++i) {
-            double price = next_techs[i]->ResearchCost() * next_techs[i]->ResearchTurns();
+            double price = next_techs[i]->ResearchCost() * next_techs[i]->ResearchTime();
             if (price < min_price) {
                 min_price = price;
                 min_index = i;
@@ -165,7 +165,7 @@ std::string Tech::Dump() const
     retval += "\n";
     retval += DumpIndent() + "category = \"" + m_category + "\"\n";
     retval += DumpIndent() + "researchcost = " + lexical_cast<std::string>(ResearchCost()) + "\n";
-    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTurns()) + "\n";
+    retval += DumpIndent() + "researchturns = " + lexical_cast<std::string>(ResearchTime()) + "\n";
     retval += DumpIndent() + "prerequisites = ";
     if (m_prerequisites.empty()) {
         retval += "[]\n";
@@ -233,7 +233,12 @@ double Tech::ResearchCost() const
         return 1.0;
 }
 
-int Tech::ResearchTurns() const
+double Tech::PerTurnCost() const
+{
+    return ResearchCost() / std::max(1, ResearchTime());
+}
+
+int Tech::ResearchTime() const
 {
     if (!CHEAP_AND_FAST_TECH_RESEARCH)
         return m_research_turns;

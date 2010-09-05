@@ -74,7 +74,7 @@ public:
 
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
-                 double build_cost, int build_time, double maintenance_cost,
+                 double production_cost, int production_time, double maintenance_cost,
                  const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
@@ -86,8 +86,9 @@ public:
     const std::string&              Name() const;                   ///< returns the unique name for this type of building
     const std::string&              Description() const;            ///< returns a text description of this type of building
     std::string                     Dump() const;                   ///< returns a data file format representation of this object
-    double                          BuildCost() const;              ///< returns the number of production points required to build this building
-    int                             BuildTime() const;              ///< returns the number of turns required to build this building
+    double                          ProductionCost() const;         ///< returns the number of production points required to build this building
+    double                          PerTurnCost() const;            ///< returns the maximum number of production points per turn that can be spend on this building
+    int                             ProductionTime() const;         ///< returns the number of turns required to build this building
     double                          MaintenanceCost() const;        ///< returns the number of monetary points required per turn to operate this building
     const Condition::ConditionBase* Location() const;               ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
@@ -107,8 +108,8 @@ public:
 private:
     std::string                                                 m_name;
     std::string                                                 m_description;
-    double                                                      m_build_cost;
-    int                                                         m_build_time;
+    double                                                      m_production_cost;
+    int                                                         m_production_time;
     double                                                      m_maintenance_cost;
     const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;

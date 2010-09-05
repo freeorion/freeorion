@@ -43,8 +43,9 @@ public:
     std::string         Dump() const;               //!< Returns a data file format representation of this object
     TechType            Type() const;               //!< Returns the type (theory/application/refinement) of this tech
     const std::string&  Category() const;           //!< retursn the name of the category to which this tech belongs
-    double              ResearchCost() const;       //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
-    int                 ResearchTurns() const;      //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
+    double              ResearchCost() const;       //!< returns the total research cost in RPs required to research this tech
+    double              PerTurnCost() const;        //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
+    int                 ResearchTime() const;      //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
 
     /** returns the effects that are applied to the discovering empire's capitol when this tech is researched;
         not all techs have effects, in which case this returns 0 */

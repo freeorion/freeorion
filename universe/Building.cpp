@@ -187,8 +187,8 @@ void Building::SetOrderedScrapped(bool b)
 BuildingType::BuildingType() :
     m_name(""),
     m_description(""),
-    m_build_cost(0.0),
-    m_build_time(0),
+    m_production_cost(0.0),
+    m_production_time(0),
     m_maintenance_cost(0.0),
     m_location(0),
     m_effects(0),
@@ -196,14 +196,14 @@ BuildingType::BuildingType() :
 {}
 
 BuildingType::BuildingType(const std::string& name, const std::string& description,
-                           double build_cost, int build_time, double maintenance_cost,
+                           double production_cost, int production_time, double maintenance_cost,
                            const Condition::ConditionBase* location,
                            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                            const std::string& graphic) :
     m_name(name),
     m_description(description),
-    m_build_cost(build_cost),
-    m_build_time(build_time),
+    m_production_cost(production_cost),
+    m_production_time(production_time),
     m_maintenance_cost(maintenance_cost),
     m_location(location),
     m_effects(effects),
@@ -231,8 +231,8 @@ std::string BuildingType::Dump() const
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_build_cost) + "\n";
-    retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_build_time) + "\n";
+    retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_production_cost) + "\n";
+    retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_production_time) + "\n";
     retval += DumpIndent() + "maintenancecost = " + lexical_cast<std::string>(m_maintenance_cost) + "\n";
     retval += DumpIndent() + "location = \n";
     ++g_indent;
@@ -257,18 +257,22 @@ std::string BuildingType::Dump() const
     return retval;
 }
 
-double BuildingType::BuildCost() const
+double BuildingType::ProductionCost() const
 {
     if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
-        return m_build_cost;
+        return m_production_cost;
     else
         return 1.0;
 }
 
-int BuildingType::BuildTime() const
+double BuildingType::PerTurnCost() const {
+    return ProductionCost() / std::max(1, ProductionTime());
+}
+
+int BuildingType::ProductionTime() const
 {
     if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
-        return m_build_time;
+        return m_production_time;
     else
         return 1;
 }

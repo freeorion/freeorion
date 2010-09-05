@@ -420,8 +420,8 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Parts
         name = UserString(m_part_name);
         texture = ClientUI::PartTexture(m_part_name);
-        turns = part->BuildTime();
-        cost = part->Cost();
+        turns = part->ProductionTime();
+        cost = part->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_PART");
         specific_type = UserString(boost::lexical_cast<std::string>(part->Class()));
@@ -441,8 +441,8 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Hulls
         name = UserString(m_hull_name);
         texture = ClientUI::HullTexture(m_hull_name);
-        turns = hull->BuildTime();
-        cost = hull->Cost();
+        turns = hull->ProductionTime();
+        cost = hull->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
         // hulls have no specific types
@@ -464,7 +464,7 @@ void EncyclopediaDetailPanel::Refresh() {
         texture = ClientUI::TechTexture(m_tech_name);
         other_texture = ClientUI::CategoryIcon(tech->Category()); 
         color = ClientUI::CategoryColor(tech->Category());
-        turns = tech->ResearchTurns();
+        turns = tech->ResearchTime();
         cost = tech->ResearchCost();
         cost_units = UserString("ENC_RP");
         general_type = str(FlexibleFormat(UserString("ENC_TECH_DETAIL_TYPE_STR"))
@@ -516,8 +516,8 @@ void EncyclopediaDetailPanel::Refresh() {
         // Buildings
         name = UserString(m_building_name);
         texture = ClientUI::BuildingTexture(m_building_name);
-        turns = building_type->BuildTime();
-        cost = building_type->BuildCost();
+        turns = building_type->ProductionTime();
+        cost = building_type->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_BUILDING_TYPE");
 
@@ -572,8 +572,8 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
-        turns = incomplete_design->BuildTime();
-        cost = incomplete_design->PerTurnCost();
+        turns = incomplete_design->ProductionTime();
+        cost = incomplete_design->ProductionCost();
         cost_units = UserString("ENC_PP");
 
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
@@ -601,8 +601,8 @@ void EncyclopediaDetailPanel::Refresh() {
         // Ship Designs
         name = design->Name();
         texture = ClientUI::ShipIcon(design->ID());
-        turns = design->BuildTime();
-        cost = design->PerTurnCost();
+        turns = design->ProductionTime();
+        cost = design->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_DESIGN");
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
@@ -711,7 +711,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     if (cost != 0.0 && turns != -1) {
         m_cost_text->SetText(str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
-            % DoubleToString(cost, 3, false)
+            % DoubleToString(cost, 4, false)
             % cost_units
             % turns));
     }

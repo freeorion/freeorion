@@ -109,8 +109,8 @@ struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure
     member1 this_;
     member2 name;
     member3 description;
-    member4 build_cost;
-    member5 build_time;
+    member4 production_cost;
+    member5 production_time;
     member6 maintenance_cost;
     member7 location;
     member8 effects_groups;
@@ -206,7 +206,7 @@ struct PartClosure : boost::spirit::classic::closure<PartClosure, PartType*, std
     member4 part_class;
     member5 stats;
     member6 cost;
-    member7 build_time;
+    member7 production_time;
     member8 mountable_slot_types;
     member9 location;
     member10 effects_groups;
@@ -235,7 +235,7 @@ struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std
     member3 description;
     member4 stats;
     member5 cost;
-    member6 build_time;
+    member6 production_time;
     member7 slots;
     member8 location;
     member9 effects_groups;

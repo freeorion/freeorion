@@ -104,8 +104,8 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .add_property("fleetSupplyableSystemIDs", make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
-            .add_property("supplyUnobstructedSystems", make_function(&Empire::SupplyUnobstructedSystems,return_internal_reference<>()))
+            .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
+            .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,return_internal_reference<>()))
         ;
 
 
@@ -180,7 +180,7 @@ namespace FreeOrionPython {
             .add_property("type",               &Tech::Type)
             .add_property("category",           make_function(&Tech::Category,          return_value_policy<copy_const_reference>()))
             .add_property("researchCost",       &Tech::ResearchCost)
-            .add_property("researchTurns",      &Tech::ResearchTurns)
+            .add_property("researchTime",       &Tech::ResearchTime)
             .add_property("prerequisites",      make_function(&Tech::Prerequisites,     return_internal_reference<>()))
             .add_property("unlockedTechs",      make_function(&Tech::UnlockedTechs,     return_internal_reference<>()))
         ;

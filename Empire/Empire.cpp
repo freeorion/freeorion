@@ -59,8 +59,9 @@ namespace {
             if (researchable) {
                 std::map<std::string, double>::const_iterator progress_it = research_progress.find(name);
                 double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
-                double RPs_needed = tech->ResearchCost() * tech->ResearchTurns() - progress;
-                double RPs_to_spend = std::min(RPs_needed, tech->ResearchCost());
+                double RPs_needed = tech->ResearchCost() - progress;
+                double RPs_per_turn_limit = tech->ResearchCost() / std::max(tech->ResearchTime(), 1);
+                double RPs_to_spend = std::min(RPs_needed, RPs_per_turn_limit);
 
                 if (total_RPs_spent + RPs_to_spend <= RPs - EPSILON) {
                     it->allocated_rp = RPs_to_spend;
@@ -170,16 +171,16 @@ namespace {
 
             // determine additional PP needed to complete build queue element: total cost - progress
             double element_accumulated_PP = production_status[i];                                   // PP accumulated by this element towards building next item
-            double element_total_cost = item_cost * build_turns * queue_element.remaining;          // total PP to build all items in this element
+            double element_total_cost = item_cost * queue_element.remaining;          // total PP to build all items in this element
             double additional_pp_to_complete_element = element_total_cost - element_accumulated_PP; // additional PP, beyond already-accumulated PP, to build all items in this element
-
+            double element_per_turn_limit = item_cost / std::max(build_turns, 1);
 
             // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
             // item cost, which is the max number of PP per turn that can be put towards this item, and by the
             // total cost remaining to complete the last item in the queue element (eg. the element has all but
             // the last item complete already) and by the total pp available in this element's production location's
             // resource sharing group
-            double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, item_cost), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
+            double allocation = std::max(std::min(std::min(additional_pp_to_complete_element, element_per_turn_limit), group_pp_available), 0.0);       // added max (..., 0.0) to prevent any negative-allocation bugs that might come up...
 
             //Logger().debugStream() << "element accumulated " << element_accumulated_PP << " of total cost " << element_total_cost << " and needs " << additional_pp_to_complete_element << " more to be completed";
             //Logger().debugStream() << "... allocating " << allocation;
@@ -382,7 +383,7 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
                 }
                 double& status = sim_research_progress[tech->Name()];
                 status += sim_queue[i].allocated_rp;
-                if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= status) {
+                if (tech->ResearchCost() - EPSILON <= status) {
                     m_queue[i].turns_left = simulation_results[m_queue[i].tech];
                     simulation_results[tech] = turns;
                     sim_queue.erase(sim_queue.begin() + i--);
@@ -822,9 +823,9 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
         for (unsigned int i = 0; i < sim_queue.size(); ++i) {
             ProductionQueue::Element& element = sim_queue[i];
 
-            double item_cost_per_turn;
+            double item_cost;
             int build_turns;
-            boost::tie(item_cost_per_turn, build_turns) = empire->ProductionCostAndTime(element.item);
+            boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(element.item);
 
 
             double& status = sim_production_status[i];  // get previous iteration's accumulated PP for this element
@@ -832,12 +833,12 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType, boost:
 
 
             // check if additional turn's PP allocation was enough to finish next item in element
-            if (item_cost_per_turn * build_turns - EPSILON <= status) {
+            if (item_cost - EPSILON <= status) {
                 // an item has been completed.
 
                 //  deduct cost of one item from accumulated PP.  don't set accumulation to zero, as this
                 // would eliminate any partial completion of the next item
-                sim_production_status[i] -= item_cost_per_turn * build_turns;
+                sim_production_status[i] -= item_cost;
 
                 // if this was the first item in the element to be completed in this simuation, update the original
                 // queue element with the turns required to complete the next item in the element
@@ -1158,7 +1159,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::
         const BuildingType* building_type = GetBuildingType(name);
         if (!building_type)
             break;
-        return std::make_pair(building_type->BuildCost(), building_type->BuildTime());
+        return std::make_pair(building_type->ProductionCost(), building_type->ProductionTime());
     }
     default:
         break;
@@ -1173,7 +1174,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
         const ShipDesign* ship_design = GetShipDesign(design_id);
         if (!ship_design)
             break;
-        return std::make_pair(ship_design->TotalCost(), ship_design->BuildTime());
+        return std::make_pair(ship_design->ProductionCost(), ship_design->ProductionTime());
     }
     default:
         break;
@@ -2366,7 +2367,7 @@ void Empire::CheckResearchProgress()
         const Tech* tech = it->tech;
         double& progress = m_research_progress[tech->Name()];
         progress += it->allocated_rp;
-        if (tech->ResearchCost() * tech->ResearchTurns() - EPSILON <= progress) {
+        if (tech->ResearchCost() - EPSILON <= progress) {
             m_techs.insert(tech->Name());
             const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
             for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
@@ -2409,7 +2410,7 @@ void Empire::CheckProductionProgress()
 
 
         // if accumulated PP is sufficient, the item is complete
-        if (item_cost * build_turns - EPSILON <= status) {
+        if (item_cost - EPSILON <= status) {
             m_production_progress[i] -= item_cost * build_turns;
             switch (m_production_queue[i].item.build_type) {
             case BT_BUILDING: {

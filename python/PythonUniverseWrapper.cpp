@@ -9,6 +9,7 @@
 #include "../universe/Planet.h"
 #include "../universe/System.h"
 #include "../universe/Special.h"
+#include "../universe/Species.h"
 
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
@@ -243,8 +244,8 @@ namespace FreeOrionPython {
             .add_property("defense",            make_function(&ShipDesign::Defense,         return_value_policy<return_by_value>()))
             .add_property("attack",             make_function(&ShipDesign::Attack,          return_value_policy<return_by_value>()))
             .add_property("canColonize",        make_function(&ShipDesign::CanColonize,     return_value_policy<return_by_value>()))
-            .add_property("cost",               make_function(&ShipDesign::TotalCost,       return_value_policy<return_by_value>()))
-            .add_property("buildTime",          make_function(&ShipDesign::BuildTime,       return_value_policy<return_by_value>()))
+            .add_property("productionCost",     make_function(&ShipDesign::ProductionCost,  return_value_policy<return_by_value>()))
+            .add_property("productionTime",     make_function(&ShipDesign::ProductionTime,       return_value_policy<return_by_value>()))
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
@@ -256,6 +257,9 @@ namespace FreeOrionPython {
 
         class_<PartType, noncopyable>("partType", no_init)
             .add_property("name",               make_function(&PartType::Name,              return_value_policy<copy_const_reference>()))
+            .add_property("class",              &PartType::Class)
+            .add_property("productionCost",     make_function(&PartType::ProductionCost,    return_value_policy<return_by_value>()))
+            .add_property("productionTime",     make_function(&PartType::ProductionTime,    return_value_policy<return_by_value>()))
             .def("canMountInSlotType",          &PartType::CanMountInSlotType)
         ;
         def("getPartType",                      &GetPartType,                               return_value_policy<reference_existing_object>());
@@ -265,6 +269,8 @@ namespace FreeOrionPython {
             .add_property("numSlots",           make_function(NumSlotsTotal,                return_value_policy<return_by_value>()))
             .def("numSlotsOfSlotType",          NumSlotsOfSlotType)
             .add_property("slots",              make_function(&HullType::Slots,             return_internal_reference<>()))
+            .add_property("productionCost",     make_function(&HullType::ProductionCost,    return_value_policy<return_by_value>()))
+            .add_property("productionTime",     make_function(&HullType::ProductionTime,    return_value_policy<return_by_value>()))
         ;
         def("getHullType",                      &GetHullType,                               return_value_policy<reference_existing_object>());
 
@@ -285,8 +291,8 @@ namespace FreeOrionPython {
         class_<BuildingType, noncopyable>("buildingType", no_init)
             .add_property("name",               make_function(&BuildingType::Name,          return_value_policy<copy_const_reference>()))
             .add_property("description",        make_function(&BuildingType::Description,   return_value_policy<copy_const_reference>()))
-            .add_property("buildCost",          &BuildingType::BuildCost)
-            .add_property("buildTime",          &BuildingType::BuildTime)
+            .add_property("productionCost",     &BuildingType::ProductionCost)
+            .add_property("productionTime",     &BuildingType::ProductionTime)
             .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
         ;
@@ -306,6 +312,7 @@ namespace FreeOrionPython {
         ///////////////////
         class_<PopCenter, noncopyable>("popCenter", no_init)
             .add_property("allocatedFood",      &PopCenter::AllocatedFood)
+            .add_property("speciesName",        make_function(&PopCenter::SpeciesName,      return_value_policy<copy_const_reference>()))
         ;
 
         //////////////////
@@ -340,5 +347,17 @@ namespace FreeOrionPython {
             .add_property("description",        make_function(&Special::Description,    return_value_policy<copy_const_reference>()))
         ;
         def("getSpecial",                       &GetSpecial,                            return_value_policy<reference_existing_object>());
+
+        /////////////////
+        //   Species   //
+        /////////////////
+        class_<Species, noncopyable>("species", no_init)
+            .add_property("name",               make_function(&Species::Name,           return_value_policy<copy_const_reference>()))
+            .add_property("description",        make_function(&Species::Description,    return_value_policy<copy_const_reference>()))
+            .add_property("homeworlds",         make_function(&Species::Homeworlds,     return_value_policy<copy_const_reference>()))
+            // TODO: const std::vector<FocusType>& Species::Foci()
+            .def("getPlanetEnvironment",        &Species::GetPlanetEnvironment)
+        ;
+        def("getSpecies",                       &GetSpecies,                            return_value_policy<reference_existing_object>());
     }
 }

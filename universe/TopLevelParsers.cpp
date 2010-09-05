@@ -169,14 +169,14 @@ namespace {
             (str_p("buildingtype")
              >> name_label >>               name_p[building_type_p.name = arg1]
              >> description_label >>        name_p[building_type_p.description = arg1]
-             >> buildcost_label >>          real_p[building_type_p.build_cost = arg1]
-             >> buildtime_label >>          int_p[building_type_p.build_time = arg1]
+             >> buildcost_label >>          real_p[building_type_p.production_cost = arg1]
+             >> buildtime_label >>          int_p[building_type_p.production_time = arg1]
              >> maintenancecost_label >>    real_p[building_type_p.maintenance_cost = arg1]
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[building_type_p.graphic = arg1])
-            [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description, building_type_p.build_cost,
-                                                        building_type_p.build_time, building_type_p.maintenance_cost, building_type_p.location,
+            [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description, building_type_p.production_cost,
+                                                        building_type_p.production_time, building_type_p.maintenance_cost, building_type_p.location,
                                                         building_type_p.effects_groups, building_type_p.graphic)];
 
         special_p =
@@ -313,13 +313,13 @@ namespace {
              >> partclass_label >>          part_class_p[part_p.part_class = arg1]
              >> part_stats_p[part_p.stats = arg1]
              >> buildcost_label >>          real_p[part_p.cost = arg1]
-             >> buildtime_label >>          int_p[part_p.build_time = arg1]
+             >> buildtime_label >>          int_p[part_p.production_time = arg1]
              >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >>           condition_p[part_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
-                                           part_p.stats, part_p.cost, part_p.build_time,
+                                           part_p.stats, part_p.cost, part_p.production_time,
                                            part_p.mountable_slot_types, part_p.location,
                                            part_p.effects_groups, part_p.graphic)];
 
@@ -350,13 +350,13 @@ namespace {
              >> description_label >>        name_p[hull_p.description = arg1]
              >> hull_stats_p[hull_p.stats = arg1]
              >> buildcost_label >>          real_p[hull_p.cost = arg1]
-             >> buildtime_label >>          int_p[hull_p.build_time = arg1]
+             >> buildtime_label >>          int_p[hull_p.production_time = arg1]
              >> !(slots_label >>            slot_vec_p[hull_p.slots = arg1])
              >> location_label >>           condition_p[hull_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description,
-                                           hull_p.stats, hull_p.cost, hull_p.build_time,
+                                           hull_p.stats, hull_p.cost, hull_p.production_time,
                                            hull_p.slots, hull_p.location,
                                            hull_p.effects_groups, hull_p.graphic)];
 

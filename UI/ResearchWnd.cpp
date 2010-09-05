@@ -61,12 +61,18 @@ namespace {
         tech(tech_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-        double turn_cost = tech->ResearchCost();
+
+        // this space intentionally left blank to line up with ProductionWnd's QueueRow implementation
+
+        double per_turn_cost = tech->PerTurnCost();
         double progress = empire->ResearchStatus(tech->Name());
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueTechPanel(w, tech_, allocated_rp, turns_left, static_cast<int>(progress / turn_cost), std::fmod(progress, turn_cost) / turn_cost);
+        GG::Control* panel = new QueueTechPanel(w, tech_,
+                                                allocated_rp, turns_left,
+                                                static_cast<int>(progress / per_turn_cost),
+                                                std::fmod(progress, per_turn_cost));
         Resize(panel->Size());
         push_back(panel);
 
@@ -76,11 +82,13 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech, double turn_spending, int turns_left, int turns_completed, double partially_complete_turn) :
+    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech,
+                                   double turn_spending, int turns_left,
+                                   int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech(tech),
         m_in_progress(turn_spending),
-        m_total_turns(tech->ResearchTurns()),
+        m_total_turns(tech->ResearchTime()),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
@@ -117,7 +125,7 @@ namespace {
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTurns(),
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTime(),
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));

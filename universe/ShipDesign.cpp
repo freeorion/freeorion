@@ -382,8 +382,8 @@ PartType::PartType() :
     m_description("indescribable"),
     m_class(INVALID_SHIP_PART_CLASS),
     m_stats(1.0),
-    m_cost(1.0),
-    m_build_time(1),
+    m_production_cost(1.0),
+    m_production_time(1),
     m_mountable_slot_types(),
     m_location(0),
     m_effects(),
@@ -392,7 +392,7 @@ PartType::PartType() :
 
 PartType::PartType(
     const std::string& name, const std::string& description,
-    ShipPartClass part_class, const PartTypeStats& stats, double cost, int build_time,
+    ShipPartClass part_class, const PartTypeStats& stats, double production_cost, int production_time,
     std::vector<ShipSlotType> mountable_slot_types,
     const Condition::ConditionBase* location,
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
@@ -401,8 +401,8 @@ PartType::PartType(
     m_description(description),
     m_class(part_class),
     m_stats(stats),
-    m_cost(cost),
-    m_build_time(build_time),
+    m_production_cost(production_cost),
+    m_production_time(production_time),
     m_mountable_slot_types(mountable_slot_types),
     m_location(location),
     m_effects(),
@@ -543,12 +543,12 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
     return false;
 }
 
-double PartType::Cost() const {
-    return m_cost;
+double PartType::ProductionCost() const {
+    return m_production_cost;
 }
 
-int PartType::BuildTime() const {
-    return m_build_time;
+int PartType::ProductionTime() const {
+    return m_production_time;
 }
 
 const std::string& PartType::Graphic() const {
@@ -604,8 +604,8 @@ HullType::HullType() :
     m_fuel(0.0),
     m_stealth(0.0),
     m_structure(0.0),
-    m_cost(1.0),
-    m_build_time(1),
+    m_production_cost(1.0),
+    m_production_time(1),
     m_slots(),
     m_location(0),
     m_effects(),
@@ -615,7 +615,7 @@ HullType::HullType() :
 HullType::HullType(const std::string& name, const std::string& description,
                    double fuel, double battle_speed, double starlane_speed,
                    double stealth, double structure,
-                   double cost, int build_time, const std::vector<Slot>& slots,
+                   double production_cost, int production_time, const std::vector<Slot>& slots,
                    const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
@@ -626,8 +626,8 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_fuel(fuel),
     m_stealth(stealth),
     m_structure(structure),
-    m_cost(cost),
-    m_build_time(build_time),
+    m_production_cost(production_cost),
+    m_production_time(production_time),
     m_slots(slots),
     m_location(location),
     m_effects(),
@@ -646,7 +646,7 @@ HullType::HullType(const std::string& name, const std::string& description,
 
 HullType::HullType(const std::string& name, const std::string& description,
                    const HullTypeStats& stats,
-                   double cost, int build_time, const std::vector<Slot>& slots,
+                   double production_cost, int production_time, const std::vector<Slot>& slots,
                    const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
@@ -657,8 +657,8 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_fuel(stats.m_fuel),
     m_stealth(stats.m_stealth),
     m_structure(stats.m_structure),
-    m_cost(cost),
-    m_build_time(build_time),
+    m_production_cost(production_cost),
+    m_production_time(production_time),
     m_slots(slots),
     m_location(location),
     m_effects(),
@@ -726,12 +726,12 @@ double HullType::Detection() const {
     return 0.0; // as of this writing, hulls don't have detection ability
 }
 
-double HullType::Cost() const {
-    return m_cost;
+double HullType::ProductionCost() const {
+    return m_production_cost;
 }
 
-int HullType::BuildTime() const {
-    return m_build_time;
+int HullType::ProductionTime() const {
+    return m_production_time;
 }
 
 unsigned int HullType::NumSlots() const {
@@ -848,8 +848,8 @@ ShipDesign::ShipDesign() :
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_build_cost(0.0),
-    m_build_turns(0),
+    m_production_cost(0.0),
+    m_production_time(0),
     m_min_SR_range(DBL_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(DBL_MAX),
@@ -884,8 +884,8 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_structure(0.0),
     m_battle_speed(0.0),
     m_starlane_speed(0.0),
-    m_build_cost(0.0),
-    m_build_turns(0),
+    m_production_cost(0.0),
+    m_production_time(0),
     m_min_SR_range(DBL_MAX),
     m_max_SR_range(0.0),
     m_min_LR_range(DBL_MAX),
@@ -948,20 +948,20 @@ int ShipDesign::DesignedOnTurn() const {
     return m_designed_on_turn;
 }
 
-double ShipDesign::TotalCost() const {
+double ShipDesign::ProductionCost() const {
     if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
-        return m_build_cost;
+        return m_production_cost;
     else
         return 1.0;
 }
 
 double ShipDesign::PerTurnCost() const {
-    return TotalCost() / std::max(1, BuildTime());
+    return ProductionCost() / std::max(1, ProductionTime());
 }
 
-int ShipDesign::BuildTime() const {
+int ShipDesign::ProductionTime() const {
     if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
-        return m_build_turns;
+        return m_production_time;
     else
         return 1;
 }
@@ -1210,8 +1210,8 @@ void ShipDesign::BuildStatCaches()
         return;
     }
 
-    m_build_turns =     hull->BuildTime();
-    m_build_cost =      hull->Cost();
+    m_production_time = hull->ProductionTime();
+    m_production_cost = hull->ProductionCost();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
     m_stealth =         hull->Stealth();
@@ -1231,8 +1231,8 @@ void ShipDesign::BuildStatCaches()
             continue;
         }
 
-        m_build_turns = std::max(m_build_turns, part->BuildTime()); // assume hull and parts are built in parallel
-        m_build_cost += part->Cost();                               // add up costs of all parts
+        m_production_time = std::max(m_production_time, part->ProductionTime()); // assume hull and parts are built in parallel
+        m_production_cost += part->ProductionCost();                               // add up costs of all parts
 
         switch (part->Class()) {
         case PC_SHORT_RANGE: {
@@ -1313,7 +1313,7 @@ void ShipDesign::BuildStatCaches()
     if (!m_min_LR_range && !m_min_PD_range)
         m_min_non_PD_weapon_range = 0.0;
 
-    m_build_cost /= m_build_turns;
+    m_production_cost;
 }
 
 std::string ShipDesign::Dump() const
