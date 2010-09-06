@@ -2482,6 +2482,7 @@ void Empire::CheckProductionProgress()
                 ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
                 ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
                 ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+                ship->BackPropegateMeters();
                 // for colony ships, set species
                 if (ship->CanColonize())
                     if (const PopCenter* build_loc_pop_center = dynamic_cast<const PopCenter*>(build_location))
