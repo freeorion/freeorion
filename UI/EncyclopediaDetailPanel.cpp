@@ -711,7 +711,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     if (cost != 0.0 && turns != -1) {
         m_cost_text->SetText(str(FlexibleFormat(UserString("ENC_COST_AND_TURNS_STR"))
-            % DoubleToString(cost, 4, false)
+            % DoubleToString(cost, 3, false)
             % cost_units
             % turns));
     }

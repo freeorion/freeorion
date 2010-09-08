@@ -1172,8 +1172,11 @@ namespace {
             planet->SetFocus(*available_foci.begin());
 
         planet->GetMeter(METER_POPULATION)->SetCurrent(colonist_capacity);
+        planet->GetMeter(METER_TARGET_POPULATION)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_FARMING)->SetCurrent(colonist_capacity);
+        planet->GetMeter(METER_TARGET_FARMING)->SetCurrent(colonist_capacity);
         planet->GetMeter(METER_HEALTH)->SetCurrent(20.0);
+        planet->GetMeter(METER_TARGET_HEALTH)->SetCurrent(20.0);
         planet->BackPropegateMeters();
 
         planet->AddOwner(empire_id);
@@ -1219,6 +1222,10 @@ namespace {
                 continue;
             planet_empire_colonization_ship_ids[colonize_planet_id][owner_empire_id].insert(ship_id);
         }
+
+
+        std::vector<int> newly_colonize_planet_ids;
+
 
         // execute colonization when:
         // 1) a single empire is colonizing a planet in a system that contains no enemy armed ships
@@ -1294,6 +1301,8 @@ namespace {
 
                 // record successful colonization
                 planet_colonized = true;
+                newly_colonize_planet_ids.push_back(planet_id);
+
                 // remove ship from ships that wanted to colonize
                 colonizing_ships.erase(ship_id);
 
@@ -1324,7 +1333,9 @@ namespace {
             }
         }
 
-        // TODO elsewhere: clear colonization planet of ships when that plant
+        // update food allocation meters for newly colonized planets, so they don't starve themselves later this turn
+
+        // TODO elsewhere: clear colonization planet of ships when that planet
         //      has been destroyed or become invisible, or if the ship leaves
         //      the system?
     }

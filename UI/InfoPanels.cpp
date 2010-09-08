@@ -886,7 +886,10 @@ void ResourcePanel::Update()
         row->push_back(dynamic_cast<GG::Control*>(graphic));
         m_focus_drop->Insert(row);
     }
-    m_focus_drop->SetDropHeight(static_cast<int>(available_foci.size()) * MeterIconSize().y*3/2 + GG::Y(5));
+
+    int drop_items = std::min(5, static_cast<int>(available_foci.size()));
+    m_focus_drop->SetDropHeight(drop_items * MeterIconSize().y*3/2 + GG::Y(5));
+
     // set browse text and select appropriate focus in droplist
     std::string focus_text;
     if (!res->Focus().empty()) {
