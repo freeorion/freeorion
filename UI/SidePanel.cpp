@@ -1499,6 +1499,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
 {
     //std::cout << "SidePanel::PlanetPanelContainer::SetPlanets( size: " << planet_ids.size() << " )" << std::endl;
 
+    int initial_selected_planet_panel = m_selected_planet_id;
+
     // remove old panels
     Clear();
 
@@ -1520,6 +1522,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     // redo contents and layout of panels, after enabling or disabling, so
     // they take this into account when doing contents
     RefreshAllPlanetPanels();
+
+    SelectPlanet(initial_selected_planet_panel);
 }
 
 void SidePanel::PlanetPanelContainer::DoPanelsLayout()
@@ -1667,9 +1671,10 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels()
 {
-    //std::cout << "SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels" << std::endl;
+    //std::cout << "SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels.  selected planet id: " << m_selected_planet_id << std::endl;
     for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
         (*it)->Refresh();
+    //std::cout << "  ...  after refreshing all planet panels: selected planet id: " << m_selected_planet_id << std::endl<< std::endl<< std::endl;
 }
 
 void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -1930,6 +1935,9 @@ void SidePanel::RefreshImpl()
     // save initial scroll position so it can be restored after repopulating the planet panel container
     const int initial_scroll_pos = m_planet_panel_container->ScrollPosition();
 
+    // save initial selected planet so it can be restored
+    const int initial_selected_planet_id = m_planet_panel_container->SelectedPlanetID();
+
 
     // clear out current contents
     m_planet_panel_container->Clear();
@@ -2025,6 +2033,9 @@ void SidePanel::RefreshImpl()
 
     // restore planet panel container scroll position from before clearing
     m_planet_panel_container->ScrollTo(initial_scroll_pos);
+
+    // restore planet selection
+    m_planet_panel_container->SelectPlanet(initial_selected_planet_id);
 
 
     // populate system resource summary
