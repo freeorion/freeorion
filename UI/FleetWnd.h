@@ -141,6 +141,7 @@ private:
     //@}
 
     void            Init(int selected_fleet_id);
+    void            RefreshStateChangedSignals();
 
     void            AddFleet(int fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
     void            RemoveFleet(int fleet_id);  ///< removes fleet row and updates internal bookkeeping
@@ -159,23 +160,23 @@ private:
     void            UniverseObjectDeleted(const UniverseObject *obj);
 
     void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
-    void            SystemFleetInsertedSlot(Fleet& fleet);  ///< responds to FleetInsertedSignal emitted by the system ...
-    void            SystemFleetRemovedSlot(Fleet& fleet);   ///< responds to FleetRemovedSignal ...
 
     mutable boost::signal<void (FleetWnd*)> ClosingSignal;
 
-    std::set<int>           m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
-    int                     m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
-    int                     m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be UniverseObject::INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
+    boost::signals::connection  m_system_connection;
 
-    bool                    m_read_only;
+    std::set<int>       m_fleet_ids;        ///< IDs of fleets shown in this wnd (always.  set when creating wnd, either by being passed in directly, or found by checking indicated system for indicated empire's fleets.  If set directly, never updates.  If set by checking system, updates when the system has a fleet added or removed.
+    int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
+    int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be UniverseObject::INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
-    FleetsListBox*          m_fleets_lb;
-    FleetDataPanel*         m_new_fleet_drop_target;
-    FleetDetailPanel*       m_fleet_detail_panel;
+    bool                m_read_only;
 
-    static GG::Pt           s_last_position;    ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
-    static GG::Pt           s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
+    FleetsListBox*      m_fleets_lb;
+    FleetDataPanel*     m_new_fleet_drop_target;
+    FleetDetailPanel*   m_fleet_detail_panel;
+
+    static GG::Pt       s_last_position;    ///< the latest position to which any FleetWnd has been moved.  This is used to keep the place of the fleet window in single-fleetwindow mode.
+    static GG::Pt       s_last_size;        ///< the latest size to which any FleetWnd has been resized.  This is used to keep the size of the fleet window in single-fleetwindow mode.
 
     friend class FleetUIManager;
 };

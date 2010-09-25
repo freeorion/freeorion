@@ -1844,16 +1844,17 @@ void FleetDetailPanel::SetFleet(int fleet_id)
     if (m_fleet_id != old_fleet_id || m_fleet_id == UniverseObject::INVALID_OBJECT_ID)
         m_fleet_connection.disconnect();
 
+    // if set fleet unchanged, refresh ships list.  if set fleet changed, update ships list for new fleet
     if (m_fleet_id == old_fleet_id)
         m_ships_lb->Refresh();
     else
-        m_ships_lb->SetFleet(fleet_id);
+        m_ships_lb->SetFleet(m_fleet_id);
 
-    if (const Fleet* fleet = GetObject<Fleet>(fleet_id)) {
+    // if set fleet changed, and new fleet exists, update state change signal connection
+    if (m_fleet_id != old_fleet_id && m_fleet_id != UniverseObject::INVALID_OBJECT_ID) {
+        const Fleet* fleet = GetObject<Fleet>(m_fleet_id);
         if (fleet && !fleet->Empty()) {
-            // update desintation text and change signal connection
-            if (old_fleet_id != fleet_id)
-                m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals::at_front);
+            m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals::at_front);
         } else {
             Logger().debugStream() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2259,11 +2260,8 @@ void FleetWnd::Init(int selected_fleet_id)
     // random other signals... deletion and state changes
     GG::Connect(GetUniverse().UniverseObjectDeleteSignal,           &FleetWnd::UniverseObjectDeleted,   this);
 
-    if (const System* system = GetObject<System>(m_system_id)) {
-        GG::Connect(system->StateChangedSignal,                     &FleetWnd::SystemChangedSlot,       this);
-        GG::Connect(system->FleetRemovedSignal,                     &FleetWnd::SystemFleetRemovedSlot,  this);
-        GG::Connect(system->FleetInsertedSignal,                    &FleetWnd::SystemFleetInsertedSlot, this);
-    }
+
+    RefreshStateChangedSignals();
 
 
     // window title
@@ -2293,6 +2291,13 @@ void FleetWnd::Init(int selected_fleet_id)
     }
 
     DoLayout();
+}
+
+void FleetWnd::RefreshStateChangedSignals()
+{
+    m_system_connection.disconnect();
+    if (const System* system = GetObject<System>(m_system_id))
+        m_system_connection = GG::Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this, boost::signals::at_front);
 }
 
 void FleetWnd::Refresh()
@@ -2336,6 +2341,8 @@ void FleetWnd::Refresh()
     // reselect previously-selected fleets
     this->SetSelectedFleets(initially_selected_fleets);
     this->SetSelectedShips(initially_selected_ships);
+
+    RefreshStateChangedSignals();
 }
 
 void FleetWnd::CloseClicked()
@@ -2455,6 +2462,8 @@ void FleetWnd::SelectFleet(int fleet_id)
 
 void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids)
 {
+    const GG::ListBox::SelectionSet initial_selections = m_fleets_lb->Selections();
+
     m_fleets_lb->DeselectAll();
 
     // early exit if nothing to select
@@ -2478,7 +2487,8 @@ void FleetWnd::SetSelectedFleets(const std::set<int>& fleet_ids)
         }
     }
 
-    FleetSelectionChanged(m_fleets_lb->Selections());
+    if (initial_selections != m_fleets_lb->Selections())
+        FleetSelectionChanged(m_fleets_lb->Selections());
 }
 
 void FleetWnd::SetSelectedShips(const std::set<int>& ship_ids)
@@ -2760,18 +2770,7 @@ void FleetWnd::SystemChangedSlot()
         Logger().errorStream() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
         return;
     }
-    // nothing to do.  fleet insertions or removals should have emitted
-    // FleetRemovedSignal or FleetInsertedSignal which have their own
-    // specialized FleetWnd handlers
-}
 
-void FleetWnd::SystemFleetInsertedSlot(Fleet& fleet)
-{
-    Refresh();
-}
-
-void FleetWnd::SystemFleetRemovedSlot(Fleet& fleet)
-{
     Refresh();
 }
 

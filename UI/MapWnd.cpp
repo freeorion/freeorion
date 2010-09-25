@@ -3065,7 +3065,7 @@ void MapWnd::RefreshFleetButtons()
         }
         const System* system = objects.Object<System>(fleet->SystemID());
         if (!system) {
-            Logger().errorStream() << "couldn't get system of an departing fleet in RefreshFleetButtons()";
+            Logger().errorStream() << "couldn't get system with id " << fleet->SystemID() << " of an departing fleet named " << fleet->Name() << " in RefreshFleetButtons()";
             continue;
         }
 
@@ -4402,7 +4402,8 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
     UpdateMeterEstimates(objects_vec);
 }
 
-void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec) {
+void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
+{
     // add this player ownership to all planets in the objects_vec that aren't
     // currently colonized.  this way, any effects the player knows about that
     // would act on those planets if the player colonized them include those
