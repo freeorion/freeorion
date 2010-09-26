@@ -3126,29 +3126,17 @@ DESC_STATIONARY
 DESC_STATIONARY_NOT
  that is moving
 
-DESC_SUPPLY_CONNECTED_FLEET_RESOURCE
- that is connected by up to %2% jumps on starlanes that can carry fleet or resource supply for the %1% empire from any object%3%
-
-DESC_SUPPLY_CONNECTED_FLEET_RESOURCE_NOT
- that is not connected by up to %2% jumps on starlanes that can carry fleet or resource supply for the %1% empire from any object%3%
-
 DESC_SUPPLY_CONNECTED_FLEET
- that is connected by up to %2% jumps on starlanes that can carry fleet supply for the %1% empire from any object%3%
+ that is in a system where the %1% empire can provide fleet supply
 
 DESC_SUPPLY_CONNECTED_FLEET_NOT
- that is not connected by up to %2% jumps on starlanes that can carry fleet supply for the %1% empire from any object%3%
+ that is not in a system where the %1% empire can provide fleet supply
 
 DESC_SUPPLY_CONNECTED_RESOURCE
- that is connected by up to %2% jumps on starlanes that can carry resource supply for the %1% empire from any object%3%
+ that is connected by resource supply of the %1% empire to an object%2%
 
 DESC_SUPPLY_CONNECTED_RESOURCE_NOT
- that is not connected by up to %2% jumps on starlanes that can carry resource supply for the %1% empire from any object%3%
-
-DESC_SUPPLY_CONNECTED_NONE
- that is connected by up to %2% jumps on no starlanes for the %1% empire from any object%3%
-
-DESC_SUPPLY_CONNECTED_NONE_NOT
- that is not connected by up to %2% jumps on no starlanes for the %1% empire from any object%3%
+ that is not connected by resource supply of the %1% empire to an object%2%
 
 DESC_AND_BETWEEN_OPERANDS
  and

@@ -1983,39 +1983,72 @@ bool Condition::Stationary::Match(const UniverseObject* source, const UniverseOb
 }
 
 ///////////////////////////////////////////////////////////
-// SupplyLineConnected                                   //
+// FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
-Condition::SupplyLineConnected::SupplyLineConnected(const ValueRef::ValueRefBase<int>* lane_owner,
-                                                    const ValueRef::ValueRefBase<int>* max_jumps,
-                                                    const ConditionBase* from_object_condition,
-                                                    bool use_fleet_supply_lines,
-                                                    bool use_resource_supply_lines) :
-    m_lane_owner(lane_owner),
-    m_max_jumps(max_jumps),
-    m_from_object_condition(from_object_condition),
-    m_use_fleet_supply_lines(use_fleet_supply_lines),
-    m_use_resource_supply_lines(use_resource_supply_lines)
+Condition::FleetSupplyableByEmpire::FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    m_empire_id(empire_id)
 {}
 
-Condition::SupplyLineConnected::~SupplyLineConnected()
+Condition::FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
 {
-    delete m_lane_owner;
-    delete m_max_jumps;
-    delete m_from_object_condition;
+    delete m_empire_id;
 }
 
-void Condition::SupplyLineConnected::Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
 {
-    // get the list of all UniverseObjects that satisfy m_from_object_condition
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+
+    std::string description_str = "DESC_SUPPLY_CONNECTED_FLEET";
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % empire_str);
+}
+
+std::string Condition::FleetSupplyableByEmpire::Dump() const
+{
+    return DumpIndent() + "FleetSupplyableByEmpire empire_id = " + m_empire_id->Dump();
+}
+
+bool Condition::FleetSupplyableByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    const EmpireManager& empires = Empires();
+    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, target, boost::any()))) {
+        const std::set<int>& supplyable_systems = empire->FleetSupplyableSystemIDs();
+        if (supplyable_systems.find(target->SystemID()) != supplyable_systems.end())
+            return true;
+    }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// ResourceSupplyConnectedByEmpire                       //
+///////////////////////////////////////////////////////////
+Condition::ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id,
+                                                                            const ConditionBase* condition) :
+    m_empire_id(empire_id),
+    m_condition(condition)
+{}
+
+Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire()
+{
+    delete m_empire_id;
+    delete m_condition;
+}
+
+void Condition::ResourceSupplyConnectedByEmpire::Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+{
+    // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
     ObjectSet condition_non_targets;
     ObjectMap& objects = GetUniverse().Objects();
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it) {
         condition_non_targets.insert(it->second);
     }
-    m_from_object_condition->Eval(source, condition_targets, condition_non_targets);
+    m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    // special case to save looping later
+    // special case to save looping later: don't need to check anything further if nothing matched sub-condition
     if (condition_targets.empty()) {
         // nothing matched from objects, so nothing can match overall condition.
         // if checking NON_TARGETS, don't need to do anything.
@@ -2028,8 +2061,7 @@ void Condition::SupplyLineConnected::Eval(const UniverseObject* source, Conditio
         return;
     }
 
-    // determine which objects in the Universe are within the specified number
-    // of jumps on the specified type of starlane
+    // determine which target objects are in the same resource sharing group as any of the objects that matched m_condition
     for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
         ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
         ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
@@ -2045,56 +2077,57 @@ void Condition::SupplyLineConnected::Eval(const UniverseObject* source, Conditio
     }
 }
 
-std::string Condition::SupplyLineConnected::Description(bool negated/* = false*/) const
+std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const
 {
-    std::string lane_owner_str = ValueRef::ConstantExpr(m_lane_owner) ? Empires().Lookup(m_lane_owner->Eval(0, 0, boost::any()))->Name() : m_lane_owner->Description();
-    std::string max_jumps_str = ValueRef::ConstantExpr(m_max_jumps) ? Empires().Lookup(m_max_jumps->Eval(0, 0, boost::any()))->Name() : m_max_jumps->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
 
-    std::string description_str;
-    if (m_use_fleet_supply_lines && m_use_resource_supply_lines)
-        description_str = "DESC_SUPPLY_CONNECTED_FLEET_RESOURCE";
-    else if (m_use_fleet_supply_lines)
-        description_str = "DESC_SUPPLY_CONNECTED_FLEET";
-    else if (m_use_fleet_supply_lines)
-        description_str = "DESC_SUPPLY_CONNECTED_RESOURCE";
-    else
-        description_str = "DESC_SUPPLY_CONNECTED_NONE";
-
+    std::string description_str = "DESC_SUPPLY_CONNECTED_RESOURCE";
     if (negated)
         description_str += "_NOT";
 
     return str(FlexibleFormat(UserString(description_str))
-               % lane_owner_str
-               % max_jumps_str
-               % m_from_object_condition->Description());
+               % empire_str
+               % m_condition->Description());
 }
 
-std::string Condition::SupplyLineConnected::Dump() const
+std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
 {
-    std::string retval = DumpIndent() + "SupplyLineConnected lane_owner = " + m_lane_owner->Dump() +
-                                        " max_jumps = " + m_max_jumps->Dump() +
-                                        " use_fleet_supply_lines = " + (m_use_fleet_supply_lines ? "true" : "false") +
-                                        " use_resource_supply_lines = " + (m_use_resource_supply_lines ? "true" : "false") +
+    std::string retval = DumpIndent() + "ResourceSupplyConnectedByEmpire empire_id = " + m_empire_id->Dump() +
                                         " condition = \n";
     ++g_indent;
-    retval += m_from_object_condition->Dump();
+    retval += m_condition->Dump();
     --g_indent;
     return retval;
 }
 
-bool Condition::SupplyLineConnected::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const ObjectMap& objects = GetMainObjectMap();
-    int jump_limit = m_max_jumps->Eval(source, target, boost::any());
+    // parameter source is an object that matched m_condition
 
-    if (jump_limit == 0) { // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-        double delta_x = source->X() - target->X();
-        double delta_y = source->Y() - target->Y();
-        return !(delta_x * delta_x + delta_y * delta_y);
-    } else {
-        // todo
+    if (!source || !target)
         return false;
+
+    const EmpireManager& empires = Empires();
+    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, target, boost::any()))) {
+        // find resource sharing system group for source
+        const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
+        for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
+            const std::set<int>& group = *groups_it;
+            if (group.find(source->SystemID()) != group.end()) {
+                // found resource sharing group containing source.  Does it also contain target?
+                if (group.find(target->SystemID()) != group.end())
+                    return true;    // object matching m_condition and target object are in same resourse sharing group
+                else
+                    return false;   // object matching m_condition is not in resource sharing group with target (each object can be in only one group)
+            }
+
+            // object matching m_condition is not in this resource sharing group
+        }
+
+        // object matching m_condition is not in any resource sharing group for this empire...
     }
+
+    return false;   // no empire... can't match any resource sharing groups
 }
 
 ///////////////////////////////////////////////////////////

@@ -46,7 +46,8 @@ namespace Condition {
     struct WithinStarlaneJumps;
     struct ExploredByEmpire;
     struct Stationary;
-    struct SupplyLineConnected;
+    struct FleetSupplyableByEmpire;
+    struct ResourceSupplyConnectedByEmpire;
     struct And;
     struct Or;
     struct Not;
@@ -603,7 +604,8 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches systems that have been explored by at least one Empire in \a empire_ids. */
+/** Matches systems that have been explored by at least one Empire
+  * in \a empire_ids. */
 struct Condition::ExploredByEmpire : Condition::ConditionBase
 {
     ExploredByEmpire(const std::vector<const ValueRef::ValueRefBase<int>*>& empire_ids);
@@ -637,17 +639,32 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches objects that are connected by starlanes up to \a max_jumps starlane
-  * traversals to any object that matches \a from_object_condition using only 
-  * starlanes that are resource or ship supply passable for empire \a lane_owner */
-struct Condition::SupplyLineConnected : Condition::ConditionBase
+/** Matches objects that are in systems that can be fleet supplied by the
+  * empire with id \a empire_id */
+struct Condition::FleetSupplyableByEmpire : Condition::ConditionBase
 {
-    SupplyLineConnected(const ValueRef::ValueRefBase<int>* lane_owner,
-                        const ValueRef::ValueRefBase<int>* max_jumps,
-                        const ConditionBase* from_object_condition,
-                        bool use_fleet_supply_lines,
-                        bool use_resource_supply_lines);
-    virtual ~SupplyLineConnected();
+    FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~FleetSupplyableByEmpire();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches objects that are in systems that are connected by resource-sharing
+  * to at least one object that meets \a condition using the resource-sharing
+  * network of the empire with id \a empire_id */
+struct Condition::ResourceSupplyConnectedByEmpire : Condition::ConditionBase
+{
+    ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition);
+    virtual ~ResourceSupplyConnectedByEmpire();
     virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
@@ -655,11 +672,8 @@ struct Condition::SupplyLineConnected : Condition::ConditionBase
 private:
     virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
 
-    const ValueRef::ValueRefBase<int>*  m_lane_owner;
-    const ValueRef::ValueRefBase<int>*  m_max_jumps;
-    const ConditionBase*                m_from_object_condition;
-    bool                                m_use_fleet_supply_lines;
-    bool                                m_use_resource_supply_lines;
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
+    const ConditionBase*                m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -942,14 +956,18 @@ void Condition::Stationary::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::SupplyLineConnected::serialize(Archive& ar, const unsigned int version)
+void Condition::FleetSupplyableByEmpire::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_lane_owner)
-        & BOOST_SERIALIZATION_NVP(m_max_jumps)
-        & BOOST_SERIALIZATION_NVP(m_from_object_condition)
-        & BOOST_SERIALIZATION_NVP(m_use_fleet_supply_lines)
-        & BOOST_SERIALIZATION_NVP(m_use_resource_supply_lines);
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
+template <class Archive>
+void Condition::ResourceSupplyConnectedByEmpire::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>

@@ -44,13 +44,7 @@ namespace {
             member4 exclusive;
         };
 
-        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Condition::ConditionBase*, std::string>
-        {
-            member1 this_;
-            member2 name;
-        };
-
-        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Condition::ConditionBase*,
+        struct StringRefVecClosure : boost::spirit::classic::closure<StringRefVecClosure, Condition::ConditionBase*,
                                                                      std::vector<const ValueRef::ValueRefBase<std::string>*> >
         {
             member1 this_;
@@ -108,8 +102,7 @@ namespace {
         };
 
         typedef rule<Scanner, OwnedByClosure::context_t>            OwnedByRule;
-        typedef rule<Scanner, NameParamClosure::context_t>          NameParamRule;
-        typedef rule<Scanner, NameRefParamClosure::context_t>       NameRefParamRule;
+        typedef rule<Scanner, StringRefVecClosure::context_t>       StringRefVecRule;
         typedef rule<Scanner, PlanetTypeClosure::context_t>         PlanetTypeRule;
         typedef rule<Scanner, PlanetSizeClosure::context_t>         PlanetSizeRule;
         typedef rule<Scanner, PlanetEnvironmentClosure::context_t>  PlanetEnvironmentRule;
@@ -122,15 +115,15 @@ namespace {
         Rule                    all;
         OwnedByRule             owned_by;
         Rule                    source;
-        NameRefParamRule        homeworld;
+        StringRefVecRule        homeworld;
         Rule                    capitol;
-        NameRefParamRule        building;
-        NameRefParamRule        species;
+        StringRefVecRule        building;
+        StringRefVecRule        species;
         PlanetTypeRule          planet_type;
         PlanetSizeRule          planet_size;
         PlanetEnvironmentRule   planet_environment;
         ObjectTypeRule          object_type;
-        NameRefParamRule        focus_type;
+        StringRefVecRule        focus_type;
         MeterValueRule          meter_value;
         AndOrRule               and_;
         AndOrRule               or_;

@@ -76,14 +76,14 @@ namespace {
             member2 empire;
         };
 
-        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Effect::EffectBase*,
+        struct StringClosure : boost::spirit::classic::closure<StringClosure, Effect::EffectBase*,
                                                                   std::string>
         {
             member1 this_;
             member2 name;
         };
 
-        struct NameRefParamClosure : boost::spirit::classic::closure<NameRefParamClosure, Effect::EffectBase*,
+        struct StringRefVecClosure : boost::spirit::classic::closure<StringRefVecClosure, Effect::EffectBase*,
                                                                      ValueRef::ValueRefBase<std::string>*>
         {
             member1 this_;
@@ -171,8 +171,8 @@ namespace {
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>              SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>              SetPlanetSizeRule;
         typedef rule<Scanner, EmpireParamClosure::context_t>                EmpireParamRule;
-        typedef rule<Scanner, NameParamClosure::context_t>                  NameParamRule;
-        typedef rule<Scanner, NameRefParamClosure::context_t>               NameRefParamRule;
+        typedef rule<Scanner, StringClosure::context_t>                     StringRule;
+        typedef rule<Scanner, StringRefVecClosure::context_t>               StringRefVecRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>             ConditionParamRule;
         typedef rule<Scanner, SetStarTypeClosure::context_t>                SetStarTypeRule;
         typedef rule<Scanner, CreatePlanetClosure::context_t>               CreatePlanetRule;
@@ -188,7 +188,7 @@ namespace {
         Rule                            set_owner_capitol;
         SetPlanetTypeRule               set_planet_type;
         SetPlanetSizeRule               set_planet_size;
-        NameRefParamRule                set_species;
+        StringRefVecRule                set_species;
         EmpireParamRule                 add_owner;
         EmpireParamRule                 remove_owner;
         CreatePlanetRule                create_planet;
@@ -196,9 +196,9 @@ namespace {
         CreateShipRule                  create_ship;
         ConditionParamRule              move_to;
         Rule                            destroy;
-        NameParamRule                   victory;
-        NameParamRule                   add_special;
-        NameParamRule                   remove_special;
+        StringRule                      victory;
+        StringRule                      add_special;
+        StringRule                      remove_special;
         SetStarTypeRule                 set_star_type;
         SetTechAvailabilityRule         set_tech_availability;
         GenerateSitRepMessageRule       generate_sitrep_message;

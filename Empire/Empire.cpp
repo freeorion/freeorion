@@ -1667,7 +1667,7 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
     // adjacency are the directly-connected systems determined above.
 
     // create graph
-    boost::adjacency_list <boost::vecS, boost::vecS, boost::undirectedS> graph;
+    boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
 
     // boost expects vertex labels to range from 0 to num vertices - 1, so need to map from system id
     // to graph id and back when accessing vertices

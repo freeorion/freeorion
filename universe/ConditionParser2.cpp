@@ -32,21 +32,21 @@ namespace {
         ConditionParser2Definition();
 
     private:
-        struct WithinDistanceClosure : boost::spirit::classic::closure<WithinDistanceClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>
+        struct DoubleRefConditionClosure : boost::spirit::classic::closure<DoubleRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 distance;
             member3 condition;
         };
 
-        struct WithinStarlaneJumpsClosure : boost::spirit::classic::closure<WithinStarlaneJumpsClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct IntRefConditionClosure : boost::spirit::classic::closure<IntRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 jumps;
             member3 condition;
         };
 
-        struct NumberClosure : boost::spirit::classic::closure<NumberClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct IntRefIntRefConditionClosure : boost::spirit::classic::closure<IntRefIntRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
             member2 high;
@@ -54,7 +54,7 @@ namespace {
             member4 condition;
         };
 
-        struct TurnClosure : boost::spirit::classic::closure<TurnClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
+        struct IntRefIntRefClosure : boost::spirit::classic::closure<IntRefIntRefClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
             member2 high;
@@ -68,7 +68,7 @@ namespace {
             member3 condition;
         };
 
-        struct NameParamClosure : boost::spirit::classic::closure<NameParamClosure, Condition::ConditionBase*, std::string>
+        struct StringClosure : boost::spirit::classic::closure<StringClosure, Condition::ConditionBase*, std::string>
         {
             member1 this_;
             member2 name;
@@ -94,7 +94,7 @@ namespace {
             member4 name;
         };
 
-        struct RandomClosure : boost::spirit::classic::closure<RandomClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
+        struct DoubleRefClosure : boost::spirit::classic::closure<DoubleRefClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 probability;
@@ -108,41 +108,41 @@ namespace {
             member4 high;
         };
 
-        struct VisibleToEmpireClosure : boost::spirit::classic::closure<VisibleToEmpireClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase<int>*> >
+        struct IntRefVecClosure : boost::spirit::classic::closure<IntRefVecClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase<int>*> >
         {
             member1 this_;
             member2 empires;
         };
 
-        typedef rule<Scanner, WithinDistanceClosure::context_t>         WithinDistanceRule;
-        typedef rule<Scanner, WithinStarlaneJumpsClosure::context_t>    WithinStarlaneJumpsRule;
-        typedef rule<Scanner, NumberClosure::context_t>                 NumberRule;
-        typedef rule<Scanner, TurnClosure::context_t>                   TurnRule;
+        typedef rule<Scanner, DoubleRefConditionClosure::context_t>     DoubleRefConditionRule;
+        typedef rule<Scanner, IntRefConditionClosure::context_t>        IntRefConditionRule;
+        typedef rule<Scanner, IntRefIntRefConditionClosure::context_t>  IntRefIntRefConditionRule;
+        typedef rule<Scanner, IntRefIntRefClosure::context_t>           IntRefIntRefRule;
         typedef rule<Scanner, NumberOfClosure::context_t>               NumberOfRule;
-        typedef rule<Scanner, NameParamClosure::context_t>              NameParamRule;
+        typedef rule<Scanner, StringClosure::context_t>                 StringRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, StarTypeClosure::context_t>               StarTypeRule;
         typedef rule<Scanner, DesignHasPartClosure::context_t>          DesignHasPartRule;
-        typedef rule<Scanner, RandomClosure::context_t>                 RandomRule;
+        typedef rule<Scanner, DoubleRefClosure::context_t>              DoubleRefRule;
         typedef rule<Scanner, StockpileClosure::context_t>              StockpileRule;
-        typedef rule<Scanner, VisibleToEmpireClosure::context_t>        VisibleToEmpireRule;
+        typedef rule<Scanner, IntRefVecClosure::context_t>              IntRefVecRule;
 
-        NameParamRule           owner_has_tech;
-        WithinDistanceRule      within_distance;
-        WithinStarlaneJumpsRule within_starlane_jumps;
-        NumberRule              number;
-        TurnRule                turn;
-        NumberOfRule            number_of;
-        NameParamRule           has_special;
-        ConditionParamRule      contains;
-        ConditionParamRule      contained_by;
-        StarTypeRule            star_type;
-        NameParamRule           design_has_hull;
-        DesignHasPartRule       design_has_part;
-        RandomRule              random;
-        StockpileRule           owner_stockpile;
-        VisibleToEmpireRule     visible_to_empire;
-        Rule                    stationary;
+        StringRule                  owner_has_tech;
+        DoubleRefConditionRule      within_distance;
+        IntRefConditionRule         within_starlane_jumps;
+        IntRefIntRefConditionRule   number;
+        IntRefIntRefRule            turn;
+        NumberOfRule                number_of;
+        StringRule                  has_special;
+        ConditionParamRule          contains;
+        ConditionParamRule          contained_by;
+        StarTypeRule                star_type;
+        StringRule                  design_has_hull;
+        DesignHasPartRule           design_has_part;
+        DoubleRefRule               random;
+        StockpileRule               owner_stockpile;
+        IntRefVecRule               visible_to_empire;
+        Rule                        stationary;
     };
 
     ConditionParser2Definition::ConditionParser2Definition()
