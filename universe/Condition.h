@@ -571,7 +571,7 @@ struct Condition::WithinDistance : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
 
     const ValueRef::ValueRefBase<double>* m_distance;
     const ConditionBase*                  m_condition;
@@ -594,7 +594,7 @@ struct Condition::WithinStarlaneJumps : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
 
     const ValueRef::ValueRefBase<int>* m_jumps;
     const ConditionBase*               m_condition;
@@ -670,7 +670,7 @@ struct Condition::ResourceSupplyConnectedByEmpire : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
 
     const ValueRef::ValueRefBase<int>*  m_empire_id;
     const ConditionBase*                m_condition;

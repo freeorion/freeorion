@@ -1654,7 +1654,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
             // see if current object is within required distance of any condition target
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
-                if (Match(non_target_obj, *condition_targets_it)) {
+                if (Match(source, non_target_obj, *condition_targets_it)) {
                     // current object is within required distance of current condition target.
                     // transfer current object to targets set
                     targets.insert(non_target_obj);
@@ -1681,7 +1681,7 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
 
             // see if current object is within required distance of any condition target
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
-                if (Match(initial_target_obj, *condition_targets_it)) {
+                if (Match(source, initial_target_obj, *condition_targets_it)) {
                     // current object is within required distance of current condition target.
                     // transfer current object to back to targets set
                     targets.insert(initial_target_obj);
@@ -1718,12 +1718,12 @@ std::string Condition::WithinDistance::Dump() const
     return retval;
 }
 
-bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
 {
     double dist = m_distance->Eval(source, target, boost::any());
     double distance_squared = dist * dist;
-    double delta_x = source->X() - target->X();
-    double delta_y = source->Y() - target->Y();
+    double delta_x = condition_match->X() - target->X();
+    double delta_y = condition_match->Y() - target->Y();
     return (delta_x * delta_x + delta_y * delta_y) <= distance_squared;
 }
 
@@ -1774,7 +1774,7 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
+            if (search_domain == TARGETS ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
                 to_set.insert(*temp);
                 from_set.erase(temp);
             }
@@ -1802,64 +1802,64 @@ std::string Condition::WithinStarlaneJumps::Dump() const
     return retval;
 }
 
-bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
 {
     const ObjectMap& objects = GetMainObjectMap();
     int jump_limit = m_jumps->Eval(source, target, boost::any());
     if (jump_limit == 0) { // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-        double delta_x = source->X() - target->X();
-        double delta_y = source->Y() - target->Y();
+        double delta_x = condition_match->X() - target->X();
+        double delta_y = condition_match->Y() - target->Y();
         return !(delta_x * delta_x + delta_y * delta_y);
     } else {
-        const System* source_system = objects.Object<System>(source->SystemID());
-        if (!source_system)
-            source_system = universe_object_cast<const System*>(source);
+        const System* condition_match_system = objects.Object<System>(condition_match->SystemID());
+        if (!condition_match_system)
+            condition_match_system = universe_object_cast<const System*>(condition_match);
         const System* target_system = objects.Object<System>(target->SystemID());
         if (!target_system)
             target_system = universe_object_cast<const System*>(target);
 
-        // need various special cases for whether the source and or target
-        // objects are or are in systems.
-        if (source_system && target_system) {
-            // both source and target are / in systems.  can just find the
-            // shortest path between the two systems
-            std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(source_system->ID(), target_system->ID());
+        // need various special cases for whether the condition-matching object
+        // and target objects are or are in systems.
+        if (condition_match_system && target_system) {
+            // both condition-matching object and target are / in systems.
+            // can just find the shortest path between the two systems
+            std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_system->ID());
             if (!path.first.empty()) { // if path.first is empty, no path exists between the systems
                 return (static_cast<int>(path.first.size()) - 1) <= jump_limit;
             }
-        } else if (source_system) {
-            // just source is / in a system.  need to check shortest path from
+        } else if (condition_match_system) {
+            // just condition-matching object is / in a system.  need to check shortest path from
             // systems on either side of starlane target is on
             if (const Fleet* target_fleet = FleetFromObject(target)) {
-                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(source_system->ID(), target_fleet->PreviousSystemID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(source_system->ID(), target_fleet->NextSystemID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_fleet->PreviousSystemID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
             // just target is / in a system.  need to check shortest path from
-            // systems on either side of starlane source is on
-           if (const Fleet* source_fleet = FleetFromObject(source)) {
-                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(source_fleet->PreviousSystemID(), target_system->ID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(source_fleet->NextSystemID(), target_system->ID());
+            // systems on either side of starlane the condition-matching object is on
+           if (const Fleet* condition_matching_fleet = FleetFromObject(condition_match)) {
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(condition_matching_fleet->PreviousSystemID(),    target_system->ID());
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(condition_matching_fleet->NextSystemID(),        target_system->ID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1 <= jump_limit;
             }
         } else {
-            // neither source nor target are / in systems.  need to check all
-            // combinations of systems on either sides of starlanes source and
-            // target are on
-            const Fleet* source_fleet = FleetFromObject(source);
+            // neither condition-matching object nor target are / in systems.
+            // need to check all combinations of systems on either sides of
+            // starlanes condition-matching object and target are on
+            const Fleet* condition_matching_fleet = FleetFromObject(condition_match);
             const Fleet* target_fleet = FleetFromObject(target);
-            if (source_fleet && target_fleet) {
-                int source_fleet_prev_system_id = source_fleet->PreviousSystemID();
-                int source_fleet_next_system_id = source_fleet->NextSystemID();
+            if (condition_matching_fleet && target_fleet) {
+                int condition_matching_fleet_prev_system_id = condition_matching_fleet->PreviousSystemID();
+                int condition_matching_fleet_next_system_id = condition_matching_fleet->NextSystemID();
                 int target_fleet_prev_system_id = target_fleet->PreviousSystemID();
                 int target_fleet_next_system_id = target_fleet->NextSystemID();
-                std::pair<std::list<int>, int> path1 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<int>, int> path2 = GetUniverse().LeastJumpsPath(source_fleet_prev_system_id, target_fleet_next_system_id);
-                std::pair<std::list<int>, int> path3 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_prev_system_id);
-                std::pair<std::list<int>, int> path4 = GetUniverse().LeastJumpsPath(source_fleet_next_system_id, target_fleet_next_system_id);
+                std::pair<std::list<int>, int> path1 = GetUniverse().LeastJumpsPath(condition_matching_fleet_prev_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<int>, int> path2 = GetUniverse().LeastJumpsPath(condition_matching_fleet_prev_system_id, target_fleet_next_system_id);
+                std::pair<std::list<int>, int> path3 = GetUniverse().LeastJumpsPath(condition_matching_fleet_next_system_id, target_fleet_prev_system_id);
+                std::pair<std::list<int>, int> path4 = GetUniverse().LeastJumpsPath(condition_matching_fleet_next_system_id, target_fleet_next_system_id);
                 if (int jumps = static_cast<int>(std::max(std::max(path1.second, path2.second),
                                                           std::max(path3.second, path4.second))))
                     return jumps - 1 <= jump_limit;
@@ -2069,7 +2069,7 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const UniverseObject* sour
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !Match(*it, *temp) : Match(*it, *temp)) {
+            if (search_domain == TARGETS ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
                 to_set.insert(*temp);
                 from_set.erase(temp);
             }
@@ -2100,11 +2100,9 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
     return retval;
 }
 
-bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
 {
-    // parameter source is an object that matched m_condition
-
-    if (!source || !target)
+    if (!source || !target || !condition_match)
         return false;
 
     const EmpireManager& empires = Empires();
@@ -2113,8 +2111,8 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* sou
         const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
         for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
             const std::set<int>& group = *groups_it;
-            if (group.find(source->SystemID()) != group.end()) {
-                // found resource sharing group containing source.  Does it also contain target?
+            if (group.find(condition_match->SystemID()) != group.end()) {
+                // found resource sharing group containing condition-matching object.  Does it also contain target?
                 if (group.find(target->SystemID()) != group.end())
                     return true;    // object matching m_condition and target object are in same resourse sharing group
                 else
