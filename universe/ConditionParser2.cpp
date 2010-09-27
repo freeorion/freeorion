@@ -35,30 +35,30 @@ namespace {
         struct DoubleRefConditionClosure : boost::spirit::classic::closure<DoubleRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>
         {
             member1 this_;
-            member2 distance;
+            member2 double_ref_vec;
             member3 condition;
         };
 
         struct IntRefConditionClosure : boost::spirit::classic::closure<IntRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
-            member2 jumps;
+            member2 int_ref;
             member3 condition;
         };
 
         struct IntRefIntRefConditionClosure : boost::spirit::classic::closure<IntRefIntRefConditionClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
         {
             member1 this_;
-            member2 high;
-            member3 low;
+            member2 int_ref_1;
+            member3 int_ref_2;
             member4 condition;
         };
 
         struct IntRefIntRefClosure : boost::spirit::classic::closure<IntRefIntRefClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*>
         {
             member1 this_;
-            member2 high;
-            member3 low;
+            member2 int_ref_1;
+            member3 int_ref_2;
         };
 
         struct NumberOfClosure : boost::spirit::classic::closure<NumberOfClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
@@ -89,29 +89,35 @@ namespace {
         struct DesignHasPartClosure : boost::spirit::classic::closure<DesignHasPartClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, std::string>
         {
             member1 this_;
-            member2 high;
-            member3 low;
+            member2 int_ref_1;
+            member3 int_ref_2;
             member4 name;
         };
 
         struct DoubleRefClosure : boost::spirit::classic::closure<DoubleRefClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
-            member2 probability;
+            member2 double_ref;
         };
 
         struct StockpileClosure : boost::spirit::classic::closure<StockpileClosure, Condition::ConditionBase*, ResourceType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
-            member3 low;
-            member4 high;
+            member3 int_ref_2;
+            member4 int_ref_1;
         };
 
         struct IntRefVecClosure : boost::spirit::classic::closure<IntRefVecClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase<int>*> >
         {
             member1 this_;
-            member2 empires;
+            member2 int_ref_vec;
+        };
+
+        struct IntRefClosure : boost::spirit::classic::closure<IntRefClosure, Condition::ConditionBase*, const ValueRef::ValueRefBase<int>*>
+        {
+            member1 this_;
+            member2 int_ref;
         };
 
         typedef rule<Scanner, DoubleRefConditionClosure::context_t>     DoubleRefConditionRule;
@@ -126,6 +132,7 @@ namespace {
         typedef rule<Scanner, DoubleRefClosure::context_t>              DoubleRefRule;
         typedef rule<Scanner, StockpileClosure::context_t>              StockpileRule;
         typedef rule<Scanner, IntRefVecClosure::context_t>              IntRefVecRule;
+        typedef rule<Scanner, IntRefClosure::context_t>                 IntRefRule;
 
         StringRule                  owner_has_tech;
         DoubleRefConditionRule      within_distance;
@@ -143,6 +150,8 @@ namespace {
         StockpileRule               owner_stockpile;
         IntRefVecRule               visible_to_empire;
         Rule                        stationary;
+        IntRefRule                  fleet_supplyable;
+        IntRefConditionRule         resource_supply_connected;
     };
 
     ConditionParser2Definition::ConditionParser2Definition()
@@ -154,28 +163,28 @@ namespace {
 
         within_distance =
             (str_p("withindistance")
-             >> distance_label >> double_expr_p[within_distance.distance = arg1]
+             >> distance_label >> double_expr_p[within_distance.double_ref_vec = arg1]
              >> condition_label >> condition_p[within_distance.condition = arg1])
-            [within_distance.this_ = new_<Condition::WithinDistance>(within_distance.distance, within_distance.condition)];
+            [within_distance.this_ = new_<Condition::WithinDistance>(within_distance.double_ref_vec, within_distance.condition)];
 
         within_starlane_jumps =
             (str_p("withinstarlanejumps")
-             >> jumps_label >> int_expr_p[within_starlane_jumps.jumps = arg1]
+             >> jumps_label >> int_expr_p[within_starlane_jumps.int_ref = arg1]
              >> condition_label >> condition_p[within_starlane_jumps.condition = arg1])
-            [within_starlane_jumps.this_ = new_<Condition::WithinStarlaneJumps>(within_starlane_jumps.jumps, within_starlane_jumps.condition)];
+            [within_starlane_jumps.this_ = new_<Condition::WithinStarlaneJumps>(within_starlane_jumps.int_ref, within_starlane_jumps.condition)];
 
         number =
             (str_p("number")
-             >> low_label >> int_expr_p[number.low = arg1]
-             >> high_label >> int_expr_p[number.high = arg1]
+             >> low_label >> int_expr_p[number.int_ref_2 = arg1]
+             >> high_label >> int_expr_p[number.int_ref_1 = arg1]
              >> condition_label >> condition_p[number.condition = arg1])
-            [number.this_ = new_<Condition::Number>(number.low, number.high, number.condition)];
+            [number.this_ = new_<Condition::Number>(number.int_ref_2, number.int_ref_1, number.condition)];
 
         turn =
             (str_p("turn")
-             >> low_label >> int_expr_p[turn.low = arg1]
-             >> high_label >> int_expr_p[turn.high = arg1])
-            [turn.this_ = new_<Condition::Turn>(turn.low, turn.high)];
+             >> low_label >> int_expr_p[turn.int_ref_2 = arg1]
+             >> high_label >> int_expr_p[turn.int_ref_1 = arg1])
+            [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
 
         number_of =
             (str_p("numberof")
@@ -212,36 +221,47 @@ namespace {
 
         design_has_part =
             (str_p("designhaspart")
-             >> low_label >> int_expr_p[design_has_part.low = arg1]
-             >> high_label >> int_expr_p[design_has_part.high = arg1]
+             >> low_label >> int_expr_p[design_has_part.int_ref_2 = arg1]
+             >> high_label >> int_expr_p[design_has_part.int_ref_1 = arg1]
              >> name_label >> name_p[design_has_part.name = arg1])
-            [design_has_part.this_ = new_<Condition::DesignHasPart>(design_has_part.low, design_has_part.high, design_has_part.name)];
+            [design_has_part.this_ = new_<Condition::DesignHasPart>(design_has_part.int_ref_2, design_has_part.int_ref_1, design_has_part.name)];
 
         random =
             (str_p("random")
              >> probability_label
-             >> double_expr_p[random.probability = arg1])
-            [random.this_ = new_<Condition::Chance>(random.probability)];
+             >> double_expr_p[random.double_ref = arg1])
+            [random.this_ = new_<Condition::Chance>(random.double_ref)];
 
         owner_stockpile =
             ((str_p("ownerfoodstockpile")[owner_stockpile.stockpile_type = val(RE_FOOD)]
               | str_p("ownermineralstockpile")[owner_stockpile.stockpile_type = val(RE_MINERALS)]
               | str_p("ownertradestockpile")[owner_stockpile.stockpile_type = val(RE_TRADE)])
-             >> low_label >> double_expr_p[owner_stockpile.low = arg1]
-             >> high_label >> double_expr_p[owner_stockpile.high = arg1])
-            [owner_stockpile.this_ = new_<Condition::EmpireStockpileValue>(owner_stockpile.stockpile_type, owner_stockpile.low, owner_stockpile.high)];
+             >> low_label >> double_expr_p[owner_stockpile.int_ref_2 = arg1]
+             >> high_label >> double_expr_p[owner_stockpile.int_ref_1 = arg1])
+            [owner_stockpile.this_ = new_<Condition::EmpireStockpileValue>(owner_stockpile.stockpile_type, owner_stockpile.int_ref_2, owner_stockpile.int_ref_1)];
 
         visible_to_empire =
             (str_p("visibletoempire")
              >> empire_label
-             >> (int_expr_p[push_back_(visible_to_empire.empires, arg1)]
-                 | ('[' >> +(int_expr_p[push_back_(visible_to_empire.empires, arg1)]) >> ']')))
-            [visible_to_empire.this_ = new_<Condition::VisibleToEmpire>(visible_to_empire.empires)];
+             >> (int_expr_p[push_back_(visible_to_empire.int_ref_vec, arg1)]
+                 | ('[' >> +(int_expr_p[push_back_(visible_to_empire.int_ref_vec, arg1)]) >> ']')))
+            [visible_to_empire.this_ = new_<Condition::VisibleToEmpire>(visible_to_empire.int_ref_vec)];
 
         stationary =
             str_p("stationary")
             [stationary.this_ = new_<Condition::Stationary>()];
 
+        fleet_supplyable =
+            (str_p("fleetsupplyablebyempire")
+             >> empire_label >> int_expr_p[fleet_supplyable.int_ref = arg1])
+            [fleet_supplyable.this_ = new_<Condition::FleetSupplyableByEmpire>(fleet_supplyable.int_ref)];
+
+        resource_supply_connected =
+            (str_p("resourcesupplyconnectedbyempire")
+             >> empire_label >> int_expr_p[resource_supply_connected.int_ref = arg1]
+             >> condition_label >> condition_p[resource_supply_connected.condition = arg1])
+            [resource_supply_connected.this_ = new_<Condition::ResourceSupplyConnectedByEmpire>(resource_supply_connected.int_ref,
+                                                                                                resource_supply_connected.condition)];
 
         condition2_p =
             owner_has_tech[condition2_p.this_ = arg1]
@@ -259,7 +279,9 @@ namespace {
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
             | visible_to_empire[condition2_p.this_ = arg1]
-            | stationary[condition2_p.this_ = arg1];
+            | stationary[condition2_p.this_ = arg1]
+            | fleet_supplyable[condition2_p.this_ = arg1]
+            | resource_supply_connected[condition2_p.this_ = arg1];
     }
     ConditionParser2Definition condition2_def;
 }
