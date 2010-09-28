@@ -16,13 +16,13 @@ def generateProductionOrders():
     possibleBuildingTypes = empire.availableBuildingTypes
     for buildingTypeID in possibleBuildingTypes:
         buildingType = fo.getBuildingType(buildingTypeID)
-        print "    " + str(buildingType.name) + " cost per turn:" + str(buildingType.buildCost) + " minimum build time:" + str(buildingType.buildTime)
+        print "    " + str(buildingType.name) + " total cost to produce:" + str(buildingType.productionCost) + " minimum time to produce:" + str(buildingType.productionTime)
 
     print "possible ship designs to build:"
     possibleShipDesigns = empire.availableShipDesigns
     for shipDesignID in possibleShipDesigns:
         shipDesign = fo.getShipDesign(shipDesignID)
-        print "    " + str(shipDesign.name(True)) + " cost per turn:" + str(shipDesign.cost) + " minimum build time:" + str(shipDesign.buildTime)
+        print "    " + str(shipDesign.name(True)) + " total cost to produce:" + str(shipDesign.productionCost) + " minimum time to produce:" + str(shipDesign.productionTime)
 
     print "projects already in building queue:"
     productionQueue = empire.productionQueue
@@ -33,7 +33,7 @@ def generateProductionOrders():
         for shipDesignID in possibleShipDesigns:
             locationIDs = getAvailableBuildLocations(shipDesignID)
             shipDesign = fo.getShipDesign(shipDesignID)
-            if len(locationIDs) > 0 and shipDesign.cost <= (totalPP * 2):
+            if len(locationIDs) > 0 and shipDesign.productionCost <= (totalPP * 2):
                 if shipDesign.attack > 0:
                     # attack ship
                     print "adding new ship to production queue: " + shipDesign.name(True)

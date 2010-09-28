@@ -245,7 +245,8 @@ namespace FreeOrionPython {
             .add_property("attack",             make_function(&ShipDesign::Attack,          return_value_policy<return_by_value>()))
             .add_property("canColonize",        make_function(&ShipDesign::CanColonize,     return_value_policy<return_by_value>()))
             .add_property("productionCost",     make_function(&ShipDesign::ProductionCost,  return_value_policy<return_by_value>()))
-            .add_property("productionTime",     make_function(&ShipDesign::ProductionTime,       return_value_policy<return_by_value>()))
+            .add_property("productionTime",     make_function(&ShipDesign::ProductionTime,  return_value_policy<return_by_value>()))
+            .add_property("perTurnCost",        make_function(&ShipDesign::PerTurnCost,     return_value_policy<return_by_value>()))
             .add_property("hull",               make_function(&ShipDesign::Hull,            return_value_policy<return_by_value>()))
             .add_property("parts",              make_function(PartsVoid,                    return_internal_reference<>()))
             .def("partsInSlotType",             PartsSlotType,                              return_value_policy<return_by_value>())
@@ -294,6 +295,7 @@ namespace FreeOrionPython {
             .add_property("productionCost",     &BuildingType::ProductionCost)
             .add_property("productionTime",     &BuildingType::ProductionTime)
             .add_property("maintenanceCost",    &BuildingType::MaintenanceCost)
+            .add_property("perTurnCost",        &BuildingType::PerTurnCost)
             .def("captureResult",               &BuildingType::GetCaptureResult)
         ;
         def("getBuildingType",                  &GetBuildingType,                           return_value_policy<reference_existing_object>());
