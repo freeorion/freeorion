@@ -698,35 +698,45 @@ void Fleet::AddShip(int ship_id)
         return;
     }
 
-    //Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
-    if (Ship* s = GetObject<Ship>(ship_id)) {
-        if (System* system = GetObject<System>(this->SystemID())) {
-            system->Insert(s);
-        } else {
-            s->MoveTo(X(), Y());
-            s->SetSystem(SystemID());
-        }
-        s->SetFleetID(ID());
-        m_ships.insert(ship_id);
-    } else {
+    Ship* ship = GetObject<Ship>(ship_id);
+    if (!ship) {
         Logger().errorStream() << "Fleet::AddShips() : Attempted to add an id (" << ship_id << ") of a non-ship object to a fleet.";
+        return;
     }
-    RecalculateFleetSpeed(); // makes AddShip take Order(m_ships.size()) time - may need replacement
+
+    //Logger().debugStream() << "Fleet '" << this->Name() << "' adding ship: " << ship_id;
+
+    // ensure ship is in same system as this fleet
+    int ship_system_id = ship->SystemID();
+    int this_fleet_system_id = this->SystemID();
+    if (ship_system_id != this_fleet_system_id)
+        if (System* system = GetObject<System>(this_fleet_system_id))
+            system->Insert(ship);   // sets ship's system, remove from old system (if any) and moves ship to system's location (if necessary)
+
+    // remove ship from old fleet
+    if (Fleet* old_fleet = GetObject<Fleet>(ship->FleetID()))
+        old_fleet->RemoveShip(ship_id);
+
+    // add ship to this fleet, and set its internal fleet record
+
+    ship->SetFleetID(ID());
+    m_ships.insert(ship_id);
+
+    RecalculateFleetSpeed();
     StateChangedSignal();
 }
 
 bool Fleet::RemoveShip(int ship)
 {
     //std::cout << "Fleet::RemoveShip" << std::endl;
-    bool retval = false;
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
         m_ships.erase(it);
         RecalculateFleetSpeed();
         StateChangedSignal();
-        retval = true;
+        return true;;
     }
-    return retval;
+    return false;
 }
 
 void Fleet::SetSystem(int sys)
