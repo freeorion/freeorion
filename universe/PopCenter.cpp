@@ -296,7 +296,7 @@ void PopCenter::Reset()
 void PopCenter::SetSpecies(const std::string& species_name)
 {
     const Species* species = GetSpecies(species_name);
-    if (!species) {
+    if (!species && !species_name.empty()) {
         Logger().errorStream() << "PopCenter::SetSpecies couldn't get species with name " << species_name;
     }
     m_species_name = species_name;
