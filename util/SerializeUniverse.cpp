@@ -2,10 +2,18 @@
 
 #include "Serialize.ipp"
 
-#ifndef FREEORION_WIN32
-#include "SerializeUniverseExports.ipp"
-#endif
+#include "../universe/Building.h"
+#include "../universe/Fleet.h"
+#include "../universe/Ship.h"
+#include "../universe/Planet.h"
+#include "../universe/ShipDesign.h"
+#include "../universe/System.h"
 
+BOOST_CLASS_EXPORT(System)
+BOOST_CLASS_EXPORT(Planet)
+BOOST_CLASS_EXPORT(Building)
+BOOST_CLASS_EXPORT(Fleet)
+BOOST_CLASS_EXPORT(Ship)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -26,6 +34,8 @@ void Universe::serialize(Archive& ar, const unsigned int version)
     EmpireObjectVisibilityTurnMap   empire_object_visibility_turns;
     ObjectKnowledgeMap              empire_known_destroyed_object_ids;
     ShipDesignMap                   ship_designs;
+
+    ar.template register_type<System>();
 
     if (Archive::is_saving::value) {
         GetObjectsToSerialize(              objects,                            s_encoding_empire);

@@ -13,10 +13,6 @@
 #include <boost/serialization/weak_ptr.hpp>
 #include <boost/ptr_container/serialize_ptr_vector.hpp>
 
-#ifdef FREEORION_WIN32
-#include "SerializeUniverseExports.ipp"
-#endif
-
 // some endianness and size checks to ensure portability of binary save files;
 // of one or more of these fails, it means that FreeOrion is not supported on
 // your platform/compiler pair, and must be modified to provide data of the
