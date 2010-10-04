@@ -531,6 +531,7 @@ float HumanClientApp::GLVersion() const
 
 void HumanClientApp::Enter2DMode()
 {
+    Logger().debugStream() << "HumanClientApp::Enter2DMode()";
     OgreGUI::Enter2DMode();
 
     glDisable(GL_DEPTH_TEST);
