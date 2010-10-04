@@ -529,9 +529,16 @@ float HumanClientApp::GLVersion() const
     return GetGLVersion();
 }
 
+namespace {
+    static bool enter_2d_mode_log_done(false);
+}
+
 void HumanClientApp::Enter2DMode()
 {
-    Logger().debugStream() << "HumanClientApp::Enter2DMode()";
+    if (!enter_2d_mode_log_done) {
+        enter_2d_mode_log_done = true;
+        Logger().debugStream() << "HumanClientApp::Enter2DMode()";
+    }
     OgreGUI::Enter2DMode();
 
     glDisable(GL_DEPTH_TEST);
