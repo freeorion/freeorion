@@ -231,6 +231,9 @@ namespace {
         if (damage <= 0.0)
             return;
 
+        Logger().debugStream() << "AttackShipShip: attacker: " << attacker->Dump() << "\ntarget: " << target->Dump();
+
+
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
         if (!target_shield || ! target_structure) {
@@ -245,14 +248,16 @@ namespace {
         if (shield_damage >= target_shield->Current())
             structure_damage = std::min(target_structure->Current(), damage - shield_damage);
 
-        if (shield_damage >= 0) {
+        if (shield_damage > 0) {
             target_shield->AddToCurrent(-shield_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
-        if (structure_damage >= 0) {
+        if (structure_damage > 0) {
             target_structure->AddToCurrent(-structure_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
+
+        Logger().debugStream() << "after AttackShipShip: attacker: " << attacker->Dump() << "\ntarget: " << target->Dump();
     }
 
     void AttackShipPlanet(Ship* attacker, Planet* target) {
@@ -266,11 +271,16 @@ namespace {
         if (damage <= 0.0)
             return;
 
-        Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
-        Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
+        Logger().debugStream() << "AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
+
+        Meter* target_shield = target->GetMeter(METER_SHIELD);
         Meter* target_construction = target->UniverseObject::GetMeter(METER_CONSTRUCTION);
-        if (!target_shield || ! target_structure || !target_construction) {
-            Logger().errorStream() << "couldn't get target structure, shield, or construction meter";
+        if (!target_shield) {
+            Logger().errorStream() << "couldn't get target shield meter";
+            return;
+        }
+        if (!target_construction) {
+            Logger().errorStream() << "couldn't get target construction meter";
             return;
         }
 
@@ -289,6 +299,8 @@ namespace {
             target_construction->AddToCurrent(-construction_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
+ 
+        Logger().debugStream() << "after AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
     }
 
     void AttackPlanetShip(Planet* attacker, Ship* target) {
@@ -298,6 +310,8 @@ namespace {
 
         if (damage <= 0.0)
             return;
+
+        Logger().debugStream() << "AttackPlanetShip: planet: " << attacker->Dump() << "\nship: " << target->Dump();
 
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         Meter* target_structure = target->UniverseObject::GetMeter(METER_STRUCTURE);
@@ -321,9 +335,12 @@ namespace {
             target_structure->AddToCurrent(-structure_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
+
+        Logger().debugStream() << "after AttackPlanetShip: planet: " << attacker->Dump() << "\nship: " << target->Dump();
     }
 
     void AttackPlanetPlanet(Planet* attacker, Planet* target) {
+        Logger().debugStream() << "AttackPlanetPlanet does nothing!";
         // intentionally left empty
     }
 }
@@ -343,7 +360,20 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     int seed = first_object->ID() + CurrentTurn();
     Seed(seed);
 
-    std::vector<int> all_combat_object_IDs = combat_info.objects.FindObjectIDs();
+
+    // compile list of valid objects to attack or be attacked in this combat
+    std::vector<int> all_combat_object_IDs;
+    for (ObjectMap::iterator it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
+        const UniverseObject* obj = it->second;
+        if (obj->Unowned())
+            continue;
+        if (universe_object_cast<const System*>(obj))
+            continue;
+        if (universe_object_cast<const Fleet*>(obj))
+            continue;
+        all_combat_object_IDs.push_back(it->first);
+    }
+
     SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object from the vector
 
 
@@ -354,10 +384,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     for (std::vector<int>::const_iterator object_it = all_combat_object_IDs.begin(); object_it != all_combat_object_IDs.end(); ++object_it) {
         int object_id = *object_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
-        if (universe_object_cast<const System*>(obj))
-            continue;
-        if (universe_object_cast<const Fleet*>(obj))
-            continue;
+        //if (universe_object_cast<const System*>(obj))
+        //    continue;
+        //if (universe_object_cast<const Fleet*>(obj))
+        //    continue;
 
         const std::set<int>& owners = obj->Owners();
 
@@ -383,7 +413,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         // check if object is already destroyed.  if so, skip this round
         if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end()) {
-            Logger().debugStream() << "skipping destroyed object as attack object";
+            //Logger().debugStream() << "skipping destroyed object as attack object";
             continue;
         }
 
@@ -395,11 +425,11 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         // fleets and the system can't attack
         if (universe_object_cast<const System*>(attacker)) {
-            Logger().debugStream() << "skipping system as attack object";
+            //Logger().debugStream() << "skipping system as attack object";
             continue;
         }
         if (universe_object_cast<const Fleet*>(attacker)) {
-            Logger().debugStream() << "skipping fleet as attack object";
+            //Logger().debugStream() << "skipping fleet as attack object";
             continue;
         }
         // TODO: skip buildings?
@@ -409,7 +439,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         // this object has only one onwer.
         const std::set<int>& owners = attacker->Owners();
         if (owners.empty()) {
-            Logger().debugStream() << "skipping unowned attacker object: " << attacker->Name() << "(" << attacker->ID() << ")";
+            //Logger().debugStream() << "skipping unowned attacker object: " << attacker->Name() << "(" << attacker->ID() << ")";
             continue;
         }
 
@@ -425,7 +455,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         const std::vector<int>& valid_target_ids = target_vec_it->second;
 
 
-        Logger().debugStream() << "Attacker: " << attacker->Name() << " (" << attacker->ID() << ")";
+        Logger().debugStream() << "Attacker: " << attacker->Dump();
 
         SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object from the vector
 
@@ -446,7 +476,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
             continue;
         }
 
-        Logger().debugStream() << "Target: " << target->Name() << " (" << target->ID() << ")";
+        Logger().debugStream() << "Target: " << target->Dump();
 
         // do actual attack
         if (Ship* attack_ship = universe_object_cast<Ship*>(attacker)) {

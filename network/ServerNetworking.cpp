@@ -156,9 +156,9 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
-            if (TRACE_EXECUTION)
-                Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
-                                       << "received message " << m_incoming_message;
+            //if (TRACE_EXECUTION)
+                //Logger().debugStream() << "PlayerConnection::HandleMessageBodyRead(): "
+                //                       << "received message " << m_incoming_message;
             if (EstablishedPlayer()) {
                 EventSignal(boost::bind(m_player_message_callback,
                                         m_incoming_message,
@@ -316,9 +316,9 @@ int ServerNetworking::GreatestPlayerID() const
 void ServerNetworking::SendMessage(const Message& message,
                                    PlayerConnectionPtr player_connection)
 {
-    if (TRACE_EXECUTION)
-        Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
-                               << message;
+    //if (TRACE_EXECUTION)
+    //    Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
+    //                           << message;
     player_connection->SendMessage(message);
 }
 
@@ -335,9 +335,9 @@ void ServerNetworking::SendMessage(const Message& message)
         return;
     }
 
-    if (TRACE_EXECUTION)
-        Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
-                               << message;
+    //if (TRACE_EXECUTION)
+    //    Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
+    //                           << message;
     player->SendMessage(message);
 }
 
