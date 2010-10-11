@@ -217,7 +217,6 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Victory "TECH_VICTORY"
     graphic = "icons/tech/singularity_of_transcendence.png"
         
@@ -237,7 +236,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            activation = Source
             effects = SetTargetResearch Value + 5
     graphic = "icons/tech/basic_autolabs.png"
 
@@ -261,7 +259,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 1.25
     graphic = ""
 
@@ -337,7 +334,6 @@ Tech
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 2
 
         EffectsGroup
@@ -347,7 +343,6 @@ Tech
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 1.75
 
         EffectsGroup
@@ -357,7 +352,6 @@ Tech
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 1.5
 
         EffectsGroup
@@ -367,7 +361,6 @@ Tech
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 1.25
     ]
     graphic = "icons/tech/stellar_tomography.png"
@@ -418,7 +411,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 2
     graphic = ""
 
@@ -463,7 +455,6 @@ Tech
                 Ship
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
-            activation = Source
             effects = [
                 RemoveOwner Target.Owner
                 AddOwner Source.Owner
@@ -502,7 +493,6 @@ Tech
                 ]
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 3
 
         EffectsGroup
@@ -749,7 +739,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            activation = Source
             effects = SetTargetHealth Value + 5
     graphic = ""
 
@@ -782,7 +771,6 @@ Tech
                     Focus "FOCUS_FARMING"
                     Planet environment = Good
             ]
-            activation = Source
             effects = SetTargetFarming Value + Target.Population
 
         EffectsGroup
@@ -791,7 +779,6 @@ Tech
                 Focus "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = SetTargetFarming Value + Target.Population * 0.5
     ]
     graphic = "icons/tech/self-rotating_crops.png"
@@ -812,7 +799,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Not TargetPopulation low = 1 high = 999
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 0.1
     graphic = "icons/tech/habitation_domes.png"
 
@@ -943,7 +929,6 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = OwnedExclusivelyBy TheEmpire Source.Owner
-            activation = Source
             effects = SetTargetFarming Value + 2
     graphic = "icons/tech/orbital_farming.png"
 
@@ -1138,7 +1123,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            activation = Source
             effects = SetTargetHealth Value + 10
     graphic = ""
 
@@ -1316,7 +1300,6 @@ Tech
                 Planet size = Tiny
                 Planet environment = [Poor Hostile]
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 5
                 SetTargetHealth Value + 10
@@ -1328,7 +1311,6 @@ Tech
                 Planet size = Small
                 Planet environment = [Poor Hostile]
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 10
                 SetTargetHealth Value + 10
@@ -1340,7 +1322,6 @@ Tech
                 Planet size = Medium
                 Planet environment = [Poor Hostile]
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 15
                 SetTargetHealth Value + 10
@@ -1352,7 +1333,6 @@ Tech
                 Planet size = Large
                 Planet environment = [Poor Hostile]
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 20
                 SetTargetHealth Value + 10
@@ -1364,7 +1344,6 @@ Tech
                 Planet size = Huge
                 Planet environment = [Poor Hostile]
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 25
                 SetTargetHealth Value + 10
@@ -1376,7 +1355,6 @@ Tech
                 Planet size = Tiny
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 4
                 SetTargetHealth Value + 5
@@ -1388,7 +1366,6 @@ Tech
                 Planet size = Small
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 8
                 SetTargetHealth Value + 5
@@ -1400,7 +1377,6 @@ Tech
                 Planet size = Medium
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 12
                 SetTargetHealth Value + 5
@@ -1412,7 +1388,6 @@ Tech
                 Planet size = Large
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 16
                 SetTargetHealth Value + 5
@@ -1424,7 +1399,6 @@ Tech
                 Planet size = Huge
                 Planet environment = Adequate
             ]
-            activation = Source
             effects = [
                 SetTargetPopulation Value + 20
                 SetTargetHealth Value + 5
@@ -1460,7 +1434,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Ship
             ]
-            activation = Source
             effects = SetMaxFuel Value + 2
 
         EffectsGroup
@@ -1468,7 +1441,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 PopulationCenter
             ]
-            activation = Source
             effects = [
                 SetMaxDefense Value + 5
                 SetMaxShield Value + 10
@@ -1480,7 +1452,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_FARMING"
             ]
-            activation = Source
             effects = SetTargetFarming Value + Target.Population * 0.25
 
         EffectsGroup
@@ -1489,7 +1460,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 10
 
         EffectsGroup
@@ -1498,7 +1468,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_INDUSTRY"
             ]
-            activation = Source
             effects = SetTargetIndustry Value + Target.Population * 0.25
 
         EffectsGroup
@@ -1507,7 +1476,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Source
             effects = SetTargetResearch Value * 1.2
     ]
     graphic = ""
@@ -1671,7 +1639,6 @@ Tech
                 PopulationCenter
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetIndustry Value +5
     graphic = "icons/tech/basic_autofactories.png"
 
@@ -1786,7 +1753,6 @@ Tech
                 Planet size = Tiny
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 20
 
         EffectsGroup
@@ -1796,7 +1762,6 @@ Tech
                 Planet size = Small
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 15
 
         EffectsGroup
@@ -1806,7 +1771,6 @@ Tech
                 Planet size = Medium
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 10
 
         EffectsGroup
@@ -1816,7 +1780,6 @@ Tech
                 Planet size = Large
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 5
     ]
     graphic = "icons/tech/deep_core_mining.png"
@@ -1886,7 +1849,6 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_INDUSTRY"
                 ]
-            activation = Source
             effects = SetTargetIndustry Value + Target.Population * 0.2
 
         EffectsGroup
@@ -1895,7 +1857,6 @@ Tech
                 ProductionCenter
                 Focus "FOCUS_MINING"
             ]
-            activation = Source
             effects = SetTargetMining Value + 10
     ]
     graphic = "icons/tech/exobots.png"
@@ -1920,7 +1881,6 @@ Tech
                 PopulationCenter
                 Focus "FOCUS_INDUSTRY"
             ]
-            activation = Source
             effects = SetTargetIndustry Value + Target.Population * 0.5
     graphic = "icons/tech/fusion_plants.png"
 
@@ -2135,7 +2095,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1 high = 999
             ]
-            activation = Source
             effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/orbital_construction.png"
 
@@ -2156,7 +2115,6 @@ Tech
                 Planet environment = Good
                 Planet size = Tiny
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 1
 
         EffectsGroup
@@ -2165,7 +2123,6 @@ Tech
                 Planet environment = Good
                 Planet size = Small
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 2
 
         EffectsGroup
@@ -2174,7 +2131,6 @@ Tech
                 Planet environment = Good
                 Planet size = Medium
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 3
 
         EffectsGroup
@@ -2183,7 +2139,6 @@ Tech
                 Planet environment = Good
                 Planet size = Large
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 4
 
         EffectsGroup
@@ -2192,7 +2147,6 @@ Tech
                 Planet environment = Good
                 Planet size = Huge
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 5
     ]
     graphic = "icons/tech/subterranean_construction.png"
@@ -2238,7 +2192,6 @@ Tech
                 ProductionCenter
                 Farming low = 0 high = Target.TargetFarming - 3
             ]
-            activation = Source
             effects = SetFarming Value + 2
 
         EffectsGroup
@@ -2247,7 +2200,6 @@ Tech
                 ProductionCenter
                 Mining low = 0 high = Target.TargetMining - 3
             ]
-            activation = Source
             effects = SetMining Value + 2
 
         EffectsGroup
@@ -2256,7 +2208,6 @@ Tech
                 ProductionCenter
                 Industry low = 0 high = Target.TargetIndustry - 3
             ]
-            activation = Source
             effects = SetIndustry Value + 2
 
         EffectsGroup
@@ -2265,7 +2216,6 @@ Tech
                 ProductionCenter
                 Research low = 0 high = Target.TargetResearch - 3
             ]
-            activation = Source
             effects = SetResearch Value + 2
 
         EffectsGroup
@@ -2274,7 +2224,6 @@ Tech
                 ProductionCenter
                 Farming low = Target.TargetFarming - 3 high = Target.TargetFarming
             ]
-            activation = Source
             effects = SetFarming Target.TargetFarming
 
         EffectsGroup
@@ -2283,7 +2232,6 @@ Tech
                 ProductionCenter
                 Mining low = Target.TargetMining - 3 high = Target.TargetMining
             ]
-            activation = Source
             effects = SetMining Target.TargetMining
 
         EffectsGroup
@@ -2292,7 +2240,6 @@ Tech
                 ProductionCenter
                 Industry low = Target.TargetIndustry - 3 high = Target.TargetIndustry
             ]
-            activation = Source
             effects = SetIndustry Target.TargetIndustry
 
         EffectsGroup
@@ -2301,7 +2248,6 @@ Tech
                 ProductionCenter
                 Research low = Target.TargetResearch - 3 high = Target.TargetResearch
             ]
-            activation = Source
             effects = SetResearch Target.TargetResearch
 
         EffectsGroup
@@ -2310,7 +2256,6 @@ Tech
                 ProductionCenter
                 Farming low = Target.TargetFarming + 5 high = 999
             ]
-            activation = Source
             effects = SetFarming Value - 3
 
         EffectsGroup
@@ -2319,7 +2264,6 @@ Tech
                 ProductionCenter
                 Mining low = Target.TargetMining + 5 high = 999
             ]
-            activation = Source
             effects = SetMining Value - 3
 
         EffectsGroup
@@ -2328,7 +2272,6 @@ Tech
                 ProductionCenter
                 Industry low = Target.TargetIndustry + 5 high = 999
             ]
-            activation = Source
             effects = SetIndustry Value - 3
 
         EffectsGroup
@@ -2337,7 +2280,6 @@ Tech
                 ProductionCenter
                 Research low = Target.TargetResearch + 5 high = 999
             ]
-            activation = Source
             effects = SetResearch Value - 3
 
         EffectsGroup
@@ -2346,7 +2288,6 @@ Tech
                 ProductionCenter
                 Farming low = Target.TargetFarming high = Target.TargetFarming + 5
             ]
-            activation = Source
             effects = SetFarming Target.TargetFarming
 
         EffectsGroup
@@ -2355,7 +2296,6 @@ Tech
                 ProductionCenter
                 Mining low = Target.TargetMining high = Target.TargetMining + 5
             ]
-            activation = Source
             effects = SetMining Target.TargetMining
 
         EffectsGroup
@@ -2364,7 +2304,6 @@ Tech
                 ProductionCenter
                 Industry low = Target.TargetIndustry high = Target.TargetIndustry + 5
             ]
-            activation = Source
             effects = SetIndustry Target.TargetIndustry
 
         EffectsGroup
@@ -2373,7 +2312,6 @@ Tech
                 ProductionCenter
                 Research low = Target.TargetResearch high = Target.TargetResearch + 5
             ]
-            activation = Source
             effects = SetResearch Target.TargetResearch
     ]
     graphic = ""
@@ -2394,7 +2332,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Building
             ]
-            activation = Source
             effects = SetStealth Value + 20
     graphic = ""
 
@@ -2415,7 +2352,6 @@ Tech
                 Planet size = Huge
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 15
 
         EffectsGroup
@@ -2424,7 +2360,6 @@ Tech
                 Planet size = Large
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 12
 
         EffectsGroup
@@ -2433,7 +2368,6 @@ Tech
                 Planet size = Medium
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 9
 
         EffectsGroup
@@ -2442,7 +2376,6 @@ Tech
                 Planet size = Small
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 6
 
         EffectsGroup
@@ -2451,7 +2384,6 @@ Tech
                 Planet size = Tiny
                 OwnedBy TheEmpire Source.Owner
             ]
-            activation = Source
             effects = SetTargetPopulation Value + 3
     ]
     graphic = ""
@@ -2487,7 +2419,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1 high = 999
             ]
-            activation = Source
             effects = SetTargetConstruction Value + 20
     graphic = ""
 
@@ -2535,7 +2466,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 TargetPopulation low = 1 high = 999
             ]
-            activation = Source
             effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/controlled_gravity_wells.png"
 
@@ -3772,7 +3702,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Ship
             ]
-            activation = Source
             effects = SetMaxStructure Value + 5
     graphic = ""
 
@@ -3876,7 +3805,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Ship
             ]
-            activation = Source
             effects = SetStructure Value + 1
     graphic = ""
 
@@ -3896,7 +3824,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Ship
             ]
-            activation = Source
             effects = SetStructure Target.MaxStructure
     graphic = ""
 
@@ -3952,7 +3879,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Source
             effects = SetDefense Value + 5
     graphic = ""
 
@@ -4008,7 +3934,6 @@ Tech
                 Ship
                 OwnedBy EnemyOf Source.Owner
             ]
-            activation = Source
             effects = SetStructure Value - 2
     graphic = ""
 
@@ -4079,7 +4004,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Source
             effects = SetMaxDefense Value + 15
     graphic = ""
 
@@ -4111,7 +4035,6 @@ Tech
                 OwnedExclusivelyBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Source
             effects = SetMaxShield Value + 45
     graphic = ""
 
@@ -4147,7 +4070,6 @@ Tech
                     Building
                 ]
             ]
-            activation = Source
             effects = SetStealth Value + 80
     graphic = ""
 
@@ -4167,7 +4089,6 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Source
             effects = SetDetection Value + 80
     graphic = ""
 
@@ -4223,7 +4144,6 @@ Tech
                 Planet
                 Building
             ]
-            activation = Source
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 14.99
     graphic = ""
