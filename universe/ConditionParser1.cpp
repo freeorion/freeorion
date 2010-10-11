@@ -15,6 +15,7 @@ ParamLabel empire_label("empire");
 ParamLabel affiliation_label("affiliation");
 ParamLabel name_label("name");
 ParamLabel type_label("type");
+ParamLabel class_label("class");
 ParamLabel planetsize_label("size");
 ParamLabel environment_label("environment");
 ParamLabel probability_label("probability");

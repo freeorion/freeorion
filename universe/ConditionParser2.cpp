@@ -15,6 +15,7 @@ extern ParamLabel empire_label;
 extern ParamLabel affiliation_label;
 extern ParamLabel name_label;
 extern ParamLabel type_label;
+extern ParamLabel class_label;
 extern ParamLabel planetsize_label;
 extern ParamLabel environment_label;
 extern ParamLabel probability_label;
@@ -94,6 +95,14 @@ namespace {
             member4 name;
         };
 
+        struct DesignHasPartClassClosure : boost::spirit::classic::closure<DesignHasPartClassClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<int>*, ShipPartClass>
+        {
+            member1 this_;
+            member2 int_ref_1;
+            member3 int_ref_2;
+            member4 part_class;
+        };
+
         struct DoubleRefClosure : boost::spirit::classic::closure<DoubleRefClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
@@ -129,6 +138,7 @@ namespace {
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, StarTypeClosure::context_t>               StarTypeRule;
         typedef rule<Scanner, DesignHasPartClosure::context_t>          DesignHasPartRule;
+        typedef rule<Scanner, DesignHasPartClassClosure::context_t>     DesignHasPartClassRule;
         typedef rule<Scanner, DoubleRefClosure::context_t>              DoubleRefRule;
         typedef rule<Scanner, StockpileClosure::context_t>              StockpileRule;
         typedef rule<Scanner, IntRefVecClosure::context_t>              IntRefVecRule;
@@ -146,6 +156,7 @@ namespace {
         StarTypeRule                star_type;
         StringRule                  design_has_hull;
         DesignHasPartRule           design_has_part;
+        DesignHasPartClassRule      design_has_part_class;
         DoubleRefRule               random;
         StockpileRule               owner_stockpile;
         IntRefVecRule               visible_to_empire;
@@ -221,10 +232,21 @@ namespace {
 
         design_has_part =
             (str_p("designhaspart")
-             >> low_label >> int_expr_p[design_has_part.int_ref_2 = arg1]
-             >> high_label >> int_expr_p[design_has_part.int_ref_1 = arg1]
-             >> name_label >> name_p[design_has_part.name = arg1])
-            [design_has_part.this_ = new_<Condition::DesignHasPart>(design_has_part.int_ref_2, design_has_part.int_ref_1, design_has_part.name)];
+             >> low_label >>    int_expr_p[ design_has_part.int_ref_2 = arg1]
+             >> high_label >>   int_expr_p[ design_has_part.int_ref_1 = arg1]
+             >> name_label >>   name_p[     design_has_part.name = arg1])
+            [design_has_part.this_ = new_<Condition::DesignHasPart>(design_has_part.int_ref_2,
+                                                                    design_has_part.int_ref_1,
+                                                                    design_has_part.name)];
+
+        design_has_part_class =
+            (str_p("designhaspartclass")
+             >> low_label >>    int_expr_p[     design_has_part_class.int_ref_2 = arg1]
+             >> high_label >>   int_expr_p[     design_has_part_class.int_ref_1 = arg1]
+             >> class_label >>  part_class_p[   design_has_part_class.part_class = arg1])
+            [design_has_part_class.this_ = new_<Condition::DesignHasPartClass>(design_has_part_class.int_ref_2,
+                                                                               design_has_part_class.int_ref_1,
+                                                                               design_has_part_class.part_class)];
 
         random =
             (str_p("random")
@@ -276,6 +298,7 @@ namespace {
             | star_type[condition2_p.this_ = arg1]
             | design_has_hull[condition2_p.this_ = arg1]
             | design_has_part[condition2_p.this_ = arg1]
+            | design_has_part_class[condition2_p.this_ = arg1]
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
             | visible_to_empire[condition2_p.this_ = arg1]

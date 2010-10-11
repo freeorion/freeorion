@@ -1349,7 +1349,7 @@ std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/)
 }
 
 std::string Condition::DesignHasPartClass::Dump() const{
-    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " part_class = " + UserString(boost::lexical_cast<std::string>(m_class));
+    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class));
 }
 
 bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const UniverseObject* target) const
