@@ -12,7 +12,6 @@ BuildingType
                 Contains Source
                 Planet
             ]
-            activation = Source
             effects = [
                 SetTargetResearch Value + 5
                 SetTargetFarming Value + Target.Population * 1.0
@@ -59,7 +58,6 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = NumberOf 1 System
-            activation = Source
             effects = SetStealth Value - 1
     graphic = ""
 

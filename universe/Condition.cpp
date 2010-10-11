@@ -1272,14 +1272,13 @@ bool Condition::DesignHasHull::Match(const UniverseObject* source, const Univers
 }
 
 ///////////////////////////////////////////////////////////
-// DesignHasPart                                              //
+// DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
 Condition::DesignHasPart::DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const std::string& name) :
     m_low(low),
     m_high(high),
     m_name(name)
-{
-}
+{}
 
 Condition::DesignHasPart::~DesignHasPart()
 {
@@ -1313,6 +1312,58 @@ bool Condition::DesignHasPart::Match(const UniverseObject* source, const Univers
             for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
                 if (*it == m_name)
                     ++count;
+            int low = m_low->Eval(source, target, boost::any());      // number matched can depend on some property of target object!
+            int high = m_high->Eval(source, target, boost::any());
+            return (low <= count && count < high);
+        }
+    }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// DesignHasPartClass                                    //
+///////////////////////////////////////////////////////////
+Condition::DesignHasPartClass::DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, ShipPartClass part_class) :
+    m_low(low),
+    m_high(high),
+    m_class(part_class)
+{}
+
+Condition::DesignHasPartClass::~DesignHasPartClass()
+{
+    delete m_low;
+    delete m_high;
+}
+
+std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ? lexical_cast<std::string>(m_low->Eval(0, 0, boost::any())) : m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ? lexical_cast<std::string>(m_high->Eval(0, 0, boost::any())) : m_high->Description();
+    std::string description_str = "DESC_DESIGN_HAS_PART_CLASS";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % low_str
+               % high_str
+               % UserString(boost::lexical_cast<std::string>(m_class)));
+}
+
+std::string Condition::DesignHasPartClass::Dump() const{
+    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " part_class = " + UserString(boost::lexical_cast<std::string>(m_class));
+}
+
+bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const UniverseObject* target) const
+{
+    if (const Ship* ship = universe_object_cast<const Ship*>(target)) {
+        if (const ShipDesign* design = ship->Design()) {
+            const std::vector<std::string>& parts = design->Parts();
+            int count = 0;
+            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
+                if (const PartType* part_type = GetPartType(*it)) {
+                    if (part_type->Class() == m_class)
+                        ++count;
+                }
+            }
             int low = m_low->Eval(source, target, boost::any());      // number matched can depend on some property of target object!
             int high = m_high->Eval(source, target, boost::any());
             return (low <= count && count < high);

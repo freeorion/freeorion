@@ -267,16 +267,23 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
 
     // evaluate the activation condition only on the source object
     Condition::ObjectSet non_targets;
-    non_targets.insert(source);
     Condition::ObjectSet matched_targets;
-    m_activation->Eval(source, matched_targets, non_targets);
 
-    // if the activation condition did not evaluate to true for the source object, do nothing
-    if (matched_targets.empty())
-        return;
+    // if there is an activation condition, evaluate it on the source object,
+    // and abort with no targets if the source object doesn't match.
+    // if there is no activation condition, continue as if the source object
+    // had matched an activation condition.
+    if (m_activation) {
+        non_targets.insert(source);
+        m_activation->Eval(source, matched_targets, non_targets);
 
-    // remove source object from target set after activation condition check
-    matched_targets.clear();
+        // if the activation condition did not evaluate to true for the source object, do nothing
+        if (matched_targets.empty())
+            return;
+
+        // remove source object from target set after activation condition check
+        matched_targets.clear();
+    }
 
     // convert potential targets TargetSet to a Condition::ObjectSet so that condition can be applied to it
     non_targets = EffectTargetSetToConditionObjectSet(potential_targets);
@@ -346,10 +353,12 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
         retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
     else
         retval.scope_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
-    if (dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
+
+    if (!m_activation || dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
         retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
     else
         retval.activation_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
+
     for (unsigned int i = 0; i < m_effects.size(); ++i) {
         retval.effect_descriptions.push_back(m_effects[i]->Description());
     }
@@ -364,8 +373,10 @@ std::string EffectsGroup::DescriptionString() const
         std::stringstream retval;
         Description description = GetDescription();
         retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
-        if (!dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
+
+        if (m_activation && !dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
             retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
+
         for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {
             retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECT_DESC")) % description.effect_descriptions[i]);
         }

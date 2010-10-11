@@ -481,7 +481,7 @@ private:
     PartsListBox*   m_parts_list;
 
     std::map<ShipPartClass, CUIButton*> m_class_buttons;
-    std::map<ShipSlotType, CUIButton*> m_slot_type_buttons;
+    std::map<ShipSlotType, CUIButton*>  m_slot_type_buttons;
     std::pair<CUIButton*, CUIButton*>   m_availability_buttons;
 };
 

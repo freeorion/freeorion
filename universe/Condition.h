@@ -37,6 +37,7 @@ namespace Condition {
     struct StarType;
     struct DesignHasHull;
     struct DesignHasPart;
+    struct DesignHasPartClass;
     struct Chance;
     struct MeterValue;
     struct EmpireStockpileValue;
@@ -457,6 +458,27 @@ private:
     const ValueRef::ValueRefBase<int>*  m_low;
     const ValueRef::ValueRefBase<int>*  m_high;
     std::string                         m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches ships whose ShipDesign has >= \a low and < \a high of ship parts of
+  * the specified \a part_class */
+struct Condition::DesignHasPartClass : Condition::ConditionBase
+{
+    DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, ShipPartClass part_class);
+    ~DesignHasPartClass();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+
+    const ValueRef::ValueRefBase<int>*  m_low;
+    const ValueRef::ValueRefBase<int>*  m_high;
+    ShipPartClass                       m_class;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -886,6 +908,15 @@ void Condition::DesignHasPart::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::DesignHasPartClass::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high)
+        & BOOST_SERIALIZATION_NVP(m_class);
 }
 
 template <class Archive>
