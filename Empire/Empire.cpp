@@ -1028,6 +1028,24 @@ void Empire::SetCapitolID(int id)
     }
 };
 
+Meter* Empire::GetAlignmentMeter(const std::string& name)
+{
+    std::map<std::string, Meter>::iterator it = m_alignments.find(name);
+    if (it != m_alignments.end())
+        return &(it->second);
+    else
+        return 0;
+}
+
+const Meter* Empire::GetAlignmentMeter(const std::string& name) const
+{
+    std::map<std::string, Meter>::const_iterator it = m_alignments.find(name);
+    if (it != m_alignments.end())
+        return &(it->second);
+    else
+        return 0;
+}
+
 bool Empire::ResearchableTech(const std::string& name) const
 {
     const Tech* tech = GetTech(name);

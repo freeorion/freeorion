@@ -7,6 +7,7 @@
 #include "../universe/Tech.h"
 #include "../universe/UniverseObject.h"
 #include "ResourcePool.h"
+#include "../universe/Meter.h"
 
 #include <deque>
 #include <list>
@@ -15,6 +16,7 @@
 class BuildingType;
 class ShipDesign;
 class Empire;
+class Meter;
 
 /** A combination of names of ShipDesign that can be put together to make a
   * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
@@ -245,6 +247,7 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+
 /** Class to maintain the state of a single empire. In both the client and
   * server, Empires are managed by a subclass of EmpireManager, and can be
   * accessed from other modules by using the EmpireManager::Lookup() method to
@@ -285,6 +288,8 @@ public:
     const std::set<int>&            ShipDesigns() const;                            ///< Returns the set of all ship design ids of this empire
     const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
     const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
+
+    const Meter*            GetAlignmentMeter(const std::string& name) const;       ///< Returns the alignment meter with the indicated name, if any, or 0 if no such alignment meter exists
 
     bool                    ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     const                   ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
@@ -350,47 +355,64 @@ public:
 
     double                  ProductionPoints() const;           ///< Returns the number of production points available to the empire (this is the minimum of available industry and available minerals)
 
-    double                  TotalTradeSpending() const {return m_maintenance_total_cost;}   ///< Returns amount of trade empire will spend this turn.  Assumes Empire::UpdateTradeSpending() has previously been called to determine this number.
+    /** Returns amount of trade empire will spend this turn.  Assumes
+      * Empire::UpdateTradeSpending() has previously been called to determine
+      * this number. */
+    double                  TotalTradeSpending() const {return m_maintenance_total_cost;}
 
-    const ResourcePool*     GetResourcePool(ResourceType resource_type) const;      ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
-    double                  ResourceStockpile(ResourceType type) const;             ///< returns current stockpiled amount of resource \a type
-    double                  ResourceMaxStockpile(ResourceType type) const;          ///< returns maximum allowed stockpile of resource \a type
-    double                  ResourceProduction(ResourceType type) const;            ///< returns amount of resource \a type being produced by ResourceCenters
-    double                  ResourceAvailable(ResourceType type) const;             ///< returns amount of resource \a type immediately available.  This = production + stockpile
+    const ResourcePool*     GetResourcePool(ResourceType resource_type) const;  ///< Returns ResourcePool for \a resource_type or 0 if no such ResourcePool exists
+    double                  ResourceStockpile(ResourceType type) const;         ///< returns current stockpiled amount of resource \a type
+    double                  ResourceMaxStockpile(ResourceType type) const;      ///< returns maximum allowed stockpile of resource \a type
+    double                  ResourceProduction(ResourceType type) const;        ///< returns amount of resource \a type being produced by ResourceCenters
+    double                  ResourceAvailable(ResourceType type) const;         ///< returns amount of resource \a type immediately available.  This = production + stockpile
 
-    const PopulationPool&   GetPopulationPool() const;                              ///< Returns PopulationPool
-    double                  Population() const;                                     ///< returns total Population of empire
+    const PopulationPool&   GetPopulationPool() const;                          ///< Returns PopulationPool
+    double                  Population() const;                                 ///< returns total Population of empire
     //@}
 
     /** \name Mutators */ //@{
-    void                    SetCapitolID(int id);                   ///< If the object with id \a id is a planet owned by this empire, sets that planet to be this empire's capitol, and otherwise does nothing
+    /** If the object with id \a id is a planet owned by this empire, sets that
+      * planet to be this empire's capitol, and otherwise does nothing. */
+    void                    SetCapitolID(int id);
 
-    /** Adds \a tech to the research queue, placing it before position \a pos.  If \a tech is already in the queue,
-      * it is moved to \a pos, then removed from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
-      * is placed at the end of the queue. If \a tech is already available, no action is taken. */
+    /** Returns the alignment meter with the indicated \a name, if any, or 0 if
+      * no such alignment meter exists. */
+    Meter*                  GetAlignmentMeter(const std::string& name);
+
+    /** Adds \a tech to the research queue, placing it before position \a pos.
+      * If \a tech is already in the queue, it is moved to \a pos, then removed
+      * from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
+      * is placed at the end of the queue. If \a tech is already available, no
+      * action is taken. */
     void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
 
-    void                    RemoveTechFromQueue(const Tech* tech);  ///< Removes \a tech from the research queue, if it is in the research queue already.
+    /** Removes \a tech from the research queue, if it is in the research
+      * queue already. */
+    void                    RemoveTechFromQueue(const Tech* tech);
 
-    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
-        queue.size() <= pos, the build is placed at the end of the queue. */
+    /** Adds the indicated build to the production queue, placing it before
+      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
+      * placed at the end of the queue. */
     void                    PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos = -1);
 
-    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
-        queue.size() <= pos, the build is placed at the end of the queue. */
+    /** Adds the indicated build to the production queue, placing it before
+      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
+      * placed at the end of the queue. */
     void                    PlaceBuildInQueue(BuildType build_type, int design_id, int number, int location, int pos = -1);
 
-    /** Adds the indicated build to the production queue, placing it before position \a pos.  If \a pos < 0 or
-        queue.size() <= pos, the build is placed at the end of the queue. */
+    /** Adds the indicated build to the production queue, placing it before
+      * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is
+      * placed at the end of the queue. */
     void                    PlaceBuildInQueue(const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
 
     void                    SetBuildQuantity(int index, int quantity);      ///< Changes the remaining number to build for queue item \a index to \a quantity
     void                    MoveBuildWithinQueue(int index, int new_index); ///< Moves \a tech from the production queue, if it is in the production queue already.
     void                    RemoveBuildFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
 
-    /** Processes Builditems on queues of empires other than this empire, at the location with id \a location_id and,
-      * as appropriate, adds them to the build queue of \a this empire, deletes them, or leaves them on the build
-      * queue of their current empire */
+    /** Processes Builditems on queues of empires other than this empire, at
+      * the location with id \a location_id and, as appropriate, adds them to
+      * the build queue of \a this empire, deletes them, or leaves them on the
+      * build queue of their current empire */
     void                    ConquerBuildsAtLocation(int location_id);
 
     void                    AddTech(const std::string& name);               ///< Inserts the given Tech into the Empire's list of available technologies.
@@ -510,6 +532,8 @@ private:
     int                             m_capitol_id;               ///< the ID of the empire's capitol planet
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
+
+    std::map<std::string, Meter>    m_alignments;               ///< the various rating scales on which an empire may be judged by species
 
     ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
     std::map<std::string, double>   m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
