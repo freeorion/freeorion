@@ -992,6 +992,17 @@ namespace {
         }
     }
 
+    /** Back project meter values of objects in combat info, so that changes to
+      * meter values from combat aren't lost when resetting meters during meter
+      * updating after combat. */
+    void BackProjectSystemCombatInfoObjectMeters(std::map<int, CombatInfo>& system_combat_info) {
+        for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
+            ObjectMap& objects = it->second.objects;
+            for (ObjectMap::iterator obj_it = objects.begin(); obj_it != objects.end(); ++obj_it)
+                obj_it->second->BackPropegateMeters();
+            }
+    }
+
     /** Takes contents of CombatInfo struct and puts it into the universe.
       * Used to store results of combat in main universe. */
     void DisseminateSystemCombatInfo(const std::map<int, CombatInfo>& system_combat_info) {
@@ -1549,6 +1560,8 @@ void ServerApp::ProcessCombats()
             AutoResolveCombat(combat_info);
         }
     }
+
+    BackProjectSystemCombatInfoObjectMeters(system_combat_info);
 
     DisseminateSystemCombatInfo(system_combat_info);
 

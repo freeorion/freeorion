@@ -355,6 +355,9 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     }
 
 
+    Logger().debugStream() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
+    Logger().debugStream() << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
+
     // reasonably unpredictable but reproducible random seeding
     const UniverseObject* first_object = combat_info.objects.begin()->second;
     int seed = first_object->ID() + CurrentTurn();
@@ -517,6 +520,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                         planet->Conquer(attacker_owner);
                 }
             }
-        }
+        }    
     }
+
+    Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 }
