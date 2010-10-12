@@ -46,13 +46,15 @@ namespace {
             member7 slot_type;
         };
 
-        struct SetOwnerStockpileClosure : boost::spirit::classic::closure<SetOwnerStockpileClosure, Effect::EffectBase*,
-                                                                          ResourceType,
-                                                                          ValueRef::ValueRefBase<double>*>
+        struct SetEmpireStockpileClosure : boost::spirit::classic::closure<SetEmpireStockpileClosure, Effect::EffectBase*,
+                                                                           ResourceType,
+                                                                           ValueRef::ValueRefBase<int>*,
+                                                                           ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 stockpile_type;
-            member3 value;
+            member3 empire;
+            member4 value;
         };
 
         struct SetPlanetTypeClosure : boost::spirit::classic::closure<SetPlanetTypeClosure, Effect::EffectBase*,
@@ -167,7 +169,7 @@ namespace {
 
         typedef rule<Scanner, SetMeterClosure::context_t>                   SetMeterRule;
         typedef rule<Scanner, SetShipPartMeterClosure::context_t>           SetShipPartMeterRule;
-        typedef rule<Scanner, SetOwnerStockpileClosure::context_t>          SetOwnerStockpileRule;
+        typedef rule<Scanner, SetEmpireStockpileClosure::context_t>         SetEmpireStockpileRule;
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>              SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>              SetPlanetSizeRule;
         typedef rule<Scanner, EmpireParamClosure::context_t>                EmpireParamRule;
@@ -184,8 +186,8 @@ namespace {
 
         SetMeterRule                    set_meter;
         SetShipPartMeterRule            set_ship_part_meter;
-        SetOwnerStockpileRule           set_owner_stockpile;
-        Rule                            set_owner_capitol;
+        SetEmpireStockpileRule          set_empire_stockpile;
+        EmpireParamRule                 set_empire_capitol;
         SetPlanetTypeRule               set_planet_type;
         SetPlanetSizeRule               set_planet_size;
         StringRefVecRule                set_species;
@@ -321,16 +323,27 @@ namespace {
                                                    set_ship_part_meter.value,
                                                    set_ship_part_meter.slot_type)]));
 
-        set_owner_stockpile =
-            ((str_p("setownerfoodstockpile")[set_owner_stockpile.stockpile_type = val(RE_FOOD)]
-              | str_p("setownermineralstockpile")[set_owner_stockpile.stockpile_type = val(RE_MINERALS)]
-              | str_p("setownertradestockpile")[set_owner_stockpile.stockpile_type = val(RE_TRADE)])
-             >> value_label >> double_expr_p[set_owner_stockpile.value = arg1])
-            [set_owner_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_owner_stockpile.stockpile_type, set_owner_stockpile.value)];
+        set_empire_stockpile =
+            ( ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type = val(RE_FOOD)]
+               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type = val(RE_MINERALS)]
+               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type = val(RE_TRADE)]
+               >> value_label >> double_expr_p[set_empire_stockpile.value = arg1])
+               [set_empire_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_empire_stockpile.stockpile_type, set_empire_stockpile.value)])
+            | ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type = val(RE_FOOD)]
+               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type = val(RE_MINERALS)]
+               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type = val(RE_TRADE)]
+               >> empire_label >> int_expr_p[set_empire_stockpile.empire = arg1]
+               >> value_label >> double_expr_p[set_empire_stockpile.value = arg1])
+               [set_empire_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_empire_stockpile.empire, set_empire_stockpile.stockpile_type, set_empire_stockpile.value)])
+            );
 
-        set_owner_capitol =
-            str_p("setownercapitol")
-            [set_owner_capitol.this_ = new_<Effect::SetEmpireCapitol>()];
+        set_empire_capitol =
+            ( (str_p("setempirecapitol")
+              [set_empire_capitol.this_ = new_<Effect::SetEmpireCapitol>()])
+            | (str_p("setempirecapitol")
+               >> empire_label >> int_expr_p[set_empire_capitol.empire = arg1]
+              [set_empire_capitol.this_ = new_<Effect::SetEmpireCapitol>(set_empire_capitol.empire)])
+            );
 
         set_planet_type =
             (str_p("setplanettype")
@@ -455,8 +468,8 @@ namespace {
         effect_p =
             set_meter[effect_p.this_ = arg1]
             | set_ship_part_meter[effect_p.this_ = arg1]
-            | set_owner_stockpile[effect_p.this_ = arg1]
-            | set_owner_capitol[effect_p.this_ = arg1]
+            | set_empire_stockpile[effect_p.this_ = arg1]
+            | set_empire_capitol[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]
             | set_planet_size[effect_p.this_ = arg1]
             | set_species[effect_p.this_ = arg1]

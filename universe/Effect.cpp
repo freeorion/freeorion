@@ -780,9 +780,9 @@ std::string SetEmpireStockpile::Dump() const
 {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
-    case RE_FOOD:       retval += "SetOwnerFoodStockpile"; break;
-    case RE_MINERALS:   retval += "SetOwnerMineralStockpile"; break;
-    case RE_TRADE:      retval += "SetOwnerTradeStockpile"; break;
+    case RE_FOOD:       retval += "SetEmpireFoodStockpile"; break;
+    case RE_MINERALS:   retval += "SetEmpireMineralStockpile"; break;
+    case RE_TRADE:      retval += "SetEmpireTradeStockpile"; break;
     default:            retval += "?"; break;
     }
     retval += " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump() + "\n";
