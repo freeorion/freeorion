@@ -46,6 +46,17 @@ namespace {
             member7 slot_type;
         };
 
+        struct SetEmpireMeterClosure : boost::spirit::classic::closure<SetEmpireMeterClosure, Effect::EffectBase*,
+                                                                       ValueRef::ValueRefBase<int>*,
+                                                                       std::string,
+                                                                       ValueRef::ValueRefBase<double>*>
+        {
+            member1 this_;
+            member2 empire;
+            member3 meter;
+            member4 value;
+        };
+
         struct SetEmpireStockpileClosure : boost::spirit::classic::closure<SetEmpireStockpileClosure, Effect::EffectBase*,
                                                                            ResourceType,
                                                                            ValueRef::ValueRefBase<int>*,
@@ -169,6 +180,7 @@ namespace {
 
         typedef rule<Scanner, SetMeterClosure::context_t>                   SetMeterRule;
         typedef rule<Scanner, SetShipPartMeterClosure::context_t>           SetShipPartMeterRule;
+        typedef rule<Scanner, SetEmpireMeterClosure::context_t>             SetEmpireMeterRule;
         typedef rule<Scanner, SetEmpireStockpileClosure::context_t>         SetEmpireStockpileRule;
         typedef rule<Scanner, SetPlanetTypeClosure::context_t>              SetPlanetTypeRule;
         typedef rule<Scanner, SetPlanetSizeClosure::context_t>              SetPlanetSizeRule;
@@ -186,6 +198,7 @@ namespace {
 
         SetMeterRule                    set_meter;
         SetShipPartMeterRule            set_ship_part_meter;
+        SetEmpireMeterRule              set_empire_meter;
         SetEmpireStockpileRule          set_empire_stockpile;
         EmpireParamRule                 set_empire_capitol;
         SetPlanetTypeRule               set_planet_type;
@@ -223,6 +236,7 @@ namespace {
         ParamLabel  parameters_label;
         ParamLabel  tag_label;
         ParamLabel  data_label;
+        ParamLabel  meter_label;
     };
 
     EffectParserDefinition::EffectParserDefinition() :
@@ -242,7 +256,8 @@ namespace {
         message_label("message"),
         parameters_label("parameters"),
         tag_label("tag"),
-        data_label("data")
+        data_label("data"),
+        meter_label("meter")
     {
         set_meter =
             (str_p("set")
@@ -322,6 +337,18 @@ namespace {
                                                    set_ship_part_meter.part_name,
                                                    set_ship_part_meter.value,
                                                    set_ship_part_meter.slot_type)]));
+
+        set_empire_meter =
+             ( ((str_p("setempiremeter")
+                 >> empire_label >>  int_expr_p[     set_empire_meter.empire = arg1]
+                 >> meter_label >>   name_p[         set_empire_meter.meter = arg1]
+                 >> value_label >>   double_expr_p[  set_empire_meter.value = arg1])
+                [set_empire_meter.this_ = new_<Effect::SetEmpireMeter>(set_empire_meter.empire, set_empire_meter.meter, set_empire_meter.value)])
+             | ((str_p("setempiremeter")
+                 >> meter_label >>   name_p[         set_empire_meter.meter = arg1]
+                 >> value_label >>   double_expr_p[  set_empire_meter.value = arg1])
+                [set_empire_meter.this_ = new_<Effect::SetEmpireMeter>(set_empire_meter.meter, set_empire_meter.value)])
+             );
 
         set_empire_stockpile =
             ( ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type = val(RE_FOOD)]
@@ -468,6 +495,7 @@ namespace {
         effect_p =
             set_meter[effect_p.this_ = arg1]
             | set_ship_part_meter[effect_p.this_ = arg1]
+            | set_empire_meter[effect_p.this_ = arg1]
             | set_empire_stockpile[effect_p.this_ = arg1]
             | set_empire_capitol[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]

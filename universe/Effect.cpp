@@ -728,7 +728,7 @@ std::string SetEmpireMeter::Description() const
 
 std::string SetEmpireMeter::Dump() const
 {
-    return DumpIndent() + "SetEmpire" + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump();
+    return DumpIndent() + "SetEmpireMeter meter = " + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump();
 }
 
 
