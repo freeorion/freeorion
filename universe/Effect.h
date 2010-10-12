@@ -23,6 +23,7 @@ namespace Effect {
     class EffectBase;
     class SetMeter;
     class SetShipPartMeter;
+    class SetEmpireMeter;
     class SetEmpireStockpile;
     class SetEmpireCapitol;
     class SetPlanetType;
@@ -50,12 +51,16 @@ namespace ValueRef {
     struct ValueRefBase;
 }
 
-/** Contains one or more Effects, a Condition which indicates the objects in the scope of the Effect(s), and a Condition which
-    indicates whether or not the Effect(s) will be executed on the objects in scope during the current turn.  Since Conditions
-    operate on sets of objects (usually all objects in the universe), the activation condition bears some explanation.  It
-    exists to allow an EffectsGroup to be activated or suppressed based on the source object only (the object to which the
-    EffectsGroup is attached).  It does this by considering the "universe" containing only the source object. If the source
-    object meets the activation condition, the EffectsGroup will be active in the current turn. */
+/** Contains one or more Effects, a Condition which indicates the objects in
+  * the scope of the Effect(s), and a Condition which indicates whether or not
+  * the Effect(s) will be executed on the objects in scope during the current
+  * turn.  Since Conditions operate on sets of objects (usually all objects in
+  * the universe), the activation condition bears some explanation.  It exists
+  * to allow an EffectsGroup to be activated or suppressed based on the source
+  * object only (the object to which the EffectsGroup is attached).  It does
+  * this by considering the "universe" containing only the source object. If
+  * the source object meets the activation condition, the EffectsGroup will be
+  * active in the current turn. */
 class Effect::EffectsGroup
 {
 public:
@@ -96,9 +101,11 @@ private:
 /** Returns a single string which describes a vector of EffectsGroups. */
 std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups);
 
-/** The base class for all Effects.  When an Effect is executed, the source object (the object to which the Effect or its containing
-    EffectGroup is attached) and the target object are both required.  Note that this means that ValueRefs contained within Effects
-    can refer to values in either the source or target objects. */
+/** The base class for all Effects.  When an Effect is executed, the source
+  * object (the object to which the Effect or its containing EffectGroup is
+  * attached) and the target object are both required.  Note that this means
+  * that ValueRefs contained within Effects can refer to values in either the
+  * source or target objects. */
 class Effect::EffectBase
 {
 public:
@@ -114,9 +121,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the meter of the given kind to \a value.  The max value of the meter is set if \a max == true; otherwise the
-    current value of the meter is set.  If the target of the Effect does not have the requested meter, nothing is
-    done. */
+/** Sets the meter of the given kind to \a value.  The max value of the meter
+  * is set if \a max == true; otherwise the current value of the meter is set.
+  * If the target of the Effect does not have the requested meter, nothing is
+  * done. */
 class Effect::SetMeter : public Effect::EffectBase
 {
 public:
@@ -138,8 +146,11 @@ private:
 };
 
 /** Sets the indicated meter on all ship parts in the indicated subset.  This
-    has no effect on non-Ship targets.  If slot_type is specified, only the
-    indicated (internal or external) parts are affected. */
+  * has no effect on non-Ship targets.  If slot_type is specified, only parts
+  * that can mount in the indicated slot type (internal or external) are
+  * affected (this is not the same at the slot type in which the part is
+  * actually located, as a part might be mountable in both types, and
+  * located in a different type than specified, and would be matched). */
 class Effect::SetShipPartMeter : public Effect::EffectBase
 {
 public:
@@ -184,12 +195,37 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the empire stockpile of the target's owning empire to \a value.  If the target does not have exactly one owner,
-    nothing is done. */
+/** Sets the indicated meter on the empire with the indicated id to the
+  * indicated value.  If \a meter is not a valid meter for empires,
+  * does nothing. */
+class Effect::SetEmpireMeter : public Effect::EffectBase
+{
+public:
+    SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value);
+    SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter, const ValueRef::ValueRefBase<double>* value);
+    virtual ~SetEmpireMeter();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const ValueRef::ValueRefBase<int>*      m_empire_id;
+    const std::string                       m_meter;
+    const ValueRef::ValueRefBase<double>*   m_value;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Sets the empire stockpile of the target's owning empire to \a value.  If
+  * the target does not have exactly one owner, nothing is done. */
 class Effect::SetEmpireStockpile : public Effect::EffectBase
 {
 public:
     SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
+    SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id, ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
@@ -197,26 +233,32 @@ public:
     virtual std::string Dump() const;
 
 private:
-    ResourceType                          m_stockpile;
-    const ValueRef::ValueRefBase<double>* m_value;
+    const ValueRef::ValueRefBase<int>*      m_empire_id;
+    ResourceType                            m_stockpile;
+    const ValueRef::ValueRefBase<double>*   m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Makes the target planet the capitol of its owner's empire.  If the target object is not a planet, does not have an owner,
-    or has more than one owner the effect does nothing. */
+/** Makes the target planet the capitol of its owner's empire.  If the target
+  * object is not a planet, does not have an owner, or has more than one owner
+  * the effect does nothing. */
 class Effect::SetEmpireCapitol : public Effect::EffectBase
 {
 public:
     SetEmpireCapitol();
+    SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~SetEmpireCapitol();
 
     virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
 private:
+    const ValueRef::ValueRefBase<int>*      m_empire_id;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
@@ -606,9 +648,19 @@ void Effect::SetShipPartMeter::serialize(Archive& ar, const unsigned int version
 }
 
 template <class Archive>
+void Effect::SetEmpireMeter::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_meter)
+        & BOOST_SERIALIZATION_NVP(m_value);
+}
+
+template <class Archive>
 void Effect::SetEmpireStockpile::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id)
         & BOOST_SERIALIZATION_NVP(m_stockpile)
         & BOOST_SERIALIZATION_NVP(m_value);
 }
@@ -616,7 +668,8 @@ void Effect::SetEmpireStockpile::serialize(Archive& ar, const unsigned int versi
 template <class Archive>
 void Effect::SetEmpireCapitol::serialize(Archive& ar, const unsigned int version)
 {
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase);
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>

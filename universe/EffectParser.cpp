@@ -294,7 +294,7 @@ namespace {
                 | str_p("launchrate")[set_ship_part_meter.meter =           val(METER_LAUNCH_RATE)]
                 | str_p("fighterweaponrange")[set_ship_part_meter.meter =   val(METER_FIGHTER_WEAPON_RANGE)]
                 | str_p("stealth")[set_ship_part_meter.meter =              val(METER_STEALTH)]
-                | str_p("health")[set_ship_part_meter.meter =               val(METER_HEALTH)]
+                | str_p("structure")[set_ship_part_meter.meter =            val(METER_STRUCTURE)]
                 | str_p("detection")[set_ship_part_meter.meter =            val(METER_DETECTION)])
             >> (((part_class_label >> part_class_p[set_ship_part_meter.part_class = arg1]
                   >> value_label >> double_expr_p[set_ship_part_meter.value = arg1]

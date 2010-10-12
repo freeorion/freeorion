@@ -2846,20 +2846,26 @@ DESC_EFFECTS_GROUP_NUMBERED_EFFECTS_GROUP_DESC
 
 # SetMeter
 
-DESC_SIMPLE_SET_METER_CURRENT
+DESC_SIMPLE_SET_METER
 %1% %2%%3%
 
-DESC_COMPLEX_SET_METER_CURRENT
+DESC_COMPLEX_SET_METER
 Set %1% to %2%
+
+DESC_SET_SHIP_PART_METER
+Set %1% for %2% to %3%
+
+DESC_SET_EMPIRE_METER
+Set %1% of empire %2% to %3%
 
 
 # others
 
 DESC_SET_EMPIRE_STOCKPILE
-Sets the stockpile of %1% of the object's owner to %2%
+Sets the stockpile of %1% of the %3% empire to %2%
 
 DESC_SET_EMPIRE_CAPITOL
-Makes the object the object's owner's capitol planet
+Makes the object the capitol planet of the %1% empire
 
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%

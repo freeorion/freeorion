@@ -203,7 +203,7 @@ namespace {
         if (slot_type != INVALID_SHIP_SLOT_TYPE && !part.CanMountInSlotType(slot_type))
             return false;
 
-        if (part_name != "")
+        if (!part_name.empty())
             return part_name == part.Name();
 
         switch (part.Class()) {
@@ -479,12 +479,12 @@ std::string SetMeter::Description() const
         case ValueRef::DIVIDES: op_char = '/'; break;
         default: op_char = '?';
         }
-        return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString("DESC_SIMPLE_SET_METER"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % op_char
                    % lexical_cast<std::string>(const_operand));
     } else {
-        return str(FlexibleFormat(UserString("DESC_COMPLEX_SET_METER_CURRENT"))
+        return str(FlexibleFormat(UserString("DESC_COMPLEX_SET_METER"))
                    % UserString(lexical_cast<std::string>(m_meter))
                    % m_value->Description());
     }
@@ -550,7 +550,10 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_slot_type(slot_type),
     m_meter(meter),
     m_value(value)
-{ assert(m_part_class != PC_FIGHTERS); }
+{
+    if (m_part_class == PC_FIGHTERS)
+        Logger().errorStream() << "SetShipPartMeter passed ShipPartClass of PC_FIGHTERS, which is invalid";
+}
 
 SetShipPartMeter::SetShipPartMeter(MeterType meter,
                                    CombatFighterType fighter_type,
@@ -593,6 +596,11 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
         return;
     }
 
+    if (m_part_class == PC_FIGHTERS && !m_part_name.empty()) {
+        Logger().debugStream() << "SetShipPartMeter::Execute aborting due to part class being PC_FIGHTERS and part name being not empty";
+        return;
+    }
+
     // loop through all parts in the ship design, applying effect to each if appropriate
     const std::vector<std::string>& design_parts = ship->Design()->Parts();
     for (std::size_t i = 0; i < design_parts.size(); ++i) {
@@ -621,15 +629,106 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
 
 std::string SetShipPartMeter::Description() const
 {
-    // TODO
-    return "";
+    std::string value_str =         ValueRef::ConstantExpr(m_value) ?           lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) :          m_value->Description();
+    std::string meter_str =         UserString(lexical_cast<std::string>(m_meter));
+
+    // TODO: indicate slot restrictions in SetShipPartMeter descriptions...
+
+    if (m_part_class != INVALID_SHIP_PART_CLASS) {
+        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+                   % meter_str
+                   % UserString(lexical_cast<std::string>(m_part_class))
+                   % value_str);
+    } else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE) {
+        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+                   % meter_str
+                   % UserString(lexical_cast<std::string>(m_fighter_type))
+                   % value_str);
+    } else if (!m_part_name.empty()) {
+        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+                   % meter_str
+                   % UserString(m_part_name)
+                   % value_str);
+    } else {
+        // something weird is going on... default cause shouldn't be needed
+        return str(FlexibleFormat(UserString("DESC_SET_SHIP_PART_METER"))
+                   % meter_str
+                   % UserString("UIT_SHIP_PART")
+                   % value_str);
+    }
 }
 
 std::string SetShipPartMeter::Dump() const
 {
-    std::string retval = DumpIndent() + "SetShipPartMeter";
-    // TODO
+    std::string retval = DumpIndent();
+    switch (m_meter) {
+        case METER_DAMAGE:              retval += "SetDamage";              break;
+        case METER_ROF:                 retval += "SetROF";                 break;
+        case METER_RANGE:               retval += "SetRange";               break;
+        case METER_SPEED:               retval += "SetSpeed";               break;
+        case METER_CAPACITY:            retval += "SetCapacity";            break;
+        case METER_ANTI_SHIP_DAMAGE:    retval += "SetAntiShipDamage";      break;
+        case METER_ANTI_FIGHTER_DAMAGE: retval += "SetAntiFighterDamage";   break;
+        case METER_LAUNCH_RATE:         retval += "SetLaunchRate";          break;
+        case METER_FIGHTER_WEAPON_RANGE:retval += "SetFighterWeaponRange";  break;
+        case METER_STEALTH:             retval += "SetStealth";             break;
+        case METER_STRUCTURE:           retval += "SetStructure";           break;
+        case METER_DETECTION:           retval += "SetDetection";           break;
+        default:                        retval += "Set????";                break;
+    }
+
+    if (m_part_class != INVALID_SHIP_PART_CLASS)
+        retval += " partclass = " + lexical_cast<std::string>(m_part_class);
+    else if (m_fighter_type != INVALID_COMBAT_FIGHTER_TYPE)
+        retval += " fightertype = " + lexical_cast<std::string>(m_fighter_type);
+    else if (!m_part_name.empty())
+        retval += " partname = " + UserString(m_part_name);
+    else
+        retval += " ???";
+
+    retval += " value = " + m_value->Dump();
+
+    if (m_slot_type != INVALID_SHIP_SLOT_TYPE)
+        retval += " slottype = " + lexical_cast<std::string>(m_slot_type);
+
     return retval;
+}
+
+
+///////////////////////////////////////////////////////////
+// SetEmpireMeter                                        //
+///////////////////////////////////////////////////////////
+SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
+    m_empire_id(0),
+    m_meter(meter),
+    m_value(value)
+{}
+
+SetEmpireMeter::SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
+    m_empire_id(empire_id),
+    m_meter(meter),
+    m_value(value)
+{}
+
+SetEmpireMeter::~SetEmpireMeter()
+{
+    delete m_empire_id;
+    delete m_value;
+}
+
+void SetEmpireMeter::Execute(const UniverseObject* source, UniverseObject* target) const
+{
+    // todo
+}
+
+std::string SetEmpireMeter::Description() const
+{
+    return Dump();
+}
+
+std::string SetEmpireMeter::Dump() const
+{
+    return DumpIndent() + "SetEmpire" + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump();
 }
 
 
@@ -637,30 +736,44 @@ std::string SetShipPartMeter::Dump() const
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
+    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner")),
+    m_stockpile(stockpile),
+    m_value(value)
+{}
+
+SetEmpireStockpile::SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id, ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
+    m_empire_id(empire_id),
     m_stockpile(stockpile),
     m_value(value)
 {}
 
 SetEmpireStockpile::~SetEmpireStockpile()
 {
+    delete m_empire_id;
     delete m_value;
 }
 
 void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (source->Owners().size() != 1)
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
+
+    Empire* empire = Empires().Lookup(empire_id);
+    if (empire)
         return;
 
-    if (Empire* empire = Empires().Lookup(*source->Owners().begin())) {
-        double value = m_value->Eval(source, target, empire->ResourceStockpile(m_stockpile));
-        empire->SetResourceStockpile(m_stockpile, value);
-    }
+    double value = m_value->Eval(source, target, empire->ResourceStockpile(m_stockpile));
+    empire->SetResourceStockpile(m_stockpile, value);
 }
 
 std::string SetEmpireStockpile::Description() const
 {
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
     std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) : m_value->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE")) % UserString(lexical_cast<std::string>(m_stockpile)) % value_str);
+
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE"))
+               % UserString(lexical_cast<std::string>(m_stockpile))
+               % value_str
+               % empire_str);
 }
 
 std::string SetEmpireStockpile::Dump() const
@@ -672,7 +785,7 @@ std::string SetEmpireStockpile::Dump() const
     case RE_TRADE:      retval += "SetOwnerTradeStockpile"; break;
     default:            retval += "?"; break;
     }
-    retval += " value = " + m_value->Dump() + "\n";
+    retval += " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump() + "\n";
     return retval;
 }
 
@@ -680,27 +793,47 @@ std::string SetEmpireStockpile::Dump() const
 ///////////////////////////////////////////////////////////
 // SetEmpireCapitol                                      //
 ///////////////////////////////////////////////////////////
-SetEmpireCapitol::SetEmpireCapitol()
+SetEmpireCapitol::SetEmpireCapitol() :
+    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner"))
 {}
+
+SetEmpireCapitol::SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id) :
+    m_empire_id(empire_id)
+{}
+
+SetEmpireCapitol::~SetEmpireCapitol()
+{
+    delete m_empire_id;
+}
 
 void SetEmpireCapitol::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    if (const Planet* planet = universe_object_cast<const Planet*>(target)) {   // verify that target object is a planet
-        const std::set<int>& owners = planet->Owners();                         // get owner(s)
-        if (owners.size() == 1)                                                 // verify that there is only a single owner
-            if (Empire* empire = Empires().Lookup(*owners.begin()))             // get that owner empire object
-                empire->SetCapitolID(planet->ID());                             // make target planet the capitol of its owner empire
-    }
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
+
+    Empire* empire = Empires().Lookup(empire_id);
+    if (empire)
+        return;
+
+    const Planet* planet = universe_object_cast<const Planet*>(target);
+    if (!planet)
+        return;
+
+    const std::set<int>& owners = planet->Owners();
+    if (owners.size() != 1)
+        return; // don't want to set multiple empires' capitols to this location...
+
+    empire->SetCapitolID(planet->ID());
 }
 
 std::string SetEmpireCapitol::Description() const
 {
-    return UserString("DESC_SET_EMPIRE_CAPITOL");
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITOL")) % empire_str);
 }
 
 std::string SetEmpireCapitol::Dump() const
 {
-    return DumpIndent() + "SetEmpireCapitol\n";
+    return DumpIndent() + "SetEmpireCapitol empire = " + m_empire_id->Dump() + "\n";
 }
 
 
