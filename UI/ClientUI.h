@@ -19,6 +19,7 @@ class ClientNetworking;
 class Combat;
 class Fleet;
 class IntroScreen;
+class CombatWnd;
 class MapWnd;
 class MessageWnd;
 class SitRepEntry;
@@ -50,8 +51,10 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    MapWnd*     GetMapWnd();                                            //!< Returns the main map window (may be null).
-    MessageWnd* GetMessageWnd();                                        //!< Returns the chat / message window.
+    MapWnd*         GetMapWnd();                                        //!< Returns the main map window (may be null).
+    MessageWnd*     GetMessageWnd();                                    //!< Returns the chat / message window.
+    IntroScreen*    GetIntroScreen();                                   //!< Returns the intro screen / splash window.
+    CombatWnd*      GetCombatWnd();                                     //!< Returns the combat window (may be null?).
 
     void    GetSaveGameUIData(SaveGameUIData& data) const;              //!< populates the relevant UI state that should be restored after a save-and-load cycle
     //!@}
@@ -200,6 +203,8 @@ private:
 
     MapWnd*             m_map_wnd;          //!< the galaxy map
     MessageWnd*         m_message_wnd;      //!< the messages / chat display
+    IntroScreen*        m_intro_screen;     //!< splash screen / main menu when starting program
+    CombatWnd*          m_combat_wnd;       //!< 3D combat view
 
     PrefixedTextures    m_prefixed_textures;
 

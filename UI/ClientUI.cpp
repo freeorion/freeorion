@@ -3,6 +3,7 @@
 #include "CUIControls.h"
 #include "FleetWnd.h"
 #include "IntroScreen.h"
+#include "CombatWnd.h"
 #include "MapWnd.h"
 #include "ChatWnd.h"
 #include "Sound.h"
@@ -450,24 +451,28 @@ namespace {
 ////////////////////////////////////////////////
 ClientUI::ClientUI() :
     m_map_wnd(0),
-    m_message_wnd(0)
+    m_message_wnd(0),
+    m_intro_screen(0),
+    m_combat_wnd(0)
 {
     s_the_UI = this;
 
     m_message_wnd = new MessageWnd(GG::X0, GG::GUI::GetGUI()->AppHeight() - GG::Y(200), GG::X(320), GG::Y(200));
     m_map_wnd = new MapWnd();
-
-    GG::GUI::GetGUI()->Register(m_map_wnd);
-    m_map_wnd->Hide();
-
-    GG::GUI::GetGUI()->Register(m_message_wnd);
-    m_message_wnd->Hide();
+    m_intro_screen = new IntroScreen();
+    if (GetOptionsDB().Get<bool>("tech-demo")) {
+        if (HumanClientApp* app = HumanClientApp::GetApp()) {
+            m_combat_wnd = new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
+        }
+    }
 }
 
 ClientUI::~ClientUI()
 {
     delete m_map_wnd;
     delete m_message_wnd;
+    delete m_intro_screen;
+    delete m_combat_wnd;
     s_the_UI = 0;
 }
 
@@ -476,6 +481,12 @@ MapWnd* ClientUI::GetMapWnd()
 
 MessageWnd* ClientUI::GetMessageWnd()
 { return m_message_wnd; }
+
+IntroScreen* ClientUI::GetIntroScreen()
+{ return m_intro_screen; }
+
+CombatWnd* ClientUI::GetCombatWnd()
+{ return m_combat_wnd; }
 
 void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { m_map_wnd->GetSaveGameUIData(data); }

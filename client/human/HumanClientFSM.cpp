@@ -79,15 +79,13 @@ void HumanClientFSM::unconsumed_event(const boost::statechart::event_base &event
 // IntroMenu
 ////////////////////////////////////////////////////////////
 IntroMenu::IntroMenu(my_context ctx) :
-    Base(ctx),
-    m_combat_wnd(GetOptionsDB().Get<bool>("tech-demo") ? new CombatWnd(Client().SceneManager(), Client().Camera(), Client().Viewport()) : 0),
-    m_intro_screen(GetOptionsDB().Get<bool>("tech-demo") ? 0 : new IntroScreen)
+    Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) IntroMenu";
     if (GetOptionsDB().Get<bool>("tech-demo"))
-        Client().Register(m_combat_wnd);
+        Client().Register(Client().m_ui->GetCombatWnd());
     else {
-        Client().Register(m_intro_screen.get());
+        Client().Register(Client().m_ui->GetIntroScreen());
         Client().Remove(Client().m_ui->GetMessageWnd());
     }
 }
@@ -95,7 +93,10 @@ IntroMenu::IntroMenu(my_context ctx) :
 IntroMenu::~IntroMenu()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~IntroMenu";
-    delete m_combat_wnd;
+    if (GetOptionsDB().Get<bool>("tech-demo"))
+        Client().Remove(Client().m_ui->GetCombatWnd());
+
+    Client().Remove(Client().m_ui->GetIntroScreen());
 }
 
 boost::statechart::result IntroMenu::react(const HostSPGameRequested& a)
@@ -192,15 +193,11 @@ MPLobby::MPLobby(my_context ctx) :
     m_lobby_wnd(0)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby";
-    if (context<IntroMenu>().m_intro_screen.get())
-        context<IntroMenu>().m_intro_screen->Hide();
 }
 
 MPLobby::~MPLobby()
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~MPLobby";
-    if (context<IntroMenu>().m_intro_screen.get())
-        context<IntroMenu>().m_intro_screen->Show();
 }
 
 boost::statechart::result MPLobby::react(const Disconnection& d)
@@ -334,7 +331,10 @@ PlayingGame::PlayingGame() :
 { if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame"; }
 
 PlayingGame::~PlayingGame()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingGame"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) ~PlayingGame";
+    Client().Remove(Client().m_ui->GetMapWnd());
+}
 
 boost::statechart::result PlayingGame::react(const Disconnection& d)
 {
@@ -557,7 +557,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn";
-    Client().m_ui->GetMapWnd()->Show();
+    Client().Register(Client().m_ui->GetMapWnd());
     Client().m_ui->GetMapWnd()->InitTurn();
     // TODO: reselect last fleet if stored in save game ui data?
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(

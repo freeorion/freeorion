@@ -69,7 +69,7 @@ private:
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
-    GG::Wnd(x, y, w, h, GG::INTERACTIVE),
+    GG::Wnd(x, y, w, h, GG::ONTOP),
     m_credits(credits),
     m_cx(cx),
     m_cy(cy),
@@ -198,26 +198,39 @@ void CreditsWnd::Render()
 // IntroScreen
 /////////////////////////////////
 IntroScreen::IntroScreen() :
-    CUIWnd(UserString("INTRO_WINDOW_TITLE"), 
-           static_cast<GG::X>(GG::GUI::GetGUI()->AppWidth() * GetOptionsDB().Get<double>("UI.main-menu.x") - MAIN_MENU_WIDTH / 2),
-           static_cast<GG::Y>(GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") - MAIN_MENU_HEIGHT / 2),
-           MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE),
+    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::ONTOP),
+    m_single_player(0),
+    m_quick_start(0),
+    m_multi_player(0),
+    m_load_game(0),
+    m_options(0),
+    m_about(0),
+    m_credits(0),
+    m_exit_game(0),
     m_credits_wnd(0),
-    m_splash(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(),
-                                   ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
-                                   GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE)),
-    m_logo(new GG::StaticGraphic(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight() / 10,
-                                 ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
-                                 GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE)),
-    m_version(new GG::TextControl(GG::X0, GG::Y0, FreeOrionVersionString(),
-                                  ClientUI::GetFont(),
-                                  ClientUI::TextColor()))
+    m_menu(0),
+    m_splash(0),
+    m_logo(0),
+    m_version(0)
 {
-    m_splash->AttachChild(m_logo);
-    GG::GUI::GetGUI()->Register(m_splash);
+    m_menu = new CUIWnd(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
+                        MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);
 
-    m_version->MoveTo(GG::Pt(GG::GUI::GetGUI()->AppWidth() -  m_version->Size().x,
-                             GG::GUI::GetGUI()->AppHeight() - m_version->Size().y));
+    m_splash = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), Height(),
+                                     ClientUI::GetTexture(ClientUI::ArtDir() / "splash.png"),
+                                     GG::GRAPHIC_FITGRAPHIC, GG::INTERACTIVE);
+
+    m_logo = new GG::StaticGraphic(GG::X0, GG::Y0, Width(), Height() / 10,
+                                   ClientUI::GetTexture(ClientUI::ArtDir() / "logo.png"),
+                                   GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+
+    m_version = new GG::TextControl(GG::X0, GG::Y0, FreeOrionVersionString(), ClientUI::GetFont(), ClientUI::TextColor());
+    m_version->MoveTo(GG::Pt(Width() - m_version->Width(), Height() - m_version->Height()));
+
+    AttachChild(m_splash);
+    m_splash->AttachChild(m_logo);
+    m_splash->AttachChild(m_menu);
+    m_splash->AttachChild(m_version);
 
     //size calculation consts and variables
     const GG::X MIN_BUTTON_WIDTH(160);
@@ -230,8 +243,7 @@ IntroScreen::IntroScreen() :
     const GG::Y V_MAINMENU_MARGIN(40); //vertical empty space
     GG::X mainmenu_width(0);  //width of the mainmenu
     GG::Y mainmenu_height(0); //height of the mainmenu
-    GG::Y button_y(12); //relativ buttonlocation
-    GG::X button_x(15);
+
     //calculate necessary button width
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     button_width = std::max(font->TextExtent(UserString("INTRO_BTN_SINGLE_PLAYER")).x, button_width);
@@ -250,21 +262,17 @@ IntroScreen::IntroScreen() :
     mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
     mainmenu_height = 8.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
 
-    //adjust window if necessary
-    if ( MAIN_MENU_WIDTH < mainmenu_width || MAIN_MENU_HEIGHT < mainmenu_height) {
-        GG::Pt ul(
-            GG::GUI::GetGUI()->AppWidth()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
-            GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2
-            );
-        GG::Pt lr(
-            GG::GUI::GetGUI()->AppWidth()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
-            GG::GUI::GetGUI()->AppHeight() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2
-            );
+    // position menu window
+    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2);
+    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
 
-        SizeMove(ul, lr);
-    }
+    m_menu->SizeMove(ul, lr);
 
     //create buttons
+    GG::Y button_y(12); //relativ buttonlocation
+    GG::X button_x(15);
     m_single_player =   new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_SINGLE_PLAYER"));
     button_y += button_height;
     m_quick_start =     new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_QUICK_START"));
@@ -282,14 +290,14 @@ IntroScreen::IntroScreen() :
     m_exit_game =       new CUIButton(button_x, button_y, button_width, UserString("INTRO_BTN_EXIT"));
 
     //attach buttons
-    AttachChild(m_single_player);
-    AttachChild(m_quick_start);
-    AttachChild(m_multi_player);
-    AttachChild(m_load_game);
-    AttachChild(m_options);
-    AttachChild(m_about);
-    AttachChild(m_credits);
-    AttachChild(m_exit_game);
+    m_menu->AttachChild(m_single_player);
+    m_menu->AttachChild(m_quick_start);
+    m_menu->AttachChild(m_multi_player);
+    m_menu->AttachChild(m_load_game);
+    m_menu->AttachChild(m_options);
+    m_menu->AttachChild(m_about);
+    m_menu->AttachChild(m_credits);
+    m_menu->AttachChild(m_exit_game);
 
     //connect signals and slots
     GG::Connect(m_single_player->ClickedSignal, &IntroScreen::OnSinglePlayer,   this);
@@ -305,9 +313,8 @@ IntroScreen::IntroScreen() :
 IntroScreen::~IntroScreen()
 {
     delete m_credits_wnd;
-    delete m_logo;
     delete m_splash;
-    delete m_version;
+    // m_menu, m_version, m_logo were childs of m_splash, so don't need to be deleted here
 }
 
 void IntroScreen::OnSinglePlayer()
@@ -358,8 +365,11 @@ void IntroScreen::OnAbout()
 
 void IntroScreen::OnCredits()
 {
-    delete m_credits_wnd;
-    m_credits_wnd = 0;
+    if (m_credits_wnd) {
+        delete m_credits_wnd;
+        m_credits_wnd = 0;
+        return;
+    }
 
 
     XMLDoc doc;
@@ -381,7 +391,7 @@ void IntroScreen::OnCredits()
                                    credits, 60, 0, 600,
                                    Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
-    GG::GUI::GetGUI()->Register(m_credits_wnd);
+    m_splash->AttachChild(m_credits_wnd);
 }
 
 void IntroScreen::OnExitGame()
@@ -402,7 +412,7 @@ void IntroScreen::Close()
 { OnExitGame(); }
 
 void IntroScreen::Render()
-{
-    CUIWnd::Render();
-    m_version->Render();
-}
+{}
+
+void IntroScreen::DoLayout()
+{}
