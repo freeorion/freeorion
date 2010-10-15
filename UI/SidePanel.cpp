@@ -1789,8 +1789,8 @@ SidePanel::~SidePanel()
 bool SidePanel::InWindow(const GG::Pt& pt) const
 {
     return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
-           || m_planet_panel_container->InWindow(pt)
-           || m_system_resource_summary->InWindow(pt);
+           || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
+           || (m_system_resource_summary && m_system_resource_summary->InWindow(pt));
 }
 
 GG::Pt SidePanel::ClientUpperLeft() const
