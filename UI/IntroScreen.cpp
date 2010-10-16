@@ -415,4 +415,57 @@ void IntroScreen::Render()
 {}
 
 void IntroScreen::DoLayout()
-{}
+{
+    m_splash->Resize(this->Size());
+    m_logo->Resize(GG::Pt(this->Width(), this->Height() / 10));
+    m_version->MoveTo(GG::Pt(this->Width() - m_version->Width(), this->Height() - m_version->Height()));
+
+    //size calculation consts and variables
+    const GG::X MIN_BUTTON_WIDTH(160);
+    const GG::Y MIN_BUTTON_HEIGHT(40);
+    const GG::X H_BUTTON_MARGIN(16); //horizontal empty space
+    const GG::Y V_BUTTON_MARGIN(16); //vertical empty space
+    GG::X button_width(0); //width of the buttons
+    GG::Y button_height(0); //height of the buttons
+    const GG::X H_MAINMENU_MARGIN(40); //horizontal empty space
+    const GG::Y V_MAINMENU_MARGIN(40); //vertical empty space
+    GG::X mainmenu_width(0);  //width of the mainmenu
+    GG::Y mainmenu_height(0); //height of the mainmenu
+
+    //calculate necessary button width
+    boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
+    button_width += H_BUTTON_MARGIN;
+    button_width = std::max(MIN_BUTTON_WIDTH, button_width);
+    //calculate  necessary button height
+    button_height = std::max(MIN_BUTTON_HEIGHT, font->Height() + V_BUTTON_MARGIN);
+    //culate window width and height
+    mainmenu_width  =        button_width  + H_MAINMENU_MARGIN;
+    mainmenu_height = 8.75 * button_height + V_MAINMENU_MARGIN; // 8 rows + 0.75 before exit button
+
+    // position menu window
+    GG::Pt ul(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") - mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") - mainmenu_height/2);
+    GG::Pt lr(Width()  * GetOptionsDB().Get<double>("UI.main-menu.x") + mainmenu_width/2,
+              Height() * GetOptionsDB().Get<double>("UI.main-menu.y") + mainmenu_height/2);
+
+    m_menu->SizeMove(ul, lr);
+
+    //create buttons
+    GG::Y button_y(12); //relativ buttonlocation
+    GG::X button_x(15);
+    m_single_player->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_quick_start->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_multi_player->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_load_game->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_options->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_about->MoveTo(GG::Pt(button_x, button_y));
+    button_y += button_height;
+    m_credits->MoveTo(GG::Pt(button_x, button_y));
+    button_y += 1.75 * button_height;
+    m_exit_game->MoveTo(GG::Pt(button_x, button_y));
+}

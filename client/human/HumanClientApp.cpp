@@ -11,20 +11,21 @@
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
-#include "../../network/Message.h"
-#include "../../network/Networking.h"
+#include "../../UI/IntroScreen.h"
 #include "../../UI/GalaxySetupWnd.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
 #include "../../UI/ServerConnectWnd.h"
 #include "../../UI/Sound.h"
+#include "../../network/Message.h"
+#include "../../network/Networking.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
-#include "../../universe/Planet.h"
-#include "../../universe/Species.h"
 #include "../../util/Process.h"
 #include "../../util/Serialize.h"
 #include "../../util/SitRepEntry.h"
 #include "../../util/Directories.h"
+#include "../../universe/Planet.h"
+#include "../../universe/Species.h"
 #include "../../Empire/Empire.h"
 
 #include <GG/BrowseInfoWnd.h>
@@ -651,9 +652,14 @@ void HumanClientApp::HandleSaveGameDataRequest()
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
 {
-    if (ClientUI* ui = ClientUI::GetClientUI())
+    if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
+        if (IntroScreen* intro_screen = ui->GetIntroScreen()) {
+            intro_screen->Resize(GG::Pt(w, h));
+            intro_screen->DoLayout();
+        }
+    }
 }
 
 void HumanClientApp::StartGame()
