@@ -18,7 +18,7 @@
 #include <cctype>
 
 using namespace Effect;
-using namespace boost::io;
+using boost::io::str;
 using boost::lexical_cast;
 
 extern int g_indent;
@@ -699,7 +699,7 @@ std::string SetShipPartMeter::Dump() const
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(0),
+    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner")),
     m_meter(meter),
     m_value(value)
 {}
@@ -723,7 +723,13 @@ void SetEmpireMeter::Execute(const UniverseObject* source, UniverseObject* targe
 
 std::string SetEmpireMeter::Description() const
 {
-    return Dump();
+    std::string empire_str =    ValueRef::ConstantExpr(m_empire_id) ?   Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() :   m_empire_id->Description();
+    std::string value_str =     ValueRef::ConstantExpr(m_value) ?       lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) :      m_value->Description();
+
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_METER"))
+               % empire_str
+               % UserString(lexical_cast<std::string>(m_meter))
+               % value_str);
 }
 
 std::string SetEmpireMeter::Dump() const

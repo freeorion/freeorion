@@ -2856,7 +2856,7 @@ DESC_SET_SHIP_PART_METER
 Set %1% for %2% to %3%
 
 DESC_SET_EMPIRE_METER
-Set %1% of empire %2% to %3%
+Set %2% of the %1% empire to %3%
 
 
 # others
