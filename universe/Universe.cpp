@@ -1303,9 +1303,9 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 0) EffectsGroups from Species
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         //Logger().debugStream() << "... object (" << it->first << "): " << it->second->Name();
         const PopCenter* pc = dynamic_cast<const PopCenter*>(it->second);
@@ -1324,7 +1324,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 1) EffectsGroups from Specials
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
         const std::set<std::string>& specials = it->second->Specials();
@@ -1341,7 +1341,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 2) EffectsGroups from Techs
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
@@ -1354,7 +1354,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 3) EffectsGroups from Buildings
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for BUILDINGS";
     std::vector<Building*> buildings = m_objects.FindObjects<Building>();
     for (std::vector<Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
         const Building* building = *building_it;
@@ -1373,7 +1373,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
-    //Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
+    Logger().debugStream() << "Universe::GetEffectsAndTargets for SHIPS";
     std::vector<Ship*> ships = m_objects.FindObjects<Ship>();
     for (std::vector<Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
         const Ship* ship = *ship_it;
@@ -1416,6 +1416,8 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
                                                     const std::string& specific_cause_name,
                                                     const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
+    Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
+
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
@@ -4395,6 +4397,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
 
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
+
+        empire->SetCapitolID(home_planet->ID());
 
         home_planet->SetSpecies(empire_starting_species);
         if (Species* species = species_manager.GetSpecies(empire_starting_species))

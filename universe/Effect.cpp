@@ -260,7 +260,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
     targets.clear();
 
     UniverseObject* source = GetObject(source_id);
-    if (!source) {
+    if (!source && m_activation) {
         Logger().errorStream() << "EffectsGroup::GetTargetSet passed invalid source object with id " << source_id;
         return;
     }

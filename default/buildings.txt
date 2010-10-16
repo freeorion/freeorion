@@ -30,7 +30,14 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1 high = 999
     ]
-    effectsgroups =
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Planet
+                Contains Source
+            ]
+            effects = SetEmpireCapitol
+            
         EffectsGroup
             scope = And [
                 Planet
@@ -44,8 +51,8 @@ BuildingType
             effects = [
                 SetTargetConstruction Value + 10
                 SetDefense Value + 5
-                SetEmpireCapitol      
             ]
+        ]
     graphic = ""
 
 BuildingType
