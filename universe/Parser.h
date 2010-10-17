@@ -264,16 +264,32 @@ struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, Flee
     member3 ship_designs;
 };
 
-extern boost::spirit::classic::rule<Scanner, BuildingTypeClosure::context_t> building_type_p;
-extern boost::spirit::classic::rule<Scanner, SpecialClosure::context_t>      special_p;
-extern boost::spirit::classic::rule<Scanner, SpeciesClosure::context_t>      species_p;
-extern boost::spirit::classic::rule<Scanner, CategoryClosure::context_t>     category_p;
-extern boost::spirit::classic::rule<Scanner, TechClosure::context_t>         tech_p;
-extern boost::spirit::classic::rule<Scanner, ItemSpecClosure::context_t>     item_spec_p;
-extern boost::spirit::classic::rule<Scanner, PartStatsClosure::context_t>    part_stats_p;
-extern boost::spirit::classic::rule<Scanner, PartClosure::context_t>         part_p;
-extern boost::spirit::classic::rule<Scanner, HullClosure::context_t>         hull_p;
-extern boost::spirit::classic::rule<Scanner, ShipDesignClosure::context_t>   ship_design_p;
-extern boost::spirit::classic::rule<Scanner, FleetPlanClosure::context_t>    fleet_plan_p;
+struct AlignmentClosure : boost::spirit::classic::closure<AlignmentClosure, Alignment,
+                                                          std::string, std::string, std::string>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 graphic;
+};
+
+struct EffectsGroupVecClosure : boost::spirit::classic::closure<EffectsGroupVecClosure, std::vector<boost::shared_ptr<const Effect::EffectsGroup> > >
+{
+    member1 this_;
+};
+
+extern boost::spirit::classic::rule<Scanner, BuildingTypeClosure::context_t>    building_type_p;
+extern boost::spirit::classic::rule<Scanner, SpecialClosure::context_t>         special_p;
+extern boost::spirit::classic::rule<Scanner, SpeciesClosure::context_t>         species_p;
+extern boost::spirit::classic::rule<Scanner, CategoryClosure::context_t>        category_p;
+extern boost::spirit::classic::rule<Scanner, TechClosure::context_t>            tech_p;
+extern boost::spirit::classic::rule<Scanner, ItemSpecClosure::context_t>        item_spec_p;
+extern boost::spirit::classic::rule<Scanner, PartStatsClosure::context_t>       part_stats_p;
+extern boost::spirit::classic::rule<Scanner, PartClosure::context_t>            part_p;
+extern boost::spirit::classic::rule<Scanner, HullClosure::context_t>            hull_p;
+extern boost::spirit::classic::rule<Scanner, ShipDesignClosure::context_t>      ship_design_p;
+extern boost::spirit::classic::rule<Scanner, FleetPlanClosure::context_t>       fleet_plan_p;
+extern boost::spirit::classic::rule<Scanner, AlignmentClosure::context_t>       alignment_p;
+extern boost::spirit::classic::rule<Scanner, EffectsGroupVecClosure::context_t> effects_group_vec_p;
 
 #endif // _Parser_h_

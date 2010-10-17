@@ -1,0 +1,70 @@
+
+Alignment
+    name = "ALIGN_MILITARISM"
+    description = "ALIGN_MILITARY_STRENGTH_DESC"
+    graphic = ""
+
+Alignment
+    name = "ALIGN_SOCIAL_CONTROL"
+    description = "ALIGN_SOICAL_CONTROL_DESC"
+    graphic = ""
+
+Alignment
+    name = "ALIGN_ENVIRONMENT_MODIFICATION"
+    description = "ALIGN_ENVIRONMENT_MODIFICATION_DESC"
+    graphic = ""
+
+Alignment
+    name = "ALIGN_BIOLOGICAL_ALTERATION"
+    description = "ALIGN_BIOLOGICAL_ALTERATION_DESC"
+    graphic = ""
+
+Alignment
+    name = "ALIGN_MECHANIZATION"
+    description = "ALIGN_MECHANIZATION_DESC"
+    graphic = ""
+
+AlignmentEffects effectsgroups = [
+    EffectsGroup
+        scope = And [
+            Ship
+            OwnedBy TheEmpire Source.Owner
+            Or [
+                DesignHasPartClass 1 999 ShortRange
+                DesignHasPartClass 1 999 Missiles
+                DesignHasPartClass 1 999 Fighters
+                DesignHasPartClass 1 999 PointDefense
+            ]
+        ]
+        effects =
+            SetEmpireMeter
+                empire = Source.Owner
+                meter = "ALIGN_MILITARISM"
+                value = Value + 1
+                
+    EffectsGroup
+        scope = And [
+            OwnedBy TheEmpire Source.Owner
+            Or [
+                Building name = "BLD_BIOTERROR_PROJECTOR"
+                Building name = "BLD_GENOME_BANK"
+                Building name = "BLD_CLONING_CENTER"
+            ]
+        ]
+        effects =
+            SetEmpireMeter
+                empire = Source.Owner
+                meter = "ALIGN_BIOLOGICAL_ALTERATION"
+                value = Value + 1
+
+    EffectsGroup
+        scope = And [
+            OwnedBy TheEmpire Source.Owner
+            Building name = "BLD_TERRAFORM"
+        ]
+        effects =
+            SetEmpireMeter
+                empire = Source.Owner
+                meter = "ALIGN_ENVIRONMENT_MODIFICATION"
+                value = Value + 10
+    ]

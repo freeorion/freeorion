@@ -87,7 +87,7 @@ void Empire::serialize(Archive& ar, const unsigned int version)
     {
         ar  & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
-            & BOOST_SERIALIZATION_NVP(m_alignments)
+            & BOOST_SERIALIZATION_NVP(m_meters)
             & BOOST_SERIALIZATION_NVP(m_research_queue)
             & BOOST_SERIALIZATION_NVP(m_research_progress)
             & BOOST_SERIALIZATION_NVP(m_production_queue)

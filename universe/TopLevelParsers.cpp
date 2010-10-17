@@ -14,18 +14,20 @@
 using namespace boost::spirit::classic;
 using namespace phoenix;
 
-rule<Scanner, BuildingTypeClosure::context_t>           building_type_p;
-rule<Scanner, SpecialClosure::context_t>                special_p;
-rule<Scanner, SpeciesClosure::context_t>                species_p;
-rule<Scanner, TechClosure::context_t>                   tech_p;
-rule<Scanner, ItemSpecClosure::context_t>               item_spec_p;
-rule<Scanner, CategoryClosure::context_t>               category_p;
-rule<Scanner, PartStatsClosure::context_t>              part_stats_p;
-rule<Scanner, PartClosure::context_t>                   part_p;
-rule<Scanner, HullStatsClosure::context_t>              hull_stats_p;
-rule<Scanner, HullClosure::context_t>                   hull_p;
-rule<Scanner, ShipDesignClosure::context_t>             ship_design_p;
-rule<Scanner, FleetPlanClosure::context_t>              fleet_plan_p;
+rule<Scanner, BuildingTypeClosure::context_t>       building_type_p;
+rule<Scanner, SpecialClosure::context_t>            special_p;
+rule<Scanner, SpeciesClosure::context_t>            species_p;
+rule<Scanner, TechClosure::context_t>               tech_p;
+rule<Scanner, ItemSpecClosure::context_t>           item_spec_p;
+rule<Scanner, CategoryClosure::context_t>           category_p;
+rule<Scanner, PartStatsClosure::context_t>          part_stats_p;
+rule<Scanner, PartClosure::context_t>               part_p;
+rule<Scanner, HullStatsClosure::context_t>          hull_stats_p;
+rule<Scanner, HullClosure::context_t>               hull_p;
+rule<Scanner, ShipDesignClosure::context_t>         ship_design_p;
+rule<Scanner, FleetPlanClosure::context_t>          fleet_plan_p;
+rule<Scanner, AlignmentClosure::context_t>          alignment_p;
+rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
 
 struct EffectsGroupClosure : boost::spirit::classic::closure<EffectsGroupClosure, Effect::EffectsGroup*,
                                                              Condition::ConditionBase*, Condition::ConditionBase*,
@@ -36,11 +38,6 @@ struct EffectsGroupClosure : boost::spirit::classic::closure<EffectsGroupClosure
     member3 activation;
     member4 stacking_group;
     member5 effects;
-};
-
-struct EffectsGroupVecClosure : boost::spirit::classic::closure<EffectsGroupVecClosure, std::vector<boost::shared_ptr<const Effect::EffectsGroup> > >
-{
-    member1 this_;
 };
 
 struct SlotClosure : boost::spirit::classic::closure<SlotClosure, HullType::Slot, ShipSlotType, double, double>
@@ -86,7 +83,6 @@ struct PlanetTypeEnvironmentMapClosure : boost::spirit::classic::closure<PlanetT
 
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>               effects_group_p;
-    rule<Scanner, EffectsGroupVecClosure::context_t>            effects_group_vec_p;
     rule<Scanner, SlotClosure::context_t>                       slot_p;
     rule<Scanner, SlotVecClosure::context_t>                    slot_vec_p;
     rule<Scanner, ShipSlotTypeVecClosure::context_t>            ship_slot_type_vec_p;
@@ -378,15 +374,20 @@ namespace {
                                                     ship_design_p.graphic, ship_design_p.model,
                                                     ship_design_p.name_desc_in_stringtable)];
 
-         fleet_plan_p =
-             (str_p("fleet")
-              >> name_label >> name_p[fleet_plan_p.name = arg1]
-              >> ships_label
-              >> (name_p[push_back_(fleet_plan_p.ship_designs, arg1)] |
-                  ('[' >> *(name_p[push_back_(fleet_plan_p.ship_designs, arg1)]) >> ']'))
-             [fleet_plan_p.this_ =
-              construct_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
+        fleet_plan_p =
+            (str_p("fleet")
+             >> name_label >> name_p[fleet_plan_p.name = arg1]
+             >> ships_label
+             >> (name_p[push_back_(fleet_plan_p.ship_designs, arg1)] |
+                 ('[' >> *(name_p[push_back_(fleet_plan_p.ship_designs, arg1)]) >> ']'))
+            [fleet_plan_p.this_ = construct_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
 
+        alignment_p =
+            (str_p("alignment")
+             >> name_label >>           name_p[alignment_p.name = arg1]
+             >> description_label >>    name_p[alignment_p.description = arg1]
+             >> graphic_label >>        file_name_p[alignment_p.graphic = arg1])
+            [alignment_p.this_ = construct_<Alignment>(alignment_p.name, alignment_p.description, alignment_p.graphic)];
 
         return true;
     }

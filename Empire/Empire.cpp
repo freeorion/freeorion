@@ -14,6 +14,8 @@
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Parser.h"
+#include "../universe/ParserUtil.h"
 #include "ResourcePool.h"
 #include "EmpireManager.h"
 
@@ -934,6 +936,139 @@ void ProductionQueue::clear()
     ProductionQueueChangedSignal();
 }
 
+////////////////
+// Alignments //
+////////////////
+Alignment::Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
+    m_name(name),
+    m_description(description),
+    m_graphic(graphic)
+{}
+
+Alignment::Alignment() :
+    m_name(),
+    m_description(),
+    m_graphic()
+{}
+
+const std::string& Alignment::Name() const
+{
+    return m_name;
+}
+
+const std::string& Alignment::Description() const
+{
+    return m_description;
+}
+
+const std::string& Alignment::Graphic() const
+{
+    return m_graphic;
+}
+
+
+namespace {
+    ParamLabel effectsgroups_label("effectsgroups");
+
+    struct store_alignment_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::vector<Alignment>& alignments, const T& alignment) const
+        {
+            alignments.push_back(alignment);
+        }
+    };
+
+    const phoenix::function<store_alignment_impl> store_alignment_;
+
+    class AlignmentManager {
+    public:
+        /** \name Accessors */ //@{
+        const std::vector<Alignment>&           Alignments() const { return m_alignments; }
+
+        const std::vector<boost::shared_ptr<
+            const Effect::EffectsGroup> >       EffectsGroups() const { return m_effects_groups; }
+        //@}
+
+        /** returns the instance of this singleton class; you should use the
+          * free function GetAlignmentManager() instead */
+        static const AlignmentManager& GetAlignmentManager();
+
+    private:
+        AlignmentManager();
+
+        std::vector<Alignment>              m_alignments;
+        std::vector<boost::shared_ptr<
+            const Effect::EffectsGroup> >   m_effects_groups;
+
+        static AlignmentManager*    s_instance;
+    };
+    // static(s)
+    AlignmentManager* AlignmentManager::s_instance = 0;
+
+    const AlignmentManager& AlignmentManager::GetAlignmentManager() {
+        static AlignmentManager manager;
+        return manager;
+    }
+
+    AlignmentManager::AlignmentManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one AlignmentManager.");
+
+        s_instance = this;
+
+        Logger().debugStream() << "Initializing AlignmentManager";
+
+        std::string file_name = "alignments.txt";
+        std::string input;
+
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return;
+        }
+
+        using namespace boost::spirit::classic;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  as_lower_d[*alignment_p[store_alignment_(var(m_alignments), arg1)]
+                             >> !(str_p("alignmenteffects")
+                                  >> effectsgroups_label >> *effects_group_vec_p[var(m_effects_groups) = arg1]
+                                 )
+                  ]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+
+//#ifdef OUTPUT_ALIGNMENTS_LIST
+        Logger().debugStream() << "Alignments:";
+        for (std::vector<Alignment>::const_iterator it = m_alignments.begin(); it != m_alignments.end(); ++it) {
+            const Alignment& p = *it;
+            Logger().debugStream() << " ... " << p.Name();
+        }
+        Logger().debugStream() << "Alignment Effects:";
+        for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
+             it != m_effects_groups.end(); ++it)
+        {
+            const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
+            Logger().debugStream() << " ... " /*<< p->Dump()*/;
+        }
+//#endif
+    }
+
+    /** returns the singleton alignment manager */
+    const AlignmentManager& GetAlignmentManager() {
+        return AlignmentManager::GetAlignmentManager();
+    }
+};
+
 
 ////////////
 // Empire //
@@ -945,11 +1080,7 @@ Empire::Empire() :
     m_population_pool(),
     m_maintenance_total_cost(0)
 {
-    m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
-    m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
-    m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
-    m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
-    m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+    Init();
 }
 
 Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color) :
@@ -963,11 +1094,24 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_maintenance_total_cost(0)
 {
     Logger().debugStream() << "Empire::Empire(" << name << ", " << player_name << ", " << empire_id << ", colour)";
+    Init();
+}
+
+void Empire::Init()
+{
     m_resource_pools[RE_MINERALS] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_MINERALS));
     m_resource_pools[RE_FOOD] =     boost::shared_ptr<ResourcePool>(new ResourcePool(RE_FOOD));
     m_resource_pools[RE_RESEARCH] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+
+    // Add alignment meters to empire
+    const AlignmentManager& alignment_manager = GetAlignmentManager();
+    const std::vector<Alignment>& alignments = alignment_manager.Alignments();
+    for (std::vector<Alignment>::const_iterator it = alignments.begin(); it != alignments.end(); ++it) {
+        const Alignment& alignment = *it;
+        m_meters[alignment.Name()];
+    }
 }
 
 Empire::~Empire()
@@ -1028,19 +1172,19 @@ void Empire::SetCapitolID(int id)
     }
 };
 
-Meter* Empire::GetAlignmentMeter(const std::string& name)
+Meter* Empire::GetMeter(const std::string& name)
 {
-    std::map<std::string, Meter>::iterator it = m_alignments.find(name);
-    if (it != m_alignments.end())
+    std::map<std::string, Meter>::iterator it = m_meters.find(name);
+    if (it != m_meters.end())
         return &(it->second);
     else
         return 0;
 }
 
-const Meter* Empire::GetAlignmentMeter(const std::string& name) const
+const Meter* Empire::GetMeter(const std::string& name) const
 {
-    std::map<std::string, Meter>::const_iterator it = m_alignments.find(name);
-    if (it != m_alignments.end())
+    std::map<std::string, Meter>::const_iterator it = m_meters.find(name);
+    if (it != m_meters.end())
         return &(it->second);
     else
         return 0;

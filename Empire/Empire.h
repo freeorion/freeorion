@@ -37,6 +37,19 @@ private:
     bool                        m_name_in_stringtable;
 };
 
+class Alignment
+{
+public:
+    Alignment(const std::string& name, const std::string& description, const std::string& graphic);
+    Alignment();
+    const std::string&  Name() const;
+    const std::string&  Description() const;
+    const std::string&  Graphic() const;
+private:
+    std::string m_name;
+    std::string m_description;
+    std::string m_graphic;
+};
 
 struct ResearchQueue
 {
@@ -289,7 +302,7 @@ public:
     const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
     const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
 
-    const Meter*            GetAlignmentMeter(const std::string& name) const;       ///< Returns the alignment meter with the indicated name, if any, or 0 if no such alignment meter exists
+    const Meter*            GetMeter(const std::string& name) const;                ///< Returns the alignment meter with the indicated name, if any, or 0 if no such alignment meter exists
 
     bool                    ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     const                   ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
@@ -306,11 +319,17 @@ public:
     const                   ProductionQueue& GetProductionQueue() const;            ///< Returns the queue of items being or queued to be produced.
     double                  ProductionStatus(int i) const;                          ///< Returns the PPs spent towards item \a i in the build queue if it has partial progress, -1.0 if there is no such index in the production queue.
 
-    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    /** Returns the maximum cost per turn and the minimum number of turns
+      * required to produce the indicated item, or (-1.0, -1) if the item is
+      * unknown, unavailable, or invalid. */
     std::pair<double, int>  ProductionCostAndTime(BuildType build_type, std::string name) const;
-    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    /** Returns the maximum cost per turn and the minimum number of turns
+      * required to produce the indicated item, or (-1.0, -1) if the item is
+      * unknown, unavailable, or invalid. */
     std::pair<double, int>  ProductionCostAndTime(BuildType build_type, int design_id = UniverseObject::INVALID_OBJECT_ID) const;
-    ///< Returns the maximum cost per turn and the minimum number of turns required to produce the indicated item, or (-1.0, -1) if the item is unknown, unavailable, or invalid.
+    /** Returns the maximum cost per turn and the minimum number of turns
+      * required to produce the indicated item, or (-1.0, -1) if the item is
+      * unknown, unavailable, or invalid. */
     std::pair<double, int>  ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const;
 
     bool                    BuildableItem(BuildType build_type, const std::string& name, int location) const;  ///< Returns true iff this empire can produce the specified item at the specified location.
@@ -334,8 +353,8 @@ public:
 
     const std::set<int>&                    SupplyUnobstructedSystems() const;              ///< returns set of system ids that are able to propagate supply from one system to the next, or at which supply can be delivered to fleets if supply can reach the system from elsewhere
 
-    /** modifies passed parameter, which is a map from system id to the range, in starlane jumps that the
-      * system can send supplies. */
+    /** modifies passed parameter, which is a map from system id to the range,
+      * in starlane jumps that the system can send supplies. */
     void                    GetSystemSupplyRanges(std::map<int, int>& system_supply_ranges) const;
 
     const std::set<int>&    ExploredSystems() const;            ///< returns set of ids of systems that this empire has explored
@@ -377,7 +396,7 @@ public:
 
     /** Returns the alignment meter with the indicated \a name, if any, or 0 if
       * no such alignment meter exists. */
-    Meter*                  GetAlignmentMeter(const std::string& name);
+    Meter*                  GetMeter(const std::string& name);
 
     /** Adds \a tech to the research queue, placing it before position \a pos.
       * If \a tech is already in the queue, it is moved to \a pos, then removed
@@ -525,6 +544,8 @@ public:
     mutable boost::signal<void ()>  ShipDesignsChangedSignal;
 
 private:
+    void                    Init();
+
     int                             m_id;                       ///< Empire's unique numeric id
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
@@ -533,7 +554,7 @@ private:
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 
-    std::map<std::string, Meter>    m_alignments;               ///< the various rating scales on which an empire may be judged by species
+    std::map<std::string, Meter>    m_meters;                   ///< empire meters, including ratings scales used by species to judge empires
 
     ResearchQueue                   m_research_queue;           ///< the queue of techs being or waiting to be researched
     std::map<std::string, double>   m_research_progress;        ///< progress of partially-researched techs; fully researched techs are removed
