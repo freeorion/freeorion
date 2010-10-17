@@ -718,7 +718,23 @@ SetEmpireMeter::~SetEmpireMeter()
 
 void SetEmpireMeter::Execute(const UniverseObject* source, UniverseObject* target) const
 {
-    // todo
+    int empire_id = m_empire_id->Eval(source, target, boost::any());
+
+    Empire* empire = Empires().Lookup(empire_id);
+    if (!empire) {
+        Logger().debugStream() << "SetEmpireMeter::Execute unable to find empire with id " << empire_id;
+        return;
+    }
+
+    Meter* meter = empire->GetMeter(m_meter);
+    if (!meter) {
+        Logger().debugStream() << "SetEmpireMeter::Execute empire " << empire->Name() << " doesn't have a meter named " << m_meter;
+        return;
+    }
+
+    double value = m_value->Eval(source, target, meter->Current());
+
+    meter->SetCurrent(value);
 }
 
 std::string SetEmpireMeter::Description() const
@@ -764,8 +780,10 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
     int empire_id = m_empire_id->Eval(source, target, boost::any());
 
     Empire* empire = Empires().Lookup(empire_id);
-    if (empire)
+    if (!empire) {
+        Logger().debugStream() << "SetEmpireStockpile::Execute couldn't find an empire with id " << empire_id;
         return;
+    }
 
     double value = m_value->Eval(source, target, empire->ResourceStockpile(m_stockpile));
     empire->SetResourceStockpile(m_stockpile, value);
