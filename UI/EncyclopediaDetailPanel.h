@@ -37,8 +37,8 @@ public:
     virtual void    Render();
     virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
 
-    /* need to redefine this so that icons and name can be put at the top of the Wnd, rather
-       than being restricted to the client area of a CUIWnd */
+    /** Need to redefine this so that icons and name can be put at the top of
+      * the Wnd, rather than being restricted to the client area of a CUIWnd */
     virtual GG::Pt  ClientUpperLeft() const;
 
     void            AddItem (const std::string& type, const std::string& name); //adds a new item to m_items
@@ -83,19 +83,18 @@ private:
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
 
-    static std::list<std::pair <std::string, std::string>>              m_items;               // stores all items which have been observed in the past
-                                                                                               // .first == item type; .second == item.name
-    static std::list<std::pair <std::string, std::string>>::iterator    m_items_it;            // stores actual position within m_items
+    static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
+                                                                                    // .first == item type; .second == item.name
+    static std::list<std::pair <std::string, std::string> >::iterator   m_items_it; // stores actual position within m_items
     boost::weak_ptr<const ShipDesign>                                   m_incomplete_design;
 
-    
     GG::TextControl*    m_name_text;        // name
     GG::TextControl*    m_cost_text;        // cost and time to build or research
     GG::TextControl*    m_summary_text;     // general purpose item
     GG::MultiEdit*      m_description_box;  // detailed and lengthy description
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_other_icon;
-    GG::Button*			m_up_button;
+    GG::Button*         m_up_button;
     GG::Button*         m_back_button;
     GG::Button*         m_next_button;
 };

@@ -58,10 +58,8 @@ namespace {
     const int       LAYOUT_MARGIN = 5;
     const GG::Y     TOOLBAR_HEIGHT(30);
 
-    struct ClrLess
-    {
-        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs) const
-        {
+    struct ClrLess {
+        bool operator()(const GG::Clr& rhs, const GG::Clr& lhs) const {
             if (rhs.r != lhs.r)
                 return rhs.r < lhs.r;
             if (rhs.g != lhs.g)
@@ -89,7 +87,7 @@ namespace {
         boost::function<bool ()> m_fn;
     };
 
-    void    AddOptions(OptionsDB& db) {
+    void AddOptions(OptionsDB& db) {
         db.Add("UI.galaxy-gas-background",          "OPTIONS_DB_GALAXY_MAP_GAS",                    true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              "OPTIONS_DB_GALAXY_MAP_STARFIELDS",             true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          "OPTIONS_DB_GALAXY_MAP_SCALE_LINE",             true,       Validator<bool>());
@@ -134,7 +132,7 @@ namespace {
         return std::make_pair(std::min(one, two), std::max(one, two));
     }
 
-    /* loads background starfield textures int \a background_textures  */
+    /* Loads background starfield textures int \a background_textures  */
     void InitBackgrounds(std::vector<boost::shared_ptr<GG::Texture> >& background_textures, std::vector<double>& scroll_rates) {
         if (!background_textures.empty())
             return;
@@ -151,7 +149,7 @@ namespace {
         }
     }
 
-    /* returns fractional distance along line segment between two points that a
+    /* Returns fractional distance along line segment between two points that a
      * third point between them is.assumes the "mid" point is between the
      * "start" and "end" points, in which case the returned fraction is between
      * 0.0 and 1.0 */

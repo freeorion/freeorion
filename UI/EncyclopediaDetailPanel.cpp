@@ -106,7 +106,6 @@ std::list <std::pair<std::string, std::string>>::iterator   EncyclopediaDetailPa
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
-    
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),
@@ -131,8 +130,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(m_up_button->ClickedSignal,         &EncyclopediaDetailPanel::OnUp,                     this);
-    GG::Connect(m_back_button->ClickedSignal,         &EncyclopediaDetailPanel::OnBack,                   this);
-    GG::Connect(m_next_button->ClickedSignal,         &EncyclopediaDetailPanel::OnNext,                   this);
+    GG::Connect(m_back_button->ClickedSignal,       &EncyclopediaDetailPanel::OnBack,                   this);
+    GG::Connect(m_next_button->ClickedSignal,       &EncyclopediaDetailPanel::OnNext,                   this);
     m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
@@ -148,6 +147,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
     DoLayout();
+
+    AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
 void EncyclopediaDetailPanel::DoLayout() {
@@ -742,14 +743,12 @@ void EncyclopediaDetailPanel::Refresh() {
     DoLayout();
 }
 
-void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name)
-{
+void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name) {
     // if the actual item is not the last one, all aubsequented items are deleted
     if (!m_items.empty()) {
         std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
         end--;
-        if (m_items_it != end)
-        {
+        if (m_items_it != end) {
             std::list<std::pair <std::string, std::string>>::iterator i = m_items_it;
             ++i;
             m_items.erase(i, m_items.end());
@@ -764,10 +763,8 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
     Refresh();
 }
 
-void EncyclopediaDetailPanel::PopItem ()
-{
-    if (m_items.size() > 0)
-    {
+void EncyclopediaDetailPanel::PopItem() {
+    if (!m_items.empty())     {
         m_items.pop_back();
         if (m_items_it == m_items.end())
             m_items_it--;
@@ -775,13 +772,11 @@ void EncyclopediaDetailPanel::PopItem ()
     }
 }
 
-void EncyclopediaDetailPanel::ClearItems ()
-{
+void EncyclopediaDetailPanel::ClearItems() {
     m_items.clear();
 }
 
-void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable)
-{
+void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable) {
     if (text == m_items_it->second)
         return;
     if (text == "ENC_INDEX")
@@ -913,8 +908,7 @@ void EncyclopediaDetailPanel::SetItem(const ShipDesign* design) {
 }
 
 void EncyclopediaDetailPanel::OnUp() {
-    if (m_items.size() > 0)
-    {
+    if (!m_items.empty()) {
         if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG ||
             m_items_it->first == INCOMPLETE_DESIGN            ||
             m_items_it->first == UNIVERSE_OBJECT)
@@ -923,6 +917,8 @@ void EncyclopediaDetailPanel::OnUp() {
         } else {
             AddItem(TextLinker::ENCYCLOPEDIA_TAG, m_items_it->first);
         }
+    } else {
+        AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
     }
 }
 
@@ -935,7 +931,7 @@ void EncyclopediaDetailPanel::OnBack() {
 void EncyclopediaDetailPanel::OnNext() {
     std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
     end--;
-    if (m_items_it != end && m_items.size() > 0)
+    if (m_items_it != end && !m_items.empty())
         m_items_it++;
     Refresh();
 }
