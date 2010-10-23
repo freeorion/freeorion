@@ -2147,7 +2147,7 @@ void TechTreeWnd::Update(const Tech* tech)
 void TechTreeWnd::Clear()
 {
     m_tech_navigator->SetTech(0);
-    m_enc_detail_panel->UnsetAll();
+    m_enc_detail_panel->OnUp();
     m_layout_panel->Clear();
 }
 

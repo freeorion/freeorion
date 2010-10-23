@@ -1852,7 +1852,8 @@ void DesignWnd::MainPanel::SetHull(const HullType* hull) {
     }
     Populate();
     DoLayout();
-    DesignChangedSignal();
+    if (hull)
+        DesignChangedSignal();
 }
 
 void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
@@ -2104,6 +2105,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
 void DesignWnd::Reset() {
     m_part_palette->Reset();
     m_base_selector->Reset();
+    m_detail_panel->Refresh();
 }
 
 void DesignWnd::Sanitize() {

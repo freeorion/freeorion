@@ -622,7 +622,7 @@ MapWnd::MapWnd() :
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
-
+    
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
     const GG::X BUTTON_TOTAL_MARGIN(8);
@@ -3768,6 +3768,7 @@ void MapWnd::Cleanup()
     HideDesign();
     HideSitRep();
     HidePedia();
+    m_pedia_panel->ClearItems();    // deletes all pedia items in the memory
     m_toolbar->Hide();
     m_FPS->Hide();
     m_scale_line->Hide();
@@ -3934,6 +3935,8 @@ void MapWnd::ShowPedia()
     HideProduction();
     HideDesign();
 
+    if (m_pedia_panel->GetItemsSize() == 0)
+        m_pedia_panel->SetIndex();
     m_pedia_panel->Show();
     m_pedia_panel->Refresh();
 
@@ -3984,6 +3987,8 @@ void MapWnd::ShowResearch()
 
     // indicate selection on button
     m_btn_research->MarkSelectedGray();
+
+    m_pedia_panel->SetText("ENC_TECH");
 }
 
 void MapWnd::HideResearch()
@@ -4012,6 +4017,7 @@ void MapWnd::ShowProduction()
     HideResearch();
     HideDesign();
     HideSidePanel();
+    m_pedia_panel->SetIndex();
 
     // show the production window
     m_production_wnd->Show();

@@ -17,6 +17,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../client/human/HumanClientApp.h"
+#include "../UI/DesignWnd.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -31,6 +32,8 @@ namespace {
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const std::string EMPTY_STRING;
+    const std::string INCOMPLETE_DESIGN = "incomplete design";
+    const std::string UNIVERSE_OBJECT = "universe object";
 }
 
 namespace {
@@ -42,66 +45,68 @@ namespace {
         return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">" + "\n";
     }
 
-    std::string PediaIndexText() {
+    std::string PediaDirText(const std::string& dir_name) {
         std::string retval;
 
-        retval += UserString("ENC_SHIP_PART") + "\n\n";
-        const PartTypeManager& part_type_manager = GetPartTypeManager();
-        for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
-            retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first);
+        if (dir_name == "ENC_INDEX") {
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES");
 
-        retval += "\n" + UserString("ENC_SHIP_HULL") + "\n\n";
-        const HullTypeManager& hull_type_manager = GetHullTypeManager();
-        for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
-            retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first);
+        } else if (dir_name == "ENC_SHIP_PART") {
+            const PartTypeManager& part_type_manager = GetPartTypeManager();
+            for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
+                retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first);
 
-        retval += "\n" + UserString("ENC_TECH") + "\n\n";
-        std::vector<std::string> tech_names = GetTechManager().TechNames();
-        for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
-            retval += LinkTaggedText(VarText::TECH_TAG, *it);
+        } else if (dir_name == "ENC_SHIP_HULL") {
+            const HullTypeManager& hull_type_manager = GetHullTypeManager();
+            for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
+                retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first);
 
-        retval += "\n" + UserString("ENC_BUILDING_TYPE") + "\n\n";
-        const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
-        for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
-            retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first);
+        } else if (dir_name == "ENC_TECH") {
+            std::vector<std::string> tech_names = GetTechManager().TechNames();
+            for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
+                retval += LinkTaggedText(VarText::TECH_TAG, *it);
 
-        retval += "\n" + UserString("ENC_SPECIAL") + "\n\n";
-        std::vector<std::string> special_names = SpecialNames();
-        for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
-            retval += LinkTaggedText(VarText::SPECIAL_TAG, *it);
+        } else if (dir_name == "ENC_BUILDING_TYPE") {
+            const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
+            for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
+                retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first);
 
-        retval += "\n" + UserString("ENC_SPECIES") + "\n\n";
-        const SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
-            retval += LinkTaggedText(VarText::SPECIES_TAG, it->first);
+        } else if (dir_name == "ENC_SPECIAL") {
+            const std::vector<std::string> special_names = SpecialNames();
+            for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
+                retval += LinkTaggedText(VarText::SPECIAL_TAG, *it);
 
-        retval += "\n" + UserString("ENC_EMPIRE") + "\n\n";
-        const EmpireManager& empire_manager = Empires();
-        for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
-            retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name());
+        } else if (dir_name == "ENC_SPECIES") {
+            const SpeciesManager& species_manager = GetSpeciesManager();
+            for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
+                retval += LinkTaggedText(VarText::SPECIES_TAG, it->first);
 
-        const Universe& universe = GetUniverse();
+        } else if (dir_name == "ENC_EMPIRE") {
+            const EmpireManager& empire_manager = Empires();
+            for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
+                retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name());
 
-        retval += "\n" + UserString("ENC_SHIP_DESIGN") + "\n\n";
-        for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
-            retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name());
+        } else if (dir_name == "ENC_SHIP_DESIGN") {
+            const Universe& universe = GetUniverse();
+            for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
+                retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name());
+        }
 
         return retval;
     }
 }
 
+std::list <std::pair<std::string, std::string>>             EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string>>(0);
+std::list <std::pair<std::string, std::string>>::iterator   EncyclopediaDetailPanel::m_items_it = m_items.begin();
+
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
-    m_tech_name(),
-    m_part_name(),
-    m_hull_name(),
-    m_building_name(),
-    m_special_name(),
-    m_species_name(),
-    m_design_id(ShipDesign::INVALID_DESIGN_ID),
-    m_object_id(UniverseObject::INVALID_OBJECT_ID),
-    m_empire_id(ALL_EMPIRES),
-    m_incomplete_design(),
+    
     m_name_text(0),
     m_cost_text(0),
     m_summary_text(0),
@@ -117,11 +122,17 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     m_name_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetBoldFont(NAME_PTS),  ClientUI::TextColor());
     m_cost_text =       new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(COST_PTS),      ClientUI::TextColor());
     m_summary_text =    new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", ClientUI::GetFont(SUMMARY_PTS),   ClientUI::TextColor());
+    m_up_button =       new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("UP"));
+    m_back_button =     new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("BACK"));
+    m_next_button =     new CUIButton(GG::X0, GG::Y0, GG::X(30), UserString("NEXT"));
 
     CUILinkTextMultiEdit* desc_box = new CUILinkTextMultiEdit(GG::X0, GG::Y0, GG::X(10), GG::Y(10), "", GG::MULTI_WORDBREAK | GG::MULTI_READ_ONLY);
     GG::Connect(desc_box->LinkClickedSignal,        &EncyclopediaDetailPanel::HandleLinkClick,          this);
     GG::Connect(desc_box->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(desc_box->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
+    GG::Connect(m_up_button->ClickedSignal,         &EncyclopediaDetailPanel::OnUp,                     this);
+    GG::Connect(m_back_button->ClickedSignal,         &EncyclopediaDetailPanel::OnBack,                   this);
+    GG::Connect(m_next_button->ClickedSignal,         &EncyclopediaDetailPanel::OnNext,                   this);
     m_description_box = desc_box;
     m_description_box->SetColor(GG::CLR_ZERO);
     m_description_box->SetInteriorColor(ClientUI::CtrlColor());
@@ -130,6 +141,9 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
     AttachChild(m_description_box);
+    AttachChild(m_up_button);
+    AttachChild(m_back_button);
+    AttachChild(m_next_button);
 
     SetChildClippingMode(ClipToClientAndWindowSeparately);
 
@@ -143,6 +157,8 @@ void EncyclopediaDetailPanel::DoLayout() {
     const int SUMMARY_PTS = PTS*4/3;
 
     const int ICON_SIZE = 12 + NAME_PTS + COST_PTS + SUMMARY_PTS;
+
+    const int BTN_WIDTH = 40;
 
     // name
     GG::Pt ul = GG::Pt();
@@ -161,8 +177,23 @@ void EncyclopediaDetailPanel::DoLayout() {
 
     // main verbose description (fluff, effects, unlocks, ...)
     ul = GG::Pt(BORDER_LEFT, ICON_SIZE + TEXT_MARGIN_Y + 1);
-    lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3);
+    lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
     m_description_box->SizeMove(ul, lr);
+
+    // "back" button
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 3 - 8, Height() - BORDER_BOTTOM*2 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 8, Height() - BORDER_BOTTOM*2);
+    m_back_button->SizeMove(ul, lr);
+
+    // "up" button
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH * 2 - 4, Height() - BORDER_BOTTOM*3 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH - 4, Height() - BORDER_BOTTOM*3);
+    m_up_button->SizeMove(ul, lr);
+
+    // "next" button
+    ul = GG::Pt(Width() - BORDER_RIGHT*3 - BTN_WIDTH, Height() - BORDER_BOTTOM*2 - PTS);
+    lr = GG::Pt(Width() - BORDER_RIGHT*3, Height() - BORDER_BOTTOM*2);
+    m_next_button->SizeMove(ul, lr);
 
     // icon
     if (m_icon) {
@@ -265,6 +296,7 @@ void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Fl
         }
 
         Resize(new_lr - UpperLeft());
+
     } else {    // normal-dragging
         GG::Pt final_move = move;
 
@@ -286,20 +318,6 @@ void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Fl
     }
 }
 
-bool EncyclopediaDetailPanel::NothingSet() const {
-    return (m_generic_text.empty() &&
-            m_part_name.empty() &&
-            m_hull_name.empty() &&
-            m_tech_name.empty() &&
-            m_building_name.empty() &&
-            m_special_name.empty() &&
-            m_species_name.empty() &&
-            m_incomplete_design.expired() &&
-            m_design_id == ShipDesign::INVALID_DESIGN_ID &&
-            m_object_id == UniverseObject::INVALID_OBJECT_ID &&
-            m_empire_id == ALL_EMPIRES
-            );
-}
 
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
     using boost::lexical_cast;
@@ -311,7 +329,7 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             link_type == VarText::SHIP_ID_TAG ||
             link_type == VarText::BUILDING_ID_TAG)
         {
-            this->SetObject(lexical_cast<int>(data));
+            this->SetObject(data);
 
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
             this->SetEmpire(lexical_cast<int>(data));
@@ -330,9 +348,8 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             this->SetPartType(data);
         } else if (link_type == VarText::SPECIES_TAG) {
             this->SetSpecies(data);
-
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
-            this->SetText(data);
+            this->SetText(data, false);
         }
     } catch (const boost::bad_lexical_cast&) {
         Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -372,7 +389,7 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
             ClientUI::GetClientUI()->ZoomToSpecies(data);
 
         } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
-            this->SetText(data);
+            this->SetText(data, false);
         }
     } catch (const boost::bad_lexical_cast&) {
         Logger().errorStream() << "EncyclopediaDetailPanel::HandleLinkDoubleClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -406,20 +423,29 @@ void EncyclopediaDetailPanel::Refresh() {
     GG::Clr color(GG::CLR_ZERO);
 
     using boost::io::str;
-    if (!m_generic_text.empty()) {
-        // plain text... not associated with any specific bit of content or in-game object
-        detailed_description = m_generic_text;
+    if (m_items.empty())
+        return;
 
-    } else if (!m_part_name.empty()) {
-        const PartType* part = GetPartType(m_part_name);
+    if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG) {
+        // Encyclopedia texts (including directories)
+        detailed_description = PediaDirText(m_items_it->second);
+        if (detailed_description.empty()) {
+            detailed_description = UserString(m_items_it->second);
+            name = EMPTY_STRING;
+        } else {
+            name = UserString(m_items_it->second);
+        }
+
+    } else if (m_items_it->first == "ENC_SHIP_PART") {
+        const PartType* part = GetPartType(m_items_it->second);
         if (!part) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << m_part_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find part with name " << m_items_it->second;
             return;
         }
 
         // Ship Parts
-        name = UserString(m_part_name);
-        texture = ClientUI::PartTexture(m_part_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::PartTexture(m_items_it->second);
         turns = part->ProductionTime();
         cost = part->ProductionCost();
         cost_units = UserString("ENC_PP");
@@ -431,37 +457,37 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(part->Effects()));
         }
 
-    } else if (!m_hull_name.empty()) {
-        const HullType* hull = GetHullType(m_hull_name);
+    } else if (m_items_it->first == "ENC_SHIP_HULL") {
+        const HullType* hull = GetHullType(m_items_it->second);
         if (!hull) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << m_hull_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find hull with name " << m_items_it->second;
             return;
         }
 
         // Ship Hulls
-        name = UserString(m_hull_name);
-        texture = ClientUI::HullTexture(m_hull_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::HullTexture(m_items_it->second);
         turns = hull->ProductionTime();
         cost = hull->ProductionCost();
         cost_units = UserString("ENC_PP");
         general_type = UserString("ENC_SHIP_HULL");
-        // hulls have no specific types
 
+        // hulls have no specific types
         detailed_description = UserString(hull->Description()) + "\n\n" + hull->StatDescription();
         if (GetOptionsDB().Get<bool>("UI.autogenerated-effects-descriptions") && !hull->Effects().empty()) {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(hull->Effects()));
         }
 
-    } else if (!m_tech_name.empty()) {
-        const Tech* tech = GetTech(m_tech_name);
+    } else if (m_items_it->first == "ENC_TECH") {
+        const Tech* tech = GetTech(m_items_it->second);
         if (!tech) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << m_tech_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find tech with name " << m_items_it->second;
             return;
         }
 
         // Technologies
-        name = UserString(m_tech_name);
-        texture = ClientUI::TechTexture(m_tech_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::TechTexture(m_items_it->second);
         other_texture = ClientUI::CategoryIcon(tech->Category()); 
         color = ClientUI::CategoryColor(tech->Category());
         turns = tech->ResearchTime();
@@ -506,16 +532,16 @@ void EncyclopediaDetailPanel::Refresh() {
             }
         }
 
-    } else if (!m_building_name.empty()) {
-        const BuildingType* building_type = GetBuildingType(m_building_name);
+    } else if (m_items_it->first == "ENC_BUILDING_TYPE") {
+        const BuildingType* building_type = GetBuildingType(m_items_it->second);
         if (!building_type) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << m_building_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find building type with name " << m_items_it->second;
             return;
         }
 
         // Buildings
-        name = UserString(m_building_name);
-        texture = ClientUI::BuildingTexture(m_building_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::BuildingTexture(m_items_it->second);
         turns = building_type->ProductionTime();
         cost = building_type->ProductionCost();
         cost_units = UserString("ENC_PP");
@@ -526,31 +552,31 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(building_type->Effects()));
         }
 
-    } else if (!m_special_name.empty()) {
-        const Special* special = GetSpecial(m_special_name);
+    } else if (m_items_it->first == "ENC_SPECIAL") {
+        const Special* special = GetSpecial(m_items_it->second);
         if (!special) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << m_special_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find special with name " << m_items_it->second;
             return;
         }
 
         // Specials
-        name = UserString(m_special_name);
-        texture = ClientUI::SpecialTexture(m_special_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::SpecialTexture(m_items_it->second);
         detailed_description = UserString(special->Description());
         if (GetOptionsDB().Get<bool>("UI.autogenerated-effects-descriptions") && !special->Effects().empty()) {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(special->Effects()));
         }
 
-    } else if (!m_species_name.empty()) {
-        const Species* species = GetSpecies(m_species_name);
+    } else if (m_items_it->first == "ENC_SPECIES") {
+        const Species* species = GetSpecies(m_items_it->second);
         if (!species) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << m_species_name;
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find species with name " << m_items_it->second;
             return;
         }
 
         // Species
-        name = UserString(m_species_name);
-        texture = ClientUI::SpeciesIcon(m_species_name);
+        name = UserString(m_items_it->second);
+        texture = ClientUI::SpeciesIcon(m_items_it->second);
         general_type = UserString("ENC_SPECIES");
 
         detailed_description = UserString(species->Description());
@@ -558,17 +584,51 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += str(FlexibleFormat(UserString("ENC_EFFECTS_STR")) % EffectsDescription(species->Effects()));
         }
 
-    } else if (boost::shared_ptr<const ShipDesign> incomplete_design = m_incomplete_design.lock()) {
-        // incomplete design.  not yet in game universe; being created on design screen
+    } else if (m_items_it->first == "ENC_SHIP_DESIGN") {
+        if (boost::lexical_cast<int>(m_items_it->second) != UniverseObject::INVALID_OBJECT_ID) {
+            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(m_items_it->second));
+            if (!design) {
+                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << m_items_it->second;
+                return;
+            }
 
-        name = incomplete_design->Name();
+            // Ship Designs
+            name = design->Name();
+            texture = ClientUI::ShipIcon(design->ID());
+            turns = design->ProductionTime();
+            cost = design->PerTurnCost();
+            cost_units = UserString("ENC_PP");
+            general_type = UserString("ENC_SHIP_DESIGN");
+            detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+                % design->Description()
+                % static_cast<int>(design->SRWeapons().size())
+                % static_cast<int>(design->LRWeapons().size())
+                % static_cast<int>(design->FWeapons().size())
+                % static_cast<int>(design->PDWeapons().size())
+                % design->Structure()
+                % design->Shields()
+                % design->Detection()
+                % design->BattleSpeed()
+                % design->StarlaneSpeed()
+                % design->Fuel()
+                % design->ColonyCapacity()
+                % design->Stealth());
+        }
 
-        texture = ClientUI::GetTexture(ClientUI::ArtDir() / incomplete_design->Graphic(), true);
-        if (!texture) {
-            if (const HullType* hull_type = incomplete_design->GetHull())
-                texture = ClientUI::HullTexture(hull_type->Name());
-        } else {
-            texture = ClientUI::HullTexture("");
+    } else if (m_items_it->first == INCOMPLETE_DESIGN) {
+        boost::shared_ptr<const ShipDesign> incomplete_design = m_incomplete_design.lock();
+        if (incomplete_design)
+        {
+            // incomplete design.  not yet in game universe; being created on design screen
+            name = incomplete_design->Name();
+
+            texture = ClientUI::GetTexture(ClientUI::ArtDir() / incomplete_design->Graphic(), true);
+            if (!texture) {
+                if (const HullType* hull_type = incomplete_design->GetHull())
+                    texture = ClientUI::HullTexture(hull_type->Name());
+            } else {
+                texture = ClientUI::HullTexture("");
+            }
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
@@ -591,90 +651,50 @@ void EncyclopediaDetailPanel::Refresh() {
             % incomplete_design->ColonyCapacity()
             % incomplete_design->Stealth());
 
-    } else if (m_design_id != ShipDesign::INVALID_DESIGN_ID) {
-        const ShipDesign* design = GetShipDesign(m_design_id);
-        if (!design) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << m_design_id;
-            return;
-        }
+    } else if (m_items_it->first == UNIVERSE_OBJECT) {
+        int id = boost::lexical_cast<int>(m_items_it->second);
 
-        // Ship Designs
-        name = design->Name();
-        texture = ClientUI::ShipIcon(design->ID());
-        turns = design->ProductionTime();
-        cost = design->ProductionCost();
-        cost_units = UserString("ENC_PP");
-        general_type = UserString("ENC_SHIP_DESIGN");
-        detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-            % design->Description()
-            % static_cast<int>(design->SRWeapons().size())
-            % static_cast<int>(design->LRWeapons().size())
-            % static_cast<int>(design->FWeapons().size())
-            % static_cast<int>(design->PDWeapons().size())
-            % design->Structure()
-            % design->Shields()
-            % design->Detection()
-            % design->BattleSpeed()
-            % design->StarlaneSpeed()
-            % design->Fuel()
-            % design->ColonyCapacity()
-            % design->Stealth());
+        if (id != UniverseObject::INVALID_OBJECT_ID) {
+            const UniverseObject* obj = GetUniverse().Objects().Object(id);
+            if (!obj) {
+                int empire_id = HumanClientApp::GetApp()->EmpireID();
+                if (empire_id == ALL_EMPIRES) {
+                    Logger().errorStream() << "EncyclopediaDetailPanel::Refresh got invalid client's empire id.";
+                    return;
+                }
+                obj = GetUniverse().EmpireKnownObjects(empire_id).Object(id);
+            }
 
-    } else if (m_object_id != UniverseObject::INVALID_OBJECT_ID) {
-        const UniverseObject* obj = GetUniverse().Objects().Object(m_object_id);
-        if (!obj) {
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
-            if (empire_id == ALL_EMPIRES) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh got invalid client's empire id.";
+            if (!obj) {
+                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_items_it->second;
                 return;
             }
 
-            obj = GetUniverse().EmpireKnownObjects(empire_id).Object(m_object_id);
+            if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+                name = ship->Name();
+                general_type = UserString("ENC_SHIP");
+
+            } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+                name = fleet->Name();
+                general_type = UserString("ENC_FLEET");
+
+            } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+                name = planet->Name();
+                general_type = UserString("ENC_PLANET");
+
+            } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
+                name = building->Name();
+                general_type = UserString("ENC_BUILDING");
+
+            } else if (const System* system = universe_object_cast<const System*>(obj)) {
+                name = system->Name();
+                general_type = UserString("ENC_SYSTEM");
+
+            } else {
+                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << m_items_it->second << ")";
+                return;
+            }
         }
-        if (!obj) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_object_id;
-            return;
-        }
-        // UniverseObject
-
-        if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
-            name = ship->Name();
-            general_type = UserString("ENC_SHIP");
-
-        } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
-            name = fleet->Name();
-            general_type = UserString("ENC_FLEET");
-
-        } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
-            name = planet->Name();
-            general_type = UserString("ENC_PLANET");
-
-        } else if (const Building* building = universe_object_cast<const Building*>(obj)) {
-            name = building->Name();
-            general_type = UserString("ENC_BUILDING");
-
-        } else if (const System* system = universe_object_cast<const System*>(obj)) {
-            name = system->Name();
-            general_type = UserString("ENC_SYSTEM");
-
-        } else {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't interpret object: " << obj->Name() << " (" << m_object_id << ")";
-            return;
-        }
-
-    } else if (m_empire_id != ALL_EMPIRES) {
-        const Empire* empire = Empires().Lookup(m_empire_id);
-        if (!empire) {
-            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find Empire with id " << m_empire_id;
-            return;
-        }
-
-        name = empire->Name();
-        general_type = UserString("ENC_SHIP");
-    } else {
-        // apparently nothing set.  show index.
-        name = UserString("ENC_INDEX");
-        detailed_description = PediaIndexText();
     }
 
     // Create Icons
@@ -722,105 +742,138 @@ void EncyclopediaDetailPanel::Refresh() {
     DoLayout();
 }
 
-void EncyclopediaDetailPanel::UnsetAll() {
-    m_generic_text.clear();
-    m_tech_name.clear();
-    m_part_name.clear();
-    m_hull_name.clear();
-    m_building_name.clear();
-    m_special_name.clear();
-    m_species_name.clear();
-    m_design_id = ShipDesign::INVALID_DESIGN_ID;
-    m_object_id = UniverseObject::INVALID_OBJECT_ID;
-    m_empire_id = ALL_EMPIRES;
-    m_incomplete_design.reset();
+void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name)
+{
+    // if the actual item is not the last one, all aubsequented items are deleted
+    if (!m_items.empty()) {
+        std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
+        end--;
+        if (m_items_it != end)
+        {
+            std::list<std::pair <std::string, std::string>>::iterator i = m_items_it;
+            ++i;
+            m_items.erase(i, m_items.end());
+        }
+    }
+
+    m_items.push_back(std::pair<std::string, std::string>(type, name));
+    if (m_items.size() == 1)
+        m_items_it = m_items.begin();
+    else
+        ++m_items_it;
+    Refresh();
+}
+
+void EncyclopediaDetailPanel::PopItem ()
+{
+    if (m_items.size() > 0)
+    {
+        m_items.pop_back();
+        if (m_items_it == m_items.end())
+            m_items_it--;
+        Refresh();
+    }
+}
+
+void EncyclopediaDetailPanel::ClearItems ()
+{
+    m_items.clear();
 }
 
 void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable)
 {
-    if (text == m_generic_text)
+    if (text == m_items_it->second)
         return;
-    UnsetAll();
-    m_generic_text = (text.empty() || !lookup_in_stringtable) ? text : UserString(text);
-    Refresh();
+    if (text == "ENC_INDEX")
+        SetIndex();
+    else
+        AddItem(TextLinker::ENCYCLOPEDIA_TAG, (text.empty() || !lookup_in_stringtable) ? text : UserString(text));
 }
 
 void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
-    if (tech_name == m_tech_name)
+    if (tech_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_tech_name = tech_name;
-    Refresh();
+    AddItem("ENC_TECH", tech_name);
 }
 
 void EncyclopediaDetailPanel::SetPartType(const std::string& part_name) {
-    if (part_name == m_part_name)
+    if (part_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_part_name = part_name;
-    Refresh();
+    AddItem("ENC_SHIP_PART", part_name);
 }
 
 void EncyclopediaDetailPanel::SetHullType(const std::string& hull_name) {
-    if (hull_name == m_hull_name)
+    if (hull_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_hull_name = hull_name;
-    Refresh();
+    AddItem("ENC_SHIP_HULL", hull_name);
 }
 
 void EncyclopediaDetailPanel::SetBuildingType(const std::string& building_name) {
-    if (building_name == m_building_name)
+    if (building_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_building_name = building_name;
-    Refresh();
+    AddItem("ENC_BUILDING_TYPE", building_name);
 }
 
 void EncyclopediaDetailPanel::SetSpecial(const std::string& special_name) {
-    if (special_name == m_special_name)
+    if (special_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_special_name = special_name;
-    Refresh();
+    AddItem("ENC_SPECIAL", special_name);
 }
 
 void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
-    if (species_name == m_species_name)
+    if (species_name == m_items_it->second)
         return;
-    UnsetAll();
-    m_species_name = species_name;
-    Refresh();
+    AddItem("ENC_SPECIES", species_name);
 }
 
 void EncyclopediaDetailPanel::SetObject(int object_id) {
-    if (object_id == m_object_id)
+    int id = boost::lexical_cast<int>(m_items_it->second);
+    if (object_id == id)
         return;
-    UnsetAll();
-    m_object_id = object_id;
-    Refresh();
+    AddItem(UNIVERSE_OBJECT, boost::lexical_cast<std::string>(object_id));
+}
+
+void EncyclopediaDetailPanel::SetObject(const std::string& object_id) {
+    if (object_id == m_items_it->second)
+        return;
+    AddItem(UNIVERSE_OBJECT, object_id);
 }
 
 void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
-    if (empire_id == m_empire_id)
+    int id = boost::lexical_cast<int>(m_items_it->second);
+    if (empire_id == id)
         return;
-    UnsetAll();
-    m_empire_id = empire_id;
-    Refresh();
+    AddItem("ENC_EMPIRE", boost::lexical_cast<std::string>(empire_id));
+}
+
+void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
+    if (empire_id == m_items_it->second)
+        return;
+    AddItem("ENC_EMPIRE", empire_id);
 }
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
-    if (design_id == m_design_id)
+    int id = boost::lexical_cast<int>(m_items_it->second);
+    if (design_id == id)
         return;
-    UnsetAll();
-    m_design_id = design_id;
-    Refresh();
+    AddItem("ENC_SHIP_DESIGN", boost::lexical_cast<std::string>(design_id));
+}
+
+void EncyclopediaDetailPanel::SetDesign(const std::string& design_id) {
+    if (design_id == m_items_it->second)
+        return;
+    AddItem("ENC_SHIP_DESIGN", design_id);
 }
 
 void EncyclopediaDetailPanel::SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design) {
-    UnsetAll();
-    m_incomplete_design = incomplete_design;
-    Refresh();
+    if (m_items_it->first != INCOMPLETE_DESIGN) {
+        m_incomplete_design = incomplete_design;
+        AddItem(INCOMPLETE_DESIGN, EMPTY_STRING);
+    }
+}
+
+void EncyclopediaDetailPanel::SetIndex() {
+    AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
 }
 
 void EncyclopediaDetailPanel::SetItem(const Tech* tech) {
@@ -857,4 +910,32 @@ void EncyclopediaDetailPanel::SetItem(const Empire* empire) {
 
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design) {
     SetDesign(design ? design->ID() : ShipDesign::INVALID_DESIGN_ID);
+}
+
+void EncyclopediaDetailPanel::OnUp() {
+    if (m_items.size() > 0)
+    {
+        if (m_items_it->first == TextLinker::ENCYCLOPEDIA_TAG ||
+            m_items_it->first == INCOMPLETE_DESIGN            ||
+            m_items_it->first == UNIVERSE_OBJECT)
+        {
+            AddItem(TextLinker::ENCYCLOPEDIA_TAG, "ENC_INDEX");
+        } else {
+            AddItem(TextLinker::ENCYCLOPEDIA_TAG, m_items_it->first);
+        }
+    }
+}
+
+void EncyclopediaDetailPanel::OnBack() {
+    if (m_items_it != m_items.begin())
+        m_items_it--;
+    Refresh();
+}
+
+void EncyclopediaDetailPanel::OnNext() {
+    std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
+    end--;
+    if (m_items_it != end && m_items.size() > 0)
+        m_items_it++;
+    Refresh();
 }

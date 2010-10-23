@@ -797,7 +797,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx)
             m_build_selector->DisplayShipDesignSignal(design);
         }
     } else {
-            m_enc_detail_panel->UnsetAll();
+            m_enc_detail_panel->OnUp();
     }
     m_enc_detail_panel->Refresh();
 }
@@ -849,7 +849,7 @@ void BuildDesignatorWnd::Reset()
     HideAvailability(false, false); // hide unavailable items without populating the list
     ShowAvailability(true, false);  // show available items without populating the list
     m_build_selector->Refresh();
-    m_enc_detail_panel->UnsetAll();
+    m_enc_detail_panel->OnUp();
 }
 
 void BuildDesignatorWnd::Clear()

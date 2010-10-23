@@ -41,6 +41,11 @@ public:
        than being restricted to the client area of a CUIWnd */
     virtual GG::Pt  ClientUpperLeft() const;
 
+    void            AddItem (const std::string& type, const std::string& name); //adds a new item to m_items
+    void            PopItem ();
+    void            ClearItems ();
+    int             GetItemsSize () { return m_items.size(); }
+
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
@@ -55,42 +60,45 @@ public:
     void            SetSpecies(const std::string& species_name);
     void            SetItem(const Species* species);
     void            SetObject(int object_id);
+    void            SetObject(const std::string& object_id);
     void            SetItem(const UniverseObject* obj);
     void            SetEmpire(int empire_id);
+    void            SetEmpire(const std::string& empire_id);
     void            SetItem(const Empire* empire);
     void            SetDesign(int design_id);
+    void            SetDesign(const std::string& design_id);
     void            SetItem(const ShipDesign* design);
     void            SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design);
-    void            UnsetAll();
-
+    void            SetIndex();
+    
     void            Refresh();
+    void            OnUp();
+    void            OnBack();
+    void            OnNext();
     //@}
 
 private:
     void DoLayout();
-    bool NothingSet() const;
-
+    
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
 
-    std::string                         m_generic_text;
-    std::string                         m_tech_name;
-    std::string                         m_part_name;
-    std::string                         m_hull_name;
-    std::string                         m_building_name;
-    std::string                         m_special_name;
-    std::string                         m_species_name;
-    int                                 m_design_id;
-    int                                 m_object_id;
-    int                                 m_empire_id;
-    boost::weak_ptr<const ShipDesign>   m_incomplete_design;
+    static std::list<std::pair <std::string, std::string>>              m_items;               // stores all items which have been observed in the past
+                                                                                               // .first == item type; .second == item.name
+    static std::list<std::pair <std::string, std::string>>::iterator    m_items_it;            // stores actual position within m_items
+    boost::weak_ptr<const ShipDesign>                                   m_incomplete_design;
 
+    
     GG::TextControl*    m_name_text;        // name
     GG::TextControl*    m_cost_text;        // cost and time to build or research
     GG::TextControl*    m_summary_text;     // general purpose item
     GG::MultiEdit*      m_description_box;  // detailed and lengthy description
     GG::StaticGraphic*  m_icon;
     GG::StaticGraphic*  m_other_icon;
+    GG::Button*			m_up_button;
+    GG::Button*         m_back_button;
+    GG::Button*         m_next_button;
 };
+
 
 #endif

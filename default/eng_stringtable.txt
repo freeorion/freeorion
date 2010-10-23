@@ -78,6 +78,15 @@ Turn
 CHAT_WHISPER
 whisper
 
+UP
+Up
+
+NEXT
+Next
+
+BACK
+Back
+
 # used to generate names for new fleets when they are created
 NEW_FLEET_NAME
 New Fleet %1%
