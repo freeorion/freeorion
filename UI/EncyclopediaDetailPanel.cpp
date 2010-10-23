@@ -723,10 +723,10 @@ void EncyclopediaDetailPanel::Refresh() {
     if (!name.empty())
         m_name_text->SetText(name);
 
-    if (!specific_type.empty())
-        m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
-            % specific_type
-            % general_type));
+    m_summary_text->SetText(str(FlexibleFormat(UserString("ENC_DETAIL_TYPE_STR"))
+        % specific_type
+        % general_type));
+
     if (color != GG::CLR_ZERO)
         m_summary_text->SetColor(color);
 
