@@ -101,8 +101,8 @@ namespace {
     }
 }
 
-std::list <std::pair<std::string, std::string>>             EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string>>(0);
-std::list <std::pair<std::string, std::string>>::iterator   EncyclopediaDetailPanel::m_items_it = m_items.begin();
+std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
+std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::X w, GG::Y h) :
     CUIWnd("", GG::X1, GG::Y1, w - 1, h - 1, GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE),
@@ -618,8 +618,7 @@ void EncyclopediaDetailPanel::Refresh() {
 
     } else if (m_items_it->first == INCOMPLETE_DESIGN) {
         boost::shared_ptr<const ShipDesign> incomplete_design = m_incomplete_design.lock();
-        if (incomplete_design)
-        {
+        if (incomplete_design) {
             // incomplete design.  not yet in game universe; being created on design screen
             name = incomplete_design->Name();
 
@@ -630,27 +629,28 @@ void EncyclopediaDetailPanel::Refresh() {
             } else {
                 texture = ClientUI::HullTexture("");
             }
+
+            turns = incomplete_design->ProductionTime();
+            cost = incomplete_design->ProductionCost();
+            cost_units = UserString("ENC_PP");
+
+            detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+                % incomplete_design->Description()
+                % static_cast<int>(incomplete_design->SRWeapons().size())
+                % static_cast<int>(incomplete_design->LRWeapons().size())
+                % static_cast<int>(incomplete_design->FWeapons().size())
+                % static_cast<int>(incomplete_design->PDWeapons().size())
+                % incomplete_design->Structure()
+                % incomplete_design->Shields()
+                % incomplete_design->Detection()
+                % incomplete_design->BattleSpeed()
+                % incomplete_design->StarlaneSpeed()
+                % incomplete_design->Fuel()
+                % incomplete_design->ColonyCapacity()
+                % incomplete_design->Stealth());
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
-        turns = incomplete_design->ProductionTime();
-        cost = incomplete_design->ProductionCost();
-        cost_units = UserString("ENC_PP");
-
-        detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-            % incomplete_design->Description()
-            % static_cast<int>(incomplete_design->SRWeapons().size())
-            % static_cast<int>(incomplete_design->LRWeapons().size())
-            % static_cast<int>(incomplete_design->FWeapons().size())
-            % static_cast<int>(incomplete_design->PDWeapons().size())
-            % incomplete_design->Structure()
-            % incomplete_design->Shields()
-            % incomplete_design->Detection()
-            % incomplete_design->BattleSpeed()
-            % incomplete_design->StarlaneSpeed()
-            % incomplete_design->Fuel()
-            % incomplete_design->ColonyCapacity()
-            % incomplete_design->Stealth());
 
     } else if (m_items_it->first == UNIVERSE_OBJECT) {
         int id = boost::lexical_cast<int>(m_items_it->second);
@@ -746,10 +746,10 @@ void EncyclopediaDetailPanel::Refresh() {
 void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name) {
     // if the actual item is not the last one, all aubsequented items are deleted
     if (!m_items.empty()) {
-        std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
+        std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
         end--;
         if (m_items_it != end) {
-            std::list<std::pair <std::string, std::string>>::iterator i = m_items_it;
+            std::list<std::pair <std::string, std::string> >::iterator i = m_items_it;
             ++i;
             m_items.erase(i, m_items.end());
         }
@@ -764,9 +764,9 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
 }
 
 void EncyclopediaDetailPanel::PopItem() {
-    if (!m_items.empty())     {
+    if (!m_items.empty()) {
         m_items.pop_back();
-        if (m_items_it == m_items.end())
+        if (m_items_it == m_items.end() && m_items_it != m_items.begin())
             m_items_it--;
         Refresh();
     }
@@ -774,10 +774,11 @@ void EncyclopediaDetailPanel::PopItem() {
 
 void EncyclopediaDetailPanel::ClearItems() {
     m_items.clear();
+    m_items_it = m_items.end();
 }
 
 void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable) {
-    if (text == m_items_it->second)
+    if (m_items_it != m_items.end() && text == m_items_it->second)
         return;
     if (text == "ENC_INDEX")
         SetIndex();
@@ -786,84 +787,94 @@ void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_st
 }
 
 void EncyclopediaDetailPanel::SetTech(const std::string& tech_name) {
-    if (tech_name == m_items_it->second)
+    if (m_items_it != m_items.end() && tech_name == m_items_it->second)
         return;
     AddItem("ENC_TECH", tech_name);
 }
 
 void EncyclopediaDetailPanel::SetPartType(const std::string& part_name) {
-    if (part_name == m_items_it->second)
+    if (m_items_it != m_items.end() && part_name == m_items_it->second)
         return;
     AddItem("ENC_SHIP_PART", part_name);
 }
 
 void EncyclopediaDetailPanel::SetHullType(const std::string& hull_name) {
-    if (hull_name == m_items_it->second)
+    if (m_items_it != m_items.end() && hull_name == m_items_it->second)
         return;
     AddItem("ENC_SHIP_HULL", hull_name);
 }
 
 void EncyclopediaDetailPanel::SetBuildingType(const std::string& building_name) {
-    if (building_name == m_items_it->second)
+    if (m_items_it != m_items.end() && building_name == m_items_it->second)
         return;
     AddItem("ENC_BUILDING_TYPE", building_name);
 }
 
 void EncyclopediaDetailPanel::SetSpecial(const std::string& special_name) {
-    if (special_name == m_items_it->second)
+    if (m_items_it != m_items.end() && special_name == m_items_it->second)
         return;
     AddItem("ENC_SPECIAL", special_name);
 }
 
 void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
-    if (species_name == m_items_it->second)
+    if (m_items_it != m_items.end() && species_name == m_items_it->second)
         return;
     AddItem("ENC_SPECIES", species_name);
 }
 
 void EncyclopediaDetailPanel::SetObject(int object_id) {
-    int id = boost::lexical_cast<int>(m_items_it->second);
+    int id = UniverseObject::INVALID_OBJECT_ID;
+    if (m_items_it != m_items.end())
+        id = boost::lexical_cast<int>(m_items_it->second);
     if (object_id == id)
         return;
     AddItem(UNIVERSE_OBJECT, boost::lexical_cast<std::string>(object_id));
 }
 
 void EncyclopediaDetailPanel::SetObject(const std::string& object_id) {
-    if (object_id == m_items_it->second)
+    if (m_items_it != m_items.end() && object_id == m_items_it->second)
         return;
     AddItem(UNIVERSE_OBJECT, object_id);
 }
 
 void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
-    int id = boost::lexical_cast<int>(m_items_it->second);
+    int id = ALL_EMPIRES;
+    if (m_items_it != m_items.end())
+        id = boost::lexical_cast<int>(m_items_it->second);
     if (empire_id == id)
         return;
     AddItem("ENC_EMPIRE", boost::lexical_cast<std::string>(empire_id));
 }
 
 void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
-    if (empire_id == m_items_it->second)
+    if (m_items_it != m_items.end() && empire_id == m_items_it->second)
         return;
     AddItem("ENC_EMPIRE", empire_id);
 }
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
-    int id = boost::lexical_cast<int>(m_items_it->second);
+    int id = ShipDesign::INVALID_DESIGN_ID;
+    if (m_items_it != m_items.end())
+        id = boost::lexical_cast<int>(m_items_it->second);
     if (design_id == id)
         return;
     AddItem("ENC_SHIP_DESIGN", boost::lexical_cast<std::string>(design_id));
 }
 
 void EncyclopediaDetailPanel::SetDesign(const std::string& design_id) {
-    if (design_id == m_items_it->second)
+    if (m_items_it != m_items.end() && design_id == m_items_it->second)
         return;
     AddItem("ENC_SHIP_DESIGN", design_id);
 }
 
 void EncyclopediaDetailPanel::SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design) {
-    if (m_items_it->first != INCOMPLETE_DESIGN) {
-        m_incomplete_design = incomplete_design;
+    m_incomplete_design = incomplete_design;
+
+    if (m_items_it == m_items.end() ||
+        m_items_it->first != INCOMPLETE_DESIGN) {
         AddItem(INCOMPLETE_DESIGN, EMPTY_STRING);
+    } else {
+        Refresh();
     }
 }
 
@@ -929,7 +940,7 @@ void EncyclopediaDetailPanel::OnBack() {
 }
 
 void EncyclopediaDetailPanel::OnNext() {
-    std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
+    std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
     end--;
     if (m_items_it != end && !m_items.empty())
         m_items_it++;
