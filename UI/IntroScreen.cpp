@@ -49,7 +49,7 @@ namespace {
 class CreditsWnd : public GG::Wnd
 {
 public:
-    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co);
+    CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co);
     ~CreditsWnd();
 
     virtual void    Render();
@@ -68,7 +68,7 @@ private:
     boost::shared_ptr<GG::Font> m_font;
 };
 
-CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &credits,int cx, int cy, int cw, int ch,int co) :
+CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
     GG::Wnd(x, y, w, h, GG::ONTOP),
     m_credits(credits),
     m_cx(cx),
@@ -77,21 +77,21 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h,const XMLElement &cred
     m_ch(ch),
     m_co(co),
     m_start_time(GG::GUI::GetGUI()->Ticks()),
-    m_bRender(true),m_displayListID(0),
+    m_bRender(true),
+    m_displayListID(0),
     m_creditsHeight(0)
 {
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 }
 
 CreditsWnd::~CreditsWnd() {
-   if(m_displayListID != 0) {
-      glDeleteLists(m_displayListID, 1);
-   }
+    if (m_displayListID != 0)
+        glDeleteLists(m_displayListID, 1);
 }
 
 void CreditsWnd::StopRendering() {
-    m_bRender=false;
-    if(m_displayListID != 0) {
+    m_bRender = false;
+    if (m_displayListID != 0) {
         glDeleteLists(m_displayListID, 1);
         m_displayListID = 0;
     }
@@ -108,36 +108,30 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     glColor(GG::Clr(transparency, transparency, transparency, 255));
 
     std::string credit;
-    for(int i = 0; i<m_credits.NumChildren();i++) {
-        if(0==m_credits.Child(i).Tag().compare("GROUP"))
-        {
+    for (int i = 0; i < m_credits.NumChildren(); i++) {
+        if (0 == m_credits.Child(i).Tag().compare("GROUP")) {
             XMLElement group = m_credits.Child(i);
-            for(int j = 0; j<group.NumChildren();j++) {
-                if(0==group.Child(j).Tag().compare("PERSON"))
-                {
+            for (int j = 0; j < group.NumChildren(); j++) {
+                if (0 == group.Child(j).Tag().compare("PERSON")) {
                     XMLElement person = group.Child(j);
                     credit = "";
-                    if(person.ContainsAttribute("name"))
-                        credit+=person.Attribute("name");
-                    if(person.ContainsAttribute("nick") && person.Attribute("nick").length()>0)
-                    {
-                        credit+=" <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
-                        credit+=person.Attribute("nick");
-                        credit+=")</rgba>";
+                    if (person.ContainsAttribute("name"))
+                        credit += person.Attribute("name");
+                    if (person.ContainsAttribute("nick") && person.Attribute("nick").length() > 0) {
+                        credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
+                        credit += person.Attribute("nick");
+                        credit += ")</rgba>";
                     }
-                    if(person.ContainsAttribute("task") && person.Attribute("task").length()>0)
-                    {
-                        credit+=" - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
-                        credit+=person.Attribute("task");
-                        credit+="</rgba>";
+                    if (person.ContainsAttribute("task") && person.Attribute("task").length() > 0) {
+                        credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
+                        credit += person.Attribute("task");
+                        credit += "</rgba>";
                     }
-                    m_font->RenderText(GG::Pt(x1, y1+offset),
-                        GG::Pt(x2,y2),
-                        credit, format, 0);
-                    offset+=m_font->TextExtent(credit, format).y+2;
+                    m_font->RenderText(GG::Pt(x1, y1+offset), GG::Pt(x2, y2), credit, format, 0);
+                    offset += m_font->TextExtent(credit, format).y + 2;
                 }
             }
-            offset+=m_font->Lineskip()+2;
+            offset += m_font->Lineskip() + 2;
         }
     }
     //store complete height for self destruction
@@ -146,7 +140,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
 
 void CreditsWnd::Render()
 {
-    if(!m_bRender)
+    if (!m_bRender)
         return;
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     if (m_displayListID == 0) {
@@ -160,21 +154,18 @@ void CreditsWnd::Render()
     int passedTicks = GG::GUI::GetGUI()->Ticks() - m_start_time;
 
     //draw background
-    GG::FlatRectangle(ul,lr,GG::FloatClr(0.0,0.0,0.0,0.5),GG::CLR_ZERO,0);
+    GG::FlatRectangle(ul, lr, GG::FloatClr(0.0, 0.0, 0.0, 0.5), GG::CLR_ZERO,0);
 
-    glPushAttrib(GL_ALL_ATTRIB_BITS ); // ***SAVE***
-    glPushMatrix();                    // attributes and transformation matrix
+    glPushAttrib(GL_ALL_ATTRIB_BITS );
+    glPushMatrix();
 
     // define clip area
     glEnable(GL_SCISSOR_TEST);
     glScissor(Value(ul.x+m_cx), Value(GG::GUI::GetGUI()->AppHeight()- lr.y), m_cw, m_ch);
 
     // move credits
-    glTranslatef(
-        0,
-        m_co + passedTicks / -40.0f,
-        0
-        );
+    glTranslatef(0, m_co + passedTicks / -40.0f, 0);
+
     if (m_displayListID != 0) {
         // draw credits using prepared display list
         // !!! in order for the display list to be valid, the font object (m_font) may not be destroyed !!!
@@ -184,13 +175,12 @@ void CreditsWnd::Render()
         DrawCredits(ul.x+m_cx, ul.y+m_cy, ul.x+m_cx+m_cw, ul.y+m_cy+m_ch, 255);
     }
 
-    glPopMatrix();              // ***RESTORE***             
-    glPopAttrib();              // attributes and transformation matrix
+    glPopMatrix();
+    glPopAttrib();
 
     //check if we are done
-    if (m_creditsHeight + m_ch < m_co + passedTicks / 40.0) {
+    if (m_creditsHeight + m_ch < m_co + passedTicks / 40.0)
         StopRendering();
-    }
 }
 
 
@@ -387,8 +377,11 @@ void IntroScreen::OnCredits()
     GG::Y nUpperLine = ( 79 * GG::GUI::GetGUI()->AppHeight()) / 768;
     GG::Y nLowerLine = (692 * GG::GUI::GetGUI()->AppHeight()) / 768;
 
+    int credit_side_pad(30);
+
     m_credits_wnd = new CreditsWnd(GG::X0, nUpperLine, GG::GUI::GetGUI()->AppWidth(), nLowerLine-nUpperLine,
-                                   credits, 60, 0, 600,
+                                   credits,
+                                   credit_side_pad, 0, Value(m_menu->UpperLeft().x) - credit_side_pad,
                                    Value(nLowerLine-nUpperLine), Value((nLowerLine-nUpperLine))/2);
 
     m_splash->AttachChild(m_credits_wnd);
@@ -423,14 +416,14 @@ void IntroScreen::DoLayout()
     //size calculation consts and variables
     const GG::X MIN_BUTTON_WIDTH(160);
     const GG::Y MIN_BUTTON_HEIGHT(40);
-    const GG::X H_BUTTON_MARGIN(16); //horizontal empty space
-    const GG::Y V_BUTTON_MARGIN(16); //vertical empty space
-    GG::X button_width(0); //width of the buttons
-    GG::Y button_height(0); //height of the buttons
-    const GG::X H_MAINMENU_MARGIN(40); //horizontal empty space
-    const GG::Y V_MAINMENU_MARGIN(40); //vertical empty space
-    GG::X mainmenu_width(0);  //width of the mainmenu
-    GG::Y mainmenu_height(0); //height of the mainmenu
+    const GG::X H_BUTTON_MARGIN(16);    //horizontal empty space
+    const GG::Y V_BUTTON_MARGIN(16);    //vertical empty space
+    GG::X button_width(0);              //width of the buttons
+    GG::Y button_height(0);             //height of the buttons
+    const GG::X H_MAINMENU_MARGIN(40);  //horizontal empty space
+    const GG::Y V_MAINMENU_MARGIN(40);  //vertical empty space
+    GG::X mainmenu_width(0);            //width of the mainmenu
+    GG::Y mainmenu_height(0);           //height of the mainmenu
 
     //calculate necessary button width
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
