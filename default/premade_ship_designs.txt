@@ -5,7 +5,7 @@ ShipDesign
     hull = "SH_STANDARD"
     parts = "DT_OPTICAL_SCANNER"
     graphic = "misc/generic.png"
-    model = ""
+    model = "fighter"
 
 ShipDesign
     name = "SD_COLONY_SHIP"
@@ -20,7 +20,7 @@ ShipDesign
         "CO_COLONY_POD"
     ]
     graphic = "misc/generic.png"
-    model = ""
+    model = "seed"
 
 ShipDesign
     name = "SD_COLONY_BASE"
@@ -29,7 +29,7 @@ ShipDesign
     hull = "SH_COLONY_BASE"
     parts = "CO_COLONY_POD"
     graphic = "misc/generic.png"
-    model = ""
+    model = "seed"
 
 ShipDesign
     name = "SD_MARK1"
@@ -42,7 +42,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark1.png"
-    model = ""
+    model = "mark1"
 
 ShipDesign
     name = "SD_MARK2"
@@ -55,7 +55,7 @@ ShipDesign
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/generic.png"
-    model = ""
+    model = "guardian"
 
 ShipDesign
     name = "SD_MARK3"
@@ -69,7 +69,7 @@ ShipDesign
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
-    model = ""
+    model = "mark1"
 
 ShipDesign
     name = "SD_MARK4"
@@ -85,7 +85,7 @@ ShipDesign
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
-    model = ""
+    model = "mark1"
 
 ShipDesign
     name = "SD_DRAGON_TOOTH"
@@ -100,4 +100,4 @@ ShipDesign
         "FU_ZERO_FUEL"
     ]
     graphic = "misc/generic.png"
-    model = ""
+    model = "mark1"
