@@ -823,10 +823,14 @@ void EncyclopediaDetailPanel::SetSpecies(const std::string& species_name) {
 }
 
 void EncyclopediaDetailPanel::SetObject(int object_id) {
-    int id = UniverseObject::INVALID_OBJECT_ID;
-    if (m_items_it != m_items.end())
-        id = boost::lexical_cast<int>(m_items_it->second);
-    if (object_id == id)
+    int current_item_id = UniverseObject::INVALID_OBJECT_ID;
+    if (m_items_it != m_items.end()) {
+        try {
+            current_item_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch (...) {
+        }
+    }
+    if (object_id == current_item_id)
         return;
     AddItem(UNIVERSE_OBJECT, boost::lexical_cast<std::string>(object_id));
 }
@@ -838,10 +842,14 @@ void EncyclopediaDetailPanel::SetObject(const std::string& object_id) {
 }
 
 void EncyclopediaDetailPanel::SetEmpire(int empire_id) {
-    int id = ALL_EMPIRES;
-    if (m_items_it != m_items.end())
-        id = boost::lexical_cast<int>(m_items_it->second);
-    if (empire_id == id)
+    int current_item_id = ALL_EMPIRES;
+    if (m_items_it != m_items.end()) {
+        try {
+            current_item_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch (...) {
+        }
+    }
+    if (empire_id == current_item_id)
         return;
     AddItem("ENC_EMPIRE", boost::lexical_cast<std::string>(empire_id));
 }
@@ -853,10 +861,13 @@ void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
 }
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
-    int id = ShipDesign::INVALID_DESIGN_ID;
-    if (m_items_it != m_items.end())
-        id = boost::lexical_cast<int>(m_items_it->second);
-    if (design_id == id)
+    int current_item_id = ShipDesign::INVALID_DESIGN_ID;
+    if (m_items_it != m_items.end()) {
+        try {
+            current_item_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch (...) {
+        }
+    }    if (design_id == current_item_id)
         return;
     AddItem("ENC_SHIP_DESIGN", boost::lexical_cast<std::string>(design_id));
 }

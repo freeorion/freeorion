@@ -654,18 +654,34 @@ std::vector<GG::X> BuildDesignatorWnd::BuildSelector::ColWidths()
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections)
 {
-    if (selections.size() == 1) {
-        GG::ListBox::iterator row = *selections.begin();
-        BuildType build_type = m_build_types[row];
-        if (build_type == BT_BUILDING) {
-            const BuildingType* building_type = GetBuildingType((*row)->DragDropDataType());
-            assert(building_type);
-            DisplayBuildingTypeSignal(building_type);
-        } else if (build_type == BT_SHIP) {
-            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>((*row)->DragDropDataType()));
-            assert(design);
-            DisplayShipDesignSignal(design);
+    if (selections.size() != 1)
+        return;
+    GG::ListBox::iterator row = *selections.begin();
+    BuildType build_type = m_build_types[row];
+    const std::string& dddt = (*row)->DragDropDataType();
+
+    if (build_type == BT_BUILDING) {
+        const BuildingType* building_type = GetBuildingType(dddt);
+        if (!building_type) {
+            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to get building type: " << dddt;
+            return;
         }
+        DisplayBuildingTypeSignal(building_type);
+
+    } else if (build_type == BT_SHIP) {
+        int design_id = ShipDesign::INVALID_DESIGN_ID;
+        try {
+            design_id = boost::lexical_cast<int>(dddt);
+        } catch (...) {
+            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to cast row drag drop data type (" << dddt << ") to design id integer";
+            return;
+        }
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design) {
+            Logger().errorStream() << "BuildDesignatorWnd::BuildSelector::BuildItemSelected unable to find design with id " << design_id;
+            return;
+        }
+        DisplayShipDesignSignal(design);
     }
 }
 
