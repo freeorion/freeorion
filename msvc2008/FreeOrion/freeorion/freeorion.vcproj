@@ -811,6 +811,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\UI\PagedGeometry\MersenneTwister.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\UI\PagedGeometry\PagedGeometry.cpp"
 					>
 				</File>
@@ -824,6 +828,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\UI\PagedGeometry\PropertyMaps.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\UI\PagedGeometry\RandomTable.h"
 					>
 				</File>
 				<File

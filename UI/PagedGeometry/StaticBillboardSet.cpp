@@ -75,11 +75,23 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 		
 		//Load vertex shader to align billboards to face the camera (if not loaded already)
 		if (++selfInstances == 1){
+
+			String shaderLanguage;
+			if (Root::getSingleton().getRenderSystem()->getName() == "Direct3D9 Rendering Subsystem")
+				shaderLanguage = "hlsl";
+			else if(Root::getSingleton().getRenderSystem()->getName() == "OpenGL Rendering Subsystem")
+				shaderLanguage = "glsl";
+			else
+				shaderLanguage = "cg";
+
 			//First shader, simple camera-alignment
 			HighLevelGpuProgramPtr vertexShader;
 			vertexShader = HighLevelGpuProgramManager::getSingleton().getByName("Sprite_vp");
 			if (vertexShader.isNull()){
-				String vertexProg = 
+				String vertexProg;
+				if(!shaderLanguage.compare("hlsl") || !shaderLanguage.compare("cg"))
+				{
+					vertexProg =
 					"void Sprite_vp(	\n"
 					"	float4 position : POSITION,	\n"
 					"	float3 normal   : NORMAL,	\n"
@@ -109,13 +121,34 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 					
 					//Fog
 					"	oFog = oPosition.z; \n"
-					"}"; 
-
-				String shaderLanguage;
-				if (Root::getSingleton().getRenderSystem()->getName() == "Direct3D9 Rendering Subsystem")
-					shaderLanguage = "hlsl";
+					"}";
+				}
 				else
-					shaderLanguage = "cg";
+				{
+					// Must be GLSL
+					vertexProg =
+					"uniform float uScroll; \n"
+					"uniform float vScroll; \n"
+					"uniform vec4  preRotatedQuad[4]; \n"
+
+					"void main() { \n"
+					//Face the camera
+					"	vec4 vCenter = vec4( gl_Vertex.x, gl_Vertex.y, gl_Vertex.z, 1.0 ); \n"
+					"	vec4 vScale = vec4( gl_Normal.x, gl_Normal.y, gl_Normal.x , 1.0 ); \n"
+					"	gl_Position = gl_ModelViewProjectionMatrix * (vCenter + (preRotatedQuad[int(gl_Normal.z)] * vScale) ); \n"
+
+					//Color
+					"	gl_FrontColor = gl_Color; \n"
+
+					//UV Scroll
+					"	gl_TexCoord[0] = gl_MultiTexCoord0; \n"
+					"	gl_TexCoord[0].x += uScroll; \n"
+					"	gl_TexCoord[0].y += vScroll; \n"
+
+					//Fog
+					"	gl_FogFragCoord = gl_Position.z; \n"
+					"}";
+				}
 
 				vertexShader = HighLevelGpuProgramManager::getSingleton()
 					.createProgram("Sprite_vp",
@@ -124,19 +157,28 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 				vertexShader->setSource(vertexProg);
 
 				if (shaderLanguage == "hlsl")
+				{
 					vertexShader->setParameter("target", "vs_1_1");
-				else
+					vertexShader->setParameter("entry_point", "Sprite_vp");
+				}
+				else if(shaderLanguage == "cg")
+				{
 					vertexShader->setParameter("profiles", "vs_1_1 arbvp1");
+					vertexShader->setParameter("entry_point", "Sprite_vp");
+				}
+				// GLSL can only have one entry point "main".
 
-				vertexShader->setParameter("entry_point", "Sprite_vp");
 				vertexShader->load();
 			}
-			
+
 			//Second shader, camera alignment and distance based fading
 			HighLevelGpuProgramPtr vertexShader2;
 			vertexShader2 = HighLevelGpuProgramManager::getSingleton().getByName("SpriteFade_vp");
 			if (vertexShader2.isNull()){
-				String vertexProg2 = 
+				String vertexProg2;
+				if(!shaderLanguage.compare("hlsl") || !shaderLanguage.compare("cg"))
+				{
+					vertexProg2 =
 					"void SpriteFade_vp(	\n"
 					"	float4 position : POSITION,	\n"
 					"	float3 normal   : NORMAL,	\n"
@@ -160,13 +202,13 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 					"	float4 vCenter = float4( position.x, position.y, position.z, 1.0f );	\n"
 					"	float4 vScale = float4( normal.x, normal.y, normal.x, 1.0f );	\n"
 					"	oPosition = mul( worldViewProj, vCenter + (preRotatedQuad[normal.z] * vScale) );  \n"
-					
+
 					"	oColor.rgb = color.rgb;   \n"
 
 					//Fade out in the distance
 					"	float dist = distance(camPos.xz, position.xz);	\n"
 					"	oColor.a = (invisibleDist - dist) / fadeGap;   \n"
-					
+
 					//UV scroll
 					"	oUv = uv;	\n"
 					"	oUv.x += uScroll; \n"
@@ -174,14 +216,41 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 
 					//Fog
 					"	oFog = oPosition.z; \n"
-					"}"; 
-
-				String shaderLanguage;
-				if (Root::getSingleton().getRenderSystem()->getName() == "Direct3D9 Rendering Subsystem")
-					shaderLanguage = "hlsl";
+					"}";
+				}
 				else
-					shaderLanguage = "cg";
+				{
+					// Must be GLSL
+					vertexProg2 =
+					"uniform vec3  camPos; \n"
+					"uniform float fadeGap; \n"
+					"uniform float invisibleDist; \n"
+					"uniform float uScroll; \n"
+					"uniform float vScroll; \n"
+					"uniform vec4  preRotatedQuad[4]; \n"
 
+					"void main() { \n"
+					//Face the camera
+					"	vec4 vCenter = vec4( gl_Vertex.x, gl_Vertex.y, gl_Vertex.z, 1.0 ); \n"
+					"	vec4 vScale = vec4( gl_Normal.x, gl_Normal.y, gl_Normal.x , 1.0 ); \n"
+					"	gl_Position = gl_ModelViewProjectionMatrix * (vCenter + (preRotatedQuad[int(gl_Normal.z)] * vScale) ); \n"
+
+					"	gl_FrontColor.xyz = gl_Color.xyz; \n"
+
+					//Fade out in the distance
+					"	vec4 position = gl_Vertex; \n"
+					"	float dist = distance(camPos.xz, position.xz); \n"
+					"	gl_FrontColor.w = (invisibleDist - dist) / fadeGap; \n"
+
+					//UV scroll
+					"	gl_TexCoord[0] = gl_MultiTexCoord0; \n"
+					"	gl_TexCoord[0].x += uScroll; \n"
+					"	gl_TexCoord[0].y += vScroll; \n"
+
+					//Fog
+					"	gl_FogFragCoord = gl_Position.z; \n"
+					"}";
+				}
 				vertexShader2 = HighLevelGpuProgramManager::getSingleton()
 					.createProgram("SpriteFade_vp",
 					ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME,
@@ -189,11 +258,17 @@ StaticBillboardSet::StaticBillboardSet(SceneManager *mgr, SceneNode *rootSceneNo
 				vertexShader2->setSource(vertexProg2);
 
 				if (shaderLanguage == "hlsl")
+				{
 					vertexShader2->setParameter("target", "vs_1_1");
-				else
+					vertexShader2->setParameter("entry_point", "SpriteFade_vp");
+				}
+				else if(shaderLanguage == "cg")
+				{
 					vertexShader2->setParameter("profiles", "vs_1_1 arbvp1");
+					vertexShader2->setParameter("entry_point", "SpriteFade_vp");
+				}
+				// GLSL can only have one entry point "main".
 
-				vertexShader2->setParameter("entry_point", "SpriteFade_vp");
 				vertexShader2->load();
 			}
 
@@ -434,8 +509,6 @@ void StaticBillboardSet::build()
 		
 		//Create an entity for the mesh
 		entity = sceneMgr->createEntity(entityName, mesh->getName());
-                const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
-                entity->setVisibilityFlags(REGULAR_OBJECTS_MASK);
 		entity->setCastShadows(false);
 
 		//Apply texture
@@ -563,6 +636,10 @@ MaterialPtr StaticBillboardSet::getFadeMaterial(Real visibleDist, Real invisible
 		//Otherwise clone the material
 		fadeMaterial = materialPtr->clone(getUniqueID("ImpostorFade"));
 
+		bool isglsl = false;
+		if(Root::getSingleton().getRenderSystem()->getName() == "OpenGL Rendering Subsystem")
+			isglsl = true;
+
 		//And apply the fade shader
 		for (unsigned short t = 0; t < fadeMaterial->getNumTechniques(); ++t){
 			Technique *tech = fadeMaterial->getTechnique(t);
@@ -572,7 +649,9 @@ MaterialPtr StaticBillboardSet::getFadeMaterial(Real visibleDist, Real invisible
 				//Setup vertex program
 				pass->setVertexProgram("SpriteFade_vp");
 				GpuProgramParametersSharedPtr params = pass->getVertexProgramParameters();
-				params->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
+
+				//glsl can use the built in gl_ModelViewProjectionMatrix
+				if(!isglsl) params->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
 				params->setNamedAutoConstant("uScroll", GpuProgramParameters::ACT_CUSTOM);
 				params->setNamedAutoConstant("vScroll", GpuProgramParameters::ACT_CUSTOM);
 				params->setNamedAutoConstant("preRotatedQuad[0]", GpuProgramParameters::ACT_CUSTOM);
@@ -610,7 +689,11 @@ void StaticBillboardSet::updateAll(const Vector3 &cameraDirection)
 		Vector3 vUp = forward.crossProduct(vRight);
 		vRight.normalise();
 		vUp.normalise();
-		
+
+		bool isglsl = false;
+		if(Root::getSingleton().getRenderSystem()->getName() == "OpenGL Rendering Subsystem")
+			isglsl = true;
+
 		//Even if camera is upside down, the billboards should remain upright
 		if (vUp.y < 0) vUp *= -1;
 
@@ -648,7 +731,9 @@ void StaticBillboardSet::updateAll(const Vector3 &cameraDirection)
 			Pass *p = mat->getTechnique(0)->getPass(0);
 			if(!p->hasVertexProgram()){
 				p->setVertexProgram("Sprite_vp");
-				p->getVertexProgramParameters()->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
+
+				//glsl can use the built in gl_ModelViewProjectionMatrix
+				if(!isglsl)	p->getVertexProgramParameters()->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
 				p->getVertexProgramParameters()->setNamedAutoConstant("uScroll", GpuProgramParameters::ACT_CUSTOM);
 				p->getVertexProgramParameters()->setNamedAutoConstant("vScroll", GpuProgramParameters::ACT_CUSTOM);
 				p->getVertexProgramParameters()->setNamedAutoConstant("preRotatedQuad[0]", GpuProgramParameters::ACT_CUSTOM);

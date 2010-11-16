@@ -9,6 +9,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 -------------------------------------------------------------------------------------*/
 
 #include "PropertyMaps.h"
+#include "PagedGeometry.h"
 
 #include <OgreRoot.h>
 #include <OgrePrerequisites.h>
@@ -126,6 +127,12 @@ float DensityMap::_getDensityAt_Unfiltered(float x, float z, const TRect<Real> &
 {
 	assert(pixels);
 
+	// Early out if the coordinates are outside map bounds.
+	if(x < mapBounds.left || x >= mapBounds.right || z < mapBounds.top || z >= mapBounds.bottom)
+	{
+		return 0.0f;
+	}
+
 	uint32 mapWidth = (uint32)pixels->getWidth();
 	uint32 mapHeight = (uint32)pixels->getHeight();
 	float boundsWidth = mapBounds.width();
@@ -137,8 +144,6 @@ float DensityMap::_getDensityAt_Unfiltered(float x, float z, const TRect<Real> &
 
 	uint32 xindex = mapWidth * (x - mapBounds.left) / boundsWidth;
 	uint32 zindex = mapHeight * (z - mapBounds.top) / boundsHeight;
-	if (xindex < 0 || zindex < 0 || xindex >= mapWidth || zindex >= mapHeight)
-		return 0.0f;
 
 	uint8 *data = (uint8*)pixels->data;
 	float val = data[mapWidth * zindex + xindex] / 255.0f;
@@ -151,6 +156,12 @@ float DensityMap::_getDensityAt_Unfiltered(float x, float z, const TRect<Real> &
 float DensityMap::_getDensityAt_Bilinear(float x, float z, const TRect<Real> &mapBounds)
 {
 	assert(pixels);
+
+	// Early out if the coordinates are outside map bounds.
+	if(x < mapBounds.left || x >= mapBounds.right || z < mapBounds.top || z >= mapBounds.bottom)
+	{
+		return 0.0f;
+	}
 
 	uint32 mapWidth = (uint32)pixels->getWidth();
 	uint32 mapHeight = (uint32)pixels->getHeight();
@@ -216,7 +227,7 @@ ColorMap *ColorMap::load(TexturePtr texture, MapChannel channel)
 		m = i->second;
 	else
 		m = new ColorMap(texture, channel);
-	
+
 	++(m->refCount);
 	return m;
 }
@@ -314,6 +325,12 @@ uint32 ColorMap::_getColorAt(float x, float z, const TRect<Real> &mapBounds)
 {
 	assert(pixels);
 
+	// Early out if the coordinates are outside map bounds.
+	if(x < mapBounds.left || x >= mapBounds.right || z < mapBounds.top || z >= mapBounds.bottom)
+	{
+		return 0xFFFFFFFF;
+	}
+
 	uint32 mapWidth = (uint32)pixels->getWidth();
 	uint32 mapHeight = (uint32)pixels->getHeight();
 	float boundsWidth = mapBounds.width();
@@ -321,8 +338,6 @@ uint32 ColorMap::_getColorAt(float x, float z, const TRect<Real> &mapBounds)
 
 	uint32 xindex = mapWidth * (x - mapBounds.left) / boundsWidth;
 	uint32 zindex = mapHeight * (z - mapBounds.top) / boundsHeight;
-	if (xindex < 0 || zindex < 0 || xindex >= mapWidth || zindex >= mapHeight)
-		return 0xFFFFFFFF;
 
 	uint32 *data = (uint32*)pixels->data;
 	return data[mapWidth * zindex + xindex];
@@ -356,6 +371,12 @@ uint32 ColorMap::_getColorAt_Bilinear(float x, float z, const TRect<Real> &mapBo
 {
 	assert(pixels);
 
+	// Early out if the coordinates are outside map bounds.
+	if(x < mapBounds.left || x >= mapBounds.right || z < mapBounds.top || z >= mapBounds.bottom)
+	{
+		return 0xFFFFFFFF;
+	}
+
 	uint32 mapWidth = (uint32)pixels->getWidth();
 	uint32 mapHeight = (uint32)pixels->getHeight();
 	float boundsWidth = mapBounds.width();
@@ -366,8 +387,8 @@ uint32 ColorMap::_getColorAt_Bilinear(float x, float z, const TRect<Real> &mapBo
 
 	uint32 xIndex = xIndexFloat;
 	uint32 zIndex = zIndexFloat;
-	if (xIndex < 0 || zIndex < 0 || xIndex >= mapWidth-1 || zIndex >= mapHeight-1)
-		return 0.0f;
+	if (xIndex < 0 || zIndex < 0 || xIndex > mapWidth-1 || zIndex > mapHeight-1)
+		return 0xFFFFFFFF;
 
 	float xRatio = xIndexFloat - xIndex;
 	float xRatioInv = 1 - xRatio;

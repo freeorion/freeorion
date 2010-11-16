@@ -3,9 +3,9 @@ Copyright (c) 2006 John Judnich
 
 This software is provided 'as-is', without any express or implied warranty. In no event will the authors be held liable for any damages arising from the use of this software.
 Permission is granted to anyone to use this software for any purpose, including commercial applications, and to alter it and redistribute it freely, subject to the following restrictions:
-    1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
-    2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
-    3. This notice may not be removed or altered from any source distribution.
+	1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
+	2. Altered source versions must be plainly marked as such, and must not be misrepresented as being the original software.
+	3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------------*/
 
 //PagedGeometry.h
@@ -25,10 +25,11 @@ using namespace std;
 namespace Forests {
 
 //-------------------------------------------------------------------------------------
-PagedGeometry::PagedGeometry(Camera* cam, const Real pageSize)
+PagedGeometry::PagedGeometry(Camera* cam, const Real pageSize, Ogre::RenderQueueGroupID queue) : mRenderQueue(queue)
 {
 	//Setup camera, scene manager, and scene node
-	if (cam){
+	if (cam)
+	{
 		sceneCam = cam;
 		sceneMgr = sceneCam->getSceneManager();
 		oldCamPos = sceneCam->getDerivedPosition();
@@ -63,6 +64,8 @@ PagedGeometry::PagedGeometry(Camera* cam, const Real pageSize)
 	//Misc.
 	pageLoader = NULL;
 	geometryAllowedVisible = true;
+	tempdir=""; // empty for current working directory
+	shadersEnabled = true; // enable shaders by default
 }
 
 PagedGeometry::~PagedGeometry()
@@ -77,12 +80,17 @@ PagedGeometry::~PagedGeometry()
 	removeDetailLevels();
 }
 
+void PagedGeometry::setTempDir(Ogre::String dir)
+{
+   tempdir = dir;
+}
+
 void PagedGeometry::setPageLoader(PageLoader *loader)
 {
 	pageLoader = loader;
 }
 
-void PagedGeometry::setCamera(const Camera *cam)
+void PagedGeometry::setCamera(Camera *cam)
 {
 	if (cam == NULL){
 		//Simply set camera to null
@@ -255,8 +263,13 @@ void PagedGeometry::reloadGeometryPage(const Vector3 &point)
 	if (!pageLoader)
 		return;
 
+#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+	point = _convertToLocal(point);
+#endif
+
 	std::list<GeometryPageManager *>::iterator it;
-	for (it = managerList.begin(); it != managerList.end(); ++it){
+	for (it = managerList.begin(); it != managerList.end(); ++it)
+	{
 		GeometryPageManager *mgr = *it;
 		mgr->reloadGeometryPage(
 #ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
@@ -274,7 +287,8 @@ void PagedGeometry::reloadGeometryPages(const Ogre::Vector3 &center, Real radius
 		return;
 
 	std::list<GeometryPageManager *>::iterator it;
-	for (it = managerList.begin(); it != managerList.end(); ++it){
+	for (it = managerList.begin(); it != managerList.end(); ++it)
+	{
 		GeometryPageManager *mgr = *it;
 		mgr->reloadGeometryPages(
 #ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
@@ -381,15 +395,20 @@ float PagedGeometry::getCustomParam(string paramName, float defaultParamValue) c
 		return defaultParamValue;
 }
 
+Ogre::RenderQueueGroupID PagedGeometry::getRenderQueue() const
+{
+	return mRenderQueue;
+}
+
 //-------------------------------------------------------------------------------------
 
 GeometryPageManager::GeometryPageManager(PagedGeometry *mainGeom)
 : mainGeom(mainGeom)
-	, geomGrid(NULL)
+	, cacheTimer(0) // Reset the cache timer
 	, scrollBuffer(NULL)
+	, geomGrid(NULL)
 	, geomGridX(0)
 	, geomGridZ(0)
-	, cacheTimer(0) // Reset the cache timer
 {
 	//Use default cache speeds
 	setCacheSpeed();
@@ -712,6 +731,7 @@ void GeometryPageManager::reloadGeometryPages(const Vector3 &center, Real radius
 	if (z2 < 0) z2 = 0; else if (z2 > geomGridZ-1) z2 = geomGridZ-1;
 
 	//Scan all the grid blocks in the region
+	Real radiusSq = radius * radius;
 	for (int x = x1; x <= x2; ++x) {
 		for (int z = z1; z <= z2; ++z) {
 			GeometryPage *page = _getGridPage(x, z);
@@ -1025,6 +1045,8 @@ GeometryPage::GeometryPage()
 	_inactiveTime = 0; _xIndex = _zIndex = 0; 
 	_centerPoint = Ogre::Vector3::ZERO; 
 	_userData = NULL;
+	mHasQueryFlag = false;
+	mQueryFlag = 0;
 }
 
 void GeometryPage::addEntityToBoundingBox(Ogre::Entity *ent, const Ogre::Vector3 &position, const Ogre::Quaternion &rotation, const Ogre::Vector3 &scale)

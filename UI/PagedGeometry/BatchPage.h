@@ -47,6 +47,7 @@ and low-res batched trees farther away.
 class BatchPage: public GeometryPage
 {
 public:
+	inline BatchPage() { geom = NULL; }
 	virtual void init(PagedGeometry *geom, const Ogre::Any &data);
 	~BatchPage();
 	
@@ -74,6 +75,7 @@ protected :
 	static unsigned long refCount;
 	static unsigned long GUID;
 	size_t mLODLevel;
+	PagedGeometry *geom;
 
 private:
 	static inline Ogre::String getUniqueID(const Ogre::String &prefix)

@@ -15,7 +15,6 @@ Permission is granted to anyone to use this software for any purpose, including 
 
 #include "ImpostorPage.h"
 #include "StaticBillboardSet.h"
-#include "../../util/Directories.h"
 
 #include <OgreRoot.h>
 #include <OgreTimer.h>
@@ -32,6 +31,7 @@ namespace Forests {
 //-------------------------------------------------------------------------------------
 
 uint32 ImpostorPage::selfInstances = 0;
+
 int ImpostorPage::impostorResolution = 128;
 ColourValue ImpostorPage::impostorBackgroundColor = ColourValue(0.0f, 0.3f, 0.0f, 0.0f);
 BillboardOrigin ImpostorPage::impostorPivot = BBO_CENTER;
@@ -52,12 +52,6 @@ void ImpostorPage::init(PagedGeometry *geom, const Ogre::Any &data)
 		geom->getSceneNode()->createChildSceneNode("ImpostorPage::cameraNode");
         ResourceGroupManager::getSingleton().createResourceGroup("Impostors");
 	}
-
-        if (const int *queue = any_cast<int>(&data)){
-		renderQueueGroup = *queue;
-        } else {
-		renderQueueGroup = RENDER_QUEUE_6 + 1;
-        }
 }
 
 ImpostorPage::~ImpostorPage()
@@ -90,7 +84,7 @@ void ImpostorPage::setRegion(Ogre::Real left, Ogre::Real top, Ogre::Real right, 
 void ImpostorPage::addEntity(Entity *ent, const Vector3 &position, const Quaternion &rotation, const Vector3 &scale, const Ogre::ColourValue &color)
 {
 	//Get the impostor batch that this impostor will be added to
-	ImpostorBatch *ibatch = ImpostorBatch::getBatch(this, ent, renderQueueGroup);
+	ImpostorBatch *ibatch = ImpostorBatch::getBatch(this, ent);
 
 	//Then add the impostor to the batch
 	ibatch->addBillboard(position, rotation, scale, color);
@@ -179,7 +173,7 @@ void ImpostorPage::update()
 
 void ImpostorPage::regenerate(Entity *ent)
 {
-	ImpostorTexture *tex = ImpostorTexture::getTexture(ent);
+	ImpostorTexture *tex = ImpostorTexture::getTexture(NULL, ent);
 	if (tex != NULL)
 		tex->regenerate();
 }
@@ -200,10 +194,10 @@ void ImpostorPage::setImpostorPivot(BillboardOrigin origin)
 
 unsigned long ImpostorBatch::GUID = 0;
 
-ImpostorBatch::ImpostorBatch(ImpostorPage *group, Entity *entity, Ogre::uint8 renderQueueGroup)
+ImpostorBatch::ImpostorBatch(ImpostorPage *group, Entity *entity)
 {
 	//Render impostor texture for this entity
-	tex = ImpostorTexture::getTexture(group, entity, renderQueueGroup);
+	tex = ImpostorTexture::getTexture(group, entity);
 	
 	//Create billboard set
 	bbset = new StaticBillboardSet(group->sceneMgr, group->geom->getSceneNode());
@@ -230,7 +224,7 @@ ImpostorBatch::~ImpostorBatch()
 
 //Returns a pointer to an ImpostorBatch for the specified entity in the specified
 //ImpostorPage. If one does not already exist, one will automatically be created.
-ImpostorBatch *ImpostorBatch::getBatch(ImpostorPage *group, Entity *entity, Ogre::uint8 renderQueueGroup)
+ImpostorBatch *ImpostorBatch::getBatch(ImpostorPage *group, Entity *entity)
 {
 	//Search for an existing impostor batch for this entity
 	String entityKey = ImpostorBatch::generateEntityKey(entity);
@@ -243,7 +237,7 @@ ImpostorBatch *ImpostorBatch::getBatch(ImpostorPage *group, Entity *entity, Ogre
 		return iter->second;
 	} else {
 		//Otherwise, create a new batch
-		ImpostorBatch *batch = new ImpostorBatch(group, entity, renderQueueGroup);
+		ImpostorBatch *batch = new ImpostorBatch(group, entity);
 
 		//Add it to the impostorBatches list
 		typedef std::pair<String, ImpostorBatch *> ListItem;
@@ -339,13 +333,13 @@ unsigned long ImpostorTexture::GUID = 0;
 
 //Do not use this constructor yourself - instead, call getTexture()
 //to get/create an ImpostorTexture for an Entity.
-ImpostorTexture::ImpostorTexture(ImpostorPage *group, Entity *entity, Ogre::uint8 renderQueueGroupID)
-: renderQueueGroup(renderQueueGroupID),
-  loader(0)
+ImpostorTexture::ImpostorTexture(ImpostorPage *group, Entity *entity)
+: loader(0)
 {
 	//Store scene manager and entity
 	ImpostorTexture::sceneMgr = group->sceneMgr;
 	ImpostorTexture::entity = entity;
+	ImpostorTexture::group = group;
 
 	//Add self to list of ImpostorTexture's
 	entityKey = ImpostorBatch::generateEntityKey(entity);
@@ -532,10 +526,10 @@ void ImpostorTexture::renderTextures(bool force)
 	Ogre::SceneManager::SpecialCaseRenderQueueMode OldSpecialCaseRenderQueueMode = sceneMgr->getSpecialCaseRenderQueueMode();
 	//Only render the entity
 	sceneMgr->setSpecialCaseRenderQueueMode(Ogre::SceneManager::SCRQM_INCLUDE); 
-	sceneMgr->addSpecialCaseRenderQueue(renderQueueGroup);
+	sceneMgr->addSpecialCaseRenderQueue(group->geom->getRenderQueue() + 1);
 
 	uint8 oldRenderQueueGroup = entity->getRenderQueueGroup();
-	entity->setRenderQueueGroup(renderQueueGroup);
+	entity->setRenderQueueGroup(group->geom->getRenderQueue() + 1);
 	bool oldVisible = entity->getVisible();
 	entity->setVisible(true);
 	float oldMaxDistance = entity->getRenderingDistance();
@@ -555,7 +549,9 @@ void ImpostorTexture::renderTextures(bool force)
 	for (i = 0; i < sizeof(key); ++i)
 		key[i] = (key[i] % 26) + 'A';
 
-	ResourceGroupManager::getSingleton().addResourceLocation(GetUserDir().string(), "FileSystem", "BinFolder");
+	String tempdir = this->group->geom->getTempdir();
+	ResourceGroupManager::getSingleton().addResourceLocation(tempdir, "FileSystem", "BinFolder");
+
 	String fileNamePNG = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".png";
 	String fileNameDDS = "Impostor." + String(key, sizeof(key)) + '.' + StringConverter::toString(textureSize) + ".dds";
 
@@ -600,10 +596,10 @@ void ImpostorTexture::renderTextures(bool force)
 				renderTarget->update();
 			}
 		}
-		
+	
 #ifdef IMPOSTOR_FILE_SAVE
-		//Save RTT to file
-		renderTarget->writeContentsToFile((GetUserDir() / fileNamePNG).string());
+		//Save RTT to file with respecting the temp dir
+		renderTarget->writeContentsToFile(tempdir + fileNamePNG);
 
 		//Load the render into the appropriate texture view
 		texture = TextureManager::getSingleton().load(fileNamePNG, "BinFolder", TEX_TYPE_2D, MIP_UNLIMITED);
@@ -616,7 +612,7 @@ void ImpostorTexture::renderTextures(bool force)
 	entity->setVisible(oldVisible);
 	entity->setRenderQueueGroup(oldRenderQueueGroup);
 	entity->setRenderingDistance(oldMaxDistance);
-	sceneMgr->removeSpecialCaseRenderQueue(renderQueueGroup);
+	sceneMgr->removeSpecialCaseRenderQueue(group->geom->getRenderQueue() + 1);
 	// Restore original state
 	sceneMgr->setSpecialCaseRenderQueueMode(OldSpecialCaseRenderQueueMode); 
 
@@ -677,7 +673,7 @@ void ImpostorTexture::removeTexture(ImpostorTexture* Texture)
 	// no need to anything if it was not found, chances are that it was already deleted
 }
 
-ImpostorTexture *ImpostorTexture::getTexture(ImpostorPage *group, Entity *entity, Ogre::uint8 renderQueueGroup)
+ImpostorTexture *ImpostorTexture::getTexture(ImpostorPage *group, Entity *entity)
 {
 	//Search for an existing impostor texture for the given entity
 	String entityKey = ImpostorBatch::generateEntityKey(entity);
@@ -689,25 +685,13 @@ ImpostorTexture *ImpostorTexture::getTexture(ImpostorPage *group, Entity *entity
 		//Return it
 		return iter->second;		
 	} else {
-		assert(group);
-		//Otherwise, return a new texture
-		return (new ImpostorTexture(group, entity, renderQueueGroup));
-	}
-}
-
-ImpostorTexture *ImpostorTexture::getTexture(Entity *entity)
-{
-	//Search for an existing impostor texture for the given entity
-	String entityKey = ImpostorBatch::generateEntityKey(entity);
-	std::map<String, ImpostorTexture *>::iterator iter;
-	iter = selfList.find(entityKey);
-	
-	//If found..
-	if (iter != selfList.end()){
-		//Return it
-		return iter->second;		
-	} else {
-		return NULL;
+		if (group){
+			//Otherwise, return a new texture
+			return (new ImpostorTexture(group, entity));
+		} else {
+			//But if group is null, return null
+			return NULL;
+		}
 	}
 }
 }

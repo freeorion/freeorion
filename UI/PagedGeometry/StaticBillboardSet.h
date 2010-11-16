@@ -49,7 +49,7 @@ public:
 /** Different methods used to render billboards. This can be supplied as a parameter
 to the StaticBillboardSet constructor to manually select how you want billboards
 rendered (although in almost all cases BB_METHOD_ACCELERATED is the best choice).*/
-enum BillboardMethod {
+typedef enum BillboardMethod {
 	/** This mode accelerates the performance of billboards by using vertex shaders
 	to keep billboards facing the camera. Note: If the computer's hardware is not
 	capable	of vertex shaders, it will automatically fall back to BB_METHOD_COMPATIBLE
@@ -60,7 +60,7 @@ enum BillboardMethod {
 	billboards to the camera. This is more compatible with old video cards,
 	although it can result in poor performance with high amounts of billboards.*/
 	BB_METHOD_COMPATIBLE = 0,
-};
+} BillboardMethod;
 
 /**
 \brief A faster alternative to Ogre's built-in BillboardSet class.

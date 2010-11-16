@@ -23,6 +23,11 @@ Permission is granted to anyone to use this software for any purpose, including 
 #include <OgreTextureManager.h>
 #include <OgreRenderTexture.h>
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_LINUX
+// linux memory fix
+#include <memory>
+#endif
+
 //The number of angle increments around the yaw axis to render impostor "snapshots" of trees
 #define IMPOSTOR_YAW_ANGLES 8
 
@@ -47,10 +52,10 @@ class ImpostorBatch;
 class ImpostorTexture;
 
 //Blend modes used by ImpostorPage::setBlendMode()
-enum ImpostorBlendMode {
+typedef enum ImpostorBlendMode {
 	ALPHA_REJECT_IMPOSTOR,
 	ALPHA_BLEND_IMPOSTOR
-};
+} ImpostorBlendMode;
 
 //-------------------------------------------------------------------------------------
 /**
@@ -199,9 +204,7 @@ protected:
 
 	Ogre::Vector3 center;
 	int aveCount;
-
-	Ogre::uint8 renderQueueGroup;
-
+	
 	std::map<Ogre::String, ImpostorBatch *> impostorBatches;
 };
 
@@ -213,7 +216,7 @@ protected:
 class ImpostorBatch
 {
 public:
-	static ImpostorBatch *getBatch(ImpostorPage *group, Ogre::Entity *entity, Ogre::uint8 renderQueueGroup);
+	static ImpostorBatch *getBatch(ImpostorPage *group, Ogre::Entity *entity);
 	~ImpostorBatch();
 
 	inline void build()
@@ -243,7 +246,7 @@ public:
 	static Ogre::String generateEntityKey(Ogre::Entity *entity);
 
 protected:
-	ImpostorBatch(ImpostorPage *group, Ogre::Entity *entity, Ogre::uint8 renderQueueGroup);
+	ImpostorBatch(ImpostorPage *group, Ogre::Entity *entity);
 
 	ImpostorTexture *tex;
 	StaticBillboardSet *bbset;
@@ -297,12 +300,7 @@ public:
 	/** Returns a pointer to an ImpostorTexture for the specified entity. If one does not
 	already exist, one will automatically be created.
 	*/
-	static ImpostorTexture *getTexture(ImpostorPage *group, Ogre::Entity *entity, Ogre::uint8 renderQueueGroup);
-	
-	/** Returns a pointer to an ImpostorTexture for the specified entity, or NUL if one
-	does not already exist.
-	*/
-	static ImpostorTexture *getTexture(Ogre::Entity *entity);
+	static ImpostorTexture *getTexture(ImpostorPage *group, Ogre::Entity *entity);
 	
 	/** remove created texture, note that all of the ImposterTextures
 	must be deleted at once, because there is no track if a texture is still
@@ -316,7 +314,7 @@ public:
 	~ImpostorTexture();
 	
 protected:
-	ImpostorTexture(ImpostorPage *group, Ogre::Entity *entity, Ogre::uint8 renderQueueGroupID);
+	ImpostorTexture(ImpostorPage *group, Ogre::Entity *entity);
 
 	void renderTextures(bool force);	// Renders the impostor texture grid
 	void updateMaterials();				// Updates the materials to use the latest rendered impostor texture grid
@@ -327,6 +325,7 @@ protected:
 	Ogre::SceneManager *sceneMgr;
 	Ogre::Entity *entity;
 	Ogre::String entityKey;
+	ImpostorPage *group;
 
 	Ogre::MaterialPtr material[IMPOSTOR_PITCH_ANGLES][IMPOSTOR_YAW_ANGLES];
 	Ogre::TexturePtr texture;
@@ -335,8 +334,6 @@ protected:
 	Ogre::AxisAlignedBox boundingBox;
 	float entityDiameter, entityRadius;
 	Ogre::Vector3 entityCenter;
-
-        Ogre::uint8 renderQueueGroup;
 
 	static unsigned long GUID;
 	static inline Ogre::String getUniqueID(const Ogre::String &prefix)

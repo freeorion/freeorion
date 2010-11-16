@@ -14,6 +14,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 //-------------------------------------------------------------------------------------
 
 #include "BatchedGeometry.h"
+#include "PagedGeometry.h"
 
 #include <OgreRoot.h>
 #include <OgreRenderSystem.h>
@@ -45,13 +46,13 @@ namespace Forests {
 //-------------------------------------------------------------------------------------
 
 BatchedGeometry::BatchedGeometry(SceneManager *mgr, SceneNode *rootSceneNode)
- :	sceneMgr(mgr),
-	sceneNode(NULL),
-	parentSceneNode(rootSceneNode),
+ :	withinFarDistance(0),
 	minDistanceSquared(0),
-	withinFarDistance(0),
+	sceneNode(NULL),
+	sceneMgr(mgr),
+	built(false),
 	boundsUndefined(true),
-	built(false)
+	parentSceneNode(rootSceneNode)
 {
 	clear();
 }
@@ -127,7 +128,7 @@ uint32 CountUsedVertices(IndexData *id, std::map<uint32, uint32> &ibmap)
 
 				for (i = 0; i < id->indexCount; i++) {
 					uint16 index = data[i];
-					if (ibmap.find(index) == ibmap.end()) ibmap[index] = ibmap.size();
+					if (ibmap.find(index) == ibmap.end()) ibmap[index] = (uint32)(ibmap.size());
 				}
 				count = (uint32)ibmap.size();
 				id->indexBuffer->unlock();
@@ -141,7 +142,7 @@ uint32 CountUsedVertices(IndexData *id, std::map<uint32, uint32> &ibmap)
 
 				for (i = 0; i < id->indexCount; i++) {
 					uint32 index = data[i];
-					if (ibmap.find(index) == ibmap.end()) ibmap[index] = ibmap.size();
+					if (ibmap.find(index) == ibmap.end()) ibmap[index] = (uint32)(ibmap.size());
 				}
 				count = (uint32)ibmap.size();
 				id->indexBuffer->unlock();
@@ -297,9 +298,6 @@ void BatchedGeometry::build()
 		for (SubBatchMap::iterator i = subBatchMap.begin(); i != subBatchMap.end(); ++i){
 			i->second->build();
 		}
-
-		const Ogre::uint32 REGULAR_OBJECTS_MASK = 1 << 0;
-		setVisibilityFlags(REGULAR_OBJECTS_MASK);
 
 		//Attach the batch to the scene node
 		sceneNode->attachObject(this);

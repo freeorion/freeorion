@@ -84,7 +84,7 @@ void WindBatchPage::_updateShaders()
 				break;
 		}
 
-		//Compile the CG shader script based on various material / fade options
+		//Compile the shader script based on various material / fade options
 		StringUtil::StrStreamType tmpName;
 		tmpName << "BatchPage_";
 		if (fadeEnabled)
@@ -103,7 +103,6 @@ void WindBatchPage::_updateShaders()
 						case VET_FLOAT2: uvType = "2"; break;
 						case VET_FLOAT3: uvType = "3"; break;
 						case VET_FLOAT4: uvType = "4"; break;
-						default: break;
 				}
 				tmpName << uvType << '_';
 			}
@@ -113,151 +112,317 @@ void WindBatchPage::_updateShaders()
 
 		const String vertexProgName = tmpName.str();
 
+		String shaderLanguage;
+		if (Root::getSingleton().getRenderSystem()->getName() == "Direct3D9 Rendering Subsystem")
+			shaderLanguage = "hlsl";
+		else if(Root::getSingleton().getRenderSystem()->getName() == "OpenGL Rendering Subsystem")
+			shaderLanguage = "glsl";
+		else
+			shaderLanguage = "cg";
+
 		//If the shader hasn't been created yet, create it
-		if (HighLevelGpuProgramManager::getSingleton().getByName(vertexProgName).isNull()){
-			String vertexProgSource =
-				"void main( \n"
-				"	float4 iPosition : POSITION, \n"
-				"	float3 normal	 : NORMAL,	\n"
-				"	out float4 oPosition : POSITION, \n";
+		if (HighLevelGpuProgramManager::getSingleton().getByName(vertexProgName).isNull())
+		{
+			Pass *pass = mat->getTechnique(0)->getPass(0);
+			String vertexProgSource;
 
-			if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL) vertexProgSource += 
-				"	float4 iColor	 : COLOR, \n";
-
-			int texNum = 0;
-
-			unsigned short texCoordCount = 0;
-			for (unsigned short j = 0; j < subBatch->vertexData->vertexDeclaration->getElementCount(); ++j) 
+			if(!shaderLanguage.compare("hlsl") || !shaderLanguage.compare("cg"))
 			{
-				const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(j);
-				if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
-				{
-					++ texCoordCount;
-				}
-			}
 
-			for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i) {
-				const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
-				if (el->getSemantic() == VES_TEXTURE_COORDINATES) {
-					if (el->getIndex() == texCoordCount - 2)
+				vertexProgSource =
+					"void main( \n"
+					"	float4 iPosition : POSITION, \n"
+					"	float3 normal	 : NORMAL, \n"
+					"	out float4 oPosition : POSITION, \n";
+
+				if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
+				{
+					vertexProgSource += 
+						"	float4 iColor	 : COLOR, \n";
+				}
+
+				int texNum = 0;
+
+				unsigned short texCoordCount = 0;
+				for (unsigned short j = 0; j < subBatch->vertexData->vertexDeclaration->getElementCount(); ++j) 
+				{
+					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(j);
+					if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
 					{
-						vertexProgSource += 
-							"	float4 params 	: TEXCOORD" + StringConverter::toString(texCoordCount-2) + ",	\n";
+						++ texCoordCount;
 					}
-					else
+				}
+
+				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+				{
+					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
+					if (el->getSemantic() == VES_TEXTURE_COORDINATES)
 					{
-						if (el->getIndex() == texCoordCount - 1)
+						if (el->getIndex() == texCoordCount - 2)
 						{
 							vertexProgSource += 
-								"	float4 originPos 	: TEXCOORD" + StringConverter::toString(texCoordCount-1) + ",	\n";
+								"	float4 params 	: TEXCOORD" + StringConverter::toString(texCoordCount-2) + ", \n";
 						}
 						else
 						{
-							String uvType = "";
-							switch (el->getType()) {
-								case VET_FLOAT1: uvType = "float"; break;
-								case VET_FLOAT2: uvType = "float2"; break;
-								case VET_FLOAT3: uvType = "float3"; break;
-								case VET_FLOAT4: uvType = "float4"; break;
-								default: break;
+							if (el->getIndex() == texCoordCount - 1)
+							{
+								vertexProgSource += 
+									"	float4 originPos 	: TEXCOORD" + StringConverter::toString(texCoordCount-1) + ", \n";
 							}
+							else
+							{
+								String uvType = "";
+								switch (el->getType())
+								{
+									case VET_FLOAT1: uvType = "float"; break;
+									case VET_FLOAT2: uvType = "float2"; break;
+									case VET_FLOAT3: uvType = "float3"; break;
+									case VET_FLOAT4: uvType = "float4"; break;
+								}
 
-
-							vertexProgSource += 
-								"	" + uvType + " iUV" + StringConverter::toString(texNum) + "			: TEXCOORD" + StringConverter::toString(texNum) + ",	\n"
-								"	out " + uvType + " oUV" + StringConverter::toString(texNum) + "		: TEXCOORD" + StringConverter::toString(texNum) + ",	\n";
+								vertexProgSource += 
+									"	" + uvType + " iUV" + StringConverter::toString(texNum) + "			: TEXCOORD" + StringConverter::toString(texNum) + ", \n"
+									"	out " + uvType + " oUV" + StringConverter::toString(texNum) + "		: TEXCOORD" + StringConverter::toString(texNum) + ", \n";
+							}
+							++texNum;
 						}
-						++texNum;
 					}
 				}
-			}
 
-			vertexProgSource +=
-				"	out float oFog : FOG,	\n"
-				"	out float4 oColor : COLOR, \n";
-
-			if (lightingEnabled) vertexProgSource +=
-				"	uniform float4 objSpaceLight,	\n"
-				"	uniform float4 lightDiffuse,	\n"
-				"	uniform float4 lightAmbient,	\n";
-
-			if (fadeEnabled) vertexProgSource +=
-				"	uniform float3 camPos, \n";
-
-			vertexProgSource +=
-				"	uniform float4x4 worldViewProj,\n"
-				"	uniform float fadeGap, \n"
-				"	uniform float invisibleDist, \n"
-				"	uniform float time) \n "
-				"{	\n";
-
-			if (lightingEnabled) {
-				//Perform lighting calculations (no specular)
 				vertexProgSource +=
-				"	float3 light = normalize(objSpaceLight.xyz - (iPosition.xyz * objSpaceLight.w)); \n"
-				"	float diffuseFactor = max(dot(normal, light), 0); \n";
-				if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL) 
-					vertexProgSource += "   oColor = (lightAmbient + diffuseFactor * lightDiffuse) * iColor; \n";
-				else
-					vertexProgSource += "   oColor = (lightAmbient + diffuseFactor * lightDiffuse); \n";
-			} else {
-				if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL) 
-					vertexProgSource += "   oColor = iColor; \n";
-				else
-					vertexProgSource += "	oColor = float4(1, 1, 1, 1); \n";
-			}
+					"	out float oFog : FOG, \n"
+					"	out float4 oColor : COLOR, \n";
 
-			if (fadeEnabled) vertexProgSource +=
-				//Fade out in the distance
-				"	float dist = distance(camPos.xz, iPosition.xz);	\n"
-				"	oColor.a *= (invisibleDist - dist) / fadeGap;   \n";
+				if (lightingEnabled)
+				{
+					 vertexProgSource +=
+						"	uniform float4 objSpaceLight, \n"
+						"	uniform float4 lightDiffuse, \n"
+						"	uniform float4 lightAmbient, \n";
+				}
 
-			for (unsigned short i = 0; i < texCoordCount - 2; ++i) {
+				if (fadeEnabled)
+				{
+					vertexProgSource +=
+						"	uniform float3 camPos, \n"
+						"	uniform float fadeGap, \n"
+						"	uniform float invisibleDist, \n";
+				}
+
+				vertexProgSource +=
+					"	uniform float4x4 worldViewProj,\n"
+					"	uniform float time) \n "
+					"{	\n";
+
+				if (lightingEnabled)
+				{
+					//Perform lighting calculations (no specular)
+					vertexProgSource +=
+						"	float3 light = normalize(objSpaceLight.xyz - (iPosition.xyz * objSpaceLight.w)); \n"
+						"	float diffuseFactor = max(dot(normal, light), 0); \n";
+
+					if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
+					{
+						vertexProgSource +=
+							"	oColor = (lightAmbient + diffuseFactor * lightDiffuse) * iColor; \n";
+					}
+					else
+					{
+						vertexProgSource +=
+							"	oColor = (lightAmbient + diffuseFactor * lightDiffuse); \n";
+					}
+				}
+				else
+				{
+					if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
+					{
+						vertexProgSource +=
+							"	oColor = iColor; \n";
+					}
+					else
+					{
+						vertexProgSource +=
+							"	oColor = float4(1, 1, 1, 1); \n";
+					}
+				}
+
+				if (fadeEnabled)
+				{
+					//Fade out in the distance
+					 vertexProgSource +=
+						"	float dist = distance(camPos.xz, iPosition.xz); \n"
+						"	oColor.a *= (invisibleDist - dist) / fadeGap; \n";
+				}
+
+				for (unsigned short i = 0; i < texCoordCount - 2; ++i)
+				{
 					vertexProgSource += 
-					"	oUV" + StringConverter::toString(i) + " = iUV" + StringConverter::toString(i) + ";	\n";
+						"	oUV" + StringConverter::toString(i) + " = iUV" + StringConverter::toString(i) + "; \n";
+				}
 
+				vertexProgSource +=
+					"	float radiusCoeff = params.x; \n"
+					"	float heightCoeff = params.y; \n"
+					"	float factorX = params.z; \n"
+					"	float factorY = params.w; \n"
+					"	float4 tmpPos = iPosition; \n"
+
+					/* 
+					2 different methods are used to for the sin calculation :
+					- the first one gives a better effect but at the cost of a few fps because of the 2 sines
+					- the second one uses less ressources but is a bit less realistic
+
+						a sin approximation could be use to optimize performances
+					*/
+	#if 1
+					"	tmpPos.y += sin(time + originPos.z + tmpPos.y + tmpPos.x) * radiusCoeff * radiusCoeff * factorY; \n"
+					"	tmpPos.x += sin(time + originPos.z ) * heightCoeff * heightCoeff * factorX ; \n"
+	#else
+					"	float sinval = sin(time + originPos.z ); \n"
+					"	tmpPos.y += sinval * radiusCoeff * radiusCoeff * factorY; \n"
+					"	tmpPos.x += sinval * heightCoeff * heightCoeff * factorX ; \n"
+	#endif
+					"	oPosition = mul(worldViewProj, tmpPos); \n"
+					"	oFog = oPosition.z; \n"
+					"}";
 			}
 
-			vertexProgSource +=
-				"	float radiusCoeff = params.x; \n"
-				"	float heightCoeff = params.y; \n"
-				"	float factorX = params.z; \n"
-				"	float factorY = params.w; \n"
-				"	float4 tmpPos = iPosition; \n"
-				
-				/* 
+			if(!shaderLanguage.compare("glsl"))
+			{
+				unsigned short texCoordCount = 0;
+				for (unsigned short j = 0; j < subBatch->vertexData->vertexDeclaration->getElementCount(); ++j) 
+				{
+					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(j);
+					if (el->getSemantic() == VES_TEXTURE_COORDINATES) 
+					{
+						++ texCoordCount;
+					}
+				}
+
+				if (lightingEnabled)
+				{
+					 vertexProgSource +=
+						"uniform vec4 objSpaceLight; \n"
+						"uniform vec4 lightDiffuse; \n"
+						"uniform vec4 lightAmbient; \n";
+				}
+
+				if (fadeEnabled)
+				{
+					 vertexProgSource +=
+						"uniform vec3 camPos; \n"
+						"uniform float fadeGap; \n"
+						"uniform float invisibleDist; \n";
+				}
+
+				vertexProgSource +=
+					"uniform float time; \n"
+					"void main() \n"
+					"{ \n";
+
+				int texNum = 0;
+
+				for (unsigned short i = 0; i < subBatch->vertexData->vertexDeclaration->getElementCount(); ++i)
+				{
+					const VertexElement *el = subBatch->vertexData->vertexDeclaration->getElement(i);
+					if (el->getSemantic() == VES_TEXTURE_COORDINATES)
+					{
+						if (el->getIndex() == texCoordCount - 2)
+						{
+							vertexProgSource += 
+								"	vec4 params = gl_MultiTexCoord" + StringConverter::toString(texCoordCount-2) + "; \n";
+						}
+						else
+						{
+							if (el->getIndex() == texCoordCount - 1)
+							{
+								vertexProgSource += 
+									"	vec4 originPos = gl_MultiTexCoord" + StringConverter::toString(texCoordCount-1) + "; \n";
+							}
+							else
+							{
+								vertexProgSource += 
+								"	gl_TexCoord[" + StringConverter::toString(texNum) + "]	= gl_MultiTexCoord" + StringConverter::toString(texNum) + "; \n";
+							}
+							++texNum;
+						}
+					}
+				}
+
+				if (lightingEnabled)
+				{
+					//Perform lighting calculations (no specular)
+					vertexProgSource +=
+						"	vec3 light = normalize(objSpaceLight.xyz - (gl_Vertex.xyz * objSpaceLight.w)); \n"
+						"	float diffuseFactor = max(dot(gl_Normal.xyz, light), 0.0); \n";
+
+					if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
+					{
+						vertexProgSource +=
+							"	gl_FrontColor = (lightAmbient + diffuseFactor * lightDiffuse) * gl_Color; \n";
+					}
+					else
+					{
+						vertexProgSource +=
+							"	gl_FrontColor = (lightAmbient + diffuseFactor * lightDiffuse); \n";
+					}
+				}
+				else
+				{
+					if (subBatch->vertexData->vertexDeclaration->findElementBySemantic(VES_DIFFUSE) != NULL)
+					{
+						vertexProgSource += "	gl_FrontColor = gl_Color; \n";
+					}
+					else
+					{
+						vertexProgSource += "	gl_FrontColor = vec4(1.0, 1.0, 1.0, 1.0); \n";
+					}
+				}
+
+				if (fadeEnabled)
+				{
+					//Fade out in the distance
+					vertexProgSource +=
+						"	float dist = distance(camPos.xz, gl_Vertex.xz);	\n"
+						"	gl_FrontColor.a *= (invisibleDist - dist) / fadeGap; \n";
+				}
+
+				vertexProgSource +=
+					"	float radiusCoeff = params.x; \n"
+					"	float heightCoeff = params.y; \n"
+					"	float factorX = params.z; \n"
+					"	float factorY = params.w; \n"
+					"	vec4 tmpPos = gl_Vertex; \n"
+					
+					/* 
 					2 different methods are used to for the sin calculation :
-				- the first one gives a better effect but at the cost of a few fps because of the 2 sines
-				- the second one uses less ressources but is a bit less realistic
+					- the first one gives a better effect but at the cost of a few fps because of the 2 sines
+					- the second one uses less ressources but is a bit less realistic
 
 					a sin approximation could be use to optimize performances
-				*/
-#if 1
-				"	tmpPos.y += sin(time + originPos.z + tmpPos.y + tmpPos.x) * radiusCoeff * radiusCoeff * factorY; \n"
-				"	tmpPos.x += sin(time + originPos.z ) * heightCoeff * heightCoeff * factorX ;\n"
-#else
-				
-				"  float sinval = sin(time + originPos.z ); \n"
-				"	tmpPos.y += sinval * radiusCoeff * radiusCoeff * factorY; \n"
-				"	tmpPos.x += sinval * heightCoeff * heightCoeff * factorX ;\n"
-#endif
-				"	oPosition = mul(worldViewProj, tmpPos);  \n"
-				"	oFog = oPosition.z; \n"
-				"}"; 
+					*/
+	#if 1
+					"	tmpPos.y += sin(time + originPos.z + tmpPos.y + tmpPos.x) * radiusCoeff * radiusCoeff * factorY; \n"
+					"	tmpPos.x += sin(time + originPos.z ) * heightCoeff * heightCoeff * factorX; \n"
+	#else
+	 				
+					"	float sinval = sin(time + originPos.z ); \n"
+					"	tmpPos.y += sinval * radiusCoeff * radiusCoeff * factorY; \n"
+					"	tmpPos.x += sinval * heightCoeff * heightCoeff * factorX; \n"
+	#endif
+					"	gl_Position = gl_ModelViewProjectionMatrix * tmpPos; \n"
+					"	gl_FogFragCoord = gl_Position.z; \n"
+					"}";
+			}
 
-			// test for shader source	
+			// test for shader source
 			//std::ofstream shaderOutput;
 			//shaderOutput.open((vertexProgName+std::string(".cg")).c_str());
 			//shaderOutput << vertexProgSource;
 			//shaderOutput.close();
 
 			// end test for shader source
-
-			String shaderLanguage;
-			if (Root::getSingleton().getRenderSystem()->getName() == "Direct3D9 Rendering Subsystem")
-				shaderLanguage = "hlsl";
-			else
-				shaderLanguage = "cg";
 
 			HighLevelGpuProgramPtr vertexShader = HighLevelGpuProgramManager::getSingleton().createProgram(
 				vertexProgName,
@@ -267,11 +432,17 @@ void WindBatchPage::_updateShaders()
 			vertexShader->setSource(vertexProgSource);
 
 			if (shaderLanguage == "hlsl")
+			{
 				vertexShader->setParameter("target", "vs_1_1");
-			else
+				vertexShader->setParameter("entry_point", "main");
+			}
+			else if(shaderLanguage == "cg")
+			{
 				vertexShader->setParameter("profiles", "vs_1_1 arbvp1");
+				vertexShader->setParameter("entry_point", "main");
+			}
+			// GLSL can only have one entry point "main".
 
-			vertexShader->setParameter("entry_point", "main");
 			vertexShader->load();
 		}
 
@@ -312,7 +483,11 @@ void WindBatchPage::_updateShaders()
 
 						params->setNamedConstantFromTime("time", 1);
 
-						params->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
+						if(shaderLanguage.compare("glsl"))
+						{
+							//glsl can use the built in gl_ModelViewProjectionMatrix
+							params->setNamedAutoConstant("worldViewProj", GpuProgramParameters::ACT_WORLDVIEWPROJ_MATRIX);
+						}
 
 						if (fadeEnabled){
 							params->setNamedAutoConstant("camPos", GpuProgramParameters::ACT_CAMERA_POSITION_OBJECT_SPACE);
