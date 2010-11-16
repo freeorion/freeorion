@@ -166,7 +166,7 @@ private:
     Ogre::PlaneBoundedVolumeListSceneQuery* m_volume_scene_query;
 
     CombatCamera* m_camera;
-    const Ogre::Camera* m_ogre_camera;
+    Ogre::Camera* m_ogre_camera;
 
     CombatData* m_combat_data;
     CombatData* m_new_combat_data;

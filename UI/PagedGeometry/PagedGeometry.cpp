@@ -263,9 +263,9 @@ void PagedGeometry::reloadGeometryPage(const Vector3 &point)
 	if (!pageLoader)
 		return;
 
-#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
-	point = _convertToLocal(point);
-#endif
+//#ifdef PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+//	point = _convertToLocal(point);
+//#endif
 
 	std::list<GeometryPageManager *>::iterator it;
 	for (it = managerList.begin(); it != managerList.end(); ++it)

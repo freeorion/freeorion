@@ -105,7 +105,7 @@ namespace {
     // HACK! The currently-used star cores only cover part of the texture.
     // Here, we adjust for this, so that the edge of the star as it appears
     // onscreen is actually what we use for the star radius below.
-    const Ogre::Real STAR_RADIUS_ADJUSTMENT_FACTOR = 0.45;
+    const Ogre::Real STAR_RADIUS_ADJUSTMENT_FACTOR = 0.45f;
 
     std::string PlanetNodeMaterial(PlanetType type)
     {
@@ -350,7 +350,7 @@ namespace {
 
     void SetupPagedGeometry(Forests::PagedGeometry*& paged_geometry,
                             Forests::TreeLoader3D*& paged_geometry_loader,
-                            const Ogre::Camera* camera)
+                            Ogre::Camera* camera)
     {
         if (!paged_geometry) {
             paged_geometry = new Forests::PagedGeometry;
@@ -1147,7 +1147,7 @@ void CombatWnd::RenderLensFlare()
             GG::Pt center(Width() / 2, Height() / 2);
             GG::Pt star_to_center = center - star_pt;
 
-            const Ogre::Real QUADRATIC_ATTENUATION_FACTOR = 5.0e-6;
+            const Ogre::Real QUADRATIC_ATTENUATION_FACTOR = 0.000006f;  // rewrote 5.0e-6 as float -Geoff
             Ogre::Real attenuation =
                 QUADRATIC_ATTENUATION_FACTOR * m_camera->GetRealPosition().squaredLength();
 
@@ -1579,7 +1579,7 @@ bool CombatWnd::frameStarted(const Ogre::FrameEvent& event)
     if (m_paged_geometry)
         m_paged_geometry->update();
 
-    const Ogre::Real MIN_ENGINE_UPDATE_TIME = 0.01;
+    const Ogre::Real MIN_ENGINE_UPDATE_TIME = 0.01f;
 
     if (m_combat_data &&
         m_combat_data->m_combat_turn_number &&
@@ -1814,7 +1814,7 @@ void CombatWnd::SelectObjectsInVolume(bool toggle_selected_items)
         // This if statement ensures that the center of the object is in the
         // volume, so we don't pick parts of objects' bounding rects that don't
         // actually contain any of the mesh itself.
-        if (volume.intersects(Ogre::Sphere((*it)->getWorldBoundingBox().getCenter(), 0.001))) {
+        if (volume.intersects(Ogre::Sphere((*it)->getWorldBoundingBox().getCenter(), 0.001f))) {
             std::map<Ogre::MovableObject*, SelectedObject>::iterator object_it = m_current_selections.find(*it);
             if (object_it != m_current_selections.end())
                 m_current_selections.erase(object_it);

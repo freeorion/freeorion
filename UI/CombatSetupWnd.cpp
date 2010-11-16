@@ -312,15 +312,15 @@ namespace {
             unit_circle_vertices.resize(SLICES);
             for (std::size_t i = 0; i < unit_circle_vertices.size(); ++i) {
                 double theta = i * INCR;
-                unit_circle_vertices[i].x = std::cos(theta);
-                unit_circle_vertices[i].y = std::sin(theta);
-                unit_circle_vertices[i].z = 0.0;
+                unit_circle_vertices[i].x = static_cast<Ogre::Real>(std::cos(theta));
+                unit_circle_vertices[i].y = static_cast<Ogre::Real>(std::sin(theta));
+                unit_circle_vertices[i].z = static_cast<Ogre::Real>(0.0f);
             }
         }
 
         const std::string UNIT_CIRCLE_MESH_NAME = std::string(allow ? "allow" : "deny") + "_unit_circle_mesh";
         const std::string RING_MESH_NAME = "deny_ring_mesh";
-        const Ogre::ColourValue COLOR(allow ? 0.0 : 1.0, allow ? 1.0 : 0.0, 0.0, 0.5);
+        const Ogre::ColourValue COLOR(allow ? 0.0f : 1.0f, allow ? 1.0f : 0.0f, 0.0f, 0.5f);
 
         std::string base_name =
             boost::lexical_cast<std::string>(group_index) + "_" +

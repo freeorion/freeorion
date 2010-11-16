@@ -8,7 +8,7 @@ Permission is granted to anyone to use this software for any purpose, including 
 	3. This notice may not be removed or altered from any source distribution.
 -------------------------------------------------------------------------------------*/
 
-#include "PagedGeometryConfig.h"
+//#include "PagedGeometryConfig.h"
 
 //PagedGeometry.h
 //Main header file for the PagedGeometry engine.
@@ -122,7 +122,7 @@ class PageLoader;
 typedef Ogre::TRect<Ogre::Real> TBounds;
 
 //Enable PagedGeometry::setCoordinateSystem()
-//#define PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
+#define PAGEDGEOMETRY_ALTERNATE_COORDSYSTEM
 
 //Enable per-entity user-defined data and callbacks
 //#define PAGEDGEOMETRY_USER_DATA
