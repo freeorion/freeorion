@@ -438,11 +438,9 @@ else ()
             OgreMain.dll
             OpenAL32.dll
             Plugin_OctreeSceneManager.dll
-            Plugin_CgProgramManager.dll
             Plugin_ParticleFX.dll
             RenderSystem_GL.dll
             alut.dll
-            cg.dll
             boost_date_time-vc90-mt-1_42.dll
             boost_filesystem-vc90-mt-1_42.dll
             boost_iostreams-vc90-mt-1_42.dll
