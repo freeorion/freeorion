@@ -210,7 +210,8 @@ bool ClientNetworking::ConnectToLocalHostServer(
 
 void ClientNetworking::DisconnectFromServer()
 {
-    m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
+    if (Connected())
+        m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
     Sleep(1000); // HACK! wait a bit for the disconnect to occur
 }
 

@@ -219,6 +219,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
+    GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
 
 
 #ifdef FREEORION_WIN32
@@ -652,6 +653,7 @@ void HumanClientApp::HandleSaveGameDataRequest()
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
 {
+    Logger().debugStream() << "HumanClientApp::HandleWindowResize()";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
@@ -660,6 +662,14 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
             intro_screen->DoLayout();
         }
     }
+}
+
+void HumanClientApp::HandleWindowClose()
+{
+    Logger().debugStream() << "HumanClientApp::HandleWindowClose()";
+    EndGame();
+    //Exit(0);  // want to call Exit here, to cleanly quit, but doing so doesn't work on Win7
+    exit(0);
 }
 
 void HumanClientApp::StartGame()
@@ -758,11 +768,11 @@ void HumanClientApp::UpdateFPSLimit()
 
 void HumanClientApp::Exit(int code)
 {
-    if (code)
+    if (code) {
         Logger().debugStream() << "Initiating Exit (code " << code << " - error termination)";
-    if (code)
         exit(code);
-    else
+    } else {
+        Logger().debugStream() << "Initiating Exit (code " << code << " - normal termination)";
 #ifdef FREEORION_MACOSX
         // FIXME - terminate is called during the stack unwind if CleanQuit is thrown,
         //  so use exit() for now (this appears to be OS X specific)
@@ -770,6 +780,7 @@ void HumanClientApp::Exit(int code)
 #else
         throw CleanQuit();
 #endif
+    }
 }
 
 HumanClientApp* HumanClientApp::GetApp()

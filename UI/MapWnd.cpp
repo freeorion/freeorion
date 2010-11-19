@@ -360,10 +360,10 @@ void MapWndPopup::Close()
 //LaneEndpoints
 //////////////////////////////////
 LaneEndpoints::LaneEndpoints() :
-    X1(UniverseObject::INVALID_POSITION),
-    Y1(UniverseObject::INVALID_POSITION),
-    X2(UniverseObject::INVALID_POSITION),
-    Y2(UniverseObject::INVALID_POSITION)
+    X1(static_cast<float>(UniverseObject::INVALID_POSITION)),
+    Y1(static_cast<float>(UniverseObject::INVALID_POSITION)),
+    X2(static_cast<float>(UniverseObject::INVALID_POSITION)),
+    Y2(static_cast<float>(UniverseObject::INVALID_POSITION))
 {}
 
 
@@ -1012,11 +1012,11 @@ void MapWnd::RenderStarfields()
     for (unsigned int i = 0; i < m_backgrounds.size(); ++i) {
         float texture_coords_per_pixel_x = 1.0f / Value(m_backgrounds[i]->Width());
         float texture_coords_per_pixel_y = 1.0f / Value(m_backgrounds[i]->Height());
-        glScalef(Value(texture_coords_per_pixel_x * Width()),
-                 Value(texture_coords_per_pixel_y * Height()),
+        glScalef(static_cast<GLfloat>(Value(texture_coords_per_pixel_x * Width())),
+                 static_cast<GLfloat>(Value(texture_coords_per_pixel_y * Height())),
                  1.0f);
-        glTranslatef(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0f * m_bg_scroll_rate[i]),
-                     Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i]),
+        glTranslatef(static_cast<GLfloat>(Value(-texture_coords_per_pixel_x * origin_offset.x / 16.0f * m_bg_scroll_rate[i])),
+                     static_cast<GLfloat>(Value(-texture_coords_per_pixel_y * origin_offset.y / 16.0f * m_bg_scroll_rate[i])),
                      0.0f);
         glBindTexture(GL_TEXTURE_2D, m_backgrounds[i]->OpenGLId());
         glBegin(GL_QUADS);
@@ -1093,7 +1093,7 @@ void MapWnd::RenderGalaxyGas()
 
 void MapWnd::RenderSystems()
 {
-    const double HALO_SCALE_FACTOR = SystemHaloScaleFactor();
+    const float HALO_SCALE_FACTOR = static_cast<float>(SystemHaloScaleFactor());
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -1104,7 +1104,7 @@ void MapWnd::RenderSystems()
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        if (0.5 < HALO_SCALE_FACTOR && m_star_texture_coords.m_name) {
+        if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.m_name) {
             glMatrixMode(GL_TEXTURE);
             glTranslatef(0.5f, 0.5f, 0.0f);
             glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
@@ -1229,7 +1229,7 @@ void MapWnd::RenderStarlanes()
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_LINE_STIPPLE);
 
-        glLineWidth(GetOptionsDB().Get<double>("UI.starlane-thickness"));
+        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.starlane-thickness")));
         glLineStipple(1, 0xffff);   // solid line / no stipple
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
@@ -1274,7 +1274,7 @@ void MapWnd::RenderStarlanes()
         glEnable(GL_LINE_STIPPLE);
 
         glLineStipple(static_cast<int>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")), STIPPLE);
-        glLineWidth(GetOptionsDB().Get<double>("UI.fleet-supply-line-width"));
+        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.fleet-supply-line-width")));
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -1394,14 +1394,14 @@ void MapWnd::RenderMovementLine(const MapWnd::MovementLineData& move_line, GG::C
             const GLfloat* tex_coords = move_line_dot_texture->DefaultTexCoords();
             glBegin(GL_TRIANGLE_STRIP);
             glTexCoord2f(tex_coords[0], tex_coords[1]);
-            glVertex2f(ul.first, ul.second);
+            glVertex2f(static_cast<GLfloat>(ul.first), static_cast<GLfloat>(ul.second));
             glTexCoord2f(tex_coords[2], tex_coords[1]);
-            glVertex2f(ul.first + Value(move_line_dot_texture->DefaultWidth()), ul.second);
+            glVertex2f(static_cast<GLfloat>(ul.first + Value(move_line_dot_texture->DefaultWidth())), static_cast<GLfloat>(ul.second));
             glTexCoord2f(tex_coords[0], tex_coords[3]);
-            glVertex2f(ul.first, ul.second + Value(move_line_dot_texture->DefaultHeight()));
+            glVertex2f(static_cast<GLfloat>(ul.first), static_cast<GLfloat>(ul.second + Value(move_line_dot_texture->DefaultHeight())));
             glTexCoord2f(tex_coords[2], tex_coords[3]);
-            glVertex2f(ul.first + Value(move_line_dot_texture->DefaultWidth()),
-                       ul.second + Value(move_line_dot_texture->DefaultHeight()));
+            glVertex2f(static_cast<GLfloat>(ul.first + Value(move_line_dot_texture->DefaultWidth())),
+                       static_cast<GLfloat>(ul.second + Value(move_line_dot_texture->DefaultHeight())));
             glEnd();
 
             // move offset to that for next dot
@@ -2298,8 +2298,8 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
                         raw_starlane_vertices.push_back(lane_endpoints.X1);
                         raw_starlane_vertices.push_back(lane_endpoints.Y1);
-                        raw_starlane_vertices.push_back((lane_endpoints.X1 + lane_endpoints.X2) * 0.5);         // half way along starlane
-                        raw_starlane_vertices.push_back((lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5);
+                        raw_starlane_vertices.push_back((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f);         // half way along starlane
+                        raw_starlane_vertices.push_back((lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
 
                         const GG::Clr& lane_colour = empire->Color();
                         raw_starlane_colors.push_back(lane_colour.r);
@@ -2453,10 +2453,10 @@ LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1,
         Y2 -= offsetY;
     }
 
-    retval.X1 = X1;
-    retval.Y1 = Y1;
-    retval.X2 = X2;
-    retval.Y2 = Y2;
+    retval.X1 = static_cast<float>(X1);
+    retval.Y1 = static_cast<float>(Y1);
+    retval.X2 = static_cast<float>(X2);
+    retval.Y2 = static_cast<float>(Y2);
     return retval;
 }
 

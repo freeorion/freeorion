@@ -277,6 +277,7 @@ int mainSetupAndRunOgre()
 
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
+        std::cout << "mainSetupAndRunOgre caught CleanQuit" << std::endl;
     } catch (const std::invalid_argument& e) {
         Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;

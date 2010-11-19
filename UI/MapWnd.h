@@ -43,7 +43,7 @@ namespace GG {
  * positioning fleet buttons that are moving along the starlane. */
 struct LaneEndpoints {
     LaneEndpoints();
-    double X1, Y1, X2, Y2;
+    float X1, Y1, X2, Y2;
 };
 
 
