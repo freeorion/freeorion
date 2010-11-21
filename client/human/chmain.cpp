@@ -91,9 +91,10 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF",             true);
         GetOptionsDB().Add<std::string>("bg-music",         "OPTIONS_DB_BG_MUSIC",      "artificial_intelligence_v3.ogg");
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
+        GetOptionsDB().Add("reset-fullscreen-size",         "OPTIONS_DB_RESET_FSSIZE",          true);
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
-        GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(), false);
+        GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(),false);
 
 
         // read config.xml and set options entries from it, if present
@@ -204,8 +205,39 @@ int mainSetupAndRunOgre()
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
         int width = 1, height = 1;
         if (fullscreen) {
-            width = GetOptionsDB().Get<int>("app-width");
-            height = GetOptionsDB().Get<int>("app-height");
+            if (GetOptionsDB().Get<bool>("reset-fullscreen-size")) {
+                GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
+
+                // parse list of available resolutions, pick the largest,
+                // which should be the monitor size
+                Ogre::StringVector possible_modes;
+                Ogre::ConfigOptionMap& renderer_options = selected_render_system->getConfigOptions();
+                for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
+                    if (it->first != "Video Mode")
+                        continue;
+                    possible_modes = it->second.possibleValues;
+                }
+                // for each most, parse the text and check if it is the biggest
+                // yet seen.
+                for (Ogre::StringVector::iterator it = possible_modes.begin(); it != possible_modes.end(); ++it) {
+                    std::istringstream iss(*it);
+                    char x;
+                    int cur_width(-1), cur_height(-1);
+                    iss >> cur_width >> std::ws >> x >> std::ws >> cur_height;
+
+                    //std::cout << cur_width << ", " << cur_height << std::endl;
+
+                    if (cur_width > width || cur_height > height) {
+                        width = cur_width;
+                        height = cur_height;
+                        GetOptionsDB().Set<int>("app-width", width);
+                        GetOptionsDB().Set<int>("app-height", height);
+                    }
+                }
+            } else {
+                width = GetOptionsDB().Get<int>("app-width");
+                height = GetOptionsDB().Get<int>("app-height");
+            }
         } else {
             width = GetOptionsDB().Get<int>("app-width-windowed");
             height = GetOptionsDB().Get<int>("app-height-windowed");
