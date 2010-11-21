@@ -1085,13 +1085,13 @@ OPTIONS_TOOLTIP_DELAY
 Tooltip delay (ms)
 
 OPTIONS_VIDEO_MODE
-Full-Screen Video Mode (restart in full-screen to take effect)
+Full-Screen Video Mode
 
 OPTIONS_VIDEO_MODE_LIST_DESCRIPTION
 Sets bits per pixel and full-screen resolution.
 
 OPTIONS_VIDEO_MODE_WINDOWED
-Windowed Video Mode  (restart in windowed mode to take effect)
+Windowed Video Mode
 
 OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION
 Sets width and height of window in windowed mode.  Windowed bits per pixel uses full-screen mode setting.
@@ -1116,6 +1116,9 @@ Limit FPS
 
 OPTIONS_MAX_FPS
 Max FPS
+
+OPTIONS_APPLY
+Apply
 
 OPTIONS_CHAT
 Chat

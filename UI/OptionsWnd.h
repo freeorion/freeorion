@@ -42,31 +42,31 @@ public:
 private:
     typedef void (OptionsWnd::* VolumeSliderHandler)(int, int, int);
 
-    void BeginPage(const std::string& name);
-    void EndPage();
-    void BeginSection(const std::string& name);
-    void EndSection();
-    CUIStateButton* BoolOption(const std::string& option_name, const std::string& text);
-    CUISpin<int>* IntOption(const std::string& option_name, const std::string& text);
-    CUISpin<double>* DoubleOption(const std::string& option_name, const std::string& text);
-    void MusicVolumeOption();
-    void VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
-                      VolumeSliderHandler volume_slider_handler, bool toggle_value);
-    void FileOptionImpl(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory);
-    void FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = 0);
-    void FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = 0);
-    void FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = 0);
-    void DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path);
-    void SoundFileOption(const std::string& option_name, const std::string& text);
-    void ColorOption(const std::string& option_name, const std::string& text);
-    void FontOption(const std::string& option_name, const std::string& text);
-    void ResolutionOption();
+    void                BeginPage(const std::string& name);
+    void                EndPage();
+    void                BeginSection(const std::string& name);
+    void                EndSection();
+    CUIStateButton*     BoolOption(const std::string& option_name, const std::string& text);
+    CUISpin<int>*       IntOption(const std::string& option_name, const std::string& text);
+    CUISpin<double>*    DoubleOption(const std::string& option_name, const std::string& text);
+    void                MusicVolumeOption();
+    void                VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
+                                     VolumeSliderHandler volume_slider_handler, bool toggle_value);
+    void                FileOptionImpl(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory);
+    void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = 0);
+    void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = 0);
+    void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = 0);
+    void                DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path);
+    void                SoundFileOption(const std::string& option_name, const std::string& text);
+    void                ColorOption(const std::string& option_name, const std::string& text);
+    void                FontOption(const std::string& option_name, const std::string& text);
+    void                ResolutionOption();
 
-    void Init();
-    void DoneClicked();
-    void MusicClicked(bool checked);
-    void MusicVolumeSlid(int pos, int low, int high);
-    void UISoundsVolumeSlid(int pos, int low, int high);
+    void                Init();
+    void                DoneClicked();
+    void                MusicClicked(bool checked);
+    void                MusicVolumeSlid(int pos, int low, int high);
+    void                UISoundsVolumeSlid(int pos, int low, int high);
 
     CUIListBox* m_current_option_list;
     int         m_indentation_level;

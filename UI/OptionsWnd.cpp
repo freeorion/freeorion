@@ -640,6 +640,11 @@ void OptionsWnd::ResolutionOption()
     IntOption("app-width-windowed", UserString("OPTIONS_APP_WIDTH_WINDOWED"));
     IntOption("app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
 
+
+    // fullscreen / windowed toggle
+    CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+
+
     // fps
     BoolOption("show-fps", UserString("OPTIONS_SHOW_FPS"));
 
@@ -649,8 +654,20 @@ void OptionsWnd::ResolutionOption()
     limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
     limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
-    GG::Connect(drop_list->SelChangedSignal,
-                ResolutionDropListIndexSetOptionFunctor(drop_list));
+
+    // apply button, sized to fit text
+    std::string apply_button_text = UserString("OPTIONS_APPLY");
+    GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
+    GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20), apply_button_text, ClientUI::GetFont());
+    row = new GG::ListBox::Row();
+    row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
+    row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));
+    m_current_option_list->Insert(row);
+
+
+    GG::Connect(apply_button->ClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
+
+    GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
 }
 
 void OptionsWnd::Init()

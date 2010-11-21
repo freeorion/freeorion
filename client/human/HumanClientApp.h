@@ -61,6 +61,8 @@ public:
     Ogre::Camera*       Camera();
     Ogre::Viewport*     Viewport();
 
+    void                Reinitialize();
+
     float               GLVersion() const;
 
     virtual void        Enter2DMode();

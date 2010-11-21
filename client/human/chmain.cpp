@@ -274,7 +274,7 @@ int mainSetupAndRunOgre()
         Viewport* viewport = window->addViewport(camera);
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
-        EntityRenderer entity_renderer(scene_manager);
+        //EntityRenderer entity_renderer(scene_manager);
 
         HumanClientApp app(root, window, scene_manager, camera, viewport);
 
