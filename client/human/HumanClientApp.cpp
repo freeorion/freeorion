@@ -662,6 +662,21 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
             intro_screen->DoLayout();
         }
     }
+    GetOptionsDB().Set<int>("app-width-windowed", Value(w));
+    GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+
+    // Save the changes:
+    {
+        boost::filesystem::ofstream ofs(GetConfigPath());
+        if (ofs) {
+            GetOptionsDB().GetXML().WriteDoc(ofs);
+        } else {
+            std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
+            std::cerr << GetConfigPath().file_string() << std::endl;
+            Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
+            Logger().errorStream() << GetConfigPath().file_string();
+        }
+    }
 }
 
 void HumanClientApp::HandleWindowClose()
