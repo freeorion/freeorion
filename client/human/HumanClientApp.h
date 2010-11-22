@@ -72,7 +72,9 @@ public:
     virtual void        Exit(int code);
     //@}
 
-    static HumanClientApp*  GetApp();                   ///< returns HumanClientApp pointer to the single instance of the app
+    static std::pair<int, int>  GetWindowWidthHeight(Ogre::RenderSystem* render_system);
+
+    static HumanClientApp*      GetApp();                   ///< returns HumanClientApp pointer to the single instance of the app
 
 private:
     virtual void    HandleSystemEvents();

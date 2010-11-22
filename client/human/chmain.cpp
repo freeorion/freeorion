@@ -203,45 +203,8 @@ int mainSetupAndRunOgre()
 
         int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-        int width = 1, height = 1;
-        if (fullscreen) {
-            if (GetOptionsDB().Get<bool>("reset-fullscreen-size")) {
-                GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
-
-                // parse list of available resolutions, pick the largest,
-                // which should be the monitor size
-                Ogre::StringVector possible_modes;
-                Ogre::ConfigOptionMap& renderer_options = selected_render_system->getConfigOptions();
-                for (Ogre::ConfigOptionMap::iterator it = renderer_options.begin(); it != renderer_options.end(); ++it) {
-                    if (it->first != "Video Mode")
-                        continue;
-                    possible_modes = it->second.possibleValues;
-                }
-                // for each most, parse the text and check if it is the biggest
-                // yet seen.
-                for (Ogre::StringVector::iterator it = possible_modes.begin(); it != possible_modes.end(); ++it) {
-                    std::istringstream iss(*it);
-                    char x;
-                    int cur_width(-1), cur_height(-1);
-                    iss >> cur_width >> std::ws >> x >> std::ws >> cur_height;
-
-                    //std::cout << cur_width << ", " << cur_height << std::endl;
-
-                    if (cur_width > width || cur_height > height) {
-                        width = cur_width;
-                        height = cur_height;
-                        GetOptionsDB().Set<int>("app-width", width);
-                        GetOptionsDB().Set<int>("app-height", height);
-                    }
-                }
-            } else {
-                width = GetOptionsDB().Get<int>("app-width");
-                height = GetOptionsDB().Get<int>("app-height");
-            }
-        } else {
-            width = GetOptionsDB().Get<int>("app-width-windowed");
-            height = GetOptionsDB().Get<int>("app-height-windowed");
-        }
+        std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight(selected_render_system);
+        int width(width_height.first), height(width_height.second);
 
         selected_render_system->setConfigOption("Full Screen", fullscreen ? "Yes" : "No");
         std::string video_mode_str =
