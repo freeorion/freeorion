@@ -1312,8 +1312,6 @@ void ShipDesign::BuildStatCaches()
         m_min_weapon_range = 0.0;
     if (!m_min_LR_range && !m_min_PD_range)
         m_min_non_PD_weapon_range = 0.0;
-
-    m_production_cost;
 }
 
 std::string ShipDesign::Dump() const

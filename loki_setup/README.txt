@@ -15,7 +15,7 @@ http://www.freeorion.org/forum/viewforum.php?f=25
 
 1. Install
 ============
-- Download the latest archiv by
+- Download the latest archive by
    executing the following commands in a console / command-line prompt:
      cd /tmp
      wget http://freeorion.psitronic.de/download/latest.tar.gz

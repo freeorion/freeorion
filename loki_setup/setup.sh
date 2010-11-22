@@ -207,7 +207,7 @@ try_run()
       # trying $setup_bin
       if [ ! -f "$setup_bin" ]; then
           setup_bin="setup.data/bin/$os/$arch/$setup"
-        	# libc dependant version failed, trying again
+        	# libc dependent version failed, trying again
           if [ ! -f "$setup_bin" ]; then
               failed=1
           fi

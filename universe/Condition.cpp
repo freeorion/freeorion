@@ -652,7 +652,6 @@ std::string Condition::Building::Dump() const
 
 bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
 {
-    const ObjectMap& objects = GetMainObjectMap();
     // is it a building?
     const ::Building* building = universe_object_cast<const ::Building*>(target);
     if (building) {

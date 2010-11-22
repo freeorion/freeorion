@@ -37,6 +37,7 @@
 #include <OgreRoot.h>
 #include <OgreVector3.h>
 #include <OgreRenderWindow.h>
+#include <OgreRenderSystem.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -589,8 +590,8 @@ void HumanClientApp::Reinitialize()
         return;
 
     //int colour_depth = GetOptionsDB().Get<int>("color-depth");
-    std::pair<int, int> width_height = GetWindowWidthHeight(render_system);
-    int width(width_height.first), height(width_height.second);
+    std::pair<unsigned int, unsigned int> width_height = GetWindowWidthHeight(render_system);
+    unsigned int width(width_height.first), height(width_height.second);
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
 
     Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();

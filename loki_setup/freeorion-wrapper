@@ -28,16 +28,16 @@
 #
 #
 # ENVIROMENT variables
-# This script supports some enviroment variables. To set them
-# either use the followin command BEFORE you execute this script.
+# This script supports some environment variables. To set them
+# either use the following command BEFORE you execute this script.
 #    export XXXX="value"
 # This permanently set the variable in you current shell script.
 # Or you prepend the options when running this script, like this:
 #    PARAM1="hello" PARAM2="yo man" ./freeorion
 #
-# Supportet are:
+# Supported are:
 #   FO_TRACE=
-#      Use this to prepend something to calling freorion.
+#      Use this to prepend something to calling freeorion.
 #      This variables also is used internally, when --gdb or --trace
 #      appear on the command line.
 #   FO_GDB_ARGS=
