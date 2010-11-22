@@ -588,7 +588,7 @@ void HumanClientApp::Reinitialize()
     if (!render_system)
         return;
 
-    int colour_depth = GetOptionsDB().Get<int>("color-depth");
+    //int colour_depth = GetOptionsDB().Get<int>("color-depth");
     std::pair<int, int> width_height = GetWindowWidthHeight(render_system);
     int width(width_height.first), height(width_height.second);
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
