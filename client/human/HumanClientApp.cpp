@@ -595,10 +595,14 @@ void HumanClientApp::Reinitialize()
 
     Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
 
-    if (fullscreen != window->isFullScreen())
+    if (fullscreen != window->isFullScreen()) {
         window->setFullscreen(fullscreen, width, height);
-    else if (width != window->getWidth() || height != window->getHeight())
-        window->resize(width, height);
+    } else if (width != window->getWidth() || height != window->getHeight()) {
+        if (fullscreen)
+            window->setFullscreen(fullscreen, width, height);
+        else
+            window->resize(width, height);
+    }
 }
 
 float HumanClientApp::GLVersion() const
