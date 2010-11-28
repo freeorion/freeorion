@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{A79A0D95-B9C4-42A5-9D4A-B55240EB295A}</ProjectGuid>
-    <RootNamespace>GiGiOgre</RootNamespace>
+    <ProjectGuid>{A88B8C11-8415-4E28-B90D-4A45B4FC513E}</ProjectGuid>
+    <RootNamespace>GiGiOgrePlugin_OIS</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -38,7 +38,6 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>../../</OutDir>
-    <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -55,8 +54,8 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>../../../include/;../../GG/;../../../include/OGRE/;../../../Boost/include/boost_1_44/</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGiOgre_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/boost_1_44;../../GG/;../include;../../../include/OGRE;../../../include/OIS</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGiOgrePlugin_OIS_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
@@ -68,20 +67,21 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>../../GiGiOgre.dll</OutputFile>
+      <OutputFile>../../GiGiOgrePlugin_OIS.dll</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>OgreMain.lib;GiGi.lib;opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>GiGi.lib;GiGiOgre.lib;OgreMain.lib;OIS.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
       <SubSystem>Console</SubSystem>
-      <LinkStatus>
-      </LinkStatus>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\GG\GG\Ogre\OgreGUI.h" />
+    <ClCompile Include="..\..\GG\src\Ogre\Plugins\OgreGUIInputPlugin.cpp" />
+    <ClCompile Include="..\..\GG\src\Ogre\Plugins\OISInput.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\GG\src\Ogre\OgreGUI.cpp" />
+    <ClInclude Include="..\..\GG\GG\Ogre\Plugins\OgreGUIInputPlugin.h" />
+    <ClInclude Include="..\..\GG\GG\Ogre\Plugins\OISInput.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
