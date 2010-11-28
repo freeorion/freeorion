@@ -219,6 +219,7 @@
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/</AdditionalLibraryDirectories>
       <LinkStatus>true</LinkStatus>
       <TreatLinkerWarningAsErrors>false</TreatLinkerWarningAsErrors>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;freetype243MT.lib;libpng.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
