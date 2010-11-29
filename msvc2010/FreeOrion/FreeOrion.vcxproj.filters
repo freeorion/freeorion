@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{b7e1ac2b-7eb2-497a-80b4-1b3c660e492a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client\human">
+      <UniqueIdentifier>{d2ae9498-3cb1-4223-b055-39f924d909ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat">
+      <UniqueIdentifier>{e1903fa4-66a8-4377-9d91-eb60de6ced9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat\OpenSteer">
+      <UniqueIdentifier>{330825c5-e4d2-4169-ad50-d5ff8744eedb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{3cc43ce0-b6b4-416a-80a0-949870380ee1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log4cpp">
+      <UniqueIdentifier>{405471ce-ed09-401c-aea4-46e155835ee8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log4cpp\threading">
+      <UniqueIdentifier>{23c674b8-a57c-4998-867c-33d393e93f60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{8155c968-e020-4d9e-9b45-1b2b9f769cf5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client\human">
+      <UniqueIdentifier>{36991414-b082-4e70-b6b1-77cff5c09cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{37734a74-6e93-4baa-9db8-67c3d7907224}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat\OpenSteer">
+      <UniqueIdentifier>{d946e25a-b6d7-45b7-bfc1-a12898991aa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Empire">
+      <UniqueIdentifier>{fa991e5a-f7ca-44c1-9e99-82eb5ef20d0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{683283a4-a27f-4105-8437-c3d102745e9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{b9e15fb8-5458-4bcb-92dc-09ba4b65cfae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{f9dda62a-26fb-45a2-a8dc-c2fe4f1434c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{df72940c-e723-470a-b3ef-bd243e47ffbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{8fb10d4c-209f-4422-a61f-749aae32aa5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\universe">
+      <UniqueIdentifier>{5b0fb282-f288-46bc-9ba9-9792793c282d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{f30d9cf4-175a-4a74-8480-75ef04f66ed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{4fba4d8e-44f9-4cb3-8914-7aff0a18b6da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI\PagedGeometry">
+      <UniqueIdentifier>{1965870f-e272-4a84-8ada-9fae2a0b8612}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI\PagedGeometry">
+      <UniqueIdentifier>{dce0428f-3d99-47ce-ab4d-52d1490873b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log4cpp">
+      <UniqueIdentifier>{d0f0c431-9cdb-4e36-951e-ed98cb8d834a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\client\ClientApp.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientFSMEvents.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\HumanClientFSM.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\chmain.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\human\HumanClientApp.h">
+      <Filter>Header Files\client\human</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Missile.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatOrder.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\ClientNetworking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TurnProgressWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\About.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\BuildDesignatorWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ChatWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ClientUI.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CollisionMeshConverter.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatCamera.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatSetupWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CombatWndFwd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIControls.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIDrawUtil.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUISpin.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIStyle.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\CUIWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\DesignWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\EntityRenderer.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\FleetButton.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\FleetWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\GalaxySetupWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\InfoPanels.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\InGameMenu.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\IntroScreen.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\LinkText.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MapWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MarkupBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\OptionsWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PlanetDetailWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ProductionWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\QueueListBox.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ResearchWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ServerConnectWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\ShaderProgram.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SidePanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SitRepPanel.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\Sound.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\StringTable.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\SystemIcon.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\TechTreeWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\GrassLoader.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\MersenneTwister.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\PagedGeometry.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\PropertyMaps.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\RandomTable.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader2D.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h">
+      <Filter>Header Files\UI\PagedGeometry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GLStateComparator.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GZStream.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Math.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLObjectFactory.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\binreloc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\DataTable.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Directories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefParser.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\InhibitableSignal.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Parser.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ParserUtil.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PopCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Predicates.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ResourceCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Appender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Category.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Configurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Export.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Filter.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Layout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NDC.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Portability.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Priority.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+    <None Include="..\..\util\Serialize.ipp">
+      <Filter>Source Files\util</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+    <None Include="..\..\log4cpp\src\Localtime.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\src\StringUtil.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientApp.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\HumanClientApp.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\chmain.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp">
+      <Filter>Source Files\client\human</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatOrder.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ResourcePool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Empire.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\EmpireManager.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Networking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\ClientNetworking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Message.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\MessageQueue.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader2D.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\GrassLoader.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\PagedGeometry.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\PropertyMaps.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PagedGeometry\StaticBillboardSet.cpp">
+      <Filter>Source Files\UI\PagedGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ShaderProgram.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SidePanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SitRepPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\Sound.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\StringTable.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\SystemIcon.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TechTreeWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\TurnProgressWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\About.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ChatWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ClientUI.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CollisionMeshConverter.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatCamera.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatSetupWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CombatWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIControls.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIDrawUtil.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIStyle.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\CUIWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\DesignWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\EntityRenderer.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\FleetButton.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\FleetWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\InfoPanels.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\InGameMenu.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\IntroScreen.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\LinkText.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MapWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MarkupBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\OptionsWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PlanetDetailWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ProductionWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\QueueListBox.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ResearchWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\ServerConnectWnd.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializePathingEngine.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SitRepEntry.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\VarText.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\XMLDoc.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\AppInterface.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DataTable.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Directories.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\GZStream.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Math.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OptionsDB.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Order.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Process.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Condition.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Building.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRefParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRef.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UniverseObject.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Universe.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\TopLevelParsers.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Tech.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\System.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Species.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Special.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ShipDesign.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Ship.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Predicates.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\PopCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Planet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ParserUtil.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Meter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Enums.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\EffectParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Effect.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser2.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser1.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Configurator.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Localtime.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LoggingEvent.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\NDC.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\PatternLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Priority.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Appender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Category.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\CategoryStream.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Version.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -62,6 +62,7 @@
       </PrecompiledHeaderOutputFile>
       <CompileAs>CompileAsCpp</CompileAs>
       <DisableSpecificWarnings>4396</DisableSpecificWarnings>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
