@@ -94,12 +94,26 @@ def getPlanetHospitality(planetID):
     planet = universe.getPlanet(planetID)
     if planet == None: return 0
 
+    empire = fo.getEmpire()
+    capitolID = empire.capitolID
+    homeworld = universe.getPlanet(capitolID)
+    speciesName = homeworld.speciesName
+    species = fo.getSpecies(speciesName)
+    planetEnvironment = species.getPlanetEnvironment(planet.type)
+    # print ">> planet:" + str(planetID) + " type:" + str(planet.type) + " planetEnvironment:" + str(planetEnvironment)
+
     # should be reworked with races
-    if planet.type == fo.planetType.terran: return 2
-    if planet.type == fo.planetType.ocean: return 1
-    if planet.type == fo.planetType.desert: return 1
-    if planet.type == fo.planetType.tundra: return 0.5
-    if planet.type == fo.planetType.swamp: return 0.5
+    # if planet.type == fo.planetType.terran: return 2
+    # if planet.type == fo.planetType.ocean: return 1
+    # if planet.type == fo.planetType.desert: return 1
+    # if planet.type == fo.planetType.tundra: return 0.5
+    # if planet.type == fo.planetType.swamp: return 0.5
+    # reworked with races
+    if planetEnvironment == fo.planetEnvironment.good: return 2
+    if planetEnvironment == fo.planetEnvironment.adequate: return 1
+    if planetEnvironment == fo.planetEnvironment.poor: return 1
+    if planetEnvironment == fo.planetEnvironment.hostile: return 0.5
+    if planetEnvironment == fo.planetEnvironment.uninhabitable: return 0.5
 
     return 0
 
@@ -108,7 +122,9 @@ def removeLowValuePlanets(evaluatedPlanets):
 
     removeIDs = []
 
+    # print ">> min:" + str(AIstate.minimalColoniseValue)
     for planetID in evaluatedPlanets.iterkeys():
+	# print ">> eval:" + str(planetID) + " val:" + str(evaluatedPlanets[planetID])
         if (evaluatedPlanets[planetID] < AIstate.minimalColoniseValue):
             removeIDs.append(planetID)
 
