@@ -81,7 +81,8 @@
       <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../lib/graphviz/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
       <AdditionalDependencies>GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
-      <LinkStatus>true</LinkStatus>
+      <LinkStatus>
+      </LinkStatus>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>

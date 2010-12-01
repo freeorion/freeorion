@@ -227,6 +227,12 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
 
 
+    unsigned int width, height, c;
+    int left, top;
+    window->getMetrics(width, height, c, left, top);
+    Logger().debugStream() << "HumanClientApp::HumanClientApp window size: " << width << "x" << height << " at " << left << "x" << top;
+
+
 #ifdef FREEORION_WIN32
     GLenum error = glewInit();
     assert(error == GLEW_OK);
@@ -617,6 +623,11 @@ namespace {
 
 void HumanClientApp::Enter2DMode()
 {
+    Ogre::RenderWindow* window = m_root->getAutoCreatedWindow();
+    unsigned int width, height, c;
+    int left, top;
+    window->getMetrics(width, height, c, left, top);
+
     if (!enter_2d_mode_log_done) {
         enter_2d_mode_log_done = true;
         Logger().debugStream() << "HumanClientApp::Enter2DMode()";
@@ -643,14 +654,14 @@ void HumanClientApp::Enter2DMode()
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    glViewport(0, 0, Value(AppWidth()), Value(AppHeight()));
+    glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 
     // set up coordinates with origin in upper-left and +x and +y directions right and down, respectively
     // the depth of the viewing volume is only 1 (from 0.0 to 1.0)
-    glOrtho(0.0, Value(AppWidth()), Value(AppHeight()), 0.0, 0.0, Value(AppWidth()));
+    glOrtho(0.0, width, height, 0.0, 0.0, width);
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
