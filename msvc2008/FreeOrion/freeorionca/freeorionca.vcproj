@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib zlib1.lib wsock32.lib cdt.lib common.lib pathplan.lib libexpat.lib python26.lib boost_python-vc90-mt-1_42.lib"
+				AdditionalDependencies="zlib1.lib python26.lib boost_python-vc90-mt-1_42.lib"
 				OutputFile="../../../freeorionca.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/"
@@ -274,10 +274,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\util\VarText.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\util\Version.h"
 				>
 			</File>
 			<File

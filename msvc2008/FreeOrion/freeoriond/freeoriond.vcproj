@@ -66,7 +66,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="opengl32.lib glu32.lib zlib1.lib wsock32.lib cdt.lib common.lib graph.lib pathplan.lib libexpat.lib"
+				AdditionalDependencies="zlib1.lib"
 				OutputFile="../../../freeoriond.exe"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="../../../../lib/;../../../../Boost/lib/"
@@ -331,10 +331,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\util\VarText.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\util\Version.h"
 				>
 			</File>
 			<File
