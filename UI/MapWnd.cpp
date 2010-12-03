@@ -3986,7 +3986,7 @@ void MapWnd::ShowResearch()
     // indicate selection on button
     m_btn_research->MarkSelectedGray();
 
-    m_pedia_panel->SetText("ENC_TECH");
+    m_pedia_panel->SetText("ENC_TECH", false);
 }
 
 void MapWnd::HideResearch()

@@ -82,6 +82,7 @@ private:
     
     void HandleLinkClick(const std::string& link_type, const std::string& data);
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
+    void CheckUpButton();
 
     static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name
