@@ -1,0 +1,763 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\AI">
+      <UniqueIdentifier>{0b89f998-cbcb-41d7-a769-d4b4b31ee70c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client">
+      <UniqueIdentifier>{0e8f8032-78e0-4fb0-8880-386704b27db3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat">
+      <UniqueIdentifier>{81f1348b-c1c9-45eb-a354-6fa382235169}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{5803563c-6e51-45f6-a92c-6c92b4c8d7dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log4cpp">
+      <UniqueIdentifier>{48d651e4-6cba-473a-a70c-170a4216e515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{30e38b6e-c2c3-438a-b48e-01114c5df836}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\python">
+      <UniqueIdentifier>{c557a17d-9943-4611-b855-9107a2eb8cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\UI">
+      <UniqueIdentifier>{03d83d46-a82e-4853-8f25-511d50153b40}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{f4507b16-fead-4c05-8cd7-5d33bc56a5ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{a57baa84-d150-40c9-b8c2-bf5299858234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\client\AI">
+      <UniqueIdentifier>{2b260b85-270a-432d-8d6c-94ec7c922589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat\OpenSteer">
+      <UniqueIdentifier>{063af849-79d6-4b90-8bf7-4628033fe6c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log4cpp\threading">
+      <UniqueIdentifier>{d84565aa-f922-43d4-bf87-6a75725d8768}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\AI">
+      <UniqueIdentifier>{c3ab409d-1113-4558-985e-22ced3ae2a29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client">
+      <UniqueIdentifier>{9b9fafb5-5938-4a70-a059-e2ac800bb473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\client\AI">
+      <UniqueIdentifier>{7ce8eac8-615b-4c78-b206-3bf5fb2ab6bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{49cbf889-c9f7-4d90-92cb-1fc5e9a30c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat\OpenSteer">
+      <UniqueIdentifier>{3abecfae-5df7-41e2-ba6e-98513237aa9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Empire">
+      <UniqueIdentifier>{9c600fea-32b7-4611-a3ea-c363bb8e61ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log4cpp">
+      <UniqueIdentifier>{6cbcc55a-8399-4ec6-b26e-7b857a2408ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{0de6ad2e-dcac-40fb-93fb-19267615fa87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{1e982752-0e28-4beb-ad8f-7e5c43d6142a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\universe">
+      <UniqueIdentifier>{6590fb8c-f9c0-47dd-9eff-61ef69465695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{2ac9143c-6b49-411d-a724-8b31af1afd06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\python">
+      <UniqueIdentifier>{2ab2cfda-27b9-4be9-a9ce-9e5b1cec2e28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GG">
+      <UniqueIdentifier>{7e48aed2-0a7f-45a6-8c82-c1d7a143dfa7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\AI\AIInterface.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AI\PythonAI.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\AI\ReferenceAI.h">
+      <Filter>Header Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientApp.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\ClientFSMEvents.h">
+      <Filter>Header Files\client</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\client\AI\AIClientApp.h">
+      <Filter>Header Files\client\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatOrder.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Missile.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\ClientNetworking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLObjectFactory.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\binreloc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\DataTable.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Directories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GLStateComparator.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GZStream.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Math.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\InhibitableSignal.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefParser.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ResourceCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Predicates.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PopCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ParserUtil.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Parser.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\UI\StringTable.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\PythonSetWrapper.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\python\PythonWrappers.h">
+      <Filter>Header Files\python</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\Exception.h">
+      <Filter>Header Files\GG</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\Clr.h">
+      <Filter>Header Files\GG</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\AI\ReferenceAI.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientApp.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
+      <Filter>Source Files\client</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatOrder.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\EmpireManager.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ResourcePool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Empire.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\NDC.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\PatternLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Appender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Category.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\CategoryStream.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Configurator.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Localtime.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LoggingEvent.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Priority.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\ClientNetworking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Message.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\MessageQueue.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Networking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SitRepEntry.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\VarText.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\XMLDoc.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\AppInterface.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DataTable.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Directories.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\GZStream.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Math.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OptionsDB.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Order.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Process.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializePathingEngine.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser2.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser1.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Condition.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Building.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRefParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRef.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UniverseObject.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Universe.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\TopLevelParsers.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Tech.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\System.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Species.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Special.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ShipDesign.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Ship.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Predicates.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\PopCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Planet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ParserUtil.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Meter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Enums.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\EffectParser.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Effect.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\StringTable.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp">
+      <Filter>Source Files\python</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\camain.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\client\AI\AIClientApp.cpp">
+      <Filter>Source Files\client\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AI\PythonAI.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\AI\AIInterface.cpp">
+      <Filter>Source Files\AI</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\log4cpp\log4cpp\Filter.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Export.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Configurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Category.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Appender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Priority.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Portability.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NDC.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Layout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+    <None Include="..\..\util\Serialize.ipp">
+      <Filter>Source Files\util</Filter>
+    </None>
+    <None Include="..\..\util\SerializeUniverseExports.ipp">
+      <Filter>Source Files\util</Filter>
+    </None>
+  </ItemGroup>
+</Project>

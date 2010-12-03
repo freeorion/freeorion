@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}</ProjectGuid>
+    <ProjectGuid>{77E8E74E-F581-4850-A4C6-A088564DF9A7}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FreeOrion</RootNamespace>
+    <RootNamespace>FreeOrionCA</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -60,40 +60,38 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_HUMAN;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_44/;../../GG/;../include/;../../../include/OGRE/;../../../include/bullet/;../../../include/zlib/;../../../include/AL/</AdditionalIncludeDirectories>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_44/;../../GG/;../../../include/Python27/;../../../include/zlib/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <DisableSpecificWarnings>4396;4251;4275;4099;4800;4091;4146</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311;4091</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>../../FreeOrion.exe</OutputFile>
-      <LinkStatus>
-      </LinkStatus>
+      <OutputFile>../../FreeOrionCA.exe</OutputFile>
+      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
+      <AdditionalDependencies>python27.lib;boost_python-vc100-mt-1_44.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\AI\AIInterface.h" />
+    <ClInclude Include="..\..\AI\PythonAI.h" />
+    <ClInclude Include="..\..\AI\ReferenceAI.h" />
+    <ClInclude Include="..\..\client\AI\AIClientApp.h" />
     <ClInclude Include="..\..\client\ClientApp.h" />
     <ClInclude Include="..\..\client\ClientFSMEvents.h" />
-    <ClInclude Include="..\..\client\human\chmain.h" />
-    <ClInclude Include="..\..\client\human\HumanClientApp.h" />
-    <ClInclude Include="..\..\client\human\HumanClientFSM.h" />
     <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h" />
@@ -117,6 +115,8 @@
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
+    <ClInclude Include="..\..\GG\GG\Clr.h" />
+    <ClInclude Include="..\..\GG\GG\Exception.h" />
     <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h" />
     <ClInclude Include="..\..\log4cpp\log4cpp\config.h" />
     <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h" />
@@ -124,60 +124,9 @@
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\UI\About.h" />
-    <ClInclude Include="..\..\UI\BuildDesignatorWnd.h" />
-    <ClInclude Include="..\..\UI\ChatWnd.h" />
-    <ClInclude Include="..\..\UI\ClientUI.h" />
-    <ClInclude Include="..\..\UI\CollisionMeshConverter.h" />
-    <ClInclude Include="..\..\UI\CombatCamera.h" />
-    <ClInclude Include="..\..\UI\CombatSetupWnd.h" />
-    <ClInclude Include="..\..\UI\CombatWnd.h" />
-    <ClInclude Include="..\..\UI\CombatWndFwd.h" />
-    <ClInclude Include="..\..\UI\CUIControls.h" />
-    <ClInclude Include="..\..\UI\CUIDrawUtil.h" />
-    <ClInclude Include="..\..\UI\CUISpin.h" />
-    <ClInclude Include="..\..\UI\CUIStyle.h" />
-    <ClInclude Include="..\..\UI\CUIWnd.h" />
-    <ClInclude Include="..\..\UI\DesignWnd.h" />
-    <ClInclude Include="..\..\UI\EncyclopediaDetailPanel.h" />
-    <ClInclude Include="..\..\UI\EntityRenderer.h" />
-    <ClInclude Include="..\..\UI\FleetButton.h" />
-    <ClInclude Include="..\..\UI\FleetWnd.h" />
-    <ClInclude Include="..\..\UI\GalaxySetupWnd.h" />
-    <ClInclude Include="..\..\UI\InfoPanels.h" />
-    <ClInclude Include="..\..\UI\InGameMenu.h" />
-    <ClInclude Include="..\..\UI\IntroScreen.h" />
-    <ClInclude Include="..\..\UI\LinkText.h" />
-    <ClInclude Include="..\..\UI\MapWnd.h" />
-    <ClInclude Include="..\..\UI\MarkupBox.h" />
-    <ClInclude Include="..\..\UI\MultiplayerLobbyWnd.h" />
-    <ClInclude Include="..\..\UI\OptionsWnd.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\BatchPage.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\GrassLoader.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\ImpostorPage.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\MersenneTwister.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\PagedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\PropertyMaps.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\RandomTable.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\StaticBillboardSet.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader2D.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\TreeLoader3D.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h" />
-    <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h" />
-    <ClInclude Include="..\..\UI\PlanetDetailWnd.h" />
-    <ClInclude Include="..\..\UI\ProductionWnd.h" />
-    <ClInclude Include="..\..\UI\QueueListBox.h" />
-    <ClInclude Include="..\..\UI\ResearchWnd.h" />
-    <ClInclude Include="..\..\UI\ServerConnectWnd.h" />
-    <ClInclude Include="..\..\UI\ShaderProgram.h" />
-    <ClInclude Include="..\..\UI\SidePanel.h" />
-    <ClInclude Include="..\..\UI\SitRepPanel.h" />
-    <ClInclude Include="..\..\UI\Sound.h" />
+    <ClInclude Include="..\..\python\PythonSetWrapper.h" />
+    <ClInclude Include="..\..\python\PythonWrappers.h" />
     <ClInclude Include="..\..\UI\StringTable.h" />
-    <ClInclude Include="..\..\UI\SystemIcon.h" />
-    <ClInclude Include="..\..\UI\TechTreeWnd.h" />
-    <ClInclude Include="..\..\UI\TurnProgressWnd.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
@@ -223,59 +172,13 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Appender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Category.hh" />
-    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Configurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Export.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Filter.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh" />
-    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Layout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\NDC.hh" />
-    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Portability.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Priority.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh" />
-    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh" />
-    <None Include="..\..\log4cpp\src\Localtime.hh" />
-    <None Include="..\..\log4cpp\src\StringUtil.hh" />
-    <None Include="..\..\util\Serialize.ipp" />
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="..\..\AI\AIInterface.cpp" />
+    <ClCompile Include="..\..\AI\PythonAI.cpp" />
+    <ClCompile Include="..\..\AI\ReferenceAI.cpp" />
+    <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
+    <ClCompile Include="..\..\client\AI\camain.cpp" />
     <ClCompile Include="..\..\client\ClientApp.cpp" />
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
-    <ClCompile Include="..\..\client\human\chmain.cpp" />
-    <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
-    <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
     <ClCompile Include="..\..\combat\CombatOrder.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
     <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
@@ -312,56 +215,11 @@
     <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
-    <ClCompile Include="..\..\UI\About.cpp" />
-    <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
-    <ClCompile Include="..\..\UI\ChatWnd.cpp" />
-    <ClCompile Include="..\..\UI\ClientUI.cpp" />
-    <ClCompile Include="..\..\UI\CollisionMeshConverter.cpp" />
-    <ClCompile Include="..\..\UI\CombatCamera.cpp" />
-    <ClCompile Include="..\..\UI\CombatSetupWnd.cpp" />
-    <ClCompile Include="..\..\UI\CombatWnd.cpp" />
-    <ClCompile Include="..\..\UI\CUIControls.cpp" />
-    <ClCompile Include="..\..\UI\CUIDrawUtil.cpp" />
-    <ClCompile Include="..\..\UI\CUIStyle.cpp" />
-    <ClCompile Include="..\..\UI\CUIWnd.cpp" />
-    <ClCompile Include="..\..\UI\DesignWnd.cpp" />
-    <ClCompile Include="..\..\UI\EncyclopediaDetailPanel.cpp" />
-    <ClCompile Include="..\..\UI\EntityRenderer.cpp" />
-    <ClCompile Include="..\..\UI\FleetButton.cpp" />
-    <ClCompile Include="..\..\UI\FleetWnd.cpp" />
-    <ClCompile Include="..\..\UI\GalaxySetupWnd.cpp" />
-    <ClCompile Include="..\..\UI\InfoPanels.cpp" />
-    <ClCompile Include="..\..\UI\InGameMenu.cpp" />
-    <ClCompile Include="..\..\UI\IntroScreen.cpp" />
-    <ClCompile Include="..\..\UI\LinkText.cpp" />
-    <ClCompile Include="..\..\UI\MapWnd.cpp" />
-    <ClCompile Include="..\..\UI\MarkupBox.cpp" />
-    <ClCompile Include="..\..\UI\MultiplayerLobbyWnd.cpp" />
-    <ClCompile Include="..\..\UI\OptionsWnd.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\BatchPage.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\GrassLoader.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\ImpostorPage.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\PagedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\PropertyMaps.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\StaticBillboardSet.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader2D.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\TreeLoader3D.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp" />
-    <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp" />
-    <ClCompile Include="..\..\UI\PlanetDetailWnd.cpp" />
-    <ClCompile Include="..\..\UI\ProductionWnd.cpp" />
-    <ClCompile Include="..\..\UI\QueueListBox.cpp" />
-    <ClCompile Include="..\..\UI\ResearchWnd.cpp" />
-    <ClCompile Include="..\..\UI\ServerConnectWnd.cpp" />
-    <ClCompile Include="..\..\UI\ShaderProgram.cpp" />
-    <ClCompile Include="..\..\UI\SidePanel.cpp" />
-    <ClCompile Include="..\..\UI\SitRepPanel.cpp" />
-    <ClCompile Include="..\..\UI\Sound.cpp" />
+    <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp" />
+    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
+    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
+    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
     <ClCompile Include="..\..\UI\StringTable.cpp" />
-    <ClCompile Include="..\..\UI\SystemIcon.cpp" />
-    <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
-    <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
     <ClCompile Include="..\..\universe\Condition.cpp" />
     <ClCompile Include="..\..\universe\ConditionParser.cpp" />
@@ -407,7 +265,53 @@
     <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\VarText.cpp" />
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
-    <ClCompile Include="..\src\Version.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Appender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh" />
+    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh" />
+    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh" />
+    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Category.hh" />
+    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Configurator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Export.hh" />
+    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh" />
+    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Filter.hh" />
+    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh" />
+    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh" />
+    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Layout.hh" />
+    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh" />
+    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\NDC.hh" />
+    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh" />
+    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Portability.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Priority.hh" />
+    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh" />
+    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh" />
+    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh" />
+    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh" />
+    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh" />
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh" />
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh" />
+    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh" />
+    <None Include="..\..\util\Serialize.ipp" />
+    <None Include="..\..\util\SerializeUniverseExports.ipp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -21,6 +21,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrion", "FreeOrion\Free
 		{2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB} = {2CEC3AB3-36A0-4037-AEC2-DA0435A4DADB}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrionD", "FreeOrionD\FreeOrionD.vcxproj", "{B9808A04-CE5E-4660-99CB-B8C8C4E64402}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FreeOrionCA", "FreeOrionCA\FreeOrionCA.vcxproj", "{77E8E74E-F581-4850-A4C6-A088564DF9A7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Release|Win32 = Release|Win32
@@ -34,6 +38,10 @@ Global
 		{A88B8C11-8415-4E28-B90D-4A45B4FC513E}.Release|Win32.Build.0 = Release|Win32
 		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release|Win32.ActiveCfg = Release|Win32
 		{311D02C0-427D-4A03-AAEB-B819A9ACF5AB}.Release|Win32.Build.0 = Release|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release|Win32.ActiveCfg = Release|Win32
+		{B9808A04-CE5E-4660-99CB-B8C8C4E64402}.Release|Win32.Build.0 = Release|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release|Win32.ActiveCfg = Release|Win32
+		{77E8E74E-F581-4850-A4C6-A088564DF9A7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
