@@ -232,11 +232,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\GG\GG\gen_signals.py">
-      <Filter>Header Files</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
       <Filter>Source Files\dialogs</Filter>
     </ClCompile>

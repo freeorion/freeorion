@@ -83,9 +83,6 @@
     <ClInclude Include="..\..\GG\src\DefaultFont.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\GG\GG\gen_signals.py" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\GG\src\AlignmentFlags.cpp" />
     <ClCompile Include="..\..\GG\src\Base.cpp" />
     <ClCompile Include="..\..\GG\src\BrowseInfoWnd.cpp" />
