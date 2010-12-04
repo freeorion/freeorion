@@ -318,14 +318,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\Ui\StringTable.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\Ui\StringTable.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\util\VarText.cpp"
 				>
 			</File>
@@ -833,6 +825,18 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="UI"
+			>
+			<File
+				RelativePath="..\..\..\Ui\StringTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\Ui\StringTable.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>
