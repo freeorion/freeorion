@@ -223,6 +223,7 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\FreeOrion.ico" />
     <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh" />
     <None Include="..\..\log4cpp\log4cpp\Appender.hh" />
     <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh" />
@@ -408,6 +409,11 @@
     <ClCompile Include="..\..\util\VarText.cpp" />
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
     <ClCompile Include="..\src\Version.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FreeOrion.rc">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">IDI_ICON1=101</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

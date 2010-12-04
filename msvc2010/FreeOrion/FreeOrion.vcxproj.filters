@@ -620,6 +620,9 @@
     <None Include="..\..\log4cpp\src\StringUtil.hh">
       <Filter>Header Files\log4cpp</Filter>
     </None>
+    <None Include="..\..\FreeOrion.ico">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientFSMEvents.cpp">
@@ -1033,5 +1036,10 @@
     <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp">
       <Filter>Source Files\log4cpp</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FreeOrion.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>
