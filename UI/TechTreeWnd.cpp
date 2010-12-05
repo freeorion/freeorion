@@ -1439,20 +1439,18 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     Clear();
     m_selected_tech = selected_tech;
 
-    const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing") * m_scale;
-    const double NODE_SEP = Value(TECH_PANEL_LAYOUT_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing") * m_scale;
-    const double WIDTH = Value(TECH_PANEL_LAYOUT_WIDTH) * m_scale;
-    const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT) * m_scale;
+    const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
+    const double NODE_SEP = Value(TECH_PANEL_LAYOUT_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
+    const double WIDTH = Value(TECH_PANEL_LAYOUT_WIDTH);
+    const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT);
 
 
-    // Do graph layout
+    // graph layout
     ogdf::Graph G;
+
     ogdf::GraphAttributes GA(G, ogdf::GraphAttributes::nodeGraphics |
                                 ogdf::GraphAttributes::edgeGraphics |
                                 ogdf::GraphAttributes::nodeLabel);
-
-    GA.setAllWidth(HEIGHT);
-    GA.setAllHeight(WIDTH);
 
     Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
 
@@ -1466,6 +1464,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
             continue;
         ogdf::node new_node = G.newNode();
         GA.labelNode(new_node) = UserString(tech->Name()).c_str();
+        GA.width(new_node) = HEIGHT;
+        GA.height(new_node) = WIDTH;
         tech_nodes[tech->Name()] = new_node;
     }
     // add edges for prerequisites
@@ -1495,10 +1495,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
             G.newEdge(prereq_node, cur_node);
         }
     }
+
     Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
-
     ogdf::SugiyamaLayout SL;
-
     SL.arrangeCCs(false);
 
     ogdf::FastHierarchyLayout* fhl = new ogdf::FastHierarchyLayout;
@@ -1533,7 +1532,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
         TechPanel* panel = new TechPanel(tech, tech == m_selected_tech, m_scale);
 
-        GG::Pt ul(panel_centre_x - panel->Width() / 2, panel_centre_y - panel->Height() / 2);
+        GG::Pt ul((panel_centre_x - panel->Width() / 2) * m_scale,
+                  (panel_centre_y - panel->Height() / 2) * m_scale);
         panel->MoveTo(ul);
 
         m_techs[tech] = panel;
@@ -1565,8 +1565,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     //}
 
     const ogdf::DRect& bound_box = GA.boundingBox();
-    GG::X graph_width(bound_box.height());
-    GG::Y graph_height(bound_box.width());
+    GG::X graph_width(bound_box.height() * m_scale);
+    GG::Y graph_height(bound_box.width() * m_scale);
 
     GG::X client_width = ClientWidth();
     GG::Y client_height = ClientHeight();
