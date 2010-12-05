@@ -61,14 +61,12 @@ else ()
     message(FATAL_ERROR "Bullet library not found.")
 endif ()
 
-find_package(Graphviz)
-if (GRAPHVIZ_FOUND)
-    include_directories(${GRAPHVIZ_INCLUDE_DIR})
-else ()
-    message(FATAL_ERROR "Graphviz library not found.")
-endif ()
-
 set(THIS_EXE_SOURCES
+    ../../client/ClientApp.cpp
+    ../../client/ClientFSMEvents.cpp
+    ../../client/human/HumanClientFSM.cpp
+    ../../client/human/HumanClientApp.cpp
+    ../../client/human/chmain.cpp
     ../../combat/CombatOrder.cpp
     ../../combat/OpenSteer/AsteroidBeltObstacle.cpp
     ../../combat/OpenSteer/CombatFighter.cpp
@@ -83,10 +81,10 @@ set(THIS_EXE_SOURCES
     ../../Empire/Empire.cpp
     ../../Empire/EmpireManager.cpp
     ../../Empire/ResourcePool.cpp
+    ../../network/ClientNetworking.cpp
     ../../network/Message.cpp
     ../../network/MessageQueue.cpp
     ../../network/Networking.cpp
-    ../../UI/StringTable.cpp
     ../../universe/Building.cpp
     ../../universe/Condition.cpp
     ../../universe/ConditionParser1.cpp
@@ -112,6 +110,8 @@ set(THIS_EXE_SOURCES
     ../../universe/UniverseObject.cpp
     ../../universe/ValueRef.cpp
     ../../universe/ValueRefParser.cpp
+    ../../universe/Universe.cpp
+    ../../util/AppInterface.cpp
     ../../util/DataTable.cpp
     ../../util/GZStream.cpp
     ../../util/Math.cpp
@@ -148,12 +148,6 @@ set(THIS_EXE_SOURCES
     ../../log4cpp/src/Priority.cpp
     ../../log4cpp/src/StringUtil.cpp
     ../../log4cpp/src/TimeStamp.cpp
-    ../../client/ClientApp.cpp
-    ../../client/ClientFSMEvents.cpp
-    ../../client/human/HumanClientFSM.cpp
-    ../../client/human/HumanClientApp.cpp
-    ../../client/human/chmain.cpp
-    ../../network/ClientNetworking.cpp
     ../../UI/About.cpp
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
@@ -186,6 +180,7 @@ set(THIS_EXE_SOURCES
     ../../UI/SidePanel.cpp
     ../../UI/SitRepPanel.cpp
     ../../UI/Sound.cpp
+    ../../UI/StringTable.cpp
     ../../UI/SystemIcon.cpp
     ../../UI/TechTreeWnd.cpp
     ../../UI/TurnProgressWnd.cpp
@@ -201,9 +196,30 @@ set(THIS_EXE_SOURCES
     ../../UI/PagedGeometry/TreeLoader3D.cpp
     ../../UI/PagedGeometry/WindBatchedGeometry.cpp
     ../../UI/PagedGeometry/WindBatchPage.cpp
-    ../../universe/Universe.cpp
-    ../../util/AppInterface.cpp
-
+    ../../UI/ogdf/src/basic/String.cpp
+    ../../UI/ogdf/src/basic/basic.cpp
+    ../../UI/ogdf/src/basic/CombinatorialEmbedding.cpp
+    ../../UI/ogdf/src/basic/geometry.cpp
+    ../../UI/ogdf/src/basic/Graph.cpp
+    ../../UI/ogdf/src/basic/GraphAttributes.cpp
+    ../../UI/ogdf/src/basic/GraphCopy.cpp
+    ../../UI/ogdf/src/basic/Hashing.cpp
+    ../../UI/ogdf/src/basic/ogdfSystem.cpp
+    ../../UI/ogdf/src/basic/PoolMemoryAllocator.cpp
+    ../../UI/ogdf/src/basic/simple_graph_alg.cpp
+    ../../UI/ogdf/src/energybased/MultilevelGraph.cpp
+    ../../UI/ogdf/src/fileformats/GmlParser.cpp
+    ../../UI/ogdf/src/fileformats/XmlParser.cpp
+    ../../UI/ogdf/src/cluster/ClusterGraph.cpp
+    ../../UI/ogdf/src/layered/sugiyama.cpp
+    ../../UI/ogdf/src/layered/acyclic_subgraph.cpp
+    ../../UI/ogdf/src/layered/CrossingsMatrix.cpp
+    ../../UI/ogdf/src/layered/FastHierarchyLayout.cpp
+    ../../UI/ogdf/src/layered/heuristics.cpp
+    ../../UI/ogdf/src/layered/HierarchyLayoutModule.cpp
+    ../../UI/ogdf/src/layered/ranking.cpp
+    ../../UI/ogdf/src/layered/SplitHeuristic.cpp
+    ../../UI/ogdf/src/packing/TileToRowsCCPacker.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
@@ -225,9 +241,6 @@ set(THIS_EXE_LINK_LIBS
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}
-    ${GRAPHVIZ_CDT_LIBRARY}
-    ${GRAPHVIZ_GRAPH_LIBRARY}
-    ${GRAPHVIZ_GVC_LIBRARY}
 )
 
 if (WIN32)
@@ -237,9 +250,7 @@ if (WIN32)
         ${ZLIB_LIBRARY}
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
-        circogen.lib common.lib dotgen.lib fdpgen.lib gd.lib libexpat.lib neatogen.lib
-        pack.lib pathplan.lib plugin.lib twopigen.lib jpeg.lib png.lib
-	glew32.lib
+        jpeg.lib libpng.lib glew32.lib
     )
     set(THIS_EXE_SOURCES ${THIS_EXE_SOURCES} ${CMAKE_BINARY_DIR}/win32_resources.rc)
 else ()
@@ -249,7 +260,7 @@ endif ()
 executable_all_variants(freeorion)
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(freeorion
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK

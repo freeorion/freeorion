@@ -5,11 +5,12 @@
 #include "CUIDrawUtil.h"
 #include "CUIWnd.h"
 #include "Sound.h"
+#include "EncyclopediaDetailPanel.h"
 #include "../client/human/HumanClientApp.h"
 #include "../util/AppInterface.h"
-#include "EncyclopediaDetailPanel.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
+#include "../util/Directories.h"
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
 #include "../Empire/Empire.h"
@@ -18,48 +19,17 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
-#include <gvc.h>
+#include <ogdf/basic/Graph.h>
+#include <ogdf/basic/GraphAttributes.h>
+#include <ogdf/layered/SugiyamaLayout.h>
+#include <ogdf/layered/FastHierarchyLayout.h>
+#include <ogdf/layered/BarycenterHeuristic.h>
+#include <ogdf/layered/MedianHeuristic.h>
+#include <ogdf/layered/SplitHeuristic.h>
+
 #include <algorithm>
 
 #include <boost/timer.hpp>
-
-#ifdef FREEORION_MACOSX
-// allows graphviz plugin to be linked statically, avoiding need to distribute
-//  or have users install graphviz in a system location
-#include <gvplugin.h>
-
-extern gvplugin_library_t *gvplugin_dot_layout_LTX_library;
-
-const lt_symlist_t lt_preloaded_symbols[] __attribute__((used)) = {
-{ "gvplugin_dot_layout_LTX_library", 
-(void*)(&gvplugin_dot_layout_LTX_library) },
-{ 0, 0 }
-};
-#endif
-
-#ifndef M_PI
-#define M_PI                3.14159265358979323846
-#endif
-
-#ifndef PI
-#define PI                  M_PI
-#endif
-
-#ifndef POINTS_PER_INCH
-#define POINTS_PER_INCH     72
-#endif
-
-#ifndef POINTS
-#define POINTS(f_inch)      (ROUND((f_inch)*POINTS_PER_INCH))
-#endif
-
-#ifndef PS2INCH
-#define PS2INCH(ps)         ((ps)/(double)POINTS_PER_INCH)
-#endif
-
-#ifndef ND_coord_i
-#define ND_coord_i(n)       (ND_coord(n))
-#endif
 
 namespace {
     // command-line options
@@ -94,6 +64,8 @@ namespace {
 
     const double MIN_SCALE = 0.1073741824;  // = 1.0/(1.25)^10
     const double MAX_SCALE = 1.0;
+
+    struct pointf { double x, y; };
 
     pointf Bezier(pointf* patch, double t)
     {
@@ -462,7 +434,6 @@ void TechTreeWnd::TechTreeControls::Render()
 
     glEnable(GL_TEXTURE_2D);
 }
-
 
 void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -1468,111 +1439,144 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     Clear();
     m_selected_tech = selected_tech;
 
-    GVC_t* gvc = gvContext();
-    Agraph_t* graph = agopen(const_cast<char*>("FreeOrion Tech Graph"), AGDIGRAPHSTRICT);
-
     const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing") * m_scale;
     const double NODE_SEP = Value(TECH_PANEL_LAYOUT_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing") * m_scale;
     const double WIDTH = Value(TECH_PANEL_LAYOUT_WIDTH) * m_scale;
     const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT) * m_scale;
 
-    // default graph properties
-    agraphattr(graph, const_cast<char*>("rankdir"), const_cast<char*>("LR"));
-    //agraphattr(graph, "ordering", "in");
-    agraphattr(graph, const_cast<char*>("ranksep"), const_cast<char*>(boost::lexical_cast<std::string>(RANK_SEP).c_str()));
-    agraphattr(graph, const_cast<char*>("nodesep"), const_cast<char*>(boost::lexical_cast<std::string>(NODE_SEP).c_str())); 
-    agraphattr(graph, const_cast<char*>("arrowhead"), const_cast<char*>("none"));
-    agraphattr(graph, const_cast<char*>("arrowtail"), const_cast<char*>("none"));
 
-    // default node properties
-    agnodeattr(graph, const_cast<char*>("shape"), const_cast<char*>("box"));
-    agnodeattr(graph, const_cast<char*>("fixedsize"), const_cast<char*>("true"));
-    agnodeattr(graph, const_cast<char*>("width"), const_cast<char*>(boost::lexical_cast<std::string>(WIDTH).c_str()));
-    agnodeattr(graph, const_cast<char*>("height"), const_cast<char*>(boost::lexical_cast<std::string>(HEIGHT).c_str()));
+    // Do graph layout
+    ogdf::Graph G;
+    ogdf::GraphAttributes GA(G, ogdf::GraphAttributes::nodeGraphics |
+                                ogdf::GraphAttributes::edgeGraphics |
+                                ogdf::GraphAttributes::nodeLabel);
 
-    // default edge properties
-    agedgeattr(graph, const_cast<char*>("tailclip"), const_cast<char*>("false"));
+    GA.setAllWidth(HEIGHT);
+    GA.setAllHeight(WIDTH);
 
     Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
 
-    std::map<std::string, Agnode_t*> name_to_node_map;
     TechManager& manager = GetTechManager();
+
+    // add nodes
+    std::map<std::string, ogdf::node> tech_nodes;
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        if (!TechVisible(*it))
+        const Tech* tech = *it;
+        if (!TechVisible(tech))
             continue;
-        Agnode_t* node = agnode(graph, const_cast<char*>((*it)->Name().c_str()));
-        assert(node);
-        name_to_node_map[(*it)->Name()] = node;
+        ogdf::node new_node = G.newNode();
+        GA.labelNode(new_node) = UserString(tech->Name()).c_str();
+        tech_nodes[tech->Name()] = new_node;
     }
+    // add edges for prerequisites
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        if (!TechVisible(*it))
+        const Tech* tech = *it;
+        if (!tech || !TechVisible(tech))
             continue;
-        for (std::set<std::string>::const_iterator prereq_it = (*it)->Prerequisites().begin();
+
+        std::map<std::string, ogdf::node>::const_iterator node_map_it = tech_nodes.find(tech->Name());
+        if (node_map_it == tech_nodes.end())
+            continue;
+        ogdf::node cur_node = node_map_it->second;
+
+        for (std::set<std::string>::const_iterator prereq_it = tech->Prerequisites().begin();
              prereq_it != (*it)->Prerequisites().end();
-             ++prereq_it) {
-            if (!TechVisible(GetTech(*prereq_it)))
-            continue;
-            agedge(graph, name_to_node_map[*prereq_it], name_to_node_map[(*it)->Name()]);
+             ++prereq_it)
+        {
+            const Tech* prereq = GetTech(*prereq_it);
+            if (!prereq || !TechVisible(prereq))
+                continue;
+
+            std::map<std::string, ogdf::node>::const_iterator node_map_it2 = tech_nodes.find(prereq->Name());
+            if (node_map_it2 == tech_nodes.end())
+                continue;
+            ogdf::node prereq_node = node_map_it2->second;
+
+            G.newEdge(prereq_node, cur_node);
         }
     }
-
     Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
 
-    gvLayout(gvc, graph, const_cast<char*>("dot"));
+    ogdf::SugiyamaLayout SL;
+
+    SL.arrangeCCs(false);
+
+    ogdf::FastHierarchyLayout* fhl = new ogdf::FastHierarchyLayout;
+    fhl->layerDistance(RANK_SEP);
+    fhl->nodeDistance(NODE_SEP);
+    fhl->fixedLayerDistance(true);
+    SL.setLayout(fhl);
+
+    SL.setCrossMin(new ogdf::BarycenterHeuristic);
+
+    SL.call(GA/*, ranks*/);
+
+    try {
+        GA.writeGML((GetUserDir() / "FreeOrion_Tech_Graph.gml").string().c_str());
+    } catch (...) {
+        Logger().errorStream() << "Unable to write Tech Graph GML file";
+    }
+
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
-    // create new tech panels and new dependency arcs
-    m_dependency_arcs.clear();
-    //const std::set<const Tech*>& collapsed_subtree_techs = m_collapsed_subtree_techs_per_view[m_category_shown];
-    for (Agnode_t* node = agfstnode(graph); node; node = agnxtnode(graph, node)) {
-        const Tech* tech = GetTech(node->name);
-        assert(tech);
-        m_techs[tech] = new TechPanel(tech, tech == m_selected_tech, m_scale);
-        m_techs[tech]->MoveTo(GG::Pt(static_cast<GG::X>(PS2INCH(ND_coord_i(node).x) - m_techs[tech]->Width() / 2 + TECH_PANEL_MARGIN_X),
-                                     static_cast<GG::Y>(PS2INCH(ND_coord_i(node).y) - (m_techs[tech]->Height() - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale) / 2 + TECH_PANEL_MARGIN_Y)));
-        m_layout_surface->AttachChild(m_techs[tech]);
-        GG::Connect(m_techs[tech]->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
-        GG::Connect(m_techs[tech]->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
-        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
+    // create new tech panels
+    for (std::map<std::string, ogdf::node>::const_iterator it = tech_nodes.begin(); it != tech_nodes.end(); ++it) {
+        const Tech* tech = GetTech(it->first);
+        if (!tech)
+            continue;
+        ogdf::node node = it->second;
+        GG::X panel_centre_x(GA.y(node));
+        GG::Y panel_centre_y(GA.x(node));
 
-        for (Agedge_t* edge = agfstout(graph, node); edge; edge = agnxtout(graph, edge)) {
-            const Tech* from = tech;
-            const Tech* to = GetTech(edge->head->name);
-            assert(from && to);
-            std::vector<std::vector<std::pair<double, double> > > points;
-            for (int i = 0; i < ED_spl(edge)->size; ++i) {
-                std::vector<std::pair<int, int> > temp;
-                for (int j = 0; j < ED_spl(edge)->list[i].size; ++j) {
-                    temp.push_back(std::pair<int, int>(static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].x) + Value(TECH_PANEL_MARGIN_X)),
-                                                       static_cast<int>(PS2INCH(ED_spl(edge)->list[i].list[j].y) + Value(TECH_PANEL_MARGIN_Y))));
-                }
-                points.push_back(Spline(temp));
-            }
+        TechPanel* panel = new TechPanel(tech, tech == m_selected_tech, m_scale);
 
-            TechStatus arc_type = TS_RESEARCHABLE;
-            if (empire)
-                arc_type = empire->GetTechStatus(to->Name());
-            m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
-        }
+        GG::Pt ul(panel_centre_x - panel->Width() / 2, panel_centre_y - panel->Height() / 2);
+        panel->MoveTo(ul);
+
+        m_techs[tech] = panel;
+        m_layout_surface->AttachChild(panel);
+
+        GG::Connect(panel->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
+        GG::Connect(panel->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
+        GG::Connect(panel->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
     }
 
-    GG::Pt client_sz = ClientSize();
-    GG::Pt layout_size(std::max(client_sz.x,
-                                static_cast<GG::X>(PS2INCH(GD_bb(graph).UR.x - GD_bb(graph).LL.x) +
-                                                   2 * TECH_PANEL_MARGIN_X + PROGRESS_PANEL_LEFT_EXTRUSION * m_scale)),
-                       std::max(client_sz.y,
-                                static_cast<GG::Y>(PS2INCH(GD_bb(graph).UR.y - GD_bb(graph).LL.y) +
-                                                   2 * TECH_PANEL_MARGIN_Y + PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale)));
-    m_layout_surface->Resize(layout_size);
-    m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_sz.y))), Value(client_sz.y));
-    m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_sz.x))), Value(client_sz.x));
+    // create dependency lines
 
-    gvFreeLayout(gvc, graph);
-    agclose(graph);
-    gvFreeContext(gvc);
+    //    for (edges) {
+    //        const Tech* source = GetTech(source_tech_name?)
+    //        const Tech* to = GetTech(target_tech_name?);
+    //        if (!from || !to)
+    //            continue;
+    //
+    //        std::vector<std::pair<int, int> > points
+    //        for (edge segments) {
+    //            points.push_back(each_bend) ?
+    //        }
+    //
+    //        TechStatus arc_type = TS_RESEARCHABLE;
+    //        if (empire)
+    //            arc_type = empire->GetTechStatus(to->Name());
+    //        m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
+    //    }
+    //}
+
+    const ogdf::DRect& bound_box = GA.boundingBox();
+    GG::X graph_width(bound_box.height());
+    GG::Y graph_height(bound_box.width());
+
+    GG::X client_width = ClientWidth();
+    GG::Y client_height = ClientHeight();
+
+    GG::Pt layout_size(GG::X(std::max(client_width, graph_width)), GG::Y(std::max(client_height, graph_height)));
+
+    m_layout_surface->Resize(layout_size);
+    m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_height))), Value(client_height));
+    m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_width))), Value(client_width));
+
 
     Logger().debugStream() << "Tech Tree Layout Done";
 
@@ -1586,7 +1590,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             if (TechVisible(*it)) {
                 CenterOnTech(*it);
-                break;
+               break;
             }
         }
     }

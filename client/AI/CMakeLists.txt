@@ -137,7 +137,7 @@ endif ()
 executable_all_variants(freeorionca)
 
 if (WIN32)
-    add_definitions(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+    add_definitions(-D_CRT_SECURE_NO_DEPRECATE -D_SCL_SECURE_NO_DEPRECATE)
     set_target_properties(freeorionca
         PROPERTIES
         COMPILE_DEFINITIONS BOOST_ALL_DYN_LINK
