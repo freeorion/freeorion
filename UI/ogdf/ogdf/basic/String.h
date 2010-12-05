@@ -1,0 +1,238 @@
+/*
+ * $Revision: 2027 $
+ * 
+ * last checkin:
+ *   $Author: gutwenger $ 
+ *   $Date: 2010-09-01 11:55:17 +0200 (Wed, 01 Sep 2010) $ 
+ ***************************************************************/
+ 
+/** \file
+ * \brief Declaration of class String.
+ * 
+ * \author Carsten Gutwenger
+ * 
+ * \par License:
+ * This file is part of the Open Graph Drawing Framework (OGDF).
+ *
+ * Copyright (C). All rights reserved.
+ * See README.txt in the root directory of the OGDF installation for details.
+ * 
+ * \par
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * Version 2 or 3 as published by the Free Software Foundation
+ * and appearing in the files LICENSE_GPL_v2.txt and
+ * LICENSE_GPL_v3.txt included in the packaging of this file.
+ *
+ * \par
+ * In addition, as a special exception, you have permission to link
+ * this software with the libraries of the COIN-OR Osi project
+ * (http://www.coin-or.org/projects/Osi.xml), all libraries required
+ * by Osi, and all LP-solver libraries directly supported by the
+ * COIN-OR Osi project, and distribute executables, as long as
+ * you follow the requirements of the GNU General Public License
+ * in regard to all of the software in the executable aside from these
+ * third-party libraries.
+ * 
+ * \par
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * \par
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ * 
+ * \see  http://www.gnu.org/copyleft/gpl.html
+ ***************************************************************/
+
+
+#ifdef _MSC_VER
+#pragma once
+#endif
+
+#ifndef OGDF_STRING_H
+#define OGDF_STRING_H
+
+
+#include <ogdf/basic/basic.h>
+#include <ogdf/basic/Hashing.h>
+
+
+#define OGDF_STRING_BUFFER_SIZE 1024
+
+
+namespace ogdf {
+
+
+//! Representation of character strings.
+/**
+ * Strings are internally stored as an Ascii character array. The positions
+ * within a string a numbered 0,1,...
+ */
+class OGDF_EXPORT String {
+	
+	char  *m_pChar; //!< Pointer to characters.
+	size_t m_length;  //!< The length of the string (number of characters).
+
+	static char s_pBuffer[OGDF_STRING_BUFFER_SIZE]; //!< Temporary buffer used by sprintf().
+
+public:
+	//! Constructs an empty string, i.e., a string with length 0.
+	String();
+	//! Constructs a string consisting of a single character \a c.
+    String(const char c);
+    //! Constructs a string that is a copy of \a str.
+	String(const char *str);
+	//String(const char *format, ...);
+	//! Constructs a string consisting of the first \a maxLen characters of \a str.
+	/**
+	 * @param maxLen is the number of characters to be copied from the begin of \a str.
+	 *        If \a str is shorter than \a maxLen, then the complete string is copied.
+	 * @param str is the string to be copied.
+	 */
+    String(size_t maxLen, const char *str);
+    //! Constructs a string that is a copy of \a str.
+	String(const String &str);
+
+	~String();
+
+	//! Cast a string into a 0-terminated C++ string.
+	//operator const char *() const { return m_pChar; }
+	const char *cstr() const { return m_pChar; }
+
+	//! Returns the length of the string.
+	size_t length() const { return m_length; }
+
+	//! Returns a reference to the character at position \a i.
+	char &operator[](size_t i) {
+		OGDF_ASSERT(0 <= i && i < m_length)
+		return m_pChar[i];
+	}
+
+	//! Returns a reference to the character at position \a i.
+	const char &operator[](size_t i) const {
+		OGDF_ASSERT(0 <= i && i < m_length)
+		return m_pChar[i];
+	}
+
+	//! Equality operator.
+	friend bool operator==(const String &x, const String &y) {
+		return (compare(x,y) == 0);
+	}
+	//! Equality operator.
+	friend bool operator==(const char *x, const String &y) {
+		return (compare(x,y) == 0);
+	}
+	//! Equality operator.
+	friend bool operator==(const String &x, const char *y) {
+		return (compare(x,y) == 0);
+	}
+
+	//! Inequality operator.
+	friend bool operator!=(const String &x, const String &y) {
+		return (compare(x,y) != 0);
+	}
+	//! Inequality operator.
+	friend bool operator!=(const char *x, const String &y) {
+		return (compare(x,y) != 0);
+	}
+	//! Inequality operator.
+	friend bool operator!=(const String &x, const char *y) {
+		return (compare(x,y) != 0);
+	}
+
+	//! Less than operator.
+	friend bool operator<(const String &x, const String &y) {
+		return (compare(x,y) < 0);
+	}
+	//! Less than operator.
+	friend bool operator<(const char *x, const String &y) {
+		return (compare(x,y) < 0);
+	}
+	//! Less than operator.
+	friend bool operator<(const String &x, const char *y) {
+		return (compare(x,y) < 0);
+	}
+
+	//! Less or equal than operator.
+	friend bool operator<=(const String &x, const String &y) {
+		return (compare(x,y) <= 0);
+	}
+	//! Less or equal than operator.
+	friend bool operator<=(const char *x, const String &y) {
+		return (compare(x,y) <= 0);
+	}
+	//! Less or equal than operator.
+	friend bool operator<=(const String &x, const char *y) {
+		return (compare(x,y) <= 0);
+	}
+
+	//! Greater than operator.
+	friend bool operator>(const String &x, const String &y) {
+		return (compare(x,y) > 0);
+	}
+	//! Greater than operator.
+	friend bool operator>(const char *x, const String &y) {
+		return (compare(x,y) > 0);
+	}
+	//! Greater than operator.
+	friend bool operator>(const String &x, const char *y) {
+		return (compare(x,y) > 0);
+	}
+
+	//! Greater or equal than operator.
+	friend bool operator>=(const String &x, const String &y) {
+		return (compare(x,y) >= 0);
+	}
+	//! Greater or equal than operator.
+	friend bool operator>=(const char *x, const String &y) {
+		return (compare(x,y) >= 0);
+	}
+	//! Greater or equal than operator.
+	friend bool operator>=(const String &x, const char *y) {
+		return (compare(x,y) >= 0);
+	}
+
+	//! Assignment operator.
+	String &operator=(const String &str);
+	//! Assignment operator.
+	String &operator=(const char *str);
+
+	//! Appends string \a str to this string.
+	String &operator+=(const String &str);
+
+	//! Formatted assignment operator.
+	/**
+	 * Behaves essentially like the C function \c printf().
+	 */
+	void sprintf(const char *format, ...);
+
+	//! Compare function for strings.
+	static int compare (const String &x, const String &y);
+
+	//! Input operator.
+	friend istream& operator>>(istream& is, String &str);
+
+	OGDF_NEW_DELETE
+};
+
+//! Output operator for strings.
+inline ostream &operator<<(ostream &os, const String &str) {
+	os << str.cstr();
+	return os;
+}
+
+template<> class DefHashFunc<String> {
+public:
+	int hash(const String &key) const;
+};
+
+
+} // end namespace ogdf
+
+
+#endif
