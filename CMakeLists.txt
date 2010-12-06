@@ -114,6 +114,7 @@ set($ENV{LANG} ${tmpLANG})
 #project(freeorion_lib)
 #
 include_directories(${CMAKE_SOURCE_DIR} log4cpp)
+include_directories(${CMAKE_SOURCE_DIR} UI/ogdf)
 #
 #if (FREEORION_RELEASE)
 #    add_definitions(-DFREEORION_RELEASE)
@@ -216,7 +217,7 @@ include_directories(${CMAKE_SOURCE_DIR} log4cpp)
 # This macro is an internal utility macro that builds a particular variant of
 # an executable.
 #
-#   executable_variant(exename 
+#   executable_variant(exename
 #                      feature1 feature2 ...)
 #
 # where exename is the name of the executable (e.g., "GiGiSDL") and feature1,
