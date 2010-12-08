@@ -777,11 +777,11 @@ private:
     class TechPanel;
     typedef std::multimap<const Tech*,
                           std::pair<const Tech*,
-                                    std::vector<std::vector<std::pair<double, double> > > > > DependencyArcsMap;
-    typedef std::map<TechStatus, DependencyArcsMap> DependencyArcsMapsByArcType;
+                                    std::vector<std::pair<double,
+                                                          double> > > > DependencyLineSegmentsMap;
+    typedef std::map<TechStatus, DependencyLineSegmentsMap>             DependencyLineSegmentsMapsByArcType;
 
-    class LayoutSurface : public GG::Wnd
-    {
+    class LayoutSurface : public GG::Wnd {
     public:
         LayoutSurface() : Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE | GG::DRAGABLE) {}
         virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {DraggedSignal(move);}
@@ -792,7 +792,7 @@ private:
 
     void Layout(bool keep_position, double old_scale = -1.0);
     bool TechVisible(const Tech* tech);
-    void DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head);
+    void DrawPolyLine(const std::vector<std::pair<double, double> >& vertices, const GG::Clr& color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
     void TechBrowsedSlot(const Tech* tech);
     void TechClickedSlot(const Tech* tech);
@@ -808,8 +808,8 @@ private:
     std::set<TechStatus>    m_tech_statuses_shown;
     const Tech*             m_selected_tech;
 
-    std::map<const Tech*, TechPanel*> m_techs;
-    DependencyArcsMapsByArcType m_dependency_arcs;
+    std::map<const Tech*, TechPanel*>   m_techs;
+    DependencyLineSegmentsMapsByArcType m_dependency_polylines;
 
     LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
@@ -1196,79 +1196,88 @@ void TechTreeWnd::LayoutPanel::Render()
     researchable_half_alpha.a = 127;
     GG::Clr unresearchable_half_alpha = ClientUI::UnresearchableTechTextAndBorderColor();
     unresearchable_half_alpha.a = 127;
-    std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> > selected_arcs;
-    for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
-        GG::Clr arc_color;
-        switch (it->first) {
-        case TS_COMPLETE:       arc_color = known_half_alpha; break;
-        case TS_RESEARCHABLE:   arc_color = researchable_half_alpha; break;
-        default:                arc_color = unresearchable_half_alpha; break;
-        }
-        glColor(arc_color);
-        for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-            bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
-            if (selected_arc) {
-                selected_arcs[it->first].push_back(it2);
-                continue;
-            }
-            DrawArc(it2, arc_color, false);
+    for (DependencyLineSegmentsMapsByArcType::const_iterator it = m_dependency_polylines.begin(); it != m_dependency_polylines.end(); ++it) {
+        const DependencyLineSegmentsMap& dlsm = it->second;
+        for (DependencyLineSegmentsMap::const_iterator dlsm_it = dlsm.begin(); dlsm_it != dlsm.end(); ++dlsm_it) {
+            const Tech* prereq_tech = dlsm_it->first;
+            const Tech* postreq_tech = dlsm_it->second.first;
+            const std::vector<std::pair<double, double> >& vertices = dlsm_it->second.second;
+            DrawPolyLine(vertices, GG::CLR_WHITE, true);
         }
     }
+    //std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> > selected_arcs;
+    //for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
+    //    GG::Clr arc_color;
+    //    switch (it->first) {
+    //    case TS_COMPLETE:       arc_color = known_half_alpha; break;
+    //    case TS_RESEARCHABLE:   arc_color = researchable_half_alpha; break;
+    //    default:                arc_color = unresearchable_half_alpha; break;
+    //    }
+    //    glColor(arc_color);
+    //    for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+    //        bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
+    //        if (selected_arc) {
+    //            selected_arcs[it->first].push_back(it2);
+    //            continue;
+    //        }
+    //        DrawArc(it2, arc_color, false);
+    //    }
+    //}
     GG::Clr known_half_alpha_selected = GG::LightColor(known_half_alpha);
     GG::Clr researchable_half_alpha_selected = GG::LightColor(researchable_half_alpha);
     GG::Clr unresearchable_half_alpha_selected = GG::LightColor(unresearchable_half_alpha);
-    for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
-         it != selected_arcs.end();
-         ++it) {
-        GG::Clr arc_color;
-        switch (it->first) {
-        case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
-        case TS_RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
-        default:                arc_color = unresearchable_half_alpha_selected; break;
-        }
-        glColor(arc_color);
-        for (unsigned int i = 0; i < it->second.size(); ++i) {
-            DrawArc(it->second[i], arc_color, false);
-        }
-    }
+    //for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
+    //     it != selected_arcs.end();
+    //     ++it) {
+    //    GG::Clr arc_color;
+    //    switch (it->first) {
+    //    case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
+    //    case TS_RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
+    //    default:                arc_color = unresearchable_half_alpha_selected; break;
+    //    }
+    //    glColor(arc_color);
+    //    for (unsigned int i = 0; i < it->second.size(); ++i) {
+    //        DrawArc(it->second[i], arc_color, false);
+    //    }
+    //}
 
     // now retrace the arc with a normal-width, full-alpha line
     glLineWidth(static_cast<GLfloat>(ARC_THICKNESS * m_scale * 0.5));
     glDisable(GL_LINE_SMOOTH);
-    for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
-        GG::Clr arc_color;
-        switch (it->first) {
-        case TS_COMPLETE:       arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
-        case TS_RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
-        default:                arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
-        }
-        glColor(arc_color);
-        for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-            bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
-            if (selected_arc) {
-                selected_arcs[it->first].push_back(it2);
-                continue;
-            }
-            DrawArc(it2, arc_color, true);
-        }
-    }
+    //for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
+    //    GG::Clr arc_color;
+    //    switch (it->first) {
+    //    case TS_COMPLETE:       arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
+    //    case TS_RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
+    //    default:                arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
+    //    }
+    //    glColor(arc_color);
+    //    for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+    //        bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
+    //        if (selected_arc) {
+    //            selected_arcs[it->first].push_back(it2);
+    //            continue;
+    //        }
+    //        DrawArc(it2, arc_color, true);
+    //    }
+    //}
     GG::Clr known_selected = GG::LightColor(ClientUI::KnownTechTextAndBorderColor());
     GG::Clr researchable_selected = GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor());
     GG::Clr unresearchable_selected = GG::LightColor(ClientUI::UnresearchableTechTextAndBorderColor());
-    for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
-         it != selected_arcs.end();
-         ++it) {
-        GG::Clr arc_color;
-        switch (it->first) {
-        case TS_COMPLETE:       arc_color = known_selected; break;
-        case TS_RESEARCHABLE:   arc_color = researchable_selected; break;
-        default:                arc_color = unresearchable_selected; break;
-        }
-        glColor(arc_color);
-        for (unsigned int i = 0; i < it->second.size(); ++i) {
-            DrawArc(it->second[i], arc_color, true);
-        }
-    }
+    //for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
+    //     it != selected_arcs.end();
+    //     ++it) {
+    //    GG::Clr arc_color;
+    //    switch (it->first) {
+    //    case TS_COMPLETE:       arc_color = known_selected; break;
+    //    case TS_RESEARCHABLE:   arc_color = researchable_selected; break;
+    //    default:                arc_color = unresearchable_selected; break;
+    //    }
+    //    glColor(arc_color);
+    //    for (unsigned int i = 0; i < it->second.size(); ++i) {
+    //        DrawArc(it->second[i], arc_color, true);
+    //    }
+    //}
     glPopMatrix();
     glEnable(GL_TEXTURE_2D);
     EndClipping();
@@ -1306,7 +1315,7 @@ void TechTreeWnd::LayoutPanel::Clear()
         delete it->second;
     m_techs.clear();
 
-    m_dependency_arcs.clear();
+    m_dependency_polylines.clear();
 
     m_selected_tech = 0;
 }
@@ -1444,6 +1453,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     const double WIDTH = Value(TECH_PANEL_LAYOUT_WIDTH);
     const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT);
 
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+
 
     // graph layout
     ogdf::Graph G;
@@ -1456,8 +1467,10 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
 
     TechManager& manager = GetTechManager();
 
-    // add nodes
     std::map<std::string, ogdf::node> tech_nodes;
+    std::map<ogdf::node, const Tech*> node_techs;
+
+    // add nodes
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
         if (!TechVisible(tech))
@@ -1466,8 +1479,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         GA.labelNode(new_node) = UserString(tech->Name()).c_str();
         GA.width(new_node) = HEIGHT;
         GA.height(new_node) = WIDTH;
+
         tech_nodes[tech->Name()] = new_node;
+        node_techs[new_node] = tech;
     }
+
     // add edges for prerequisites
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
@@ -1516,9 +1532,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
         Logger().errorStream() << "Unable to write Tech Graph GML file";
     }
 
-
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
     // create new tech panels
@@ -1545,24 +1558,52 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     }
 
     // create dependency lines
+    for (ogdf::edge e = G.firstEdge(); e != G.lastEdge()->succ(); e = e->succ()) {
+        ogdf::node source = e->source();
+        ogdf::node target = e->target();
+        if (!source || !target)
+            continue;
 
-    //    for (edges) {
-    //        const Tech* source = GetTech(source_tech_name?)
-    //        const Tech* to = GetTech(target_tech_name?);
-    //        if (!from || !to)
-    //            continue;
-    //
-    //        std::vector<std::pair<int, int> > points
-    //        for (edge segments) {
-    //            points.push_back(each_bend) ?
-    //        }
-    //
-    //        TechStatus arc_type = TS_RESEARCHABLE;
-    //        if (empire)
-    //            arc_type = empire->GetTechStatus(to->Name());
-    //        m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
-    //    }
-    //}
+        const Tech* source_tech(0);
+        std::map<ogdf::node, const Tech*>::const_iterator it = node_techs.find(source);
+        if (it != node_techs.end())
+            source_tech = it->second;
+        else
+            continue;
+
+        const TechPanel* source_panel = m_techs[source_tech];
+        const GG::X HALF_SOURCE_PANEL_WIDTH = source_panel->Width() / 2;
+
+        const Tech* target_tech(0);
+        it = node_techs.find(target);
+        if (it != node_techs.end())
+            target_tech = it->second;
+        else
+            continue;
+
+        const TechPanel* target_panel = m_techs[target_tech];
+        const GG::X HALF_TARGET_PANEL_WIDTH = target_panel->Width() / 2;
+
+        // assemble vertices on dependenc line from graph layout results
+        std::vector<std::pair<double, double> > dependency_line_vertices;
+        // start
+        dependency_line_vertices.push_back(std::make_pair(GA.y(source) * m_scale/* + Value(HALF_SOURCE_PANEL_WIDTH)*/,
+                                                          GA.x(source) * m_scale));
+        // corners (may be none)
+        const ogdf::DPolyline& bends = GA.bends(e);
+        for (ogdf::DPolyline::const_iterator it = bends.begin(); it != bends.end(); ++it) {
+            const ogdf::DPoint& point = *it;
+            dependency_line_vertices.push_back(std::make_pair(point.m_y * m_scale, point.m_x * m_scale));
+        }
+        // end
+        dependency_line_vertices.push_back(std::make_pair(GA.y(target) * m_scale/* - Value(HALF_TARGET_PANEL_WIDTH)*/,
+                                                          GA.x(target) * m_scale));
+
+        TechStatus arc_type = TS_RESEARCHABLE;
+        if (empire)
+            arc_type = empire->GetTechStatus(source_tech->Name());
+        m_dependency_polylines[arc_type].insert(std::make_pair(source_tech, std::make_pair(target_tech, dependency_line_vertices)));
+    }
 
     const ogdf::DRect& bound_box = GA.boundingBox();
     GG::X graph_width(bound_box.height() * m_scale);
@@ -1621,36 +1662,42 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     return true;
 }
 
-void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head)
+void TechTreeWnd::LayoutPanel::DrawPolyLine(const std::vector<std::pair<double, double> >& vertices, const GG::Clr& color, bool with_arrow_head)
 {
     GG::Pt ul = UpperLeft();
+
+    glColor(color);
+
     glBegin(GL_LINE_STRIP);
-    for (unsigned int i = 0; i < it->second.second.size(); ++i) {
-        for (unsigned int j = 0; j < it->second.second[i].size(); ++j) {
-            glVertex(it->second.second[i][j].first + ul.x, it->second.second[i][j].second + ul.y);
-        }
-    }
+    for (std::vector<std::pair<double, double> >::const_iterator it = vertices.begin(); it != vertices.end(); ++it)
+        glVertex(it->first + ul.x, it->second + ul.y);
     glEnd();
-    if (with_arrow_head) {
-        double final_point_x = Value(it->second.second.back().back().first + ul.x);
-        double final_point_y = Value(it->second.second.back().back().second + ul.y);
-        double second_to_final_point_x = Value(it->second.second.back()[it->second.second.back().size() - 2].first + ul.x);
-        double second_to_final_point_y = Value(it->second.second.back()[it->second.second.back().size() - 2].second + ul.y);
-        const double ARROW_LENGTH = 10 * m_scale;
-        const double ARROW_WIDTH = 9 * m_scale;
-        glEnable(GL_TEXTURE_2D);
-        glPushMatrix();
-        glTranslated(final_point_x, final_point_y, 0.0);
-        glRotated(std::atan2(final_point_y - second_to_final_point_y, final_point_x - second_to_final_point_x) * 180.0 / 3.141594, 0.0, 0.0, 1.0);
-        glTranslated(-final_point_x, -final_point_y, 0.0);
-        IsoscelesTriangle(GG::Pt(GG::X(static_cast<int>(final_point_x - ARROW_LENGTH + 0.5)),
-                                 GG::Y(static_cast<int>(final_point_y - ARROW_WIDTH / 2.0 + 0.5))),
-                          GG::Pt(GG::X(static_cast<int>(final_point_x + 0.5)),
-                                 GG::Y(static_cast<int>(final_point_y + ARROW_WIDTH / 2.0 + 0.5))),
-                          SHAPE_RIGHT, color, false);
-        glPopMatrix();
-        glDisable(GL_TEXTURE_2D);
-    }
+
+    if (!with_arrow_head || vertices.size() < 2)
+        return;
+
+    std::vector<std::pair<double, double> >::const_reverse_iterator it = vertices.rbegin();
+    double x2 = it->first + Value(ul.x);
+    double y2 = it->second + Value(ul.y);
+    ++it;
+    double x1 = it->first + Value(ul.x);
+    double y1 = it->second + Value(ul.y);
+
+    const double ARROW_LENGTH = 10 * m_scale;
+    const double ARROW_WIDTH = 9 * m_scale;
+
+    glEnable(GL_TEXTURE_2D);
+    glPushMatrix();
+    glTranslated(x2, y2, 0.0);
+    glRotated(std::atan2(y2 - y1, x2 - x1) * 180.0 / 3.141594, 0.0, 0.0, 1.0);
+    glTranslated(-x2, -y2, 0.0);
+    IsoscelesTriangle(GG::Pt(GG::X(static_cast<int>(x2 - ARROW_LENGTH + 0.5)),
+                             GG::Y(static_cast<int>(y2 - ARROW_WIDTH / 2.0 + 0.5))),
+                      GG::Pt(GG::X(static_cast<int>(x2 + 0.5)),
+                             GG::Y(static_cast<int>(y2 + ARROW_WIDTH / 2.0 + 0.5))),
+                      SHAPE_RIGHT, color, false);
+    glPopMatrix();
+    glDisable(GL_TEXTURE_2D);
 }
 
 void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int)
