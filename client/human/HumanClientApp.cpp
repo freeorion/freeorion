@@ -744,7 +744,7 @@ void HumanClientApp::HandleSaveGameDataRequest()
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
 {
-    Logger().debugStream() << "HumanClientApp::HandleWindowResize()";
+    Logger().debugStream() << "HumanClientApp::HandleWindowResize(" << Value(w) << ", " << Value(h) << ")";
     if (ClientUI* ui = ClientUI::GetClientUI()) {
         if (MapWnd* map_wnd = ui->GetMapWnd())
             map_wnd->DoLayout();
