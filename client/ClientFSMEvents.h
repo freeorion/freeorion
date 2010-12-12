@@ -36,6 +36,7 @@ struct MessageEventBase
     (TurnUpdate)                               \
     (TurnPartialUpdate)                        \
     (TurnProgress)                             \
+    (PlayerStatus)                             \
     (CombatStart)                              \
     (CombatRoundUpdate)                        \
     (CombatEnd)                                \

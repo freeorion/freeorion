@@ -34,7 +34,6 @@ namespace {
         }
     };
 
-
     struct ToggleBuildTypeFunctor {
         ToggleBuildTypeFunctor(BuildDesignatorWnd* designator_wnd, BuildType type) : m_designator_wnd(designator_wnd), m_build_type(type) {}
         void operator()() {m_designator_wnd->ToggleType(m_build_type);}

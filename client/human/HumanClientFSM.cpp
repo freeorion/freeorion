@@ -7,6 +7,7 @@
 #include "../../network/Networking.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../UI/ChatWnd.h"
+#include "../../UI/PlayerListWnd.h"
 #include "../../UI/CombatWnd.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/MultiplayerLobbyWnd.h"
@@ -87,6 +88,7 @@ IntroMenu::IntroMenu(my_context ctx) :
     else {
         Client().Register(Client().m_ui->GetIntroScreen());
         Client().Remove(Client().m_ui->GetMessageWnd());
+        Client().Remove(Client().m_ui->GetPlayerListWnd());
     }
 }
 
@@ -135,6 +137,7 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
     Client().SetPlayerID(msg.m_message.ReceivingPlayer());
     Client().m_ui->GetMapWnd()->Sanitize();
     Client().m_ui->GetMessageWnd()->Show();
+    Client().m_ui->GetPlayerListWnd()->Show();
     return transit<PlayingGame>();
 }
 
@@ -272,6 +275,9 @@ boost::statechart::result HostMPLobby::react(const StartMPGameClicked& a)
     context<HumanClientFSM>().m_next_waiting_for_data_mode =
         context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
         WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
+    Client().m_ui->GetMapWnd()->Sanitize();
+    Client().m_ui->GetMessageWnd()->Show();
+    Client().m_ui->GetPlayerListWnd()->Show();
     return transit<PlayingGame>();
 }
 
@@ -310,6 +316,9 @@ boost::statechart::result NonHostMPLobby::react(const GameStart& msg)
     context<HumanClientFSM>().m_next_waiting_for_data_mode =
         context<MPLobby>().m_lobby_wnd->LoadGameSelected() ?
         WAITING_FOR_LOADED_GAME : WAITING_FOR_NEW_GAME;
+    Client().m_ui->GetMapWnd()->Sanitize();
+    Client().m_ui->GetMessageWnd()->Show();
+    Client().m_ui->GetPlayerListWnd()->Show();
     return transit<PlayingGame>();
 }
 
@@ -336,12 +345,38 @@ PlayingGame::~PlayingGame()
     Client().Remove(Client().m_ui->GetMapWnd());
 }
 
+boost::statechart::result PlayingGame::react(const PlayerChat& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerChat";
+    const std::string& text = msg.m_message.Text();
+    int sending_player_id = msg.m_message.SendingPlayer();
+    int recipient_player_id = msg.m_message.ReceivingPlayer();
+
+    Client().m_ui->GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, recipient_player_id);
+
+    return discard_event();
+}
+
 boost::statechart::result PlayingGame::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Disconnection";
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     Client().EndGame();
     return transit<IntroMenu>();
+}
+
+boost::statechart::result PlayingGame::react(const PlayerStatus& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.PlayerStatus";
+    int about_player_id;
+    Message::PlayerStatus status;
+    ExtractMessageData(msg.m_message, about_player_id, status);
+
+    Client().m_ui->GetMessageWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+    Client().m_ui->GetPlayerListWnd()->HandlePlayerStatusUpdate(status, about_player_id);
+    // TODO: tell the map wnd or something else as well?
+
+    return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const VictoryDefeat& msg)
@@ -429,6 +464,7 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData";
 
     Client().Register(Client().m_ui->GetMessageWnd());
+    Client().Register(Client().m_ui->GetPlayerListWnd());
 
     if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
         Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("NEW_GAME") + "\n");
@@ -451,10 +487,8 @@ boost::statechart::result WaitingForTurnData::react(const TurnProgress& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForTurnData.TurnProgress";
 
     Message::TurnProgressPhase phase_id;
-    int empire_id;
-    ExtractMessageData(msg.m_message, phase_id, empire_id);
-
-    Client().m_ui->GetMessageWnd()->HandleTurnPhaseUpdate(phase_id, empire_id);
+    ExtractMessageData(msg.m_message, phase_id);
+    Client().m_ui->GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 
     return discard_event();
 }
@@ -482,7 +516,6 @@ boost::statechart::result WaitingForTurnData::react(const TurnPartialUpdate& msg
 
     return discard_event();
 }
-
 
 boost::statechart::result WaitingForTurnData::react(const CombatStart& msg)
 {
@@ -562,6 +595,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // TODO: reselect last fleet if stored in save game ui data?
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
+    Client().m_ui->GetPlayerListWnd()->Refresh();
     Client().m_ui->GetMapWnd()->EnableOrderIssuing();
 
     if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
@@ -587,18 +621,6 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.TurnEnded";
     return transit<WaitingForTurnData>();
-}
-
-boost::statechart::result PlayingTurn::react(const PlayerChat& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingTurn.PlayerChat";
-    const std::string& text = msg.m_message.Text();
-    int sending_player_id = msg.m_message.SendingPlayer();
-    int recipient_player_id = msg.m_message.ReceivingPlayer();
-
-    Client().m_ui->GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, recipient_player_id);
-
-    return discard_event();
 }
 
 boost::statechart::result PlayingTurn::react(const AutoAdvanceFirstTurn& d)

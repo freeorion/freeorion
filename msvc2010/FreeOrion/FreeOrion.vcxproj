@@ -249,6 +249,7 @@
     <ClInclude Include="..\..\UI\PagedGeometry\WindBatchedGeometry.h" />
     <ClInclude Include="..\..\UI\PagedGeometry\WindBatchPage.h" />
     <ClInclude Include="..\..\UI\PlanetDetailWnd.h" />
+    <ClInclude Include="..\..\UI\PlayerListWnd.h" />
     <ClInclude Include="..\..\UI\ProductionWnd.h" />
     <ClInclude Include="..\..\UI\QueueListBox.h" />
     <ClInclude Include="..\..\UI\ResearchWnd.h" />
@@ -458,6 +459,7 @@
     <ClCompile Include="..\..\UI\PagedGeometry\WindBatchedGeometry.cpp" />
     <ClCompile Include="..\..\UI\PagedGeometry\WindBatchPage.cpp" />
     <ClCompile Include="..\..\UI\PlanetDetailWnd.cpp" />
+    <ClCompile Include="..\..\UI\PlayerListWnd.cpp" />
     <ClCompile Include="..\..\UI\ProductionWnd.cpp" />
     <ClCompile Include="..\..\UI\QueueListBox.cpp" />
     <ClCompile Include="..\..\UI\ResearchWnd.cpp" />

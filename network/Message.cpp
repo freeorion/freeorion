@@ -65,12 +65,13 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::TURN_PARTIAL_UPDATE)
     GG_ENUM_MAP_INSERT(Message::TURN_ORDERS)
     GG_ENUM_MAP_INSERT(Message::TURN_PROGRESS)
+    GG_ENUM_MAP_INSERT(Message::PLAYER_STATUS)
     GG_ENUM_MAP_INSERT(Message::CLIENT_SAVE_DATA)
     GG_ENUM_MAP_INSERT(Message::COMBAT_START)
     GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_UPDATE)
     GG_ENUM_MAP_INSERT(Message::COMBAT_TURN_ORDERS)
     GG_ENUM_MAP_INSERT(Message::COMBAT_END)
-    GG_ENUM_MAP_INSERT(Message::HUMAN_PLAYER_CHAT)
+    GG_ENUM_MAP_INSERT(Message::PLAYER_CHAT)
     GG_ENUM_MAP_INSERT(Message::PLAYER_ELIMINATED)
     GG_ENUM_MAP_INSERT(Message::REQUEST_NEW_OBJECT_ID)
     GG_ENUM_MAP_INSERT(Message::DISPATCH_NEW_OBJECT_ID)
@@ -103,24 +104,37 @@ std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase)
     return StripMessageScoping(GG::GetEnumMap<Message::TurnProgressPhase>().FromEnum(phase));
 }
 
+namespace GG {
+    GG_ENUM_MAP_BEGIN(Message::PlayerStatus)
+    GG_ENUM_MAP_INSERT(Message::PLAYING_TURN)
+    GG_ENUM_MAP_INSERT(Message::RESOLVING_COMBAT)
+    GG_ENUM_MAP_INSERT(Message::WAITING)
+    GG_ENUM_MAP_END
+}
+
+std::string PlayerStatusStr(Message::PlayerStatus status)
+{
+    return StripMessageScoping(GG::GetEnumMap<Message::PlayerStatus>().FromEnum(status));
+}
+
 std::ostream& operator<<(std::ostream& os, const Message& msg)
 {
     os << "Message: "
        << MessageTypeStr(msg.Type()) << " "
        << msg.SendingPlayer();
 
-    if (msg.SendingPlayer() == -1)
+    if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown) --> ";
-    else if (msg.SendingPlayer() == 0)
+    else if (msg.SendingPlayer() == Networking::HOST_PLAYER_ID)
         os << "(host) --> ";
     else
         os << " --> ";
 
     os << msg.ReceivingPlayer();
 
-    if (msg.ReceivingPlayer() == -1)
+    if (msg.ReceivingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown)";
-    else if (msg.ReceivingPlayer() == 0)
+    else if (msg.ReceivingPlayer() == Networking::HOST_PLAYER_ID)
         os << "(host)";
 
     os << " \"" << msg.Text() << "\"\n";
@@ -232,6 +246,11 @@ void HeaderToBuffer(const Message& message, int* header_buf)
 Message ErrorMessage(const std::string& problem)
 {
     return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, problem);
+}
+
+Message ErrorMessage(int player_id, const std::string& problem)
+{
+    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, player_id, problem);
 }
 
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
@@ -367,15 +386,25 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders)
     return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id)
+Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id)
 {
     std::ostringstream os;
     {
         FREEORION_OARCHIVE_TYPE oa(os);
-        oa << BOOST_SERIALIZATION_NVP(phase_id)
-           << BOOST_SERIALIZATION_NVP(empire_id);
+        oa << BOOST_SERIALIZATION_NVP(phase_id);
     }
     return Message(Message::TURN_PROGRESS, Networking::INVALID_PLAYER_ID, player_id, os.str());
+}
+
+Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status)
+{
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(about_player_id)
+           << BOOST_SERIALIZATION_NVP(player_status);
+    }
+    return Message(Message::PLAYER_STATUS, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
@@ -406,8 +435,7 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
     return Message(Message::TURN_PARTIAL_UPDATE, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders,
-                              const SaveGameUIData& ui_data)
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data)
 {
     std::ostringstream os;
     {
@@ -422,8 +450,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders,
     return Message(Message::CLIENT_SAVE_DATA, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders,
-                              const std::string& save_state_string)
+Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string)
 {
     std::ostringstream os;
     {
@@ -486,12 +513,12 @@ Message ServerSaveGameMessage(int receiver, bool synchronous_response)
 
 Message GlobalChatMessage(int sender, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg);
+    return Message(Message::PLAYER_CHAT, sender, Networking::INVALID_PLAYER_ID, msg);
 }
 
 Message SingleRecipientChatMessage(int sender, int receiver, const std::string& msg)
 {
-    return Message(Message::HUMAN_PLAYER_CHAT, sender, receiver, msg);
+    return Message(Message::PLAYER_CHAT, sender, receiver, msg);
 }
 
 Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_defeat,
@@ -794,17 +821,31 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
     }
 }
 
-void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id,
-                        int& empire_id)
+void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id)
 {
     try {
         std::istringstream is(msg.Text());
         FREEORION_IARCHIVE_TYPE ia(is);
-        ia >> BOOST_SERIALIZATION_NVP(phase_id)
-           >> BOOST_SERIALIZATION_NVP(empire_id);
+        ia >> BOOST_SERIALIZATION_NVP(phase_id);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, Message::TurnProgressPhase& "
-                               << "phase_id, int& empire_id) failed!  Message:\n"
+                               << "phase_id) failed!  Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        throw err;
+    }
+}
+
+void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(about_player_id)
+           >> BOOST_SERIALIZATION_NVP(status);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, int& about_player_id "
+                               << "Message::PlayerStatus&) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
         throw err;

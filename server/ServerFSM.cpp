@@ -461,7 +461,7 @@ sc::result MPLobby::react(const LobbyChat& msg)
     ServerApp& server = Server();
     const Message& message = msg.m_message;
 
-    if (message.ReceivingPlayer() == -1) { // the receiver is everyone (except the sender)
+    if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
         for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
             if ((*it)->PlayerID() != message.SendingPlayer())
                 (*it)->SendMessage(ServerLobbyChatMessage(message.SendingPlayer(), (*it)->PlayerID(), message.Text()));
@@ -875,7 +875,7 @@ sc::result PlayingGame::react(const PlayerChat& msg)
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if (msg.m_message.ReceivingPlayer() == -1 || msg.m_message.ReceivingPlayer() == (*it)->PlayerID())
+        if (msg.m_message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID || msg.m_message.ReceivingPlayer() == (*it)->PlayerID())
             (*it)->SendMessage(SingleRecipientChatMessage(msg.m_message.SendingPlayer(), (*it)->PlayerID(), msg.m_message.Text()));
     }
     return discard_event();
@@ -939,8 +939,10 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
     Empire* empire = server.GetPlayerEmpire(player_id);
     if (!empire) {
         Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"));
         return discard_event();
     }
+
     for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
         OrderPtr order = it->second;
         if (!order) {
@@ -948,23 +950,37 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
             continue;
         }
         if (empire->EmpireID() != order->EmpireID()) {
-            throw std::runtime_error(
-                "WaitingForTurnEnd.TurnOrders : Player \"" + empire->PlayerName() +
-                "\" attempted to issue orders for player \"" +
-                Empires().Lookup(order->EmpireID())->PlayerName() + "\"!  Terminating...");
+            Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
+                                   << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
+                                   << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
+            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE"));
+            return discard_event();
         }
     }
-
-    server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS, -1));
 
     if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
 
     server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
 
+    // notify other player that this player submitted orders
+    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        if (player_ctn->PlayerID() != message.SendingPlayer())
+            player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(), message.SendingPlayer(), Message::WAITING));
+    }
+
     if (server.AllOrdersReceived()) {
+        // if all players have submitted orders, proceed to turn processing
         if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
         post_event(ProcessTurn());
         return transit<ProcessingTurn>();
+
+    } else {
+        // if still waiting for other players, inform the player who just submitted orders
+        server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS));
     }
 
     return discard_event();
@@ -1255,7 +1271,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
     assert(empire);
     for (CombatOrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
         const CombatOrder& order = *it;
-        int owner_id = -1;
+        int owner_id = ALL_EMPIRES;
         if (order.Type() == CombatOrder::SHIP_ORDER ||
             order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
             if (UniverseObject* object = GetObject(order.ID())) {
@@ -1270,7 +1286,7 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
         } else {
             assert(!"Unknown CombatOrder type!");
         }
-        if (owner_id == -1) {
+        if (owner_id == ALL_EMPIRES) {
             throw std::runtime_error(
                 "ResolvingCombat.CombatTurnOrders : Player \"" + empire->PlayerName() +
                 "\" attempted to issue combat orders for an object that does not exist!  "

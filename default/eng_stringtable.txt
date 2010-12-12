@@ -51,6 +51,18 @@ No
 EMPIRE
 Empire
 
+HUMAN_PLAYER
+Human
+
+AI_PLAYER
+AI
+
+OBSERVER
+Obs
+
+HOST
+Host
+
 ALL
 All
 
@@ -251,6 +263,12 @@ Error when writing save file.
 
 UNABLE_TO_READ_SAVE_FILE
 Error when reading save file.
+
+EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
+You do not control an empire and cannot issue orders.
+
+ORDERS_FOR_WRONG_EMPIRE
+Orders were sent for an empire you do not control.
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -2100,7 +2118,7 @@ TURN_PROGRESS_PHASE_WAITING
 Waiting for Other Players
 
 TURN_PROGRESS_PHASE_ORDERS
-Executing %1% Orders
+Executing Orders
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
 Colonization and Scrapping
@@ -2115,13 +2133,27 @@ Begin Turn %1%
 # Messages Panel       #
 ########################
 
-#Window title####
-
 MESSAGES_PANEL_TITLE
 Messages
 
 MESSAGES_PANEL_INTRO
 Status and Chat Messages
+
+########################
+# Players List         #
+########################
+
+PLAYERS_LIST_PANEL_TITLE
+Empires
+
+PLAYING_TURN
+Playing
+
+RESOLVING_COMBAT
+Combat
+
+WAITING
+Waiting
 
 ########################
 # SitRep Panel         #

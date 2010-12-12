@@ -765,6 +765,9 @@
     <ClInclude Include="..\..\UI\ogdf\ogdf\internal\basic\MallocMemoryAllocator.h">
       <Filter>Header Files\UI\ogdf\internal\basic</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\PlayerListWnd.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
@@ -1392,6 +1395,9 @@
     </ClCompile>
     <ClCompile Include="..\..\UI\ogdf\src\basic\ogdfSystem.cpp">
       <Filter>Source Files\UI\ogdf\basic</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\PlayerListWnd.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -22,6 +22,7 @@ class IntroScreen;
 class CombatWnd;
 class MapWnd;
 class MessageWnd;
+class PlayerListWnd;
 class SitRepEntry;
 struct SaveGameUIData;
 class System;
@@ -53,6 +54,7 @@ public:
     //! \name Accessors //!@{
     MapWnd*         GetMapWnd();                                        //!< Returns the main map window (may be null).
     MessageWnd*     GetMessageWnd();                                    //!< Returns the chat / message window.
+    PlayerListWnd*  GetPlayerListWnd();                                 //!< Returns the players list window.
     IntroScreen*    GetIntroScreen();                                   //!< Returns the intro screen / splash window.
     CombatWnd*      GetCombatWnd();                                     //!< Returns the combat window (may be null?).
 
@@ -203,6 +205,7 @@ private:
 
     MapWnd*             m_map_wnd;          //!< the galaxy map
     MessageWnd*         m_message_wnd;      //!< the messages / chat display
+    PlayerListWnd*      m_player_list_wnd;  //!< the players list
     IntroScreen*        m_intro_screen;     //!< splash screen / main menu when starting program
     CombatWnd*          m_combat_wnd;       //!< 3D combat view
 

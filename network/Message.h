@@ -71,12 +71,13 @@ public:
         TURN_PARTIAL_UPDATE,    ///< sent to a client when the server updates part of the client gamestate after partially processing a turn, such as after fleet movement but before the rest of the turn is processed.  Does NOT indicate a new turn has begun.
         TURN_ORDERS,            ///< sent to the server by a client that has orders to be processed at the end of a turn
         TURN_PROGRESS,          ///< sent to clients to display a turn progress message
+        PLAYER_STATUS,          ///< sent to clients to inform them that a player has some status, such as having finished playing a turn and submitted orders, or is resolving combat, or is playing a turn normally
         CLIENT_SAVE_DATA,       ///< sent to the server in response to a server request for the data needed to create a save file
         COMBAT_START,           ///< sent to clients when a combat is about to start
         COMBAT_TURN_UPDATE,     ///< sent to clients when a combat round has been resolved
         COMBAT_TURN_ORDERS,     ///< sent to the server by a client that has combat orders to be processed at the end of a combat turn
         COMBAT_END,             ///< sent to clients when a combat is concluded
-        HUMAN_PLAYER_CHAT,      ///< sent when one player sends a chat message to another in multiplayer
+        PLAYER_CHAT,            ///< sent when one player sends a chat message to another in multiplayer
         REQUEST_NEW_OBJECT_ID,  ///< sent by client to server requesting a new object ID.
         DISPATCH_NEW_OBJECT_ID, ///< sent by server to client with the new object ID.
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
@@ -94,6 +95,12 @@ public:
         PROCESSING_ORDERS,      ///< processing orders
         COLONIZE_AND_SCRAP,     ///< enacting colonization and scrapping orders
         DOWNLOADING             ///< downloading new game state from server
+    };
+
+    enum PlayerStatus {
+        PLAYING_TURN,           ///< player is playing a turn, on the galax map
+        RESOLVING_COMBAT,       ///< player is resolving a combat interactively
+        WAITING                 ///< player is waiting for others to submit orders, to resolve combats, or for turn processing to complete
     };
 
     enum EndGameReason {
@@ -162,6 +169,9 @@ std::string MessageTypeStr(Message::MessageType type);
 /** Returns a string representation of \a phase. */
 std::string TurnProgressPhaseStr(Message::TurnProgressPhase phase);
 
+/** Returns a string representation of \a status. */
+std::string PlayerStatusStr(Message::PlayerStatus status);
+
 /** Writes \a msg to \a os.  The format of the output is designed for debugging purposes. */
 std::ostream& operator<<(std::ostream& os, const Message& msg);
 
@@ -172,6 +182,7 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 
 /** creates an ERROR message*/
 Message ErrorMessage(const std::string& problem);
+Message ErrorMessage(int player_id, const std::string& problem);
 
 /** creates a HOST_SP_GAME message*/
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
@@ -215,7 +226,10 @@ Message JoinAckMessage(int player_id);
 Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
 /** creates a TURN_PROGRESS message. */
-Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id, int empire_id);
+Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id);
+
+/** creates a PLAYER_STATUS message. */
+Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status);
 
 /** creates a TURN_UPDATE message. */
 Message TurnUpdateMessage(int player_id, int empire_id, int current_turn, const EmpireManager& empires,
@@ -294,7 +308,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data);
 Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
-    receiver is -1. Note that the receiver of this message is always the server.*/
+    receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
 Message LobbyChatMessage(int sender, int receiver, const std::string& text);
 
 /** creates an LOBBY_CHAT message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.
@@ -358,7 +372,9 @@ void ExtractMessageData(const Message& msg, OrderSet& orders, bool& ui_data_avai
                         SaveGameUIData& ui_data, bool& save_state_string_available,
                         std::string& save_state_string);
 
-void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id, int& empire_id);
+void ExtractMessageData(const Message& msg, Message::TurnProgressPhase& phase_id);
+
+void ExtractMessageData(const Message& msg, int& about_player_id, Message::PlayerStatus& status);
 
 void ExtractMessageData(const Message& msg, SinglePlayerSetupData& setup_data);
 

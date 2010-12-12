@@ -420,7 +420,7 @@ void TechTreeWnd::TechTreeControls::Render()
             GG::X middle = cl_ul.x + m_col_offset*3 - BUTTON_SEPARATION/2 + UPPER_LEFT_PAD;
             glVertex(middle, category_bottom);
             glVertex(middle, cl_lr.y - 1);
-            
+
         } else {
             // the status and type buttons are split into separate vertical groups, and need a horiztonal separator between them
             GG::Y status_bottom = category_bottom + m_status_or_type_button_rows*m_row_offset;
@@ -1794,9 +1794,9 @@ private:
     class TechRow : public CUIListBox::Row {
     public:
         TechRow(GG::X w, const Tech* tech);
-        const Tech*                    GetTech() { return m_tech; }
-        virtual void                   Render();
-        static std::vector<GG::X> ColWidths(GG::X total_width);
+        const Tech*                 GetTech() { return m_tech; }
+        virtual void                Render();
+        static std::vector<GG::X>   ColWidths(GG::X total_width);
 
     private:
         const Tech*     m_tech;

@@ -225,25 +225,25 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     Logger().debugStream() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME:          m_fsm->process_event(HostSPGame(msg, player_connection)); break;
-    case Message::START_MP_GAME:         m_fsm->process_event(StartMPGame(msg, player_connection)); break;
-    case Message::LOBBY_UPDATE:          m_fsm->process_event(LobbyUpdate(msg, player_connection)); break;
-    case Message::LOBBY_CHAT:            m_fsm->process_event(LobbyChat(msg, player_connection)); break;
-    case Message::LOBBY_HOST_ABORT:      m_fsm->process_event(LobbyHostAbort(msg, player_connection)); break;
-    case Message::LOBBY_EXIT:            m_fsm->process_event(LobbyNonHostExit(msg, player_connection)); break;
-    case Message::SAVE_GAME:             m_fsm->process_event(SaveGameRequest(msg, player_connection)); break;
-    case Message::TURN_ORDERS:           m_fsm->process_event(TurnOrders(msg, player_connection)); break;
-    case Message::COMBAT_TURN_ORDERS:    m_fsm->process_event(CombatTurnOrders(msg, player_connection)); break;
-    case Message::CLIENT_SAVE_DATA:      m_fsm->process_event(ClientSaveData(msg, player_connection)); break;
-    case Message::HUMAN_PLAYER_CHAT:     m_fsm->process_event(PlayerChat(msg, player_connection)); break;
-    case Message::REQUEST_NEW_OBJECT_ID: m_fsm->process_event(RequestObjectID(msg, player_connection)); break;
-    case Message::REQUEST_NEW_DESIGN_ID: m_fsm->process_event(RequestDesignID(msg, player_connection)); break;
+    case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
+    case Message::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
+    case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
+    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
+    case Message::LOBBY_HOST_ABORT:         m_fsm->process_event(LobbyHostAbort(msg, player_connection));   break;
+    case Message::LOBBY_EXIT:               m_fsm->process_event(LobbyNonHostExit(msg, player_connection)); break;
+    case Message::SAVE_GAME:                m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
+    case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
+    case Message::COMBAT_TURN_ORDERS:       m_fsm->process_event(CombatTurnOrders(msg, player_connection)); break;
+    case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
+    case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
+    case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
+    case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
 
     // TODO: For prototyping only.
-    case Message::COMBAT_END:            m_fsm->process_event(CombatComplete()); break;
+    case Message::COMBAT_END:               m_fsm->process_event(CombatComplete()); break;
 
     case Message::ERROR:
-    case Message::DEBUG:                 break;
+    case Message::DEBUG:                    break;
 
     default:
         Logger().errorStream() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -255,11 +255,11 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
 void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_connection)
 {
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection)); break;
-    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection)); break;
-    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection)); break;
+    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
+    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
+    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
 #ifndef FREEORION_RELEASE
-    case Message::DEBUG:                 break;
+    case Message::DEBUG:        break;
 #endif
     default:
         Logger().errorStream() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
@@ -1363,12 +1363,12 @@ void ServerApp::PreCombatProcessTurns()
 
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
 
+    // inform players of order execution
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it)
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::PROCESSING_ORDERS));
+
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
-        // inform players of order execution
-        for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-            (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::PROCESSING_ORDERS, it->first));
-        }
         Empire* empire = empires.Lookup(it->first);
         empire->ClearSitRep();
         OrderSet* order_set = it->second;
@@ -1383,7 +1383,7 @@ void ServerApp::PreCombatProcessTurns()
 
     // player notifications
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COLONIZE_AND_SCRAP, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COLONIZE_AND_SCRAP));
     }
 
 
@@ -1423,7 +1423,7 @@ void ServerApp::PreCombatProcessTurns()
 
     // player notifications
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::FLEET_MOVEMENT, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::FLEET_MOVEMENT));
     }
 
     // fleet movement
@@ -1470,7 +1470,7 @@ void ServerApp::PreCombatProcessTurns()
          player_it != m_networking.established_end();
          ++player_it)
     {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING));
     }
 
     // send partial turn updates to all players after orders and movement
@@ -1491,7 +1491,7 @@ void ServerApp::ProcessCombats()
     Logger().debugStream() << "ServerApp::ProcessCombats";
     // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COMBAT, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COMBAT));
     }
 
 
@@ -1584,7 +1584,7 @@ void ServerApp::PostCombatProcessTurns()
 
     // notify players that production and growth is being processed
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::EMPIRE_PRODUCTION, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::EMPIRE_PRODUCTION));
     }
 
 
@@ -1731,7 +1731,7 @@ void ServerApp::PostCombatProcessTurns()
          player_it != m_networking.established_end();
          ++player_it)
     {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING, -1));
+        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING));
     }
 
 

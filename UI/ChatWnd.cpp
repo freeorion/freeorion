@@ -15,10 +15,6 @@
 
 namespace {
     const int PAD = 3;
-
-    void AddOptions(OptionsDB& db)
-    {}
-    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 class MessageWndEdit : public CUIEdit
@@ -236,7 +232,11 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
-void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, int empire_id)
+void MessageWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id)
+{
+}
+
+void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id)
 {
     std::string phase_str;
     switch (phase_id) {
@@ -253,19 +253,7 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, int 
         phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
         break;
     case Message::PROCESSING_ORDERS:
-        {
-            const Empire* empire = Empires().Lookup(empire_id);
-            if (!empire) {
-                Logger().errorStream() << "MessageWnd::HandleTurnPhaseUpdate couldn't get empire with id " << empire_id;
-                return;
-            }
-            const std::string& empire_name = empire->Name();
-            const GG::Clr empire_clr = empire->Color();
-
-            std::string wrapped_empire_name = RgbaTag(empire_clr) + empire_name + "</rgba>";
-
-            phase_str = boost::io::str(FlexibleFormat(UserString("TURN_PROGRESS_PHASE_ORDERS")) % wrapped_empire_name);
-        }
+        phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
         break;
     case Message::COLONIZE_AND_SCRAP:
         phase_str = UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP");

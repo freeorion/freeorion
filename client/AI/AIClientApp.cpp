@@ -207,6 +207,7 @@ void AIClientApp::HandleMessage(const Message& msg)
         break;
 
     case Message::TURN_PROGRESS:
+    case Message::PLAYER_STATUS:
         break;
 
     case Message::COMBAT_START: {
@@ -237,7 +238,7 @@ void AIClientApp::HandleMessage(const Message& msg)
         break;
     }
 
-    case Message::HUMAN_PLAYER_CHAT:
+    case Message::PLAYER_CHAT:
         m_AI->HandleChatMessage(msg.SendingPlayer(), msg.Text());
         break;
 

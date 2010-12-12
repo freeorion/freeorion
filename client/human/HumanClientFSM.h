@@ -24,12 +24,14 @@ enum WaitingForDataMode {
     WAITING_FOR_NEW_TURN
 };
 
-// This function returns true iff the FSM's state instrumentation should be output to the logger's debug stream.
+/** This function returns true iff the FSM's state instrumentation should be
+  * output to the logger's debug stream. */
 bool TraceHumanClientFSMExecution();
 
 // Human client-specific events not already defined in ClientFSMEvents.h
 
-// Indicates that the "Start Game" button was clicked in the MP Lobby UI, in host player mode.
+/** Indicates that the "Start Game" button was clicked in the MP Lobby UI, in
+  * host player mode. */
 struct StartMPGameClicked : boost::statechart::event<StartMPGameClicked> {};
 
 // Indicates that the "Cancel" button was clicked in the MP Lobby UI.
@@ -51,14 +53,15 @@ struct JoinMPGameRequested : boost::statechart::event<JoinMPGameRequested> {};
 // Indicates that the player's turn has been sent to the server.
 struct TurnEnded : boost::statechart::event<TurnEnded> {};
 
-// Indicates that a game has ended and that the state should be reset to IntroMenu.
+/** Indicates that a game has ended and that the state should be reset to
+  * IntroMenu. */
 struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
 
 // Posted by PlayingTurn's ctor when --auto-advance-first-turn is in use.
 struct AutoAdvanceFirstTurn : boost::statechart::event<AutoAdvanceFirstTurn> {};
 
-// This is a Boost.Preprocessor list of all the events above.  As new events
-// are added above, they should be added to this list as well.
+/** This is a Boost.Preprocessor list of all the events above.  As new events
+  * are added above, they should be added to this list as well. */
 #define HUMAN_CLIENT_FSM_EVENTS                                 \
     (StartMPGameClicked)                                        \
     (CancelMPGameClicked)                                       \
@@ -100,11 +103,14 @@ class MultiplayerLobbyWnd;
 
 #define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
 
-// Note that empty idle states are needed for several states.  They are needed when a state has internal states (and so
-// because of the requirements of Boost.StateChart, must have an initial internal state), but the state does not
-// logically have an initial state that is always correct to use.  for instance, MPLobby must always be in one of its
-// internal substates HostMPLobby, or NonHostMPLobby, but it is inappropriate to make either of these be the "default"
-// (initial) internal state.  For this reason, a do-nothing internal state MPLobbyIdle is created instead.
+/** Note that empty idle states are needed for several states.  They are needed
+  * when a state has internal states (and so because of the requirements of
+  * Boost.StateChart, must have an initial internal state), but the state does
+  * not logically have an initial state that is always correct to use.  for
+  * instance, MPLobby must always be in one of its internal substates
+  * HostMPLobby, or NonHostMPLobby, but it is inappropriate to make either of
+  * these be the "default" (initial) internal state.  For this reason, a
+  * do-nothing internal state MPLobbyIdle is created instead. */
 #define EMPTY_IDLE_STATE(name)                                          \
     struct name##Idle : boost::statechart::simple_state<name##Idle, name> \
     {                                                                   \
@@ -157,8 +163,8 @@ struct IntroMenu : boost::statechart::state<IntroMenu, HumanClientFSM, IntroMenu
 EMPTY_IDLE_STATE(IntroMenu);
 
 
-/** The human client state in which the player has requested to host a single player game and is waiting for the server
-    to acknowledge the request. */
+/** The human client state in which the player has requested to host a single
+  * player game and is waiting for the server to acknowledge the request. */
 struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM>
 {
     typedef boost::statechart::simple_state<WaitingForSPHostAck, HumanClientFSM> Base;
@@ -178,8 +184,8 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
 };
 
 
-/** The human client state in which the player has requested to host a multiplayer game and is waiting for the server
-    to acknowledge the request. */
+/** The human client state in which the player has requested to host a
+  * multiplayer game and is waiting for the server to acknowledge the request. */
 struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM>
 {
     typedef boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM> Base;
@@ -197,8 +203,9 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
 };
 
 
-/** The human client state in which the player has requested to join a single-player game and is waiting for the server
-    to acknowledge the player's join. */
+/** The human client state in which the player has requested to join a
+  * single-player game and is waiting for the server to acknowledge the
+  * player's join. */
 struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM>
 {
     typedef boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM> Base;
@@ -290,13 +297,16 @@ struct NonHostMPLobby : boost::statechart::state<NonHostMPLobby, MPLobby>
 };
 
 
-/** The human client state in which a game has been started, and a turn is being played. */
+/** The human client state in which a game has been started, and a turn is being
+  * played. */
 struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData>
 {
     typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<PlayerChat>,
         boost::statechart::custom_reaction<Disconnection>,
+        boost::statechart::custom_reaction<PlayerStatus>,
         boost::statechart::custom_reaction<VictoryDefeat>,
         boost::statechart::custom_reaction<PlayerEliminated>,
         boost::statechart::custom_reaction<EndGame>,
@@ -307,7 +317,9 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     PlayingGame();
     ~PlayingGame();
 
+    boost::statechart::result react(const PlayerChat& msg);
     boost::statechart::result react(const Disconnection& d);
+    boost::statechart::result react(const PlayerStatus& msg);
     boost::statechart::result react(const VictoryDefeat& msg);
     boost::statechart::result react(const PlayerEliminated& msg);
     boost::statechart::result react(const EndGame& msg);
@@ -332,8 +344,7 @@ struct WaitingForTurnData : boost::statechart::state<WaitingForTurnData, Playing
         boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::deferral<VictoryDefeat>,
-        boost::statechart::deferral<PlayerEliminated>,
-        boost::statechart::deferral<PlayerChat>
+        boost::statechart::deferral<PlayerEliminated>
     > reactions;
 
     WaitingForTurnData(my_context ctx);
@@ -376,7 +387,6 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<SaveGame>,
         boost::statechart::custom_reaction<TurnEnded>,
-        boost::statechart::custom_reaction<PlayerChat>,
         boost::statechart::custom_reaction<AutoAdvanceFirstTurn>
     > reactions;
 
@@ -385,7 +395,6 @@ struct PlayingTurn : boost::statechart::state<PlayingTurn, PlayingGame>
 
     boost::statechart::result react(const SaveGame& d);
     boost::statechart::result react(const TurnEnded& d);
-    boost::statechart::result react(const PlayerChat& msg);
     boost::statechart::result react(const AutoAdvanceFirstTurn& d);
 
     CLIENT_ACCESSOR
@@ -400,8 +409,7 @@ struct ResolvingCombat : boost::statechart::state<ResolvingCombat, WaitingForTur
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<CombatStart>,
         boost::statechart::custom_reaction<CombatRoundUpdate>,
-        boost::statechart::custom_reaction<CombatEnd>,
-        boost::statechart::deferral<PlayerChat>
+        boost::statechart::custom_reaction<CombatEnd>
     > reactions;
 
     ResolvingCombat(my_context ctx);

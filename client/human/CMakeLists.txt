@@ -151,6 +151,7 @@ set(THIS_EXE_SOURCES
     ../../UI/About.cpp
     ../../UI/BuildDesignatorWnd.cpp
     ../../UI/ChatWnd.cpp
+    ../../UI/PlayerListWnd.cpp
     ../../UI/ClientUI.cpp
     ../../UI/CollisionMeshConverter.cpp
     ../../UI/CombatCamera.cpp

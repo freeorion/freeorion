@@ -279,14 +279,14 @@ void HumanClientApp::StartServer()
 void HumanClientApp::FreeServer()
 {
     m_server_process.Free();
-    SetPlayerID(-1);
+    SetPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
 void HumanClientApp::KillServer()
 {
     m_server_process.Kill();
-    SetPlayerID(-1);
+    SetPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
@@ -365,7 +365,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                     human_player_setup_data.m_starting_species_name = sm.begin()->first;
              }
 
-            human_player_setup_data.m_save_game_empire_id = -1; // not used for new games
+            human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
             human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
 
             // add to setup data players
@@ -378,10 +378,10 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                 PlayerSetupData ai_setup_data;
 
                 ai_setup_data.m_player_name = "AI_" + boost::lexical_cast<std::string>(ai_i);
-                ai_setup_data.m_empire_name.clear();            // leave blank, to be set by server in Universe::GenerateEmpires
-                ai_setup_data.m_empire_color = GG::CLR_ZERO;    // to be set by server
-                ai_setup_data.m_starting_species_name.clear();  // leave blank, to be set by server
-                ai_setup_data.m_save_game_empire_id = -1;       // not used for new games
+                ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
+                ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
+                ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
+                ai_setup_data.m_save_game_empire_id = ALL_EMPIRES;  // not used for new games
                 ai_setup_data.m_client_type = Networking::CLIENT_TYPE_AI_PLAYER;
 
                 setup_data.m_players.push_back(ai_setup_data);
@@ -707,26 +707,27 @@ void HumanClientApp::HandleMessage(Message& msg)
         std::cerr << "HumanClientApp::HandleMessage(" << MessageTypeStr(msg.Type()) << ")\n";
 
     switch (msg.Type()) {
-    case Message::ERROR:                m_fsm->process_event(Error(msg)); break;
-    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg)); break;
-    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg)); break;
-    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg)); break;
-    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg)); break;
-    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg)); break;
-    case Message::LOBBY_HOST_ABORT:     m_fsm->process_event(LobbyHostAbort(msg)); break;
-    case Message::LOBBY_EXIT:           m_fsm->process_event(LobbyNonHostExit(msg)); break;
-    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg)); break;
-    case Message::GAME_START:           m_fsm->process_event(GameStart(msg)); break;
-    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg)); break;
-    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg)); break;
-    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg)); break;
-    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg)); break;
-    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg)); break;
-    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg)); break;
-    case Message::HUMAN_PLAYER_CHAT:    m_fsm->process_event(PlayerChat(msg)); break;
-    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg)); break;
-    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg)); break;
-    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg)); break;
+    case Message::ERROR:                m_fsm->process_event(Error(msg));               break;
+    case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));          break;
+    case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));          break;
+    case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));            break;
+    case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg));         break;
+    case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg));           break;
+    case Message::LOBBY_HOST_ABORT:     m_fsm->process_event(LobbyHostAbort(msg));      break;
+    case Message::LOBBY_EXIT:           m_fsm->process_event(LobbyNonHostExit(msg));    break;
+    case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg));          break;
+    case Message::GAME_START:           m_fsm->process_event(GameStart(msg));           break;
+    case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));          break;
+    case Message::TURN_PARTIAL_UPDATE:  m_fsm->process_event(TurnPartialUpdate(msg));   break;
+    case Message::TURN_PROGRESS:        m_fsm->process_event(TurnProgress(msg));        break;
+    case Message::PLAYER_STATUS:        m_fsm->process_event(PlayerStatus(msg));        break;
+    case Message::COMBAT_START:         m_fsm->process_event(CombatStart(msg));         break;
+    case Message::COMBAT_TURN_UPDATE:   m_fsm->process_event(CombatRoundUpdate(msg));   break;
+    case Message::COMBAT_END:           m_fsm->process_event(CombatEnd(msg));           break;
+    case Message::PLAYER_CHAT:          m_fsm->process_event(PlayerChat(msg));          break;
+    case Message::VICTORY_DEFEAT :      m_fsm->process_event(VictoryDefeat(msg));       break;
+    case Message::PLAYER_ELIMINATED:    m_fsm->process_event(PlayerEliminated(msg));    break;
+    case Message::END_GAME:             m_fsm->process_event(::EndGame(msg));           break;
     default:
         Logger().errorStream() << "HumanClientApp::HandleMessage : Received an unknown message type \""
                                << msg.Type() << "\".";

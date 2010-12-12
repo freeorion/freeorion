@@ -22,7 +22,8 @@ public:
 
     //! \name Mutators //@{
     void            HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id);
-    void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id, int empire_id);
+    void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
+    void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);
     void            HandleGameStatusUpdate(const std::string& text);
     void            HandleLogMessage(const std::string& text);
     void            Clear();

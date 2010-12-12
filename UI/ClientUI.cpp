@@ -6,6 +6,7 @@
 #include "CombatWnd.h"
 #include "MapWnd.h"
 #include "ChatWnd.h"
+#include "PlayerListWnd.h"
 #include "Sound.h"
 #include "../util/AppInterface.h"
 
@@ -443,6 +444,9 @@ namespace {
         db.Add("UI.window-quickclose",          "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",          true);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    const GG::X PANEL_WIDTH(320);
+    const GG::Y PANEL_HEIGHT(200);
 }
 
 
@@ -452,17 +456,20 @@ namespace {
 ClientUI::ClientUI() :
     m_map_wnd(0),
     m_message_wnd(0),
+    m_player_list_wnd(0),
     m_intro_screen(0),
     m_combat_wnd(0)
 {
     s_the_UI = this;
 
-    m_message_wnd = new MessageWnd(GG::X0, GG::GUI::GetGUI()->AppHeight() - GG::Y(200), GG::X(320), GG::Y(200));
-    m_map_wnd = new MapWnd();
-    m_intro_screen = new IntroScreen();
+    m_message_wnd =         new MessageWnd(GG::X0,      GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,  PANEL_WIDTH,    PANEL_HEIGHT);
+    m_player_list_wnd =     new PlayerListWnd(GG::X0,   m_message_wnd->UpperLeft().y - PANEL_HEIGHT,    PANEL_WIDTH,    PANEL_HEIGHT);
+    m_map_wnd =             new MapWnd();
+    m_intro_screen =        new IntroScreen();
+
     if (GetOptionsDB().Get<bool>("tech-demo")) {
         if (HumanClientApp* app = HumanClientApp::GetApp()) {
-            m_combat_wnd = new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
+            m_combat_wnd =  new CombatWnd(app->SceneManager(), app->Camera(), app->Viewport());
         }
     }
 }
@@ -471,6 +478,7 @@ ClientUI::~ClientUI()
 {
     delete m_map_wnd;
     delete m_message_wnd;
+    delete m_player_list_wnd;
     delete m_intro_screen;
     delete m_combat_wnd;
     s_the_UI = 0;
@@ -481,6 +489,9 @@ MapWnd* ClientUI::GetMapWnd()
 
 MessageWnd* ClientUI::GetMessageWnd()
 { return m_message_wnd; }
+
+PlayerListWnd* ClientUI::GetPlayerListWnd()
+{ return m_player_list_wnd; }
 
 IntroScreen* ClientUI::GetIntroScreen()
 { return m_intro_screen; }
