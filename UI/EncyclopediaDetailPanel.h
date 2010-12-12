@@ -31,8 +31,6 @@ public:
     //!@}
 
     /** \name Mutators */ //@{
-    void            ConnectLinkClickSignalsToShowInSubscreens();
-
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     virtual void    Render();
     virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);

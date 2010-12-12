@@ -2682,7 +2682,6 @@ void MapWnd::ReselectLastFleet()
     }
 }
 
-
 void MapWnd::SelectPlanet(int planetID)
 {
     //std::cout << "MapWnd::SelectPlanet(" << planetID << ")" << std::endl;
@@ -4125,6 +4124,7 @@ bool MapWnd::KeyboardZoomIn()
     Zoom(1);
     return true;
 }
+
 bool MapWnd::KeyboardZoomOut()
 {
     Zoom(-1);
