@@ -680,6 +680,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\PlayerListWnd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\PlayerListWnd.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Ui\ProductionWnd.cpp"
 				>
 			</File>
