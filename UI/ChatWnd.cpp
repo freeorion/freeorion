@@ -1,6 +1,7 @@
 #include "ChatWnd.h"
 
 #include "CUIControls.h"
+#include "PlayerListWnd.h"
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -297,8 +298,8 @@ void MessageWnd::MessageEntered()
     // TODO: Check if message is chat, or some other command...?
 
     // send chat message
-    std::string edit_text = m_edit->Text();
-    if (edit_text != "") {
+    const std::string& edit_text = m_edit->Text();
+    if (!edit_text.empty()) {
         if (m_history.size() == 1 || m_history[1] != edit_text) {
             m_history[0] = edit_text;
             m_history.push_front("");
@@ -308,7 +309,21 @@ void MessageWnd::MessageEntered()
         while (12 < static_cast<int>(m_history.size()) + 1)
             m_history.pop_back();
         m_history_position = 0;
-        HumanClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(HumanClientApp::GetApp()->PlayerID(), edit_text));
+
+        ClientNetworking& net = HumanClientApp::GetApp()->Networking();
+        int sender_id = HumanClientApp::GetApp()->PlayerID();
+
+        std::set<int> recipients;
+        if (PlayerListWnd* player_list_wnd = ClientUI::GetClientUI()->GetPlayerListWnd())
+            recipients = player_list_wnd->SelectedPlayerIDs();
+        if (recipients.empty()) {
+            net.SendMessage(GlobalChatMessage(sender_id, edit_text));
+        } else {
+            if (recipients.find(sender_id) == recipients.end())
+                recipients.insert(sender_id);   // ensure recipient sees own sent message
+            for (std::set<int>::const_iterator it = recipients.begin(); it != recipients.end(); ++it)
+                net.SendMessage(SingleRecipientChatMessage(sender_id, *it, edit_text));
+        }
     }
     m_edit->Clear();
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
