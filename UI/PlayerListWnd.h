@@ -5,7 +5,7 @@
 #include "CUIWnd.h"
 #include "../network/Message.h"
 
-class CUIListBox;
+class PlayerListBox;
 
 class PlayerListWnd : public CUIWnd
 {
@@ -33,7 +33,7 @@ public:
 private:
     void            DoLayout();
 
-    CUIListBox* m_player_list;
+    PlayerListBox*  m_player_list;
 };
 
 #endif

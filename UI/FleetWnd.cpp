@@ -641,14 +641,12 @@ namespace {
         }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt ClientUpperLeft() const
-        {
+        virtual GG::Pt  ClientUpperLeft() const {
             return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER));
         }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt ClientLowerRight() const
-        {
+        virtual GG::Pt  ClientLowerRight() const {
             return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
         }
 
@@ -869,28 +867,31 @@ namespace {
     public:
         ShipRow(GG::X w, GG::Y h, int ship_id) :
             GG::ListBox::Row(w, h, ""),
-            m_ship_id(ship_id)
+            m_ship_id(ship_id),
+            m_panel(0)
         {
             SetName("ShipRow");
             SetChildClippingMode(ClipToClient);
             if (GetObject<Ship>(m_ship_id))
                 SetDragDropDataType(SHIP_DROP_TYPE_STRING);
-            push_back(new ShipDataPanel(w, h, m_ship_id));
+            m_panel = new ShipDataPanel(w, h, m_ship_id);
+            push_back(m_panel);
         }
 
         void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (!empty() && old_size != Size())
-                at(0)->Resize(Size());
+            if (!empty() && old_size != Size() && m_panel)
+                m_panel->Resize(Size());
         }
 
         int             ShipID() const {return m_ship_id;}
         Ship*           GetShip() const {return GetObject<Ship>(m_ship_id);}
 
     private:
-        int m_ship_id;
+        int             m_ship_id;
+        ShipDataPanel*  m_panel;
     };
 }
 
@@ -1225,25 +1226,28 @@ namespace {
     public:
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, GetObject<Fleet>(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
-            m_fleet_id(fleet_id)
+            m_fleet_id(fleet_id),
+            m_panel(0)
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
-            push_back(new FleetDataPanel(w, h, m_fleet_id));
+            m_panel = new FleetDataPanel(w, h, m_fleet_id);
+            push_back(m_panel);
         }
 
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "FleetRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
-            if (!empty() && old_size != Size())
-                at(0)->Resize(Size());
+            if (!empty() && old_size != Size() && m_panel)
+                m_panel->Resize(Size());
         }
 
         int             FleetID() const {return m_fleet_id;}
         Fleet*          GetFleet() const {return GetObject<Fleet>(m_fleet_id);}
     private:
-        int m_fleet_id;
+        int             m_fleet_id;
+        FleetDataPanel* m_panel;
     };
 }
 
