@@ -1,19 +1,18 @@
-Cosmic Consortium
-United Federation
-Spatial Union
-Dominion of Worlds
-Stellar Confederation
-Galactic Empire
-Commonwealth of Stars
-The Hegemony
-Star Kingdom
-Luminar Republic
-League of Systems
-Planetary Protectorate
-The Authority
-Principality of Space
-Omnispatial Tribes
-Pangalactic Government
-The Alliance
+Consortium
+Federation
+Union
+Dominion
+Confederation
+Empire
+Commonwealth
+Hegemony
+Kingdom
+Republic
+League
+Protectorate
+Authority
+Principality
+Tribes
+Governance
+Alliance
 Sovereignty
-Independent Worlds
