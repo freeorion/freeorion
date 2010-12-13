@@ -1811,7 +1811,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool read_onl
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
 
-    m_ships_lb = new ShipsListBox(0, read_only);
+    m_ships_lb = new ShipsListBox(UniverseObject::INVALID_OBJECT_ID, read_only);
     AttachChild(m_ships_lb);
     m_ships_lb->SetHiliteColor(GG::CLR_ZERO);
 

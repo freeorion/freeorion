@@ -75,19 +75,14 @@ namespace {
 
         /** Renders black panel background, border with color depending on the current state and a background for the ship's name text. */
         virtual void    Render() {
-            // main background position and colour
             const GG::Clr& background_colour = ClientUI::WndColor();
-            const GG::Pt ul = UpperLeft(), lr = LowerRight(), cul = ClientUpperLeft();
-
-            // title background colour and position
             const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
             const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
-            GG::Clr border_colour = unselected_colour;//m_selected ? selected_colour : unselected_colour;
+            GG::Clr border_colour = m_selected ? selected_colour : unselected_colour;
             if (Disabled())
                 border_colour = DisabledColor(border_colour);
 
-            // render
-            GG::FlatRectangle(ul,       lr,         background_colour,  border_colour, DATA_PANEL_BORDER);  // background and border
+            GG::FlatRectangle(UpperLeft(), LowerRight(), background_colour,  border_colour, DATA_PANEL_BORDER);
         }
 
         void            Select(bool b) {
@@ -286,6 +281,10 @@ PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     m_player_list(0)
 {
     m_player_list = new PlayerListBox(GG::X0, GG::Y0, ClientWidth(), ClientHeight());
+    m_player_list->SetHiliteColor(GG::CLR_ZERO);
+    m_player_list->SetStyle(GG::LIST_QUICKSEL | GG::LIST_NOSORT);
+    GG::Connect(m_player_list->SelChangedSignal,    &PlayerListWnd::PlayerSelectionChanged,  this);
+    GG::Connect(m_player_list->DoubleClickedSignal, &PlayerListWnd::PlayerDoubleClicked,     this);
     AttachChild(m_player_list);
 
     DoLayout();
@@ -297,7 +296,16 @@ PlayerListWnd::PlayerListWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
 }
 
 std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
-    return std::set<int>();
+    std::set<int> retval;
+    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+        if (!m_player_list->Selected(it))
+            continue;
+
+        int selected_player_id = PlayerInRow(it);
+        if (selected_player_id != Networking::INVALID_PLAYER_ID)
+            retval.insert(selected_player_id);
+    }
+    return retval;
 }
 
 void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
@@ -323,6 +331,8 @@ void PlayerListWnd::Update() {
 }
 
 void PlayerListWnd::Refresh() {
+    std::set<int> initially_selected_players = this->SelectedPlayerIDs();
+
     m_player_list->Clear();
 
     const ClientApp* app = ClientApp::GetApp();
@@ -340,6 +350,38 @@ void PlayerListWnd::Refresh() {
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
     }
+
+    this->SetSelectedPlayers(initially_selected_players);
+}
+
+void PlayerListWnd::SetSelectedPlayers(const std::set<int>& player_ids) {
+    const GG::ListBox::SelectionSet initial_selections = m_player_list->Selections();
+
+    m_player_list->DeselectAll();
+
+    // early exit if nothing to select
+    if (player_ids.empty()) {
+        PlayerSelectionChanged(m_player_list->Selections());
+        return;
+    }
+
+    // loop through players, selecting any indicated
+    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+        PlayerRow* row = dynamic_cast<PlayerRow*>(*it);
+        if (!row) {
+            Logger().errorStream() << "PlayerRow::SetSelectedPlayers couldn't cast a listbow row to PlayerRow?";
+            continue;
+        }
+
+        // if this row's player should be selected, so so
+        if (player_ids.find(row->PlayerID()) != player_ids.end()) {
+            m_player_list->SelectRow(it);
+            m_player_list->BringRowIntoView(it);  // may cause earlier rows brought into view to be brought out of view... oh well
+        }
+    }
+
+    if (initial_selections != m_player_list->Selections())
+        PlayerSelectionChanged(m_player_list->Selections());
 }
 
 void PlayerListWnd::Clear() {
@@ -362,4 +404,51 @@ void PlayerListWnd::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::Mo
 
 void PlayerListWnd::DoLayout() {
     m_player_list->SizeMove(GG::Pt(), GG::Pt(ClientWidth(), ClientHeight() - GG::Y(INNER_BORDER_ANGLE_OFFSET)));
+}
+
+void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows) {
+    // mark as selected all PlayerDataPanel that are in \a rows and mark as not
+    // selected all PlayerDataPanel that aren't in \a rows
+    for (GG::ListBox::iterator it = m_player_list->begin(); it != m_player_list->end(); ++it) {
+        bool select_this_row = (rows.find(it) != rows.end());
+
+        GG::ListBox::Row* row = *it;
+        if (!row) {
+            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get row";
+            continue;
+        }
+        if (row->empty()) {
+            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged got empty row";
+            continue;
+        }
+        GG::Control* control = (*row)[0];
+        if (!control) {
+            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get control from row";
+            continue;
+        }
+        PlayerDataPanel* data_panel = dynamic_cast<PlayerDataPanel*>(control);
+        if (!data_panel) {
+            Logger().errorStream() << "PlayerListWnd::PlayerSelectionChanged couldn't get PlayerDataPanel from control";
+            continue;
+        }
+        data_panel->Select(select_this_row);
+    }
+
+    SelectedPlayersChangedSignal();
+}
+
+void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it) {
+    int player_id = PlayerInRow(it);
+    if (player_id != Networking::INVALID_PLAYER_ID)
+        PlayerDoubleClickedSignal(player_id);
+}
+
+int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {
+    if (it == m_player_list->end())
+        return Networking::INVALID_PLAYER_ID;
+
+    if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(*it))
+        return player_row->PlayerID();
+
+    return Networking::INVALID_PLAYER_ID;
 }
