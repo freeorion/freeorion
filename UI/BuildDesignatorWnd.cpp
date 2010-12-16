@@ -18,8 +18,185 @@
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
+#include <GG/TextControl.h>
 
 namespace {
+    //////////////////////////////////
+    // ProductionItemPanel
+    //////////////////////////////////
+    class ProductionItemPanel : public GG::Control {
+    public:
+        ProductionItemPanel(GG::X w, GG::Y h, const ProductionQueue::ProductionItem& item, int empire_id) :
+            Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
+            m_item(item),
+            m_empire_id(empire_id),
+            m_icon(0),
+            m_name(0),
+            m_cost(0),
+            m_time(0),
+            m_desc(0)
+        {
+            SetChildClippingMode(ClipToClient);
+
+            const Empire* empire = Empires().Lookup(m_empire_id);
+
+            boost::shared_ptr<GG::Texture>  texture;
+            std::string                     name_text;
+            std::string                     desc_text;
+            switch (m_item.build_type) {
+            case BT_BUILDING: {
+                texture = ClientUI::BuildingTexture(m_item.name);
+                desc_text = UserString("BT_BUILDING"); 
+                name_text = UserString(m_item.name);
+                break;
+            }
+            case BT_SHIP: {
+                texture = ClientUI::ShipIcon(m_item.design_id);
+                desc_text = UserString("BT_SHIP");
+                name_text = m_item.name;
+                break;
+            }
+            default:
+                Logger().errorStream() << "ProductionItemPanel::Init got invalid item type";
+                texture = ClientUI::GetTexture("");
+            }
+
+            m_icon = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X1, GG::Y1, texture,
+                                           GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_icon);
+
+            m_name = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, name_text,
+                                         ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_name);
+
+            // cost / turn, and minimum production turns
+            std::string cost_text;
+            std::string time_text;
+            if (empire) {
+                std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item);
+                cost_text = DoubleToString(cost_time.first, 3, false);
+                time_text = boost::lexical_cast<std::string>(cost_time.second);
+            }
+            m_cost = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, cost_text,
+                                         ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+            AttachChild(m_cost);
+
+            m_time = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, time_text,
+                                         ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_CENTER | GG::FORMAT_VCENTER);
+            AttachChild(m_time);
+
+            m_desc = new GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, desc_text,
+                                         ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            AttachChild(m_desc);
+
+            DoLayout();
+        }
+
+        /** Renders panel background and border. */
+        virtual void    Render() {
+            GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1u);
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::Control::SizeMove(ul, lr);
+            //std::cout << "ProductionItemPanel::SizeMove new size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            if (old_size != Size())
+                DoLayout();
+        }
+
+    private:
+        void            DoLayout() {
+            const GG::Y ICON_HEIGHT(ClientHeight());
+            const GG::X ICON_WIDTH(Value(ClientHeight()));
+            const GG::X ITEM_NAME_WIDTH(ClientUI::Pts() * 16);
+            const GG::X COST_WIDTH(ClientUI::Pts() * 4);
+            const GG::X TIME_WIDTH(ClientUI::Pts() * 3);
+            const GG::X DESC_WIDTH(ClientUI::Pts() * 18);
+
+            GG::X left(GG::X0);
+            GG::Y top(GG::Y0);
+            GG::Y bottom(ClientHeight());
+
+            m_icon->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ICON_WIDTH, bottom));
+            left += ICON_WIDTH + GG::X(3);
+
+            m_name->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + ITEM_NAME_WIDTH, bottom));
+            left += ITEM_NAME_WIDTH;
+
+            m_cost->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + COST_WIDTH, bottom));
+            left += COST_WIDTH;
+
+            m_time->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + TIME_WIDTH, bottom));
+            left += TIME_WIDTH;
+
+            m_desc->SizeMove(GG::Pt(left, GG::Y0), GG::Pt(left + DESC_WIDTH, bottom));
+        }
+
+        const ProductionQueue::ProductionItem&  m_item;
+        int                 m_empire_id;
+
+        GG::StaticGraphic*  m_icon;
+        GG::TextControl*    m_name;
+        GG::TextControl*    m_cost;
+        GG::TextControl*    m_time;
+        GG::TextControl*    m_desc;
+    };
+
+
+    ////////////////////////////////////////////////
+    // ProductionItemRow
+    ////////////////////////////////////////////////
+    class ProductionItemRow : public GG::ListBox::Row {
+    public:
+        ProductionItemRow(GG::X w, GG::Y h, const std::string& building_name, int empire_id) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
+            m_item(BT_BUILDING, building_name),
+            m_empire_id(empire_id),
+            m_panel(0)
+        {
+            SetName("ProductionItemRow");
+            SetChildClippingMode(ClipToClient);
+            SetDragDropDataType(building_name);
+            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
+            push_back(m_panel);
+        }
+
+        ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
+            m_item(BT_SHIP, design_id),
+            m_empire_id(empire_id),
+            m_panel(0)
+        {
+            SetName("ProductionItemRow");
+            SetChildClippingMode(ClipToClient);
+            SetDragDropDataType(boost::lexical_cast<std::string>(design_id));
+            m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
+            push_back(m_panel);
+        }
+
+        const   ProductionQueue::ProductionItem& Item() const {
+            return m_item;
+        }
+
+        void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            GG::ListBox::Row::SizeMove(ul, lr);
+            //std::cout << "ProductionItemRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            if (!empty() && old_size != Size() && m_panel)
+                m_panel->Resize(Size());
+        }
+
+    private:
+        ProductionQueue::ProductionItem m_item;
+        int                             m_empire_id;
+        ProductionItemPanel*            m_panel;
+    };
+
     //////////////////////////////////
     // BuildableItemsListBox
     //////////////////////////////////
@@ -27,10 +204,37 @@ namespace {
     public:
         BuildableItemsListBox(GG::X x, GG::Y y, GG::X w, GG::Y h) :
             CUIListBox(x, y, w, h)
-        {}
-        virtual void GainingFocus() {
+        {
+            // preinitialize listbox/row column widths, because what
+            // ListBox::Insert does on default is not suitable for this case
+            SetNumCols(1);
+            SetColWidth(0, GG::X0);
+            LockColWidths();
+        }
+
+        virtual void    GainingFocus() {
             DeselectAll();
             SelChangedSignal(Selections());
+        }
+
+        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+            const GG::Pt old_size = Size();
+            CUIListBox::SizeMove(ul, lr);
+            std::cout << "BuildableItemsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            if (old_size != Size()) {
+                const GG::Pt row_size = ListRowSize();
+                std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
+                for (GG::ListBox::iterator it = begin(); it != end(); ++it)
+                    (*it)->Resize(row_size);
+            }
+        }
+
+        GG::Pt          ListRowSize() const {
+            return GG::Pt(Width() - ClientUI::ScrollWidth() - 5, ListRowHeight());
+        }
+
+        static GG::Y    ListRowHeight() {
+            return GG::Y(ClientUI::Pts() * 3/2);
         }
     };
 
@@ -118,7 +322,6 @@ private:
     static const GG::X TEXT_MARGIN_X;
     static const GG::Y TEXT_MARGIN_Y;
 
-    std::vector<GG::X>  ColWidths();
     void                DoLayout();
 
     bool    BuildableItemVisible(BuildType build_type, const std::string& name);
@@ -146,8 +349,6 @@ private:
 
     int                                     m_build_location;
     int                                     m_empire_id;
-
-    GG::Y                                   m_row_height;
 
     mutable boost::signals::connection      m_empire_ship_designs_changed_signal;
 
@@ -186,9 +387,6 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
                 &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
     m_buildable_items->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
 
-    m_row_height = GG::Y(ClientUI::Pts()*3/2);
-    std::vector<GG::X> col_widths = ColWidths();
-
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
     //boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -201,13 +399,13 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(GG::X w, GG::Y h) :
     //m_buildable_items->SetColHeaders(header);
 
 
-    m_buildable_items->SetNumCols(static_cast<int>(col_widths.size()));
-    m_buildable_items->LockColWidths();
+    //m_buildable_items->SetNumCols(static_cast<int>(col_widths.size()));
+    //m_buildable_items->LockColWidths();
 
-    for (unsigned int i = 0; i < col_widths.size(); ++i) {
-        m_buildable_items->SetColWidth(i, col_widths[i]);
-        m_buildable_items->SetColAlignment(i, GG::ALIGN_LEFT);
-    }
+    //for (unsigned int i = 0; i < col_widths.size(); ++i) {
+    //    m_buildable_items->SetColWidth(i, col_widths[i]);
+    //    m_buildable_items->SetColAlignment(i, GG::ALIGN_LEFT);
+    //}
 
     DoLayout();
 }
@@ -237,7 +435,8 @@ void BuildDesignatorWnd::BuildSelector::DoLayout()
     m_availability_buttons[0]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height)); x += button_width;
     m_availability_buttons[1]->SizeMove(GG::Pt(x, GG::Y0), GG::Pt(x + button_width, button_height));
 
-    m_buildable_items->SizeMove(GG::Pt(GG::X0, button_height), ClientSize() - GG::Pt(TEXT_MARGIN_X, TEXT_MARGIN_Y));
+    m_buildable_items->SizeMove(GG::Pt(GG::X0, button_height),
+                                ClientSize() - GG::Pt(GG::X0, GG::Y(INNER_BORDER_ANGLE_OFFSET)));
 }
 
 void BuildDesignatorWnd::BuildSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
@@ -477,7 +676,9 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
 void BuildDesignatorWnd::BuildSelector::PopulateList()
 {
     //std::cout << "BuildDesignatorWnd::BuildSelector::PopulateList start" << std::endl;
-    const Empire* empire = Empires().Lookup(m_empire_id);
+    Empire* empire = Empires().Lookup(m_empire_id);
+    if (!empire)
+        return;
 
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
@@ -491,10 +692,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
 
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
-
-    std::vector<GG::X> col_widths = ColWidths();
-    GG::X icon_col_width = col_widths[0];
-    GG::X desc_col_width = col_widths[4];
+    const GG::Pt row_size = m_buildable_items->ListRowSize();
 
     GG::ListBox::iterator row_to_select = m_buildable_items->end(); // may be set while populating - used to reselect previously selected row after populating
     int i = 0;              // counter that keeps track of how many rows have been added so far
@@ -511,51 +709,21 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             if (!BuildableItemVisible(BT_BUILDING, name)) continue;
 
-            GG::ListBox::Row* row = new GG::ListBox::Row();
-            row->SetDragDropDataType(name);
-
-            // icon
-            GG::Control* icon = new GG::StaticGraphic(GG::X0, GG::Y0, icon_col_width, m_row_height, 
-                ClientUI::BuildingTexture(type->Name()),
-                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            row->push_back(icon);
-
-            // building name
-            row->push_back(UserString(name), default_font, ClientUI::TextColor());
-
-            // cost / turn, and minimum production turns
-            std::string cost_text = "";
-            std::string time_text = "";
-            if (empire) {
-                std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_BUILDING, name);
-                cost_text = DoubleToString(cost_time.first, 3, false);
-                time_text = boost::lexical_cast<std::string>(cost_time.second);
-            }
-            row->push_back(cost_text, default_font, ClientUI::TextColor());
-            row->push_back(time_text, default_font, ClientUI::TextColor());
-
-            // brief description
-            std::string desc_text = UserString("BT_BUILDING");
-            GG::Control* desc_control = new GG::TextControl(GG::X0, GG::Y0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
-            row->push_back(desc_control);
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, name, m_empire_id);
 
             // is item buildable?  If not, disable row
             if (!empire || !empire->BuildableItem(BT_BUILDING, name, m_build_location)) {
-                row->Disable(true);
+                item_row->Disable(true);
             } else {
-                row->Disable(false);
+                item_row->Disable(false);
             }
 
-            GG::ListBox::iterator row_it = m_buildable_items->Insert(row);
+            GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_BUILDING;
-            if (row->DragDropDataType() == selected_row)
+            if (item_row->DragDropDataType() == selected_row)
                 row_to_select = row_it;
 
-            row->GetLayout()->SetColumnStretch(0, 0.0);
-            row->GetLayout()->SetColumnStretch(1, 0.0);
-            row->GetLayout()->SetColumnStretch(2, 0.0);
-            row->GetLayout()->SetColumnStretch(3, 0.0);
-            row->GetLayout()->SetColumnStretch(4, 1.0);
+            item_row->Resize(row_size);
         }
     }
     // populate with ship designs
@@ -578,51 +746,23 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
             if (!ship_design) continue;
 
-            GG::ListBox::Row* row = new GG::ListBox::Row();
-            row->SetDragDropDataType(boost::lexical_cast<std::string>(ship_design_id));
+            // add build item panel
 
-            // icon
-            GG::StaticGraphic* icon = new GG::StaticGraphic(GG::X0, GG::Y0, icon_col_width, m_row_height, 
-                ClientUI::ShipIcon(ship_design->ID()),
-                GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            row->push_back(dynamic_cast<GG::Control*>(icon));
-
-            // ship design name
-            row->push_back(ship_design->Name(), default_font, ClientUI::TextColor());
-
-            // cost / turn, and minimum production turns
-            std::string cost_text = "";
-            std::string time_text = "";
-            if (empire) {
-                std::pair<double, int> cost_time = empire->ProductionCostAndTime(BT_SHIP, ship_design_id);
-                cost_text = DoubleToString(cost_time.first, 3, false);
-                time_text = boost::lexical_cast<std::string>(cost_time.second);
-            }
-            row->push_back(cost_text, default_font, ClientUI::TextColor());
-            row->push_back(time_text, default_font, ClientUI::TextColor());
-
-            // brief description            
-            std::string desc_text = UserString("BT_SHIP");
-            GG::Control* desc_control = new GG::TextControl(GG::X0, GG::Y0, desc_col_width, m_row_height, desc_text, default_font, ClientUI::TextColor(), GG::FORMAT_LEFT); ///< ctor taking a font directly
-            row->push_back(desc_control);
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, ship_design_id, m_empire_id);
 
             // is item buildable?  If not, disable row
             if (!empire || !empire->BuildableItem(BT_SHIP, ship_design_id, m_build_location)) {
-                row->Disable(true);
+                item_row->Disable(true);
             } else {
-                row->Disable(false);
+                item_row->Disable(false);
             }
 
-            GG::ListBox::iterator row_it = m_buildable_items->Insert(row);
+            GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_SHIP;
-            if (row->DragDropDataType() == selected_row)
+            if (item_row->DragDropDataType() == selected_row)
                 row_to_select = row_it;
 
-            row->GetLayout()->SetColumnStretch(0, 0.0);
-            row->GetLayout()->SetColumnStretch(1, 0.0);
-            row->GetLayout()->SetColumnStretch(2, 0.0);
-            row->GetLayout()->SetColumnStretch(3, 0.0);
-            row->GetLayout()->SetColumnStretch(4, 1.0);
+            item_row->Resize(row_size);
         }
     }
 
@@ -632,23 +772,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
         BuildItemSelected(m_buildable_items->Selections());
     }
     Logger().debugStream() << "Done";
-}
-
-std::vector<GG::X> BuildDesignatorWnd::BuildSelector::ColWidths()
-{
-    std::vector<GG::X> retval;
-
-    retval.push_back(GG::X(Value(m_row_height)));  // icon
-    retval.push_back(GG::X(ClientUI::Pts()*18));   // name
-    retval.push_back(GG::X(ClientUI::Pts()*3));    // cost
-    retval.push_back(GG::X(ClientUI::Pts()*2));    // time
-
-    GG::X desc_col_width = m_buildable_items->ClientWidth() 
-        - (retval[0] + retval[1] + retval[2] + retval[3])
-        - ClientUI::ScrollWidth();
-    retval.push_back(desc_col_width);
-
-    return retval;
 }
 
 void BuildDesignatorWnd::BuildSelector::BuildItemSelected(const GG::ListBox::SelectionSet& selections)

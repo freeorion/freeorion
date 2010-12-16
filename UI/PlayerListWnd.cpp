@@ -73,7 +73,7 @@ namespace {
             return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); 
         }
 
-        /** Renders black panel background, border with color depending on the current state and a background for the ship's name text. */
+        /** Renders panel background, border with color depending on the current state. */
         virtual void    Render() {
             const GG::Clr& background_colour = ClientUI::WndColor();
             const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
@@ -153,7 +153,6 @@ namespace {
         }
 
     private:
-
         void            DoLayout() {
             const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts() * 15/2);
             const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts() * 17/2);
@@ -197,7 +196,7 @@ namespace {
     class PlayerRow : public GG::ListBox::Row {
     public:
         PlayerRow(GG::X w, GG::Y h, int player_id) :
-            GG::ListBox::Row(w, h, ""),
+            GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_player_id(player_id),
             m_panel(0)
         {
@@ -222,6 +221,8 @@ namespace {
                 m_panel->SetStatus(player_status);
         }
 
+        /** This function overridden because otherwise, rows don't expand
+          * larger than their initial size when resizing the list. */
         void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
