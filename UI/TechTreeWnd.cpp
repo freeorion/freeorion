@@ -1558,51 +1558,53 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -
     }
 
     // create dependency lines
-    for (ogdf::edge e = G.firstEdge(); e != G.lastEdge()->succ(); e = e->succ()) {
-        ogdf::node source = e->source();
-        ogdf::node target = e->target();
-        if (!source || !target)
-            continue;
+    if (G.numberOfEdges() > 0) {
+        for (ogdf::edge e = G.firstEdge(); e != G.lastEdge()->succ(); e = e->succ()) {
+            ogdf::node source = e->source();
+            ogdf::node target = e->target();
+            if (!source || !target)
+                continue;
 
-        const Tech* source_tech(0);
-        std::map<ogdf::node, const Tech*>::const_iterator it = node_techs.find(source);
-        if (it != node_techs.end())
-            source_tech = it->second;
-        else
-            continue;
+            const Tech* source_tech(0);
+            std::map<ogdf::node, const Tech*>::const_iterator it = node_techs.find(source);
+            if (it != node_techs.end())
+                source_tech = it->second;
+            else
+                continue;
 
-        const TechPanel* source_panel = m_techs[source_tech];
-        const GG::X HALF_SOURCE_PANEL_WIDTH = source_panel->Width() / 2;
+            const TechPanel* source_panel = m_techs[source_tech];
+            const GG::X HALF_SOURCE_PANEL_WIDTH = source_panel->Width() / 2;
 
-        const Tech* target_tech(0);
-        it = node_techs.find(target);
-        if (it != node_techs.end())
-            target_tech = it->second;
-        else
-            continue;
+            const Tech* target_tech(0);
+            it = node_techs.find(target);
+            if (it != node_techs.end())
+                target_tech = it->second;
+            else
+                continue;
 
-        const TechPanel* target_panel = m_techs[target_tech];
-        const GG::X HALF_TARGET_PANEL_WIDTH = target_panel->Width() / 2;
+            const TechPanel* target_panel = m_techs[target_tech];
+            const GG::X HALF_TARGET_PANEL_WIDTH = target_panel->Width() / 2;
 
-        // assemble vertices on dependenc line from graph layout results
-        std::vector<std::pair<double, double> > dependency_line_vertices;
-        // start
-        dependency_line_vertices.push_back(std::make_pair(GA.y(source) * m_scale/* + Value(HALF_SOURCE_PANEL_WIDTH)*/,
-                                                          GA.x(source) * m_scale));
-        // corners (may be none)
-        const ogdf::DPolyline& bends = GA.bends(e);
-        for (ogdf::DPolyline::const_iterator it = bends.begin(); it != bends.end(); ++it) {
-            const ogdf::DPoint& point = *it;
-            dependency_line_vertices.push_back(std::make_pair(point.m_y * m_scale, point.m_x * m_scale));
+            // assemble vertices on dependenc line from graph layout results
+            std::vector<std::pair<double, double> > dependency_line_vertices;
+            // start
+            dependency_line_vertices.push_back(std::make_pair(GA.y(source) * m_scale/* + Value(HALF_SOURCE_PANEL_WIDTH)*/,
+                                                              GA.x(source) * m_scale));
+            // corners (may be none)
+            const ogdf::DPolyline& bends = GA.bends(e);
+            for (ogdf::DPolyline::const_iterator it = bends.begin(); it != bends.end(); ++it) {
+                const ogdf::DPoint& point = *it;
+                dependency_line_vertices.push_back(std::make_pair(point.m_y * m_scale, point.m_x * m_scale));
+            }
+            // end
+            dependency_line_vertices.push_back(std::make_pair(GA.y(target) * m_scale/* - Value(HALF_TARGET_PANEL_WIDTH)*/,
+                                                              GA.x(target) * m_scale));
+
+            TechStatus arc_type = TS_RESEARCHABLE;
+            if (empire)
+                arc_type = empire->GetTechStatus(source_tech->Name());
+            m_dependency_polylines[arc_type].insert(std::make_pair(source_tech, std::make_pair(target_tech, dependency_line_vertices)));
         }
-        // end
-        dependency_line_vertices.push_back(std::make_pair(GA.y(target) * m_scale/* - Value(HALF_TARGET_PANEL_WIDTH)*/,
-                                                          GA.x(target) * m_scale));
-
-        TechStatus arc_type = TS_RESEARCHABLE;
-        if (empire)
-            arc_type = empire->GetTechStatus(source_tech->Name());
-        m_dependency_polylines[arc_type].insert(std::make_pair(source_tech, std::make_pair(target_tech, dependency_line_vertices)));
     }
 
     const ogdf::DRect& bound_box = GA.boundingBox();
