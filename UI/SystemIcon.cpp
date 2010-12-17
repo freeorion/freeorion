@@ -39,7 +39,7 @@ namespace {
     const std::string   EMPTY_STRING;
 
     const std::string& ApparentSystemName(const System* system, int empire_id, bool blank_unexplored_and_none) {
-        Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
+        //Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
         if (!system)
             return EMPTY_STRING;
         if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)

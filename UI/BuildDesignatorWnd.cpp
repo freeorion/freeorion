@@ -220,10 +220,10 @@ namespace {
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
-            std::cout << "BuildableItemsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
+            //std::cout << "BuildableItemsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
             if (old_size != Size()) {
                 const GG::Pt row_size = ListRowSize();
-                std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
+                //std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
                 for (GG::ListBox::iterator it = begin(); it != end(); ++it)
                     (*it)->Resize(row_size);
             }
