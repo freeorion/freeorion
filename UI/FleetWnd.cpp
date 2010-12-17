@@ -83,6 +83,34 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true);
     }
 
+    const std::string   EMPTY_STRING;
+
+    const std::string& ApparentSystemName(const System* system, int empire_id) {
+        if (!system)
+            return EMPTY_STRING;
+        if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+            return system->Name();
+
+        const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
+        if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
+            // if name is empty because system hasn't been seen by
+            // this client player with high enough visiblity to know the name,
+            // it should be renamed to clarify this.
+            if (system->GetStarType() == STAR_NONE)
+                return UserString("UNEXPLORED_REGION");
+            else
+                return UserString("UNEXPLORED_SYSTEM");
+        }
+
+        if (system->GetStarType() == STAR_NONE) {
+            // if name is empty because object is empty space, clarify this
+            // by renaming
+            return UserString("EMPTY_SPACE");
+        }
+
+        return system->Name();
+    }
+
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
         const Fleet* fleet = GetObject<Fleet>(fleet_id);
@@ -90,6 +118,7 @@ namespace {
             return retval;
 
         const ObjectMap& objects = GetMainObjectMap();
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
 
         const System* dest = objects.Object<System>(fleet->FinalDestinationID());
         const System* cur_sys = objects.Object<System>(fleet->SystemID());
@@ -97,9 +126,7 @@ namespace {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
-            std::string dest_name = dest->Name();
-            if (dest_name.empty())
-                dest_name = UserString("UNKNOWN_SYSTEM");
+            const std::string& dest_name = ApparentSystemName(dest, empire_id);
 
             // next system on path
             std::string next_eta_text;
@@ -128,12 +155,8 @@ namespace {
                                                 dest_name % final_eta_text % next_eta_text);
 
         } else if (cur_sys) {
-            // name of current system
-            std::string cur_name = cur_sys->Name();
-            if (cur_name.empty())
-                cur_name = UserString("UNKNOWN_SYSTEM");
-
-            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_name);
+            const std::string& cur_system_name = ApparentSystemName(cur_sys, empire_id);
+            retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_system_name);
         }
         return retval;
     }

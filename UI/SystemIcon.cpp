@@ -35,12 +35,45 @@ namespace {
         db.Add("UI.system-tiny-icon-size-threshold",    "OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD",    10, RangedValidator<int>(1, 16));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
+
+    const std::string   EMPTY_STRING;
+
+    const std::string& ApparentSystemName(const System* system, int empire_id, bool blank_unexplored_and_none) {
+        Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
+        if (!system)
+            return EMPTY_STRING;
+        if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+            return system->Name();
+
+        const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
+        if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
+            if (blank_unexplored_and_none)
+                return EMPTY_STRING;
+
+            if (system->GetStarType() == STAR_NONE)
+                return UserString("UNEXPLORED_REGION");
+            else
+                return UserString("UNEXPLORED_SYSTEM");
+        }
+
+        if (system->GetStarType() == STAR_NONE) {
+            // if name is empty because object is empty space, clarify this
+            // by renaming
+            if (blank_unexplored_and_none)
+                return EMPTY_STRING;
+            else
+                return UserString("EMPTY_SPACE");
+        }
+
+        return system->Name();
+    }
 }
 
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
+OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, bool hide_empty_or_missing_names/* = false*/,
+                                               GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, flags)
 {
     // TODO: Have this make a single call per color.
@@ -56,10 +89,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, GG:
         return;
 
     // get system name
-    std::string system_name = system->Name();
-    if (system_name.empty())
-        system_name = UserString("SP_UNKNOWN_SYSTEM");
-
+    const std::string& system_name = ApparentSystemName(system, HumanClientApp::GetApp()->EmpireID(), hide_empty_or_missing_names);
 
     // loop through planets in system, checking if any are a homeworld, capitol or have a shipyard
     bool capitol = false, homeworld = false, has_shipyard = false;
@@ -525,7 +555,7 @@ void SystemIcon::Refresh()
         }
 
         // create and position
-        m_colored_name = new OwnerColoredSystemName(m_system_id, name_pts);
+        m_colored_name = new OwnerColoredSystemName(m_system_id, name_pts, true);
         PositionSystemName();
 
         // attach if appropriate, to display

@@ -66,9 +66,6 @@ Host
 ALL
 All
 
-UNKNOWN_SYSTEM
-Unknown System
-
 RENAME
 Rename
 
@@ -105,6 +102,15 @@ New Fleet %1%
 
 NEW_FLEET_NAME_NO_NUMBER
 New Fleet
+
+EMPTY_SPACE
+Deep Space
+
+UNEXPLORED_REGION
+Unexplored Region
+
+UNEXPLORED_SYSTEM
+Unexplored System
 
 NOT_APPLICABLE
 N/A
@@ -1642,11 +1648,6 @@ TT_RESOURCE_ALLOCATION
 
 TT_SPECIES_POPULATION
 %1% [[METER_POPULATION]]
-
-## Misc. Sidepanel##########
-
-SP_UNKNOWN_SYSTEM
-Unknown System
 
 SP_RENAME_PLANET
 Rename Planet

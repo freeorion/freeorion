@@ -1970,7 +1970,6 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
             if (vis <= VIS_NO_VISIBILITY)
                 continue;   // empire can't see current object, so move to next empire
 
-
             // empire can see object.  need to update empire's latest known
             // information about object, and historical turns on which object
             // was seen at various visibility levels.
@@ -1992,17 +1991,18 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
                     known_object_map.Insert(object_id, new_obj);
             }
 
+            //Logger().debugStream() << "Empire " << empire_id << " can see object " << object_id << " with vis level " << vis;
 
             // update empire's visibility turn history for current vis, and lesser vis levels
             if (vis >= VIS_BASIC_VISIBILITY) {
                 vis_turn_map[VIS_BASIC_VISIBILITY] = current_turn;
                 if (vis >= VIS_PARTIAL_VISIBILITY) {
-                    vis_turn_map[VIS_BASIC_VISIBILITY] = current_turn;
+                    vis_turn_map[VIS_PARTIAL_VISIBILITY] = current_turn;
                     if (vis >= VIS_FULL_VISIBILITY) {
-                        vis_turn_map[VIS_BASIC_VISIBILITY] = current_turn;
+                        vis_turn_map[VIS_FULL_VISIBILITY] = current_turn;
                     }
                 }
-                //Logger().debugStream() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
+                Logger().debugStream() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
             } else {
                 Logger().errorStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() found invalid visibility for object with id " << object_id << " by empire with id " << empire_id;
                 continue;
@@ -2746,12 +2746,9 @@ namespace {
             LoadSystemNames(star_names);
 
         // generate new star
-        int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-        std::list<std::string>::iterator it = star_names.begin();
-        std::advance(it, star_name_idx);
-        std::string star_name(*it);
-        star_names.erase(it);
 
+        // pick a star type
+        StarType star_type = STAR_NONE;
         // make a series of "rolls" (1-100) for each star type, and take the highest modified roll
         int idx = 0;
         int max_roll = 0;
@@ -2762,13 +2759,29 @@ namespace {
                 idx = i;
             }
         }
-        System* system = new System(StarType(idx), MAX_SYSTEM_ORBITS, star_name, x, y);
+        star_type = StarType(idx);
+
+        // pick a name for the system
+        std::string star_name;
+        //if (star_type != STAR_NONE) {
+            if (!star_names.empty()) {
+                int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
+                std::list<std::string>::iterator it = star_names.begin();
+                std::advance(it, star_name_idx);
+                star_name = *it;
+                // erase chosen name from list, to avoid duplicates
+                star_names.erase(it);
+            }
+        //}
+
+        // create new system
+        System* system = new System(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);
 
         int new_system_id = universe.Insert(system);
         if (new_system_id == UniverseObject::INVALID_OBJECT_ID) {
-            throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system " +
-                                     star_name + " into the object map failed.");
+            throw std::runtime_error("Universe::GenerateSystem() : Attempt to insert system into the object map failed.");
         }
+
         return system;
     }
 

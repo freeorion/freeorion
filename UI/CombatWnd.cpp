@@ -244,7 +244,8 @@ namespace {
             for (std::map<StarType, std::string>::const_iterator type_it =
                      ClientUI::StarTypeFilePrefixes().begin();
                  type_it != ClientUI::StarTypeFilePrefixes().end();
-                 ++type_it) {
+                 ++type_it)
+            {
                 std::set<std::string>& current_textures = star_textures[type_it->first];
                 for (fs::directory_iterator it(dir); it != end_it; ++it) {
                     try {

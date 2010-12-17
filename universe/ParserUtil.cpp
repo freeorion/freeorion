@@ -101,7 +101,8 @@ namespace {
             ("orange",      STAR_ORANGE)
             ("red",         STAR_RED)
             ("neutron",     STAR_NEUTRON)
-            ("blackhole",   STAR_BLACK);
+            ("blackhole",   STAR_BLACK)
+            ("nostar",      STAR_NONE);
 
         affiliation_type_p.add
             ("theempire",   AFFIL_SELF)

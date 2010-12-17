@@ -67,6 +67,15 @@
         <alpha>255</alpha>
       </GG::Clr>
     </StarLightData>
+    <StarLightData>
+      <star_type>STAR_NONE</star_type>
+      <GG::Clr>
+        <red>64</red>
+        <green>64</green>
+        <blue>64</blue>
+        <alpha>255</alpha>
+      </GG::Clr>
+    </StarLightData>
   </GLStars>
 
 

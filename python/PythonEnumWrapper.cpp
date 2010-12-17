@@ -13,6 +13,7 @@ namespace FreeOrionPython {
             .value("red",       STAR_RED)
             .value("neutron",   STAR_NEUTRON)
             .value("blackHole", STAR_BLACK)
+            .value("noStar",    STAR_NONE)
         ;
         enum_<PlanetSize>("planetSize")
             .value("tiny",      SZ_TINY)

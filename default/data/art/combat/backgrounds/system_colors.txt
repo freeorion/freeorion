@@ -1,5 +1,6 @@
 # star colors
 
+nostar01 (64, 64, 64)
 blackhole01 (85, 85, 85)
 blue01 (177, 205, 246)
 neutron01 (85, 85, 85)

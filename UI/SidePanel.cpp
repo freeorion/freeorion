@@ -595,7 +595,7 @@ boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boos
 ////////////////////////////////////////////////
 namespace {
     int SystemNameFontSize() {
-        return ClientUI::Pts()*3/2;
+        return ClientUI::Pts();
     }
 
     GG::Y SystemNameTextControlHeight() {
@@ -608,7 +608,7 @@ namespace {
             GG::ListBox::Row(),
             m_system_id(system_id)
         {
-            SetDragDropDataType("SystemID");
+            SetDragDropDataType("SystemRow");
             push_back(new OwnerColoredSystemName(m_system_id, SystemNameFontSize()));
         }
 
@@ -617,7 +617,7 @@ namespace {
         int m_system_id;
     };
 
-    XMLElement GetXMLChild(XMLElement &node,const std::string &child_path) {
+    XMLElement  GetXMLChild(XMLElement &node,const std::string &child_path) {
         int index;
 
         if (-1 == (index=child_path.find_first_of('.')))

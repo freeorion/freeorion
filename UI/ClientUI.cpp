@@ -301,6 +301,7 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
         prefixes[STAR_RED] = "red";
         prefixes[STAR_NEUTRON] = "neutron";
         prefixes[STAR_BLACK] = "blackhole";
+        prefixes[STAR_NONE] = "nostar";
     }
     return prefixes;
 }
@@ -316,6 +317,7 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
         prefixes[STAR_RED] = "halo_red";
         prefixes[STAR_NEUTRON] = "halo_neutron";
         prefixes[STAR_BLACK] = "halo_blackhole";
+        prefixes[STAR_NONE] = "halo_nostar";
     }
     return prefixes;
 }

@@ -10,11 +10,11 @@
 
 <3x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
-LowDensity                      70          0           0       0       0       0       0               0
-AverageDensity                  50          0           0       0       0       0       0               0
-HighDensity                     30          0           0       0       0       0       0               0
+LowDensity                      100         0           0       0       0       0       0               0
+AverageDensity                  70          0           0       0       0       0       0               0
+HighDensity                     40          0           0       0       0       0       0               0
 
-<7x8>
+<8x8>
 StarColorModToPlanetSizeDist    NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
 Blue                            0           0           0       0       0       0       0               0
 White                           0           0           0       0       0       0       0               0
@@ -23,6 +23,7 @@ Orange                          0           0           0       0       0       
 Red                             0           0           0       0       0       0       0               0
 Neutron                         5           5           0       0       0       0       20              0
 Blackhole                       30          0           0       -5      -5      -5      10              -5
+NoStar                          100         0           0       0       0       0       0               0
 
 <10x8>
 SlotModToPlanetSizeDist         NoWorld     Planetoid   Small   Medium  Large   Massive  AsteroidField  GasGiant
@@ -61,7 +62,7 @@ Slot8                           -5      0       -5      0           15      10  
 Slot9                           -10     -5      -10     -10         20      10      -10     -10     -10     0               0
 Slot10                          -20     -10     -20     -20         25      5       -20     -20     -20     0               0
 
-<7x11>
+<8x11>
 StarColorModToPlanetTypeDist    Swamp  Toxic   Inferno Radiated     Barren   Tundra  Desert  Terran  Ocean  AsteroidField   GasGiant
 Blue                            0      10      15      20           15      0       5       0       0       0               0
 White                           5      5       10      5            10      0       15      0       0       0               0
@@ -70,16 +71,17 @@ Orange                          5      5       0       0            10      10  
 Red                             0      10      0       0            20      10      0       0       0       0               0
 Neutron                         -10    5       5       30           20      0       5       -30     -30     0               0
 Blackhole                       -10    -10     -10     15           30      0       -30     -30     -30     0               0
+NoStar                          -60    -60     -60     -60          -50     -60     -60     -60     -60     0               0
 
-<3x7>
-UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole
-Young                           10      20      0       0       0       0       0
-Mature                          0        0      10      0       0       10      10
-Ancient                         0        0      0       10      10      20      20
+<3x8>
+UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
+Young                           10      20      0       0       0       0       0         40
+Mature                          0        0      10      0       0       10      10        20
+Ancient                         0        0      0       10      10      20      20        0
 
-<1x7>
-BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole
-Base                            30      40      50      40      30      0       0
+<1x8>
+BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
+Base                            30      40      50      40      30      0       0         80
 
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why VeryMany has the lowest value.
 <1x6>
@@ -90,6 +92,6 @@ Max                             0       8       5       3       2       1
 MaxStarlaneLength               120
 
 # since only integer values are expected in this file, each value X below will be taken to be X / 10,000 in the code
-<1x7>
+<1x4>
 SpecialsFrequency               None    Rare    Uncommon        Common
-Freq                            0       300     1000            3000
+Freq                            0       1000    3000            8000
