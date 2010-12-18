@@ -614,7 +614,7 @@ OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN
 Sets whether to show rendered planets / asteroids on the sidepanel.
 
 OPTIONS_DB_GAMESETUP_STARS
-The number of stars in the galaxy to be generated.
+The number of systems in the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_GALAXY_SHAPE
 The shape of the galaxy to be generated.
@@ -926,7 +926,7 @@ Number of AI Players
 #Drop-down list labels and choices####
 
 GSETUP_STARS
-Stars
+Systems
 GSETUP_SHAPE
 Galaxy Shape
 GSETUP_AGE
