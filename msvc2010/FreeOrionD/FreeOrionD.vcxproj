@@ -211,7 +211,6 @@
     <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh" />
     <None Include="..\..\util\Serialize.ipp" />
     <None Include="..\..\util\SerializeUniverseExports.ipp" />
-    <None Include="..\..\util\Version.cpp.in" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\combat\CombatOrder.cpp" />

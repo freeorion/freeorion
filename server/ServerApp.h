@@ -252,6 +252,7 @@ private:
     friend struct WaitingForTurnEnd;
     friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
+    friend struct ProcessingTurn;
     friend struct ResolvingCombat;
 };
 

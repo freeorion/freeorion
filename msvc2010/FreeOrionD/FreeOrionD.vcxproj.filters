@@ -436,9 +436,6 @@
     <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh">
       <Filter>Header Files\log4cpp\threading</Filter>
     </None>
-    <None Include="..\..\util\Version.cpp.in">
-      <Filter>Source Files\util</Filter>
-    </None>
     <None Include="..\..\util\Serialize.ipp">
       <Filter>Source Files\util</Filter>
     </None>

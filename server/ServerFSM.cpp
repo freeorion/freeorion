@@ -968,8 +968,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
          ++player_it)
     {
         PlayerConnectionPtr player_ctn = *player_it;
-        if (player_ctn->PlayerID() != message.SendingPlayer())
-            player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(), message.SendingPlayer(), Message::WAITING));
+        player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(), message.SendingPlayer(), Message::WAITING));
     }
 
     if (server.AllOrdersReceived()) {
@@ -1158,6 +1157,28 @@ sc::result ProcessingTurn::react(const ProcessTurn& u)
     server.PreCombatProcessTurns();
     server.ProcessCombats();
     server.PostCombatProcessTurns();
+
+    // update players that other players are now playing their turn
+    for (ServerNetworking::const_established_iterator player_it = server.m_networking.established_begin();
+         player_it != server.m_networking.established_end();
+         ++player_it)
+    {
+        PlayerConnectionPtr player_ctn = *player_it;
+        if (player_ctn->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER ||
+            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        {
+            // inform all players that this player is playing a turn
+            for (ServerNetworking::const_established_iterator recipient_player_it = server.m_networking.established_begin();
+                recipient_player_it != server.m_networking.established_end();
+                ++recipient_player_it)
+            {
+                PlayerConnectionPtr recipient_player_ctn = *recipient_player_it;
+                server.m_networking.SendMessage(
+                    PlayerStatusMessage(recipient_player_ctn->PlayerID(), player_ctn->PlayerID(), Message::PLAYING_TURN));
+            }
+        }
+    }
+
     return transit<WaitingForTurnEnd>();
 }
 

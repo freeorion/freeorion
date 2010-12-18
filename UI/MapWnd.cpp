@@ -45,7 +45,7 @@
 namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/3.0);
     const double    ZOOM_IN_MAX_STEPS = 9.0;
-    const double    ZOOM_IN_MIN_STEPS = -4.0;   // negative zoom steps indicates zooming out
+    const double    ZOOM_IN_MIN_STEPS = -7.0;   // negative zoom steps indicates zooming out
     const int       ZOOM_TOTAL_STEPS = static_cast<const int>(ZOOM_IN_MAX_STEPS + 1.0 + ZOOM_IN_MIN_STEPS);
     const double    ZOOM_MAX = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MAX_STEPS);
     const double    ZOOM_MIN = std::pow(ZOOM_STEP_SIZE, ZOOM_IN_MIN_STEPS);
