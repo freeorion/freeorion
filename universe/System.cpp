@@ -95,9 +95,12 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
         for (StarlaneMap::const_iterator it = visible_lanes_holes.begin(); it != visible_lanes_holes.end(); ++it)
             this->m_starlanes_wormholes[it->first] = it->second;
 
-        this->m_star =                  copied_system->m_star;
+        this->m_star =                  INVALID_STAR_TYPE;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
+
+            this->m_star =              copied_system->m_star;
+
             // remove any not-visible lanes that were previously known: with
             // partial vis, they should be seen, but aren't, so are known not
             // to exist any more

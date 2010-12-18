@@ -294,6 +294,7 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
+        prefixes[INVALID_STAR_TYPE] = "unknown";
         prefixes[STAR_BLUE] = "blue";
         prefixes[STAR_WHITE] = "white";
         prefixes[STAR_YELLOW] = "yellow";
@@ -310,6 +311,7 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
+        prefixes[INVALID_STAR_TYPE] = "halo_unknown";
         prefixes[STAR_BLUE] = "halo_blue";
         prefixes[STAR_WHITE] = "halo_white";
         prefixes[STAR_YELLOW] = "halo_yellow";

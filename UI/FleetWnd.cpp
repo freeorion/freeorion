@@ -88,25 +88,19 @@ namespace {
     const std::string& ApparentSystemName(const System* system, int empire_id) {
         if (!system)
             return EMPTY_STRING;
-        if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+        if (empire_id == ALL_EMPIRES)
             return system->Name();
 
         const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
         if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
-            // if name is empty because system hasn't been seen by
-            // this client player with high enough visiblity to know the name,
-            // it should be renamed to clarify this.
-            if (system->GetStarType() == STAR_NONE)
+            if (system->GetStarType() == INVALID_STAR_TYPE)
                 return UserString("UNEXPLORED_REGION");
             else
                 return UserString("UNEXPLORED_SYSTEM");
         }
 
-        if (system->GetStarType() == STAR_NONE) {
-            // if name is empty because object is empty space, clarify this
-            // by renaming
+        if (system->GetStarType() == STAR_NONE)
             return UserString("EMPTY_SPACE");
-        }
 
         return system->Name();
     }

@@ -105,6 +105,8 @@ private:
     bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator
     OwnerColoredSystemName*         m_colored_name;         //!< the control that holds the name of the system
     bool                            m_showing_name;         //!< is the icon supposed to show its name?
+
+    boost::signals::connection      m_system_connection;
 };
 
 #endif // _SystemIcon_h_

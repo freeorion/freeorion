@@ -42,7 +42,7 @@ namespace {
         //Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
         if (!system)
             return EMPTY_STRING;
-        if (empire_id == ALL_EMPIRES || Universe::ALL_OBJECTS_VISIBLE)
+        if (empire_id == ALL_EMPIRES)
             return system->Name();
 
         const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
@@ -50,15 +50,13 @@ namespace {
             if (blank_unexplored_and_none)
                 return EMPTY_STRING;
 
-            if (system->GetStarType() == STAR_NONE)
+            if (system->GetStarType() == INVALID_STAR_TYPE)
                 return UserString("UNEXPLORED_REGION");
             else
                 return UserString("UNEXPLORED_SYSTEM");
         }
 
         if (system->GetStarType() == STAR_NONE) {
-            // if name is empty because object is empty space, clarify this
-            // by renaming
             if (blank_unexplored_and_none)
                 return EMPTY_STRING;
             else
@@ -255,11 +253,6 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
 }
 
 void SystemIcon::Init() {
-    // state change signals for system itself and fleets in it
-    const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
-    if (system)
-        Connect(system->StateChangedSignal, &SystemIcon::Refresh,   this);
-
     // everything is resized by SizeMove
     const int DEFAULT_SIZE = 10;
 
@@ -536,12 +529,16 @@ void SystemIcon::SetSelected(bool selected)
 
 void SystemIcon::Refresh()
 {
-    std::string name = "";
+    std::string name;
 
-    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID()))
+    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
         name = system->Name();
+        m_system_connection.disconnect();
+        m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);
+    }
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
+
 
     // remove existing system name control
     delete m_colored_name;  m_colored_name = 0;

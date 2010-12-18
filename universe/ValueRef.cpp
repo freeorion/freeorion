@@ -160,7 +160,7 @@ namespace ValueRef {
         case STAR_NEUTRON:  return "Neutron";
         case STAR_BLACK:    return "BlackHole";
         case STAR_NONE:     return "NoStar";
-        default:            return "?";
+        default:            return "Unknown";
         }
     }
 
