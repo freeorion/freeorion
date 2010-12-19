@@ -38,6 +38,7 @@
 #include <GG/DrawUtil.h>
 #include <GG/MultiEdit.h>
 #include <GG/WndEvent.h>
+#include <GG/Layout.h>
 
 #include <vector>
 #include <deque>
@@ -121,7 +122,7 @@ namespace {
 #ifndef FREEORION_RELEASE
     bool RequestRegressionTestDump() {
         ClientNetworking& networking = HumanClientApp::GetApp()->Networking();
-        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), -1, "EffectsRegressionTest");
+        Message msg(Message::DEBUG, HumanClientApp::GetApp()->PlayerID(), Networking::INVALID_PLAYER_ID, "EffectsRegressionTest");
         networking.SendMessage(msg);
         return true;
     }
@@ -566,7 +567,10 @@ MapWnd::MapWnd() :
     m_toolbar = new CUIToolBar(GG::X0, GG::Y0, AppWidth(), TOOLBAR_HEIGHT);
     GG::GUI::GetGUI()->Register(m_toolbar);
     m_toolbar->Hide();
-
+    GG::Layout* layout = new GG::Layout(m_toolbar->ClientUpperLeft().x, m_toolbar->ClientUpperLeft().y,
+                                        m_toolbar->ClientWidth(), m_toolbar->ClientHeight(),
+                                        1, 14);
+    m_toolbar->SetLayout(layout);
 
     // system-view side panel
     m_side_panel = new SidePanel(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y, AppHeight() - m_toolbar->Height());
@@ -620,10 +624,10 @@ MapWnd::MapWnd() :
     m_design_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_design_wnd);
     m_design_wnd->Hide();
-    
+
 
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-    const GG::X BUTTON_TOTAL_MARGIN(8);
+    const GG::X BUTTON_TOTAL_MARGIN(12);
 
 
     // turn button
@@ -631,14 +635,12 @@ MapWnd::MapWnd() :
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
     GG::X button_width = font->TextExtent(turn_button_longest_reasonable_text).x + BUTTON_TOTAL_MARGIN;
     // create button using determined width
-    m_turn_update = new CUITurnButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), button_width, turn_button_longest_reasonable_text);
-    m_toolbar->AttachChild(m_turn_update);
+    m_turn_update = new CUITurnButton(GG::X0, GG::Y0, button_width, turn_button_longest_reasonable_text);
     GG::Connect(m_turn_update->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::EndTurn, this)));
 
 
     // FPS indicator
-    m_FPS = new FPSIndicator(m_turn_update->LowerRight().x + LAYOUT_MARGIN, m_turn_update->UpperLeft().y);
-    m_toolbar->AttachChild(m_FPS);
+    m_FPS = new FPSIndicator(GG::X0, GG::Y0);
     m_FPS->Hide();
 
 
@@ -682,10 +684,7 @@ MapWnd::MapWnd() :
 
     // Menu button
     button_width = font->TextExtent(UserString("MAP_BTN_MENU")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_menu = new SettableInWindowCUIButton(m_toolbar->LowerRight().x - button_width - GG::X(LAYOUT_MARGIN),
-                                               GG::Y(LAYOUT_MARGIN),
-                                               button_width, UserString("MAP_BTN_MENU") );
-    m_toolbar->AttachChild(m_btn_menu);
+    m_btn_menu = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_MENU"));
     GG::Connect(m_btn_menu->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ShowMenu, this)));
     // create custom InWindow function for Menu button that extends its
     // clickable area to the adjacent edges of the toolbar containing it
@@ -698,10 +697,7 @@ MapWnd::MapWnd() :
 
     // Encyclo"pedia" button
     button_width = font->TextExtent(UserString("MAP_BTN_PEDIA")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_pedia = new SettableInWindowCUIButton(m_btn_menu->UpperLeft().x - LAYOUT_MARGIN-button_width,
-                                                GG::Y(LAYOUT_MARGIN),
-                                                button_width, UserString("MAP_BTN_PEDIA") );
-    m_toolbar->AttachChild(m_btn_pedia);
+    m_btn_pedia = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_PEDIA"));
     GG::Connect(m_btn_pedia->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::TogglePedia, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_pedia),   boost::bind(&WndTop, m_toolbar),
@@ -712,10 +708,7 @@ MapWnd::MapWnd() :
 
     // Design button
     button_width = font->TextExtent(UserString("MAP_BTN_DESIGN")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_design = new SettableInWindowCUIButton(m_btn_pedia->UpperLeft().x-LAYOUT_MARGIN-button_width,
-                                                 GG::Y(LAYOUT_MARGIN),
-                                                 button_width, UserString("MAP_BTN_DESIGN") );
-    m_toolbar->AttachChild(m_btn_design);
+    m_btn_design = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_DESIGN"));
     GG::Connect(m_btn_design->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleDesign, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_design),   boost::bind(&WndTop, m_toolbar),
@@ -726,10 +719,7 @@ MapWnd::MapWnd() :
 
     // Production button
     button_width = font->TextExtent(UserString("MAP_BTN_PRODUCTION")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_production = new SettableInWindowCUIButton(m_btn_design->UpperLeft().x - LAYOUT_MARGIN-button_width,
-                                                     GG::Y(LAYOUT_MARGIN),
-                                                     button_width, UserString("MAP_BTN_PRODUCTION") );
-    m_toolbar->AttachChild(m_btn_production);
+    m_btn_production = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_PRODUCTION"));
     GG::Connect(m_btn_production->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleProduction, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_production),   boost::bind(&WndTop, m_toolbar),
@@ -740,10 +730,7 @@ MapWnd::MapWnd() :
 
     // Research button
     button_width = font->TextExtent(UserString("MAP_BTN_RESEARCH")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_research = new SettableInWindowCUIButton(m_btn_production->UpperLeft().x - LAYOUT_MARGIN - button_width,
-                                                   GG::Y(LAYOUT_MARGIN),
-                                                   button_width, UserString("MAP_BTN_RESEARCH") );
-    m_toolbar->AttachChild(m_btn_research);
+    m_btn_research = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_RESEARCH"));
     GG::Connect(m_btn_research->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleResearch, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_research),   boost::bind(&WndTop, m_toolbar),
@@ -754,10 +741,7 @@ MapWnd::MapWnd() :
 
     // SitRep button
     button_width = font->TextExtent(UserString("MAP_BTN_SITREP")).x + BUTTON_TOTAL_MARGIN;
-    m_btn_siterep = new SettableInWindowCUIButton(m_btn_research->UpperLeft().x - LAYOUT_MARGIN-button_width,
-                                                  GG::Y(LAYOUT_MARGIN),
-                                                  button_width, UserString("MAP_BTN_SITREP") );
-    m_toolbar->AttachChild(m_btn_siterep);
+    m_btn_siterep = new SettableInWindowCUIButton(GG::X0, GG::Y0, button_width, UserString("MAP_BTN_SITREP"));
     GG::Connect(m_btn_siterep->ClickedSignal, BoolToVoidAdapter(boost::bind(&MapWnd::ToggleSitRep, this)));
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, m_btn_siterep),   boost::bind(&WndTop, m_toolbar),
@@ -769,37 +753,100 @@ MapWnd::MapWnd() :
     // resources
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(ICON_DUAL_WIDTH - 30);
-    m_population = new StatisticIcon(m_btn_siterep->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_population = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                      ClientUI::MeterIcon(METER_POPULATION),
-                                     0,0,3,3,false,true);
-    m_toolbar->AttachChild(m_population);
+                                     0, 0, 3, 3, false, true);
 
-    m_industry = new StatisticIcon(m_population->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
+    m_industry = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_INDUSTRY),
-                                   0,3,false);
-    m_toolbar->AttachChild(m_industry);
+                                   0, 3, false);
 
-    m_research = new StatisticIcon(m_industry->UpperLeft().x-LAYOUT_MARGIN-ICON_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_WIDTH,m_turn_update->Height(),
+    m_research = new StatisticIcon(GG::X0, GG::Y0, ICON_WIDTH, m_turn_update->Height(),
                                    ClientUI::MeterIcon(METER_RESEARCH),
-                                   0,3,false);
-    m_toolbar->AttachChild(m_research);
+                                   0, 3, false);
 
-    m_trade = new StatisticIcon(m_research->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_trade = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                 ClientUI::MeterIcon(METER_TRADE),
-                                0,0,3,3,false,true);
-    m_toolbar->AttachChild(m_trade);
+                                0, 0, 3, 3, false, true);
 
-    m_mineral = new StatisticIcon(m_trade->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_mineral = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                   ClientUI::MeterIcon(METER_MINING),
-                                  0,0,3,3,false,true);
-    m_toolbar->AttachChild(m_mineral);
+                                  0, 0, 3, 3, false, true);
 
-    m_food = new StatisticIcon(m_mineral->UpperLeft().x-LAYOUT_MARGIN-ICON_DUAL_WIDTH,GG::Y(LAYOUT_MARGIN),ICON_DUAL_WIDTH,m_turn_update->Height(),
+    m_food = new StatisticIcon(GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_turn_update->Height(),
                                ClientUI::MeterIcon(METER_FARMING),
-                               0,0,3,3,false,true);
-    m_toolbar->AttachChild(m_food);
+                               0, 0, 3, 3, false, true);
 
     m_menu_showing = false;
+
+    int layout_column(0);
+
+    layout->SetMinimumColumnWidth(layout_column, m_turn_update->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_turn_update,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, GG::X(ClientUI::Pts()*4));
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_FPS,              0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_food,             0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_mineral,          0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_industry,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_research,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_trade,            0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetColumnStretch(layout_column, 1.0);
+    layout->Add(m_population,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_siterep->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_siterep,      0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_research->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_research,     0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_production->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_production,   0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_design->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_design,       0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_pedia->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_pedia,        0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetMinimumColumnWidth(layout_column, m_btn_menu->Width());
+    layout->SetColumnStretch(layout_column, 0.0);
+    layout->Add(m_btn_menu,         0, layout_column, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+    ++layout_column;
+
+    layout->SetCellMargin(5);
+    layout->SetBorderMargin(5);
 
 
     //clear background images
