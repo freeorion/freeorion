@@ -196,13 +196,13 @@ void GalaxySetupPanel::Init()
 {
     AttachSignalChildren();
 
-    GG::Connect(m_stars_spin->ValueChangedSignal, &GalaxySetupPanel::SettingChanged_, this);
-    GG::Connect(m_galaxy_shapes_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
-    GG::Connect(m_galaxy_ages_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
-    GG::Connect(m_starlane_freq_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
-    GG::Connect(m_planet_density_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
-    GG::Connect(m_specials_freq_list->SelChangedSignal, &GalaxySetupPanel::SettingChanged, this);
-    GG::Connect(m_galaxy_shapes_list->SelChangedSignal, &GalaxySetupPanel::ShapeChanged, this);
+    GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
+    GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_starlane_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_planet_density_list->SelChangedSignal,    &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_specials_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::ShapeChanged,    this);
 
     // create and load textures
     m_textures.clear();

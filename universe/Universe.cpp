@@ -2763,16 +2763,14 @@ namespace {
 
         // pick a name for the system
         std::string star_name;
-        //if (star_type != STAR_NONE) {
-            if (!star_names.empty()) {
-                int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
-                std::list<std::string>::iterator it = star_names.begin();
-                std::advance(it, star_name_idx);
-                star_name = *it;
-                // erase chosen name from list, to avoid duplicates
-                star_names.erase(it);
-            }
-        //}
+        if (!star_names.empty()) {
+            int star_name_idx = RandSmallInt(0, static_cast<int>(star_names.size()) - 1);
+            std::list<std::string>::iterator it = star_names.begin();
+            std::advance(it, star_name_idx);
+            star_name = *it;
+            // erase chosen name from list, to avoid duplicates
+            star_names.erase(it);
+        }
 
         // create new system
         System* system = new System(star_type, MAX_SYSTEM_ORBITS, star_name, x, y);

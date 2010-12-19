@@ -96,7 +96,6 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
             this->m_starlanes_wormholes[it->first] = it->second;
 
         this->m_orbits =                copied_system->m_orbits;
-        this->m_star =                  INVALID_STAR_TYPE;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
             this->m_star =              copied_system->m_star;

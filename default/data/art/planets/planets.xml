@@ -70,9 +70,9 @@
     <StarLightData>
       <star_type>STAR_NONE</star_type>
       <GG::Clr>
-        <red>64</red>
-        <green>64</green>
-        <blue>64</blue>
+        <red>32</red>
+        <green>32</green>
+        <blue>32</blue>
         <alpha>255</alpha>
       </GG::Clr>
     </StarLightData>
