@@ -95,10 +95,10 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
         for (StarlaneMap::const_iterator it = visible_lanes_holes.begin(); it != visible_lanes_holes.end(); ++it)
             this->m_starlanes_wormholes[it->first] = it->second;
 
+        this->m_orbits =                copied_system->m_orbits;
         this->m_star =                  INVALID_STAR_TYPE;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-
             this->m_star =              copied_system->m_star;
 
             // remove any not-visible lanes that were previously known: with
@@ -117,8 +117,13 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
                     this->m_starlanes_wormholes.erase(lane_end_sys_id);
             }
 
-            if (vis >= VIS_FULL_VISIBILITY) {
-                this->m_orbits =            copied_system->m_orbits;
+            if (vis < VIS_FULL_VISIBILITY) {
+                // copy system name if at partial visibility, as it won't be copied
+                // by UniverseObject::Copy unless at full visibility, but players
+                // should know system names even if they don't own the system
+                Universe::InhibitUniverseObjectSignals(true);
+                this->Rename(copied_system->Name());
+                Universe::InhibitUniverseObjectSignals(false);
             }
         }
     }

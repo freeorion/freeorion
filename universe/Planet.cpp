@@ -138,9 +138,18 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
         this->m_axial_tilt =                copied_planet->m_axial_tilt;
         this->m_just_conquered =            copied_planet->m_just_conquered;
 
-        if (vis >= VIS_FULL_VISIBILITY) {
-            this->m_available_trade =           copied_planet->m_available_trade;
-            this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_available_trade =           copied_planet->m_available_trade;
+                this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
+            } else {
+                // copy system name if at partial visibility, as it won't be copied
+                // by UniverseObject::Copy unless at full visibility, but players
+                // should know planet names even if they don't own the planet
+                Universe::InhibitUniverseObjectSignals(true);
+                this->Rename(copied_planet->Name());
+                Universe::InhibitUniverseObjectSignals(false);
+            }
         }
     }
 }

@@ -155,25 +155,6 @@ namespace {
         return retval;
     }
 
-    std::string FleetNameText(int fleet_id) {
-        std::string retval = UserString("ERROR");
-        const Fleet* fleet = GetObject<Fleet>(fleet_id);
-        if (!fleet)
-            return retval;
-
-        // name of fleet
-        std::string name = fleet->Name();
-        if (!name.empty())
-            return name;
-
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-
-        if (fleet->Unowned() || fleet->OwnedBy(empire_id))
-            return UserString("FLEET");
-        else
-            return UserString("FW_FOREIGN_FLEET");
-    }
-
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids) {
         if (ship_ids.empty())
             return;
@@ -772,13 +753,7 @@ namespace {
 
 
             // name and design name update
-            std::string ship_name = ship->Name();
-            if (ship_name.empty()) {
-                if (ship->Unowned() || ship->OwnedBy(empire_id))
-                    ship_name = UserString("SHIP");
-                else
-                    ship_name = UserString("FOREIGN_SHIP");
-            }
+            std::string ship_name = ship->PublicName(empire_id);
             m_ship_name_text->SetText(ship_name);
 
             if (m_design_name_text) {
@@ -1158,7 +1133,7 @@ void FleetDataPanel::Refresh()
 
     if (const Fleet* fleet = GetObject<Fleet>(m_fleet_id)) {
         // set fleet name and destination text
-        m_fleet_name_text->SetText(FleetNameText(m_fleet_id));
+        m_fleet_name_text->SetText(fleet->PublicName(HumanClientApp::GetApp()->EmpireID()));
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
@@ -2134,7 +2109,7 @@ void FleetDetailWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 std::string FleetDetailWnd::TitleText() const
 {
     if (const Fleet* fleet = m_fleet_panel->GetFleet())
-        return fleet->Name();   // TODO: Should this return fleet->PublicName() depending on ownership...?
+        return fleet->PublicName(HumanClientApp::GetApp()->EmpireID());
     else
         return "";
 }

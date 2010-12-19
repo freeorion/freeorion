@@ -89,13 +89,13 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
 
-            this->m_name =              copied_object->m_name;  // may be overwritten by derived class' Copy
             this->m_owners =            copied_object->m_owners;
             this->m_specials =          copied_object->m_specials;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
-            //if (vis >= VIS_FULL_VISIBILITY) {
-            //}
+            if (vis >= VIS_FULL_VISIBILITY) {
+                this->m_name =          copied_object->m_name;
+            }
         }
     }
 }

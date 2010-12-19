@@ -6,7 +6,8 @@
 #include <boost/bind.hpp>
 
 
-/** A class template for a type of signal that wraps a boost::signal so that its emission can be controlled by an external boolean value. */
+/** A class template for a type of signal that wraps a boost::signal so that its
+  * emission can be controlled by an external boolean value. */
 template <class T>
 class InhibitableSignal
 {
@@ -34,10 +35,12 @@ private:
 };
 
 namespace GG {
-/** connects an InhibitableSignal to a member function of a specific object that has the same function signature, putting \a R 
-    in slot group 0.  Slot call groups are called in ascending order.
-    Overloads exist for const- and non-const- versions with 0 to 8 arguments.  8 was picked as the max 
-    simply because boost::bind only supports up to 8 args as of this writing. */
+/** Connects an InhibitableSignal to a member function of a specific object that
+  * has the same function signature, putting \a R  in slot group 0.  Slot call
+  * groups are called in ascending order.
+  * Overloads exist for const- and non-const- versions with 0 to 8 arguments.  8 
+  * as picked as the max simply because boost::bind only supports up to 8 args as
+  * of this writing. */
 template <class C, class R, class T1, class T2> inline
 boost::signals::connection 
 Connect(InhibitableSignal<boost::signal<R (), C> >& sig, 
@@ -218,10 +221,12 @@ Connect(InhibitableSignal<boost::signal<R (A1, A2, A3, A4, A5, A6, A7, A8), C> >
     return sig.connect(boost::bind(fn, obj, _1, _2, _3, _4, _5, _6, _7, _8), at);
 }
 
-/** connects an InhibitableSignal to a member function of a specific object that has the same function signature, putting \a R 
-    in slot group \a grp.  Slot call groups are called in ascending order. 
-    Overloads exist for const- and non-const- versions with 0 to 8 arguments.  8 was picked as the max 
-    simply because boost::bind only supports up to 8 args as of this writing. */
+/** Connects an InhibitableSignal to a member function of a specific object that
+  * has the same function signature, putting \a R in slot group \a grp.  Slot
+  * call groups are called in ascending order. 
+  * Overloads exist for const- and non-const- versions with 0 to 8 arguments.  8
+  * was picked as the max simply because boost::bind only supports up to 8 args
+  * as of this writing. */
 template <class C, class R, class T1, class T2> inline
 boost::signals::connection 
 Connect(InhibitableSignal<boost::signal<R (), C> >& sig, 
