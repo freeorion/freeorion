@@ -20,7 +20,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -39,7 +39,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -48,7 +48,7 @@ Hull
     speed = 50
     starlaneSpeed = 80
     fuel = 3
-    stealth = 10
+    stealth = 1
     structure = 20
     buildCost = 100
     buildTime = 1
@@ -64,7 +64,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -73,7 +73,7 @@ Hull
     speed = 60
     starlaneSpeed = 80
     fuel = 3
-    stealth = 10
+    stealth = 1
     structure = 15
     buildCost = 75
     buildTime = 2
@@ -111,7 +111,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -121,7 +121,7 @@ Hull
     speed = 80
     starlaneSpeed = 80
     fuel = 3
-    stealth = 25
+    stealth = 10
     structure = 5
     buildCost = 50
     buildTime = 1
@@ -156,7 +156,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -204,7 +204,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -250,7 +250,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -304,7 +304,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -313,7 +313,7 @@ Hull
     speed = 100
     starlaneSpeed = 80
     fuel = 3
-    stealth = 50
+    stealth = 30
     structure = 1
     buildCost = 50
     buildTime = 3
@@ -337,7 +337,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -346,7 +346,7 @@ Hull
     speed = 25
     starlaneSpeed = 80
     fuel = 3
-    stealth = 10
+    stealth = 1
     structure = 60
     buildCost = 750
     buildTime = 15
@@ -405,7 +405,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -415,7 +415,7 @@ Hull
     speed = 35
     starlaneSpeed = 60
     fuel = 4
-    stealth = 5
+    stealth = 3
     structure = 15
     buildCost = 50
     buildTime = 1
@@ -448,7 +448,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -458,7 +458,7 @@ Hull
     speed = 70
     starlaneSpeed = 60
     fuel = 4
-    stealth = 10
+    stealth = 5
     structure = 5
     buildCost = 20
     buildTime = 1
@@ -487,7 +487,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -533,7 +533,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -574,7 +574,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -613,7 +613,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -673,7 +673,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -716,7 +716,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -789,7 +789,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -836,7 +836,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""
 
@@ -915,7 +915,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -1307,7 +1307,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -1369,7 +1369,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -1414,7 +1414,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     graphic = ""
 
 Hull
@@ -1506,6 +1506,6 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 2
     ]
     graphic = ""

@@ -2332,7 +2332,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Building
             ]
-            effects = SetStealth Value + 20
+            effects = SetStealth Value + 5
     graphic = ""
 
 Tech
@@ -2968,7 +2968,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 20
+            effects = SetDetection Value + 5
     graphic = ""
 
 Tech
@@ -3671,7 +3671,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 40
+            effects = SetDetection Value + 10
     graphic = ""
 
 Tech
@@ -3786,7 +3786,7 @@ Tech
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 60
+            effects = SetDetection Value + 20
     graphic = ""
 
 Tech
@@ -3961,7 +3961,7 @@ Tech
                 Not OwnerHasTech "SHP_DIM_CLOAK"
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
-            effects = SetStealth Value + 30
+            effects = SetStealth Value + 10
     graphic = ""
 
 Tech
@@ -3985,7 +3985,7 @@ Tech
                 ]
             ]
             activation = Not OwnerHasTech "SHP_PHASING_CLOAK"
-            effects = SetStealth Value + 55
+            effects = SetStealth Value + 15
     graphic = ""
 
 Tech
@@ -4070,7 +4070,7 @@ Tech
                     Building
                 ]
             ]
-            effects = SetStealth Value + 80
+            effects = SetStealth Value + 5
     graphic = ""
 
 Tech
@@ -4089,7 +4089,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDetection Value + 80
+            effects = SetDetection Value + 25
     graphic = ""
 
 Tech
@@ -4145,5 +4145,5 @@ Tech
                 Building
             ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 14.99
+            effects = SetStealth Value + 4.99
     graphic = ""

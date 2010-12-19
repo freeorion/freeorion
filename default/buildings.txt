@@ -33,10 +33,18 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet
                 Contains Source
+                Planet                
             ]
             effects = SetEmpireCapitol
+            
+        EffectsGroup
+            scope = And [
+                Contains Source
+                Planet                
+            ]
+            stackinggroup = "IMERIAL_PALACE_SUPPLY_EFFECT"
+            effects = SetSupply Value + 5
             
         EffectsGroup
             scope = And [

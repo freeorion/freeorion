@@ -141,7 +141,7 @@ Part
     speed = 100
     stealth = 0
     structure = 1
-    detection = 80
+    detection = 20
     capacity = 12
     buildcost = 20
     buildtime = 1
@@ -159,7 +159,7 @@ Part
     launchrate = 6
     fighterweaponrange = 25
     speed = 90
-    stealth = 25
+    stealth = 15
     structure = 3
     detection = 40
     capacity = 36
@@ -189,7 +189,7 @@ Part
     launchrate = 3
     fighterweaponrange = 25
     speed = 70
-    stealth = 25
+    stealth = 15
     structure = 5
     detection = 40
     capacity = 18
@@ -261,7 +261,7 @@ Part
     ROF = 1
     range = 125
     speed = 50
-    stealth = 30
+    stealth = 15
     structure = 1
     capacity = 20
     buildcost = 25
@@ -278,7 +278,7 @@ Part
     ROF = 1
     range = 125
     speed = 50
-    stealth = 30
+    stealth = 15
     structure = 6
     capacity = 20
     buildcost = 125
@@ -334,7 +334,7 @@ Part
     ROF = 0.5
     range = 175
     speed = 75
-    stealth = 50
+    stealth = 25
     structure = 1
     capacity = 10
     buildcost = 300
@@ -473,7 +473,7 @@ Part
             scope = Source
             activation = Star type = [Red Orange Yellow White Blue]
             stackinggroup = "SH_MULTISPEC_STEALTH_STACK"
-            effects = SetStealth Value + 200
+            effects = SetStealth Value + 50
     graphic = ""
 
 Part
@@ -490,7 +490,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 75
+            effects = SetDetection Value + 15
     graphic = ""
 
 Part
@@ -507,7 +507,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 55
+            effects = SetDetection Value + 25
     graphic = ""
 
 Part
@@ -524,7 +524,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 35
+            effects = SetDetection Value + 10
     graphic = "icons/ship_parts/active_radar.png"
 
 Part
@@ -541,7 +541,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 15
+            effects = SetDetection Value + 3
     graphic = "icons/ship_parts/optical_sensors.png"
 
 Part
@@ -596,7 +596,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 80
+            effects = SetStealth Value + 15
     graphic = ""
 
 Part
@@ -613,7 +613,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 55
+            effects = SetStealth Value + 25
     graphic = ""
 
 Part
@@ -630,7 +630,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "STEALTH_PART_STACK"
-            effects = SetStealth Value + 30
+            effects = SetStealth Value + 10
     graphic = ""
 
 Part
