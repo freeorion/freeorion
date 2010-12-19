@@ -215,6 +215,12 @@ Home Fleet
 FN_BATTLE_FLEET
 Battle Fleet
 
+FN_SCOUT_FLEET
+Scout Fleet
+
+FN_COLONY_FLEET
+Colony Fleet
+
 ##########################
 # Status Update Messages #
 ##########################

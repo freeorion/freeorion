@@ -1,10 +1,21 @@
 #include "VarText.h"
 
 #include "../universe/Universe.h"
+#include "../universe/System.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "AppInterface.h"
 #include "MultiplayerCommon.h"
+
+#ifdef FREEORION_BUILD_SERVER
+# include "../server/ServerApp.h"
+#else
+# ifdef FREEORION_BUILD_HUMAN
+#  include "../client/human/HumanClientApp.h"
+# else
+#  include "../client/AI/AIClientApp.h"
+# endif
+#endif
 
 #include <boost/spirit/include/classic.hpp>
 
@@ -83,7 +94,18 @@ namespace {
                     m_str += UserString("ERROR");
                     return;
                 }
-                m_str += open_tag + obj->Name() + close_tag;
+
+#ifdef FREEORION_BUILD_SERVER
+                std::string name_text = obj->Name();
+#else
+                int empire_id = ClientApp::GetApp()->EmpireID();
+                std::string name_text = obj->PublicName(empire_id);
+#endif
+                if (const System* system = universe_object_cast<const System*>(obj))
+                    if (system->GetStarType() == STAR_NONE)
+                        name_text = UserString("EMPTY_SPACE");
+
+                m_str += open_tag + name_text + close_tag;
 
             // technology token
             } else if (token == VarText::TECH_TAG) {
