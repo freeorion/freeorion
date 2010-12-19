@@ -1,7 +1,11 @@
 Fleet
-    name = "FN_HOME_FLEET"
+    name = "FN_COLONY_FLEET"
+    ships = [
+        "SD_COLONY_SHIP"
+    ]
+    
+Fleet
+    name = "FN_SCOUT_FLEET"
     ships = [
         "SD_SCOUT"
-        "SD_SCOUT"
-        "SD_COLONY_SHIP"
     ]
