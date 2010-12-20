@@ -184,7 +184,6 @@ namespace ValueRef {
     }
 }
 
-
 ///////////////////////////////////////////////////////////
 // Variable                                              //
 ///////////////////////////////////////////////////////////
@@ -618,7 +617,7 @@ namespace ValueRef {
                 hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
             unsigned int& num_seen = hist_it->second;
 
-            num_seen += 1;
+            num_seen++;
 
             if (num_seen > max_seen) {
                 most_common_property_value_it = hist_it;
@@ -657,7 +656,6 @@ namespace ValueRef {
                m_operand2->Eval(source, target, current_value);
     }
 }
-
 
 std::string DumpIndent()
 {

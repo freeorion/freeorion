@@ -540,7 +540,7 @@ virtual T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const Unive
             hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
         unsigned int& num_seen = hist_it->second;
 
-        num_seen += 1;
+        num_seen++;
 
         if (num_seen > max_seen) {
             most_common_property_value_it = hist_it;
@@ -569,6 +569,9 @@ namespace ValueRef {
 template <class T>
 T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const
 {
+    if (object_property_values.empty())
+        return T(0);
+
     switch (m_stat_type) {
         case NUMBER: {
             return T(object_property_values.size());
@@ -586,9 +589,6 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         }
 
         case MEAN: {
-            if (object_property_values.empty())
-                return T(0);
-
             T accumulator(0);
             for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
@@ -599,19 +599,136 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             break;
         }
 
-        case RMS:
+        case RMS: {
+            T accumulator(0);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator += (it->second * it->second);
+            }
+            accumulator /= static_cast<T>(object_property_values.size());
 
-        case MODE:
+            double retval = std::sqrt(static_cast<double>(accumulator));
+            return static_cast<T>(retval);
+            break;
+        }
 
-        case MAX:
+        case MODE: {
+            // count number of each result, tracking which has the most occurances
+            std::map<T, unsigned int> histogram;
+            std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+            unsigned int max_seen(0);
 
-        case MIN:
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                const T& property_value = it->second;
 
-        case SPREAD:
+                std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
+                if (hist_it == histogram.end())
+                    hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
+                unsigned int& num_seen = hist_it->second;
 
-        case STDEV:
+                num_seen++;
 
-        case PRODUCT:
+                if (num_seen > max_seen) {
+                    most_common_property_value_it = hist_it;
+                    max_seen = num_seen;
+                }
+            }
+
+            // return result (property value) that occured most frequently
+            return most_common_property_value_it->first;
+            break;
+        }
+
+        case MAX: {
+            std::map<const UniverseObject*, T>::const_iterator max_it = object_property_values.begin();
+
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                const T& property_value = it->second;
+                if (property_value > max_it->second)
+                    max_it = it;
+            }
+
+            // return maximal observed propery value
+            return max_it->second;
+            break;
+        }
+
+        case MIN: {
+            std::map<const UniverseObject*, T>::const_iterator min_it = object_property_values.begin();
+
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                const T& property_value = it->second;
+                if (property_value < min_it->second)
+                    min_it = it;
+            }
+
+            // return minimal observed propery value
+            return min_it->second;
+            break;
+        }
+
+        case SPREAD: {
+            std::map<const UniverseObject*, T>::const_iterator max_it = object_property_values.begin();
+            std::map<const UniverseObject*, T>::const_iterator min_it = object_property_values.begin();
+
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                const T& property_value = it->second;
+                if (property_value > max_it->second)
+                    max_it = it;
+                if (property_value < min_it->second)
+                    min_it = it;
+            }
+
+            // return difference between maximal and minimal observed propery values
+            return max_it->second - min_it->second;
+            break;
+        }
+
+        case STDEV: {
+            if (object_property_values.size() < 2)
+                return T(0);
+
+            // find sample mean
+            T accumulator(0);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator += it->second;
+            }
+            const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
+
+            // find average of squared deviations from sample mean
+            accumulator = T(0);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator += (it->second - MEAN) * (it->second - MEAN);
+            }
+            const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
+            double retval = std::sqrt(static_cast<double>(MEAN_DEV2));
+            return static_cast<T>(retval);
+            break;
+        }
+
+        case PRODUCT: {
+            T accumulator(1);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator *= it->second;
+            }
+            return accumulator;
+            break;
+        }
 
         default:
             throw std::runtime_error("ValueRef evaluated with an unknown or invalid StatisticType.");
