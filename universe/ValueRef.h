@@ -13,8 +13,12 @@
 
 #include <string>
 #include <vector>
+#include <map>
 
 class UniverseObject;
+namespace Condition {
+    struct ConditionBase;
+}
 
 namespace detail {
     std::vector<std::string> TokenizeDottedReference(const std::string& str);
@@ -27,6 +31,19 @@ namespace ValueRef {
     template <class T> struct ValueRefBase;
     template <class T> struct Constant;
     template <class T> struct Variable;
+    template <class T> struct Statistic;
+    enum StatisticType {
+        NUMBER, // returns the number of objects matching the condition
+        SUM,    // returns the sum of the property values of all objects matching the condition
+        MEAN,   // returns the mean of the property values of all objects matching the condition
+        RMS,    // returns the sqrt root of the mean of the squares of the property value sof all objects matching the condition
+        MODE,   // returns the most common property value of objects matching the condition
+        MAX,    // returns the maximum value of the property amongst objects matching the condition
+        MIN,    // returns the minimum value of the property amongst objects matching the condition
+        SPREAD, // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
+        STDEV,  // returns the standard deviation of the property values of all objects matching the condition
+        PRODUCT // returns the product of the property values of all objects matching the condition
+    };
     template <class FromType, class ToType> struct StaticCast;
     template <class FromType> struct StringCast;
     template <class T> struct Operation;
@@ -93,20 +110,69 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
       * otherwise, the same field is read from Eval's \a target parameter. */
     Variable(bool source_ref, const std::string& property_name);
 
-    bool SourceRef() const;
+    bool                            SourceRef() const;
     const std::vector<std::string>& PropertyName() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
-                   const boost::any& current_value) const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
+    virtual T                       Eval(const UniverseObject* source, const UniverseObject* target,
+                                         const boost::any& current_value) const;
+    virtual std::string             Description() const;
+    virtual std::string             Dump() const;
 
 protected:
     Variable(bool source_ref, const std::vector<std::string>& property_name);
 
 private:
-    bool                     m_source_ref;
-    std::vector<std::string> m_property_name;
+    bool                            m_source_ref;
+    std::vector<std::string>        m_property_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** The variable statistic class.   The value returned by this node is
+  * computed from the general gamestate; the value of the indicated
+  * \a property_name is computed for each object that matches
+  * \a sampling_condition and the statistic indicated by \a stat_type is
+  * calculated from them and returned. */
+template <class T>
+struct ValueRef::Statistic : public ValueRef::Variable<T>
+{
+    Statistic(const std::string& property_name,
+              StatisticType stat_type,
+              const Condition::ConditionBase* sampling_condition);
+
+    StatisticType                   GetStatisticType() const;
+    const Condition::ConditionBase* SamplingCondition() const;
+
+    virtual T                       Eval(const UniverseObject* source, const UniverseObject* target,
+                                         const boost::any& current_value) const;
+
+    virtual std::string             Description() const;
+    virtual std::string             Dump() const;
+
+protected:
+    Statistic(const std::vector<std::string>& property_name,
+              StatisticType stat_type,
+              const Condition::ConditionBase* sampling_condition);
+
+    /** Gets the set of objects in the Universe that match the sampling condition. */
+    void    GetConditionMatches(const UniverseObject* source,
+                                Condition::ObjectSet& condition_targets,
+                                const Condition::ConditionBase* condition) const;
+
+    /** Evaluates the property for the specified objects. */
+    void    GetObjectPropertyValues(const UniverseObject* source,
+                                    const Condition::ObjectSet& objects,
+                                    std::map<const UniverseObject*, T>& object_property_values) const;
+
+    /** Computes the statistic from the specified set of property values. */
+    T       ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const;
+
+private:
+    std::vector<std::string>        m_property_name;
+    StatisticType                   m_stat_type;
+    const Condition::ConditionBase* m_sampling_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -359,6 +425,207 @@ void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_source_ref)
         & BOOST_SERIALIZATION_NVP(m_property_name);
+}
+
+///////////////////////////////////////////////////////////
+// Statistic                                             //
+///////////////////////////////////////////////////////////
+template <class T>
+ValueRef::Statistic<T>::Statistic(const std::string& property_name,
+                                  StatisticType stat_type,
+                                  const Condition::ConditionBase* sampling_condition) :
+    Variable(false, property_name),
+    m_stat_type(stat_type),
+    m_sampling_condition(sampling_condition)
+{}
+
+template <class T>
+ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
+                                  StatisticType stat_type,
+                                  const Condition::ConditionBase* sampling_condition) :
+    Variable(false, property_name),
+    m_stat_type(stat_type),
+    m_sampling_condition(sampling_condition)
+{}
+
+template <class T>
+ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const
+{
+    return m_stat_type;
+}
+
+template <class T>
+const Condition::ConditionBase* ValueRef::Statistic<T>::SamplingCondition() const
+{
+    return m_sampling_condition;
+}
+
+template <class T>
+void ValueRef::Statistic<T>::GetConditionMatches(const UniverseObject* source,
+                                                 Condition::ObjectSet& condition_targets,
+                                                 const Condition::ConditionBase* condition) const
+{
+    condition_targets.clear();
+
+    if (!condition)
+        return;
+
+    const ObjectMap& objects = GetMainObjectMap();
+
+    // evaluate condition on all objects in Universe
+    Condition::ObjectSet condition_non_targets;
+    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
+        condition_non_targets.insert(it->second);
+    }
+    condition->Eval(source, condition_targets, condition_non_targets);
+}
+
+template <class T>
+void ValueRef::Statistic<T>::GetObjectPropertyValues(const UniverseObject* source,
+                                                     const Condition::ObjectSet& objects,
+                                                     std::map<const UniverseObject*, T>& object_property_values) const
+{
+    object_property_values.clear();
+
+    for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
+        const UniverseObject* obj = *it;
+        T property_value = this->Variable<T>::Eval(source, obj, boost::any());
+        object_property_values[obj] = property_value;
+    }
+}
+
+template <class T>
+std::string ValueRef::Statistic<T>::Description() const
+{
+    return "Statistic Desc";
+}
+
+template <class T>
+std::string ValueRef::Statistic<T>::Dump() const
+{
+    return "Statistic Dump";
+}
+
+template <class T>
+virtual T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                       const boost::any& current_value) const
+{
+    // the only statistic that can be computed on non-number property types
+    // and that is itself of a non-number type is the most common value
+    if (m_stat_type != MODE)
+        throw std::runtime_error("ValueRef evaluated with an invalid STatisticType for the return type.");
+
+    Condition::ObjectSet condition_matches;
+    GetConditionMatches(source, condition_matches, m_sampling_condition);
+
+    if (condition_matches.empty())
+        return T(-1);   // should be INVALID_T of enum types
+
+    // evaluate property for each condition-matched object
+    std::map<const UniverseObject*, T> object_property_values;
+    GetObjectPropertyValues(source, condition_matches, object_property_values);
+
+    // count number of each result, tracking which has the most occurances
+    std::map<T, unsigned int> histogram;
+    std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+    unsigned int max_seen(0);
+
+    for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+         it != object_property_values.end(); ++it)
+    {
+        const T& property_value = it->second;
+
+        std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
+        if (hist_it == histogram.end())
+            hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
+        unsigned int& num_seen = hist_it->second;
+
+        num_seen += 1;
+
+        if (num_seen > max_seen) {
+            most_common_property_value_it = hist_it;
+            max_seen = num_seen;
+        }
+    }
+
+    // return result (property value) that occured most frequently
+    return most_common_property_value_it->first;
+}
+
+namespace ValueRef {
+    template <>
+    double Statistic<double>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                   const boost::any& current_value) const;
+
+    template <>
+    int Statistic<int>::Eval(const UniverseObject* source, const UniverseObject* target,
+                             const boost::any& current_value) const;
+
+    template <>
+    std::string Statistic<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                             const boost::any& current_value) const;
+}
+
+template <class T>
+T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const
+{
+    switch (m_stat_type) {
+        case NUMBER: {
+            return T(object_property_values.size());
+            break;
+        }
+        case SUM: {
+            T accumulator(0);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator += it->second;
+            }
+            return accumulator;
+            break;
+        }
+
+        case MEAN: {
+            if (object_property_values.empty())
+                return T(0);
+
+            T accumulator(0);
+            for (std::map<const UniverseObject*, T>::const_iterator it = object_property_values.begin();
+                 it != object_property_values.end(); ++it)
+            {
+                accumulator += it->second;
+            }
+            return accumulator / static_cast<T>(object_property_values.size());
+            break;
+        }
+
+        case RMS:
+
+        case MODE:
+
+        case MAX:
+
+        case MIN:
+
+        case SPREAD:
+
+        case STDEV:
+
+        case PRODUCT:
+
+        default:
+            throw std::runtime_error("ValueRef evaluated with an unknown or invalid StatisticType.");
+            break;
+    }
+}
+
+template <class T>
+template <class Archive>
+void ValueRef::Statistic<T>::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Variable)
+        & BOOST_SERIALIZATION_NVP(m_stat_type)
+        & BOOST_SERIALIZATION_NVP(m_sampling_condition);
 }
 
 ///////////////////////////////////////////////////////////

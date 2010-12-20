@@ -6,6 +6,7 @@
 #include "Planet.h"
 #include "System.h"
 #include "UniverseObject.h"
+#include "Condition.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "../util/MultiplayerCommon.h"
@@ -33,7 +34,7 @@ namespace {
     {
         const ObjectMap& objects = GetMainObjectMap();
         while (first != last) {
-            std::string property_name = *first;
+            const std::string& property_name = *first;
             if (boost::iequals(property_name, "Planet")) {
                 if (const Building* b = universe_object_cast<const Building*>(obj))
                     obj = objects.Object<Planet>(b->PlanetID());
@@ -208,7 +209,7 @@ namespace ValueRef {
     PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
                                           const boost::any& current_value) const
     {
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetSize)
 
@@ -230,7 +231,7 @@ namespace ValueRef {
     PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                           const boost::any& current_value) const
     {
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetType)
 
@@ -252,7 +253,7 @@ namespace ValueRef {
     PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
                                                         const boost::any& current_value) const
     {
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetEnvironment)
 
@@ -274,7 +275,7 @@ namespace ValueRef {
     UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                                           const boost::any& current_value) const
     {
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(UniverseObjectType)
 
@@ -309,7 +310,7 @@ namespace ValueRef {
     StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
                                       const boost::any& current_value) const
     {
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(StarType)
 
@@ -336,7 +337,7 @@ namespace ValueRef {
             Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
             return 0.0;
         }
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(double)
 
@@ -454,7 +455,7 @@ namespace ValueRef {
             Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
             return 0;
         }
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(int)
 
@@ -524,7 +525,7 @@ namespace ValueRef {
             Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
             return "";
         }
-        std::string property_name = m_property_name.back();
+        const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(std::string)
 
@@ -549,6 +550,85 @@ namespace ValueRef {
     }
 
 #undef IF_CURRENT_VALUE_ELSE
+}
+
+///////////////////////////////////////////////////////////
+// Statistic                                             //
+///////////////////////////////////////////////////////////
+namespace ValueRef {
+    template <>
+    double Statistic<double>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                   const boost::any& current_value) const
+    {
+        Condition::ObjectSet condition_matches;
+        GetConditionMatches(source, condition_matches, m_sampling_condition);
+
+        // evaluate property for each condition-matched object
+        std::map<const UniverseObject*, double> object_property_values;
+        GetObjectPropertyValues(source, condition_matches, object_property_values);
+
+        return ReduceData(object_property_values);
+    }
+
+    template <>
+    int Statistic<int>::Eval(const UniverseObject* source, const UniverseObject* target,
+                             const boost::any& current_value) const
+    {
+        Condition::ObjectSet condition_matches;
+        GetConditionMatches(source, condition_matches, m_sampling_condition);
+
+        // evaluate property for each condition-matched object
+        std::map<const UniverseObject*, int> object_property_values;
+        GetObjectPropertyValues(source, condition_matches, object_property_values);
+
+        return ReduceData(object_property_values);
+    }
+
+    template <>
+    std::string Statistic<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
+                                             const boost::any& current_value) const
+    {
+        // the only statistic that can be computed on non-number property types
+        // and that is itself of a non-number type is the most common value
+        if (m_stat_type != MODE)
+            throw std::runtime_error("ValueRef evaluated with an invalid STatisticType for the return type (string).");
+
+        Condition::ObjectSet condition_matches;
+        GetConditionMatches(source, condition_matches, m_sampling_condition);
+
+        if (condition_matches.empty())
+            return "";
+
+        // evaluate property for each condition-matched object
+        std::map<const UniverseObject*, std::string> object_property_values;
+        GetObjectPropertyValues(source, condition_matches, object_property_values);
+
+        // count number of each result, tracking which has the most occurances
+        std::map<std::string, unsigned int> histogram;
+        std::map<std::string, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
+        unsigned int max_seen(0);
+
+        for (std::map<const UniverseObject*, std::string>::const_iterator it = object_property_values.begin();
+             it != object_property_values.end(); ++it)
+        {
+            const std::string& property_value = it->second;
+
+            std::map<std::string, unsigned int>::iterator hist_it = histogram.find(property_value);
+            if (hist_it == histogram.end())
+                hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
+            unsigned int& num_seen = hist_it->second;
+
+            num_seen += 1;
+
+            if (num_seen > max_seen) {
+                most_common_property_value_it = hist_it;
+                max_seen = num_seen;
+            }
+        }
+
+        // return result (property value) that occured most frequently
+        return most_common_property_value_it->first;
+    }
 }
 
 ///////////////////////////////////////////////////////////
