@@ -30,13 +30,13 @@ typedef ValueRefRule<PlanetEnvironment>::type   PlanetEnvironmentValueRefRule;
 typedef ValueRefRule<UniverseObjectType>::type  UniverseObjectTypeValueRefRule;
 typedef ValueRefRule<StarType>::type            StarTypeValueRefRule;
 
-extern StringValueRefRule string_expr_p;
-extern IntValueRefRule int_expr_p;
-extern DoubleValueRefRule double_expr_p;
-extern PlanetSizeValueRefRule planetsize_expr_p;
-extern PlanetTypeValueRefRule planettype_expr_p;
-extern PlanetEnvironmentValueRefRule planetenvironment_expr_p;
-extern UniverseObjectTypeValueRefRule universeobjecttype_expr_p;
-extern StarTypeValueRefRule startype_expr_p;
+extern StringValueRefRule               string_expr_p;
+extern IntValueRefRule                  int_expr_p;
+extern DoubleValueRefRule               double_expr_p;
+extern PlanetSizeValueRefRule           planetsize_expr_p;
+extern PlanetTypeValueRefRule           planettype_expr_p;
+extern PlanetEnvironmentValueRefRule    planetenvironment_expr_p;
+extern UniverseObjectTypeValueRefRule   universeobjecttype_expr_p;
+extern StarTypeValueRefRule             startype_expr_p;
 
 #endif // _ValueRefParser_h_

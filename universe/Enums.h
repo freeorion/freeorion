@@ -9,7 +9,7 @@
 
 /* the various major subclasses of UniverseObject */
 enum UniverseObjectType {
-    INVALID_UNIVERSE_OBJECT_TYPE,
+    INVALID_UNIVERSE_OBJECT_TYPE = -1,
     OBJ_BUILDING,
     OBJ_SHIP,
     OBJ_FLEET, 
