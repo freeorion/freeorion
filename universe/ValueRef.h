@@ -36,8 +36,8 @@ namespace ValueRef {
         NUMBER, // returns the number of objects matching the condition
         SUM,    // returns the sum of the property values of all objects matching the condition
         MEAN,   // returns the mean of the property values of all objects matching the condition
-        RMS,    // returns the sqrt root of the mean of the squares of the property value sof all objects matching the condition
-        MODE,   // returns the most common property value of objects matching the condition
+        RMS,    // returns the sqrt of the mean of the squares of the property values of all objects matching the condition
+        MODE,   // returns the most common property value of objects matching the condition.  supported for non-numeric types such as enums.
         MAX,    // returns the maximum value of the property amongst objects matching the condition
         MIN,    // returns the minimum value of the property amongst objects matching the condition
         SPREAD, // returns the (positive) difference between the maximum and minimum values of the property amongst objects matching the condition
@@ -507,13 +507,13 @@ std::string ValueRef::Statistic<T>::Dump() const
 }
 
 template <class T>
-virtual T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObject* target,
+T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObject* target,
                                        const boost::any& current_value) const
 {
     // the only statistic that can be computed on non-number property types
     // and that is itself of a non-number type is the most common value
     if (m_stat_type != MODE)
-        throw std::runtime_error("ValueRef evaluated with an invalid STatisticType for the return type.");
+        throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
 
     Condition::ObjectSet condition_matches;
     GetConditionMatches(source, condition_matches, m_sampling_condition);
