@@ -327,10 +327,52 @@ namespace {
     {
         // enumerated types only support the MODE StatisticType
         statistic =
-            (str_p("mode")[statistic.stat_type = val(ValueRef::MODE)]
+            (str_p("mode")
              >> property_label >> (!(variable_container >> ".") >> variable_final)
                  [statistic.property_name = construct_<std::string>(arg1, arg2)]
              >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-            [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)];
+            [statistic.this_ = new_<RefStat>(statistic.property_name, val(ValueRef::MODE), statistic.sampling_condition)];
+    }
+
+    template <>
+    void ValueRefParserDefinition<int>::SpecializedVariableStatisticDefinition()
+    {
+        statistic =
+            ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
+                 [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
+                  | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
+                  | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]
+                  | str_p("mode")[statistic.stat_type = val(ValueRef::MODE)]
+                  | str_p("max")[statistic.stat_type = val(ValueRef::MAX)]
+                  | str_p("min")[statistic.stat_type = val(ValueRef::MIN)]
+                  | str_p("spread")[statistic.stat_type = val(ValueRef::SPREAD)]
+                  | str_p("stdev")[statistic.stat_type = val(ValueRef::STDEV)]
+                  | str_p("product")[statistic.stat_type = val(ValueRef::PRODUCT)])
+                 >> property_label >> (!(variable_container >> ".") >> variable_final)
+                     [statistic.property_name = construct_<std::string>(arg1, arg2)]
+                 >> condition_label >> condition_p[statistic.sampling_condition = arg1])
+                    [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
+    }
+
+    template <>
+    void ValueRefParserDefinition<double>::SpecializedVariableStatisticDefinition()
+    {
+        statistic =
+            ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
+                 [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
+                  | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
+                  | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]
+                  | str_p("mode")[statistic.stat_type = val(ValueRef::MODE)]
+                  | str_p("max")[statistic.stat_type = val(ValueRef::MAX)]
+                  | str_p("min")[statistic.stat_type = val(ValueRef::MIN)]
+                  | str_p("spread")[statistic.stat_type = val(ValueRef::SPREAD)]
+                  | str_p("stdev")[statistic.stat_type = val(ValueRef::STDEV)]
+                  | str_p("product")[statistic.stat_type = val(ValueRef::PRODUCT)])
+                 >> property_label >> (!(variable_container >> ".") >> variable_final)
+                     [statistic.property_name = construct_<std::string>(arg1, arg2)]
+                 >> condition_label >> condition_p[statistic.sampling_condition = arg1])
+                    [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
     }
 }
