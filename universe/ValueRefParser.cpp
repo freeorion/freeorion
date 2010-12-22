@@ -360,7 +360,7 @@ namespace {
     {
         statistic =
             ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-                 [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
+                 [statistic.this_ = new_<RefStat>(val("dummy"), val(ValueRef::NUMBER), statistic.sampling_condition)])
              | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
                   | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
                   | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]

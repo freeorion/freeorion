@@ -562,9 +562,12 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(source, condition_matches, m_sampling_condition);
 
+        if (m_stat_type == NUMBER)
+            return static_cast<double>(condition_matches.size());
+
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, double> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, object_property_values);
+        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
 
         return ReduceData(object_property_values);
     }
@@ -576,9 +579,12 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(source, condition_matches, m_sampling_condition);
 
+        if (m_stat_type == NUMBER)
+            return static_cast<int>(condition_matches.size());
+
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, int> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, object_property_values);
+        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
 
         return ReduceData(object_property_values);
     }
@@ -590,7 +596,7 @@ namespace ValueRef {
         // the only statistic that can be computed on non-number property types
         // and that is itself of a non-number type is the most common value
         if (m_stat_type != MODE)
-            throw std::runtime_error("ValueRef evaluated with an invalid STatisticType for the return type (string).");
+            throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
 
         Condition::ObjectSet condition_matches;
         GetConditionMatches(source, condition_matches, m_sampling_condition);
@@ -600,7 +606,7 @@ namespace ValueRef {
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, std::string> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, object_property_values);
+        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
 
         // count number of each result, tracking which has the most occurances
         std::map<std::string, unsigned int> histogram;

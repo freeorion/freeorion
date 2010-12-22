@@ -164,13 +164,13 @@ protected:
     /** Evaluates the property for the specified objects. */
     void    GetObjectPropertyValues(const UniverseObject* source,
                                     const Condition::ObjectSet& objects,
+                                    const boost::any& current_value,
                                     std::map<const UniverseObject*, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
     T       ReduceData(const std::map<const UniverseObject*, T>& object_property_values) const;
 
 private:
-    std::vector<std::string>        m_property_name;
     StatisticType                   m_stat_type;
     const Condition::ConditionBase* m_sampling_condition;
 
@@ -437,7 +437,9 @@ ValueRef::Statistic<T>::Statistic(const std::string& property_name,
     Variable(false, property_name),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
-{}
+{
+    Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(" << property_name << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
+}
 
 template <class T>
 ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
@@ -446,7 +448,9 @@ ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
     Variable(false, property_name),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
-{}
+{
+    Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(??." << property_name.back() << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
+}
 
 template <class T>
 ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const
@@ -483,13 +487,18 @@ void ValueRef::Statistic<T>::GetConditionMatches(const UniverseObject* source,
 template <class T>
 void ValueRef::Statistic<T>::GetObjectPropertyValues(const UniverseObject* source,
                                                      const Condition::ObjectSet& objects,
+                                                     const boost::any& current_value,
                                                      std::map<const UniverseObject*, T>& object_property_values) const
 {
     object_property_values.clear();
 
+    Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
+                           << " sampling condition: " << m_sampling_condition->Dump()
+                           << " property name final: " << PropertyName().back();
+
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
         const UniverseObject* obj = *it;
-        T property_value = this->Variable<T>::Eval(source, obj, boost::any());
+        T property_value = this->Variable<T>::Eval(source, obj, current_value);
         object_property_values[obj] = property_value;
     }
 }
@@ -523,7 +532,7 @@ T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObjec
 
     // evaluate property for each condition-matched object
     std::map<const UniverseObject*, T> object_property_values;
-    GetObjectPropertyValues(source, condition_matches, object_property_values);
+    GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
 
     // count number of each result, tracking which has the most occurances
     std::map<T, unsigned int> histogram;
