@@ -2698,13 +2698,13 @@ std::string FleetWnd::TitleText() const
 
     const ObjectMap& objects = GetMainObjectMap();
 
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
     // at least one fleet is available, so show appropriate title this
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = system->Name();
-            if (sys_name.empty())
-                sys_name = UserString("SP_UNKNOWN_SYSTEM");
+            std::string sys_name = system->PublicName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                   empire->Name() % sys_name);
         } else {
@@ -2713,9 +2713,7 @@ std::string FleetWnd::TitleText() const
         }
     } else {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = system->Name();
-            if (sys_name.empty())
-                sys_name = UserString("SP_UNKNOWN_SYSTEM");
+            std::string sys_name = system->PublicName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
                                   sys_name);
         } else {
