@@ -27,10 +27,18 @@ struct ValueRefStatisticRule
                                                                       ValueRef::StatisticType, std::string,
                                                                       const Condition::ConditionBase*>
     {
-        member1 this_;
-        member2 stat_type;
-        member3 property_name;
-        member4 sampling_condition;
+        typedef boost::spirit::classic::closure<
+            ValueRefStatisticClosure,
+            RefBase*,
+            ValueRef::StatisticType,
+            std::string,
+            const Condition::ConditionBase*
+        > BaseType;
+
+        typename BaseType::member1 this_;
+        typename BaseType::member2 stat_type;
+        typename BaseType::member3 property_name;
+        typename BaseType::member4 sampling_condition;
     };
     typedef boost::spirit::classic::rule<Scanner, typename ValueRefStatisticClosure::context_t> type;
 };

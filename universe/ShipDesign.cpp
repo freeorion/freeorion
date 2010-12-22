@@ -9,6 +9,7 @@
 #include "ParserUtil.h"
 #include "Condition.h"
 #include "Effect.h"
+#include "ValueRef.h"
 
 #include <boost/filesystem/fstream.hpp>
 

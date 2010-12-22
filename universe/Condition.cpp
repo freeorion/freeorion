@@ -10,6 +10,7 @@
 #include "System.h"
 #include "Species.h"
 #include "Meter.h"
+#include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 

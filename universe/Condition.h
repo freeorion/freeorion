@@ -2,9 +2,15 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-#include <set>
+#include "Enums.h"
+#include "ValueRefFwd.h"
 
-#include "ValueRef.h"
+#include <boost/serialization/access.hpp>
+#include <boost/serialization/nvp.hpp>
+
+#include <set>
+#include <string>
+#include <vector>
 
 class UniverseObject;
 

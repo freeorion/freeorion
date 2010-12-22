@@ -3,6 +3,7 @@
 #include "ParserUtil.h"
 #include "ValueRefParser.h"
 #include "Condition.h"
+#include "ValueRef.h"
 
 using namespace boost::spirit::classic;
 using namespace phoenix;
