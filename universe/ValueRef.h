@@ -404,7 +404,7 @@ ValueRef::Statistic<T>::Statistic(const std::string& property_name,
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
 {
-    Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(" << property_name << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
+    //Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(" << property_name << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
 }
 
 template <class T>
@@ -415,7 +415,7 @@ ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
 {
-    Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(??." << property_name.back() << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
+    //Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(??." << property_name.back() << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
 }
 
 template <class T>
@@ -458,9 +458,9 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const UniverseObject* sourc
 {
     object_property_values.clear();
 
-    Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
-                           << " sampling condition: " << m_sampling_condition->Dump()
-                           << " property name final: " << this->PropertyName().back();
+    //Logger().debugStream() << "ValueRef::Statistic<T>::GetObjectPropertyValues source: " << source->Dump()
+    //                       << " sampling condition: " << m_sampling_condition->Dump()
+    //                       << " property name final: " << this->PropertyName().back();
 
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
         const UniverseObject* obj = *it;
