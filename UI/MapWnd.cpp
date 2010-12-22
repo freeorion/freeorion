@@ -1680,7 +1680,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
 {
     if (move)
-        Zoom(move);
+        Zoom(move, pt);
 }
 
 void MapWnd::EnableOrderIssuing(bool enable/* = true*/)
@@ -3396,15 +3396,27 @@ FleetButton::SizeType MapWnd::FleetButtonSizeType() const
 
 void MapWnd::Zoom(int delta)
 {
+    GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
+    Zoom(delta, center);
+}
+
+void MapWnd::Zoom(int delta, const GG::Pt& position)
+{
     if (delta == 0)
         return;
 
     // increment zoom steps in by delta steps
     double new_zoom_steps_in = m_zoom_steps_in + static_cast<double>(delta);
-    SetZoom(new_zoom_steps_in, true);
+    SetZoom(new_zoom_steps_in, true, position);
 }
 
 void MapWnd::SetZoom(double steps_in, bool update_slide)
+{
+    GG::Pt center = GG::Pt(AppWidth() / 2.0, AppHeight() / 2.0);
+    SetZoom(steps_in, update_slide, center);
+}
+
+void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 {
     // impose range limits on zoom steps
     double new_steps_in = std::max(std::min(steps_in, ZOOM_IN_MAX_STEPS), ZOOM_IN_MIN_STEPS);
@@ -3427,11 +3439,20 @@ void MapWnd::SetZoom(double steps_in, bool update_slide)
     // set new zoom level
     m_zoom_steps_in = new_steps_in;
 
+    
+    // keeps position the same after zooming
+    // used to keep the mouse at the same position when doing mouse wheel zoom
+    const GG::Pt position_center_delta = GG::Pt(position.x - center_x, position.y - center_y); 
+    ul_offset_x -= position_center_delta.x;
+    ul_offset_y -= position_center_delta.y;
 
     // correct map offsets for zoom changes
     ul_offset_x *= (ZoomFactor() / OLD_ZOOM);
     ul_offset_y *= (ZoomFactor() / OLD_ZOOM);
 
+    // now add the zoom position offset at the new zoom level
+    ul_offset_x += position_center_delta.x;
+    ul_offset_y += position_center_delta.y;
 
     // show or hide system names, depending on zoom.  replicates code in MapWnd::Zoom
     if (ZoomFactor() * ClientUI::Pts() < MIN_SYSTEM_NAME_SIZE)
