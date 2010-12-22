@@ -145,20 +145,20 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual GG::Pt  MinUsableSize(GG::X available_width) const;
+    virtual GG::Pt MinUsableSize() const;
 
-    GG::Clr         BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
+    GG::Clr        BorderColor() const {return m_border_color;} ///< returns the color used to render the border of the button
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Render();
-    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseLeave();
+    virtual void   Render();
+    virtual void   MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    virtual void   MouseLeave();
     //@}
 
 private:
-    GG::Clr     m_border_color;
-    bool        m_mouse_here;
+    GG::Clr m_border_color;
+    bool    m_mouse_here;
 };
 
 

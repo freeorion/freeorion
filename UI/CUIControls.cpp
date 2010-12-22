@@ -299,12 +299,12 @@ CUIStateButton::CUIStateButton(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::st
     GG::Connect(CheckedSignal, PlayButtonCheckSound(style == GG::SBSTYLE_3D_RADIO), -1);
 }
 
-GG::Pt CUIStateButton::MinUsableSize(GG::X available_width) const
+GG::Pt CUIStateButton::MinUsableSize() const
 {
     // HACK! This code assumes that the text_format flag GG::FORMAT_VCENTER is in effect.  This is currently the case for
     // all of CUIStateButton in FO.
-    GG::Pt retval = StateButton::MinUsableSize(available_width);
-    retval.y = TextControl::MinUsableSize(available_width).y;
+    GG::Pt retval = StateButton::MinUsableSize();
+    retval.y = TextControl::MinUsableSize().y;
     return retval;
 }
 

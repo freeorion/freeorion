@@ -74,12 +74,12 @@ ServerConnectWnd::ServerConnectWnd() :
     const int CONTROL_MARGIN = 5;
 
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 8, 4, CONTROL_MARGIN);
-    layout->SetMinimumColumnWidth(0, player_name_label->MinUsableSize(GG::X0).x + CONTROL_MARGIN);
+    layout->SetMinimumColumnWidth(0, player_name_label->MinUsableSize().x + CONTROL_MARGIN);
     layout->SetColumnStretch(1, 1.0);
     layout->SetMinimumColumnWidth(2, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
     layout->SetMinimumColumnWidth(3, OK_CANCEL_BUTTON_WIDTH + CONTROL_MARGIN);
     layout->SetMinimumRowHeight(0, m_player_name_edit->Height() + CONTROL_MARGIN);
-    layout->SetMinimumRowHeight(1, m_host_or_join_radio_group->MinUsableSize(GG::X0).y);
+    layout->SetMinimumRowHeight(1, m_host_or_join_radio_group->MinUsableSize().y);
     layout->SetMinimumRowHeight(2, m_LAN_game_label->Height() + (2 * CONTROL_MARGIN));
     layout->SetRowStretch(3, 1.0);
     layout->SetMinimumRowHeight(4, m_find_LAN_servers_bn->Height() + CONTROL_MARGIN);

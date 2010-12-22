@@ -155,7 +155,7 @@ GG::StateButton* CUIStyle::NewTabBarTab(GG::X x, GG::Y y, GG::X w, GG::Y h, cons
                                         GG::StateButtonStyle style/* = GG::SBSTYLE_3D_TOP_ATTACHED_TAB*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) const
 {
     GG::StateButton* retval = new CUIStateButton(x, y, w, h, str, format, GG::SBSTYLE_3D_TOP_DETACHED_TAB);
-    retval->Resize(retval->MinUsableSize(w) + GG::Pt(GG::X(12), GG::Y0));
+    retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }
 

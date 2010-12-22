@@ -261,7 +261,7 @@ void OptionsWnd::BeginSection(const std::string& name)
     assert(0 <= m_indentation_level);
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* heading_text = new GG::TextControl(GG::X0, GG::Y0, name, ClientUI::GetFont(ClientUI::Pts() * 4 / 3), ClientUI::TextColor(), GG::FORMAT_LEFT);
-    row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize(GG::X0).y + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, heading_text->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), heading_text, m_indentation_level));
     m_current_option_list->Insert(row);
     ++m_indentation_level;
@@ -278,8 +278,8 @@ CUIStateButton* OptionsWnd::BoolOption(const std::string& option_name, const std
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
-    button->Resize(button->MinUsableSize(GG::X0));
-    row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize(GG::X0).y + 6));
+    button->Resize(button->MinUsableSize());
+    row->Resize(GG::Pt(ROW_WIDTH, button->MinUsableSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), button, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -311,7 +311,7 @@ CUISpin<int>* OptionsWnd::IntOption(const std::string& option_name, const std::s
     layout->Add(text_control, 0, 1);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize(GG::X0).y, text_control->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -344,7 +344,7 @@ CUISpin<double>* OptionsWnd::DoubleOption(const std::string& option_name, const 
     layout->Add(text_control, 0, 1);
     layout->SetMinimumColumnWidth(0, SPIN_WIDTH);
     layout->SetColumnStretch(1, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize(GG::X0).y, text_control->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(spin->MinUsableSize().y, text_control->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -359,7 +359,7 @@ void OptionsWnd::MusicVolumeOption()
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
-    button->Resize(button->MinUsableSize(GG::X0));
+    button->Resize(button->MinUsableSize());
     button->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("music-volume"));
     assert(validator);
@@ -368,7 +368,7 @@ void OptionsWnd::MusicVolumeOption()
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize(GG::X0).y, slider->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -384,7 +384,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, text, GG::FORMAT_LEFT);
-    button->Resize(button->MinUsableSize(GG::X0));
+    button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
@@ -393,7 +393,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize(GG::X0).y, slider->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -411,7 +411,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, GG::X1, GetOptionsDB().Get<std::string>(option_name));
     edit->SetMaxSize(GG::Pt(edit->MaxSize().x, edit->Size().y));
     CUIButton* button = new CUIButton(GG::X0, GG::Y0, GG::X1, "...");
-    button->SetMinSize(GG::Pt(button->MinUsableSize(GG::X0).x + 8, button->Height()));
+    button->SetMinSize(GG::Pt(button->MinUsableSize().x + 8, button->Height()));
     button->SetMaxSize(GG::Pt(button->MaxSize().x, button->Height()));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 2, 0, LAYOUT_MARGIN);
     layout->Add(text_control, 0, 0, 1, 2);
@@ -419,7 +419,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     layout->Add(button, 1, 1, 1, 1, GG::ALIGN_VCENTER);
     layout->SetMinimumColumnWidth(1, button->Width());
     layout->SetColumnStretch(0, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize(GG::X0).y + LAYOUT_MARGIN + std::max(edit->MinUsableSize(GG::X0).y, button->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + std::max(edit->MinUsableSize().y, button->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -472,7 +472,7 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
     layout->Add(color_selector, 0, 1, 1, 1, GG::ALIGN_VCENTER);
     layout->SetMinimumColumnWidth(1, COLOR_SELECTOR_WIDTH);
     layout->SetColumnStretch(0, 1.0);
-    row->Resize(GG::Pt(ROW_WIDTH, std::max(text_control->MinUsableSize(GG::X0).y, color_selector->MinUsableSize(GG::X0).y) + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, std::max(text_control->MinUsableSize().y, color_selector->MinUsableSize().y) + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -509,7 +509,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
     layout->Add(text_control, 0, 0);
     layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
-    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize(GG::X0).y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     std::string current_font = GetOptionsDB().Get<std::string>(option_name);
@@ -608,7 +608,7 @@ void OptionsWnd::ResolutionOption()
     layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
 
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, drop_list_label->MinUsableSize(GG::X0).y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, drop_list_label->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
 
     m_current_option_list->Insert(row);
@@ -633,7 +633,7 @@ void OptionsWnd::ResolutionOption()
     windowed_spinner_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION"));
 
     row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, windowed_spinner_label->MinUsableSize(GG::X0).y + LAYOUT_MARGIN + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, windowed_spinner_label->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), windowed_spinner_label, m_indentation_level));
     m_current_option_list->Insert(row);
 
@@ -660,7 +660,7 @@ void OptionsWnd::ResolutionOption()
     GG::X button_width = ClientUI::GetFont()->TextExtent(apply_button_text).x + GG::X(LAYOUT_MARGIN);
     GG::Button* apply_button = new CUIButton(GG::X(LAYOUT_MARGIN), GG::Y(LAYOUT_MARGIN), GG::X(20), apply_button_text, ClientUI::GetFont());
     row = new GG::ListBox::Row();
-    row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize(GG::X0).y + LAYOUT_MARGIN + 6));
+    row->Resize(GG::Pt(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6));
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), apply_button, m_indentation_level));
     m_current_option_list->Insert(row);
 
