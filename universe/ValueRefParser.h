@@ -7,6 +7,12 @@ namespace ValueRef {
     struct ValueRefBase;
 }
 
+typedef boost::spirit::classic::rule<Scanner> SimpleRule;
+extern SimpleRule int_variable_final;
+extern SimpleRule double_variable_final;
+extern SimpleRule string_variable_final;
+extern SimpleRule variable_container;
+
 template <class T>
 struct ValueRefRule
 {

@@ -8,6 +8,31 @@
 using namespace boost::spirit::classic;
 using namespace phoenix;
 
+// final variable tokens: object property names that have the appropriate type
+// for the ValueRef return type.
+SimpleRule int_variable_final =
+    str_p("owner") | "id" | "creationturn" | "age" | "designid"
+    | "fleetid" | "planetid" | "systemid" | "finaldestinationid"
+    | "nextsystemid" | "previoussystemid" | "numships";
+
+SimpleRule double_variable_final =
+    str_p("farming") | "targetfarming" | "industry" | "targetindustry"
+    | "research" | "targetresearch" | "trade" | "targettrade"
+    | "mining" | "targetmining" | "construction" | "targetconstruction"
+    | "population" | "targetpopulation" | "health" | "targethealth"
+    | "maxfuel" | "fuel" | "maxshield" | "shield"
+    | "maxdefense" | "defense" | "maxstructure" | "structure"
+    | "supply" | "stealth" | "detection" | "foodconsumption"
+    | "battlespeed" | "starlanespeed"
+    | "tradestockpile" | "mineralstockpile" | "foodstockpile";
+
+SimpleRule string_variable_final =
+    str_p("name") | "species" | "buildingtype" | "focus";
+
+SimpleRule variable_container =
+    str_p("planet") | "system" | "fleet";
+
+// complete rule for all possible ValueRef return types
 StringValueRefRule              string_expr_p;
 IntValueRefRule                 int_expr_p;
 DoubleValueRefRule              double_expr_p;
@@ -16,7 +41,6 @@ PlanetTypeValueRefRule          planettype_expr_p;
 PlanetEnvironmentValueRefRule   planetenvironment_expr_p;
 UniverseObjectTypeValueRefRule  universeobjecttype_expr_p;
 StarTypeValueRefRule            startype_expr_p;
-
 
 // statistic parsers: require more complex parser than single-property valueref
 template <class T>
@@ -59,18 +83,15 @@ namespace {
         ValueRefParserDefinition(Rule& expr);
 
     private:
-        void SpecializedConstantDefinition();
+        void SpecializedConstantAndVariableFinalDefinition();
         void SpecializedVariableDefinition();
         void SpecializedVariableStatisticDefinition();
 
         typedef typename ValueRefStatisticRule<T>::type StatisticRule;
         StatisticRule   statistic;
 
+        SimpleRule      variable_final;
         Rule            constant;
-        Rule            variable_container;
-        Rule            variable_final;
-        Rule            int_variable_final;
-        Rule            double_variable_final;
         Rule            variable;
 
         Rule            primary_expr;
@@ -98,29 +119,8 @@ namespace {
         property_label("property"),
         condition_label("condition")
     {
-        int_variable_final =
-            str_p("owner") | "id" | "creationturn" | "age" | "designid"
-            | "fleetid" | "planetid" | "systemid" | "finaldestinationid"
-            | "nextsystemid" | "previoussystemid" | "numships";
-
-        double_variable_final =
-            str_p("farming") | "targetfarming" | "industry" | "targetindustry"
-            | "research" | "targetresearch" | "trade" | "targettrade"
-            | "mining" | "targetmining" | "construction" | "targetconstruction"
-            | "population" | "targetpopulation" | "health" | "targethealth"
-            | "maxfuel" | "fuel" | "maxshield" | "shield"
-            | "maxdefense" | "defense" | "maxstructure" | "structure"
-            | "supply" | "stealth" | "detection" | "foodconsumption"
-            | "battlespeed" | "starlanespeed"
-            | "tradestockpile" | "mineralstockpile" | "foodstockpile";
-
-        SpecializedConstantDefinition();
-
-        variable_container =
-            str_p("planet") | "system" | "fleet";
-
+        SpecializedConstantAndVariableFinalDefinition();
         SpecializedVariableDefinition();
-
         SpecializedVariableStatisticDefinition();
 
         // basic expression: constant, variable or statistical variable; input to further calculations
@@ -156,7 +156,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<std::string>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<std::string>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             // quote-enclosed string
@@ -179,15 +179,11 @@ namespace {
             | (real_p >> eps_p) [constant.this_ =           new_<RefConst>(construct_<std::string>(arg1, arg2))]
             | (int_p >> eps_p)[constant.this_ =             new_<RefConst>(construct_<std::string>(arg1, arg2))];
 
-        variable_final =
-            str_p("name")
-            | "species"
-            | "buildingtype"
-            | "focus";
+        variable_final = string_variable_final;
     }
 
     template <>
-    void ValueRefParserDefinition<int>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<int>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             real_p[constant.this_ = new_<RefConst>(static_cast_<int>(arg1))]
@@ -197,7 +193,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<double>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<double>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             real_p[constant.this_ = new_<RefConst>(arg1)]
@@ -207,7 +203,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<PlanetSize>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<PlanetSize>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             planet_size_p[constant.this_ = new_<RefConst>(arg1)]
@@ -217,7 +213,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<PlanetType>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<PlanetType>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             planet_type_p[constant.this_ = new_<RefConst>(arg1)]
@@ -227,7 +223,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<PlanetEnvironment>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<PlanetEnvironment>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             planet_environment_type_p[constant.this_ = new_<RefConst>(arg1)]
@@ -237,7 +233,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<UniverseObjectType>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<UniverseObjectType>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             universe_object_type_p[constant.this_ = new_<RefConst>(arg1)]
@@ -247,7 +243,7 @@ namespace {
     }
 
     template <>
-    void ValueRefParserDefinition<StarType>::SpecializedConstantDefinition()
+    void ValueRefParserDefinition<StarType>::SpecializedConstantAndVariableFinalDefinition()
     {
         constant =
             star_type_p[constant.this_ = new_<RefConst>(arg1)]
@@ -337,7 +333,7 @@ namespace {
         statistic =
             (str_p("mode")
              >> property_label >> (!(variable_container >> ".") >> variable_final)
-                 [statistic.property_name = construct_<std::string>(arg1, arg2)]
+                                  [statistic.property_name = construct_<std::string>(arg1, arg2)]
              >> condition_label >> condition_p[statistic.sampling_condition = arg1])
             [statistic.this_ = new_<RefStat>(statistic.property_name, val(ValueRef::MODE), statistic.sampling_condition)];
     }
@@ -347,7 +343,7 @@ namespace {
     {
         statistic =
             ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-                 [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
              | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
                   | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
                   | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]
@@ -358,9 +354,9 @@ namespace {
                   | str_p("stdev")[statistic.stat_type = val(ValueRef::STDEV)]
                   | str_p("product")[statistic.stat_type = val(ValueRef::PRODUCT)])
                  >> property_label >> (!(variable_container >> ".") >> variable_final)
-                     [statistic.property_name = construct_<std::string>(arg1, arg2)]
+                                      [statistic.property_name = construct_<std::string>(arg1, arg2)]
                  >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-                    [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
+                [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
     }
 
     template <>
@@ -368,7 +364,7 @@ namespace {
     {
         statistic =
             ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-                 [statistic.this_ = new_<RefStat>(val("dummy"), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             [statistic.this_ = new_<RefStat>(val("dummy"), val(ValueRef::NUMBER), statistic.sampling_condition)])
              | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
                   | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
                   | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]
@@ -379,8 +375,8 @@ namespace {
                   | str_p("stdev")[statistic.stat_type = val(ValueRef::STDEV)]
                   | str_p("product")[statistic.stat_type = val(ValueRef::PRODUCT)])
                  >> property_label >> (!(variable_container >> ".") >> variable_final)
-                     [statistic.property_name = construct_<std::string>(arg1, arg2)]
+                                      [statistic.property_name = construct_<std::string>(arg1, arg2)]
                  >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-                    [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
+                [statistic.this_ = new_<RefStat>(statistic.property_name, statistic.stat_type, statistic.sampling_condition)]);
     }
 }
