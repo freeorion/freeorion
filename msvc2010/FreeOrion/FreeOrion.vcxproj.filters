@@ -768,6 +768,9 @@
     <ClInclude Include="..\..\UI\PlayerListWnd.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">

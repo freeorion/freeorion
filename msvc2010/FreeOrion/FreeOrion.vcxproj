@@ -284,6 +284,7 @@
     <ClInclude Include="..\..\universe\Universe.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
+    <ClInclude Include="..\..\universe\ValueRefFwd.h" />
     <ClInclude Include="..\..\universe\ValueRefParser.h" />
     <ClInclude Include="..\..\util\AppInterface.h" />
     <ClInclude Include="..\..\util\binreloc.h" />

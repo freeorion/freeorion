@@ -341,6 +341,9 @@
     <ClInclude Include="..\..\GG\GG\Clr.h">
       <Filter>Header Files\GG</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\AI\ReferenceAI.cpp">
