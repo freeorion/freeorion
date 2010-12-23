@@ -15,14 +15,22 @@
 class UniverseObject;
 
 
-/** this namespace holds ConditionBase and its subclasses; these classes represent predicates about UniverseObjects used
-    by, for instance, the Effect system. */
+/** this namespace holds ConditionBase and its subclasses; these classes
+  * represent predicates about UniverseObjects used by, for instance, the
+  * Effect system. */
 namespace Condition {
     typedef std::set<const UniverseObject*> ObjectSet;
 
     enum SearchDomain {
-        NON_TARGETS, ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
-        TARGETS      ///< The Condition will only examine items in the target set; those that do not match the Condition will be inserted into the nontarget set.
+        NON_TARGETS,    ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
+        TARGETS         ///< The Condition will only examine items in the target set; those that do not match the Condition will be inserted into the nontarget set.
+    };
+
+    enum SortingMethod {
+        SORT_MAX,       ///< Objects with the largest property value will be selected
+        SORT_MIN,       ///< Objects with the smallest property value will be selected
+        SORT_MODE,      ///< Objects with the most common property value will be selected
+        SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
     };
 
     struct ConditionBase;
@@ -59,9 +67,9 @@ namespace Condition {
     struct Or;
     struct Not;
     struct Turn;
-    struct NumberOf;
     struct ContainedBy;
     struct Number;
+    struct SortedNumberOf;
 }
 
 /** The base class for all Conditions. */
@@ -121,19 +129,37 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches a randomly selected \a number of objects that match Condition \a condition, or as many objects
-    as match the condition if the number of objects is less than the number requested. */
-struct Condition::NumberOf : Condition::ConditionBase
+/** Matches a specified \a number of objects that match Condition \a condition
+  * or as many objects as match the condition if the number of objects is less
+  * than the number requested.  If more objects match the condition than are
+  * requested, the objects are sorted according to the value of the specified
+  * \a property_name and objects are matched according to whether they have
+  * the specified \a sorting_type of those property values.  For example,
+  * objects with the largest, smallest or most common property value may be
+  * selected preferentially. */
+struct Condition::SortedNumberOf : public Condition::ConditionBase
 {
-    NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition);
-    virtual ~NumberOf();
+    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                   const ConditionBase* condition,
+                   const std::string& property_name,
+                   SortingMethod sorting_method);
+
+    virtual ~SortedNumberOf();
     virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
+protected:
+    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                   const ConditionBase* condition,
+                   const std::vector<std::string>& property_name,
+                   SortingMethod sorting_method);
+
 private:
-    const ValueRef::ValueRefBase<int>* m_number;
-    const ConditionBase*               m_condition;
+    const ValueRef::ValueRefBase<int>*  m_number;
+    const ConditionBase*                m_condition;
+    std::vector<std::string>            m_property_name;
+    SortingMethod                       m_sorting_method;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -782,11 +808,13 @@ void Condition::Turn::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::NumberOf::serialize(Archive& ar, const unsigned int version)
+void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_number)
-        & BOOST_SERIALIZATION_NVP(m_condition);
+        & BOOST_SERIALIZATION_NVP(m_condition)
+        & BOOST_SERIALIZATION_NVP(m_property_name)
+        & BOOST_SERIALIZATION_NVP(m_sorting_method);
 }
 
 template <class Archive>

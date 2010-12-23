@@ -180,7 +180,7 @@ bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* 
 }
 
 ///////////////////////////////////////////////////////////
-// NumberOf                                              //
+// SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
 namespace {
     /** Random number genrator function to use with random_shuffle */
@@ -189,9 +189,8 @@ namespace {
     }
     int (*CRI)(int) = CustomRandInt;
 
-
-    /** Transfers the indicated \a number of objects from from_set to to_set */
-    void TransferObjects(unsigned int number, Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
+    /** Transfers the indicated \a number of objects, randomly selected from from_set to to_set */
+    void TransferRandomObjects(unsigned int number, Condition::ObjectSet& from_set, Condition::ObjectSet& to_set) {
         // ensure number of objects to be moved is within reasonable range
         number = std::min<unsigned int>(number, from_set.size());
         if (number == 0)
@@ -219,40 +218,34 @@ namespace {
     }
 }
 
-Condition::NumberOf::NumberOf(const ValueRef::ValueRefBase<int>* number, const ConditionBase* condition) :
+Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                                          const ConditionBase* condition,
+                                          const std::string& property_name,
+                                          SortingMethod sorting_method) :
     m_number(number),
-    m_condition(condition)
-{
-}
+    m_condition(condition),
+    m_property_name(::detail::TokenizeDottedReference(property_name)),
+    m_sorting_method(sorting_method)
+{}
 
-Condition::NumberOf::~NumberOf()
+Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                                          const ConditionBase* condition,
+                                          const std::vector<std::string>& property_name,
+                                          SortingMethod sorting_method) :
+    m_number(number),
+    m_condition(condition),
+    m_property_name(),
+    m_sorting_method(sorting_method)
+{}
+
+Condition::SortedNumberOf::~SortedNumberOf()
 {
     delete m_number;
     delete m_condition;
 }
 
-std::string Condition::NumberOf::Description(bool negated/* = false*/) const
-{
-    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
-    std::string description_str = "DESC_NUMBER_OF";
-    if (negated)
-        description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str))
-               % value_str
-               % m_condition->Description());
-}
-
-std::string Condition::NumberOf::Dump() const
-{
-    std::string retval = DumpIndent() + "NumberOf number = " + m_number->Dump() + " condition =\n";
-    ++g_indent;
-    retval += m_condition->Dump();
-    --g_indent;
-    return retval;
-}
-
-void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                               SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::ObjectSet& targets,
+                                     Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
     int number = m_number->Eval(source, source, boost::any());
 
@@ -261,8 +254,14 @@ void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets,
         ObjectSet matched_non_targets;
         m_condition->Eval(source, matched_non_targets, non_targets, NON_TARGETS);
 
-        // transfer the indicated number of matched_non_targets to targets
-        TransferObjects(number, matched_non_targets, targets);
+        switch (m_sorting_method) {
+        case SORT_RANDOM:
+            // transfer the indicated number of matched_non_targets to targets
+            TransferRandomObjects(number, matched_non_targets, targets);
+            break;
+        default:
+            break;
+        }
 
         // move remainder of matched_non_targets back to non_targets
         non_targets.insert(matched_non_targets.begin(), matched_non_targets.end());
@@ -277,13 +276,65 @@ void Condition::NumberOf::Eval(const UniverseObject* source, ObjectSet& targets,
         ObjectSet matched_targets = targets;
         targets.clear();
 
-        // transfer desired number of matched_targets back to targets set
-        TransferObjects(number, matched_targets, targets);
+        switch (m_sorting_method) {
+        case SORT_RANDOM:
+            // transfer desired number of matched_targets back to targets set
+            TransferRandomObjects(number, matched_targets, targets);
+            break;
+        default:
+            break;
+        }
 
         // move remainder to non_targets set
         non_targets.insert(matched_targets.begin(), matched_targets.end());
         matched_targets.clear();
     }
+}
+
+std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const
+{
+    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
+    std::string description_str = "DESC_NUMBER_OF";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % value_str
+               % m_condition->Description());
+}
+
+std::string Condition::SortedNumberOf::Dump() const
+{
+    std::string retval = DumpIndent();
+    switch (m_sorting_method) {
+    case SORT_RANDOM:
+        retval += "NumberOf";   break;
+    case SORT_MAX:
+        retval += "MaximumNumberOf";  break;
+    case SORT_MIN:
+        retval += "MinimumNumberOf"; break;
+    case SORT_MODE:
+        retval += "ModeNumberOf"; break;
+    default:
+        retval += "?NumberOf"; break;
+    }
+
+    retval += " number = " + m_number->Dump();
+
+    if (m_sorting_method != SORT_RANDOM) {
+        retval += " property = ";
+        for (std::vector<std::string>::const_iterator it = m_property_name.begin(); it != m_property_name.end(); ++it) {
+            if (it != m_property_name.begin())
+                retval += ".";
+            retval += *it;
+        }
+    }
+
+    retval += " condition =\n";
+    ++g_indent;
+        retval += m_condition->Dump();
+    --g_indent;
+
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -786,7 +837,7 @@ std::string Condition::ContainedBy::Dump() const
 {
     std::string retval = DumpIndent() + "ContainedBy condition =\n";
     ++g_indent;
-    retval += m_condition->Dump();
+        retval += m_condition->Dump();
     --g_indent;
     return retval;
 }
@@ -1300,7 +1351,7 @@ std::string Condition::DesignHasPart::Description(bool negated/* = false*/) cons
 }
 
 std::string Condition::DesignHasPart::Dump() const{
-    return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " name = " + m_name;
+    return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name;
 }
 
 bool Condition::DesignHasPart::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1349,7 +1400,7 @@ std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/)
 }
 
 std::string Condition::DesignHasPartClass::Dump() const{
-    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class));
+    return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class));
 }
 
 bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const UniverseObject* target) const
@@ -1441,7 +1492,7 @@ std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 
 std::string Condition::MeterValue::Dump() const
 {
-    std::string retval = DumpIndent() + "Current";
+    std::string retval = DumpIndent();
     switch (m_meter) {
     case INVALID_METER_TYPE:        retval += "INVALID_METER_TYPE"; break;
     case METER_TARGET_POPULATION:   retval += "TargetPopulation";   break;
@@ -1483,7 +1534,7 @@ std::string Condition::MeterValue::Dump() const
     case METER_ANTI_FIGHTER_DAMAGE: retval += "AntiFighterDamage";  break;
     case METER_LAUNCH_RATE:         retval += "LaunchRate";         break;
     case METER_FIGHTER_WEAPON_RANGE:retval += "FighterWeaponRange"; break;
-    default: retval += "?"; break;
+    default: retval += "?Meter?"; break;
     }
     retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
     return retval;

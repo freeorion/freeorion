@@ -21,6 +21,7 @@ extern ParamLabel environment_label;
 extern ParamLabel probability_label;
 extern ParamLabel distance_label;
 extern ParamLabel jumps_label;
+extern ParamLabel property_label;
 
 rule<Scanner, ConditionClosure::context_t> condition2_p;
 
@@ -62,11 +63,15 @@ namespace {
             member3 int_ref_2;
         };
 
-        struct NumberOfClosure : boost::spirit::classic::closure<NumberOfClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, Condition::ConditionBase*>
+        struct SortedNumberOfClosure : boost::spirit::classic::closure<SortedNumberOfClosure, Condition::ConditionBase*,
+                                                                       ValueRef::ValueRefBase<int>*, Condition::ConditionBase*,
+                                                                       std::string, Condition::SortingMethod>
         {
             member1 this_;
             member2 number;
             member3 condition;
+            member4 property_name;
+            member5 sorting_method;
         };
 
         struct StringClosure : boost::spirit::classic::closure<StringClosure, Condition::ConditionBase*, std::string>
@@ -133,7 +138,7 @@ namespace {
         typedef rule<Scanner, IntRefConditionClosure::context_t>        IntRefConditionRule;
         typedef rule<Scanner, IntRefIntRefConditionClosure::context_t>  IntRefIntRefConditionRule;
         typedef rule<Scanner, IntRefIntRefClosure::context_t>           IntRefIntRefRule;
-        typedef rule<Scanner, NumberOfClosure::context_t>               NumberOfRule;
+        typedef rule<Scanner, SortedNumberOfClosure::context_t>         SortedNumberOfRule;
         typedef rule<Scanner, StringClosure::context_t>                 StringRule;
         typedef rule<Scanner, ConditionParamClosure::context_t>         ConditionParamRule;
         typedef rule<Scanner, StarTypeClosure::context_t>               StarTypeRule;
@@ -149,7 +154,7 @@ namespace {
         IntRefConditionRule         within_starlane_jumps;
         IntRefIntRefConditionRule   number;
         IntRefIntRefRule            turn;
-        NumberOfRule                number_of;
+        SortedNumberOfRule          number_of;
         StringRule                  has_special;
         ConditionParamRule          contains;
         ConditionParamRule          contained_by;
@@ -198,10 +203,20 @@ namespace {
             [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
 
         number_of =
-            (str_p("numberof")
-             >> number_label >> int_expr_p[number_of.number = arg1]
-             >> condition_label >> condition_p[number_of.condition = arg1])
-            [number_of.this_ = new_<Condition::NumberOf>(number_of.number, number_of.condition)];
+            ( ((str_p("numberof")
+                >> number_label >> int_expr_p[number_of.number = arg1]
+                >> condition_label >> condition_p[number_of.condition = arg1])
+               [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition,
+                                                                  val("dummy"), Condition::SORT_RANDOM)])
+             | ((str_p("maximumnumberof")[number_of.sorting_method =    val(Condition::SORT_MAX)]
+                 | str_p("minimumnumberof")[number_of.sorting_method =  val(Condition::SORT_MIN)]
+                 | str_p("modenumberof")[number_of.sorting_method =     val(Condition::SORT_MODE)])
+                >> number_label >> int_expr_p[number_of.number = arg1]
+                >> property_label >> (!(variable_container >> ".") >> double_variable_final)
+                                     [number_of.property_name = construct_<std::string>(arg1, arg2)]
+                >> condition_label >> condition_p[number_of.condition = arg1]))
+            [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition,
+                                                              number_of.property_name, number_of.sorting_method)];
 
         has_special =
             (str_p("hasspecial")
