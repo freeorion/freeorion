@@ -1,19 +1,20 @@
 import copy
 import freeOrionAIInterface as fo
-import EnumsAI
 from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
+import EnumsAI
 import AIFleetMission
 
 # global variables
 foodStockpileSize = 1     # food stored per population
 minimalColoniseValue = 4  # minimal value for a planet to be colonised, now a size 2 terran world
+colonisablePlanetIDs = []  # TODO: move into AIstate
+colonisableOutpostIDs = []  # TODO: move into AIstate
+colonyFleetIDs = []
+outpostFleetIDs = []
 
 # AIstate class
 class AIstate(object):
     "stores AI game state"
-
-    # def colonisablePlanets (should be set at start of turn)
-    # getColonisablePlanets (deepcopy!)
 
     def __init__(self):
         "constructor"

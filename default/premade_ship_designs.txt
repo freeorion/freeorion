@@ -32,6 +32,30 @@ ShipDesign
     model = "seed"
 
 ShipDesign
+    name = "SD_OUTPOST_SHIP"
+    description = "SD_OUTPOST_SHIP_DESC"
+    lookup_strings = true
+    hull = "SH_STANDARD"
+    parts = [
+        ""
+        ""
+        ""
+        ""
+        "CO_OUTPOST_MOD"
+    ]
+    graphic = "misc/generic.png"
+    model = "seed"
+
+ShipDesign
+    name = "SD_OUTPOST_BASE"
+    description = "SD_OUTPOST_BASE_DESC"
+    lookup_strings = true
+    hull = "SH_COLONY_BASE"
+    parts = "CO_OUTPOST_MOD"
+    graphic = "misc/generic.png"
+    model = "seed"
+
+ShipDesign
     name = "SD_MARK1"
     description = "SD_MARK1_DESC"
     lookup_strings = true

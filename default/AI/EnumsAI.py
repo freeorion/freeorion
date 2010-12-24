@@ -25,24 +25,25 @@ class AIPriorityType(object):
     PRIORITY_RESOURCE_RESEARCH = 3
     PRIORITY_RESOURCE_TRADE = 4
     PRIORITY_PRODUCTION_EXPLORATION = 5
-    PRIORITY_PRODUCTION_COLONISATION = 6
-    PRIORITY_PRODUCTION_MILITARY = 7
-    PRIORITY_PRODUCTION_BUILDINGS = 8
-    PRIORITY_RESEARCH_LEARNING = 9
-    PRIORITY_RESEARCH_GROWTH = 10
-    PRIORITY_RESEARCH_PRODUCTION = 11
-    PRIORITY_RESEARCH_CONSTRUCTION = 12
-    PRIORITY_RESEARCH_ECONOMICS = 13
-    PRIORITY_RESEARCH_SHIPS = 14
+    PRIORITY_PRODUCTION_OUTPOST = 6
+    PRIORITY_PRODUCTION_COLONISATION = 7
+    PRIORITY_PRODUCTION_MILITARY = 8
+    PRIORITY_PRODUCTION_BUILDINGS = 9
+    PRIORITY_RESEARCH_LEARNING = 10
+    PRIORITY_RESEARCH_GROWTH = 11
+    PRIORITY_RESEARCH_PRODUCTION = 12
+    PRIORITY_RESEARCH_CONSTRUCTION = 13
+    PRIORITY_RESEARCH_ECONOMICS = 14
+    PRIORITY_RESEARCH_SHIPS = 15
 
 def getAIPriorityResourceTypes():
     return __getInterval(0, 4)
 def getAIPriorityProductionTypes():
-    return __getInterval(5, 8)
+    return __getInterval(5, 9)
 def getAIPriorityResearchTypes():
-    return __getInterval(9, 14)
+    return __getInterval(10, 15)
 def getAIPriorityTypes():
-    return __getInterval(0, 14)
+    return __getInterval(0, 15)
 
 
 class AIExplorableSystemType(object):
@@ -58,16 +59,17 @@ def getAIExplorableSystemTypes():
 class AIFleetMissionType(object):
     FLEET_MISSION_INVALID = -1
     FLEET_MISSION_EXPLORATION = 0
-    FLEET_MISSION_COLONISATION = 1
-    FLEET_MISSION_SPLIT_FLEET = 2
-    FLEET_MISSION_MERGE_FLEET = 3
-    FLEET_MISSION_HIT_AND_RUN = 4
-    FLEET_MISSION_ATTACK = 5
-    FLEET_MISSION_DEFEND = 6
-    FLEET_MISSION_LAST_STAND = 7
+    FLEET_MISSION_OUTPOST = 1  # added 12/10 rk
+    FLEET_MISSION_COLONISATION = 2
+    FLEET_MISSION_SPLIT_FLEET = 3
+    FLEET_MISSION_MERGE_FLEET = 4
+    FLEET_MISSION_HIT_AND_RUN = 5
+    FLEET_MISSION_ATTACK = 6
+    FLEET_MISSION_DEFEND = 7
+    FLEET_MISSION_LAST_STAND = 8
 
 def getAIFleetMissionTypes():
-    return __getInterval(0, 7)
+    return __getInterval(0, 8) # updated 12/10 rk
 
 
 class AIFleetOrderType(object):
@@ -77,12 +79,13 @@ class AIFleetOrderType(object):
     ORDER_RESUPPLY = 2
     ORDER_SPLIT_FLEET = 3
     ORDER_MERGE_FLEET = 4
-    ORDER_COLONISE = 5
-    ORDER_ATACK = 6
-    ORDER_DEFEND = 7
+    ORDER_OUTPOST = 5
+    ORDER_COLONISE = 6
+    ORDER_ATACK = 7
+    ORDER_DEFEND = 8
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 7)
+    return __getInterval(0, 8)
 
 
 class AIShipRoleType(object):
@@ -93,9 +96,10 @@ class AIShipRoleType(object):
     SHIP_ROLE_MILITARY_POINTDEFENSE = 3
     SHIP_ROLE_CIVILIAN_EXPLORATION = 4
     SHIP_ROLE_CIVILIAN_COLONISATION = 5
+    SHIP_ROLE_CIVILIAN_OUTPOST = 6  # added 12/10 rk
 
 def getAIShipRolesTypes():
-    return __getInterval(0, 5)
+    return __getInterval(0, 6)  # updated 12/10 rk
 
 
 class AITargetType(object):
@@ -178,3 +182,10 @@ class AIDemandType(object):
 
 def getAIDemandTypes():
     return __getInterval(0, 2)
+
+
+class AIFocusType(object):
+    FOCUS_FARMING = "FOCUS_FARMING"
+    FOCUS_MINING = "FOCUS_MINING"
+    FOCUS_INDUSTRY = "FOCUS_INDUSTRY"
+    FOCUS_RESEARCH = "FOCUS_RESEARCH"

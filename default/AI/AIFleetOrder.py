@@ -54,8 +54,25 @@ class AIFleetOrder(object):
             targetAITargetTypeValid = False
             universe = fo.getUniverse()
 
+            # outpost
+            if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
+                # with ship
+                if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                    ship = universe.getShip(self.getSourceAITarget().getTargetID())
+                    if ship.canColonize:
+                        sourceAITargetTypeValid = True
+                # with fleet
+                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
+                    if fleet.hasColonyShips:
+                        sourceAITargetTypeValid = True
+                # colonise planet
+                if AITargetType.TARGET_PLANET == self.getTargetAITarget().getAITargetType():
+                    planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
+                    if planet.unowned:
+                        targetAITargetTypeValid = True
             # colonise
-            if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
+            elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 # with ship
                 if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
                     ship = universe.getShip(self.getSourceAITarget().getTargetID())
@@ -123,8 +140,26 @@ class AIFleetOrder(object):
             return False
 
         universe = fo.getUniverse()
+        # outpost
+        if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
+            fleetID = None
+            shipID = None
+            if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                shipID = self.getSourceAITarget().getTargetID()
+                ship = universe.getShip(shipID)
+                fleetID = ship.fleetID
+            elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                fleetID = self.getSourceAITarget().getTargetID()
+                shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
+
+            ship = universe.getShip(shipID)
+            fleet = universe.getFleet(fleetID)
+            planet = universe.getPlanet(self.getTargetAITarget().getTargetID())
+            if (ship != None) and (fleet.systemID == planet.systemID) and ship.canColonize:
+                return True
+            return False
         # colonise
-        if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
+        elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
             fleetID = None
             shipID = None
             if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
@@ -155,8 +190,18 @@ class AIFleetOrder(object):
         else:
             self.__setExecuted()
 
+            # outpost
+            if AIFleetOrderType.ORDER_OUTPOST == self.getAIFleetOrderType():
+                shipID = None
+                if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                    shipID = self.getSourceAITarget().getTargetID()
+                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    fleetID = self.getSourceAITarget().getTargetID()
+                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST)
+
+                fo.issueColonizeOrder(shipID, self.getTargetAITarget().getTargetID())
             # colonise
-            if AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
+            elif AIFleetOrderType.ORDER_COLONISE == self.getAIFleetOrderType():
                 shipID = None
                 if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
                     shipID = self.getSourceAITarget().getTargetID()

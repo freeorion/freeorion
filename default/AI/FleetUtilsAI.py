@@ -130,6 +130,8 @@ def assessFleetRole(fleetID):
         return AIFleetMissionType.FLEET_MISSION_EXPLORATION
     if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
         return AIFleetMissionType.FLEET_MISSION_COLONISATION
+    if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST: # added 12/10 rk
+        return AIFleetMissionType.FLEET_MISSION_OUTPOST
     if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
         return AIFleetMissionType.FLEET_MISSION_ATTACK
 
@@ -143,7 +145,16 @@ def assessShipRole(shipID):
     ship = universe.getShip(shipID)
 
     if ship.canColonize:
-        return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+	# look for the CO_OUTPOST_MOD added 12/10 rk
+	if ship.design.parts.__contains__("CO_OUTPOST_MOD"):
+	    # print ">> assessShipRole Outpost Ship:" + str(shipID)
+	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+	if ship.design.parts.__contains__("CO_COLONY_POD"):
+	    # print ">> assessShipRole Colony Ship:" + str(shipID)
+	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+	if ship.design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
+	    # print ">> assessShipRole SuspAnim Ship:" + str(shipID)
+	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
     elif ship.isArmed:
         return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
     else:
@@ -154,12 +165,13 @@ def assessShipRole(shipID):
 def generateAIFleetOrdersForAIFleetMissions():
     "generates fleet orders from targets"
 
-    print "Exploration fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
+    print "Exploration fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
     print "Colonisation fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
-    print "Attack fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
-    print "Defend fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
+    print "Outpost fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)) # added 12/10 rk
+    print "Attack fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
+    print "Defend fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
     print ""
-    print "Explored systems:"
+    print "Explored systems  :"
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
     print "Unexplored systems:"
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))

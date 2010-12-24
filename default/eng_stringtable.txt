@@ -198,6 +198,12 @@ Colony Base
 SD_COLONY_BASE_DESC
 Unarmed vessel capable of creating a colony in the system where it is produced.
 
+SD_OUTPOST_BASE
+Outpost Base
+
+SD_OUTPOST_BASE_DESC
+Unarmed vessel capable of creating an outpost in the system where it is produced.
+
 SD_DRAGON_TOOTH
 Dragon Tooth
 

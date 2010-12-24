@@ -75,7 +75,9 @@ class AIFleetMission(AIAbstractMission):
     def __getAIFleetOrderFromAITarget(self, aiFleetMissionType, aiTarget):
         result = None
         fleetAITarget = AITarget.AITarget(AITargetType.TARGET_FLEET, self.getAITargetID())
-        if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
+        if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+            result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_OUTPOST, fleetAITarget, aiTarget)
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_COLONISE, fleetAITarget, aiTarget)
         # TODO: implement other mission types
 
@@ -89,6 +91,15 @@ class AIFleetMission(AIAbstractMission):
             if aiTarget.getAITargetType() == AITargetType.TARGET_SYSTEM:
                 empire = fo.getEmpire()
                 if not empire.hasExploredSystem(aiTarget.getTargetID()):
+                    return True
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
+            universe = fo.getUniverse()
+            fleet = universe.getFleet(self.getAITargetID())
+            if not fleet.hasColonyShips:
+                return False
+            if aiTarget.getAITargetType() == AITargetType.TARGET_PLANET:
+                planet = universe.getPlanet(aiTarget.getTargetID())
+                if planet.unowned:
                     return True
         elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
             universe = fo.getUniverse()
