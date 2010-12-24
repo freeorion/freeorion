@@ -182,6 +182,31 @@ bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* 
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
+Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                                          const ConditionBase* condition) :
+    m_number(number),
+    m_sort_key(0),
+    m_sorting_method(Condition::SORT_RANDOM),
+    m_condition(condition)
+{}
+
+Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                                          const ValueRef::ValueRefBase<double>* sort_key,
+                                          SortingMethod sorting_method,
+                                          const ConditionBase* condition) :
+    m_number(number),
+    m_sort_key(sort_key),
+    m_sorting_method(sorting_method),
+    m_condition(condition)
+{}
+
+Condition::SortedNumberOf::~SortedNumberOf()
+{
+    delete m_number;
+    delete m_sort_key;
+    delete m_condition;
+}
+
 namespace {
     /** Random number genrator function to use with random_shuffle */
     int CustomRandInt(int max_plus_one) {
@@ -217,9 +242,13 @@ namespace {
         }
     }
 
-    /** */
+    /** Transfers the indicated \a number of objects, selected from \a from_set
+      * into \a to_set.  The objects transferred are selected based on the value
+      * of \a sort_key evaluated on them, with the largest / smallest / most
+      * common sort keys chosen, or a random selection chosen, depending on the
+      * specified \a sorting_method */
     void TransferSortedObjects(unsigned int number, const ValueRef::ValueRefBase<double>* sort_key,
-                               Condition::SortingMethod sorting_method,
+                               const UniverseObject* source, Condition::SortingMethod sorting_method,
                                Condition::ObjectSet& from_set, Condition::ObjectSet& to_set)
     {
         // handle random case, which doesn't need sorting key
@@ -228,9 +257,18 @@ namespace {
             return;
         }
 
-        // get sort key values for all objects in from_set
+        // for other SoringMethods, need sort key values
+        if (!sort_key) {
+            Logger().errorStream() << "TransferSortedObjects given null sort_key";
+            return;
+        }
 
-        // sort them
+        // get sort key values for all objects in from_set, and sort by inserting into map
+        std::multimap<double, const UniverseObject*> sort_key_objects;
+        for (Condition::ObjectSet::const_iterator it = from_set.begin(); it != from_set.end(); ++it) {
+            double sort_value = sort_key->Eval(source, *it, boost::any());
+            sort_key_objects.insert(std::make_pair(sort_value, *it));
+        }
 
         // pick max / min / most common values
 
@@ -238,67 +276,105 @@ namespace {
     }
 }
 
-Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(0),
-    m_sorting_method(Condition::SORT_RANDOM),
-    m_condition(condition)
-{
-    Logger().debugStream() << Dump();
-}
-
-Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ValueRef::ValueRefBase<double>* sort_key,
-                                          SortingMethod sorting_method,
-                                          const ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(sort_key),
-    m_sorting_method(sorting_method),
-    m_condition(condition)
-{
-    Logger().debugStream() << Dump();
-}
-
-Condition::SortedNumberOf::~SortedNumberOf()
-{
-    delete m_number;
-    delete m_sort_key;
-    delete m_condition;
-}
-
 void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::ObjectSet& targets,
                                      Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
 {
+    // Most conditions match objects independently of the other objects being
+    // tested, but the number parameter for NumberOf conditions makes things
+    // more complicated.  In order to match some number of the potential
+    // matchs property, both the targets and non_targets need to be checked
+    // against the subcondition, and the total number of subcondition matches
+    // counted.
+    // Then, when searching NON_TARGETS, non_targets may be moved into targets
+    // so that the number of subcondition matches in targets is equal to the
+    // requested number.  There may also be subcondition non-matches in
+    // targets, but these are not counted or affected by this condition.
+    // Or, when searching TARGETS, targets may be moved into non_targets so
+    // that the number of subcondition matches in targets is equal to the
+    // requested number.  There again may be subcondition non-matches in
+    // targets, but these are also not counted or affected by this condition.
+
+    // which input targets match the subcondition?
+    ObjectSet subcondition_matching_targets;
+    m_condition->Eval(source, subcondition_matching_targets, targets, NON_TARGETS);
+
+    // remaining input targets don't match the subcondition...
+    ObjectSet subcondition_non_matching_targets = targets;
+    targets.clear();    // to be refilled later
+
+    // which input non_targets match the subcondition?
+    ObjectSet subcondition_matching_non_targets;
+    m_condition->Eval(source, subcondition_matching_non_targets, non_targets, NON_TARGETS);
+
+    // remaining input non_targets don't match the subcondition...
+    ObjectSet subcondition_non_matching_non_targets = non_targets;
+    non_targets.clear();    // to be refilled later
+
+    // assemble single set of subcondition matching objects
+    ObjectSet all_subcondition_matches = subcondition_matching_targets;
+    all_subcondition_matches.insert(subcondition_matching_non_targets.begin(), subcondition_matching_non_targets.end());
+
+    // how many subcondition matches to select as matches to this condition
     int number = m_number->Eval(source, source, boost::any());
 
+    // compile single set of all objects that are matched by this condition.
+    // these are the objects that should be transferred from non_targets into
+    // targets, or those left in targets while the rest are moved into non_targets
+    ObjectSet matched_objects;
+    TransferSortedObjects(number, m_sort_key, source, m_sorting_method, all_subcondition_matches, matched_objects);
+
+    // put objects back into targets and non_target sets as output...
+
     if (search_domain == NON_TARGETS) {
-        // find items in non_targets set that match the test condition
-        ObjectSet matched_non_targets;
-        m_condition->Eval(source, matched_non_targets, non_targets, NON_TARGETS);
+        // put matched objects that are in subcondition_matching_non_targets into targets
+        for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
+            const UniverseObject* matched_object = *match_it;
 
-        // transfer the indicated number of matched_non_targets to targets
-        TransferSortedObjects(number, m_sort_key, m_sorting_method, matched_non_targets, targets);
+            // is this matched object in subcondition_matching_non_targets?
+            ObjectSet::iterator smnt_it = subcondition_matching_non_targets.find(matched_object);
+            if (smnt_it != subcondition_matching_non_targets.end()) {
+                // yes; move object to targets
+                subcondition_matching_non_targets.erase(smnt_it);
+                targets.insert(matched_object);
+            }
+        }
 
-        // move remainder of matched_non_targets back to non_targets
-        non_targets.insert(matched_non_targets.begin(), matched_non_targets.end());
-        matched_non_targets.clear();
+        // put remaining (non-matched) objects in subcondition_matching_non_targets back into non_targets
+        non_targets.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
+        // put objects in subcondition_non_matching_non_targets back into non_targets
+        non_targets.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
+        // put objects in subcondition_matching_targets and subcondition_non_matching_targets back into targets
+        targets.insert(     subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
+        targets.insert(     subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
+        // this leaves the original contents of targets unchanged, other than
+        // possibly having transferred some objects into targets from non_targets
 
-    } else {
-        // find items in targets set that don't match test condition, and move
-        // directly to non_targets
-        m_condition->Eval(source, targets, non_targets, TARGETS);
+    } else { /*(search_domain == TARGETS)*/
+        // put matched objecs that are in subcondition_matching_targets back into targets
+        for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
+            const UniverseObject* matched_object = *match_it;
 
-        // move all matched targets to matched_targets set
-        ObjectSet matched_targets = targets;
-        targets.clear();
+            // is this matched object in subcondition_matching_targets?
+            ObjectSet::iterator smt_it = subcondition_matching_targets.find(matched_object);
+            if (smt_it != subcondition_matching_targets.end()) {
+                // yes; move back into targets
+                subcondition_matching_targets.erase(smt_it);
+                targets.insert(matched_object);
+            }
+        }
 
-        TransferSortedObjects(number, m_sort_key, m_sorting_method, matched_targets, targets);
-
-        // move remainder to non_targets set
-        non_targets.insert(matched_targets.begin(), matched_targets.end());
-        matched_targets.clear();
+        // put remaining (non-matched) objects in subcondition_matching_targets) into non_targets
+        non_targets.insert( subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
+        // put objects in subcondition_non_matching_targets into non_targets
+        non_targets.insert( subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
+        // put objects in subcondition_matching_non_targets and subcondition_non_matching_non_targets back into non_targets
+        non_targets.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
+        non_targets.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
+        // this leaves the original contents of non_targets unchanged, other than
+        // possibly having transferred some objects into non_targets from targets
     }
+
+    // put remaining objects back into targets and non-targets
 }
 
 std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const
@@ -1772,11 +1848,12 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     // special case to save looping later
     if (condition_targets.empty()) {
         // nothing matched from objects, so nothing can match overall condition.
+
         // if checking NON_TARGETS, don't need to do anything.
         if (search_domain == NON_TARGETS)
             return;
 
-        // move all objects from non_targets to targets
+        // if checking TARGETS move all objects from targets to non_targets
         non_targets.insert(targets.begin(), targets.end());
         targets.clear();
         return;

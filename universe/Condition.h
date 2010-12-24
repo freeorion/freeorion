@@ -30,7 +30,6 @@ namespace Condition {
         SORT_MAX,       ///< Objects with the largest sort key will be selected
         SORT_MIN,       ///< Objects with the smallest sort key will be selected
         SORT_MODE,      ///< Objects with the most common sort key will be selected
-        SORT_MODE_NOT,  ///< Objects with the most common sort key will be excluded.  Useful for implementing SORT_MODE
         SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
     };
 
