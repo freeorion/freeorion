@@ -14,6 +14,7 @@ namespace FreeOrionPython {
             .value("neutron",   STAR_NEUTRON)
             .value("blackHole", STAR_BLACK)
             .value("noStar",    STAR_NONE)
+            .value("unknown",   INVALID_STAR_TYPE)
         ;
         enum_<PlanetSize>("planetSize")
             .value("tiny",      SZ_TINY)
