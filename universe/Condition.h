@@ -27,9 +27,10 @@ namespace Condition {
     };
 
     enum SortingMethod {
-        SORT_MAX,       ///< Objects with the largest property value will be selected
-        SORT_MIN,       ///< Objects with the smallest property value will be selected
-        SORT_MODE,      ///< Objects with the most common property value will be selected
+        SORT_MAX,       ///< Objects with the largest sort key will be selected
+        SORT_MIN,       ///< Objects with the smallest sort key will be selected
+        SORT_MODE,      ///< Objects with the most common sort key will be selected
+        SORT_MODE_NOT,  ///< Objects with the most common sort key will be excluded.  Useful for implementing SORT_MODE
         SORT_RANDOM     ///< Objects will be selected randomly, without consideration of property values
     };
 
@@ -139,27 +140,27 @@ private:
   * selected preferentially. */
 struct Condition::SortedNumberOf : public Condition::ConditionBase
 {
+    /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                   const ConditionBase* condition,
-                   const std::string& property_name,
-                   SortingMethod sorting_method);
+                   const ConditionBase* condition);
+
+    /** Sorts according to the specified method, based on the key values
+      * evaluated for each object. */
+    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
+                   const ValueRef::ValueRefBase<double>* sort_key_ref,
+                   SortingMethod sorting_method,
+                   const ConditionBase* condition);
 
     virtual ~SortedNumberOf();
     virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
-protected:
-    SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                   const ConditionBase* condition,
-                   const std::vector<std::string>& property_name,
-                   SortingMethod sorting_method);
-
 private:
-    const ValueRef::ValueRefBase<int>*  m_number;
-    const ConditionBase*                m_condition;
-    std::vector<std::string>            m_property_name;
-    SortingMethod                       m_sorting_method;
+    const ValueRef::ValueRefBase<int>*      m_number;
+    const ValueRef::ValueRefBase<double>*   m_sort_key;
+    SortingMethod                           m_sorting_method;
+    const ConditionBase*                    m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -812,9 +813,9 @@ void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int versio
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_number)
-        & BOOST_SERIALIZATION_NVP(m_condition)
-        & BOOST_SERIALIZATION_NVP(m_property_name)
-        & BOOST_SERIALIZATION_NVP(m_sorting_method);
+        & BOOST_SERIALIZATION_NVP(m_sort_key)
+        & BOOST_SERIALIZATION_NVP(m_sorting_method)
+        & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
 template <class Archive>

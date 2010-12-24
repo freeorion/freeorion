@@ -22,7 +22,7 @@ ParamLabel environment_label("environment");
 ParamLabel probability_label("probability");
 ParamLabel distance_label("distance");
 ParamLabel jumps_label("jumps");
-ParamLabel property_label("property");
+ParamLabel sort_key_label("sortby");
 
 rule<Scanner, ConditionClosure::context_t> condition1_p;
 

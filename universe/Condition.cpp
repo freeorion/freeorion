@@ -216,31 +216,54 @@ namespace {
             }
         }
     }
+
+    /** */
+    void TransferSortedObjects(unsigned int number, const ValueRef::ValueRefBase<double>* sort_key,
+                               Condition::SortingMethod sorting_method,
+                               Condition::ObjectSet& from_set, Condition::ObjectSet& to_set)
+    {
+        // handle random case, which doesn't need sorting key
+        if (sorting_method == Condition::SORT_RANDOM) {
+            TransferRandomObjects(number, from_set, to_set);
+            return;
+        }
+
+        // get sort key values for all objects in from_set
+
+        // sort them
+
+        // pick max / min / most common values
+
+        // pick objects in from set that match / don't match
+    }
 }
 
 Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ConditionBase* condition,
-                                          const std::string& property_name,
-                                          SortingMethod sorting_method) :
+                                          const ConditionBase* condition) :
     m_number(number),
-    m_condition(condition),
-    m_property_name(::detail::TokenizeDottedReference(property_name)),
-    m_sorting_method(sorting_method)
-{}
+    m_sort_key(0),
+    m_sorting_method(Condition::SORT_RANDOM),
+    m_condition(condition)
+{
+    Logger().debugStream() << Dump();
+}
 
 Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ConditionBase* condition,
-                                          const std::vector<std::string>& property_name,
-                                          SortingMethod sorting_method) :
+                                          const ValueRef::ValueRefBase<double>* sort_key,
+                                          SortingMethod sorting_method,
+                                          const ConditionBase* condition) :
     m_number(number),
-    m_condition(condition),
-    m_property_name(),
-    m_sorting_method(sorting_method)
-{}
+    m_sort_key(sort_key),
+    m_sorting_method(sorting_method),
+    m_condition(condition)
+{
+    Logger().debugStream() << Dump();
+}
 
 Condition::SortedNumberOf::~SortedNumberOf()
 {
     delete m_number;
+    delete m_sort_key;
     delete m_condition;
 }
 
@@ -254,14 +277,8 @@ void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::Ob
         ObjectSet matched_non_targets;
         m_condition->Eval(source, matched_non_targets, non_targets, NON_TARGETS);
 
-        switch (m_sorting_method) {
-        case SORT_RANDOM:
-            // transfer the indicated number of matched_non_targets to targets
-            TransferRandomObjects(number, matched_non_targets, targets);
-            break;
-        default:
-            break;
-        }
+        // transfer the indicated number of matched_non_targets to targets
+        TransferSortedObjects(number, m_sort_key, m_sorting_method, matched_non_targets, targets);
 
         // move remainder of matched_non_targets back to non_targets
         non_targets.insert(matched_non_targets.begin(), matched_non_targets.end());
@@ -276,14 +293,7 @@ void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::Ob
         ObjectSet matched_targets = targets;
         targets.clear();
 
-        switch (m_sorting_method) {
-        case SORT_RANDOM:
-            // transfer desired number of matched_targets back to targets set
-            TransferRandomObjects(number, matched_targets, targets);
-            break;
-        default:
-            break;
-        }
+        TransferSortedObjects(number, m_sort_key, m_sorting_method, matched_targets, targets);
 
         // move remainder to non_targets set
         non_targets.insert(matched_targets.begin(), matched_targets.end());
@@ -293,13 +303,49 @@ void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::Ob
 
 std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
-    std::string description_str = "DESC_NUMBER_OF";
-    if (negated)
-        description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str))
-               % value_str
-               % m_condition->Description());
+    std::string number_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
+
+    if (m_sorting_method == SORT_RANDOM) {
+        std::string description_str = "DESC_NUMBER_OF";
+        if (negated)
+            description_str += "_NOT";
+        return str(FlexibleFormat(UserString(description_str))
+                   % number_str
+                   % m_condition->Description());
+    } else {
+        std::string sort_key_str = ValueRef::ConstantExpr(m_sort_key) ? lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
+
+        std::string description_str, temp;
+        switch (m_sorting_method) {
+        case SORT_MAX:
+            temp = "DESC_MAX_NUMBER_OF";
+            if (negated)
+                temp += "_NOT";
+            description_str = UserString(temp);
+            break;
+
+        case SORT_MIN:
+            temp = "DESC_MIN_NUMBER_OF";
+            if (negated)
+                temp += "_NOT";
+            description_str = UserString(temp);
+            break;
+
+        case SORT_MODE:
+            temp = "DESC_MODE_NUMBER_OF";
+            if (negated)
+                temp += "_NOT";
+            description_str = UserString(temp);
+            break;
+        default:
+            break;
+        }
+
+        return str(FlexibleFormat(UserString(description_str))
+                   % number_str
+                   % sort_key_str
+                   % m_condition->Description());
+    }
 }
 
 std::string Condition::SortedNumberOf::Dump() const
@@ -315,19 +361,13 @@ std::string Condition::SortedNumberOf::Dump() const
     case SORT_MODE:
         retval += "ModeNumberOf"; break;
     default:
-        retval += "?NumberOf"; break;
+        retval += "??NumberOf??"; break;
     }
 
     retval += " number = " + m_number->Dump();
 
-    if (m_sorting_method != SORT_RANDOM) {
-        retval += " property = ";
-        for (std::vector<std::string>::const_iterator it = m_property_name.begin(); it != m_property_name.end(); ++it) {
-            if (it != m_property_name.begin())
-                retval += ".";
-            retval += *it;
-        }
-    }
+    if (m_sort_key)
+         retval += " sortby = " + m_sort_key->Dump();
 
     retval += " condition =\n";
     ++g_indent;

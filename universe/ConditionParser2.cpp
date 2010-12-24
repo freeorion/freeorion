@@ -21,7 +21,7 @@ extern ParamLabel environment_label;
 extern ParamLabel probability_label;
 extern ParamLabel distance_label;
 extern ParamLabel jumps_label;
-extern ParamLabel property_label;
+extern ParamLabel sort_key_label;
 
 rule<Scanner, ConditionClosure::context_t> condition2_p;
 
@@ -64,14 +64,14 @@ namespace {
         };
 
         struct SortedNumberOfClosure : boost::spirit::classic::closure<SortedNumberOfClosure, Condition::ConditionBase*,
-                                                                       ValueRef::ValueRefBase<int>*, Condition::ConditionBase*,
-                                                                       std::string, Condition::SortingMethod>
+                                                                       ValueRef::ValueRefBase<int>*, ValueRef::ValueRefBase<double>*,
+                                                                       Condition::SortingMethod, Condition::ConditionBase*>
         {
             member1 this_;
             member2 number;
-            member3 condition;
-            member4 property_name;
-            member5 sorting_method;
+            member3 sort_key;
+            member4 sorting_method;
+            member5 condition;
         };
 
         struct StringClosure : boost::spirit::classic::closure<StringClosure, Condition::ConditionBase*, std::string>
@@ -203,20 +203,19 @@ namespace {
             [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
 
         number_of =
-            ( ((str_p("numberof")
-                >> number_label >> int_expr_p[number_of.number = arg1]
-                >> condition_label >> condition_p[number_of.condition = arg1])
-               [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition,
-                                                                  val("dummy"), Condition::SORT_RANDOM)])
-             | ((str_p("maximumnumberof")[number_of.sorting_method =    val(Condition::SORT_MAX)]
+            ((str_p("numberof")
+              >> number_label >> int_expr_p[number_of.number = arg1]
+              >> condition_label >> condition_p[number_of.condition = arg1])
+             [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition)])
+
+            | ( ((str_p("maximumnumberof")[number_of.sorting_method =    val(Condition::SORT_MAX)]
                  | str_p("minimumnumberof")[number_of.sorting_method =  val(Condition::SORT_MIN)]
                  | str_p("modenumberof")[number_of.sorting_method =     val(Condition::SORT_MODE)])
-                >> number_label >> int_expr_p[number_of.number = arg1]
-                >> property_label >> (!(variable_container >> ".") >> double_variable_final)
-                                     [number_of.property_name = construct_<std::string>(arg1, arg2)]
-                >> condition_label >> condition_p[number_of.condition = arg1]))
-            [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition,
-                                                              number_of.property_name, number_of.sorting_method)];
+                 >> number_label >> int_expr_p[number_of.number = arg1]
+                 >> sort_key_label >> double_expr_p[number_of.sort_key = arg1]
+                 >> condition_label >> condition_p[number_of.condition = arg1])
+                [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.sort_key,
+                                                                  number_of.sorting_method, number_of.condition)]);
 
         has_special =
             (str_p("hasspecial")
