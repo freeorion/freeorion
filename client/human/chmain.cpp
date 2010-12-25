@@ -169,7 +169,6 @@ int mainSetupAndRunOgre()
     OISInput*               ois_input_plugin = 0;
 #elif defined(OGRE_STATIC_LIB)
     OISInput*               ois_input_plugin = 0;
-    Ogre::CgPlugin*         cg_plugin = 0;
     Ogre::OctreePlugin*     octree_plugin = 0;
     Ogre::ParticleFXPlugin* particle_fx_plugin = 0;
     Ogre::GLPlugin*         gl_plugin = 0;
@@ -184,11 +183,9 @@ int mainSetupAndRunOgre()
         root = new Root((GetBinDir() / "ogre_plugins.cfg").string());
 
 #if defined(OGRE_STATIC_LIB)
-        cg_plugin = new Ogre::CgPlugin;
         octree_plugin = new Ogre::OctreePlugin;
         particle_fx_plugin = new Ogre::ParticleFXPlugin;
         gl_plugin = new Ogre::GLPlugin;
-        root->installPlugin(cg_plugin);
         root->installPlugin(octree_plugin);
         root->installPlugin(particle_fx_plugin);
         root->installPlugin(gl_plugin);
@@ -299,12 +296,10 @@ int mainSetupAndRunOgre()
         delete ois_input_plugin;
 #elif defined(OGRE_STATIC_LIB)
         root->uninstallPlugin(ois_input_plugin);
-        root->uninstallPlugin(cg_plugin);
         root->uninstallPlugin(octree_plugin);
         root->uninstallPlugin(particle_fx_plugin);
         root->uninstallPlugin(gl_plugin);
         delete ois_input_plugin;
-        delete cg_plugin;
         delete octree_plugin;
         delete particle_fx_plugin;
         delete gl_plugin;
