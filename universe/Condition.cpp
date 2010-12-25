@@ -270,9 +270,90 @@ namespace {
             sort_key_objects.insert(std::make_pair(sort_value, *it));
         }
 
-        // pick max / min / most common values
+        // how many objects to select?
+        number = std::min<unsigned int>(number, sort_key_objects.size());
+        if (number == 0)
+            return;
+        unsigned int number_transferred(0);
 
-        // pick objects in from set that match / don't match
+        // pick max / min / most common values
+        if (sorting_method == Condition::SORT_MIN) {
+            // move (number) objects with smallest sort key (at start of map)
+            // from the from_set into the to_set.
+            for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = sort_key_objects.begin();
+                 sorted_it != sort_key_objects.end(); ++sorted_it)
+            {
+                const UniverseObject* object_to_transfer = sorted_it->second;
+                Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                if (from_it != from_set.end()) {
+                    from_set.erase(from_it);
+                    to_set.insert(object_to_transfer);
+                    number_transferred++;
+                    if (number_transferred >= number)
+                        return;
+                }
+            }
+        } else if (sorting_method == Condition::SORT_MAX) {
+            // move (number) objects with largest sort key (at end of map)
+            // from the from_set into the to_set.
+            for (std::multimap<double, const UniverseObject*>::const_reverse_iterator sorted_it = sort_key_objects.rbegin();
+                 sorted_it != sort_key_objects.rend(); ++sorted_it)
+            {
+                const UniverseObject* object_to_transfer = sorted_it->second;
+                Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                if (from_it != from_set.end()) {
+                    from_set.erase(from_it);
+                    to_set.insert(object_to_transfer);
+                    number_transferred++;
+                    if (number_transferred >= number)
+                        return;                }
+            }
+        } else if (sorting_method == Condition::SORT_MODE) {
+            // compile histogram of of number of times each sort key occurs
+            std::map<double, unsigned int> histogram;
+            for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = sort_key_objects.begin();
+                 sorted_it != sort_key_objects.end(); ++sorted_it)
+            {
+                histogram[sorted_it->first]++;
+            }
+            // invert histogram to index by number of occurances
+            std::multimap<unsigned int, double> inv_histogram;
+            for (std::map<double, unsigned int>::const_iterator hist_it = histogram.begin();
+                 hist_it != histogram.end(); ++hist_it)
+            {
+                inv_histogram.insert(std::make_pair(hist_it->second, hist_it->first));
+            }
+            // reverse-loop through inverted histogram to find which sort keys
+            // occurred most frequently, and transfer objects with those sort
+            // keys from from_set to to_set.
+            for (std::multimap<unsigned int, double>::const_reverse_iterator inv_hist_it = inv_histogram.rbegin();
+                 inv_hist_it != inv_histogram.rend(); ++inv_hist_it)
+            {
+                double cur_sort_key = inv_hist_it->second;
+
+                // get range of objects with the current sort key
+                std::pair<std::multimap<double, const UniverseObject*>::const_iterator,
+                          std::multimap<double, const UniverseObject*>::const_iterator> key_range =
+                    sort_key_objects.equal_range(cur_sort_key);
+
+                // loop over range, selecting objects to transfer from from_set to to_set
+                for (std::multimap<double, const UniverseObject*>::const_iterator sorted_it = sort_key_objects.begin();
+                     sorted_it != sort_key_objects.end(); ++sorted_it)
+                {
+                    const UniverseObject* object_to_transfer = sorted_it->second;
+                    Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                    if (from_it != from_set.end()) {
+                        from_set.erase(from_it);
+                        to_set.insert(object_to_transfer);
+                        number_transferred++;
+                        if (number_transferred >= number)
+                            return;
+                    }
+                }
+            }
+        } else {
+            Logger().debugStream() << "TransferSortedObjects given unknown sort method";
+        }
     }
 }
 
@@ -373,8 +454,6 @@ void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::Ob
         // this leaves the original contents of non_targets unchanged, other than
         // possibly having transferred some objects into non_targets from targets
     }
-
-    // put remaining objects back into targets and non-targets
 }
 
 std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const

@@ -302,7 +302,7 @@ OPTIONS_DB_HELP
 Print this help message.
 
 OPTIONS_DB_GENERATE_CONFIG_XML
-Uses all the settings from any existing config.xml file and those given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
+Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
 
 OPTIONS_DB_MUSIC_OFF
 Disables music in the game.
@@ -3246,10 +3246,28 @@ DESC_TURN_NOT
  when the current turn is not between %1% and %2%
 
 DESC_NUMBER_OF
- that is one of %1% objects%2%
+ that is one of %1% randomly selected objects%2%
 
 DESC_NUMBER_OF_NOT
- that is not one of %1% objects%2%
+ that is not one of %1% randomly selected objects%2%
+
+DESC_MAX_NUMBER_OF
+ that is one of %1% objects with the largest value of%2% and%3%
+
+DESC_MAX_NUMBER_OF_NOT
+that is not one of %1% objects with the largest value of%2% and%3%
+
+DESC_MIN_NUMBER_OF
+that is one of %1% objects with the smallest value of%2% and%3%
+
+DESC_MIN_NUMBER_OF_NOT
+that is not one of %1% objects with the smallest value of%2% and%3%
+
+DESC_MODE_NUMBER_OF
+that is one of %1% objects with the most common value of%2% and%3%
+
+DESC_MODE_NUMBER_OF_NOT
+that is not one of %1% objects with the most common value of%2% and%3%
 
 DESC_CONTAINED_BY
  that is contained by an object%1%
