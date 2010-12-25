@@ -1722,7 +1722,6 @@ void MapWnd::InitTurn()
     // (Apparently not needed?)
 
 
-
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
@@ -1872,11 +1871,18 @@ void MapWnd::InitTurnRendering()
     m_system_icons.clear();
 
 
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
     // create system icons
     std::vector<const System*> systems = known_objects.FindObjects<System>();
     for (unsigned int i = 0; i < systems.size(); ++i) {
-        // create new system icon
         const System* start_system = systems[i];
+
+        // skip known destroyed objects
+        if (this_client_known_destroyed_objects.find(start_system->ID()) != this_client_known_destroyed_objects.end())
+            continue;
+
+        // create new system icon
         SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
         m_system_icons[start_system->ID()] = icon;
         icon->InstallEventFilter(this);
@@ -3017,10 +3023,16 @@ void MapWnd::RefreshFleetButtons()
     // be grouped by empire owner and buttons created
     const ObjectMap& objects = GetUniverse().Objects();
 
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
     // for each system, each empire's fleets that are ordered to move, but still at the system: "departing fleets"
     std::map<const System*, std::map<int, std::vector<const Fleet*> > > departing_fleets;
     std::vector<const UniverseObject*> departing_fleet_objects = objects.FindObjects(OrderedMovingFleetVisitor());
     for (std::vector<const UniverseObject*>::iterator it = departing_fleet_objects.begin(); it != departing_fleet_objects.end(); ++it) {
+        // skip known destroyed objects
+        if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
+            continue;
+
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
 
         // sanity checks
@@ -3050,6 +3062,10 @@ void MapWnd::RefreshFleetButtons()
     std::map<const System*, std::map<int, std::vector<const Fleet*> > > stationary_fleets;
     std::vector<const UniverseObject*> stationary_fleet_objects = objects.FindObjects(StationaryFleetVisitor());
     for (std::vector<const UniverseObject*>::iterator it = stationary_fleet_objects.begin(); it != stationary_fleet_objects.end(); ++it) {
+        // skip known destroyed objects
+        if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
+            continue;
+
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
 
         // sanity checks
@@ -3079,6 +3095,10 @@ void MapWnd::RefreshFleetButtons()
     std::map<std::pair<double, double>, std::map<int, std::vector<const Fleet*> > > moving_fleets;
     std::vector<const UniverseObject*> moving_fleet_objects = objects.FindObjects(MovingFleetVisitor());
     for (std::vector<const UniverseObject*>::iterator it = moving_fleet_objects.begin(); it != moving_fleet_objects.end(); ++it) {
+        // skip known destroyed objects
+        if (this_client_known_destroyed_objects.find((*it)->ID()) != this_client_known_destroyed_objects.end())
+            continue;
+
         const Fleet* fleet = universe_object_cast<const Fleet*>(*it);
 
         // sanity checks
