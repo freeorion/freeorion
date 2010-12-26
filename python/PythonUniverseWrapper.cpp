@@ -193,11 +193,11 @@ namespace FreeOrionPython {
             .add_property("creationTurn",       &UniverseObject::CreationTurn)
             .add_property("ageInTurns",         &UniverseObject::AgeInTurns)
             .add_property("specials",           make_function(&UniverseObject::Specials,    return_internal_reference<>()))
-            .def("Contains",                    &UniverseObject::Contains)
-            .def("ContainedBy",                 &UniverseObject::ContainedBy)
-            .def("CurrentMeterValue",           &UniverseObject::CurrentMeterValue)
-            .def("InitialMeterValue",           &UniverseObject::InitialMeterValue)
-            .def("NextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
+            .def("contains",                    &UniverseObject::Contains)
+            .def("containedBy",                 &UniverseObject::ContainedBy)
+            .def("currentMeterValue",           &UniverseObject::CurrentMeterValue)
+            .def("initialMeterValue",           &UniverseObject::InitialMeterValue)
+            .def("nextTurnCurrentMeterValue",   &UniverseObject::NextTurnCurrentMeterValue)
         ;
 
         ///////////////////

@@ -5,9 +5,10 @@
 #include <boost/python.hpp>
 
 namespace {
-    // Expose interface for redirecting standard output and error to FreeOrion logging.  Can be imported
-    // before loading the main FreeOrion AI interface library.
-    static const int MAX_SINGLE_CHUNK_TEXT_SIZE = 1000; 
+    // Expose interface for redirecting standard output and error to FreeOrion
+    // logging.  Can be imported before loading the main FreeOrion AI interface
+    // library.
+    static const int MAX_SINGLE_CHUNK_TEXT_SIZE = 4096;
 
     // stdout logger
     static std::string log_buffer("");
