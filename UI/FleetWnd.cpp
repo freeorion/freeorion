@@ -1640,10 +1640,17 @@ public:
         SetColWidth(0, GG::X0);
         LockColWidths();
 
+        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
         std::set<int> new_selected_ship_ids;
 
         for (Fleet::const_iterator it = fleet->begin(); it != fleet->end(); ++it) {
             int ship_id = *it;
+
+            // skip known destroyed objects
+            if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
+                continue;
+
             ShipRow* row = new ShipRow(GG::X1, row_size.y, ship_id);
             ShipsListBox::iterator row_it = Insert(row);
             row->Resize(row_size);
@@ -2299,6 +2306,7 @@ void FleetWnd::RefreshStateChangedSignals()
 void FleetWnd::Refresh()
 {
     const ObjectMap& objects = GetUniverse().Objects(); // objects visisble to this client's empire
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
     // save selected fleet(s) and ships(s)
     std::set<int> initially_selected_fleets = this->SelectedFleetIDs();
@@ -2307,6 +2315,14 @@ void FleetWnd::Refresh()
     // remove existing fleet rows
     m_fleets_lb->Clear();   // deletes rows when removing; they don't need to be manually deleted
 
+    // skip nonexistant systems
+    if (m_system_id != UniverseObject::INVALID_OBJECT_ID &&
+        this_client_known_destroyed_objects.find(m_system_id) != this_client_known_destroyed_objects.end())
+    {
+        m_system_connection.disconnect();
+        return;
+    }
+
     // repopulate m_fleet_ids according to FleetWnd settings
     if (GetMainObjectMap().Object<System>(m_system_id)) {
         // get fleets to show from system, based on required ownership
@@ -2314,8 +2330,14 @@ void FleetWnd::Refresh()
         std::vector<const Fleet*> all_fleets = objects.FindObjects<Fleet>();
         for (std::vector<const Fleet*>::const_iterator it = all_fleets.begin(); it != all_fleets.end(); ++it) {
             const Fleet* fleet = *it;
-            if (fleet->SystemID() != m_system_id)
+            if (fleet->SystemID() != m_system_id ||
+                this_client_known_destroyed_objects.find(fleet->ID()) != this_client_known_destroyed_objects.end())
+            {
+                // skip fleets that aren't actually in this system, or that
+                // don't actually exist anymore...
                 continue;
+            }
+
             if (m_empire_id == ALL_EMPIRES || fleet->OwnedBy(m_empire_id)) {
                 m_fleet_ids.insert(fleet->ID());
                 AddFleet(fleet->ID());
@@ -2326,6 +2348,12 @@ void FleetWnd::Refresh()
         std::set<int> validated_fleet_ids;
         for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
             int fleet_id = *it;
+
+            if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end()) {
+                // skip fleets that don't actually exist anymore...
+                continue;
+            }
+
             if (objects.Object<Fleet>(fleet_id)) {
                 validated_fleet_ids.insert(fleet_id);
                 AddFleet(fleet_id);
