@@ -1495,9 +1495,8 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
     // objects to be destroyed, but doesn't actually do so in order to ensure
     // no interaction in order of effects and source or target objects being
     // destroyed / deleted between determining target sets and executing effects
-    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it) {
+    for (std::set<int>::iterator it = m_marked_destroyed.begin(); it != m_marked_destroyed.end(); ++it)
         RecursiveDestroy(*it);
-    }
 }
 
 void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map)
@@ -2053,8 +2052,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
         for (EmpireManager::iterator emp_it = Empires().begin(); emp_it != Empires().end(); ++emp_it) {
             int empire_id = emp_it->first;
             if (obj->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
-                m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
-
+                SetEmpireKnowledgeOfDestroyedObject(object_id, empire_id);
                 // TODO: Update m_empire_latest_known_objects somehow?
             }
         }
@@ -2069,6 +2067,40 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     // remove from existing objects set and insert into destroyed objects set
     UniverseObjectDeleteSignal(obj);
     delete m_objects.Remove(object_id);
+}
+
+void Universe::RecursiveDestroy(int object_id)
+{
+    UniverseObject* obj = m_objects.Object(object_id);
+    if (!obj) {
+        Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
+        return;
+    }
+
+    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
+        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
+        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        Destroy(object_id);
+        if (fleet && fleet->Empty())
+            Destroy(fleet->ID());
+
+    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
+        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it)
+            Destroy(*it);
+        Destroy(object_id);
+
+    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
+        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it)
+            Destroy(*it);
+        Destroy(object_id);
+
+    } else if (universe_object_cast<System*>(obj)) {
+        // unsupported: do nothing
+
+    } else if (universe_object_cast<Building*>(obj)) {
+        Destroy(object_id);
+    }
+    // else ??? object is of some type unknown as of this writing.
 }
 
 bool Universe::Delete(int object_id)
@@ -2242,34 +2274,6 @@ const bool& Universe::UniverseObjectSignalsInhibited()
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 {
     s_inhibit_universe_object_signals = inhibit;
-}
-
-void Universe::RecursiveDestroy(int object_id)
-{
-    UniverseObject* obj = m_objects.Object(object_id);
-    if (!obj) {
-        Logger().debugStream() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
-        return;
-    }
-    if (Ship* ship = universe_object_cast<Ship*>(obj)) {
-        // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
-        Destroy(object_id);
-        if (fleet && fleet->Empty())
-            Destroy(fleet->ID());
-    } else if (Fleet* fleet = universe_object_cast<Fleet*>(obj)) {
-        for (Fleet::iterator it = fleet->begin(); it != fleet->end(); ++it)
-            Destroy(*it);
-        Destroy(object_id);
-    } else if (Planet* planet = universe_object_cast<Planet*>(obj)) {
-        for (std::set<int>::const_iterator it = planet->Buildings().begin(); it != planet->Buildings().end(); ++it)
-            Destroy(*it);
-        Destroy(object_id);
-    } else if (universe_object_cast<System*>(obj)) {
-        // unsupported: do nothing
-    } else {
-        Delete(object_id);
-    }
 }
 
 void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const
