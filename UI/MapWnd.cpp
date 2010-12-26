@@ -2171,6 +2171,7 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
 
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
@@ -2178,20 +2179,30 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
         int system_id = it->first;
-        const System* system = GetEmpireKnownObject<System>(system_id, empire_id);
-        if (!system) {
+
+        // skip systems that don't actually exist
+        if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+            continue;
+
+        const System* start_system = GetEmpireKnownObject<System>(system_id, empire_id);
+        if (!start_system) {
             Logger().errorStream() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
         }
 
         // add system's starlanes
-        for (System::const_lane_iterator lane_it = system->begin_lanes(); lane_it != system->end_lanes(); ++lane_it) {
+        for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
             bool lane_is_wormhole = lane_it->second;
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
-            const System* start_system = system;
+            int lane_end_sys_id = lane_it->first;
+
+            // skip lanes to systems that don't actually exist
+            if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                continue;
+
             const System* dest_system = GetEmpireKnownObject<System>(lane_it->first, empire_id);
-            if (!start_system || ! dest_system)
+            if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
 
@@ -2300,6 +2311,10 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
     // create animated lines indicating fleet supply flow
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        // which empires' fleet supply to show?
+        if (it->first != HumanClientApp::GetApp()->EmpireID())
+            continue;
+
         Empire* empire = it->second;
         const std::set<std::pair<int, int> >& fleet_supply_lanes = empire->FleetSupplyStarlaneTraversals();
         for (std::set<std::pair<int, int> >::const_iterator lane_it = fleet_supply_lanes.begin(); lane_it != fleet_supply_lanes.end(); ++lane_it) {
