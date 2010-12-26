@@ -83,7 +83,8 @@ void Empire::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_color);
 
     if (Universe::ALL_OBJECTS_VISIBLE ||
-        Universe::s_encoding_empire == ALL_EMPIRES || m_id == Universe::s_encoding_empire)
+        Universe::s_encoding_empire == ALL_EMPIRES ||
+        m_id == Universe::s_encoding_empire)
     {
         ar  & BOOST_SERIALIZATION_NVP(m_capitol_id)
             & BOOST_SERIALIZATION_NVP(m_techs)
@@ -96,6 +97,16 @@ void Empire::serialize(Archive& ar, const unsigned int version)
             & BOOST_SERIALIZATION_NVP(m_available_part_types)
             & BOOST_SERIALIZATION_NVP(m_available_hull_types)
             & BOOST_SERIALIZATION_NVP(m_explored_systems)
+
+            & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
+            & BOOST_SERIALIZATION_NVP(m_fleet_supply_starlane_traversals)
+            & BOOST_SERIALIZATION_NVP(m_fleet_supply_system_ranges)
+            & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
+            & BOOST_SERIALIZATION_NVP(m_resource_supply_starlane_traversals)
+            & BOOST_SERIALIZATION_NVP(m_resource_supply_obstructed_starlane_traversals)
+            & BOOST_SERIALIZATION_NVP(m_resource_supply_system_ranges)
+            & BOOST_SERIALIZATION_NVP(m_supply_unobstructed_systems)
+
             & BOOST_SERIALIZATION_NVP(m_ship_designs)
             & BOOST_SERIALIZATION_NVP(m_sitrep_entries)
             & BOOST_SERIALIZATION_NVP(m_resource_pools)

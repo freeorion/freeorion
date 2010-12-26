@@ -1696,6 +1696,9 @@ void MapWnd::InitTurn()
     timer.restart();
     // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        if (it->first == this_client_empire->EmpireID())
+            continue;
+
         Empire* empire2 = it->second;
 
         // use systems this client's player's empire has explored for all empires, so that this client's
