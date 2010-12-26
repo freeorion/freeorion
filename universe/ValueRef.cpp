@@ -438,6 +438,11 @@ namespace ValueRef {
                 Empire* empire = Empires().Lookup(*object->Owners().begin());
                 return empire->ResourceStockpile(RE_FOOD);
             }
+        } else if (boost::iequals(property_name, "DistanceToSource")) {
+            double delta_x = object->X() - source->X();
+            double delta_y = object->Y() - source->Y();
+            return std::sqrt(delta_x * delta_x + delta_y * delta_y);
+
         } else {
             throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");
         }

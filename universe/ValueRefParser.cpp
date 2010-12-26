@@ -24,7 +24,8 @@ SimpleRule double_variable_final =
     | "maxdefense" | "defense" | "maxstructure" | "structure"
     | "supply" | "stealth" | "detection" | "foodconsumption"
     | "battlespeed" | "starlanespeed"
-    | "tradestockpile" | "mineralstockpile" | "foodstockpile";
+    | "tradestockpile" | "mineralstockpile" | "foodstockpile"
+    | "distancetosource";
 
 SimpleRule string_variable_final =
     str_p("name") | "species" | "buildingtype" | "focus";
