@@ -189,14 +189,14 @@ int System::NumWormholes() const
 
 bool System::HasStarlaneTo(int id) const
 {
-   const_lane_iterator it = m_starlanes_wormholes.find(id);
-   return (it == m_starlanes_wormholes.end() ? false : it->second == false);
+    const_lane_iterator it = m_starlanes_wormholes.find(id);
+    return (it == m_starlanes_wormholes.end() ? false : it->second == false);
 }
 
 bool System::HasWormholeTo(int id) const
 {
-   const_lane_iterator it = m_starlanes_wormholes.find(id);
-   return (it == m_starlanes_wormholes.end() ? false : it->second == true);
+    const_lane_iterator it = m_starlanes_wormholes.find(id);
+    return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
 int System::SystemID() const
@@ -465,34 +465,38 @@ void System::SetStarType(StarType type)
 
 void System::AddStarlane(int id)
 {
-   m_starlanes_wormholes[id] = false;
-   StateChangedSignal();
+    if (!HasStarlaneTo(id)) {
+        m_starlanes_wormholes[id] = false;
+        StateChangedSignal();
+    }
 }
 
 void System::AddWormhole(int id)
 {
-   m_starlanes_wormholes[id] = true;
-   StateChangedSignal();
+    if (!HasWormholeTo(id)) {
+        m_starlanes_wormholes[id] = true;
+        StateChangedSignal();
+    }
 }
 
 bool System::RemoveStarlane(int id)
 {
-   bool retval = false;
-   if (retval = HasStarlaneTo(id)) {
-      m_starlanes_wormholes.erase(id);
-      StateChangedSignal();
-   }
-   return retval;
+    bool retval = false;
+    if (retval = HasStarlaneTo(id)) {
+        m_starlanes_wormholes.erase(id);
+        StateChangedSignal();
+    }
+    return retval;
 }
 
 bool System::RemoveWormhole(int id)
 {
-   bool retval = false;
-   if (retval = HasWormholeTo(id)) {
-      m_starlanes_wormholes.erase(id);
-      StateChangedSignal();
-   }
-   return retval;
+    bool retval = false;
+    if (retval = HasWormholeTo(id)) {
+        m_starlanes_wormholes.erase(id);
+        StateChangedSignal();
+    }
+    return retval;
 }
 
 void System::AddOwner(int id)

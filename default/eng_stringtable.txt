@@ -2980,6 +2980,12 @@ Attaches %1% special to object
 DESC_REMOVE_SPECIAL
 Removes %1% special from object
 
+DESC_ADD_STARLANES
+Creates starlanes between the target system and the system of objects%1%
+
+DESC_REMOVE_STARLANES
+Removes starlanes between the target system and the system of objects%1%
+
 DESC_SET_STAR_TYPE
 Changes the star's type to %1%
 

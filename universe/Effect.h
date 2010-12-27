@@ -37,6 +37,8 @@ namespace Effect {
     class Destroy;
     class AddSpecial;
     class RemoveSpecial;
+    class AddStarlanes;
+    class RemoveStarlanes;
     class SetStarType;
     class SetTechAvailability;
     class MoveTo;
@@ -493,6 +495,46 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Creates starlane(s) between the target system and systems that match
+  * \a other_lane_endpoint_condition */
+class Effect::AddStarlanes : public Effect::EffectBase
+{
+public:
+    AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    virtual ~AddStarlanes();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const Condition::ConditionBase* m_other_lane_endpoint_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Removes starlane(s) between the target system and systems that match
+  * \a other_lane_endpoint_condition */
+class Effect::RemoveStarlanes : public Effect::EffectBase
+{
+public:
+    RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
+    virtual ~RemoveStarlanes();
+
+    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const Condition::ConditionBase* m_other_lane_endpoint_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Sets the star type of the target to \a type.  This has no effect on
   * non-System targets. */
 class Effect::SetStarType : public Effect::EffectBase
@@ -748,6 +790,20 @@ void Effect::RemoveSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Effect::AddStarlanes::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_other_lane_endpoint_condition);
+}
+
+template <class Archive>
+void Effect::RemoveStarlanes::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_other_lane_endpoint_condition);
 }
 
 template <class Archive>

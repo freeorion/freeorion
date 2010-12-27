@@ -214,6 +214,8 @@ namespace {
         StringRule                      victory;
         StringRule                      add_special;
         StringRule                      remove_special;
+        ConditionParamRule              add_starlanes;
+        ConditionParamRule              remove_starlanes;
         SetStarTypeRule                 set_star_type;
         SetTechAvailabilityRule         set_tech_availability;
         GenerateSitRepMessageRule       generate_sitrep_message;
@@ -228,6 +230,7 @@ namespace {
         ParamLabel  design_name_label;
         ParamLabel  part_name_label;
         ParamLabel  destination_label;
+        ParamLabel  endpoint_label;
         ParamLabel  reason_label;
         ParamLabel  fighter_type_label;
         ParamLabel  slot_type_label;
@@ -249,6 +252,7 @@ namespace {
         design_name_label("designname"),
         part_name_label("partname"),
         destination_label("destination"),
+        endpoint_label("endpoints"),
         reason_label("reason"),
         fighter_type_label("fightertype"),
         slot_type_label("slottype"),
@@ -400,7 +404,7 @@ namespace {
         create_planet =
             (str_p("createplanet")
              >> type_label >> planettype_expr_p[create_planet.type = arg1]
-             >> planetsize_label >> planetsize_expr_p[create_planet.size = arg1])
+             >> endpoint_label >> planetsize_expr_p[create_planet.size = arg1])
             [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size)];
 
         create_building =
@@ -448,6 +452,16 @@ namespace {
             (str_p("removespecial")
              >> name_label >> name_p[remove_special.name = arg1])
             [remove_special.this_ = new_<Effect::RemoveSpecial>(remove_special.name)];
+
+        add_starlanes =
+            (str_p("addstarlanes")
+             >> endpoint_label >> condition_p[add_starlanes.condition = arg1])
+            [add_starlanes.this_ = new_<Effect::AddStarlanes>(add_starlanes.condition)];
+
+        remove_starlanes
+            (str_p("removestarlanes")
+             >> endpoint_label >> condition_p[remove_starlanes.condition = arg1])
+            [remove_starlanes.this_ = new_<Effect::RemoveStarlanes>(remove_starlanes.condition)];
 
         set_star_type =
             (str_p("setstartype")
@@ -511,6 +525,8 @@ namespace {
             | victory[effect_p.this_ = arg1]
             | add_special[effect_p.this_ = arg1]
             | remove_special[effect_p.this_ = arg1]
+            | add_starlanes[effect_p.this_ = arg1]
+            | remove_starlanes[effect_p.this_ = arg1]
             | set_star_type[effect_p.this_ = arg1]
             | set_tech_availability[effect_p.this_ = arg1]
             | generate_sitrep_message[effect_p.this_ = arg1];
