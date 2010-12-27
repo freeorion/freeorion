@@ -10,9 +10,9 @@
 
 <3x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
-LowDensity                      100         0           0       0       0       0       0               0
+LowDensity                      90          0           0       0       0       0       0               0
 AverageDensity                  70          0           0       0       0       0       0               0
-HighDensity                     40          0           0       0       0       0       0               0
+HighDensity                     50          0           0       0       0       0       0               0
 
 <8x8>
 StarColorModToPlanetSizeDist    NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
@@ -23,7 +23,7 @@ Orange                          0           0           0       0       0       
 Red                             0           0           0       0       0       0       0               0
 Neutron                         5           5           0       0       0       0       20              0
 Blackhole                       30          0           0       -5      -5      -5      10              -5
-NoStar                          100         0           0       0       0       0       0               0
+NoStar                          80          0           0       0       0       0       0               10
 
 <10x8>
 SlotModToPlanetSizeDist         NoWorld     Planetoid   Small   Medium  Large   Massive  AsteroidField  GasGiant
@@ -75,13 +75,13 @@ NoStar                          -60    -60     -60     -60          -50     -60 
 
 <3x8>
 UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
-Young                           10      20      0       0       0       0       0         40
-Mature                          0        0      10      0       0       10      10        20
-Ancient                         0        0      0       10      10      20      20        0
+Young                           10      20      0       0       0       0       0         30
+Mature                          -5       0      10      20      0       10      10        15
+Ancient                         -20      -10    0       10      20      20      20        0
 
 <1x8>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
-Base                            30      40      50      40      30      0       0         80
+Base                            30      40      50      40      30      0       0         60
 
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why VeryMany has the lowest value.
 <1x6>
