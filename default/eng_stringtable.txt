@@ -2562,7 +2562,7 @@ Strength and size of military
 ALIGN_SOCIAL_CONTROL
 Social Control
 
-ALIGN_SOICAL_CONTROL_DESC
+ALIGN_SOCIAL_CONTROL_DESC
 Degree to which population is monitored, restricted and manipulated
 
 ALIGN_ENVIRONMENT_MODIFICATION
