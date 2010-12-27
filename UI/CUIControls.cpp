@@ -646,6 +646,7 @@ CUIDropDownList::CUIDropDownList(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Y drop_
     m_mouse_here(false)
 {
     SetInteriorColor(interior);
+    SetMinSize(GG::Pt(MinSize().x, CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT));
 }
 
 void CUIDropDownList::Render()
