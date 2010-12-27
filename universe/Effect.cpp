@@ -1462,22 +1462,51 @@ void RemoveStarlanes::Execute(const UniverseObject* source, UniverseObject* targ
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
+    // get target system
+    if (!target)
+        return;
+    System* target_system = universe_object_cast<System*>(target);
+    if (!target_system)
+        target_system = objects.Object<System>(target->SystemID());
+    if (!target_system)
+        return; // nothing to do!
+
+    // get other endpoint systems...
+
     // get all objects in an ObjectSet
-    Condition::ObjectSet potential_locations;
+    Condition::ObjectSet potential_endpoint_objects;
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.insert(it->second);
+        potential_endpoint_objects.insert(it->second);
 
-    Condition::ObjectSet valid_locations;
+    Condition::ObjectSet endpoint_objects;
 
-    // apply location condition to determine valid location to move target to
-    m_other_lane_endpoint_condition->Eval(source, valid_locations, potential_locations);
+    // apply endpoints condition to determine objects whose systems should be
+    // connected to the source system
+    m_other_lane_endpoint_condition->Eval(source, endpoint_objects, potential_endpoint_objects);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
-    if (valid_locations.empty())
-        return;
+    if (endpoint_objects.empty())
+        return; // nothing to do!
 
-    // "randomly" pick a destination
-    UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
+    // get systems containing at least one endpoint object
+    std::set<System*> endpoint_systems;
+    for (Condition::ObjectSet::const_iterator it = endpoint_objects.begin(); it != endpoint_objects.end(); ++it) {
+        const UniverseObject* endpoint_object = *it;
+        const System* endpoint_system = universe_object_cast<const System*>(endpoint_object);
+        if (!endpoint_system)
+            endpoint_system = objects.Object<System>(endpoint_object->SystemID());
+        if (!endpoint_system)
+            continue;
+        endpoint_systems.insert(const_cast<System*>(endpoint_system));
+    }
+
+    // remove starlanes from target to endpoint systems
+    int target_system_id = target_system->ID();
+    for (std::set<System*>::iterator it = endpoint_systems.begin(); it != endpoint_systems.end(); ++it) {
+        System* endpoint_system = *it;
+        target_system->RemoveStarlane(endpoint_system->ID());
+        endpoint_system->RemoveStarlane(target_system_id);
+    }
 }
 
 std::string RemoveStarlanes::Description() const
