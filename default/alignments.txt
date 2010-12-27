@@ -6,7 +6,7 @@ Alignment
 
 Alignment
     name = "ALIGN_SOCIAL_CONTROL"
-    description = "ALIGN_SOICAL_CONTROL_DESC"
+    description = "ALIGN_SOCIAL_CONTROL_DESC"
     graphic = ""
 
 Alignment
