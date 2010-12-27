@@ -2001,7 +2001,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns()
                         vis_turn_map[VIS_FULL_VISIBILITY] = current_turn;
                     }
                 }
-                Logger().debugStream() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
+                //Logger().debugStream() << " ... Setting empire " << empire_id << " object " << full_object->Name() << " (" << object_id << ") vis " << vis << " (and higher) turn to " << current_turn;
             } else {
                 Logger().errorStream() << "Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() found invalid visibility for object with id " << object_id << " by empire with id " << empire_id;
                 continue;
@@ -2189,6 +2189,9 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
             // get id in universe of system at other end of lane
             int lane_dest_id = it->first;
+            // skip null lanes
+            if (lane_dest_id == system1_id)
+                continue;
 
             // get m_graph_impl->m_system_graph index for this system
             std::map<int, int>::iterator reverse_lookup_map_it = system_id_graph_index_reverse_lookup_map.find(lane_dest_id);

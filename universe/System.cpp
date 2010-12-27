@@ -465,15 +465,16 @@ void System::SetStarType(StarType type)
 
 void System::AddStarlane(int id)
 {
-    if (!HasStarlaneTo(id)) {
+    if (!HasStarlaneTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
+        Logger().debugStream() << "System " << this->Dump() << " added starlane to system " << id;
     }
 }
 
 void System::AddWormhole(int id)
 {
-    if (!HasWormholeTo(id)) {
+    if (!HasWormholeTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = true;
         StateChangedSignal();
     }
