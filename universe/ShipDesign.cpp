@@ -1136,7 +1136,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
     }
-    hull->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
+    hull->Location()->Eval(source, locations, non_locations, Condition::MATCHES);
     if (locations.empty())
         return false;
 
@@ -1151,7 +1151,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
             Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
-        part->Location()->Eval(source, locations, non_locations, Condition::TARGETS);
+        part->Location()->Eval(source, locations, non_locations, Condition::MATCHES);
         if (locations.empty())
             return false;
     }

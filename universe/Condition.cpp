@@ -41,15 +41,15 @@ Condition::ConditionBase::ConditionBase()
 Condition::ConditionBase::~ConditionBase()
 {}
 
-void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::ConditionBase::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-    ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+    ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+    ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
     ObjectSet::iterator it = from_set.begin();
     ObjectSet::iterator end_it = from_set.end();
     for ( ; it != end_it; ) {
         ObjectSet::iterator temp = it++;
-        if (search_domain == TARGETS ? !Match(source, *temp) : Match(source, *temp)) {
+        if (search_domain == MATCHES ? !Match(source, *temp) : Match(source, *temp)) {
             to_set.insert(*temp);
             from_set.erase(temp);
         }
@@ -66,7 +66,7 @@ std::string Condition::ConditionBase::Dump() const
     return "";
 }
 
-bool Condition::ConditionBase::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::ConditionBase::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     return false;
 }
@@ -110,7 +110,7 @@ std::string Condition::Number::Dump() const
     return retval;
 }
 
-void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::Number::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get set of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -119,7 +119,7 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
     for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
         condition_non_targets.insert(uit->second);
     }
-    m_condition->Eval(source, condition_targets, condition_non_targets, NON_TARGETS);
+    m_condition->Eval(source, condition_targets, condition_non_targets, NON_MATCHES);
 
     // compare number of objects that satisfy m_condition to the acceptable range of such objects
     int matched = condition_targets.size();
@@ -127,15 +127,15 @@ void Condition::Number::Eval(const UniverseObject* source, ObjectSet& targets, O
     int high = m_high->Eval(source, source, boost::any());
     bool in_range = (low <= matched && matched < high);
 
-    // transfer objects to or from target set, according to whether number of matches was within
+    // transfer objects to or from local_candidate set, according to whether number of matches was within
     // the requested range.
-    if (search_domain == TARGETS && !in_range) {
-        non_targets.insert(targets.begin(), targets.end());
-        targets.clear();
+    if (search_domain == MATCHES && !in_range) {
+        non_matches.insert(matches.begin(), matches.end());
+        matches.clear();
     }
-    if (search_domain == NON_TARGETS && in_range) {
-        targets.insert(non_targets.begin(), non_targets.end());
-        non_targets.clear();
+    if (search_domain == NON_MATCHES && in_range) {
+        matches.insert(non_matches.begin(), non_matches.end());
+        non_matches.clear();
     }
 }
 
@@ -170,10 +170,10 @@ std::string Condition::Turn::Dump() const
     return DumpIndent() + "Turn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
 }
 
-bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Turn::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    double low = std::max(0, m_low->Eval(source, target, boost::any()));
-    double high = std::min(m_high->Eval(source, target, boost::any()), IMPOSSIBLY_LARGE_TURN);
+    double low = std::max(0, m_low->Eval(source, local_candidate, boost::any()));
+    double high = std::min(m_high->Eval(source, local_candidate, boost::any()), IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
 
     return (low <= turn && turn < high);
@@ -357,39 +357,39 @@ namespace {
     }
 }
 
-void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::ObjectSet& targets,
-                                     Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::ObjectSet& matches,
+                                     Condition::ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // Most conditions match objects independently of the other objects being
     // tested, but the number parameter for NumberOf conditions makes things
     // more complicated.  In order to match some number of the potential
-    // matchs property, both the targets and non_targets need to be checked
+    // matchs property, both the matches and non_matches need to be checked
     // against the subcondition, and the total number of subcondition matches
     // counted.
-    // Then, when searching NON_TARGETS, non_targets may be moved into targets
-    // so that the number of subcondition matches in targets is equal to the
+    // Then, when searching NON_MATCHES, non_matches may be moved into matches
+    // so that the number of subcondition matches in matches is equal to the
     // requested number.  There may also be subcondition non-matches in
-    // targets, but these are not counted or affected by this condition.
-    // Or, when searching TARGETS, targets may be moved into non_targets so
-    // that the number of subcondition matches in targets is equal to the
+    // matches, but these are not counted or affected by this condition.
+    // Or, when searching MATCHES, matches may be moved into non_matches so
+    // that the number of subcondition matches in matches is equal to the
     // requested number.  There again may be subcondition non-matches in
-    // targets, but these are also not counted or affected by this condition.
+    // matches, but these are also not counted or affected by this condition.
 
-    // which input targets match the subcondition?
+    // which input matches match the subcondition?
     ObjectSet subcondition_matching_targets;
-    m_condition->Eval(source, subcondition_matching_targets, targets, NON_TARGETS);
+    m_condition->Eval(source, subcondition_matching_targets, matches, NON_MATCHES);
 
-    // remaining input targets don't match the subcondition...
-    ObjectSet subcondition_non_matching_targets = targets;
-    targets.clear();    // to be refilled later
+    // remaining input matches don't match the subcondition...
+    ObjectSet subcondition_non_matching_targets = matches;
+    matches.clear();    // to be refilled later
 
-    // which input non_targets match the subcondition?
+    // which input non_matches match the subcondition?
     ObjectSet subcondition_matching_non_targets;
-    m_condition->Eval(source, subcondition_matching_non_targets, non_targets, NON_TARGETS);
+    m_condition->Eval(source, subcondition_matching_non_targets, non_matches, NON_MATCHES);
 
-    // remaining input non_targets don't match the subcondition...
-    ObjectSet subcondition_non_matching_non_targets = non_targets;
-    non_targets.clear();    // to be refilled later
+    // remaining input non_matches don't match the subcondition...
+    ObjectSet subcondition_non_matching_non_targets = non_matches;
+    non_matches.clear();    // to be refilled later
 
     // assemble single set of subcondition matching objects
     ObjectSet all_subcondition_matches = subcondition_matching_targets;
@@ -399,60 +399,60 @@ void Condition::SortedNumberOf::Eval(const UniverseObject* source, Condition::Ob
     int number = m_number->Eval(source, source, boost::any());
 
     // compile single set of all objects that are matched by this condition.
-    // these are the objects that should be transferred from non_targets into
-    // targets, or those left in targets while the rest are moved into non_targets
+    // these are the objects that should be transferred from non_matches into
+    // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
     TransferSortedObjects(number, m_sort_key, source, m_sorting_method, all_subcondition_matches, matched_objects);
 
-    // put objects back into targets and non_target sets as output...
+    // put objects back into matches and non_target sets as output...
 
-    if (search_domain == NON_TARGETS) {
-        // put matched objects that are in subcondition_matching_non_targets into targets
+    if (search_domain == NON_MATCHES) {
+        // put matched objects that are in subcondition_matching_non_targets into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
             const UniverseObject* matched_object = *match_it;
 
             // is this matched object in subcondition_matching_non_targets?
             ObjectSet::iterator smnt_it = subcondition_matching_non_targets.find(matched_object);
             if (smnt_it != subcondition_matching_non_targets.end()) {
-                // yes; move object to targets
+                // yes; move object to matches
                 subcondition_matching_non_targets.erase(smnt_it);
-                targets.insert(matched_object);
+                matches.insert(matched_object);
             }
         }
 
-        // put remaining (non-matched) objects in subcondition_matching_non_targets back into non_targets
-        non_targets.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
-        // put objects in subcondition_non_matching_non_targets back into non_targets
-        non_targets.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
-        // put objects in subcondition_matching_targets and subcondition_non_matching_targets back into targets
-        targets.insert(     subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
-        targets.insert(     subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
-        // this leaves the original contents of targets unchanged, other than
-        // possibly having transferred some objects into targets from non_targets
+        // put remaining (non-matched) objects in subcondition_matching_non_targets back into non_matches
+        non_matches.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
+        // put objects in subcondition_non_matching_non_targets back into non_matches
+        non_matches.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
+        // put objects in subcondition_matching_targets and subcondition_non_matching_targets back into matches
+        matches.insert(     subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
+        matches.insert(     subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
+        // this leaves the original contents of matches unchanged, other than
+        // possibly having transferred some objects into matches from non_matches
 
-    } else { /*(search_domain == TARGETS)*/
-        // put matched objecs that are in subcondition_matching_targets back into targets
+    } else { /*(search_domain == MATCHES)*/
+        // put matched objecs that are in subcondition_matching_targets back into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
             const UniverseObject* matched_object = *match_it;
 
             // is this matched object in subcondition_matching_targets?
             ObjectSet::iterator smt_it = subcondition_matching_targets.find(matched_object);
             if (smt_it != subcondition_matching_targets.end()) {
-                // yes; move back into targets
+                // yes; move back into matches
                 subcondition_matching_targets.erase(smt_it);
-                targets.insert(matched_object);
+                matches.insert(matched_object);
             }
         }
 
-        // put remaining (non-matched) objects in subcondition_matching_targets) into non_targets
-        non_targets.insert( subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
-        // put objects in subcondition_non_matching_targets into non_targets
-        non_targets.insert( subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
-        // put objects in subcondition_matching_non_targets and subcondition_non_matching_non_targets back into non_targets
-        non_targets.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
-        non_targets.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
-        // this leaves the original contents of non_targets unchanged, other than
-        // possibly having transferred some objects into non_targets from targets
+        // put remaining (non-matched) objects in subcondition_matching_targets) into non_matches
+        non_matches.insert( subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
+        // put objects in subcondition_non_matching_targets into non_matches
+        non_matches.insert( subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
+        // put objects in subcondition_matching_non_targets and subcondition_non_matching_non_targets back into non_matches
+        non_matches.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
+        non_matches.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
+        // this leaves the original contents of non_matches unchanged, other than
+        // possibly having transferred some objects into non_matches from matches
     }
 }
 
@@ -538,15 +538,15 @@ std::string Condition::SortedNumberOf::Dump() const
 Condition::All::All()
 {}
 
-void Condition::All::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::All::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    if (search_domain == NON_TARGETS) {
-        // move all objects from non_targets to targets
-        targets.insert(non_targets.begin(), non_targets.end());
-        non_targets.clear();
+    if (search_domain == NON_MATCHES) {
+        // move all objects from non_matches to matches
+        matches.insert(non_matches.begin(), non_matches.end());
+        non_matches.clear();
     }
-    // if search_comain is TARGETS, do nothing: all objects in target set
-    // match this condition, so should remain in target set
+    // if search_comain is MATCHES, do nothing: all objects in matches set
+    // match this condition, so should remain in mathes set
 }
 
 std::string Condition::All::Description(bool negated/* = false*/) const
@@ -608,28 +608,28 @@ std::string Condition::EmpireAffiliation::Dump() const
     return retval;
 }
 
-bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::EmpireAffiliation::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
+    int empire_id = m_empire_id->Eval(source, local_candidate, boost::any());
 
     switch (m_affiliation) {
     case AFFIL_SELF:
         if (m_exclusive) {
-            // target object owned only by specified empire
-            return target->WhollyOwnedBy(empire_id);
+            // local_candidate object owned only by specified empire
+            return local_candidate->WhollyOwnedBy(empire_id);
         } else {
-            // target object owned by specified empire, and possibly others
-            return target->OwnedBy(empire_id);
+            // local_candidate object owned by specified empire, and possibly others
+            return local_candidate->OwnedBy(empire_id);
         }
         break;
     case AFFIL_ENEMY:
         if (m_exclusive) {
-            // target has an owner, but isn't owned by specified empire
-            return (!target->Owners().empty() && !target->OwnedBy(empire_id));
+            // local_candidate has an owner, but isn't owned by specified empire
+            return (!local_candidate->Owners().empty() && !local_candidate->OwnedBy(empire_id));
         } else {
-            // at least one of target's owners is not specified empire, but specified empire may also own target
-            return (target->Owners().size() > 1 ||
-                    (!target->Owners().empty() && !target->OwnedBy(empire_id))
+            // at least one of local_candidate's owners is not specified empire, but specified empire may also own local_candidate
+            return (local_candidate->Owners().size() > 1 ||
+                    (!local_candidate->Owners().empty() && !local_candidate->OwnedBy(empire_id))
                    );
         }
         break;
@@ -661,9 +661,9 @@ std::string Condition::Self::Dump() const
     return DumpIndent() + "Source\n";
 }
 
-bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Self::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    return source == target;
+    return source == local_candidate;
 }
 
 ///////////////////////////////////////////////////////////
@@ -714,13 +714,13 @@ std::string Condition::Homeworld::Dump() const
     return retval;
 }
 
-bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
     // is it a planet or a building on a planet?
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(local_candidate);
     const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (!planet)
@@ -742,7 +742,7 @@ bool Condition::Homeworld::Match(const UniverseObject* source, const UniverseObj
     } else {
         // match any of the species specified
         for (unsigned int i = 0; i < m_names.size(); ++i) {
-            std::string species_name = m_names[i]->Eval(source, target, boost::any());
+            std::string species_name = m_names[i]->Eval(source, local_candidate, boost::any());
             if (const ::Species* species = GetSpecies(species_name)) {
                 const std::set<int>& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())
@@ -772,10 +772,10 @@ std::string Condition::Capitol::Dump() const
     return DumpIndent() + "Capitol\n";
 }
 
-bool Condition::Capitol::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Capitol::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    // check if any empire's capitol's ID is that target object's id.  if it is, the target object is a capitol.
-    int target_id = target->ID();
+    // check if any empire's capitol's ID is that local_candidate object's id.  if it is, the local_candidate object is a capitol.
+    int target_id = local_candidate->ID();
     const EmpireManager& empires = Empires();
     for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
         if (it->second->CapitolID() == target_id)
@@ -819,29 +819,29 @@ std::string Condition::Type::Dump() const
     return retval;
 }
 
-bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Type::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    switch (m_type->Eval(source, target, boost::any())) {
+    switch (m_type->Eval(source, local_candidate, boost::any())) {
     case OBJ_BUILDING:
-        return universe_object_cast<const ::Building*>(target);
+        return universe_object_cast<const ::Building*>(local_candidate);
         break;
     case OBJ_SHIP:
-        return universe_object_cast<const Ship*>(target);
+        return universe_object_cast<const Ship*>(local_candidate);
         break;
     case OBJ_FLEET:
-        return universe_object_cast<const Fleet*>(target);
+        return universe_object_cast<const Fleet*>(local_candidate);
         break;
     case OBJ_PLANET:
-        return universe_object_cast<const Planet*>(target);
+        return universe_object_cast<const Planet*>(local_candidate);
         break;
     case OBJ_POP_CENTER:
-        return dynamic_cast<const PopCenter*>(target);
+        return dynamic_cast<const PopCenter*>(local_candidate);
         break;
     case OBJ_PROD_CENTER:
-        return dynamic_cast<const ResourceCenter*>(target);
+        return dynamic_cast<const ResourceCenter*>(local_candidate);
         break;
     case OBJ_SYSTEM:
-        return universe_object_cast<const System*>(target);
+        return universe_object_cast<const System*>(local_candidate);
         break;
     default:
         break;
@@ -897,13 +897,13 @@ std::string Condition::Building::Dump() const
     return retval;
 }
 
-bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Building::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     // is it a building?
-    const ::Building* building = universe_object_cast<const ::Building*>(target);
+    const ::Building* building = universe_object_cast<const ::Building*>(local_candidate);
     if (building) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(source, target, boost::any()) == building->BuildingTypeName())
+            if (m_names[i]->Eval(source, local_candidate, boost::any()) == building->BuildingTypeName())
                 return true;
         }
     }
@@ -930,9 +930,9 @@ std::string Condition::HasSpecial::Dump() const
     return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
 }
 
-bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::HasSpecial::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    return (m_name == "All" && !target->Specials().empty()) || target->Specials().find(m_name) != target->Specials().end();
+    return (m_name == "All" && !local_candidate->Specials().empty()) || local_candidate->Specials().find(m_name) != local_candidate->Specials().end();
 }
 
 ///////////////////////////////////////////////////////////
@@ -959,8 +959,8 @@ std::string Condition::Contains::Dump() const
     return retval;
 }
 
-void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                               SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches,
+                               SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -971,8 +971,8 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-    ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+    ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+    ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
     ObjectSet::iterator from_it = from_set.begin();
     ObjectSet::iterator from_end = from_set.end();
 
@@ -982,10 +982,10 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
         ObjectSet::const_iterator contained_it = condition_targets.begin();
         ObjectSet::const_iterator contained_end = condition_targets.end();
 
-        if (search_domain == NON_TARGETS) {
-            // non_targets (from_set) objects need to contain at least one condition_target to be transferred from
+        if (search_domain == NON_MATCHES) {
+            // non_matches (from_set) objects need to contain at least one condition_target to be transferred from
             // from_set to to_set.
-            // As soon as one contained condition target is found, object may be transferred.
+            // As soon as one contained condition local_candidate is found, object may be transferred.
             for ( ; contained_it != contained_end; ++contained_it) {
                 if ((*container_it)->Contains((*contained_it)->ID())) {
                     to_set.insert(*container_it);
@@ -994,17 +994,17 @@ void Condition::Contains::Eval(const UniverseObject* source, ObjectSet& targets,
                 }
             }
         } else {
-            // targets (from_set) objects need to include no condition_targets to be transferred from from_set
+            // matches (from_set) objects need to include no condition_targets to be transferred from from_set
             // to to_set.
-            // As soon as one contained condition target is found, it is known that object need NOT
-            // be trasferred.  Only after all condition targets are verified not to be contained can object
+            // As soon as one contained condition local_candidate is found, it is known that object need NOT
+            // be trasferred.  Only after all condition matches are verified not to be contained can object
             // be transferred.
             for ( ; contained_it != contained_end; ++contained_it) {
                 if ((*container_it)->Contains((*contained_it)->ID()))
                     break;
             }
-            // if the end of the condition_targets was reached, no condition targets were contained, so 
-            // this targets object can be transferred to the non_targets set
+            // if the end of the condition_targets was reached, no condition matches were contained, so 
+            // this matches object can be transferred to the non_matches set
             if (contained_it == contained_end) {
                 to_set.insert(*container_it);
                 from_set.erase(container_it);
@@ -1037,8 +1037,8 @@ std::string Condition::ContainedBy::Dump() const
     return retval;
 }
 
-void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                                  SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches,
+                                  SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -1049,8 +1049,8 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
     }
     m_condition->Eval(source, condition_targets, condition_non_targets);
 
-    ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-    ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+    ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+    ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
     ObjectSet::iterator from_it = from_set.begin();
     ObjectSet::iterator from_end = from_set.end();
 
@@ -1060,10 +1060,10 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
         ObjectSet::const_iterator container_it = condition_targets.begin();
         ObjectSet::const_iterator container_end = condition_targets.end();
 
-        if (search_domain == NON_TARGETS) {
-            // non_targets (from_set) objects need to be contained by at least one condition_target to be 
+        if (search_domain == NON_MATCHES) {
+            // non_matches (from_set) objects need to be contained by at least one condition_target to be 
             // transferred from from_set to to_set.
-            // As soon as one containing condition target is found, object may be transferred.
+            // As soon as one containing condition local_candidate is found, object may be transferred.
             for ( ; container_it != container_end; ++container_it) {
                 if ((*container_it)->Contains((*contained_it)->ID())) {
                     to_set.insert(*contained_it);
@@ -1072,17 +1072,17 @@ void Condition::ContainedBy::Eval(const UniverseObject* source, ObjectSet& targe
                 }
             }
         } else {
-            // targets (from_set) objects need to be contained by no condition_targets to be transferred from from_set
+            // matches (from_set) objects need to be contained by no condition_targets to be transferred from from_set
             // to to_set.
-            // As soon as one containing condition target is found, it is known that object need NOT
-            // be trasferred.  Only after all condition targets are verified not to contain can object
+            // As soon as one containing condition local_candidate is found, it is known that object need NOT
+            // be trasferred.  Only after all condition matches are verified not to contain can object
             // be transferred.
             for ( ; container_it != container_end; ++container_it) {
                 if ((*container_it)->Contains((*contained_it)->ID()))
                     break;
             }
-            // if the end of the condition_targets was reached, no condition targets contained, so 
-            // this targets object can be transferred to the non_targets set
+            // if the end of the condition_targets was reached, no condition matches contained, so 
+            // this matches object can be transferred to the non_matches set
             if (container_it == container_end) {
                 to_set.insert(*contained_it);
                 from_set.erase(contained_it);
@@ -1139,17 +1139,17 @@ std::string Condition::PlanetType::Dump() const
     return retval;
 }
 
-bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::PlanetType::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(local_candidate);
     const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(source, target, boost::any()) == planet->Type())
+            if (m_types[i]->Eval(source, local_candidate, boost::any()) == planet->Type())
                 return true;
         }
     }
@@ -1204,17 +1204,17 @@ std::string Condition::PlanetSize::Dump() const
     return retval;
 }
 
-bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::PlanetSize::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(local_candidate);
     const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_sizes.size(); ++i) {
-            if (m_sizes[i]->Eval(source, target, boost::any()) == planet->Size())
+            if (m_sizes[i]->Eval(source, local_candidate, boost::any()) == planet->Size())
                 return true;
         }
     }
@@ -1269,18 +1269,18 @@ std::string Condition::PlanetEnvironment::Dump() const
     return retval;
 }
 
-bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::PlanetEnvironment::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(local_candidate);
     const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         ::PlanetEnvironment env_for_planets_species = planet->EnvironmentForSpecies();
         for (unsigned int i = 0; i < m_environments.size(); ++i) {
-            if (m_environments[i]->Eval(source, target, boost::any()) == env_for_planets_species)
+            if (m_environments[i]->Eval(source, local_candidate, boost::any()) == env_for_planets_species)
                 return true;
         }
     }
@@ -1335,26 +1335,26 @@ std::string Condition::Species::Dump() const
     return retval;
 }
 
-bool Condition::Species::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Species::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
     // is it a planet or a building on a planet?
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(local_candidate);
     const ::Building* building = 0;
-    if (!planet && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!planet && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(source, target, boost::any()) == planet->SpeciesName())
+            if (m_names[i]->Eval(source, local_candidate, boost::any()) == planet->SpeciesName())
                 return true;
         }
     }
     // is it a ship?
-    const Ship* ship = universe_object_cast<const Ship*>(target);
+    const Ship* ship = universe_object_cast<const Ship*>(local_candidate);
     if (ship) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(source, target, boost::any()) == ship->SpeciesName())
+            if (m_names[i]->Eval(source, local_candidate, boost::any()) == ship->SpeciesName())
                 return true;
         }
     }
@@ -1409,19 +1409,19 @@ std::string Condition::FocusType::Dump() const
     return retval;
 }
 
-bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::FocusType::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(target);
+    const ResourceCenter* res_center = dynamic_cast<const ResourceCenter*>(local_candidate);
     const ::Building* building = 0;
-    if (!res_center && (building = universe_object_cast<const ::Building*>(target))) {
+    if (!res_center && (building = universe_object_cast<const ::Building*>(local_candidate))) {
         if (const Planet* planet = objects.Object<Planet>(building->PlanetID()))
             res_center = dynamic_cast<const ResourceCenter*>(planet);
     }
     if (res_center) {
         for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(source, target, boost::any()) == res_center->Focus())
+            if (m_names[i]->Eval(source, local_candidate, boost::any()) == res_center->Focus())
                 return true;
         }
     }
@@ -1476,13 +1476,13 @@ std::string Condition::StarType::Dump() const
     return retval;
 }
 
-bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::StarType::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    const System* system = objects.Object<System>(target->SystemID());
-    if (system || (system = universe_object_cast<const System*>(target))) {
+    const System* system = objects.Object<System>(local_candidate->SystemID());
+    if (system || (system = universe_object_cast<const System*>(local_candidate))) {
         for (unsigned int i = 0; i < m_types.size(); ++i) {
-            if (m_types[i]->Eval(source, target, boost::any()) == system->GetStarType())
+            if (m_types[i]->Eval(source, local_candidate, boost::any()) == system->GetStarType())
                 return true;
         }
     }
@@ -1509,9 +1509,9 @@ std::string Condition::DesignHasHull::Dump() const
     return DumpIndent() + "DesignHasHull name = \"" + m_name + "\"\n";
 }
 
-bool Condition::DesignHasHull::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::DesignHasHull::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    if (const Ship* ship = universe_object_cast<const Ship*>(target))
+    if (const Ship* ship = universe_object_cast<const Ship*>(local_candidate))
         if (const ShipDesign* design = ship->Design())
             return (design->Hull() == m_name);
     return false;
@@ -1549,17 +1549,17 @@ std::string Condition::DesignHasPart::Dump() const{
     return DumpIndent() + "DesignHasPart low = " + m_low->Dump() + " high = " + m_high->Dump() + " name = " + m_name;
 }
 
-bool Condition::DesignHasPart::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::DesignHasPart::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    if (const Ship* ship = universe_object_cast<const Ship*>(target)) {
+    if (const Ship* ship = universe_object_cast<const Ship*>(local_candidate)) {
         if (const ShipDesign* design = ship->Design()) {
             const std::vector<std::string>& parts = design->Parts();
             int count = 0;
             for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
                 if (*it == m_name)
                     ++count;
-            int low = m_low->Eval(source, target, boost::any());      // number matched can depend on some property of target object!
-            int high = m_high->Eval(source, target, boost::any());
+            int low = m_low->Eval(source, local_candidate, boost::any());      // number matched can depend on some property of local_candidate object!
+            int high = m_high->Eval(source, local_candidate, boost::any());
             return (low <= count && count < high);
         }
     }
@@ -1598,9 +1598,9 @@ std::string Condition::DesignHasPartClass::Dump() const{
     return DumpIndent() + "DesignHasPartClass low = " + m_low->Dump() + " high = " + m_high->Dump() + " class = " + UserString(boost::lexical_cast<std::string>(m_class));
 }
 
-bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    if (const Ship* ship = universe_object_cast<const Ship*>(target)) {
+    if (const Ship* ship = universe_object_cast<const Ship*>(local_candidate)) {
         if (const ShipDesign* design = ship->Design()) {
             const std::vector<std::string>& parts = design->Parts();
             int count = 0;
@@ -1610,8 +1610,8 @@ bool Condition::DesignHasPartClass::Match(const UniverseObject* source, const Un
                         ++count;
                 }
             }
-            int low = m_low->Eval(source, target, boost::any());      // number matched can depend on some property of target object!
-            int high = m_high->Eval(source, target, boost::any());
+            int low = m_low->Eval(source, local_candidate, boost::any());      // number matched can depend on some property of local_candidate object!
+            int high = m_high->Eval(source, local_candidate, boost::any());
             return (low <= count && count < high);
         }
     }
@@ -1651,9 +1651,9 @@ std::string Condition::Chance::Dump() const
     return DumpIndent() + "Random probability = " + m_chance->Dump() + "\n";
 }
 
-bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Chance::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    double chance = std::max(0.0, std::min(m_chance->Eval(source, target, boost::any()), 1.0));
+    double chance = std::max(0.0, std::min(m_chance->Eval(source, local_candidate, boost::any()), 1.0));
     return RandZeroToOne() <= chance;
 }
 
@@ -1735,11 +1735,11 @@ std::string Condition::MeterValue::Dump() const
     return retval;
 }
 
-bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::MeterValue::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    double low = m_low->Eval(source, target, boost::any());
-    double high = m_high->Eval(source, target, boost::any());
-    if (const Meter* meter = target->GetMeter(m_meter)) {
+    double low = m_low->Eval(source, local_candidate, boost::any());
+    double high = m_high->Eval(source, local_candidate, boost::any());
+    if (const Meter* meter = local_candidate->GetMeter(m_meter)) {
         double value = meter->Initial();
         return low <= value && value < high;
     } else {
@@ -1791,14 +1791,14 @@ std::string Condition::EmpireStockpileValue::Dump() const
     return retval;
 }
 
-bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::EmpireStockpileValue::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    if (target->Owners().size() != 1)
+    if (local_candidate->Owners().size() != 1)
         return false;
-    if (const Empire* empire = Empires().Lookup(*target->Owners().begin()))
+    if (const Empire* empire = Empires().Lookup(*local_candidate->Owners().begin()))
         if (m_stockpile == RE_FOOD || m_stockpile == RE_MINERALS || m_stockpile == RE_TRADE) {
             double stockpile = empire->ResourceStockpile(m_stockpile);
-            return (m_low->Eval(source, target, boost::any()) <= stockpile && stockpile <= m_high->Eval(source, target, boost::any()));
+            return (m_low->Eval(source, local_candidate, boost::any()) <= stockpile && stockpile <= m_high->Eval(source, local_candidate, boost::any()));
         }
     return false;
 }
@@ -1823,11 +1823,11 @@ std::string Condition::OwnerHasTech::Dump() const
     return DumpIndent() + "OwnerHasTech name = \"" + m_name + "\"\n";
 }
 
-bool Condition::OwnerHasTech::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::OwnerHasTech::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
-    if (target->Owners().size() != 1)
+    if (local_candidate->Owners().size() != 1)
         return false;
-    if (const Empire* empire = Empires().Lookup(*target->Owners().begin()))
+    if (const Empire* empire = Empires().Lookup(*local_candidate->Owners().begin()))
         return empire->TechResearched(m_name);
     else
         return false;
@@ -1889,11 +1889,11 @@ std::string Condition::VisibleToEmpire::Dump() const
     return retval;
 }
 
-bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::VisibleToEmpire::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     bool retval = false;
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (target->GetVisibility(m_empire_ids[i]->Eval(source, target, boost::any())) != VIS_NO_VISIBILITY)
+        if (local_candidate->GetVisibility(m_empire_ids[i]->Eval(source, local_candidate, boost::any())) != VIS_NO_VISIBILITY)
             return true;
     }
     return retval;
@@ -1913,8 +1913,8 @@ Condition::WithinDistance::~WithinDistance()
     delete m_condition;
 }
 
-void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                                     SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches,
+                                     SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -1928,61 +1928,61 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
     if (condition_targets.empty()) {
         // nothing matched from objects, so nothing can match overall condition.
 
-        // if checking NON_TARGETS, don't need to do anything.
-        if (search_domain == NON_TARGETS)
+        // if checking NON_MATCHES, don't need to do anything.
+        if (search_domain == NON_MATCHES)
             return;
 
-        // if checking TARGETS move all objects from targets to non_targets
-        non_targets.insert(targets.begin(), targets.end());
-        targets.clear();
+        // if checking MATCHES move all objects from matches to non_matches
+        non_matches.insert(matches.begin(), matches.end());
+        matches.clear();
         return;
     }
 
-    if (search_domain == NON_TARGETS) {
-        // to be transferred to targets, object initially in non_targets
+    if (search_domain == NON_MATCHES) {
+        // to be transferred to matches, object initially in non_matches
         // needs to be within required distance of at least one
         // condition_target
 
         // check each non_target
-        for (ObjectSet::iterator non_targets_it = non_targets.begin() ; non_targets_it != non_targets.end();) {
+        for (ObjectSet::iterator non_targets_it = non_matches.begin() ; non_targets_it != non_matches.end();) {
 
             // get current object while incrementing main iterator
             ObjectSet::iterator current_non_target_it = non_targets_it++;
             const UniverseObject* non_target_obj = *current_non_target_it;
 
-            // see if current object is within required distance of any condition target
+            // see if current object is within required distance of any condition local_candidate
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
                 if (Match(source, non_target_obj, *condition_targets_it)) {
-                    // current object is within required distance of current condition target.
-                    // transfer current object to targets set
-                    targets.insert(non_target_obj);
-                    non_targets.erase(current_non_target_it);
+                    // current object is within required distance of current condition local_candidate.
+                    // transfer current object to matches set
+                    matches.insert(non_target_obj);
+                    non_matches.erase(current_non_target_it);
                     break;
                 }
             }
         }
 
     } else {
-        // to be transferred to non_targets, object initially in targets needs
-        // to be not within required distance of all/any condition targets
+        // to be transferred to non_matches, object initially in matches needs
+        // to be not within required distance of all/any condition matches
 
-        // transfer targets into temp storage
-        ObjectSet initial_targets = targets;
-        targets.clear();
+        // transfer matches into temp storage
+        ObjectSet initial_targets = matches;
+        matches.clear();
 
-        // check initial targets
+        // check initial matches
         for (ObjectSet::iterator initial_targets_it = initial_targets.begin() ; initial_targets_it != initial_targets.end();) {
 
             // get current object while incrementing main iterator
             ObjectSet::iterator current_initial_target_it = initial_targets_it++;
             const UniverseObject* initial_target_obj = *current_initial_target_it;
 
-            // see if current object is within required distance of any condition target
+            // see if current object is within required distance of any condition local_candidate
             for (ObjectSet::iterator condition_targets_it = condition_targets.begin(); condition_targets_it != condition_targets.end(); ++condition_targets_it) {
                 if (Match(source, initial_target_obj, *condition_targets_it)) {
-                    // current object is within required distance of current condition target.
-                    // transfer current object to back to targets set
-                    targets.insert(initial_target_obj);
+                    // current object is within required distance of current condition local_candidate.
+                    // transfer current object to back to matches set
+                    matches.insert(initial_target_obj);
                     initial_targets.erase(current_initial_target_it);
                     break;
                 }
@@ -1990,8 +1990,8 @@ void Condition::WithinDistance::Eval(const UniverseObject* source, ObjectSet& ta
         }
 
         // move any initial_targets that weren't in range of any condition
-        // target into non_targets
-        non_targets.insert(initial_targets.begin(), initial_targets.end());
+        // local_candidate into non_matches
+        non_matches.insert(initial_targets.begin(), initial_targets.end());
         initial_targets.clear();
     }
 }
@@ -2016,12 +2016,12 @@ std::string Condition::WithinDistance::Dump() const
     return retval;
 }
 
-bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
+bool Condition::WithinDistance::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const
 {
-    double dist = m_distance->Eval(source, target, boost::any());
+    double dist = m_distance->Eval(source, local_candidate, boost::any());
     double distance_squared = dist * dist;
-    double delta_x = condition_match->X() - target->X();
-    double delta_y = condition_match->Y() - target->Y();
+    double delta_x = condition_match->X() - local_candidate->X();
+    double delta_y = condition_match->Y() - local_candidate->Y();
     return (delta_x * delta_x + delta_y * delta_y) <= distance_squared;
 }
 
@@ -2039,8 +2039,8 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
     delete m_condition;
 }
 
-void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets,
-                                          SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches,
+                                          SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -2054,25 +2054,25 @@ void Condition::WithinStarlaneJumps::Eval(const UniverseObject* source, ObjectSe
     // special case to save looping later
     if (condition_targets.empty()) {
         // nothing matched from objects, so nothing can match overall condition.
-        // if checking NON_TARGETS, don't need to do anything.
-        if (search_domain == NON_TARGETS)
+        // if checking NON_MATCHES, don't need to do anything.
+        if (search_domain == NON_MATCHES)
             return;
 
-        // move all objects from non_targets to targets
-        non_targets.insert(targets.begin(), targets.end());
-        targets.clear();
+        // move all objects from non_matches to matches
+        non_matches.insert(matches.begin(), matches.end());
+        matches.clear();
         return;
     }
 
     // determine which objects in the Universe are within the specified distance from the objects in condition_targets
     for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
         ObjectSet::iterator it2 = from_set.begin();
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
+            if (search_domain == MATCHES ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
                 to_set.insert(*temp);
                 from_set.erase(temp);
             }
@@ -2100,26 +2100,26 @@ std::string Condition::WithinStarlaneJumps::Dump() const
     return retval;
 }
 
-bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
+bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
-    int jump_limit = m_jumps->Eval(source, target, boost::any());
+    int jump_limit = m_jumps->Eval(source, local_candidate, boost::any());
     if (jump_limit == 0) { // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
-        double delta_x = condition_match->X() - target->X();
-        double delta_y = condition_match->Y() - target->Y();
+        double delta_x = condition_match->X() - local_candidate->X();
+        double delta_y = condition_match->Y() - local_candidate->Y();
         return !(delta_x * delta_x + delta_y * delta_y);
     } else {
         const System* condition_match_system = objects.Object<System>(condition_match->SystemID());
         if (!condition_match_system)
             condition_match_system = universe_object_cast<const System*>(condition_match);
-        const System* target_system = objects.Object<System>(target->SystemID());
+        const System* target_system = objects.Object<System>(local_candidate->SystemID());
         if (!target_system)
-            target_system = universe_object_cast<const System*>(target);
+            target_system = universe_object_cast<const System*>(local_candidate);
 
         // need various special cases for whether the condition-matching object
-        // and target objects are or are in systems.
+        // and local_candidate objects are or are in systems.
         if (condition_match_system && target_system) {
-            // both condition-matching object and target are / in systems.
+            // both condition-matching object and local_candidate are / in systems.
             // can just find the shortest path between the two systems
             std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_system->ID());
             if (!path.first.empty()) { // if path.first is empty, no path exists between the systems
@@ -2127,15 +2127,15 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
             }
         } else if (condition_match_system) {
             // just condition-matching object is / in a system.  need to check shortest path from
-            // systems on either side of starlane target is on
-            if (const Fleet* target_fleet = FleetFromObject(target)) {
+            // systems on either side of starlane local_candidate is on
+            if (const Fleet* target_fleet = FleetFromObject(local_candidate)) {
                 std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_fleet->PreviousSystemID());
                 std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(condition_match_system->ID(), target_fleet->NextSystemID());
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())) - 1)
                     return jumps <= jump_limit;
             }
         } else if (target_system) {
-            // just target is / in a system.  need to check shortest path from
+            // just local_candidate is / in a system.  need to check shortest path from
             // systems on either side of starlane the condition-matching object is on
            if (const Fleet* condition_matching_fleet = FleetFromObject(condition_match)) {
                 std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(condition_matching_fleet->PreviousSystemID(),    target_system->ID());
@@ -2144,11 +2144,11 @@ bool Condition::WithinStarlaneJumps::Match(const UniverseObject* source, const U
                     return jumps - 1 <= jump_limit;
             }
         } else {
-            // neither condition-matching object nor target are / in systems.
+            // neither condition-matching object nor local_candidate are / in systems.
             // need to check all combinations of systems on either sides of
-            // starlanes condition-matching object and target are on
+            // starlanes condition-matching object and local_candidate are on
             const Fleet* condition_matching_fleet = FleetFromObject(condition_match);
-            const Fleet* target_fleet = FleetFromObject(target);
+            const Fleet* target_fleet = FleetFromObject(local_candidate);
             if (condition_matching_fleet && target_fleet) {
                 int condition_matching_fleet_prev_system_id = condition_matching_fleet->PreviousSystemID();
                 int condition_matching_fleet_next_system_id = condition_matching_fleet->NextSystemID();
@@ -2224,12 +2224,12 @@ std::string Condition::ExploredByEmpire::Dump() const
     return retval;
 }
 
-bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::ExploredByEmpire::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const EmpireManager& empires = Empires();
     for (unsigned int i = 0; i < m_empire_ids.size(); ++i) {
-        if (const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, target, boost::any())))
-            if (empire->HasExploredSystem(target->ID()))
+        if (const Empire* empire = empires.Lookup(m_empire_ids[i]->Eval(source, local_candidate, boost::any())))
+            if (empire->HasExploredSystem(local_candidate->ID()))
                 return true;
     }
     return false;
@@ -2254,15 +2254,15 @@ std::string Condition::Stationary::Dump() const
     return DumpIndent() + "Stationary\n";
 }
 
-bool Condition::Stationary::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::Stationary::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const ObjectMap& objects = GetMainObjectMap();
     // the only objects that can move are fleets and the ships in them.  so,
-    // attempt to cast the target object to a fleet or ship, and if it's a ship
+    // attempt to cast the local_candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    const Fleet* fleet = universe_object_cast<const Fleet*>(target);
+    const Fleet* fleet = universe_object_cast<const Fleet*>(local_candidate);
     if (!fleet)
-        if (const Ship* ship = universe_object_cast<const Ship*>(target))
+        if (const Ship* ship = universe_object_cast<const Ship*>(local_candidate))
             fleet = objects.Object<Fleet>(ship->FleetID());
 
     if (fleet) {
@@ -2309,12 +2309,12 @@ std::string Condition::FleetSupplyableByEmpire::Dump() const
     return DumpIndent() + "FleetSupplyableByEmpire empire_id = " + m_empire_id->Dump();
 }
 
-bool Condition::FleetSupplyableByEmpire::Match(const UniverseObject* source, const UniverseObject* target) const
+bool Condition::FleetSupplyableByEmpire::Match(const UniverseObject* source, const UniverseObject* local_candidate) const
 {
     const EmpireManager& empires = Empires();
-    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, target, boost::any()))) {
+    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, local_candidate, boost::any()))) {
         const std::set<int>& supplyable_systems = empire->FleetSupplyableSystemIDs();
-        if (supplyable_systems.find(target->SystemID()) != supplyable_systems.end())
+        if (supplyable_systems.find(local_candidate->SystemID()) != supplyable_systems.end())
             return true;
     }
     return false;
@@ -2335,7 +2335,7 @@ Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire()
     delete m_condition;
 }
 
-void Condition::ResourceSupplyConnectedByEmpire::Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::ResourceSupplyConnectedByEmpire::Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     // get the list of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -2349,25 +2349,25 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const UniverseObject* sour
     // special case to save looping later: don't need to check anything further if nothing matched sub-condition
     if (condition_targets.empty()) {
         // nothing matched from objects, so nothing can match overall condition.
-        // if checking NON_TARGETS, don't need to do anything.
-        if (search_domain == NON_TARGETS)
+        // if checking NON_MATCHES, don't need to do anything.
+        if (search_domain == NON_MATCHES)
             return;
 
-        // move all objects from non_targets to targets
-        non_targets.insert(targets.begin(), targets.end());
-        targets.clear();
+        // move all objects from non_matches to matches
+        non_matches.insert(matches.begin(), matches.end());
+        matches.clear();
         return;
     }
 
-    // determine which target objects are in the same resource sharing group as any of the objects that matched m_condition
+    // determine which local_candidate objects are in the same resource sharing group as any of the objects that matched m_condition
     for (ObjectSet::const_iterator it = condition_targets.begin(); it != condition_targets.end(); ++it) {
-        ObjectSet& from_set = search_domain == TARGETS ? targets : non_targets;
-        ObjectSet& to_set = search_domain == TARGETS ? non_targets : targets;
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
         ObjectSet::iterator it2 = from_set.begin();
         ObjectSet::iterator end_it2 = from_set.end();
         for ( ; it2 != end_it2; ) {
             ObjectSet::iterator temp = it2++;
-            if (search_domain == TARGETS ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
+            if (search_domain == MATCHES ? !Match(source, *it, *temp) : Match(source, *it, *temp)) {
                 to_set.insert(*temp);
                 from_set.erase(temp);
             }
@@ -2398,23 +2398,23 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
     return retval;
 }
 
-bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const
+bool Condition::ResourceSupplyConnectedByEmpire::Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const
 {
-    if (!source || !target || !condition_match)
+    if (!source || !local_candidate || !condition_match)
         return false;
 
     const EmpireManager& empires = Empires();
-    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, target, boost::any()))) {
+    if (const Empire* empire = empires.Lookup(m_empire_id->Eval(source, local_candidate, boost::any()))) {
         // find resource sharing system group for source
         const std::set<std::set<int> >& groups = empire->ResourceSupplyGroups();
         for (std::set<std::set<int> >::const_iterator groups_it = groups.begin(); groups_it != groups.end(); ++groups_it) {
             const std::set<int>& group = *groups_it;
             if (group.find(condition_match->SystemID()) != group.end()) {
-                // found resource sharing group containing condition-matching object.  Does it also contain target?
-                if (group.find(target->SystemID()) != group.end())
-                    return true;    // object matching m_condition and target object are in same resourse sharing group
+                // found resource sharing group containing condition-matching object.  Does it also contain local_candidate?
+                if (group.find(local_candidate->SystemID()) != group.end())
+                    return true;    // object matching m_condition and local_candidate object are in same resourse sharing group
                 else
-                    return false;   // object matching m_condition is not in resource sharing group with target (each object can be in only one group)
+                    return false;   // object matching m_condition is not in resource sharing group with local_candidate (each object can be in only one group)
             }
 
             // object matching m_condition is not in this resource sharing group
@@ -2442,34 +2442,34 @@ Condition::And::~And()
     }
 }
 
-void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::And::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-        //std::cout << "And::Eval: input targets:" << std::endl;
-        //for (ObjectSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
+        //std::cout << "And::Eval: input matches:" << std::endl;
+        //for (ObjectSet::const_iterator it = matches.begin(); it != matches.end(); ++it)
         //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
-        //std::cout << "And::Eval: input non_targets:" << std::endl;
-        //for (ObjectSet::const_iterator it = non_targets.begin(); it != non_targets.end(); ++it)
+        //std::cout << "And::Eval: input non_matches:" << std::endl;
+        //for (ObjectSet::const_iterator it = non_matches.begin(); it != non_matches.end(); ++it)
         //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
-    if (search_domain == NON_TARGETS) {
+    if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_targets;
 
-        // move items in non_targets set that pass first operand condition into
+        // move items in non_matches set that pass first operand condition into
         // partly_checked_non_targets set
-        m_operands[0]->Eval(source, partly_checked_non_targets, non_targets, NON_TARGETS);
+        m_operands[0]->Eval(source, partly_checked_non_targets, non_matches, NON_MATCHES);
 
         //std::cout << "And::Eval: non_target input objects meeting first condition: " << m_operands[0]->Dump() << std::endl;
         //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
         //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
         //std::cout << std::endl;
 
-        // move items that don't pass one of the other conditions back to non_targets
+        // move items that don't pass one of the other conditions back to non_matches
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_non_targets.empty()) break;
-            m_operands[i]->Eval(source, partly_checked_non_targets, non_targets, TARGETS);
+            m_operands[i]->Eval(source, partly_checked_non_targets, non_matches, MATCHES);
 
             //std::cout << "And::Eval: non_target input objects also meeting " << i + 1 <<"th condition: " << m_operands[i]->Dump() << std::endl;
             //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
@@ -2477,23 +2477,23 @@ void Condition::And::Eval(const UniverseObject* source, ObjectSet& targets, Obje
             //std::cout << std::endl;
         }
 
-        // merge items that passed all operand conditions into targets
-        targets.insert(partly_checked_non_targets.begin(), partly_checked_non_targets.end());
+        // merge items that passed all operand conditions into matches
+        matches.insert(partly_checked_non_targets.begin(), partly_checked_non_targets.end());
         partly_checked_non_targets.clear();
 
-        // items already in targets set are not checked, and remain in targets set even if
+        // items already in matches set are not checked, and remain in matches set even if
         // they don't match one of the operand conditions
 
     } else {
-        // check all operand conditions on all objects in the targets set, moving those
-        // that don't pass a condition to the non-targets set
+        // check all operand conditions on all objects in the matches set, moving those
+        // that don't pass a condition to the non-matches set
 
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            if (targets.empty()) break;
-            m_operands[i]->Eval(source, targets, non_targets, TARGETS);
+            if (matches.empty()) break;
+            m_operands[i]->Eval(source, matches, non_matches, MATCHES);
         }
 
-        // items already in non_targets set are not checked, and remain in non_targets set
+        // items already in non_matches set are not checked, and remain in non_matches set
         // even if they pass all operand conditions
     }
 }
@@ -2543,40 +2543,40 @@ Condition::Or::~Or()
     }
 }
 
-void Condition::Or::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::Or::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    if (search_domain == NON_TARGETS) {
-        // check each item in the non-targets set against each of the operand conditions
-        // if a non-target item matches an operand condition, move the item to the
-        // targets set.
+    if (search_domain == NON_MATCHES) {
+        // check each item in the non-matches set against each of the operand conditions
+        // if a non-local_candidate item matches an operand condition, move the item to the
+        // matches set.
 
         for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            if (non_targets.empty()) break;
-            m_operands[i]->Eval(source, targets, non_targets, NON_TARGETS);
+            if (non_matches.empty()) break;
+            m_operands[i]->Eval(source, matches, non_matches, NON_MATCHES);
         }
 
-        // items already in targets set are not checked and remain in the
-        // targets set even if they fail all the operand conditions
+        // items already in matches set are not checked and remain in the
+        // matches set even if they fail all the operand conditions
 
     } else {
         ObjectSet partly_checked_targets;
 
-        // move items in targets set the fail the first operand condition into 
+        // move items in matches set the fail the first operand condition into 
         // partly_checked_targets set
-        m_operands[0]->Eval(source, targets, partly_checked_targets, TARGETS);
+        m_operands[0]->Eval(source, matches, partly_checked_targets, MATCHES);
 
-        // move items that pass any of the other conditions back into targets
+        // move items that pass any of the other conditions back into matches
         for (unsigned int i = 1; i < m_operands.size(); ++i) {
             if (partly_checked_targets.empty()) break;
-            m_operands[i]->Eval(source, targets, partly_checked_targets, NON_TARGETS);
+            m_operands[i]->Eval(source, matches, partly_checked_targets, NON_MATCHES);
         }
 
-        // merge items that failed all operand conditions into non_targets
-        non_targets.insert(partly_checked_targets.begin(), partly_checked_targets.end());
+        // merge items that failed all operand conditions into non_matches
+        non_matches.insert(partly_checked_targets.begin(), partly_checked_targets.end());
         partly_checked_targets.clear();
 
-        // items already in non_targets set are not checked and remain in
-        // non_targets set even if they pass one or more of the operand 
+        // items already in non_matches set are not checked and remain in
+        // non_matches set even if they pass one or more of the operand 
         // conditions
     }
 }
@@ -2624,16 +2624,16 @@ Condition::Not::~Not()
     delete m_operand;
 }
 
-void Condition::Not::Eval(const UniverseObject* source, ObjectSet& targets, ObjectSet& non_targets, SearchDomain search_domain/* = NON_TARGETS*/) const
+void Condition::Not::Eval(const UniverseObject* source, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    if (search_domain == NON_TARGETS) {
-        // search non_targets set for items that don't meet the operand
-        // condition, and move those to the targets set
-        m_operand->Eval(source, non_targets, targets, TARGETS); // swapping order of targets and non_targets set parameters and TARGETS / NON_TARGETS search domain effects NOT on requested search domain
+    if (search_domain == NON_MATCHES) {
+        // search non_matches set for items that don't meet the operand
+        // condition, and move those to the matches set
+        m_operand->Eval(source, non_matches, matches, MATCHES); // swapping order of matches and non_matches set parameters and MATCHES / NON_MATCHES search domain effects NOT on requested search domain
     } else {
-        // search targets set for items that meet the operand condition
-        // condition, and move those to the non_targets set
-        m_operand->Eval(source, non_targets, targets, NON_TARGETS);
+        // search matches set for items that meet the operand condition
+        // condition, and move those to the non_matches set
+        m_operand->Eval(source, non_matches, matches, NON_MATCHES);
     }
 }
 

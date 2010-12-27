@@ -22,8 +22,8 @@ namespace Condition {
     typedef std::set<const UniverseObject*> ObjectSet;
 
     enum SearchDomain {
-        NON_TARGETS,    ///< The Condition will only examine items in the nontarget set; those that match the Condition will be inserted into the target set.
-        TARGETS         ///< The Condition will only examine items in the target set; those that do not match the Condition will be inserted into the nontarget set.
+        NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.
+        MATCHES         ///< The Condition will only examine items in the matches set; those that do not match the Condition will be inserted into the nonmatches set.
     };
 
     enum SortingMethod {
@@ -59,6 +59,7 @@ namespace Condition {
     struct VisibleToEmpire;
     struct WithinDistance;
     struct WithinStarlaneJumps;
+    struct CanHaveStarlaneConnection;
     struct ExploredByEmpire;
     struct Stationary;
     struct FleetSupplyableByEmpire;
@@ -77,12 +78,15 @@ struct Condition::ConditionBase
 {
     ConditionBase();
     virtual ~ConditionBase();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source,
+                             Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -96,7 +100,7 @@ struct Condition::Number : Condition::ConditionBase
 {
     Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition);
     virtual ~Number();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -119,7 +123,7 @@ struct Condition::Turn : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>* m_low;
     const ValueRef::ValueRefBase<int>* m_high;
@@ -151,7 +155,7 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase
                    const ConditionBase* condition);
 
     virtual ~SortedNumberOf();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -170,7 +174,7 @@ private:
 struct Condition::All : Condition::ConditionBase
 {
     All();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -190,7 +194,7 @@ struct Condition::EmpireAffiliation : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>* m_empire_id;
     EmpireAffiliationType              m_affiliation;
@@ -209,7 +213,7 @@ struct Condition::Self : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -227,7 +231,7 @@ struct Condition::Homeworld : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -244,7 +248,7 @@ struct Condition::Capitol : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -259,7 +263,7 @@ struct Condition::Type : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<UniverseObjectType>* m_type;
 
@@ -278,7 +282,7 @@ struct Condition::Building : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -297,7 +301,7 @@ struct Condition::HasSpecial : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::string m_name;
 
@@ -312,7 +316,7 @@ private:
 struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -330,7 +334,7 @@ private:
 struct Condition::ContainedBy : Condition::ConditionBase
 {
     ContainedBy(const ConditionBase* condition);
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -353,7 +357,7 @@ struct Condition::PlanetType : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> m_types;
 
@@ -373,7 +377,7 @@ struct Condition::PlanetSize : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
 
@@ -392,7 +396,7 @@ struct Condition::PlanetEnvironment : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> m_environments;
 
@@ -412,7 +416,7 @@ struct Condition::Species : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -430,7 +434,7 @@ struct Condition::FocusType : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -449,7 +453,7 @@ struct Condition::StarType : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase< ::StarType>*> m_types;
 
@@ -466,7 +470,7 @@ struct Condition::DesignHasHull : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::string     m_name;
 
@@ -485,7 +489,7 @@ struct Condition::DesignHasPart : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>*  m_low;
     const ValueRef::ValueRefBase<int>*  m_high;
@@ -506,7 +510,7 @@ struct Condition::DesignHasPartClass : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>*  m_low;
     const ValueRef::ValueRefBase<int>*  m_high;
@@ -526,7 +530,7 @@ struct Condition::Chance : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<double>* m_chance;
 
@@ -545,7 +549,7 @@ struct Condition::MeterValue : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     MeterType                             m_meter;
     const ValueRef::ValueRefBase<double>* m_low;
@@ -566,7 +570,7 @@ struct Condition::EmpireStockpileValue : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     ResourceType m_stockpile;
     const ValueRef::ValueRefBase<double>* m_low;
@@ -585,7 +589,7 @@ struct Condition::OwnerHasTech : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::string m_name;
 
@@ -603,7 +607,7 @@ struct Condition::VisibleToEmpire : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<int>*> m_empire_ids;
 
@@ -620,12 +624,12 @@ struct Condition::WithinDistance : Condition::ConditionBase
 {
     WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition);
     virtual ~WithinDistance();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
-    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<double>* m_distance;
     const ConditionBase*                  m_condition;
@@ -643,14 +647,31 @@ struct Condition::WithinStarlaneJumps : Condition::ConditionBase
 {
     WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition);
     virtual ~WithinStarlaneJumps();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
-    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>* m_jumps;
+    const ConditionBase*               m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** CanHaveStarlaneConnection*/
+struct Condition::CanHaveStarlaneConnection :  Condition::ConditionBase
+{
+    CanHaveStarlaneConnection(const ConditionBase* condition);
+    virtual ~CanHaveStarlaneConnection();
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
     const ConditionBase*               m_condition;
 
     friend class boost::serialization::access;
@@ -668,7 +689,7 @@ struct Condition::ExploredByEmpire : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     std::vector<const ValueRef::ValueRefBase<int>*> m_empire_ids;
 
@@ -686,7 +707,7 @@ struct Condition::Stationary : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -703,7 +724,7 @@ struct Condition::FleetSupplyableByEmpire : Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
-    virtual bool        Match(const UniverseObject* source, const UniverseObject* target) const;
+    virtual bool        Match(const UniverseObject* source, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>*  m_empire_id;
 
@@ -719,12 +740,12 @@ struct Condition::ResourceSupplyConnectedByEmpire : Condition::ConditionBase
 {
     ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition);
     virtual ~ResourceSupplyConnectedByEmpire();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
-    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* target) const;
+    bool                Match(const UniverseObject* source, const UniverseObject* condition_match, const UniverseObject* local_candidate) const;
 
     const ValueRef::ValueRefBase<int>*  m_empire_id;
     const ConditionBase*                m_condition;
@@ -739,7 +760,7 @@ struct Condition::And : Condition::ConditionBase
 {
     And(const std::vector<const ConditionBase*>& operands);
     virtual ~And();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -756,7 +777,7 @@ struct Condition::Or : Condition::ConditionBase
 {
     Or(const std::vector<const ConditionBase*>& operands);
     virtual ~Or();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -773,7 +794,10 @@ struct Condition::Not : Condition::ConditionBase
 {
     Not(const ConditionBase* operand);
     virtual ~Not();
-    virtual void        Eval(const UniverseObject* source, Condition::ObjectSet& targets, Condition::ObjectSet& non_targets, SearchDomain search_domain = NON_TARGETS) const;
+    virtual void        Eval(const UniverseObject* source,
+                             Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1004,6 +1028,13 @@ void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int v
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_jumps)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::CanHaveStarlaneConnection::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
 }
 
