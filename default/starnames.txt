@@ -97,6 +97,7 @@ Benetnasch
 Berkano
 Bessel
 Betelgeuse
+Bexley
 Biham
 Bladehill
 Bode
@@ -233,6 +234,7 @@ Herbig
 Herschel
 Hertzsprung
 Hewish
+Holly
 Homam
 Hoyle
 Huachuca
@@ -274,8 +276,10 @@ Kitalpha
 Klazart
 Knuth
 Kochab
+Kochanski
 Kornephoros
 Kril
+Kryten
 Kuiper
 Lagrange
 Laguz
@@ -286,6 +290,7 @@ Leonis
 Leporis
 Lesath
 Levitt
+Lister
 Lockyer
 Loki
 Lupi
@@ -414,6 +419,7 @@ Reilsa
 Reynolds
 Riccioli
 Rigel
+Rimmer
 Ri-pog
 Rome
 Rook
