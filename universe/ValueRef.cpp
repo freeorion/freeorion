@@ -104,6 +104,11 @@ namespace {
                                           ValueRef::ReferenceType ref_type,
                                           ScriptingContext context)
     {
+        Logger().debugStream() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
+            << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+            << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+            << " parent c: " << (context.condition_parent_candidate ? context.condition_parent_candidate->Name() : "0")
+            << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
         const ObjectMap& objects = GetMainObjectMap();
         const UniverseObject* obj(0);
         switch(ref_type) {
@@ -281,7 +286,7 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
 
-#define IF_CURRENT_VALUE_ELSE(T)                                           \
+#define IF_CURRENT_VALUE(T)                                           \
     if (boost::iequals(property_name, "Value")) {                          \
         if (context.current_value.empty())                             \
             throw std::runtime_error(                                      \
@@ -294,14 +299,14 @@ namespace ValueRef {
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \
                 "because the provided current value is not an " #T ".");   \
         }                                                                  \
-    } else
+    }
 
     template <>
     PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE_ELSE(PlanetSize)
+        IF_CURRENT_VALUE(PlanetSize)
 
         if (boost::iequals(property_name, "PlanetSize")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -322,7 +327,7 @@ namespace ValueRef {
     {
         const std::string& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE_ELSE(PlanetType)
+        IF_CURRENT_VALUE(PlanetType)
 
         if (boost::iequals(property_name, "PlanetType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -343,7 +348,7 @@ namespace ValueRef {
     {
         const std::string& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE_ELSE(PlanetEnvironment)
+        IF_CURRENT_VALUE(PlanetEnvironment)
 
         if (boost::iequals(property_name, "PlanetEnvironment")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -364,7 +369,7 @@ namespace ValueRef {
     {
         const std::string& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE_ELSE(UniverseObjectType)
+        IF_CURRENT_VALUE(UniverseObjectType)
 
         if (boost::iequals(property_name, "ObjectType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -398,7 +403,7 @@ namespace ValueRef {
     {
         const std::string& property_name = m_property_name.back();
 
-        IF_CURRENT_VALUE_ELSE(StarType)
+        IF_CURRENT_VALUE(StarType)
 
         if (boost::iequals(property_name, "StarType")) {
             const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
@@ -417,14 +422,15 @@ namespace ValueRef {
     template <>
     double Variable<double>::Eval(const ScriptingContext& context) const
     {
+        const std::string& property_name = m_property_name.back();
+
+        IF_CURRENT_VALUE(double)
+
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0.0;
         }
-        const std::string& property_name = m_property_name.back();
-
-        IF_CURRENT_VALUE_ELSE(double)
 
         if        (boost::iequals(property_name, "Population")) {
             return object->InitialMeterValue(METER_POPULATION);
@@ -543,14 +549,15 @@ namespace ValueRef {
     template <>
     int Variable<int>::Eval(const ScriptingContext& context) const
     {
+        const std::string& property_name = m_property_name.back();
+
+        IF_CURRENT_VALUE(int)
+
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0;
         }
-        const std::string& property_name = m_property_name.back();
-
-        IF_CURRENT_VALUE_ELSE(int)
 
         if (boost::iequals(property_name, "Owner")) {
             if (object->Owners().size() == 1)
@@ -612,14 +619,15 @@ namespace ValueRef {
     template <>
     std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     {
+        const std::string& property_name = m_property_name.back();
+
+        IF_CURRENT_VALUE(std::string)
+
         const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return "";
         }
-        const std::string& property_name = m_property_name.back();
-
-        IF_CURRENT_VALUE_ELSE(std::string)
 
         if (boost::iequals(property_name, "Name")) {
             return object->Name();
@@ -641,7 +649,7 @@ namespace ValueRef {
         return "";
     }
 
-#undef IF_CURRENT_VALUE_ELSE
+#undef IF_CURRENT_VALUE
 }
 
 ///////////////////////////////////////////////////////////
