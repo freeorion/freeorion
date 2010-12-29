@@ -63,15 +63,15 @@ ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
 {}
 
 ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
-                                   const UniverseObject* condition_local_candidate_):
-    source(parent_context.source),
-    effect_target(parent_context.effect_target),
-    condition_root_candidate(parent_context.condition_root_candidate ?
-                                parent_context.condition_root_candidate :
-                                parent_context.condition_local_candidate),  // if parent context doesn't already have a root candidate, the new local candidate is the root
-    condition_parent_candidate(parent_context.condition_local_candidate),   // parent_context's local candidate is this new context's parent candidate
-    condition_local_candidate(condition_local_candidate_),                  // new local candidate
-    current_value(parent_context.current_value)
+                                   const UniverseObject* condition_local_candidate):
+    source(                     parent_context.source),
+    effect_target(              parent_context.effect_target),
+    condition_root_candidate(   parent_context.condition_root_candidate ?
+                                    parent_context.condition_root_candidate :
+                                    condition_local_candidate),                 // if parent context doesn't already have a root candidate, the new local candidate is the root
+    condition_parent_candidate( parent_context.condition_local_candidate),      // parent_context's local candidate is this new context's parent candidate
+    condition_local_candidate(  condition_local_candidate),                     // new local candidate
+    current_value(              parent_context.current_value)
 {}
 
 ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
@@ -109,7 +109,7 @@ namespace {
             << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
             << " parent c: " << (context.condition_parent_candidate ? context.condition_parent_candidate->Name() : "0")
             << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
-        const ObjectMap& objects = GetMainObjectMap();
+
         const UniverseObject* obj(0);
         switch(ref_type) {
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
@@ -121,6 +121,7 @@ namespace {
             return 0;
         }
 
+        const ObjectMap& objects = GetMainObjectMap();
         while (first != last) {
             const std::string& property_name = *first;
             if (boost::iequals(property_name, "Planet")) {
