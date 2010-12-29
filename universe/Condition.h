@@ -265,6 +265,7 @@ private:
 struct Condition::Type : Condition::ConditionBase
 {
     Type(const ValueRef::ValueRefBase<UniverseObjectType>* type);
+    virtual ~Type();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -322,6 +323,7 @@ private:
 struct Condition::Contains : Condition::ConditionBase
 {
     Contains(const ConditionBase* condition);
+    virtual ~Contains();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -341,6 +343,7 @@ private:
 struct Condition::ContainedBy : Condition::ConditionBase
 {
     ContainedBy(const ConditionBase* condition);
+    virtual ~ContainedBy();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -668,16 +671,22 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** CanHaveStarlaneConnection*/
+/** Matches objects that are in systems that could have starlanes added between
+  * them and all (not just one) of the systems containing (or that are) one of
+  * the objects matched by \a condition.  "Could have starlanes added" means
+  * that a lane would be geometrically acceptable, meaning it wouldn't cross
+  * any other lanes, pass too close to another system, or be too close in angle
+  * to an existing lane. */
 struct Condition::CanHaveStarlaneConnection :  Condition::ConditionBase
 {
     CanHaveStarlaneConnection(const ConditionBase* condition);
     virtual ~CanHaveStarlaneConnection();
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
     const ConditionBase*               m_condition;
 
     friend class boost::serialization::access;

@@ -3209,6 +3209,12 @@ DESC_WITHIN_STARLANE_JUMPS
 DESC_WITHIN_STARLANE_JUMPS_NOT
  that is not within %1% starlane jumps of any object%2%
 
+DESC_CAN_HAVE_STARLANE_CONNECTION_BY
+ that can have starlanes to all systems that contain objects%1%
+
+DESC_CAN_HAVE_STARLANE_CONNECTION_BY_NOT
+that can not have starlanes to all systems that contain objects%1%
+
 DESC_EXPLORED_BY_SINGLE_EMPIRE
  that has been explored by the %1% empire
 

@@ -121,12 +121,12 @@ std::string Condition::Number::Dump() const
 
 void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    // TODO: Evaluate m_condition for each object being tested, so that
-    //       the condition_local_candidate can be updated.
-    //       Use case: matching objects that have some number of
-    //       objects near them.
-    const UniverseObject* candidate(0);
-    ScriptingContext local_context(parent_context, candidate);
+    // Number does not have a single valid local candidate to be matched, as it
+    // will match anything if the proper number of objects match the
+    // subcondition.  So, the local context that is passed to the subcondition
+    // needs to have a null local candidate.
+    const UniverseObject* no_object(0);
+    ScriptingContext local_context(parent_context, no_object);
 
     // get set of all UniverseObjects that satisfy m_condition
     ObjectSet condition_targets;
@@ -711,9 +711,8 @@ Condition::Homeworld::Homeworld(const std::vector<const ValueRef::ValueRefBase<s
 
 Condition::Homeworld::~Homeworld()
 {
-    for (unsigned int i = 0; i < m_names.size(); ++i) {
+    for (unsigned int i = 0; i < m_names.size(); ++i)
         delete m_names[i];
-    }
 }
 
 std::string Condition::Homeworld::Description(bool negated/* = false*/) const
@@ -841,6 +840,11 @@ bool Condition::Capitol::Match(const ScriptingContext& local_context) const
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
     m_type(type)
 {}
+
+Condition::Type::~Type()
+{
+    delete m_type;
+}
 
 std::string Condition::Type::Description(bool negated/* = false*/) const
 {
@@ -1018,6 +1022,11 @@ Condition::Contains::Contains(const ConditionBase* condition) :
     m_condition(condition)
 {}
 
+Condition::Contains::~Contains()
+{
+    delete m_condition;
+}
+
 std::string Condition::Contains::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_CONTAINS";
@@ -1067,6 +1076,11 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const
 Condition::ContainedBy::ContainedBy(const ConditionBase* condition) :
     m_condition(condition)
 {}
+
+Condition::ContainedBy::~ContainedBy()
+{
+    delete m_condition;
+}
 
 std::string Condition::ContainedBy::Description(bool negated/* = false*/) const
 {
@@ -2261,6 +2275,70 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
     }
 
     return false;
+}
+
+///////////////////////////////////////////////////////////
+// CanHaveStarlaneConnection                             //
+///////////////////////////////////////////////////////////
+Condition::CanHaveStarlaneConnection::CanHaveStarlaneConnection(const ConditionBase* condition) :
+    m_condition(condition)
+{}
+
+Condition::CanHaveStarlaneConnection::~CanHaveStarlaneConnection()
+{
+    delete m_condition;
+}
+
+std::string Condition::CanHaveStarlaneConnection::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_CAN_HAVE_STARLANE_CONNECTION_BY";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
+}
+
+std::string Condition::CanHaveStarlaneConnection::Dump() const
+{
+    std::string retval = DumpIndent() + "CanHaveStarlaneConnection condition =\n";
+    ++g_indent;
+        retval += m_condition->Dump();
+    --g_indent;
+    return retval;
+}
+
+bool Condition::CanHaveStarlaneConnection::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "CanHaveStarlaneConnection::Match passed no candidate object";
+        return false;
+    }
+
+    ObjectMap& objects = GetUniverse().Objects();
+
+    // get objects to be considering for matching against subcondition
+    ObjectSet subcondition_non_matches;
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+        subcondition_non_matches.insert(it->second);
+    ObjectSet subcondition_matches;
+
+    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+
+    // assemble all systems in or containing objects in subcondition matches
+    ObjectSet destination_systems;
+    for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it)
+        if (const System* system = objects.Object<System>((*it)->SystemID()))
+            destination_systems.insert(system);
+
+    if (destination_systems.empty())
+        return false;
+
+    // can the candidate object have starlanes to all destination systems?
+    for (ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
+        return false;
+    }
+
+    return true;
 }
 
 ///////////////////////////////////////////////////////////
