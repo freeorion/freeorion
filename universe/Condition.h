@@ -774,11 +774,12 @@ struct Condition::And : Condition::ConditionBase
 {
     And(const std::vector<const ConditionBase*>& operands);
     virtual ~And();
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
     std::vector<const ConditionBase*> m_operands;
 
     friend class boost::serialization::access;
@@ -791,11 +792,12 @@ struct Condition::Or : Condition::ConditionBase
 {
     Or(const std::vector<const ConditionBase*>& operands);
     virtual ~Or();
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
     std::vector<const ConditionBase*> m_operands;
 
     friend class boost::serialization::access;
@@ -808,14 +810,12 @@ struct Condition::Not : Condition::ConditionBase
 {
     Not(const ConditionBase* operand);
     virtual ~Not();
-    virtual void        Eval(const ScriptingContext& parent_context,
-                             Condition::ObjectSet& matches,
-                             Condition::ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
     const ConditionBase* m_operand;
 
     friend class boost::serialization::access;

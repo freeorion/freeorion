@@ -2618,66 +2618,17 @@ Condition::And::~And()
     }
 }
 
-void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+bool Condition::And::Match(const ScriptingContext& local_context) const
 {
-    //std::cout << "And::Eval: input matches:" << std::endl;
-    //for (ObjectSet::const_iterator it = matches.begin(); it != matches.end(); ++it)
-    //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
-    //std::cout << std::endl;
-
-    //std::cout << "And::Eval: input non_matches:" << std::endl;
-    //for (ObjectSet::const_iterator it = non_matches.begin(); it != non_matches.end(); ++it)
-    //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
-    //std::cout << std::endl;
-
-    // And does not have a valid local candidate to be matched
-    // before the subcondition is evaluated, so the local context that is
-    // passed to the subcondition needs to have a null local candidate.
-    const UniverseObject* no_object(0);
-    ScriptingContext local_context(parent_context, no_object);
-
-
-    if (search_domain == NON_MATCHES) {
-        ObjectSet partly_checked_non_matches;
-
-        // move items in non_matches set that pass first operand condition into
-        // partly_checked_non_targets set
-        m_operands[0]->Eval(local_context, partly_checked_non_matches, non_matches, NON_MATCHES);
-
-        //std::cout << "And::Eval: non_target input objects meeting first condition: " << m_operands[0]->Dump() << std::endl;
-        //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
-        //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
-        //std::cout << std::endl;
-
-        // move items that don't pass one of the other conditions back to non_matches
-        for (unsigned int i = 1; i < m_operands.size(); ++i) {
-            if (partly_checked_non_matches.empty()) break;
-            m_operands[i]->Eval(local_context, partly_checked_non_matches, non_matches, MATCHES);
-
-            //std::cout << "And::Eval: non_target input objects also meeting " << i + 1 <<"th condition: " << m_operands[i]->Dump() << std::endl;
-            //for (ObjectSet::const_iterator it = partly_checked_non_targets.begin(); it != partly_checked_non_targets.end(); ++it)
-            //    std::cout << "... " << (*it)->TypeName() << " " << (*it)->Name() << std::endl;
-            //std::cout << std::endl;
-        }
-
-        // merge items that passed all operand conditions into matches
-        matches.insert(partly_checked_non_matches.begin(), partly_checked_non_matches.end());
-
-        // items already in matches set are not checked, and remain in matches set even if
-        // they don't match one of the operand conditions
-
-    } else /*(search_domain == MATCHES)*/ {
-        // check all operand conditions on all objects in the matches set, moving those
-        // that don't pass a condition to the non-matches set
-
-        for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            if (matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, non_matches, MATCHES);
-        }
-
-        // items already in non_matches set are not checked, and remain in non_matches set
-        // even if they pass all operand conditions
+    ObjectSet non_match;
+    ObjectSet match;        match.insert(local_context.condition_local_candidate);
+    // candidate must match all subconditions
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it) {
+        (*it)->Eval(local_context, match, non_match, MATCHES);
+        if (match.empty())
+            return false;
     }
+    return true;
 }
 
 std::string Condition::And::Description(bool negated/* = false*/) const
@@ -2725,48 +2676,17 @@ Condition::Or::~Or()
     }
 }
 
-void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+bool Condition::Or::Match(const ScriptingContext& local_context) const
 {
-    // Or does not have a valid local candidate to be matched
-    // before the subcondition is evaluated, so the local context that is
-    // passed to the subcondition needs to have a null local candidate.
-    const UniverseObject* no_object(0);
-    ScriptingContext local_context(parent_context, no_object);
-
-
-    if (search_domain == NON_MATCHES) {
-        // check each item in the non-matches set against each of the operand conditions
-        // if a non-candidate item matches an operand condition, move the item to the
-        // matches set.
-
-        for (unsigned int i = 0; i < m_operands.size(); ++i) {
-            if (non_matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, non_matches, NON_MATCHES);
-        }
-
-        // items already in matches set are not checked and remain in the
-        // matches set even if they fail all the operand conditions
-
-    } else {
-        ObjectSet partly_checked_matches;
-
-        // move items in matches set the fail the first operand condition into 
-        // partly_checked_targets set
-        m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
-
-        // move items that pass any of the other conditions back into matches
-        for (unsigned int i = 1; i < m_operands.size(); ++i) {
-            if (partly_checked_matches.empty()) break;
-            m_operands[i]->Eval(local_context, matches, partly_checked_matches, NON_MATCHES);
-        }
-
-        // merge items that failed all operand conditions into non_matches
-        non_matches.insert(partly_checked_matches.begin(), partly_checked_matches.end());
-
-        // items already in non_matches set are not checked and remain in
-        // non_matches set even if they pass one or more of the operand 
-        // conditions
+    ObjectSet non_match;    non_match.insert(local_context.condition_local_candidate);
+    ObjectSet match;
+    // candidate must match at least one subcondition
+    for (std::vector<const ConditionBase*>::const_iterator it = m_operands.begin(); it != m_operands.end(); ++it) {
+        (*it)->Eval(local_context, match, non_match);
+        if (non_match.empty())
+            return true;
     }
+    return false;
 }
 
 std::string Condition::Or::Description(bool negated/* = false*/) const
@@ -2812,23 +2732,12 @@ Condition::Not::~Not()
     delete m_operand;
 }
 
-void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+bool Condition::Not::Match(const ScriptingContext& local_context) const
 {
-    // Not does not have a valid local candidate to be matched
-    // before the subcondition is evaluated, so the local context that is
-    // passed to the subcondition needs to have a null local candidate.
-    const UniverseObject* no_object(0);
-    ScriptingContext local_context(parent_context, no_object);
-
-    if (search_domain == NON_MATCHES) {
-        // search non_matches set for items that don't meet the operand
-        // condition, and move those to the matches set
-        m_operand->Eval(local_context, non_matches, matches, MATCHES); // swapping order of matches and non_matches set parameters and MATCHES / NON_MATCHES search domain effects NOT on requested search domain
-    } else {
-        // search matches set for items that meet the operand condition
-        // condition, and move those to the non_matches set
-        m_operand->Eval(local_context, non_matches, matches, NON_MATCHES);
-    }
+    ObjectSet non_match;    non_match.insert(local_context.condition_local_candidate);
+    ObjectSet match;
+    m_operand->Eval(local_context, match, non_match);
+    return match.empty();
 }
 
 std::string Condition::Not::Description(bool negated/* = false*/) const
