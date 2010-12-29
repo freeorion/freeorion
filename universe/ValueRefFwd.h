@@ -6,6 +6,15 @@
   * subclasses represent expression trees that may be evaluated at various
   * times, and which refer to both constant and variable values. */
 namespace ValueRef {
+    enum ReferenceType {
+        INVALID_REFERENCE_TYPE = -1,
+        NON_OBJECT_REFERENCE,               // ValueRef::Variable is not evalulated on any specific object
+        SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
+        EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
+        CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
+        CONDITION_PARENT_CANDIDATE_REFERENCE,//ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a root condition, this will reference any object, but in a subcondition of another condition, the enclosing condition's candidate object will be reference.
+        CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
+    };
     template <class T> struct ValueRefBase;
     template <class T> struct Constant;
     template <class T> struct Variable;

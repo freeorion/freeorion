@@ -119,9 +119,11 @@ namespace {
         return fleet;
     }
 
-    /** Explores the system with the specified \a system_id for the owner of the specified \a target_object.  Used when
-        moving objects into a system with the MoveTo effect, as otherwise the system wouldn't get explored, and objects
-        being moved into unexplored systems might disappear for players or confuse the AI. */
+    /** Explores the system with the specified \a system_id for the owner of
+      * the specified \a target_object.  Used when moving objects into a system
+      * with the MoveTo effect, as otherwise the system wouldn't get explored,
+      * and objects being moved into unexplored systems might disappear for
+      * players or confuse the AI. */
     void ExploreSystem(int system_id, const UniverseObject* target_object) {
         if (!target_object) return;
         const std::set<int>& owners = target_object->Owners();
@@ -275,7 +277,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
     // had matched an activation condition.
     if (m_activation) {
         non_targets.insert(source);
-        m_activation->Eval(source, matched_targets, non_targets);
+        m_activation->Eval(ScriptingContext(source), matched_targets, non_targets);
 
         // if the activation condition did not evaluate to true for the source object, do nothing
         if (matched_targets.empty())
@@ -289,7 +291,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
     non_targets = EffectTargetSetToConditionObjectSet(potential_targets);
 
     // evaluate the scope condition
-    m_scope->Eval(source, matched_targets, non_targets);
+    m_scope->Eval(ScriptingContext(source), matched_targets, non_targets);
 
     // convert result back to TargetSet
     targets = ConditionObjectSetToEffectTargetSet(matched_targets);
@@ -316,7 +318,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
     for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
         //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
         for (unsigned int i = 0; i < m_effects.size(); ++i)
-            m_effects[i]->Execute(source, *it);
+            m_effects[i]->Execute(ScriptingContext(source, *it));
     }
 }
 
@@ -333,7 +335,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_i
 
     // execute effect on targets
     for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
-        m_effects[effect_index]->Execute(source, *it);
+        m_effects[effect_index]->Execute(ScriptingContext(source, *it));
 }
 
 const std::string& EffectsGroup::StackingGroup() const
@@ -456,12 +458,16 @@ SetMeter::~SetMeter()
     delete m_value;
 }
 
-void SetMeter::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetMeter::Execute(const ScriptingContext& context) const
 {
-    if (Meter* m = target->GetMeter(m_meter)) {
-        double val = m_value->Eval(source, target, m->Current());
-        m->SetCurrent(val);
-    }
+    if (!context.effect_target)
+        return;
+    Meter* m = context.effect_target->GetMeter(m_meter);
+    if (!m)
+        return;
+
+    double val = m_value->Eval(ScriptingContext(context, m->Current()));
+    m->SetCurrent(val);
 }
 
 std::string SetMeter::Description() const
@@ -582,17 +588,17 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
 SetShipPartMeter::~SetShipPartMeter()
 { delete m_value; }
 
-void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetShipPartMeter::Execute(const ScriptingContext& context) const
 {
-    if (!target) {
+    if (!context.effect_target) {
         Logger().debugStream() << "SetShipPartMeter::Execute passed null target pointer";
         return;
     }
 
-    Ship* ship = universe_object_cast<Ship*>(target);
+    Ship* ship = universe_object_cast<Ship*>(context.effect_target);
     if (!ship) {
         Logger().errorStream() << "SetShipPartMeter::Execute acting on non-ship target:";
-        target->Dump();
+        context.effect_target->Dump();
         return;
     }
 
@@ -621,7 +627,7 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
         // verify that found part matches the target part type information for
         // this effect: same name, same class and slot type, or same fighter type
         if (PartMatchesEffect(*target_part, m_part_class, m_fighter_type, m_part_name, m_slot_type)) {
-            double val = m_value->Eval(source, target, meter->Current());
+            double val = m_value->Eval(ScriptingContext(context, meter->Current()));
             meter->SetCurrent(val);
         }
     }
@@ -629,8 +635,10 @@ void SetShipPartMeter::Execute(const UniverseObject* source, UniverseObject* tar
 
 std::string SetShipPartMeter::Description() const
 {
-    std::string value_str =         ValueRef::ConstantExpr(m_value) ?           lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) :          m_value->Description();
-    std::string meter_str =         UserString(lexical_cast<std::string>(m_meter));
+    std::string value_str = ValueRef::ConstantExpr(m_value) ?
+                                lexical_cast<std::string>(m_value->Eval()) :
+                                m_value->Description();
+    std::string meter_str = UserString(lexical_cast<std::string>(m_meter));
 
     // TODO: indicate slot restrictions in SetShipPartMeter descriptions...
 
@@ -699,7 +707,7 @@ std::string SetShipPartMeter::Dump() const
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner")),
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner")),
     m_meter(meter),
     m_value(value)
 {}
@@ -716,9 +724,9 @@ SetEmpireMeter::~SetEmpireMeter()
     delete m_value;
 }
 
-void SetEmpireMeter::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetEmpireMeter::Execute(const ScriptingContext& context) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
+    int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
@@ -732,15 +740,19 @@ void SetEmpireMeter::Execute(const UniverseObject* source, UniverseObject* targe
         return;
     }
 
-    double value = m_value->Eval(source, target, meter->Current());
+    double value = m_value->Eval(ScriptingContext(context, meter->Current()));
 
     meter->SetCurrent(value);
 }
 
 std::string SetEmpireMeter::Description() const
 {
-    std::string empire_str =    ValueRef::ConstantExpr(m_empire_id) ?   Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() :   m_empire_id->Description();
-    std::string value_str =     ValueRef::ConstantExpr(m_value) ?       lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) :      m_value->Description();
+    std::string empire_str =    ValueRef::ConstantExpr(m_empire_id) ?
+                                    Empires().Lookup(m_empire_id->Eval())->Name() :
+                                    m_empire_id->Description();
+    std::string value_str =     ValueRef::ConstantExpr(m_value) ?
+                                    lexical_cast<std::string>(m_value->Eval()) :
+                                    m_value->Description();
 
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_METER"))
                % empire_str
@@ -758,7 +770,7 @@ std::string SetEmpireMeter::Dump() const
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner")),
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner")),
     m_stockpile(stockpile),
     m_value(value)
 {}
@@ -775,9 +787,9 @@ SetEmpireStockpile::~SetEmpireStockpile()
     delete m_value;
 }
 
-void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetEmpireStockpile::Execute(const ScriptingContext& context) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
+    int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
@@ -785,14 +797,18 @@ void SetEmpireStockpile::Execute(const UniverseObject* source, UniverseObject* t
         return;
     }
 
-    double value = m_value->Eval(source, target, empire->ResourceStockpile(m_stockpile));
+    double value = m_value->Eval(ScriptingContext(context, empire->ResourceStockpile(m_stockpile)));
     empire->SetResourceStockpile(m_stockpile, value);
 }
 
 std::string SetEmpireStockpile::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
-    std::string value_str = ValueRef::ConstantExpr(m_value) ? lexical_cast<std::string>(m_value->Eval(0, 0, boost::any())) : m_value->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                Empires().Lookup(m_empire_id->Eval())->Name() :
+                                m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_value) ?
+                                lexical_cast<std::string>(m_value->Eval()) :
+                                m_value->Description();
 
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_STOCKPILE"))
                % UserString(lexical_cast<std::string>(m_stockpile))
@@ -818,7 +834,7 @@ std::string SetEmpireStockpile::Dump() const
 // SetEmpireCapitol                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapitol::SetEmpireCapitol() :
-    m_empire_id(new ValueRef::Variable<int>(false, "Target.Owner"))
+    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner"))
 {}
 
 SetEmpireCapitol::SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id) :
@@ -830,15 +846,15 @@ SetEmpireCapitol::~SetEmpireCapitol()
     delete m_empire_id;
 }
 
-void SetEmpireCapitol::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetEmpireCapitol::Execute(const ScriptingContext& context) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
+    int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
     if (empire)
         return;
 
-    const Planet* planet = universe_object_cast<const Planet*>(target);
+    const Planet* planet = universe_object_cast<const Planet*>(context.effect_target);
     if (!planet)
         return;
 
@@ -851,7 +867,9 @@ void SetEmpireCapitol::Execute(const UniverseObject* source, UniverseObject* tar
 
 std::string SetEmpireCapitol::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                Empires().Lookup(m_empire_id->Eval())->Name() :
+                                m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITOL")) % empire_str);
 }
 
@@ -873,10 +891,10 @@ SetPlanetType::~SetPlanetType()
     delete m_type;
 }
 
-void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetPlanetType::Execute(const ScriptingContext& context) const
 {
-    if (Planet* p = universe_object_cast<Planet*>(target)) {
-        PlanetType type = m_type->Eval(source, target, p->Type());
+    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+        PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
         p->SetType(type);
         if (type == PT_ASTEROIDS)
             p->SetSize(SZ_ASTEROIDS);
@@ -891,7 +909,9 @@ void SetPlanetType::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string SetPlanetType::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_type) ?
+                                UserString(lexical_cast<std::string>(m_type->Eval())) :
+                                m_type->Description();
     return str(FlexibleFormat(UserString("DESC_SET_PLANET_TYPE")) % value_str);
 }
 
@@ -913,10 +933,10 @@ SetPlanetSize::~SetPlanetSize()
     delete m_size;
 }
 
-void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetPlanetSize::Execute(const ScriptingContext& context) const
 {
-    if (Planet* p = universe_object_cast<Planet*>(target)) {
-        PlanetSize size = m_size->Eval(source, target, p->Size());
+    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+        PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
         p->SetSize(size);
         if (size == SZ_ASTEROIDS)
             p->SetType(PT_ASTEROIDS);
@@ -929,7 +949,9 @@ void SetPlanetSize::Execute(const UniverseObject* source, UniverseObject* target
 
 std::string SetPlanetSize::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0, boost::any()))) : m_size->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_size) ?
+                                UserString(lexical_cast<std::string>(m_size->Eval())) :
+                                m_size->Description();
     return str(FlexibleFormat(UserString("DESC_SET_PLANET_SIZE")) % value_str);
 }
 
@@ -951,20 +973,22 @@ SetSpecies::~SetSpecies()
     delete m_species_name;
 }
 
-void SetSpecies::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetSpecies::Execute(const ScriptingContext& context) const
 {
-    if (Planet* p = universe_object_cast<Planet*>(target)) {
-        std::string species_name = m_species_name->Eval(source, target, p->SpeciesName());
+    if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
+        std::string species_name = m_species_name->Eval(ScriptingContext(context, p->SpeciesName()));
         p->SetSpecies(species_name);
-    } else if (Ship* s = universe_object_cast<Ship*>(target)) {
-        std::string species_name = m_species_name->Eval(source, target, s->SpeciesName());
+    } else if (Ship* s = universe_object_cast<Ship*>(context.effect_target)) {
+        std::string species_name = m_species_name->Eval(ScriptingContext(context, s->SpeciesName()));
         s->SetSpecies(species_name);
     }
 }
 
 std::string SetSpecies::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_species_name) ? UserString(m_species_name->Eval(0, 0, boost::any())) : m_species_name->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_species_name) ?
+                                UserString(m_species_name->Eval()) :
+                                m_species_name->Description();
     return str(FlexibleFormat(UserString("DESC_SET_SPECIES")) % value_str);
 }
 
@@ -986,16 +1010,20 @@ AddOwner::~AddOwner()
     delete m_empire_id;
 }
 
-void AddOwner::Execute(const UniverseObject* source, UniverseObject* target) const
+void AddOwner::Execute(const ScriptingContext& context) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
-    assert(Empires().Lookup(empire_id));
-    target->AddOwner(empire_id);
+    int empire_id = m_empire_id->Eval(context);
+    if (Empires().Lookup(empire_id))
+        return;
+    if (context.effect_target)
+        context.effect_target->AddOwner(empire_id);
 }
 
 std::string AddOwner::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                Empires().Lookup(m_empire_id->Eval())->Name() :
+                                m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_ADD_OWNER")) % value_str);
 }
 
@@ -1017,20 +1045,22 @@ RemoveOwner::~RemoveOwner()
     delete m_empire_id;
 }
 
-void RemoveOwner::Execute(const UniverseObject* source, UniverseObject* target) const
+void RemoveOwner::Execute(const ScriptingContext& context) const
 {
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
+    int empire_id = m_empire_id->Eval(context);
+    if (!Empires().Lookup(empire_id)) {
         Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
         return;
     }
-    target->RemoveOwner(empire_id);
+    if (context.effect_target)
+        context.effect_target->RemoveOwner(empire_id);
 }
 
 std::string RemoveOwner::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                Empires().Lookup(m_empire_id->Eval())->Name() :
+                                m_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_REMOVE_OWNER")) % value_str);
 }
 
@@ -1054,16 +1084,27 @@ CreatePlanet::~CreatePlanet()
     delete m_size;
 }
 
-void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target) const
+void CreatePlanet::Execute(const ScriptingContext& context) const
 {
-    System* location = GetObject<System>(target->SystemID());
+    if (!context.effect_target) {
+        Logger().errorStream() << "CreatePlanet::Execute passed no target object";
+        return;
+    }
+    System* location = GetObject<System>(context.effect_target->SystemID());
     if (!location) {
         Logger().errorStream() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
     }
 
-    PlanetSize size = m_size->Eval(source, target, boost::any());
-    PlanetType type = m_type->Eval(source, target, boost::any());
+    PlanetSize target_size = INVALID_PLANET_SIZE;
+    PlanetType target_type = INVALID_PLANET_TYPE;
+    if (const Planet* location_planet = universe_object_cast<const Planet*>(context.effect_target)) {
+        target_size = location_planet->Size();
+        target_type = location_planet->Type();
+    }
+
+    PlanetSize size = m_size->Eval(ScriptingContext(context, target_size));
+    PlanetType type = m_type->Eval(ScriptingContext(context, target_type));
     if (size == INVALID_PLANET_SIZE || type == INVALID_PLANET_TYPE) {
         Logger().errorStream() << "CreatePlanet::Execute got invalid size or type of planet to create...";
         return;
@@ -1077,7 +1118,10 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
     }
 
     Planet* planet = new Planet(type, size);
-    assert(planet);
+    if (!planet) {
+        Logger().errorStream() << "CreatePlanet::Execute unable to create new Planet object";
+        return;
+    }
     int new_planet_id = GetNewObjectID();
     GetUniverse().InsertID(planet, new_planet_id);
 
@@ -1087,8 +1131,12 @@ void CreatePlanet::Execute(const UniverseObject* source, UniverseObject* target)
 
 std::string CreatePlanet::Description() const
 {
-    std::string type_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
-    std::string size_str = ValueRef::ConstantExpr(m_size) ? UserString(lexical_cast<std::string>(m_size->Eval(0, 0, boost::any()))) : m_size->Description();
+    std::string type_str = ValueRef::ConstantExpr(m_type) ?
+                                UserString(lexical_cast<std::string>(m_type->Eval())) :
+                                m_type->Description();
+    std::string size_str = ValueRef::ConstantExpr(m_size) ?
+                                UserString(lexical_cast<std::string>(m_size->Eval())) :
+                                m_size->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_PLANET"))
                % type_str
@@ -1113,15 +1161,22 @@ CreateBuilding::~CreateBuilding()
     delete m_building_type_name;
 }
 
-void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* target) const
+void CreateBuilding::Execute(const ScriptingContext& context) const
 {
-    Planet* location = universe_object_cast<Planet*>(target);
+    if (!context.effect_target) {
+        Logger().errorStream() << "CreateBuilding::Execute passed no target object";
+        return;
+    }
+    Planet* location = universe_object_cast<Planet*>(context.effect_target);
+    if (!location)
+        if (Building* location_building = universe_object_cast<Building*>(context.effect_target))
+            location = GetObject<Planet>(location_building->PlanetID());
     if (!location) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
         return;
     }
 
-    std::string building_type_name = m_building_type_name->Eval(source, target, boost::any());
+    std::string building_type_name = m_building_type_name->Eval(context);
     const BuildingType* building_type = GetBuildingType(building_type_name);
     if (!building_type) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't get building type";
@@ -1146,7 +1201,9 @@ void CreateBuilding::Execute(const UniverseObject* source, UniverseObject* targe
 
 std::string CreateBuilding::Description() const
 {
-    std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ? UserString(lexical_cast<std::string>(m_building_type_name->Eval(0, 0, boost::any()))) : m_building_type_name->Description();
+    std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ?
+                                UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
+                                m_building_type_name->Description();
     return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
                % UserString(type_str));
 }
@@ -1185,14 +1242,14 @@ CreateShip::~CreateShip()
     delete m_species_name;
 }
 
-void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) const
+void CreateShip::Execute(const ScriptingContext& context) const
 {
-    if (!target) {
+    if (!context.effect_target) {
         Logger().errorStream() << "CreateShip::Execute passed null target";
         return;
     }
 
-    System* system = GetObject<System>(target->SystemID());
+    System* system = GetObject<System>(context.effect_target->SystemID());
     if (!system) {
         Logger().errorStream() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -1201,7 +1258,7 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
     int design_id = ShipDesign::INVALID_DESIGN_ID;
 
     if (m_design_id) {
-        design_id = m_design_id->Eval(source, target, boost::any());
+        design_id = m_design_id->Eval(context);
         if (!GetShipDesign(design_id)) {
             Logger().errorStream() << "CreateShip::Execute couldn't get ship design with id: " << design_id;
             return;
@@ -1219,14 +1276,14 @@ void CreateShip::Execute(const UniverseObject* source, UniverseObject* target) c
         return;
     }
 
-    int empire_id = m_empire_id->Eval(source, target, boost::any());
+    int empire_id = m_empire_id->Eval(context);
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
         return;
     }
 
-    std::string species_name = m_species_name->Eval(source, target, boost::any());
+    std::string species_name = m_species_name->Eval(context);
     if (!GetSpecies(species_name)) {
         Logger().errorStream() << "CreateShip::Execute couldn't get species with which to create a ship";
         return;
@@ -1262,7 +1319,7 @@ std::string CreateShip::Description() const
 {
     std::string empire_str = UserString("ERROR");
     if (ValueRef::ConstantExpr(m_empire_id)) {
-        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval(0, 0, boost::any())))
+        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
             empire_str = empire->Name();
     } else {
         empire_str = m_empire_id->Description();
@@ -1271,7 +1328,7 @@ std::string CreateShip::Description() const
     std::string design_str = UserString("ERROR");
     if (m_design_id) {
         if (ValueRef::ConstantExpr(m_design_id)) {
-            if (const ShipDesign* design = GetShipDesign(m_design_id->Eval(0, 0, boost::any())))
+            if (const ShipDesign* design = GetShipDesign(m_design_id->Eval()))
                 design_str = design->Name();
         } else {
             design_str = m_design_id->Description();
@@ -1280,7 +1337,9 @@ std::string CreateShip::Description() const
         design_str = UserString(m_design_name);
     }
 
-    std::string species_str = ValueRef::ConstantExpr(m_species_name) ? UserString(m_species_name->Eval(0, 0, boost::any())) : m_species_name->Description();
+    std::string species_str = ValueRef::ConstantExpr(m_species_name) ?
+                                UserString(m_species_name->Eval()) :
+                                m_species_name->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
                % design_str
@@ -1307,9 +1366,13 @@ std::string CreateShip::Dump() const
 Destroy::Destroy()
 {}
 
-void Destroy::Execute(const UniverseObject* source, UniverseObject* target) const
+void Destroy::Execute(const ScriptingContext& context) const
 {
-    GetUniverse().EffectDestroy(target->ID());
+    if (!context.effect_target) {
+        Logger().errorStream() << "Destroy::Execute passed no target object";
+        return;
+    }
+    GetUniverse().EffectDestroy(context.effect_target->ID());
 }
 
 std::string Destroy::Description() const
@@ -1330,9 +1393,13 @@ AddSpecial::AddSpecial(const std::string& name) :
     m_name(name)
 {}
 
-void AddSpecial::Execute(const UniverseObject* source, UniverseObject* target) const
+void AddSpecial::Execute(const ScriptingContext& context) const
 {
-    target->AddSpecial(m_name);
+    if (!context.effect_target) {
+        Logger().errorStream() << "AddSpecial::Execute passed no target object";
+        return;
+    }
+    context.effect_target->AddSpecial(m_name);
 }
 
 std::string AddSpecial::Description() const
@@ -1353,9 +1420,13 @@ RemoveSpecial::RemoveSpecial(const std::string& name) :
     m_name(name)
 {}
 
-void RemoveSpecial::Execute(const UniverseObject* source, UniverseObject* target) const
+void RemoveSpecial::Execute(const ScriptingContext& context) const
 {
-    target->RemoveSpecial(m_name);
+    if (!context.effect_target) {
+        Logger().errorStream() << "RemoveSpecial::Execute pass no target object.";
+        return;
+    }
+    context.effect_target->RemoveSpecial(m_name);
 }
 
 std::string RemoveSpecial::Description() const
@@ -1381,17 +1452,19 @@ AddStarlanes::~AddStarlanes()
     delete m_other_lane_endpoint_condition;
 }
 
-void AddStarlanes::Execute(const UniverseObject* source, UniverseObject* target) const
+void AddStarlanes::Execute(const ScriptingContext& context) const
 {
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
     // get target system
-    if (!target)
+    if (!context.effect_target) {
+        Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
-    System* target_system = universe_object_cast<System*>(target);
+    }
+    System* target_system = universe_object_cast<System*>(context.effect_target);
     if (!target_system)
-        target_system = objects.Object<System>(target->SystemID());
+        target_system = objects.Object<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -1406,7 +1479,7 @@ void AddStarlanes::Execute(const UniverseObject* source, UniverseObject* target)
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(source, endpoint_objects, potential_endpoint_objects);
+    m_other_lane_endpoint_condition->Eval(context, endpoint_objects, potential_endpoint_objects);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (endpoint_objects.empty())
@@ -1457,17 +1530,19 @@ RemoveStarlanes::~RemoveStarlanes()
     delete m_other_lane_endpoint_condition;
 }
 
-void RemoveStarlanes::Execute(const UniverseObject* source, UniverseObject* target) const
+void RemoveStarlanes::Execute(const ScriptingContext& context) const
 {
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
     // get target system
-    if (!target)
+    if (!context.effect_target) {
+        Logger().errorStream() << "AddStarlanes::Execute passed no target object";
         return;
-    System* target_system = universe_object_cast<System*>(target);
+    }
+    System* target_system = universe_object_cast<System*>(context.effect_target);
     if (!target_system)
-        target_system = objects.Object<System>(target->SystemID());
+        target_system = objects.Object<System>(context.effect_target->SystemID());
     if (!target_system)
         return; // nothing to do!
 
@@ -1482,7 +1557,7 @@ void RemoveStarlanes::Execute(const UniverseObject* source, UniverseObject* targ
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
-    m_other_lane_endpoint_condition->Eval(source, endpoint_objects, potential_endpoint_objects);
+    m_other_lane_endpoint_condition->Eval(context, endpoint_objects, potential_endpoint_objects);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (endpoint_objects.empty())
@@ -1533,16 +1608,23 @@ SetStarType::~SetStarType()
     delete m_type;
 }
 
-void SetStarType::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetStarType::Execute(const ScriptingContext& context) const
 {
-    if (System* s = universe_object_cast<System*>(target)) {
-        s->SetStarType(m_type->Eval(source, target, s->GetStarType()));
+    if (!context.effect_target) {
+        Logger().errorStream() << "SetStarType::Execute given no target object";
+        return;
     }
+    if (System* s = universe_object_cast<System*>(context.effect_target))
+        s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
+    else
+        Logger().errorStream() << "SetStarType::Execute given a non-system target";
 }
 
 std::string SetStarType::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_type) ? UserString(lexical_cast<std::string>(m_type->Eval(0, 0, boost::any()))) : m_type->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_type) ?
+                                UserString(lexical_cast<std::string>(m_type->Eval())) :
+                                m_type->Description();
     return str(FlexibleFormat(UserString("DESC_SET_STAR_TYPE")) % value_str);
 }
 
@@ -1564,8 +1646,13 @@ MoveTo::~MoveTo()
     delete m_location_condition;
 }
 
-void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
+void MoveTo::Execute(const ScriptingContext& context) const
 {
+    if (!context.effect_target) {
+        Logger().errorStream() << "MoveTo::Execute given no target object";
+        return;
+    }
+
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
@@ -1577,7 +1664,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
     Condition::ObjectSet valid_locations;
 
     // apply location condition to determine valid location to move target to
-    m_location_condition->Eval(source, valid_locations, potential_locations);
+    m_location_condition->Eval(context, valid_locations, potential_locations);
 
     // early exit if there are no valid locations - can't move anything if there's nowhere to move to
     if (valid_locations.empty())
@@ -1589,13 +1676,13 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
 
     // do the moving...
 
-    if (Fleet* fleet = universe_object_cast<Fleet*>(target)) {
+    if (Fleet* fleet = universe_object_cast<Fleet*>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination object (or the 
         // destination object istelf if it is a system
         if (System* dest_system = GetObject<System>(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
-                dest_system->Insert(target);
-                ExploreSystem(dest_system->ID(), target);
+                dest_system->Insert(fleet);
+                ExploreSystem(dest_system->ID(), fleet);
                 UpdateFleetRoute(fleet, UniverseObject::INVALID_OBJECT_ID, UniverseObject::INVALID_OBJECT_ID);  // inserted into dest_system, so next and previous systems are invalid objects
             }
         } else {
@@ -1625,7 +1712,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
             }
         }
 
-    } else if (Ship* ship = universe_object_cast<Ship*>(target)) {
+    } else if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
         Fleet* old_fleet = GetObject<Fleet>(ship->FleetID());
@@ -1651,7 +1738,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
             Fleet* new_fleet = 0;
             if (System* dest_system = GetObject<System>(destination->SystemID())) {
                 new_fleet = CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
-                ExploreSystem(dest_system->ID(), target);
+                ExploreSystem(dest_system->ID(), ship);
 
             } else {
                 new_fleet = CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
@@ -1661,7 +1748,7 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
         if (old_fleet && old_fleet->NumShips() < 1)
             universe.EffectDestroy(old_fleet->ID());
 
-    } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
+    } else if (Planet* planet = universe_object_cast<Planet*>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
         if (System* dest_system = GetObject<System>(destination->SystemID())) {
             // check if planet is already in this system.  if so, don't need to do anything
@@ -1670,27 +1757,27 @@ void MoveTo::Execute(const UniverseObject* source, UniverseObject* target) const
                 std::set<int> free_orbits = dest_system->FreeOrbits();
                 if (!free_orbits.empty()) {
                     int orbit = *(free_orbits.begin());
-                    dest_system->Insert(target, orbit);
-                    ExploreSystem(dest_system->ID(), target);
+                    dest_system->Insert(planet, orbit);
+                    ExploreSystem(dest_system->ID(), planet);
                 }
             }
         }
         // don't move planets to a location outside a system
 
-    } else if (Building* building = universe_object_cast<Building*>(target)) {
+    } else if (Building* building = universe_object_cast<Building*>(context.effect_target)) {
         // buildings need to be located on planets, so if destination is a planet, insert building into it,
         // or attempt to get the planet on which the destination object is located and insert target building into that
         if (Planet* dest_planet = universe_object_cast<Planet*>(destination)) {
             dest_planet->AddBuilding(building->ID());
             if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
-                ExploreSystem(dest_system->ID(), target);
+                ExploreSystem(dest_system->ID(), building);
 
 
         } else if (Building* dest_building = universe_object_cast<Building*>(destination)) {
             if (Planet* dest_planet = GetObject<Planet>(dest_building->PlanetID())) {
                 dest_planet->AddBuilding(building->ID());
                 if (const System* dest_system = GetObject<System>(dest_planet->SystemID()))
-                    ExploreSystem(dest_system->ID(), target);
+                    ExploreSystem(dest_system->ID(), building);
             }
         }
         // else if destination is something else that can be on a planet...
@@ -1716,9 +1803,13 @@ Victory::Victory(const std::string& reason_string) :
     m_reason_string(reason_string)
 {}
 
-void Victory::Execute(const UniverseObject* source, UniverseObject* target) const
+void Victory::Execute(const ScriptingContext& context) const
 {
-    GetUniverse().EffectVictory(target->ID(), m_reason_string);
+    if (!context.effect_target) {
+        Logger().errorStream() << "Victory::Execute given no target object";
+        return;
+    }
+    GetUniverse().EffectVictory(context.effect_target->ID(), m_reason_string);
 }
 
 std::string Victory::Description() const
@@ -1747,9 +1838,9 @@ SetTechAvailability::~SetTechAvailability()
     delete m_empire_id;
 }
 
-void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* target) const
+void SetTechAvailability::Execute(const ScriptingContext& context) const
 {
-    Empire* empire = Empires().Lookup(m_empire_id->Eval(source, target, boost::any()));
+    Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
     if (!empire) return;
 
     const Tech* tech = GetTech(m_tech_name);
@@ -1777,7 +1868,9 @@ void SetTechAvailability::Execute(const UniverseObject* source, UniverseObject* 
 std::string SetTechAvailability::Description() const
 {
     std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ? Empires().Lookup(m_empire_id->Eval(0, 0, boost::any()))->Name() : m_empire_id->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                Empires().Lookup(m_empire_id->Eval())->Name() :
+                                m_empire_id->Description();
     return str(FlexibleFormat(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
                % affected
                % empire_str);
@@ -1824,9 +1917,9 @@ GenerateSitRepMessage::~GenerateSitRepMessage()
     delete m_recipient_empire_id;
 }
 
-void GenerateSitRepMessage::Execute(const UniverseObject* source, UniverseObject* target) const
+void GenerateSitRepMessage::Execute(const ScriptingContext& context) const
 {
-    Empire* empire = Empires().Lookup(m_recipient_empire_id->Eval(source, target, boost::any()));
+    Empire* empire = Empires().Lookup(m_recipient_empire_id->Eval(context));
     if (!empire) return;
 
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
@@ -1834,7 +1927,7 @@ void GenerateSitRepMessage::Execute(const UniverseObject* source, UniverseObject
          it != m_message_parameters.end();
          ++it)
     {
-        parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(source, target, boost::any())));
+        parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
     }
 
     empire->AddSitRepEntry(CreateSitRep(m_message_string, parameter_tag_values));
@@ -1842,7 +1935,9 @@ void GenerateSitRepMessage::Execute(const UniverseObject* source, UniverseObject
 
 std::string GenerateSitRepMessage::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_recipient_empire_id) ? Empires().Lookup(m_recipient_empire_id->Eval(0, 0, boost::any()))->Name() : m_recipient_empire_id->Description();
+    std::string empire_str = ValueRef::ConstantExpr(m_recipient_empire_id) ?
+                                Empires().Lookup(m_recipient_empire_id->Eval())->Name() :
+                                m_recipient_empire_id->Description();
     return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
 }
 

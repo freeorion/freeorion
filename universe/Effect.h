@@ -12,6 +12,7 @@
 #include <boost/serialization/nvp.hpp>
 
 class UniverseObject;
+struct ScriptingContext;
 
 namespace Condition {
     struct ConditionBase;
@@ -52,6 +53,7 @@ namespace ValueRef {
     template <class T>
     struct ValueRefBase;
 }
+
 
 /** Contains one or more Effects, a Condition which indicates the objects in
   * the scope of the Effect(s), and a Condition which indicates whether or not
@@ -113,7 +115,7 @@ class Effect::EffectBase
 public:
     virtual ~EffectBase();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const = 0;
+    virtual void        Execute(const ScriptingContext& context) const = 0;
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0;
 
@@ -133,7 +135,7 @@ public:
     SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetMeter();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
     MeterType GetMeterType() const {return m_meter;};
@@ -180,7 +182,7 @@ public:
 
     virtual ~SetShipPartMeter();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -207,7 +209,7 @@ public:
     SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireMeter();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -230,7 +232,7 @@ public:
     SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id, ResourceType stockpile, const ValueRef::ValueRefBase<double>* value);
     virtual ~SetEmpireStockpile();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -254,7 +256,7 @@ public:
     SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~SetEmpireCapitol();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -276,7 +278,7 @@ public:
     SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type);
     virtual ~SetPlanetType();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -299,7 +301,7 @@ public:
     SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~SetPlanetSize();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -319,7 +321,7 @@ public:
     SetSpecies(const ValueRef::ValueRefBase<std::string>* species);
     virtual ~SetSpecies();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -339,7 +341,7 @@ public:
     AddOwner(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~AddOwner();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -359,7 +361,7 @@ public:
     RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id);
     virtual ~RemoveOwner();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -380,7 +382,7 @@ public:
                  const ValueRef::ValueRefBase<PlanetSize>* size);
     virtual ~CreatePlanet();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
@@ -399,7 +401,7 @@ public:
     CreateBuilding(const ValueRef::ValueRefBase<std::string>* building_type_name);
     virtual ~CreateBuilding();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
@@ -424,7 +426,7 @@ public:
                const ValueRef::ValueRefBase<std::string>* species_name);
     virtual ~CreateShip();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 private:
@@ -448,7 +450,7 @@ class Effect::Destroy : public Effect::EffectBase
 public:
     Destroy();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -464,7 +466,7 @@ class Effect::AddSpecial : public Effect::EffectBase
 public:
     AddSpecial(const std::string& name);
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -483,7 +485,7 @@ class Effect::RemoveSpecial : public Effect::EffectBase
 public:
     RemoveSpecial(const std::string& name);
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -503,7 +505,7 @@ public:
     AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~AddStarlanes();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -523,7 +525,7 @@ public:
     RemoveStarlanes(const Condition::ConditionBase* other_lane_endpoint_condition);
     virtual ~RemoveStarlanes();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -543,7 +545,7 @@ public:
     SetStarType(const ValueRef::ValueRefBase<StarType>* type);
     virtual ~SetStarType();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -563,7 +565,7 @@ public:
     MoveTo(const Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -582,7 +584,7 @@ class Effect::Victory : public Effect::EffectBase
 public:
     Victory(const std::string& reason_string);
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -609,7 +611,7 @@ public:
                         bool include_tech);
     virtual ~SetTechAvailability();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -638,7 +640,7 @@ public:
                           const ValueRef::ValueRefBase<int>* recipient_empire_id);
     virtual ~GenerateSitRepMessage();
 
-    virtual void        Execute(const UniverseObject* source, UniverseObject* target) const;
+    virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 

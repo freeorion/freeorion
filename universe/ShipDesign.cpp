@@ -101,7 +101,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(false, "Value"),
+                new ValueRef::Variable<double>(ValueRef::NON_OBJECT_REFERENCE, "Value"),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -119,7 +119,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(false, "Value"),
+                new ValueRef::Variable<double>(ValueRef::NON_OBJECT_REFERENCE, "Value"),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -1125,9 +1125,6 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         return false;
     }
 
-    UniverseObject* source = objects.Object(empire->CapitolID());
-    if (!source) return false;
-
     locations.insert(loc);
 
     // apply hull location conditions to potential location
@@ -1136,7 +1133,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
     }
-    hull->Location()->Eval(source, locations, non_locations, Condition::MATCHES);
+    hull->Location()->Eval(locations, non_locations, Condition::MATCHES);
     if (locations.empty())
         return false;
 
@@ -1151,7 +1148,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
             Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
-        part->Location()->Eval(source, locations, non_locations, Condition::MATCHES);
+        part->Location()->Eval(locations, non_locations, Condition::MATCHES);
         if (locations.empty())
             return false;
     }

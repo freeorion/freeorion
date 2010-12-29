@@ -7,6 +7,7 @@
 #include "Predicates.h"
 #include "Species.h"
 #include "Condition.h"
+#include "ValueRef.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
@@ -313,15 +314,15 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
 std::vector<std::string> Planet::AvailableFoci() const
 {
     std::vector<std::string> retval;
+    ScriptingContext context(this);
     if (const Species* species = GetSpecies(this->SpeciesName())) {
         const std::vector<FocusType>& foci = species->Foci();
         for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
             const FocusType& focus_type = *it;
             if (const Condition::ConditionBase* location = focus_type.Location()) {
-                const UniverseObject* source = this;
                 Condition::ObjectSet potential_targets; potential_targets.insert(this);
                 Condition::ObjectSet matched_targets;
-                location->Eval(source, matched_targets, potential_targets);
+                location->Eval(context, matched_targets, potential_targets);
                 if (!matched_targets.empty())
                     retval.push_back(focus_type.Name());
             }

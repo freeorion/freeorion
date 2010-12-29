@@ -16,6 +16,77 @@
 
 int g_indent = 0;
 
+
+ScriptingContext::ScriptingContext() :
+    source(0),
+    effect_target(0),
+    condition_root_candidate(0),
+    condition_parent_candidate(0),
+    condition_local_candidate(0)
+{}
+
+ScriptingContext::ScriptingContext(const UniverseObject* source_) :
+    source(source_),
+    effect_target(0),
+    condition_root_candidate(0),
+    condition_parent_candidate(0),
+    condition_local_candidate(0)
+{}
+
+ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject* target_) :
+    source(source_),
+    effect_target(target_),
+    condition_root_candidate(0),
+    condition_parent_candidate(0),
+    condition_local_candidate(0)
+{}
+
+
+ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+                                   const boost::any& current_value_) :
+    source(source_),
+    effect_target(target_),
+    condition_root_candidate(0),
+    condition_parent_candidate(0),
+    condition_local_candidate(0),
+    current_value(current_value_)
+{}
+
+ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
+                                   const boost::any& current_value_) :
+    source(parent_context.source),
+    effect_target(parent_context.effect_target),
+    condition_root_candidate(parent_context.condition_root_candidate),
+    condition_parent_candidate(parent_context.condition_parent_candidate),
+    condition_local_candidate(parent_context.condition_local_candidate),
+    current_value(current_value_)
+{}
+
+ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
+                                   const UniverseObject* condition_local_candidate_):
+    source(parent_context.source),
+    effect_target(parent_context.effect_target),
+    condition_root_candidate(parent_context.condition_root_candidate ?
+                                parent_context.condition_root_candidate :
+                                parent_context.condition_local_candidate),  // if parent context doesn't already have a root candidate, the new local candidate is the root
+    condition_parent_candidate(parent_context.condition_local_candidate),   // parent_context's local candidate is this new context's parent candidate
+    condition_local_candidate(condition_local_candidate_),                  // new local candidate
+    current_value(parent_context.current_value)
+{}
+
+ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+                                   const boost::any& current_value_,
+                                   const UniverseObject* condition_root_candidate_,
+                                   const UniverseObject* condition_parent_candidate_,
+                                   const UniverseObject* condition_local_candidate_) :
+    source(source_),
+    effect_target(0),
+    condition_root_candidate(condition_root_candidate_),
+    condition_parent_candidate(condition_parent_candidate_),
+    condition_local_candidate(condition_local_candidate_),
+    current_value(current_value_)
+{}
+
 namespace detail {
     std::vector<std::string> TokenizeDottedReference(const std::string& str)
     {
@@ -30,9 +101,21 @@ namespace detail {
 namespace {
     const UniverseObject* FollowReference(std::vector<std::string>::const_iterator first,
                                           std::vector<std::string>::const_iterator last,
-                                          const UniverseObject* obj)
+                                          ValueRef::ReferenceType ref_type,
+                                          ScriptingContext context)
     {
         const ObjectMap& objects = GetMainObjectMap();
+        const UniverseObject* obj(0);
+        switch(ref_type) {
+        case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
+        case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
+        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:     obj = context.condition_local_candidate;    break;
+        case ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE:    obj = context.condition_parent_candidate;   break;
+        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
+        default:
+            return 0;
+        }
+
         while (first != last) {
             const std::string& property_name = *first;
             if (boost::iequals(property_name, "Planet")) {
@@ -54,9 +137,18 @@ namespace {
         return obj;
     }
 
-    std::string ReconstructName(const std::vector<std::string>& name, bool source_ref)
+    std::string ReconstructName(const std::vector<std::string>& name,
+                                ValueRef::ReferenceType ref_type)
     {
-        std::string retval(source_ref ? "Source" : "Target");
+        std::string retval;
+        switch (ref_type) {
+        case ValueRef::SOURCE_REFERENCE:                    retval = "Source";          break;
+        case ValueRef::EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
+        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
+        case ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE:retval = "ParentCandidate"; break;
+        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
+        default:                                            retval = "?????";   break;
+        }
         for (unsigned int i = 0; i < name.size(); ++i) {
             retval += '.';
             retval += name[i];
@@ -191,12 +283,12 @@ namespace ValueRef {
 
 #define IF_CURRENT_VALUE_ELSE(T)                                           \
     if (boost::iequals(property_name, "Value")) {                          \
-        if (current_value.empty())                                         \
+        if (context.current_value.empty())                             \
             throw std::runtime_error(                                      \
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \
                 "because no current value was provided.");                 \
         try {                                                              \
-            return boost::any_cast<T>(current_value);                      \
+            return boost::any_cast<T>(context.current_value);          \
         } catch (const boost::bad_any_cast&) {                             \
             throw std::runtime_error(                                      \
                 "Variable<" #T ">::Eval(): Value could not be evaluated, " \
@@ -205,83 +297,79 @@ namespace ValueRef {
     } else
 
     template <>
-    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                          const boost::any& current_value) const
+    PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetSize)
 
         if (boost::iequals(property_name, "PlanetSize")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_PLANET_SIZE;
             }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->Size();
         } else {
-            throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetSize.");
+            throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetSize.");
         }
         return INVALID_PLANET_SIZE;
     }
 
     template <>
-    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                          const boost::any& current_value) const
+    PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetType)
 
         if (boost::iequals(property_name, "PlanetType")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_PLANET_TYPE;
             }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->Type();
         } else {
-            throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetType.");
+            throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetType.");
         }
         return INVALID_PLANET_TYPE;
     }
 
     template <>
-    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                                        const boost::any& current_value) const
+    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(PlanetEnvironment)
 
         if (boost::iequals(property_name, "PlanetEnvironment")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                Logger().errorStream() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_PLANET_ENVIRONMENT;
             }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->EnvironmentForSpecies();
         } else {
-            throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type PlanetEnvironment.");
+            throw std::runtime_error("Attempted to read a non-PlanetEnvironment value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetEnvironment.");
         }
         return INVALID_PLANET_ENVIRONMENT;
     }
 
     template <>
-    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                                          const boost::any& current_value) const
+    UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(UniverseObjectType)
 
         if (boost::iequals(property_name, "ObjectType")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                Logger().errorStream() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_UNIVERSE_OBJECT_TYPE;
             }
             if (universe_object_cast<const Planet*>(object)) {
@@ -300,40 +388,38 @@ namespace ValueRef {
                 return OBJ_PROD_CENTER;
             }
         } else {
-            throw std::runtime_error("Attempted to read a non-ObjectType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type ObjectType.");
+            throw std::runtime_error("Attempted to read a non-ObjectType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type ObjectType.");
         }
         return INVALID_UNIVERSE_OBJECT_TYPE;
     }
 
     template <>
-    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                      const boost::any& current_value) const
+    StarType Variable<StarType>::Eval(const ScriptingContext& context) const
     {
         const std::string& property_name = m_property_name.back();
 
         IF_CURRENT_VALUE_ELSE(StarType)
 
         if (boost::iequals(property_name, "StarType")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
             if (!object) {
-                Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+                Logger().errorStream() << "Variable<StarType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
                 return INVALID_STAR_TYPE;
             }
             if (const System* s = universe_object_cast<const System*>(object))
                 return s->GetStarType();
         } else {
-            throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type StarType.");
+            throw std::runtime_error("Attempted to read a non-StarType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type StarType.");
         }
         return INVALID_STAR_TYPE;
     }
 
     template <>
-    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                  const boost::any& current_value) const
+    double Variable<double>::Eval(const ScriptingContext& context) const
     {
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0.0;
         }
         const std::string& property_name = m_property_name.back();
@@ -439,24 +525,27 @@ namespace ValueRef {
                 return empire->ResourceStockpile(RE_FOOD);
             }
         } else if (boost::iequals(property_name, "DistanceToSource")) {
-            double delta_x = object->X() - source->X();
-            double delta_y = object->Y() - source->Y();
+            if (!context.source) {
+                Logger().errorStream() << "ValueRef::Variable<double>::Eval can't find distance to source because no source was passed";
+                return 0.0;
+            }
+            double delta_x = object->X() - context.source->X();
+            double delta_y = object->Y() - context.source->Y();
             return std::sqrt(delta_x * delta_x + delta_y * delta_y);
 
         } else {
-            throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type double.");
+            throw std::runtime_error("Attempted to read a non-double value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type double.");
         }
 
         return 0.0;
     }
 
     template <>
-    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target,
-                            const boost::any& current_value) const
+    int Variable<int>::Eval(const ScriptingContext& context) const
     {
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            Logger().errorStream() << "Variable<int>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0;
         }
         const std::string& property_name = m_property_name.back();
@@ -514,19 +603,18 @@ namespace ValueRef {
         } else if (boost::iequals(property_name, "CurrentTurn")) {
             return CurrentTurn();
         } else {
-            throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type int.");
+            throw std::runtime_error("Attempted to read a non-int value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type int.");
         }
 
         return 0;
     }
 
     template <>
-    std::string Variable<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                            const boost::any& current_value) const
+    std::string Variable<std::string>::Eval(const ScriptingContext& context) const
     {
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_source_ref ? source : target);
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
-            Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_source_ref);
+            Logger().errorStream() << "Variable<std::string>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return "";
         }
         const std::string& property_name = m_property_name.back();
@@ -547,7 +635,7 @@ namespace ValueRef {
             if (const Planet* planet = universe_object_cast<const Planet*>(object))
                 return planet->Focus();
         } else {
-            throw std::runtime_error("Attempted to read a non-string value \"" + ReconstructName(m_property_name, m_source_ref) + "\" using a ValueRef of type std::string.");
+            throw std::runtime_error("Attempted to read a non-string value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type std::string.");
         }
 
         return "";
@@ -561,42 +649,39 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
     template <>
-    double Statistic<double>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                   const boost::any& current_value) const
+    double Statistic<double>::Eval(const ScriptingContext& context) const
     {
         Condition::ObjectSet condition_matches;
-        GetConditionMatches(source, condition_matches, m_sampling_condition);
+        GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (m_stat_type == NUMBER)
             return static_cast<double>(condition_matches.size());
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, double> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
+        GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         return ReduceData(object_property_values);
     }
 
     template <>
-    int Statistic<int>::Eval(const UniverseObject* source, const UniverseObject* target,
-                             const boost::any& current_value) const
+    int Statistic<int>::Eval(const ScriptingContext& context) const
     {
         Condition::ObjectSet condition_matches;
-        GetConditionMatches(source, condition_matches, m_sampling_condition);
+        GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (m_stat_type == NUMBER)
             return static_cast<int>(condition_matches.size());
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, int> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
+        GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         return ReduceData(object_property_values);
     }
 
     template <>
-    std::string Statistic<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                             const boost::any& current_value) const
+    std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
     {
         // the only statistic that can be computed on non-number property types
         // and that is itself of a non-number type is the most common value
@@ -604,14 +689,14 @@ namespace ValueRef {
             throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
 
         Condition::ObjectSet condition_matches;
-        GetConditionMatches(source, condition_matches, m_sampling_condition);
+        GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (condition_matches.empty())
             return "";
 
         // evaluate property for each condition-matched object
         std::map<const UniverseObject*, std::string> object_property_values;
-        GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
+        GetObjectPropertyValues(context, condition_matches, object_property_values);
 
         // count number of each result, tracking which has the most occurances
         std::map<std::string, unsigned int> histogram;
@@ -646,8 +731,7 @@ namespace ValueRef {
 ///////////////////////////////////////////////////////////
 namespace ValueRef {
     template <>
-    std::string Operation<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                             const boost::any& current_value) const
+    std::string Operation<std::string>::Eval(const ScriptingContext& context) const
     {
         std::string op_link;
         switch (m_op_type) {
@@ -656,15 +740,15 @@ namespace ValueRef {
             case TIMES:     op_link = " * ";    break;
             case DIVIDES:   op_link = " / ";    break;
             case NEGATE:
-                return "-" + m_operand1->Eval(source, target, current_value);
+                return "-" + m_operand1->Eval(context);
                 break;
             default:
                 throw std::runtime_error("std::string ValueRef evaluated with an unknown OpType.");
                 break;
         }
-        return m_operand1->Eval(source, target, current_value)
+        return m_operand1->Eval(context)
                + op_link +
-               m_operand2->Eval(source, target, current_value);
+               m_operand2->Eval(context);
     }
 }
 

@@ -285,6 +285,7 @@ double BuildingType::MaintenanceCost() const
 const Condition::ConditionBase* BuildingType::Location() const {
     return m_location;
 }
+
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
 {
     return m_effects;
@@ -307,12 +308,9 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
         return false;
     }
 
-    const UniverseObject* source = objects.Object(empire->CapitolID());
-    if (!source) return false;
-
     Condition::ObjectSet potential_targets; potential_targets.insert(location);
     Condition::ObjectSet matched_targets;
-    m_location->Eval(source, matched_targets, potential_targets);
+    m_location->Eval(matched_targets, potential_targets);
 
     return !matched_targets.empty();
 }

@@ -476,7 +476,7 @@ namespace {
              >> name_label >> name_p[set_tech_availability.name = arg1])
             [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(
                 set_tech_availability.name,
-                new_<ValueRef::Variable<int> >(false, "Owner"),
+                new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"),
                 set_tech_availability.available,
                 set_tech_availability.include_tech)
             ];

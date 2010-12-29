@@ -18,6 +18,51 @@
 #include <map>
 
 class UniverseObject;
+namespace boost {
+    class any;
+}
+
+struct ScriptingContext {
+    /** Empty context.  Useful for evaluating ValueRef::Constant that don't
+      * depend on their context. */
+    ScriptingContext();
+
+    /** Context with only a source object.  Useful for evaluating effectsgroup
+      * scope and activation conditions that have no external candidates or
+      * effect target to propegate. */
+    explicit ScriptingContext(const UniverseObject* source_);
+
+    ScriptingContext(const UniverseObject* source_, UniverseObject* target_);
+
+    ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+                     const boost::any& current_value_);
+
+    /** For evaluating ValueRef in an Effect::Execute function.  Keeps input
+      * context, but specifies the current value. */
+    ScriptingContext(const ScriptingContext& context,
+                     const boost::any& current_value_);
+
+    /** For recusrive evaluation of Conditions.  Keeps source and effect_target
+      * from input context, but sets local candidate with input object, and
+      * sets new context's parent candidate to the input context's local
+      * candidate.  If there is no root candidate in the parent context, then
+      * the input object becomes the root candidate. */
+    ScriptingContext(const ScriptingContext& parent_context,
+                     const UniverseObject* condition_local_candidate);
+
+    ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
+                     const boost::any& current_value_,
+                     const UniverseObject* condition_root_candidate_,
+                     const UniverseObject* condition_parent_candidate_,
+                     const UniverseObject* condition_local_candidate_);
+
+    const UniverseObject*   source;
+    UniverseObject*         effect_target;
+    const UniverseObject*   condition_root_candidate;
+    const UniverseObject*   condition_parent_candidate;
+    const UniverseObject*   condition_local_candidate;
+    const boost::any        current_value;
+};
 
 namespace detail {
     std::vector<std::string> TokenizeDottedReference(const std::string& str);
@@ -30,11 +75,15 @@ struct ValueRef::ValueRefBase
 {
     virtual ~ValueRefBase() {} ///< virtual dtor
 
-    /** Evaluates the expression tree and return the results; \a current_value
-        is used to fill in any instances of the "CurrentValue" variable that
-        exist in the tree. */
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
-                   const boost::any& current_value) const = 0;
+    /** Evaluates the expression tree and return the results; \a context
+      * is used to fill in any instances of the "Value" variable or references
+      * to objects such as the source, effect target, or condition candidates
+      * that exist in the tree. */
+    virtual T           Eval(const ScriptingContext& context) const = 0;
+
+    /** Evaluates the expression tree with an empty context.  Useful for
+      * evaluating expressions that do not depend on context. */
+    T                   Eval() const { return Eval(::ScriptingContext()); }
 
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
@@ -53,8 +102,7 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
 
     T Value() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
-                   const boost::any& current_value) const;
+    virtual T Eval(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -71,24 +119,23 @@ private:
 template <class T>
 struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
-    /** basic ctor.  If \a source_ref is true, the field corresponding to
+    /** basic ctor.  If \a ref_type is true, the field corresponding to
       * \a property_name is read from the \a source parameter of Eval;
       * otherwise, the same field is read from Eval's \a target parameter. */
-    Variable(bool source_ref, const std::string& property_name);
+    Variable(ReferenceType ref_type, const std::string& property_name);
 
-    bool                            SourceRef() const;
+    ReferenceType                   GetReferenceType() const;
     const std::vector<std::string>& PropertyName() const;
 
-    virtual T                       Eval(const UniverseObject* source, const UniverseObject* target,
-                                         const boost::any& current_value) const;
+    virtual T                       Eval(const ScriptingContext& context) const;
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
 
 protected:
-    Variable(bool source_ref, const std::vector<std::string>& property_name);
+    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
 
 private:
-    bool                            m_source_ref;
+    ReferenceType                   m_ref_type;
     std::vector<std::string>        m_property_name;
 
     friend class boost::serialization::access;
@@ -111,8 +158,7 @@ struct ValueRef::Statistic : public ValueRef::Variable<T>
     StatisticType                   GetStatisticType() const;
     const Condition::ConditionBase* SamplingCondition() const;
 
-    virtual T                       Eval(const UniverseObject* source, const UniverseObject* target,
-                                         const boost::any& current_value) const;
+    virtual T                       Eval(const ScriptingContext& context) const;
 
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
@@ -123,14 +169,13 @@ protected:
               const Condition::ConditionBase* sampling_condition);
 
     /** Gets the set of objects in the Universe that match the sampling condition. */
-    void    GetConditionMatches(const UniverseObject* source,
+    void    GetConditionMatches(const ScriptingContext& context,
                                 Condition::ObjectSet& condition_targets,
                                 const Condition::ConditionBase* condition) const;
 
     /** Evaluates the property for the specified objects. */
-    void    GetObjectPropertyValues(const UniverseObject* source,
+    void    GetObjectPropertyValues(const ScriptingContext& context,
                                     const Condition::ObjectSet& objects,
-                                    const boost::any& current_value,
                                     std::map<const UniverseObject*, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
@@ -154,8 +199,7 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
     ~StaticCast();
 
-    virtual double Eval(const UniverseObject* source, const UniverseObject* target,
-                   const boost::any& current_value) const;
+    virtual double Eval(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -176,8 +220,7 @@ struct ValueRef::StringCast : public ValueRef::Variable<std::string>
     StringCast(const ValueRef::Variable<FromType>* value_ref);
     ~StringCast();
 
-    virtual std::string Eval(const UniverseObject* source, const UniverseObject* target,
-                             const boost::any& current_value) const;
+    virtual std::string Eval(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -203,8 +246,7 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     const ValueRefBase<T>* LHS() const;
     const ValueRefBase<T>* RHS() const;
 
-    virtual T Eval(const UniverseObject* source, const UniverseObject* target,
-                   const boost::any& current_value) const;
+    virtual T Eval(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -248,8 +290,7 @@ T ValueRef::Constant<T>::Value() const
 }
 
 template <class T>
-T ValueRef::Constant<T>::Eval(const UniverseObject* source, const UniverseObject* target,
-                              const boost::any& current_value) const
+T ValueRef::Constant<T>::Eval(const ScriptingContext& context) const
 {
     return m_value;
 }
@@ -307,21 +348,21 @@ void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Variable<T>::Variable(bool source_ref, const std::string& property_name) :
-    m_source_ref(source_ref),
+ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name) :
+    m_ref_type(ref_type),
     m_property_name(::detail::TokenizeDottedReference(property_name))
 {}
 
 template <class T>
-ValueRef::Variable<T>::Variable(bool source_ref, const std::vector<std::string>& property_name) :
-    m_source_ref(source_ref),
+ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
+    m_ref_type(ref_type),
     m_property_name(property_name)
 {}
 
 template <class T>
-bool ValueRef::Variable<T>::SourceRef() const
+ValueRef::ReferenceType ValueRef::Variable<T>::GetReferenceType() const
 {
-    return m_source_ref;
+    return m_ref_type;
 }
 
 template <class T>
@@ -334,7 +375,7 @@ template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
-    formatter % UserString(m_source_ref ? "DESC_VAR_SOURCE" : "DESC_VAR_TARGET");
+    formatter % UserString(m_ref_type ? "DESC_VAR_SOURCE" : "DESC_VAR_TARGET");
     for (unsigned int i = 0; i < m_property_name.size(); ++i) {
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
     }
@@ -344,7 +385,7 @@ std::string ValueRef::Variable<T>::Description() const
 template <class T>
 std::string ValueRef::Variable<T>::Dump() const
 {
-    std::string str(m_source_ref ? "Source" : "Target");
+    std::string str(m_ref_type ? "Source" : "Target");
     // now that we have some variables that apply globally, we need to special-case them:
     if (m_property_name.back() == "CurrentTurn")
         str = "";
@@ -356,32 +397,25 @@ std::string ValueRef::Variable<T>::Dump() const
 
 namespace ValueRef {
     template <>
-    PlanetSize Variable<PlanetSize>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                          const boost::any& current_value) const;
+    PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
     template <>
-    PlanetType Variable<PlanetType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                          const boost::any& current_value) const;
+    PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const;
 
     template <>
-    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                                        const boost::any& current_value) const;
+    PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
 
     template <>
-    UniverseObjectType Variable<UniverseObjectType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                                          const boost::any& current_value) const;
+    UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
 
     template <>
-    StarType Variable<StarType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                      const boost::any& current_value) const;
+    StarType Variable<StarType>::Eval(const ScriptingContext& context) const;
 
     template <>
-    double Variable<double>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                  const boost::any& current_value) const;
+    double Variable<double>::Eval(const ScriptingContext& context) const;
 
     template <>
-    int Variable<int>::Eval(const UniverseObject* source, const UniverseObject* target,
-                            const boost::any& current_value) const;
+    int Variable<int>::Eval(const ScriptingContext& context) const;
 }
 
 template <class T>
@@ -389,7 +423,7 @@ template <class Archive>
 void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
-        & BOOST_SERIALIZATION_NVP(m_source_ref)
+        & BOOST_SERIALIZATION_NVP(m_ref_type)
         & BOOST_SERIALIZATION_NVP(m_property_name);
 }
 
@@ -400,7 +434,7 @@ template <class T>
 ValueRef::Statistic<T>::Statistic(const std::string& property_name,
                                   StatisticType stat_type,
                                   const Condition::ConditionBase* sampling_condition) :
-    Variable<T>(false, property_name),
+    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
 {
@@ -411,7 +445,7 @@ template <class T>
 ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
                                   StatisticType stat_type,
                                   const Condition::ConditionBase* sampling_condition) :
-    Variable<T>(false, property_name),
+    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
 {
@@ -431,7 +465,7 @@ const Condition::ConditionBase* ValueRef::Statistic<T>::SamplingCondition() cons
 }
 
 template <class T>
-void ValueRef::Statistic<T>::GetConditionMatches(const UniverseObject* source,
+void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
                                                  Condition::ObjectSet& condition_targets,
                                                  const Condition::ConditionBase* condition) const
 {
@@ -447,13 +481,12 @@ void ValueRef::Statistic<T>::GetConditionMatches(const UniverseObject* source,
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
         condition_non_targets.insert(it->second);
     }
-    condition->Eval(source, condition_targets, condition_non_targets);
+    condition->Eval(context, condition_targets, condition_non_targets);
 }
 
 template <class T>
-void ValueRef::Statistic<T>::GetObjectPropertyValues(const UniverseObject* source,
+void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
                                                      const Condition::ObjectSet& objects,
-                                                     const boost::any& current_value,
                                                      std::map<const UniverseObject*, T>& object_property_values) const
 {
     object_property_values.clear();
@@ -464,7 +497,7 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const UniverseObject* sourc
 
     for (Condition::ObjectSet::const_iterator it = objects.begin(); it != objects.end(); ++it) {
         const UniverseObject* obj = *it;
-        T property_value = this->Variable<T>::Eval(source, obj, current_value);
+        T property_value = this->Variable<T>::Eval(context);
         object_property_values[obj] = property_value;
     }
 }
@@ -482,8 +515,7 @@ std::string ValueRef::Statistic<T>::Dump() const
 }
 
 template <class T>
-T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                       const boost::any& current_value) const
+T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
 {
     // the only statistic that can be computed on non-number property types
     // and that is itself of a non-number type is the most common value
@@ -491,14 +523,14 @@ T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObjec
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
 
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(source, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition);
 
     if (condition_matches.empty())
         return T(-1);   // should be INVALID_T of enum types
 
     // evaluate property for each condition-matched object
     std::map<const UniverseObject*, T> object_property_values;
-    GetObjectPropertyValues(source, condition_matches, current_value, object_property_values);
+    GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // count number of each result, tracking which has the most occurances
     std::map<T, unsigned int> histogram;
@@ -529,16 +561,13 @@ T ValueRef::Statistic<T>::Eval(const UniverseObject* source, const UniverseObjec
 
 namespace ValueRef {
     template <>
-    double Statistic<double>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                   const boost::any& current_value) const;
+    double Statistic<double>::Eval(const ScriptingContext& context) const;
 
     template <>
-    int Statistic<int>::Eval(const UniverseObject* source, const UniverseObject* target,
-                             const boost::any& current_value) const;
+    int Statistic<int>::Eval(const ScriptingContext& context) const;
 
     template <>
-    std::string Statistic<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                             const boost::any& current_value) const;
+    std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
 }
 
 template <class T>
@@ -725,7 +754,7 @@ void ValueRef::Statistic<T>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 template <class FromType, class ToType>
 ValueRef::StaticCast<FromType, ToType>::StaticCast(const ValueRef::Variable<FromType>* value_ref) :
-    ValueRef::Variable<ToType>(value_ref->SourceRef(), value_ref->PropertyName()),
+    ValueRef::Variable<ToType>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
@@ -734,10 +763,9 @@ ValueRef::StaticCast<FromType, ToType>::~StaticCast()
 { delete m_value_ref; }
 
 template <class FromType, class ToType>
-double ValueRef::StaticCast<FromType, ToType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                                    const boost::any& current_value) const
+double ValueRef::StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
 {
-    return static_cast<ToType>(m_value_ref->Eval(source, target, current_value));
+    return static_cast<ToType>(m_value_ref->Eval(context));
 }
 
 template <class FromType, class ToType>
@@ -765,7 +793,7 @@ void ValueRef::StaticCast<FromType, ToType>::serialize(Archive& ar, const unsign
 ///////////////////////////////////////////////////////////
 template <class FromType>
 ValueRef::StringCast<FromType>::StringCast(const ValueRef::Variable<FromType>* value_ref) :
-    ValueRef::Variable<std::string>(value_ref->SourceRef(), value_ref->PropertyName()),
+    ValueRef::Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
     m_value_ref(value_ref)
 {}
 
@@ -774,10 +802,9 @@ ValueRef::StringCast<FromType>::~StringCast()
 { delete m_value_ref; }
 
 template <class FromType>
-std::string ValueRef::StringCast<FromType>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                            const boost::any& current_value) const
+std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
 {
-    return boost::lexical_cast<std::string>(m_value_ref->Eval(source, target, current_value));
+    return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
 }
 
 template <class FromType>
@@ -843,28 +870,27 @@ const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::RHS() const
 }
 
 template <class T>
-T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObject* target,
-                               const boost::any& current_value) const
+T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
-            return T(m_operand1->Eval(source, target, current_value) +
-                     m_operand2->Eval(source, target, current_value));
+            return T(m_operand1->Eval(context) +
+                     m_operand2->Eval(context));
             break;
         case MINUS:
-            return T(m_operand1->Eval(source, target, current_value) -
-                     m_operand2->Eval(source, target, current_value));
+            return T(m_operand1->Eval(context) -
+                     m_operand2->Eval(context));
             break;
         case TIMES:
-            return T(m_operand1->Eval(source, target, current_value) *
-                     m_operand2->Eval(source, target, current_value));
+            return T(m_operand1->Eval(context) *
+                     m_operand2->Eval(context));
             break;
         case DIVIDES:
-            return T(m_operand1->Eval(source, target, current_value) /
-                     m_operand2->Eval(source, target, current_value));
+            return T(m_operand1->Eval(context) /
+                     m_operand2->Eval(context));
             break;
         case NEGATE:
-            return T(-m_operand1->Eval(source, target, current_value));
+            return T(-m_operand1->Eval(context));
             break;
         default:
             throw std::runtime_error("ValueRef evaluated with an unknown OpType.");
@@ -874,8 +900,7 @@ T ValueRef::Operation<T>::Eval(const UniverseObject* source, const UniverseObjec
 
 namespace ValueRef {
     template <>
-    std::string Operation<std::string>::Eval(const UniverseObject* source, const UniverseObject* target,
-                                             const boost::any& current_value) const;
+    std::string Operation<std::string>::Eval(const ScriptingContext& context) const;
 }
 
 template <class T>
