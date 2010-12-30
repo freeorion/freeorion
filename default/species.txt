@@ -146,12 +146,12 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = Target.TargetHealth - 3
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
             scope = Source
-            activation = Health low = Target.TargetHealth - 3 high = Target.TargetHealth
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
             effects = SetHealth Target.TargetHealth
 
         EffectsGroup
@@ -281,42 +281,42 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = Target.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = Target.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = Target.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = Target.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
             effects = SetResearch Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Farming low = Target.TargetFarming high = Target.TargetFarming + 2
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
             effects = SetFarming Target.TargetFarming
 
         EffectsGroup
             scope = Source
-            activation = Mining low = Target.TargetMining high = Target.TargetMining + 2
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
             effects = SetMining Target.TargetMining
 
         EffectsGroup
             scope = Source
-            activation = Industry low = Target.TargetIndustry high = Target.TargetIndustry + 2
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Target.TargetIndustry
 
         EffectsGroup
             scope = Source
-            activation = Research low = Target.TargetResearch high = Target.TargetResearch + 2
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
             effects = SetResearch Target.TargetResearch
 
         EffectsGroup
@@ -471,7 +471,7 @@ Species
                 WithinStarlaneJumps 4 Source
                 Not Number low = 1 high = 999 And [
                     Building "BLD_GENOME_BANK"
-                    OwnedBy TheEmpire Target.Owner
+                    OwnedBy TheEmpire RootCandidate.Owner
                 ]
             ]
             activation = Focus "FOCUS_BIOTERROR"
@@ -719,12 +719,12 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = Target.TargetHealth - 3
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
             scope = Source
-            activation = Health low = Target.TargetHealth - 3 high = Target.TargetHealth
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
             effects = SetHealth Target.TargetHealth
 
         EffectsGroup
@@ -854,42 +854,42 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = Target.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = Target.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = Target.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = Target.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
             effects = SetResearch Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Farming low = Target.TargetFarming high = Target.TargetFarming + 2
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
             effects = SetFarming Target.TargetFarming
 
         EffectsGroup
             scope = Source
-            activation = Mining low = Target.TargetMining high = Target.TargetMining + 2
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
             effects = SetMining Target.TargetMining
 
         EffectsGroup
             scope = Source
-            activation = Industry low = Target.TargetIndustry high = Target.TargetIndustry + 2
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Target.TargetIndustry
 
         EffectsGroup
             scope = Source
-            activation = Research low = Target.TargetResearch high = Target.TargetResearch + 2
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
             effects = SetResearch Target.TargetResearch
 
         EffectsGroup
@@ -1044,7 +1044,7 @@ Species
                 WithinStarlaneJumps 4 Source
                 Not Number low = 1 high = 999 And [
                     Building "BLD_GENOME_BANK"
-                    OwnedBy TheEmpire Target.Owner
+                    OwnedBy TheEmpire RootCandidate.Owner
                 ]
             ]
             activation = Focus "FOCUS_BIOTERROR"

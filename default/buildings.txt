@@ -44,7 +44,7 @@ BuildingType
                 Planet                
             ]
             stackinggroup = "IMERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetSupply Value + 5
+            effects = SetSupply Value + 3
             
         EffectsGroup
             scope = And [
@@ -57,7 +57,7 @@ BuildingType
             ]
             stackinggroup = "IMPERIAL_PALACE_EFFECT"
             effects = [
-                SetTargetConstruction Value + 10
+                SetTargetConstruction Value + 30
                 SetDefense Value + 5
             ]
         ]

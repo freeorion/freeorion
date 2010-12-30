@@ -2191,7 +2191,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = 0 high = Target.TargetFarming - 3
+                Farming low = 0 high = RootCandidate.TargetFarming - 3
             ]
             effects = SetFarming Value + 2
 
@@ -2199,7 +2199,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = 0 high = Target.TargetMining - 3
+                Mining low = 0 high = RootCandidate.TargetMining - 3
             ]
             effects = SetMining Value + 2
 
@@ -2207,7 +2207,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = 0 high = Target.TargetIndustry - 3
+                Industry low = 0 high = RootCandidate.TargetIndustry - 3
             ]
             effects = SetIndustry Value + 2
 
@@ -2215,7 +2215,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = 0 high = Target.TargetResearch - 3
+                Research low = 0 high = RootCandidate.TargetResearch - 3
             ]
             effects = SetResearch Value + 2
 
@@ -2223,7 +2223,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = Target.TargetFarming - 3 high = Target.TargetFarming
+                Farming low = RootCandidate.TargetFarming - 3 high = RootCandidate.TargetFarming
             ]
             effects = SetFarming Target.TargetFarming
 
@@ -2231,7 +2231,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = Target.TargetMining - 3 high = Target.TargetMining
+                Mining low = RootCandidate.TargetMining - 3 high = RootCandidate.TargetMining
             ]
             effects = SetMining Target.TargetMining
 
@@ -2239,7 +2239,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = Target.TargetIndustry - 3 high = Target.TargetIndustry
+                Industry low = RootCandidate.TargetIndustry - 3 high = RootCandidate.TargetIndustry
             ]
             effects = SetIndustry Target.TargetIndustry
 
@@ -2247,7 +2247,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = Target.TargetResearch - 3 high = Target.TargetResearch
+                Research low = RootCandidate.TargetResearch - 3 high = RootCandidate.TargetResearch
             ]
             effects = SetResearch Target.TargetResearch
 
@@ -2255,7 +2255,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = Target.TargetFarming + 5 high = 999
+                Farming low = RootCandidate.TargetFarming + 5 high = 999
             ]
             effects = SetFarming Value - 3
 
@@ -2263,7 +2263,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = Target.TargetMining + 5 high = 999
+                Mining low = RootCandidate.TargetMining + 5 high = 999
             ]
             effects = SetMining Value - 3
 
@@ -2271,7 +2271,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = Target.TargetIndustry + 5 high = 999
+                Industry low = RootCandidate.TargetIndustry + 5 high = 999
             ]
             effects = SetIndustry Value - 3
 
@@ -2279,7 +2279,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = Target.TargetResearch + 5 high = 999
+                Research low = RootCandidate.TargetResearch + 5 high = 999
             ]
             effects = SetResearch Value - 3
 
@@ -2287,7 +2287,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = Target.TargetFarming high = Target.TargetFarming + 5
+                Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 5
             ]
             effects = SetFarming Target.TargetFarming
 
@@ -2295,7 +2295,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = Target.TargetMining high = Target.TargetMining + 5
+                Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 5
             ]
             effects = SetMining Target.TargetMining
 
@@ -2303,7 +2303,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = Target.TargetIndustry high = Target.TargetIndustry + 5
+                Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 5
             ]
             effects = SetIndustry Target.TargetIndustry
 
@@ -2311,7 +2311,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = Target.TargetResearch high = Target.TargetResearch + 5
+                Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 5
             ]
             effects = SetResearch Target.TargetResearch
     ]
@@ -2508,41 +2508,6 @@ Tech
     prerequisites = "CON_ORGANIC_STRC"
     unlock = Item type = Building name = "BLD_TRANSFORMER"
     graphic = "icons/tech/transforming_structures.png"
-
-Tech
-    name = "CON_PALACE_EXCLUDE"
-    description = "CON_PALACE_EXCLUDE_DESC"
-    short_description = "GAME_MAKE_WORK_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 1
-    researchturns = 1
-    prerequisites = []
-    unlock = []
-    effectsgroups = [
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Building "BLD_IMPERIAL_PALACE"
-                OwnedBy TheEmpire Source.Owner
-            ]
-            activation = Number low = 2 high = 9999 And [
-                Building "BLD_IMPERIAL_PALACE"
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = Destroy
-
-        EffectsGroup
-            scope = NumberOf 1 And [
-                Building "BLD_MEGALITH"
-                OwnedBy TheEmpire Source.Owner
-            ]
-            activation = Number low = 2 high = 9999 And [
-                Building "BLD_MEGALITH"
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = Destroy
-    ]
-    graphic = ""
 
 Tech
     name = "SHP_GAL_EXPLO"
