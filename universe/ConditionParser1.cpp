@@ -118,6 +118,7 @@ namespace {
         Rule                    all;
         OwnedByRule             owned_by;
         Rule                    source;
+        Rule                    target;
         StringRefVecRule        homeworld;
         Rule                    capitol;
         StringRefVecRule        building;
@@ -153,7 +154,11 @@ namespace {
 
         source =
             str_p("source")
-            [source.this_ = new_<Condition::Self>()];
+            [source.this_ = new_<Condition::Source>()];
+
+        target =
+            str_p("target")
+            [target.this_ = new_<Condition::Target>()];
 
         homeworld =
             str_p("homeworld")
@@ -262,6 +267,7 @@ namespace {
         condition1_p =
             all[condition1_p.this_ = arg1]
             | source[condition1_p.this_ = arg1]
+            | target[condition1_p.this_ = arg1]
             | focus_type[condition1_p.this_ = arg1]
             | homeworld[condition1_p.this_ = arg1]
             | building[condition1_p.this_ = arg1]

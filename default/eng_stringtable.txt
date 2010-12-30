@@ -3071,6 +3071,12 @@ DESC_SELF
 DESC_SELF_NOT
  that is not the source object
 
+DESC_TARGET
+ that is the target object
+
+DESC_TARGET_NET
+ that is not the target object
+
 DESC_HOMEWORLD
  that is a homeworld of species %1%
 

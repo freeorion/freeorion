@@ -36,7 +36,8 @@ namespace Condition {
     struct ConditionBase;
     struct All;
     struct EmpireAffiliation;
-    struct Self;
+    struct Source;
+    struct Target;
     struct Homeworld;
     struct Capitol;
     struct Type;
@@ -212,9 +213,24 @@ private:
 };
 
 /** Matches the source object only. */
-struct Condition::Self : Condition::ConditionBase
+struct Condition::Source : Condition::ConditionBase
 {
-    Self();
+    Source();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches the target of an effect being executed. */
+struct Condition::Target : Condition::ConditionBase
+{
+    Target();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -871,7 +887,13 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 }
 
 template <class Archive>
-void Condition::Self::serialize(Archive& ar, const unsigned int version)
+void Condition::Source::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Target::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }

@@ -351,12 +351,12 @@ const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
 EffectsGroup::Description EffectsGroup::GetDescription() const
 {
     Description retval;
-    if (dynamic_cast<const Condition::Self*>(m_scope))
+    if (dynamic_cast<const Condition::Source*>(m_scope))
         retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
     else
         retval.scope_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE")) % m_scope->Description());
 
-    if (!m_activation || dynamic_cast<const Condition::Self*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
+    if (!m_activation || dynamic_cast<const Condition::Source*>(m_activation) || dynamic_cast<const Condition::All*>(m_activation))
         retval.activation_description = UserString("DESC_EFFECTS_GROUP_ALWAYS_ACTIVE");
     else
         retval.activation_description = str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION")) % m_activation->Description());
@@ -376,7 +376,7 @@ std::string EffectsGroup::DescriptionString() const
         Description description = GetDescription();
         retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_SCOPE_DESC")) % description.scope_description);
 
-        if (m_activation && !dynamic_cast<const Condition::Self*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
+        if (m_activation && !dynamic_cast<const Condition::Source*>(m_activation) && !dynamic_cast<const Condition::All*>(m_activation))
             retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_ACTIVATION_DESC")) % description.activation_description);
 
         for (unsigned int i = 0; i < description.effect_descriptions.size(); ++i) {

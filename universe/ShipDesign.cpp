@@ -96,8 +96,8 @@ namespace {
     {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Self* scope = new Condition::Self;
-        Condition::Self* activation = new Condition::Self;
+        Condition::Source* scope = new Condition::Source;
+        Condition::Source* activation = new Condition::Source;
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
@@ -114,8 +114,8 @@ namespace {
     {
         typedef boost::shared_ptr<const Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
-        Condition::Self* scope = new Condition::Self;
-        Condition::Self* activation = new Condition::Self;
+        Condition::Source* scope = new Condition::Source;
+        Condition::Source* activation = new Condition::Source;
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,

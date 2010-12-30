@@ -316,7 +316,7 @@ namespace {
         } else if (sorting_method == Condition::SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<double, const UniverseObject*>::const_reverse_iterator sorted_it = sort_key_objects.rbegin();
+            for (std::multimap<double, const UniverseObject*>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
                 const UniverseObject* object_to_transfer = sorted_it->second;
@@ -346,7 +346,7 @@ namespace {
             // reverse-loop through inverted histogram to find which sort keys
             // occurred most frequently, and transfer objects with those sort
             // keys from from_set to to_set.
-            for (std::multimap<unsigned int, double>::const_reverse_iterator inv_hist_it = inv_histogram.rbegin();
+            for (std::multimap<unsigned int, double>::reverse_iterator inv_hist_it = inv_histogram.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  inv_hist_it != inv_histogram.rend(); ++inv_hist_it)
             {
                 double cur_sort_key = inv_hist_it->second;
@@ -677,12 +677,12 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 }
 
 ///////////////////////////////////////////////////////////
-// Self                                                  //
+// Source                                                //
 ///////////////////////////////////////////////////////////
-Condition::Self::Self()
+Condition::Source::Source()
 {}
 
-std::string Condition::Self::Description(bool negated/* = false*/) const
+std::string Condition::Source::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_SELF";
     if (negated)
@@ -690,16 +690,42 @@ std::string Condition::Self::Description(bool negated/* = false*/) const
     return UserString(description_str);
 }
 
-std::string Condition::Self::Dump() const
+std::string Condition::Source::Dump() const
 {
     return DumpIndent() + "Source\n";
 }
 
-bool Condition::Self::Match(const ScriptingContext& local_context) const
+bool Condition::Source::Match(const ScriptingContext& local_context) const
 {
     if (!local_context.condition_local_candidate)
         return false;
     return local_context.source == local_context.condition_local_candidate;
+}
+
+///////////////////////////////////////////////////////////
+// Target                                                //
+///////////////////////////////////////////////////////////
+Condition::Target::Target()
+{}
+
+std::string Condition::Target::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_TARGET";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Target::Dump() const
+{
+    return DumpIndent() + "Target\n";
+}
+
+bool Condition::Target::Match(const ScriptingContext& local_context) const
+{
+    if (!local_context.effect_target)
+        return false;
+    return local_context.effect_target == local_context.condition_local_candidate;
 }
 
 ///////////////////////////////////////////////////////////
