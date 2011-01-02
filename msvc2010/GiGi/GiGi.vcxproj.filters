@@ -230,6 +230,9 @@
     <ClInclude Include="..\..\GG\src\DefaultFont.h">
       <Filter>Source Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GG\GG\GroupBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -335,6 +338,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\PtRect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\GroupBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

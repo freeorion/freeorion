@@ -41,6 +41,7 @@
     <ClInclude Include="..\..\GG\GG\Font.h" />
     <ClInclude Include="..\..\GG\GG\FontFwd.h" />
     <ClInclude Include="..\..\GG\GG\glext.h" />
+    <ClInclude Include="..\..\GG\GG\GroupBox.h" />
     <ClInclude Include="..\..\GG\GG\GUI.h" />
     <ClInclude Include="..\..\GG\GG\Layout.h" />
     <ClInclude Include="..\..\GG\GG\Lexer.h" />
@@ -99,6 +100,7 @@
     <ClCompile Include="..\..\GG\src\Edit.cpp" />
     <ClCompile Include="..\..\GG\src\EventPump.cpp" />
     <ClCompile Include="..\..\GG\src\Font.cpp" />
+    <ClCompile Include="..\..\GG\src\GroupBox.cpp" />
     <ClCompile Include="..\..\GG\src\GUI.cpp" />
     <ClCompile Include="..\..\GG\src\Layout.cpp" />
     <ClCompile Include="..\..\GG\src\ListBox.cpp" />
