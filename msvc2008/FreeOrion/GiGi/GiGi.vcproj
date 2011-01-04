@@ -179,6 +179,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\..\GG\GG\GroupBox.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\..\GG\GG\GUI.h"
 					>
 				</File>
@@ -336,6 +340,10 @@
 				</File>
 				<File
 					RelativePath="..\..\..\GG\src\Font.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\..\GG\src\GroupBox.cpp"
 					>
 				</File>
 				<File
