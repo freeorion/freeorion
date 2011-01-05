@@ -60,7 +60,8 @@ namespace Condition {
     struct VisibleToEmpire;
     struct WithinDistance;
     struct WithinStarlaneJumps;
-    struct CanHaveStarlaneConnection;
+    struct CanAddStarlaneConnection;
+    struct CanRemoveStarlaneConnection;
     struct ExploredByEmpire;
     struct Stationary;
     struct FleetSupplyableByEmpire;
@@ -693,10 +694,33 @@ private:
   * that a lane would be geometrically acceptable, meaning it wouldn't cross
   * any other lanes, pass too close to another system, or be too close in angle
   * to an existing lane. */
-struct Condition::CanHaveStarlaneConnection :  Condition::ConditionBase
+struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase
 {
-    CanHaveStarlaneConnection(const ConditionBase* condition);
-    virtual ~CanHaveStarlaneConnection();
+    CanAddStarlaneConnection(const ConditionBase* condition);
+    virtual ~CanAddStarlaneConnection();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ConditionBase*               m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches objects that are in systems that could have starlanes removed from
+  * between them and all (not just one) of the systems containing (or that are)
+  * one of the objects matched by \a condition.  "Could have starlanes removed"
+  * means there is a lane between those systems, and that removing that lane
+  * will not break starlane-network connectivity between the systems on either
+  * end of the lane. */
+struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase
+{
+    CanRemoveStarlaneConnection(const ConditionBase* condition);
+    virtual ~CanRemoveStarlaneConnection();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -1068,7 +1092,14 @@ void Condition::WithinStarlaneJumps::serialize(Archive& ar, const unsigned int v
 }
 
 template <class Archive>
-void Condition::CanHaveStarlaneConnection::serialize(Archive& ar, const unsigned int version)
+void Condition::CanAddStarlaneConnection::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::CanRemoveStarlaneConnection::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);

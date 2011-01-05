@@ -2304,39 +2304,103 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 }
 
 ///////////////////////////////////////////////////////////
-// CanHaveStarlaneConnection                             //
+// CanAddStarlaneConnection                             //
 ///////////////////////////////////////////////////////////
-Condition::CanHaveStarlaneConnection::CanHaveStarlaneConnection(const ConditionBase* condition) :
+Condition::CanAddStarlaneConnection::CanAddStarlaneConnection(const ConditionBase* condition) :
     m_condition(condition)
 {}
 
-Condition::CanHaveStarlaneConnection::~CanHaveStarlaneConnection()
+Condition::CanAddStarlaneConnection::~CanAddStarlaneConnection()
 {
     delete m_condition;
 }
 
-std::string Condition::CanHaveStarlaneConnection::Description(bool negated/* = false*/) const
+std::string Condition::CanAddStarlaneConnection::Description(bool negated/* = false*/) const
 {
-    std::string description_str = "DESC_CAN_HAVE_STARLANE_CONNECTION_BY";
+    std::string description_str = "DESC_CAN_ADD_STARLANE_CONNECTION";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
 }
 
-std::string Condition::CanHaveStarlaneConnection::Dump() const
+std::string Condition::CanAddStarlaneConnection::Dump() const
 {
-    std::string retval = DumpIndent() + "CanHaveStarlaneConnection condition =\n";
+    std::string retval = DumpIndent() + "CanAddStarlaneConnection condition =\n";
     ++g_indent;
         retval += m_condition->Dump();
     --g_indent;
     return retval;
 }
 
-bool Condition::CanHaveStarlaneConnection::Match(const ScriptingContext& local_context) const
+bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const
 {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "CanHaveStarlaneConnection::Match passed no candidate object";
+        Logger().errorStream() << "CanAddStarlaneConnection::Match passed no candidate object";
+        return false;
+    }
+
+    ObjectMap& objects = GetUniverse().Objects();
+
+    // get objects to be considering for matching against subcondition
+    ObjectSet subcondition_non_matches;
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+        subcondition_non_matches.insert(it->second);
+    ObjectSet subcondition_matches;
+
+    m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
+
+    // assemble all systems in or containing objects in subcondition matches
+    ObjectSet destination_systems;
+    for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it)
+        if (const System* system = objects.Object<System>((*it)->SystemID()))
+            destination_systems.insert(system);
+
+    if (destination_systems.empty())
+        return false;
+
+    // can the candidate object have starlanes to all destination systems?
+    for (ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
+        return false;
+    }
+
+    return true;
+}
+
+///////////////////////////////////////////////////////////
+// CanRemoveStarlaneConnection                             //
+///////////////////////////////////////////////////////////
+Condition::CanRemoveStarlaneConnection::CanRemoveStarlaneConnection(const ConditionBase* condition) :
+    m_condition(condition)
+{}
+
+Condition::CanRemoveStarlaneConnection::~CanRemoveStarlaneConnection()
+{
+    delete m_condition;
+}
+
+std::string Condition::CanRemoveStarlaneConnection::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_CAN_REMOVE_STARLANE_CONNECTION";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str)) % m_condition->Description());
+}
+
+std::string Condition::CanRemoveStarlaneConnection::Dump() const
+{
+    std::string retval = DumpIndent() + "CanRemoveStarlaneConnection condition =\n";
+    ++g_indent;
+        retval += m_condition->Dump();
+    --g_indent;
+    return retval;
+}
+
+bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "CanRemoveStarlaneConnection::Match passed no candidate object";
         return false;
     }
 
