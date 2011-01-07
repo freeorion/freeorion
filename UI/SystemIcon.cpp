@@ -218,7 +218,7 @@ void OwnerColoredSystemName::Render()
 ////////////////////////////////////////////////
 // SystemIcon
 ////////////////////////////////////////////////
-SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id) :
+SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_system_id(system_id),
     m_tiny_graphic(0),
@@ -245,9 +245,6 @@ SystemIcon::SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id
         m_halo_texture = m_disc_texture;
         m_tiny_texture = m_disc_texture;
     }
-
-    if (parent)
-        parent->AttachChild(this);
 
     Init();
 }

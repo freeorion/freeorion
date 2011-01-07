@@ -1886,7 +1886,7 @@ void MapWnd::InitTurnRendering()
             continue;
 
         // create new system icon
-        SystemIcon* icon = new SystemIcon(this, GG::X0, GG::Y0, GG::X(10), start_system->ID());
+        SystemIcon* icon = new SystemIcon(GG::X0, GG::Y0, GG::X(10), start_system->ID());
         m_system_icons[start_system->ID()] = icon;
         icon->InstallEventFilter(this);
         if (SidePanel::SystemID() == systems[i]->ID())

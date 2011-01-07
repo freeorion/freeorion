@@ -45,8 +45,8 @@ public:
     //!@}
 
     //! \name Structors //!@{
-    SystemIcon(GG::Wnd* parent, GG::X x, GG::Y y, GG::X w, int system_id);  //!< construct from a universe ID at specified size and position
-    ~SystemIcon();                                                          //!< dtor
+    SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id);       //!< construct from a universe ID at specified size and position
+    ~SystemIcon();                                              //!< dtor
     //!@}
 
     //! \name Accessors //!@{
