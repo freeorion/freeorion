@@ -38,8 +38,6 @@ namespace {
 }
 
 namespace {
-    struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
-
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables()
@@ -50,7 +48,9 @@ namespace {
         return map;
     }
 
-    // used to short-circuit the use of BFS (breadth-first search) or Dijkstra's algorithm for pathfinding when it finds the desired destination system
+    /** Used to short-circuit the use of BFS (breadth-first search) or
+      * Dijkstra's algorithm for pathfinding when it finds the desired
+      * destination system. */
     struct PathFindingShortCircuitingVisitor : public boost::base_visitor<PathFindingShortCircuitingVisitor>
     {
         typedef boost::on_finish_vertex event_filter;
@@ -94,6 +94,7 @@ namespace {
     ////////////////////////////////////////////////////////////////
     // templated implementations of Universe graph search methods //
     ////////////////////////////////////////////////////////////////
+    struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
 
     // returns the \a graph index for system with \a system_id
     template <class Graph>
@@ -112,10 +113,12 @@ namespace {
         return -1;
     }
 
-    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that travels the shorest 
-       distance on starlanes, and the path length.  If system1_id is the same vertex as system2_id, the path 
-       has just that system in it, and the path lenth is 0.  If there is no path between the two vertices, then
-       the list is empty and the path length is -1.0 */
+    /** Returns the path between vertices \a system1_id and \a system2_id of
+      * \a graph that travels the shorest distance on starlanes, and the path
+      * length.  If system1_id is the same vertex as system2_id, the path has
+      * just that system in it, and the path lenth is 0.  If there is no path
+      * between the two vertices, then the list is empty and the path length
+      * is -1.0 */
     template <class Graph>
     std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
     {
@@ -185,10 +188,12 @@ namespace {
         return retval;
     }
 
-    /* returns the path between vertices \a system1_id and \a system2_id of \a graph that takes the fewest 
-       number of jumps (edge traversals), and the number of jumps this path takes.  If system1_id is the same
-       vertex as system2_id, the path has just that system in it, and the path lenth is 0.  If there is no
-       path between the two vertices, then the list is empty and the path length is -1 */
+    /** Returns the path between vertices \a system1_id and \a system2_id of
+      * \a graph that takes the fewest number of jumps (edge traversals), and
+      * the number of jumps this path takes.  If system1_id is the same vertex
+      * as system2_id, the path has just that system in it, and the path lenth
+      * is 0.  If there is no path between the two vertices, then the list is
+      * empty and the path length is -1 */
     template <class Graph>
     std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
     {
@@ -547,10 +552,6 @@ struct Universe::GraphImpl
     typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
                                   vertex_property_t, edge_property_t> SystemGraph;
 
-    // declare types for iteration over graph
-    typedef SystemGraph::vertex_iterator   VertexIterator;
-    typedef SystemGraph::out_edge_iterator OutEdgeIterator;
-
     struct EdgeVisibilityFilter
     {
         EdgeVisibilityFilter() :
@@ -607,8 +608,8 @@ struct Universe::GraphImpl
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::const_type      ConstEdgeWeightPropertyMap;
     typedef boost::property_map<SystemGraph, boost::edge_weight_t>::type            EdgeWeightPropertyMap;
 
-    SystemGraph                 m_system_graph;                 ///< a graph in which the systems are vertices and the starlanes are edges
-    EmpireViewSystemGraphMap    m_empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
+    SystemGraph                 system_graph;                 ///< a graph in which the systems are vertices and the starlanes are edges
+    EmpireViewSystemGraphMap    empire_system_graph_views;    ///< a map of empire IDs to the views of the system graph by those empires
 };
 
 
@@ -845,8 +846,8 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
 double Universe::LinearDistance(int system1_id, int system2_id) const
 {
     //Logger().debugStream() << "LinearDistance(" << system1_id << ", " << system2_id << ")";
-    int system1_index = SystemGraphIndex(m_graph_impl->m_system_graph, system1_id);
-    int system2_index = SystemGraphIndex(m_graph_impl->m_system_graph, system2_id);
+    int system1_index = SystemGraphIndex(m_graph_impl->system_graph, system1_id);
+    int system2_index = SystemGraphIndex(m_graph_impl->system_graph, system2_id);
     return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
 }
 
@@ -854,10 +855,10 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
 {
     double linear_distance = LinearDistance(system1_id, system2_id);
     if (empire_id == ALL_EMPIRES) {
-        return ShortestPathImpl(m_graph_impl->m_system_graph, system1_id, system2_id, linear_distance);
+        return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id, linear_distance);
     } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
+        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
+        if (graph_it != m_graph_impl->empire_system_graph_views.end())
             return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance);
     }
     return std::pair<std::list<int>, double>();
@@ -866,10 +867,10 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
 std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_graph_impl->m_system_graph, system1_id, system2_id);
+        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id);
     } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
+        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
+        if (graph_it != m_graph_impl->empire_system_graph_views.end())
             return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id);
     }
     return std::pair<std::list<int>, int>();
@@ -892,10 +893,10 @@ bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_graph_impl->m_system_graph, system_id);
+        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id);
     } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->m_empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->m_empire_system_graph_views.end())
+        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
+        if (graph_it != m_graph_impl->empire_system_graph_views.end())
             return ImmediateNeighborsImpl(*graph_it->second, system_id);
     }
     return std::map<double, int>();
@@ -2154,9 +2155,9 @@ void Universe::InitializeSystemGraph(int for_empire_id)
 {
     const ObjectMap& objects = EmpireKnownObjects(for_empire_id);
 
-    for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->m_system_graph)) - 1; i >= 0; --i) {
-        boost::clear_vertex(i, m_graph_impl->m_system_graph);
-        boost::remove_vertex(i, m_graph_impl->m_system_graph);
+    for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->system_graph)) - 1; i >= 0; --i) {
+        boost::clear_vertex(i, m_graph_impl->system_graph);
+        boost::remove_vertex(i, m_graph_impl->system_graph);
     }
 
     std::vector<int> system_ids = objects.FindObjectIDs<System>();
@@ -2164,20 +2165,20 @@ void Universe::InitializeSystemGraph(int for_empire_id)
     //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
     //    Logger().debugStream() << " ... " << *it;
 
-    m_system_distances.resize(system_ids.size());
-    GraphImpl::SystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), m_graph_impl->m_system_graph);
+    GraphImpl::SystemIDPropertyMap sys_id_property_map =
+        boost::get(vertex_system_id_t(), m_graph_impl->system_graph);
 
-    GraphImpl::EdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, m_graph_impl->m_system_graph);
-    typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
+    GraphImpl::EdgeWeightPropertyMap edge_weight_map =
+        boost::get(boost::edge_weight, m_graph_impl->system_graph);
 
-    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_graph_impl->m_system_graph of system's vertex
+    std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in m_graph_impl->system_graph of system's vertex
 
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
-        boost::add_vertex(m_graph_impl->m_system_graph);
+        boost::add_vertex(m_graph_impl->system_graph);
         int system_id = system_ids[i];
         sys_id_property_map[i] = system_id;
-        // add record of index in m_graph_impl->m_system_graph of this system
+        // add record of index in m_graph_impl->system_graph of this system
         system_id_graph_index_reverse_lookup_map[system_id] = i;
     }
 
@@ -2188,18 +2189,20 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         // add edges and edge weights
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
             // get id in universe of system at other end of lane
-            int lane_dest_id = it->first;
+            const int lane_dest_id = it->first;
             // skip null lanes
             if (lane_dest_id == system1_id)
                 continue;
 
-            // get m_graph_impl->m_system_graph index for this system
+            // get m_graph_impl->system_graph index for this system
             std::map<int, int>::iterator reverse_lookup_map_it = system_id_graph_index_reverse_lookup_map.find(lane_dest_id);
             if (reverse_lookup_map_it == system_id_graph_index_reverse_lookup_map.end())
                 continue;   // couldn't find destination system id in reverse lookup map; don't add to graph
             int lane_dest_graph_index = reverse_lookup_map_it->second;
 
-            std::pair<EdgeDescriptor, bool> add_edge_result = boost::add_edge(i, lane_dest_graph_index, m_graph_impl->m_system_graph);
+            typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
+            std::pair<EdgeDescriptor, bool> add_edge_result =
+                boost::add_edge(i, lane_dest_graph_index, m_graph_impl->system_graph);
 
             if (add_edge_result.second) {                   // if this is a non-duplicate starlane or wormhole
                 if (it->second) {                               // if this is a wormhole
@@ -2215,6 +2218,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         }
 
         // define the straight-line system distances for this system
+        m_system_distances.resize(system_ids.size());
         m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[j];
@@ -2232,7 +2236,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
 
 void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
 {
-    m_graph_impl->m_empire_system_graph_views.clear();
+    m_graph_impl->empire_system_graph_views.clear();
 
     // if building system graph views for all empires, then each empire's graph
     // should accurately filter for that empire's visibility.  if building
@@ -2247,19 +2251,19 @@ void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
         // all empires get their own, accurately filtered graph
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             int empire_id = it->first;
-            GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, empire_id);
-            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
-            m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
+            GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
+            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
+            m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
 
     } else {
         // all empires share a single filtered graph, filtered by the for_empire_id
-        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->m_system_graph, for_empire_id);
-        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->m_system_graph, filter));
+        GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
+        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
 
         for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
             int empire_id = it->first;
-            m_graph_impl->m_empire_system_graph_views[empire_id] = filtered_graph_ptr;
+            m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
     }
 }
