@@ -527,10 +527,13 @@ void SystemIcon::SetSelected(bool selected)
 void SystemIcon::Refresh()
 {
     std::string name;
+    m_system_connection.disconnect();
 
-    if (const System* system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID())) {
+    const System* system = GetObject<System>(m_system_id);
+    if (!system)
+        system = GetEmpireKnownObject<System>(m_system_id, HumanClientApp::GetApp()->EmpireID());
+    if (system) {
         name = system->Name();
-        m_system_connection.disconnect();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals::at_front);
     }
 
