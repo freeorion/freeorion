@@ -1692,39 +1692,6 @@ void MapWnd::InitTurn()
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems and visible objects time: " << (timer.elapsed() * 1000.0);
 
 
-
-    timer.restart();
-    // determine sytems where fleets can deliver supply, and groups of systems that can exchange resources
-    for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        if (it->first == this_client_empire->EmpireID())
-            continue;
-
-        Empire* empire2 = it->second;
-
-        // use systems this client's player's empire has explored for all empires, so that this client's
-        // player can see where other empires can probably propegate supply, even if this client's empire
-        // doesn't know what systems the other player has actually explored
-        empire2->UpdateSupplyUnobstructedSystems(this_client_known_systems);
-
-        empire2->UpdateSystemSupplyRanges(this_client_known_objects);
-
-        // similarly, use this client's player's known starlanes to propegate all empires' supply
-        empire2->UpdateFleetSupply(this_client_known_starlanes);
-        empire2->UpdateResourceSupply(this_client_known_starlanes);
-
-        empire2->InitResourcePools();
-    }
-    Logger().debugStream() << "MapWnd::InitTurn resource pools init time: " << (timer.elapsed() * 1000.0);
-
-
-    //// re-update meter estimates of ships after resource pools and fleet supply
-    //// have been updated, so that resupply can be taken into account when 
-    //// predicting meter values on ships
-    //std::vector<int> ship_ids = universe.FindObjectIDs<Ship>();
-    //UpdateMeterEstimates(ship_ids);
-    // (Apparently not needed?)
-
-
     // set up system icons, starlanes, galaxy gas rendering
     InitTurnRendering();
 
@@ -4214,7 +4181,7 @@ void MapWnd::RefreshFoodResourceIndicator()
     }
 
 
-    const std::vector<PopCenter*>& pop_centers = pop_pool.PopCenters();
+    const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
 
 
     double stockpile_group_food_allocation = 0.0;
@@ -4222,13 +4189,18 @@ void MapWnd::RefreshFoodResourceIndicator()
 
     // go through population pools, adding up food allocation of those that are in one of the systems
     // in the group of systems that can access the stockpile
-    for (std::vector<PopCenter*>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
-        const PopCenter* pop = *it;
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(pop);
+    for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
+        const UniverseObject* obj = GetObject(*it);
         if (!obj) {
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a PopCenter* to an UniverseObject*";
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an object with id " << *it;
             continue;
         }
+        const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
+        if (!pop) {
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a UniverseObject* to an PopCenter*";
+            continue;
+        }
+
         int center_system_id = obj->SystemID();
 
         if (stockpile_group_systems.find(center_system_id) != stockpile_group_systems.end()) {

@@ -19,8 +19,8 @@ ResourcePool::ResourcePool(ResourceType type) :
     m_type(type)
 {}
 
-const std::vector<ResourceCenter*>& ResourcePool::ResourceCenters() const {
-    return m_resource_centers;
+const std::vector<int>& ResourcePool::ResourceCenterIDs() const {
+    return m_resource_center_ids;
 }
 
 int ResourcePool::StockpileSystemID() const {
@@ -28,62 +28,31 @@ int ResourcePool::StockpileSystemID() const {
 }
 
 double ResourcePool::Stockpile() const {
-    //Logger().debugStream() << "ResourcePool::Stockpile returning " << m_stockpile;
     return m_stockpile;
 }
 
 double ResourcePool::Production() const {
     double retval = 0.0;
-    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it)
+    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin();
+         it != m_supply_system_groups_resource_production.end(); ++it)
+    {
         retval += it->second;
-    //Logger().debugStream() << "ResourcePool::Production returning " << retval;
+    }
     return retval;
 }
 
-double ResourcePool::Production(int object_id) const {
-    const UniverseObject* obj = GetObject(object_id);
-    if (!obj) {
-        Logger().errorStream() << "ResourcePool::Production asked to return resource production for a nonexistant object with id " << object_id;
-        // consider throwing exception instead...?
-        return 0.0;
-    }
-    const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj);
-    if (!res) {
-        Logger().errorStream() << "ResourcePool::Production asked to return resource production for an object that is not a ResourceCenter";
-        // exception here as well?
-        return 0.0;
-    }
-
-    // ensure this pool contains the passed resource center
-    std::map<const ResourceCenter*, const UniverseObject*>::const_iterator it = m_resource_center_objs.find(res);
-    if (it != m_resource_center_objs.end()) {
-        MeterType meter_type = ResourceToMeter(m_type);
-        return res->NextTurnCurrentMeterValue(meter_type);
-    }
-
-    Logger().debugStream() << "ResourcePool::Production asked for the resource production of a ResourceCenter that is not in this pool";
-    // thow here also?
-    return 0.0;
-}
-
-double ResourcePool::GroupProduction(int system_id) const
-{
-    Logger().debugStream() << "ResourcePool::GroupProdeuction(" << system_id << ")";
-    const UniverseObject* sys = GetObject(system_id);
-    if (!sys) {
-        Logger().errorStream() << "ResourcePool::GroupProduction asked to return resource production for a nonexistant object with id " << system_id;
-        // consider throwing exception instead...?
-        return 0.0;
-    }
-
-    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it) {
+double ResourcePool::GroupProduction(int system_id) const {
+    // find group containing specified system
+    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin();
+         it != m_supply_system_groups_resource_production.end(); ++it)
+    {
         const std::set<int>& group = it->first;
         if (group.find(system_id) != group.end())
             return it->second;
     }
 
     // default return case:
-    Logger().debugStream() << "ResourcePool::GroupProduction asked to return resource production for the group of systems containing an object that is not contained within any systems in groups in this ResourcePool";
+    Logger().debugStream() << "ResourcePool::GroupProduction passed unknown system id: " << system_id;
     return 0.0;
 }
 
@@ -91,7 +60,6 @@ double ResourcePool::TotalAvailable() const {
     double retval = m_stockpile;
     for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it)
         retval += it->second;
-    //Logger().debugStream() << "ResourcePool::Available returning " << retval;
     return retval;
 }
 
@@ -116,68 +84,46 @@ std::map<std::set<int>, double> ResourcePool::Available() const {
 double ResourcePool::GroupAvailable(int system_id) const
 {
     Logger().debugStream() << "ResourcePool::GroupAvailable(" << system_id << ")";
-    // available is stockpile + production in this group.  If system_id is the id of the stockpile
-    // system, then add this pool's stockpile to the production of this group and return.
-    if (m_stockpile_system_id == system_id)
-        return GroupProduction(system_id) + m_stockpile;
+    // available is stockpile + production in this group
 
-    // system_id isn't the stockpile system, so need to do more work...
+    if (m_stockpile_system_id == UniverseObject::INVALID_OBJECT_ID)
+        return GroupProduction(system_id);
 
-    // verify system_id is a valid object
-    const UniverseObject* sys = GetObject(system_id);
-    if (!sys) {
-        Logger().errorStream() << "ResourcePool::GroupAvailable asked to return available resource for a nonexistant object with id " << system_id;
-        // consider throwing exception instead...?
-        return 0.0;
-    }
-
-    // find group that contains passed system_id
-    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it) {
+    // need to find if stockpile system is in the requested system's group
+    for (std::map<std::set<int>, double>::const_iterator it = m_supply_system_groups_resource_production.begin();
+         it != m_supply_system_groups_resource_production.end(); ++it)
+    {
         const std::set<int>& group = it->first;
         if (group.find(system_id) != group.end()) {
-            // found group containing system with id system_id.
-
-            // available resource depends on whether this group also contains the stockpile system
+            // found group for requested system.  is stockpile also in this group?
             if (group.find(m_stockpile_system_id) != group.end())
-                return it->second + m_stockpile;    // available for this group is group's production + stockpile
+                return it->second + m_stockpile;    // yes; add stockpile to production to return available
             else
-                return it->second;                  // available for this group is just group's production.  stockpile is held elsewhere
+                return it->second;                  // no; just return production as available
         }
     }
 
     // default return case:
-    Logger().debugStream() << "ResourcePool::GroupAvailable asked to return resource production for the group of systems containing an object that is not contained within any systems in groups in this ResourcePool";
+    Logger().debugStream() << "ResourcePool::GroupAvailable passed unknown system id: " << system_id;
     return 0.0;
 }
 
-void ResourcePool::SetResourceCenters(const std::vector<ResourceCenter*>& resource_center_vec) {
-    //Logger().debugStream() << "ResourcePool::SetResourceCenters for type " << boost::lexical_cast<std::string>(m_type);
-    m_resource_centers = resource_center_vec;
-    m_resource_center_objs.clear();
-    for (std::vector<ResourceCenter*>::const_iterator it = m_resource_centers.begin(); it != m_resource_centers.end(); ++it) {
-        ResourceCenter* rc = *it;
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(rc);
-        if (!obj) {
-            Logger().errorStream() << "ResourcePool::SetResourceCenters couldn't cast a ResourceCenter to a UniverseObject";
-            continue;
-        }
-        //Logger().debugStream() << "... adding object: " << obj->Name() << " (" << obj->ID() << ")";
-        m_resource_center_objs[rc] = obj;
-    }
+std::string ResourcePool::Dump() const {
+    std::string retval = "ResourcePool type = " + boost::lexical_cast<std::string>(m_type) +
+                         " stockpile = " + boost::lexical_cast<std::string>(m_stockpile) +
+                         " stockpile_system_id = " + boost::lexical_cast<std::string>(m_stockpile_system_id) +
+                         " resource_center_ids: ";
+    for (std::vector<int>::const_iterator it = m_resource_center_ids.begin(); it != m_resource_center_ids.end(); ++it)
+        retval += boost::lexical_cast<std::string>(*it) + ", ";
+    return retval;
+}
+
+void ResourcePool::SetResourceCenters(const std::vector<int>& resource_center_ids) {
+    m_resource_center_ids = resource_center_ids;
 }
 
 void ResourcePool::SetSystemSupplyGroups(const std::set<std::set<int> >& supply_system_groups) {
-    //Logger().debugStream() << "ResourcePool::SetSystemSupplyGroups for type " << boost::lexical_cast<std::string>(m_type);
-    m_supply_system_groups_resource_production.clear();         // get rid of old data
-    // add a (zero-valued, for now) entry in the map from sets to production amounts for each group.  will accumulate actual production later
-    for (std::set<std::set<int> >::const_iterator it = supply_system_groups.begin(); it != supply_system_groups.end(); ++it) {
-        //// DEBUG
-        //Logger().debugStream() << "... group: ";
-        //for (std::set<int>::const_iterator set_it = it->begin(); set_it != it->end(); ++set_it)
-        //    Logger().debugStream() << "... ... " << *set_it;
-        //// END DBUG
-        m_supply_system_groups_resource_production[*it] = 0.0;
-    }
+    m_supply_system_groups = supply_system_groups;
 }
 
 void ResourcePool::SetStockpileSystem(int stockpile_system_id) {
@@ -196,39 +142,34 @@ void ResourcePool::Update() {
     if (INVALID_METER_TYPE == meter_type)
         Logger().errorStream() << "ResourcePool::Update() called when m_type can't be converted to a valid MeterType";
 
-    // for every group...
-    for (std::map<std::set<int>, double>::iterator it = m_supply_system_groups_resource_production.begin(); it != m_supply_system_groups_resource_production.end(); ++it) {
-        // sum production from from all ResourceCenters in this pool that are located in a system in this group
 
-        const std::set<int>& group_ids = it->first;     // extract the set of systems that this group comprises
-        double& group_production = it->second;          // to be updated later...
-        group_production = 0.0;                         // zero production for this pool before beginning accumulation
+    // zero group production
+    m_supply_system_groups_resource_production.clear();
+    // add a (zero-valued, for now) entry in the map from sets to production
+    // amounts for each group.  will accumulate actual production later
+    for (std::set<std::set<int> >::const_iterator it = m_supply_system_groups.begin(); it != m_supply_system_groups.end(); ++it)
+        m_supply_system_groups_resource_production[*it] = 0.0;
 
-        // loop through systems in group, checking each resource center to see if it is located therein
-        for (std::set<int>::const_iterator group_it = group_ids.begin(); group_it != group_ids.end(); ++group_it) {
-            int system_in_group_id = *group_it;         // get system to check resource centers against
 
-            //// DEBUG
-            //const UniverseObject* system = GetUniverse().Object(system_in_group_id);
-            //if (!system)
-            //    Logger().errorStream() << "ResourcePool::Update tried to get a system that doesn't exist but is listed in a supply system group";
-            //Logger().debugStream() << "... system: " << system->Name() << "(" << system_in_group_id << ")";
-            //// END DEBUG
-
-            // check all ResourceCenters in this pool to see if any are in this system.
-            for (std::map<const ResourceCenter*, const UniverseObject*>::const_iterator obj_it = m_resource_center_objs.begin(); obj_it != m_resource_center_objs.end(); ++obj_it) {
-                if (obj_it->second->SystemID() == system_in_group_id) {
-                    // add this ResourceCenter's output to the group pool
-                    const ResourceCenter* rc = obj_it->first;
-                    group_production += rc->CurrentMeterValue(meter_type);
-                    //Logger().debugStream() << "... ... " << obj_it->second->Name() << " contributes: " << rc->NextTurnCurrentMeterValue(meter_type);
-                }
-            }
-
-            // this checks all ResourceCenter against all systems, even if a system has already been found for a ResourceCenter.  Some
-            // fancy caching or swapping the inner and outer loops might be a performance improvement... or detriment.
+    // find supply system group for each resource center and add production to that group's tally
+    for (std::vector<int>::const_iterator res_it = m_resource_center_ids.begin(); res_it != m_resource_center_ids.end(); ++res_it) {
+        const UniverseObject* obj = GetObject(*res_it);
+        if (!obj) {
+            Logger().errorStream() << "ResourcePool::Update couldn't find object / resoure center with id " << *res_it;
+            continue;
         }
-        //Logger().debugStream() << "... group output: " << group_production;
+        int res_center_system_id = obj->SystemID();
+
+
+        for (std::map<std::set<int>, double>::iterator it = m_supply_system_groups_resource_production.begin();
+             it != m_supply_system_groups_resource_production.end(); ++it)
+        {
+            const std::set<int>& group_ids = it->first;
+            if (group_ids.find(res_center_system_id) != group_ids.end()) {
+                it->second += obj->CurrentMeterValue(meter_type);
+                break;
+            }
+        }
     }
 
     ChangedSignal();
@@ -237,12 +178,6 @@ void ResourcePool::Update() {
 //////////////////////////////////////////////////
 // PopulationPool
 //////////////////////////////////////////////////
-namespace {
-    bool PopCenterLess(const PopCenter* elem1, const PopCenter* elem2) {
-        return elem1->CurrentMeterValue(METER_POPULATION) < elem2->CurrentMeterValue(METER_POPULATION);
-    }
-}
-
 PopulationPool::PopulationPool() :
     m_population(0.0),
     m_growth(0.0)
@@ -256,20 +191,24 @@ double PopulationPool::Growth() const {
     return m_growth;
 }
 
-void PopulationPool::SetPopCenters(const std::vector<PopCenter*>& pop_center_vec) {
-    m_pop_centers = pop_center_vec;
-    std::sort(m_pop_centers.begin(), m_pop_centers.end(), &PopCenterLess);  // this ordering ensures higher population PopCenters get first priority for food distribution
+void PopulationPool::SetPopCenters(const std::vector<int>& pop_center_ids) {
+    if (m_pop_center_ids == pop_center_ids)
+        return;
+    m_pop_center_ids = pop_center_ids;
 }
 
 void PopulationPool::Update() {
     m_population = 0.0;
-    double m_future_population = 0.0;
+    double future_population = 0.0;
     // sum population from all PopCenters in this pool
-    for (std::vector<PopCenter*>::const_iterator it = PopCenters().begin(); it != PopCenters().end(); ++it) {
-        const PopCenter* center = (*it);
-        m_population += center->CurrentMeterValue(METER_POPULATION);
-        m_future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
+    for (std::vector<int>::const_iterator it = m_pop_center_ids.begin(); it != m_pop_center_ids.end(); ++it) {
+        if (const UniverseObject* obj = GetObject(*it)) {
+            if (const PopCenter* center = dynamic_cast<const PopCenter*>(obj)) {
+                m_population += center->CurrentMeterValue(METER_POPULATION);
+                future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
+            }
+        }
     }
-    m_growth = m_future_population - m_population;
+    m_growth = future_population - m_population;
     ChangedSignal();
 }

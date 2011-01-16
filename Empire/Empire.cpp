@@ -1454,8 +1454,8 @@ void Empire::EliminationCleanup()
     // m_ship_designs;
     m_sitrep_entries.clear();
     for (std::map<ResourceType, boost::shared_ptr<ResourcePool> >::iterator it = m_resource_pools.begin(); it != m_resource_pools.end(); ++it)
-        it->second->SetResourceCenters(std::vector<ResourceCenter*>());
-    m_population_pool.SetPopCenters(std::vector<PopCenter*>());
+        it->second->SetResourceCenters(std::vector<int>());
+    m_population_pool.SetPopCenters(std::vector<int>());
     m_maintenance_total_cost = 0;
     // m_ship_names_used;
     m_fleet_supplyable_system_ids.clear();
@@ -2779,17 +2779,21 @@ void Empire::CheckGrowthFoodProgress()
             Logger().debugStream() << "didn't find in group... trying next.";
         }
 
-        const std::vector<PopCenter*>& pop_centers = pop_pool.PopCenters();
+        const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
 
         double stockpile_group_food_allocation = 0.0;
 
         // go through population pools, adding up food allocation of those that are in one of the systems
         // in the group of systems that can access the stockpile
-        for (std::vector<PopCenter*>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
-            const PopCenter* pop = *it;
-            const UniverseObject* obj = dynamic_cast<const UniverseObject*>(pop);
+        for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
+            const UniverseObject* obj = GetObject(*it);
             if (!obj) {
-                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast a PopCenter* to an UniverseObject*";
+                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get object with id " << *it;
+                continue;
+            }
+            const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
+            if (!pop) {
+                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast an UniverseObject* to PopCenter*";
                 continue;
             }
             int center_system_id = obj->SystemID();
@@ -2830,18 +2834,19 @@ void Empire::SetPlayerName(const std::string& player_name)
 
 void Empire::InitResourcePools()
 {
-    ObjectMap& objects = GetUniverse().Objects();
-
-    std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
-    std::vector<ResourceCenter*> res_vec;
-    std::vector<PopCenter*> pop_vec;
+    const ObjectMap& objects = GetUniverse().Objects();
+    std::vector<const UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(m_id));
+    std::vector<int> res_vec, pop_vec;
+    res_vec.reserve(object_vec.size());
+    pop_vec.reserve(object_vec.size());
 
     // determine if each object owned by this empire is a ResourceCenter and/or PopCenter (could be one, neither or both)
-    for (unsigned int i = 0; i < object_vec.size(); ++i) {
-        if (ResourceCenter* rc = dynamic_cast<ResourceCenter*>(object_vec[i]))
-            res_vec.push_back(rc);
-        if (PopCenter* pc = dynamic_cast<PopCenter*>(object_vec[i]))
-            pop_vec.push_back(pc);
+    for (std::vector<const UniverseObject*>::const_iterator it = object_vec.begin(); it != object_vec.end(); ++it) {
+        const UniverseObject* obj = *it;
+        if (const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj))
+            res_vec.push_back(obj->ID());
+        if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
+            pop_vec.push_back(obj->ID());
     }
 
     m_resource_pools[RE_MINERALS]->SetResourceCenters(res_vec);
@@ -2859,11 +2864,11 @@ void Empire::InitResourcePools()
     m_resource_pools[RE_INDUSTRY]->SetSystemSupplyGroups(m_resource_supply_groups);
 
 
-    // set non-blockadeable resrouce pools to share resources between all systems
+    // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    const std::vector<System*> all_systems_vec = objects.FindObjects<System>();
-    for (std::vector<System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
+    const std::vector<const System*> all_systems_vec = objects.FindObjects<System>();
+    for (std::vector<const System*>::const_iterator it = all_systems_vec.begin(); it != all_systems_vec.end(); ++it)
         all_systems_set.insert((*it)->ID());
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetSystemSupplyGroups(sets_set);
@@ -2952,27 +2957,21 @@ void Empire::UpdateFoodDistribution()
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
-    std::vector<PopCenter*>             pop_centers =       m_population_pool.PopCenters();
-    std::vector<ResourceCenter*>        resource_centers =  m_resource_pools[RE_FOOD]->ResourceCenters();
+    const std::vector<int>& pop_centers =       m_population_pool.PopCenterIDs();
+    const std::vector<int>& resource_centers =  m_resource_pools[RE_FOOD]->ResourceCenterIDs();
 
     // get UniverseObject pointers for ResourceCenters and PopCenters
     std::map<const UniverseObject*, const ResourceCenter*> object_resource_centers;     // used to look up whether an object is a ResourceCenter
-    for (std::vector<ResourceCenter*>::const_iterator res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it) {
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(*res_it);
-        if (!obj) {
-            Logger().errorStream() << "Empire::UpdateFoodDistribution couldn't cast a ResourceCenter object to a UniverseObject";
-            continue;
-        }
-        object_resource_centers[obj] = *res_it;
+    for (std::vector<int>::const_iterator res_it = resource_centers.begin(); res_it != resource_centers.end(); ++res_it) {
+        if (const UniverseObject* obj = GetObject(*res_it))
+            if (const ResourceCenter* res = dynamic_cast<const ResourceCenter*>(obj))
+                object_resource_centers[obj] = res;
     }
     std::map<PopCenter*, const UniverseObject*> pop_center_objects;               // used to get the object of PopCenters (to check what system they're in)
-    for (std::vector<PopCenter*>::const_iterator pop_it = pop_centers.begin(); pop_it != pop_centers.end(); ++pop_it) {
-        const UniverseObject* obj = dynamic_cast<const UniverseObject*>(*pop_it);
-        if (!obj) {
-            Logger().errorStream() << "Empire::UpdateFoodDistribution couldn't cast a PopCenter object to a UniverseObject";
-            continue;
-        }
-        pop_center_objects[*pop_it] = obj;
+    for (std::vector<int>::const_iterator pop_it = pop_centers.begin(); pop_it != pop_centers.end(); ++pop_it) {
+        if (UniverseObject* obj = GetObject(*pop_it))
+            if (PopCenter* pop = dynamic_cast<PopCenter*>(obj))
+                pop_center_objects[pop] = obj;
     }
 
 

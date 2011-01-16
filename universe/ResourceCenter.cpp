@@ -80,7 +80,7 @@ const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) cons
 std::string ResourceCenter::Dump() const
 {
     std::stringstream os;
-    os << " focus: " << m_focus;
+    os << "ResourceCenter focus: " << m_focus;
     return os.str();
 }
 
