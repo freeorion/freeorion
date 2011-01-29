@@ -67,7 +67,7 @@ def identifyFleetsRoles():
     universe = fo.getUniverse()
     for fleetID in universe.fleetIDs:
         foAIstate.addFleetRole(fleetID, FleetUtilsAI.assessFleetRole(fleetID))
-        # print str(fleetID) + ": " + FleetUtilsAIAIAI.assessFleetRole(fleetID)
+        # print str(fleetID) + ": " + FleetUtilsAI.assessFleetRole(fleetID)
 
 # called when client receives a load game message
 def resumeLoadedGame(savedStateString):

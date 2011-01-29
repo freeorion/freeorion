@@ -94,9 +94,9 @@ def generateProductionOrders():
 	print "  ID|Focus: " + str(planetID) + "|" + str(planet.focus)
 	# for focus in planet.availableFoci:
 	#     print "    >" + str(focus)
-	if str(planet.focus) != str(newFocus) and str(newFocus) in planet.availableFoci:
-	    fo.issueChangeFocusOrder(planetID, newFocus)
-	    print "  issueChangeFocusOrder(" + str(planetID) + ", " + str(newFocus) + ")"
+	# if str(planet.focus) != str(newFocus) and str(newFocus) in planet.availableFoci:
+	#     fo.issueChangeFocusOrder(planetID, newFocus)
+	#     print "  issueChangeFocusOrder(" + str(planetID) + ", " + str(newFocus) + ")"
 
 def getAvailableBuildLocations(shipDesignID):
     "returns locations where shipDesign can be built"

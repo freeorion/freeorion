@@ -177,12 +177,12 @@ def generateAIFleetOrdersForAIFleetMissions():
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_UNEXPLORED))
     print ""
 
-    print "Exploration fleet targets: fleetID[AIFleetMissionType]:{AITargetType:targetID}"
+    print "Exploration targets: fleetID[MissionType]:{TargetType:targetID}"
     explorationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_EXPLORATION])
     for explorationAIFleetMission in explorationAIFleetMissions:
         print "    " + str(explorationAIFleetMission)
 
-    print "Colonisation fleet targets: fleetID[AIFleetMissionType]:{AITargetType:targetID}"
+    print "Colonisation targets: fleetID[MissionType]:{TargetType:targetID}"
     colonisationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     for colonisationAIFleetMission in colonisationAIFleetMissions:
         print "    " + str(colonisationAIFleetMission)

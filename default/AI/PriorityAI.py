@@ -40,9 +40,9 @@ def calculateFoodPriority():
     foodPriority = (foodTarget - foodStockpile) / foodTarget * 100
 
     print ""
-    print "Size of food stockpile:  " + str(foodStockpile)
-    print "Target food stockpile:   " + str (foodTarget)
-    print "Priority for Food:       " + str(foodPriority)
+    print "Size of food stockpile: " + str(foodStockpile)
+    print "Target food stockpile : " + str (foodTarget)
+    print "Priority for Food     : " + str(foodPriority)
 
     if foodPriority < 0:
         return 0
@@ -62,9 +62,9 @@ def calculateExplorationPriority():
     explorationPriority = (numUnexploredSystems - numScouts) / numUnexploredSystems * 100
 
     print ""
-    print "Number of Scouts: " + str(numScouts)
+    print "Number of Scouts            : " + str(numScouts)
     print "Number of Unexplored systems: " + str(numUnexploredSystems)
-    print "Priority for scouts: " + str(explorationPriority)
+    print "Priority for scouts         : " + str(explorationPriority)
 
     if explorationPriority < 0: return 0
 

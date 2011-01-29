@@ -13,9 +13,15 @@ def getColonyFleets():
 
     # get supplyable systems
     empire = fo.getEmpire()
+    universe = fo.getUniverse()
+    capitolID = empire.capitolID
+    homeworld = universe.getPlanet(capitolID)
+    speciesName = homeworld.speciesName
+    species = fo.getSpecies(speciesName)
+
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
-    print ":: fleetSupplyablePlanetIDs:" + str(fleetSupplyablePlanetIDs)
+    print "    fleetSupplyablePlanetIDs:" + str(fleetSupplyablePlanetIDs)
 
     # get planets
     systemIDs = foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED)
@@ -24,7 +30,7 @@ def getColonyFleets():
     removeAlreadyOwnedPlanetIDs(planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION)
     removeAlreadyOwnedPlanetIDs(planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST)
 
-    evaluatedPlanets = assignColonisationValues(planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs)
+    evaluatedPlanets = assignColonisationValues(planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, fleetSupplyablePlanetIDs, species, empire)
     removeLowValuePlanets(evaluatedPlanets)
 
     sortedPlanets = evaluatedPlanets.items()
@@ -42,7 +48,7 @@ def getColonyFleets():
     allOutpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
     AIstate.outpostFleetIDs = FleetUtilsAI.extractFleetIDsWithoutMissionTypes(allOutpostFleetIDs)
 
-    evaluatedOutposts = assignColonisationValues(planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs)
+    evaluatedOutposts = assignColonisationValues(planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, fleetSupplyablePlanetIDs, species, empire)
     removeLowValuePlanets(evaluatedOutposts)
 
     sortedOutposts = evaluatedOutposts.items()
@@ -90,17 +96,17 @@ def removeAlreadyOwnedPlanetIDs(planetIDs, missionType):
         # print "removed planet " + str(ID)
 
 
-def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs):
+def assignColonisationValues(planetIDs, missionType, fleetSupplyablePlanetIDs, species, empire):
     "creates a dictionary that takes planetIDs as key and their colonisation score as value"
 
     planetValues = {}
 
     for planetID in planetIDs:
-        planetValues[planetID] = evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs)
+        planetValues[planetID] = evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, empire)
 
     return planetValues
 
-def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs):
+def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, empire):
     "returns the colonisation value of a planet"
     # TODO: in planet evaluation consider specials and distance
 
@@ -109,21 +115,34 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs):
     planet = universe.getPlanet(planetID)
     if (planet == None): return 0
 
-    # print ":: evaluatePlanet ID:" + str(planetID) + "/" + str(planet.type) + "/" + str(planet.size)
+    # give preference to closest worlds
+    empireID = empire.empireID
+    capitolID = empire.capitolID
+    homeworld = universe.getPlanet(capitolID)
+    homeSystemID = homeworld.systemID
+    evalSystemID = planet.systemID
+    leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))
+    distanceFactor = 1.001 / (leastJumpsPath + 1)
+
+    # print ">>> evaluatePlanet ID:" + str(planetID) + "/" + str(planet.type) + "/" + str(planet.size) + "/" + str(leastJumpsPath) + "/" + str(distanceFactor)
     if missionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
         # planet size ranges from 1-5
 	if (planetID in fleetSupplyablePlanetIDs):
-	    return getPlanetHospitality(planetID) * planet.size + 1
+	    return getPlanetHospitality(planetID, species) * planet.size + distanceFactor
 	else:
-	    return getPlanetHospitality(planetID) * planet.size
+	    return getPlanetHospitality(planetID, species) * planet.size - distanceFactor
     elif missionType == AIFleetMissionType.FLEET_MISSION_OUTPOST:
-	if str(planet.type) == str("gasGiant") or str(planet.type) == str("asteroids"):
+	planetEnvironment = species.getPlanetEnvironment(planet.type)
+        if planetEnvironment == fo.planetEnvironment.uninhabitable:
+	    # prevent outposts from being built when they cannot get food
 	    if (planetID in fleetSupplyablePlanetIDs):
-		return AIstate.minimalColoniseValue + 1
+		return AIstate.minimalColoniseValue + distanceFactor
+	    elif (str("GRO_ORBIT_FARMING") in empire.availableTechs):
+		return AIstate.minimalColoniseValue + distanceFactor
 	    else:
-		return AIstate.minimalColoniseValue - 1
+		return AIstate.minimalColoniseValue - distanceFactor
 
-def getPlanetHospitality(planetID):
+def getPlanetHospitality(planetID, species):
     "returns a value depending on the planet type"
 
     universe = fo.getUniverse()
@@ -131,20 +150,15 @@ def getPlanetHospitality(planetID):
     planet = universe.getPlanet(planetID)
     if planet == None: return 0
 
-    empire = fo.getEmpire()
-    capitolID = empire.capitolID
-    homeworld = universe.getPlanet(capitolID)
-    speciesName = homeworld.speciesName
-    species = fo.getSpecies(speciesName)
     planetEnvironment = species.getPlanetEnvironment(planet.type)
     # print ":: planet:" + str(planetID) + " type:" + str(planet.type) + " size:" + str(planet.size) + " env:" + str(planetEnvironment)
 
     # reworked with races
-    if planetEnvironment == fo.planetEnvironment.good: return 2.5
+    if planetEnvironment == fo.planetEnvironment.good: return 2.75
     if planetEnvironment == fo.planetEnvironment.adequate: return 1
     if planetEnvironment == fo.planetEnvironment.poor: return 0.5
     if planetEnvironment == fo.planetEnvironment.hostile: return 0.25
-    if planetEnvironment == fo.planetEnvironment.uninhabitable: return 0.25
+    if planetEnvironment == fo.planetEnvironment.uninhabitable: return 0.1
 
     return 0
 

@@ -1,7 +1,7 @@
 import copy
 import freeOrionAIInterface as fo
-from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
 import EnumsAI
+from EnumsAI import AIFleetMissionType, AIShipRoleType, AIExplorableSystemType
 import AIFleetMission
 
 # global variables
@@ -15,6 +15,9 @@ outpostFleetIDs = []
 # AIstate class
 class AIstate(object):
     "stores AI game state"
+
+    # def colonisablePlanets (should be set at start of turn)
+    # getColonisablePlanets (deepcopy!)
 
     def __init__(self):
         "constructor"
