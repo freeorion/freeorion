@@ -104,11 +104,11 @@ namespace {
                                           ValueRef::ReferenceType ref_type,
                                           ScriptingContext context)
     {
-        Logger().debugStream() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
-            << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
-            << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-            << " parent c: " << (context.condition_parent_candidate ? context.condition_parent_candidate->Name() : "0")
-            << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
+        //Logger().debugStream() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
+        //    << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
+        //    << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
+        //    << " parent c: " << (context.condition_parent_candidate ? context.condition_parent_candidate->Name() : "0")
+        //    << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         const UniverseObject* obj(0);
         switch(ref_type) {

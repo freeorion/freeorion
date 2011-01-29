@@ -267,7 +267,6 @@ namespace {
         condition1_p =
             all[condition1_p.this_ = arg1]
             | source[condition1_p.this_ = arg1]
-            | target[condition1_p.this_ = arg1]
             | focus_type[condition1_p.this_ = arg1]
             | homeworld[condition1_p.this_ = arg1]
             | building[condition1_p.this_ = arg1]
@@ -278,6 +277,7 @@ namespace {
             | object_type[condition1_p.this_ = arg1]
             | meter_value[condition1_p.this_ = arg1]
             | owned_by[condition1_p.this_ = arg1]
+            | target[condition1_p.this_ = arg1]
             | and_[condition1_p.this_ = arg1]
             | or_[condition1_p.this_ = arg1]
             | not_[condition1_p.this_ = arg1];

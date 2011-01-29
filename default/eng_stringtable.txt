@@ -3074,7 +3074,7 @@ DESC_SELF_NOT
 DESC_TARGET
  that is the target object
 
-DESC_TARGET_NET
+DESC_TARGET_NOT
  that is not the target object
 
 DESC_HOMEWORLD
