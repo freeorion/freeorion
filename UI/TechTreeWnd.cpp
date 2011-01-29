@@ -14,18 +14,11 @@
 #include "../universe/Tech.h"
 #include "../universe/Effect.h"
 #include "../Empire/Empire.h"
+#include "TechTreeLayout.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
-
-#include <ogdf/basic/Graph.h>
-#include <ogdf/basic/GraphAttributes.h>
-#include <ogdf/layered/SugiyamaLayout.h>
-#include <ogdf/layered/FastHierarchyLayout.h>
-#include <ogdf/layered/BarycenterHeuristic.h>
-#include <ogdf/layered/MedianHeuristic.h>
-#include <ogdf/layered/SplitHeuristic.h>
 
 #include <algorithm>
 
@@ -57,6 +50,7 @@ namespace {
     const GG::X TECH_PANEL_LAYOUT_WIDTH = THEORY_TECH_PANEL_LAYOUT_WIDTH;
     const GG::Y TECH_PANEL_LAYOUT_HEIGHT = THEORY_TECH_PANEL_LAYOUT_HEIGHT - PROGRESS_PANEL_BOTTOM_EXTRUSION;
 
+    const int    HORIZONTAL_LINE_LENGTH = 12;
     const float OUTER_LINE_THICKNESS = 1.5;
     const float ARC_THICKNESS = 3.0;
 
@@ -769,6 +763,9 @@ public:
     void HideStatus(TechStatus status);
     void ShowTech(const Tech* tech);
     void CenterOnTech(const Tech* tech);
+    void DoZoom(const GG::Pt & p) const;
+    void UndoZoom() const;
+    GG::Pt Convert(const GG::Pt & p) const;
     //@}
 
     static const double ZOOM_STEP_SIZE;
@@ -777,27 +774,32 @@ private:
     class TechPanel;
     typedef std::multimap<const Tech*,
                           std::pair<const Tech*,
-                                    std::vector<std::pair<double,
-                                                          double> > > > DependencyLineSegmentsMap;
-    typedef std::map<TechStatus, DependencyLineSegmentsMap>             DependencyLineSegmentsMapsByArcType;
+                                    std::vector<std::pair<double, double> > > > DependencyArcsMap;
+    typedef std::map<TechStatus, DependencyArcsMap> DependencyArcsMapsByArcType;
 
     class LayoutSurface : public GG::Wnd {
     public:
         LayoutSurface() : Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE | GG::DRAGABLE) {}
         virtual void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) {DraggedSignal(move);}
+         virtual void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys){ButtonDownSignal(pt);}
+        virtual void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {ButtonUpSignal(pt);}
         virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) {ZoomedSignal(move);}
         mutable boost::signal<void (int)> ZoomedSignal;
         mutable boost::signal<void (const GG::Pt&)> DraggedSignal;
+        mutable boost::signal<void (const GG::Pt&)> ButtonDownSignal;
+        mutable boost::signal<void (const GG::Pt&)> ButtonUpSignal;
     };
 
-    void Layout(bool keep_position, double old_scale = -1.0);
+    void Layout(bool keep_position);
     bool TechVisible(const Tech* tech);
-    void DrawPolyLine(const std::vector<std::pair<double, double> >& vertices, const GG::Clr& color, bool with_arrow_head);
+    void DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head);
     void ScrolledSlot(int, int, int, int);
     void TechBrowsedSlot(const Tech* tech);
     void TechClickedSlot(const Tech* tech);
     void TechDoubleClickedSlot(const Tech* tech);
     void TreeDraggedSlot(const GG::Pt& move);
+    void TreeDragBegin(const GG::Pt& move);
+    void TreeDragEnd(const GG::Pt& move);
     void TreeZoomedSlot(int move);
     void TreeZoomInClicked();
     void TreeZoomOutClicked();
@@ -807,14 +809,18 @@ private:
     std::set<TechType>      m_tech_types_shown;
     std::set<TechStatus>    m_tech_statuses_shown;
     const Tech*             m_selected_tech;
+    TechTreeLayout          m_graph;
 
     std::map<const Tech*, TechPanel*>   m_techs;
-    DependencyLineSegmentsMapsByArcType m_dependency_polylines;
+    DependencyArcsMapsByArcType m_dependency_arcs;
 
     LayoutSurface* m_layout_surface;
     CUIScroll*     m_vscroll;
     CUIScroll*     m_hscroll;
-    GG::Pt         m_scroll_position;
+    double         m_scroll_position_x; //actual scroll position
+    double         m_scroll_position_y;
+    double         m_drag_scroll_position_x; //position when drag started
+    double         m_drag_scroll_position_y;
     CUIButton*     m_zoom_in_button;
     CUIButton*     m_zoom_out_button;
 };
@@ -832,7 +838,7 @@ public:
     typedef boost::signal<void (const Tech*)>      TechDoubleClickedSignalType; ///< emitted when a technology is double-clicked
     //@}
 
-    TechPanel(const Tech* tech, bool selected, double scale = 1.0);
+    TechPanel(const Tech* tech, const LayoutPanel* panel);
 
     virtual bool InWindow(const GG::Pt& pt) const;
     virtual void Render();
@@ -853,7 +859,7 @@ private:
     GG::Rect ProgressPanelRect(const GG::Pt& ul, const GG::Pt& lr);
 
     const Tech*           m_tech;
-    double                m_scale;
+    const LayoutPanel*    m_panel;
     double                m_progress; // in [0.0, 1.0]
     GG::Clr               m_fill_color;
     GG::Clr               m_text_and_border_color;
@@ -861,72 +867,63 @@ private:
     GG::TextControl*      m_tech_name_text;
     GG::TextControl*      m_tech_cost_text;
     GG::TextControl*      m_progress_text;
-    bool                  m_selected;
 };
 
-TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, double scale/* = 1.0*/) :
+TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, const LayoutPanel* panel) :
     GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
     m_tech(tech),
-    m_scale(scale),
+    m_panel(panel),
     m_progress(0.0),
     m_tech_name_text(0),
     m_tech_cost_text(0),
-    m_progress_text(0),
-    m_selected(selected)
+    m_progress_text(0)
 {
     GG::Pt size;
     if (m_tech->Type() == TT_THEORY) {
-        size = GG::Pt(static_cast<GG::X>(THEORY_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<GG::Y>(THEORY_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
+        size = GG::Pt(THEORY_TECH_PANEL_LAYOUT_WIDTH, THEORY_TECH_PANEL_LAYOUT_HEIGHT);
     } else if (m_tech->Type() == TT_APPLICATION) {
-        size = GG::Pt(static_cast<GG::X>(APPLICATION_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<GG::Y>(APPLICATION_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
+        size = GG::Pt(APPLICATION_TECH_PANEL_LAYOUT_WIDTH, APPLICATION_TECH_PANEL_LAYOUT_HEIGHT);
     } else { // m_tech->Type() == TT_REFINEMENT
-        size = GG::Pt(static_cast<GG::X>(REFINEMENT_TECH_PANEL_LAYOUT_WIDTH * m_scale + 0.5), static_cast<GG::Y>(REFINEMENT_TECH_PANEL_LAYOUT_HEIGHT * m_scale + 0.5));
+        size = GG::Pt(REFINEMENT_TECH_PANEL_LAYOUT_WIDTH, REFINEMENT_TECH_PANEL_LAYOUT_HEIGHT);
     }
     Resize(size);
 
-
-    const int FONT_PTS = std::max(static_cast<const int>(ClientUI::Pts() * m_scale + 0.5), 3);
+    const int FONT_PTS = ClientUI::Pts();
     boost::shared_ptr<GG::Font> font = ClientUI::GetFont(FONT_PTS);
 
+    //REMARK: do not use AttachChild but add child->Render() to method render, as the component is zoomed
     // tech icon
-    const int GRAPHIC_SIZE = static_cast<int>(Value(size.y - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale - 2));
+    const int GRAPHIC_SIZE = static_cast<int>(Value(size.y - PROGRESS_PANEL_BOTTOM_EXTRUSION - 2));
     m_icon = new GG::StaticGraphic(GG::X1, GG::Y1, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE), ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
     m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
-    AttachChild(m_icon);
-
 
     // tech name text
     GG::Pt UPPER_TECH_TEXT_OFFSET(GG::X(4), GG::Y(2));
     GG::Pt LOWER_TECH_TEXT_OFFSET(GG::X(4), GG::Y(0));
-    UPPER_TECH_TEXT_OFFSET = GG::Pt(static_cast<GG::X>(UPPER_TECH_TEXT_OFFSET.x * m_scale), static_cast<GG::Y>(UPPER_TECH_TEXT_OFFSET.y * m_scale));
-    LOWER_TECH_TEXT_OFFSET = GG::Pt(static_cast<GG::X>(LOWER_TECH_TEXT_OFFSET.x * m_scale), static_cast<GG::Y>(LOWER_TECH_TEXT_OFFSET.y * m_scale));
+    UPPER_TECH_TEXT_OFFSET = GG::Pt(static_cast<GG::X>(UPPER_TECH_TEXT_OFFSET.x), static_cast<GG::Y>(UPPER_TECH_TEXT_OFFSET.y));
+    LOWER_TECH_TEXT_OFFSET = GG::Pt(static_cast<GG::X>(LOWER_TECH_TEXT_OFFSET.x), static_cast<GG::Y>(LOWER_TECH_TEXT_OFFSET.y));
 
-    GG::X text_left(m_icon->LowerRight().x + 4 * m_scale);
+    GG::X text_left(m_icon->LowerRight().x + 4);
     m_tech_name_text = new GG::TextControl(text_left, UPPER_TECH_TEXT_OFFSET.y,
-                                           Width() - m_icon->LowerRight().x - static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
+                                           Width() - m_icon->LowerRight().x - static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION),
                                            font->Lineskip(), UserString(m_tech->Name()), font,
                                            m_text_and_border_color, GG::FORMAT_TOP | GG::FORMAT_LEFT);
     m_tech_name_text->ClipText(true);
-    AttachChild(m_tech_name_text);
-
 
     // cost text box
     m_tech_cost_text = new GG::TextControl(text_left, GG::Y0,
                                            Width() - text_left,
-                                           static_cast<GG::Y>(Height() - LOWER_TECH_TEXT_OFFSET.y - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
+                                           static_cast<GG::Y>(Height() - LOWER_TECH_TEXT_OFFSET.y - PROGRESS_PANEL_BOTTOM_EXTRUSION),
                                            "Tech Cost Text", font, m_text_and_border_color,
                                            GG::FORMAT_BOTTOM | GG::FORMAT_LEFT);
-    AttachChild(m_tech_cost_text);
 
 
     // progress text box
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());
-    m_progress_text = new GG::TextControl(static_cast<GG::X>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
-                                          static_cast<GG::Y>(progress_panel.ul.y - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale),
+    m_progress_text = new GG::TextControl(static_cast<GG::X>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION),
+                                          static_cast<GG::Y>(progress_panel.ul.y - PROGRESS_PANEL_BOTTOM_EXTRUSION),
                                           progress_panel.Width(), progress_panel.Height(),
                                           "Progress Panel", font, m_text_and_border_color);
-    AttachChild(m_progress_text);
-
 
     // constrain long text that would otherwise overflow planel boundaries
     SetChildClippingMode(ClipToClient);
@@ -939,30 +936,46 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const Tech* tech, bool selected, 
 bool TechTreeWnd::LayoutPanel::TechPanel::InWindow(const GG::Pt& pt) const
 {
     GG::Pt lr = LowerRight();
-    return GG::Wnd::InWindow(pt) &&
-        (pt.x <= lr.x - PROGRESS_PANEL_LEFT_EXTRUSION * m_scale || lr.y - PROGRESS_PANEL_HEIGHT * m_scale <= pt.y) &&
-        (lr.x - PROGRESS_PANEL_WIDTH * m_scale <= pt.x || pt.y <= lr.y - PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale);
+    const GG::Pt p = m_panel->Convert(pt);
+    return GG::Wnd::InWindow(p) &&
+        (p.x <= lr.x - PROGRESS_PANEL_LEFT_EXTRUSION || lr.y - PROGRESS_PANEL_HEIGHT <= p.y) &&
+        (lr.x - PROGRESS_PANEL_WIDTH <= p.x || p.y <= lr.y - PROGRESS_PANEL_BOTTOM_EXTRUSION);
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Render()
 {
-    GG::Pt      ul = UpperLeft();
-    GG::Pt      lr = LowerRight() - GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale),
-                                           static_cast<GG::Y>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale));
-    GG::Clr     interior_color_to_use = m_selected  ?   GG::LightColor(m_fill_color)            :   m_fill_color;
-    GG::Clr     border_color_to_use =   m_selected  ?   GG::LightColor(m_text_and_border_color) :   m_text_and_border_color;
+    GG::Pt      ul(GG::X(0), GG::Y(0));
+    GG::Pt      lr(Width(), Height());
+    
+    GG::Clr     interior_color_to_use;
+    GG::Clr     border_color_to_use;
+    if ( m_panel->m_selected_tech == m_tech) {
+        interior_color_to_use = GG::LightColor(m_fill_color);
+        border_color_to_use   = GG::LightColor(m_text_and_border_color);
+    } else {
+        interior_color_to_use = m_fill_color;
+        border_color_to_use   = m_text_and_border_color;
+    }
 
     GG::Rect    main_panel(ul, lr);
     GG::Rect    progress_panel = ProgressPanelRect(ul, lr);
     TechType    tech_type = m_tech->Type();
     bool        show_progress = !m_progress_text->Empty();
-
+    //YYY use m_panel in order to scale graphics TODO
+    m_panel->DoZoom(UpperLeft());
+    //draw frame
     RenderTechPanel(tech_type, main_panel, progress_panel, interior_color_to_use, border_color_to_use, show_progress, m_progress);
+    //draw children
+    m_icon->Render();
+    m_tech_name_text->Render();
+    m_tech_cost_text->Render();
+    m_progress_text->Render();
+    m_panel->UndoZoom();
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_selected)
+    if (m_panel->m_selected_tech != m_tech)
         TechClickedSignal(m_tech);
 }
 
@@ -978,7 +991,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::MouseHere(const GG::Pt& pt, GG::Flags<
 
 void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
 {
-    if (m_selected = select) {
+    if (select) {
         m_tech_name_text->SetTextColor(GG::LightColor(m_text_and_border_color));
         m_tech_cost_text->SetTextColor(GG::LightColor(m_text_and_border_color));
         m_progress_text->SetTextColor(GG::LightColor(m_text_and_border_color));
@@ -1050,21 +1063,22 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
     m_progress_text->SetText(progress_str);
 
 
-    Select(m_selected);
+    Select(m_panel->m_selected_tech == m_tech);
 }
 
 GG::Rect TechTreeWnd::LayoutPanel::TechPanel::ProgressPanelRect(const GG::Pt& ul, const GG::Pt& lr)
 {
     GG::Rect retval;
-    retval.lr = lr + GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION * m_scale), static_cast<GG::Y>(PROGRESS_PANEL_BOTTOM_EXTRUSION * m_scale));
-    retval.ul = retval.lr - GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_WIDTH * m_scale), static_cast<GG::Y>(PROGRESS_PANEL_HEIGHT * m_scale));
+    //(Lathanda) removed m_scale
+    retval.lr = lr + GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_LEFT_EXTRUSION), static_cast<GG::Y>(PROGRESS_PANEL_BOTTOM_EXTRUSION));
+    retval.ul = retval.lr - GG::Pt(static_cast<GG::X>(PROGRESS_PANEL_WIDTH), static_cast<GG::Y>(PROGRESS_PANEL_HEIGHT));
     return retval;
 }
 
 //////////////////////////////////////////////////
 // TechTreeWnd::LayoutPanel                     //
 //////////////////////////////////////////////////
-const double TechTreeWnd::LayoutPanel::ZOOM_STEP_SIZE = 1.25;
+const double TechTreeWnd::LayoutPanel::ZOOM_STEP_SIZE = 1.125;
 TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_scale(1.0),
@@ -1076,11 +1090,13 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_vscroll(0),
     m_hscroll(0),
     m_zoom_in_button(0),
-    m_zoom_out_button(0)
+    m_zoom_out_button(0),
+    m_graph()
 {
     SetChildClippingMode(ClipToClient);
 
-    m_scale = 1.0 / ZOOM_STEP_SIZE; // because fully zoomed in is too close
+//    m_scale = 1.0 / ZOOM_STEP_SIZE; // because fully zoomed in is too close
+    m_scale = 1.0; //(LATHANDA) Initialise Fullzoom an do real zooming using GL TODO CHec best size
 
     m_layout_surface = new LayoutSurface();
     m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), GG::Y0, GG::X(ClientUI::ScrollWidth()), h - ClientUI::ScrollWidth(), GG::VERTICAL);
@@ -1105,6 +1121,8 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     AttachChild(m_zoom_out_button);
 
     GG::Connect(m_layout_surface->DraggedSignal,    &TechTreeWnd::LayoutPanel::TreeDraggedSlot,     this);
+    GG::Connect(m_layout_surface->ButtonUpSignal,   &TechTreeWnd::LayoutPanel::TreeDragEnd,         this);
+    GG::Connect(m_layout_surface->ButtonDownSignal, &TechTreeWnd::LayoutPanel::TreeDragBegin,       this);
     GG::Connect(m_layout_surface->ZoomedSignal,     &TechTreeWnd::LayoutPanel::TreeZoomedSlot,      this);
     GG::Connect(m_vscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
     GG::Connect(m_hscroll->ScrolledSignal,          &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
@@ -1183,107 +1201,96 @@ void TechTreeWnd::LayoutPanel::Render()
 
     BeginClipping();
     // render dependency arcs
-
-    glPushMatrix();
-    glTranslated(-Value(m_scroll_position.x), -Value(m_scroll_position.y), 0);
+    DoZoom(GG::Pt());
 
     // first, draw arc with thick, half-alpha line
     glEnable(GL_LINE_SMOOTH);
-    glLineWidth(static_cast<GLfloat>(ARC_THICKNESS * m_scale));
+    glLineWidth((int)(ARC_THICKNESS * m_scale));
     GG::Clr known_half_alpha = ClientUI::KnownTechTextAndBorderColor();
     known_half_alpha.a = 127;
     GG::Clr researchable_half_alpha = ClientUI::ResearchableTechTextAndBorderColor();
     researchable_half_alpha.a = 127;
     GG::Clr unresearchable_half_alpha = ClientUI::UnresearchableTechTextAndBorderColor();
     unresearchable_half_alpha.a = 127;
-    for (DependencyLineSegmentsMapsByArcType::const_iterator it = m_dependency_polylines.begin(); it != m_dependency_polylines.end(); ++it) {
-        const DependencyLineSegmentsMap& dlsm = it->second;
-        for (DependencyLineSegmentsMap::const_iterator dlsm_it = dlsm.begin(); dlsm_it != dlsm.end(); ++dlsm_it) {
-            const Tech* prereq_tech = dlsm_it->first;
-            const Tech* postreq_tech = dlsm_it->second.first;
-            const std::vector<std::pair<double, double> >& vertices = dlsm_it->second.second;
-            DrawPolyLine(vertices, GG::CLR_WHITE, true);
+    std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> > selected_arcs;
+    for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
+        GG::Clr arc_color;
+        switch (it->first) {
+        case TS_COMPLETE:       arc_color = known_half_alpha; break;
+        case TS_RESEARCHABLE:   arc_color = researchable_half_alpha; break;
+        default:                arc_color = unresearchable_half_alpha; break;
+        }
+        glColor(arc_color);
+        for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+            bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
+            if (selected_arc) {
+                selected_arcs[it->first].push_back(it2);
+                continue;
+            }
+            DrawArc(it2, arc_color, false);
         }
     }
-    //std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> > selected_arcs;
-    //for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
-    //    GG::Clr arc_color;
-    //    switch (it->first) {
-    //    case TS_COMPLETE:       arc_color = known_half_alpha; break;
-    //    case TS_RESEARCHABLE:   arc_color = researchable_half_alpha; break;
-    //    default:                arc_color = unresearchable_half_alpha; break;
-    //    }
-    //    glColor(arc_color);
-    //    for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-    //        bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
-    //        if (selected_arc) {
-    //            selected_arcs[it->first].push_back(it2);
-    //            continue;
-    //        }
-    //        DrawArc(it2, arc_color, false);
-    //    }
-    //}
     GG::Clr known_half_alpha_selected = GG::LightColor(known_half_alpha);
     GG::Clr researchable_half_alpha_selected = GG::LightColor(researchable_half_alpha);
     GG::Clr unresearchable_half_alpha_selected = GG::LightColor(unresearchable_half_alpha);
-    //for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
-    //     it != selected_arcs.end();
-    //     ++it) {
-    //    GG::Clr arc_color;
-    //    switch (it->first) {
-    //    case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
-    //    case TS_RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
-    //    default:                arc_color = unresearchable_half_alpha_selected; break;
-    //    }
-    //    glColor(arc_color);
-    //    for (unsigned int i = 0; i < it->second.size(); ++i) {
-    //        DrawArc(it->second[i], arc_color, false);
-    //    }
-    //}
+    for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
+         it != selected_arcs.end();
+         ++it) {
+        GG::Clr arc_color;
+        switch (it->first) {
+        case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
+        case TS_RESEARCHABLE:   arc_color = researchable_half_alpha_selected; break;
+        default:                arc_color = unresearchable_half_alpha_selected; break;
+        }
+        glColor(arc_color);
+        for (unsigned int i = 0; i < it->second.size(); ++i) {
+            DrawArc(it->second[i], arc_color, false);
+        }
+    }
 
     // now retrace the arc with a normal-width, full-alpha line
-    glLineWidth(static_cast<GLfloat>(ARC_THICKNESS * m_scale * 0.5));
+    glLineWidth(ARC_THICKNESS * m_scale * 0.5);
     glDisable(GL_LINE_SMOOTH);
-    //for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
-    //    GG::Clr arc_color;
-    //    switch (it->first) {
-    //    case TS_COMPLETE:       arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
-    //    case TS_RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
-    //    default:                arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
-    //    }
-    //    glColor(arc_color);
-    //    for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
-    //        bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
-    //        if (selected_arc) {
-    //            selected_arcs[it->first].push_back(it2);
-    //            continue;
-    //        }
-    //        DrawArc(it2, arc_color, true);
-    //    }
-    //}
+    for (DependencyArcsMapsByArcType::const_iterator it = m_dependency_arcs.begin(); it != m_dependency_arcs.end(); ++it) {
+        GG::Clr arc_color;
+        switch (it->first) {
+        case TS_COMPLETE:       arc_color = ClientUI::KnownTechTextAndBorderColor(); break;
+        case TS_RESEARCHABLE:   arc_color = ClientUI::ResearchableTechTextAndBorderColor(); break;
+        default:                arc_color = ClientUI::UnresearchableTechTextAndBorderColor(); break;
+        }
+        glColor(arc_color);
+        for (DependencyArcsMap::const_iterator it2 = it->second.begin(); it2 != it->second.end(); ++it2) {
+            bool selected_arc = it2->first == m_selected_tech || it2->second.first == m_selected_tech;
+            if (selected_arc) {
+                selected_arcs[it->first].push_back(it2);
+                continue;
+            }
+            DrawArc(it2, arc_color, true);
+        }
+    }
     GG::Clr known_selected = GG::LightColor(ClientUI::KnownTechTextAndBorderColor());
     GG::Clr researchable_selected = GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor());
     GG::Clr unresearchable_selected = GG::LightColor(ClientUI::UnresearchableTechTextAndBorderColor());
-    //for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
-    //     it != selected_arcs.end();
-    //     ++it) {
-    //    GG::Clr arc_color;
-    //    switch (it->first) {
-    //    case TS_COMPLETE:       arc_color = known_selected; break;
-    //    case TS_RESEARCHABLE:   arc_color = researchable_selected; break;
-    //    default:                arc_color = unresearchable_selected; break;
-    //    }
-    //    glColor(arc_color);
-    //    for (unsigned int i = 0; i < it->second.size(); ++i) {
-    //        DrawArc(it->second[i], arc_color, true);
-    //    }
-    //}
-    glPopMatrix();
+    for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
+         it != selected_arcs.end();
+         ++it) {
+        GG::Clr arc_color;
+        switch (it->first) {
+        case TS_COMPLETE:       arc_color = known_selected; break;
+        case TS_RESEARCHABLE:   arc_color = researchable_selected; break;
+        default:                arc_color = unresearchable_selected; break;
+        }
+        glColor(arc_color);
+        for (unsigned int i = 0; i < it->second.size(); ++i) {
+            DrawArc(it->second[i], arc_color, true);
+        }
+    }
+   
     glEnable(GL_TEXTURE_2D);
     EndClipping();
 
     glLineWidth(1.0);
-
+    UndoZoom();
     GG::GUI::RenderWindow(m_vscroll);
     GG::GUI::RenderWindow(m_hscroll);
 }
@@ -1314,8 +1321,9 @@ void TechTreeWnd::LayoutPanel::Clear()
     for (std::map<const Tech*, TechPanel*>::const_iterator it = m_techs.begin(); it != m_techs.end(); ++it)
         delete it->second;
     m_techs.clear();
+    m_graph.Clear();
 
-    m_dependency_polylines.clear();
+    m_dependency_arcs.clear();
 
     m_selected_tech = 0;
 }
@@ -1335,7 +1343,6 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale)
     if (m_scale != scale) {
         double old_scale = m_scale;
         m_scale = scale;
-        Layout(true, old_scale);
     }
 }
 
@@ -1424,216 +1431,148 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
         Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << (tech ? tech->Name() : "Null tech pointer") << " due to lack of such a tech panel";
     }
 }
+void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt & p) const {
+    glPushMatrix();
+    //center to panel
+    glTranslated(Value(Width()/2.0),Value(Height()/2.0),0);
+    //zoom
+    glScaled(m_scale, m_scale, 1);
+    //translate to actual scroll position
+    glTranslated(-m_scroll_position_x, -m_scroll_position_y, 0);
+    glTranslated(Value(p.x), Value(p.y), 0);
+}
 
-void TechTreeWnd::LayoutPanel::Layout(bool keep_position, double old_scale/* = -1.0*/)
+void TechTreeWnd::LayoutPanel::UndoZoom() const {
+    glPopMatrix();
+}
+
+GG::Pt TechTreeWnd::LayoutPanel::Convert(const GG::Pt & p) const {
+/*
+* Converts screen coordinate into virtual coordiante
+* doing the inverse transformation as DoZoom in the same order
+*/    
+    double x = Value(p.x);
+    double y = Value(p.y);
+    x -= Value(Width()/2.0);
+    y -= Value(Height()/2.0);
+    x /= m_scale;
+    y /= m_scale;
+    x += m_scroll_position_x;
+    y += m_scroll_position_y;
+    return GG::Pt(GG::X((int)x),GG::Y((int)y));
+
+}
+
+void TechTreeWnd::LayoutPanel::Layout(bool keep_position) 
 {
+    //constants
     const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
     const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
-
-    if (old_scale < 0.0)
-        old_scale = m_scale;
-    GG::Pt final_position;
-    if (keep_position) {
-        if (m_scale == old_scale) {
-            final_position = m_scroll_position;
-        } else {
-            GG::Pt cl_sz = ClientSize();
-            GG::Pt center = m_scroll_position + GG::Pt(cl_sz.x / 2, cl_sz.y / 2);
-            center.x = (center.x - TECH_PANEL_MARGIN_X) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN_X;
-            center.y = (center.y - TECH_PANEL_MARGIN_Y) * m_scale / old_scale + 0.5 + TECH_PANEL_MARGIN_Y;
-            final_position = GG::Pt(center.x - cl_sz.x / 2, center.y - cl_sz.y / 2);
-        }
-    }
-    const Tech* selected_tech = keep_position ? m_selected_tech : 0;
-    Clear();
-    m_selected_tech = selected_tech;
-
     const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
     const double NODE_SEP = Value(TECH_PANEL_LAYOUT_HEIGHT) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
     const double WIDTH = Value(TECH_PANEL_LAYOUT_WIDTH);
     const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT);
+    const double X_MARGIN = HORIZONTAL_LINE_LENGTH;
 
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    //store data that may be restored
+    double relativ_scroll_position_x = m_hscroll->PosnRange().first / m_hscroll->ScrollRange().second;
+    double relativ_scroll_position_y = m_vscroll->PosnRange().first / m_vscroll->ScrollRange().second;
+    const Tech* selected_tech = m_selected_tech;
 
-
-    // graph layout
-    ogdf::Graph G;
-
-    ogdf::GraphAttributes GA(G, ogdf::GraphAttributes::nodeGraphics |
-                                ogdf::GraphAttributes::edgeGraphics |
-                                ogdf::GraphAttributes::nodeLabel);
+    //cleanup old data for new layout
+    Clear();
 
     Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
 
+    //create a node for every tech
     TechManager& manager = GetTechManager();
-
-    std::map<std::string, ogdf::node> tech_nodes;
-    std::map<ogdf::node, const Tech*> node_techs;
-
-    // add nodes
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        const Tech* tech = *it;
-        if (!TechVisible(tech))
+        if (!TechVisible(*it))
             continue;
-        ogdf::node new_node = G.newNode();
-        GA.labelNode(new_node) = UserString(tech->Name()).c_str();
-        GA.width(new_node) = HEIGHT;
-        GA.height(new_node) = WIDTH;
-
-        tech_nodes[tech->Name()] = new_node;
-        node_techs[new_node] = tech;
+        m_techs[*it] = new TechPanel(*it, this);
+        m_graph.AddNode(*it, m_techs[*it]->Width(), m_techs[*it]->Height());
     }
 
-    // add edges for prerequisites
+    //create an edge for every prerequisite
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        const Tech* tech = *it;
-        if (!tech || !TechVisible(tech))
+        if (!TechVisible(*it))
             continue;
-
-        std::map<std::string, ogdf::node>::const_iterator node_map_it = tech_nodes.find(tech->Name());
-        if (node_map_it == tech_nodes.end())
-            continue;
-        ogdf::node cur_node = node_map_it->second;
-
-        for (std::set<std::string>::const_iterator prereq_it = tech->Prerequisites().begin();
+        for (std::set<std::string>::const_iterator prereq_it = (*it)->Prerequisites().begin();
              prereq_it != (*it)->Prerequisites().end();
-             ++prereq_it)
-        {
-            const Tech* prereq = GetTech(*prereq_it);
-            if (!prereq || !TechVisible(prereq))
-                continue;
-
-            std::map<std::string, ogdf::node>::const_iterator node_map_it2 = tech_nodes.find(prereq->Name());
-            if (node_map_it2 == tech_nodes.end())
-                continue;
-            ogdf::node prereq_node = node_map_it2->second;
-
-            G.newEdge(prereq_node, cur_node);
+             ++prereq_it) {
+            if (!TechVisible(GetTech(*prereq_it)))
+            continue;
+            m_graph.AddEdge(*prereq_it, (*it)->Name());
         }
     }
 
     Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
-    ogdf::SugiyamaLayout SL;
-    SL.arrangeCCs(false);
 
-    ogdf::FastHierarchyLayout* fhl = new ogdf::FastHierarchyLayout;
-    fhl->layerDistance(RANK_SEP);
-    fhl->nodeDistance(NODE_SEP);
-    fhl->fixedLayerDistance(true);
-    SL.setLayout(fhl);
+    //calculate layout
+    m_graph.DoLayout((int)(WIDTH + RANK_SEP), (int)(HEIGHT + NODE_SEP), (int)(X_MARGIN));
 
-    SL.setCrossMin(new ogdf::BarycenterHeuristic);
-
-    SL.call(GA/*, ranks*/);
-
-    try {
-        GA.writeGML((GetUserDir() / "FreeOrion_Tech_Graph.gml").string().c_str());
-    } catch (...) {
-        Logger().errorStream() << "Unable to write Tech Graph GML file";
-    }
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
     Logger().debugStream() << "Tech Tree Layout Creating Panels";
 
-    // create new tech panels
-    for (std::map<std::string, ogdf::node>::const_iterator it = tech_nodes.begin(); it != tech_nodes.end(); ++it) {
-        const Tech* tech = GetTech(it->first);
-        if (!tech)
+    // create new tech panels and new dependency arcs 
+    for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
+        if (!TechVisible(*it))
             continue;
-        ogdf::node node = it->second;
-        GG::X panel_centre_x(GA.y(node));
-        GG::Y panel_centre_y(GA.x(node));
+        //techpanel
+        const Tech* tech = *it;
+        const TechTreeLayout::Node* node = m_graph.GetNode(tech->Name());
+        assert(tech);
+        //move TechPanel
+        m_techs[tech]->MoveTo(GG::Pt(
+            node->GetX( ),
+            node->GetY( )
+        ));
+        m_layout_surface->AttachChild(m_techs[tech]);
+        GG::Connect(m_techs[tech]->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
+        GG::Connect(m_techs[tech]->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
+        GG::Connect(m_techs[tech]->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
 
-        TechPanel* panel = new TechPanel(tech, tech == m_selected_tech, m_scale);
-
-        GG::Pt ul((panel_centre_x - panel->Width() / 2) * m_scale,
-                  (panel_centre_y - panel->Height() / 2) * m_scale);
-        panel->MoveTo(ul);
-
-        m_techs[tech] = panel;
-        m_layout_surface->AttachChild(panel);
-
-        GG::Connect(panel->TechBrowsedSignal,       &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
-        GG::Connect(panel->TechClickedSignal,       &TechTreeWnd::LayoutPanel::TechClickedSlot,         this);
-        GG::Connect(panel->TechDoubleClickedSignal, &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
-    }
-
-    // create dependency lines
-    if (G.numberOfEdges() > 0) {
-        for (ogdf::edge e = G.firstEdge(); e != G.lastEdge()->succ(); e = e->succ()) {
-            ogdf::node source = e->source();
-            ogdf::node target = e->target();
-            if (!source || !target)
-                continue;
-
-            const Tech* source_tech(0);
-            std::map<ogdf::node, const Tech*>::const_iterator it = node_techs.find(source);
-            if (it != node_techs.end())
-                source_tech = it->second;
-            else
-                continue;
-
-            const TechPanel* source_panel = m_techs[source_tech];
-            const GG::X HALF_SOURCE_PANEL_WIDTH = source_panel->Width() / 2;
-
-            const Tech* target_tech(0);
-            it = node_techs.find(target);
-            if (it != node_techs.end())
-                target_tech = it->second;
-            else
-                continue;
-
-            const TechPanel* target_panel = m_techs[target_tech];
-            const GG::X HALF_TARGET_PANEL_WIDTH = target_panel->Width() / 2;
-
-            // assemble vertices on dependenc line from graph layout results
-            std::vector<std::pair<double, double> > dependency_line_vertices;
-            // start
-            dependency_line_vertices.push_back(std::make_pair(GA.y(source) * m_scale/* + Value(HALF_SOURCE_PANEL_WIDTH)*/,
-                                                              GA.x(source) * m_scale));
-            // corners (may be none)
-            const ogdf::DPolyline& bends = GA.bends(e);
-            for (ogdf::DPolyline::const_iterator it = bends.begin(); it != bends.end(); ++it) {
-                const ogdf::DPoint& point = *it;
-                dependency_line_vertices.push_back(std::make_pair(point.m_y * m_scale, point.m_x * m_scale));
-            }
-            // end
-            dependency_line_vertices.push_back(std::make_pair(GA.y(target) * m_scale/* - Value(HALF_TARGET_PANEL_WIDTH)*/,
-                                                              GA.x(target) * m_scale));
-
+        const std::vector<TechTreeLayout::Edge*> edges = m_graph.GetOutEdges( tech->Name( ) );
+        //prerequisite edge
+        for (std::vector<TechTreeLayout::Edge*>::const_iterator edge = edges.begin(); edge != edges.end(); edge++) {
+            std::vector<std::pair<double, double> > points;
+            const Tech* from = (*edge)->GetTechFrom( );
+            const Tech* to   = (*edge)->GetTechTo( );
+            assert(from && to);
+            (*edge)->ReadPoints( points );
             TechStatus arc_type = TS_RESEARCHABLE;
             if (empire)
-                arc_type = empire->GetTechStatus(source_tech->Name());
-            m_dependency_polylines[arc_type].insert(std::make_pair(source_tech, std::make_pair(target_tech, dependency_line_vertices)));
+                arc_type = empire->GetTechStatus(to->Name( ));
+            m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
+        
     }
-
-    const ogdf::DRect& bound_box = GA.boundingBox();
-    GG::X graph_width(bound_box.height() * m_scale);
-    GG::Y graph_height(bound_box.width() * m_scale);
-
-    GG::X client_width = ClientWidth();
-    GG::Y client_height = ClientHeight();
-
-    GG::Pt layout_size(GG::X(std::max(client_width, graph_width)), GG::Y(std::max(client_height, graph_height)));
-
+    //format window
+    GG::Pt client_sz = ClientSize();
+    GG::Pt layout_size(
+        std::max(client_sz.x, m_graph.GetWidth( ) + 2 * TECH_PANEL_MARGIN_X + PROGRESS_PANEL_LEFT_EXTRUSION),
+        std::max(client_sz.y, m_graph.GetHeight( ) + 2 * TECH_PANEL_MARGIN_Y + PROGRESS_PANEL_BOTTOM_EXTRUSION)
+    );
     m_layout_surface->Resize(layout_size);
-    m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_height))), Value(client_height));
-    m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_width))), Value(client_width));
-
+    //format scrollbar
+    m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_sz.y))), Value(client_sz.y));
+    m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_sz.x))), Value(client_sz.x));
 
     Logger().debugStream() << "Tech Tree Layout Done";
 
+    //restore save data
     if (keep_position) {
-        m_vscroll->ScrollTo(Value(final_position.y));
-        GG::SignalScroll(*m_vscroll, true);
-        m_hscroll->ScrollTo(Value(final_position.x));
-        GG::SignalScroll(*m_hscroll, true);
+        m_selected_tech = selected_tech;
+        m_hscroll->ScrollTo((int)(m_hscroll->ScrollRange().second * relativ_scroll_position_x));
+        m_vscroll->ScrollTo((int)(m_vscroll->ScrollRange().second * relativ_scroll_position_y));
     } else {
+        m_selected_tech = 0;
         // find a tech to centre view on
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             if (TechVisible(*it)) {
                 CenterOnTech(*it);
-               break;
+                break;
             }
         }
     }
@@ -1664,51 +1603,42 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     return true;
 }
 
-void TechTreeWnd::LayoutPanel::DrawPolyLine(const std::vector<std::pair<double, double> >& vertices, const GG::Clr& color, bool with_arrow_head)
+void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it, GG::Clr color, bool with_arrow_head)
 {
     GG::Pt ul = UpperLeft();
-
-    glColor(color);
-
     glBegin(GL_LINE_STRIP);
-    for (std::vector<std::pair<double, double> >::const_iterator it = vertices.begin(); it != vertices.end(); ++it)
-        glVertex(it->first + ul.x, it->second + ul.y);
+    for (unsigned int i = 0; i < it->second.second.size(); ++i) {
+        glVertex(it->second.second[i].first + ul.x, it->second.second[i].second + ul.y);
+    }
     glEnd();
-
-    if (!with_arrow_head || vertices.size() < 2)
-        return;
-
-    std::vector<std::pair<double, double> >::const_reverse_iterator it = vertices.rbegin();
-    double x2 = it->first + Value(ul.x);
-    double y2 = it->second + Value(ul.y);
-    ++it;
-    double x1 = it->first + Value(ul.x);
-    double y1 = it->second + Value(ul.y);
-
-    const double ARROW_LENGTH = 10 * m_scale;
-    const double ARROW_WIDTH = 9 * m_scale;
-
-    glEnable(GL_TEXTURE_2D);
-    glPushMatrix();
-    glTranslated(x2, y2, 0.0);
-    glRotated(std::atan2(y2 - y1, x2 - x1) * 180.0 / 3.141594, 0.0, 0.0, 1.0);
-    glTranslated(-x2, -y2, 0.0);
-    IsoscelesTriangle(GG::Pt(GG::X(static_cast<int>(x2 - ARROW_LENGTH + 0.5)),
-                             GG::Y(static_cast<int>(y2 - ARROW_WIDTH / 2.0 + 0.5))),
-                      GG::Pt(GG::X(static_cast<int>(x2 + 0.5)),
-                             GG::Y(static_cast<int>(y2 + ARROW_WIDTH / 2.0 + 0.5))),
-                      SHAPE_RIGHT, color, false);
-    glPopMatrix();
-    glDisable(GL_TEXTURE_2D);
+    if (with_arrow_head) {
+        double final_point_x = Value(it->second.second.back().first + ul.x);
+        double final_point_y = Value(it->second.second.back().second + ul.y);
+        double second_to_final_point_x = Value(it->second.second[it->second.second.size() - 2].first + ul.x);
+        double second_to_final_point_y = Value(it->second.second[it->second.second.size() - 2].second + ul.y);
+        const double ARROW_LENGTH = 10 * m_scale;
+        const double ARROW_WIDTH = 9 * m_scale;
+        glEnable(GL_TEXTURE_2D);
+        glPushMatrix();
+        glTranslated(final_point_x, final_point_y, 0.0);
+        glRotated(std::atan2(final_point_y - second_to_final_point_y, final_point_x - second_to_final_point_x) * 180.0 / 3.141594, 0.0, 0.0, 1.0);
+        glTranslated(-final_point_x, -final_point_y, 0.0);
+        IsoscelesTriangle(GG::Pt(GG::X(static_cast<int>(final_point_x - ARROW_LENGTH + 0.5)),
+                                 GG::Y(static_cast<int>(final_point_y - ARROW_WIDTH / 2.0 + 0.5))),
+                          GG::Pt(GG::X(static_cast<int>(final_point_x + 0.5)),
+                                 GG::Y(static_cast<int>(final_point_y + ARROW_WIDTH / 2.0 + 0.5))),
+                          SHAPE_RIGHT, color, false);
+        glPopMatrix();
+        glDisable(GL_TEXTURE_2D);
+    }
 }
+
 
 void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int)
 {
-    GG::X scroll_x(m_hscroll->PosnRange().first);
-    GG::Y scroll_y(m_vscroll->PosnRange().first);
-    m_scroll_position.x = scroll_x;
-    m_scroll_position.y = scroll_y;
-    m_layout_surface->MoveTo(GG::Pt(-scroll_x, -scroll_y));
+    m_scroll_position_x = m_hscroll->PosnRange().first;
+    m_scroll_position_y = m_vscroll->PosnRange().first;
+   // m_layout_surface->MoveTo(GG::Pt(-scroll_x, -scroll_y));
 }
 
 void TechTreeWnd::LayoutPanel::TechBrowsedSlot(const Tech* tech)
@@ -1732,11 +1662,22 @@ void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const Tech* tech)
 
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move)
 {
-    m_vscroll->ScrollTo(Value(m_vscroll->PosnRange().first - move.y));
-    GG::SignalScroll(*m_vscroll, true);
-    m_hscroll->ScrollTo(Value(m_hscroll->PosnRange().first - move.x));
-    GG::SignalScroll(*m_hscroll, true);
+    m_hscroll->ScrollTo(m_drag_scroll_position_x - Value(move.x / m_scale));
+    m_vscroll->ScrollTo(m_drag_scroll_position_y - Value(move.y / m_scale));
+    m_scroll_position_x = m_hscroll->PosnRange().first;
+    m_scroll_position_y = m_vscroll->PosnRange().first;
 }
+void TechTreeWnd::LayoutPanel::TreeDragBegin(const GG::Pt& pt)
+{
+    m_drag_scroll_position_x = m_scroll_position_x;
+    m_drag_scroll_position_y = m_scroll_position_y;
+}
+void TechTreeWnd::LayoutPanel::TreeDragEnd(const GG::Pt& pt)
+{
+    m_drag_scroll_position_x = m_scroll_position_x;
+    m_drag_scroll_position_y = m_scroll_position_y;
+}
+
 
 void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move)
 {
@@ -1796,9 +1737,9 @@ private:
     class TechRow : public CUIListBox::Row {
     public:
         TechRow(GG::X w, const Tech* tech);
-        const Tech*                 GetTech() { return m_tech; }
-        virtual void                Render();
-        static std::vector<GG::X>   ColWidths(GG::X total_width);
+        const Tech*                    GetTech() { return m_tech; }
+        virtual void                   Render();
+        static std::vector<GG::X> ColWidths(GG::X total_width);
 
     private:
         const Tech*     m_tech;

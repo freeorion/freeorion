@@ -184,6 +184,7 @@ set(THIS_EXE_SOURCES
     ../../UI/StringTable.cpp
     ../../UI/SystemIcon.cpp
     ../../UI/TechTreeWnd.cpp
+    ../../UI/TechTreeLayout.cpp
     ../../UI/TurnProgressWnd.cpp
     ../../UI/ShaderProgram.cpp
     ../../UI/PagedGeometry/BatchedGeometry.cpp
@@ -197,30 +198,6 @@ set(THIS_EXE_SOURCES
     ../../UI/PagedGeometry/TreeLoader3D.cpp
     ../../UI/PagedGeometry/WindBatchedGeometry.cpp
     ../../UI/PagedGeometry/WindBatchPage.cpp
-    ../../UI/ogdf/src/basic/String.cpp
-    ../../UI/ogdf/src/basic/basic.cpp
-    ../../UI/ogdf/src/basic/CombinatorialEmbedding.cpp
-    ../../UI/ogdf/src/basic/geometry.cpp
-    ../../UI/ogdf/src/basic/Graph.cpp
-    ../../UI/ogdf/src/basic/GraphAttributes.cpp
-    ../../UI/ogdf/src/basic/GraphCopy.cpp
-    ../../UI/ogdf/src/basic/Hashing.cpp
-    ../../UI/ogdf/src/basic/ogdfSystem.cpp
-    ../../UI/ogdf/src/basic/PoolMemoryAllocator.cpp
-    ../../UI/ogdf/src/basic/simple_graph_alg.cpp
-    ../../UI/ogdf/src/energybased/MultilevelGraph.cpp
-    ../../UI/ogdf/src/fileformats/GmlParser.cpp
-    ../../UI/ogdf/src/fileformats/XmlParser.cpp
-    ../../UI/ogdf/src/cluster/ClusterGraph.cpp
-    ../../UI/ogdf/src/layered/sugiyama.cpp
-    ../../UI/ogdf/src/layered/acyclic_subgraph.cpp
-    ../../UI/ogdf/src/layered/CrossingsMatrix.cpp
-    ../../UI/ogdf/src/layered/FastHierarchyLayout.cpp
-    ../../UI/ogdf/src/layered/heuristics.cpp
-    ../../UI/ogdf/src/layered/HierarchyLayoutModule.cpp
-    ../../UI/ogdf/src/layered/ranking.cpp
-    ../../UI/ogdf/src/layered/SplitHeuristic.cpp
-    ../../UI/ogdf/src/packing/TileToRowsCCPacker.cpp
     ${CMAKE_BINARY_DIR}/util/Version.cpp
 )
 
