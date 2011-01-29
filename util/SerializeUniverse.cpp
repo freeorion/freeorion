@@ -172,6 +172,12 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_species_name);
 }
 
+template
+void System::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE& ar, const unsigned int version);
+
+template
+void System::serialize<FREEORION_IARCHIVE_TYPE>(FREEORION_IARCHIVE_TYPE& ar, const unsigned int version);
+
 void Serialize(FREEORION_OARCHIVE_TYPE& oa, const Universe& universe)
 { oa << BOOST_SERIALIZATION_NVP(universe); }
 
