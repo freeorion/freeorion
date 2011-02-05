@@ -1191,6 +1191,7 @@ void MapWnd::RenderStarlanes()
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
 
     if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
+        // render starlanes with vertex buffer (and possibly colour buffer)
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
         glDisable(GL_TEXTURE_2D);
@@ -1223,6 +1224,70 @@ void MapWnd::RenderStarlanes()
 
         glPopClientAttrib();
         glPopAttrib();
+
+        glEnable(GL_TEXTURE_2D);
+        glDisable(GL_LINE_SMOOTH);
+        glDisable(GL_LINE_STIPPLE);
+
+
+    } else if (!m_starlane_vertices.m_name) {
+        // render lanes without buffers
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+        glColor(UNOWNED_LANE_COLOUR);
+
+        glDisable(GL_TEXTURE_2D);
+        glEnable(GL_LINE_SMOOTH);
+        glEnable(GL_LINE_STIPPLE);
+
+        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.starlane-thickness")));
+        glLineStipple(1, 0xffff);   // solid line / no stipple
+
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        EmpireManager& manager = HumanClientApp::GetApp()->Empires();
+        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
+        glBegin(GL_LINES);
+
+        // for every system icon, render lanes
+        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
+            int system_id = it->first;
+
+            // skip systems that don't actually exist
+            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+                continue;
+
+            const System* start_system = GetEmpireKnownObject<System>(system_id, empire_id);
+            if (!start_system) {
+                Logger().errorStream() << "MapWnd::RenderStarlanes couldn't get system with id " << system_id;
+                continue;
+            }
+
+            // render system's starlanes
+            for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
+                bool lane_is_wormhole = lane_it->second;
+                if (lane_is_wormhole) continue; // at present, not rendering wormholes
+
+                int lane_end_sys_id = lane_it->first;
+
+                // skip lanes to systems that don't actually exist
+                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                    continue;
+
+                const System* dest_system = GetEmpireKnownObject<System>(lane_it->first, empire_id);
+                if (!dest_system)
+                    continue;
+
+                // get lane endpoint positions
+                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+
+                glVertex2d(lane_endpoints.X1, lane_endpoints.Y1);
+                glVertex2d(lane_endpoints.X2, lane_endpoints.Y2);
+            }
+        }
+
+        glEnd();
+
+        glLineWidth(1.0);
 
         glEnable(GL_TEXTURE_2D);
         glDisable(GL_LINE_SMOOTH);
