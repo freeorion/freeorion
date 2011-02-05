@@ -94,7 +94,7 @@ public:
     void AddPoint(double x, double y);
     void Debug( ) const;
 private:
-    std::vector<std::pair<double,double>> m_points; // point list of connection
+    std::vector<std::pair<double,double> > m_points; // point list of connection
     const Tech* m_from; //source tech
     const Tech* m_to;   //destination tech
 };
