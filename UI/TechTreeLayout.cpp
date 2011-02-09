@@ -549,7 +549,7 @@ void TechTreeLayout::Node::CreatePlaceHolder(std::vector<Node*> & nodes ) {
     m_children_rows = std::max(m_children_rows, NODE_CELL_HEIGHT);
 }
 void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat ) {
-    assert(row_height > 0 && column_width > 0 && row_index != 0);
+    //assert(row_height > 0 && column_width > 0 && row_index != 0);
     if(m_row != -1) return; //already done
     // 2. place node
     int index = 0;
