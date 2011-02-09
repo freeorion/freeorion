@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */; };
+		2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */; };
+		2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966A12EEAF0200F58913 /* GroupBox.cpp */; };
+		2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA40CEF565700A7DF2B /* MessageQueue.cpp */; };
+		2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C5D0A98A3F900DA9C21 /* ClientApp.cpp */; };
+		2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FAA0CEF566200A7DF2B /* ClientNetworking.cpp */; };
 		3402E24D0F5A30D600DF6FE7 /* BatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2370F5A30D600DF6FE7 /* BatchedGeometry.cpp */; };
 		3402E24E0F5A30D600DF6FE7 /* BatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2390F5A30D600DF6FE7 /* BatchPage.cpp */; };
 		3402E24F0F5A30D600DF6FE7 /* GrassLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E23B0F5A30D600DF6FE7 /* GrassLoader.cpp */; };
@@ -114,31 +120,6 @@
 		34B9FA5F0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */; };
 		34BA5BA10F8AA97400B74FE5 /* libexpat.1.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34BA5BA00F8AA95C00B74FE5 /* libexpat.1.dylib */; };
 		34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */; };
-		34BAB2030FC5D02600EF792E /* adam.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1EA0FC5D02600EF792E /* adam.cpp */; };
-		34BAB2040FC5D02600EF792E /* adam_evaluate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1EB0FC5D02600EF792E /* adam_evaluate.cpp */; };
-		34BAB2050FC5D02600EF792E /* adam_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1EC0FC5D02600EF792E /* adam_parser.cpp */; };
-		34BAB2060FC5D02600EF792E /* any_regular.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1ED0FC5D02600EF792E /* any_regular.cpp */; };
-		34BAB2070FC5D02600EF792E /* basic_sheet.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1EE0FC5D02600EF792E /* basic_sheet.cpp */; };
-		34BAB2080FC5D02600EF792E /* eve.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1EF0FC5D02600EF792E /* eve.cpp */; };
-		34BAB2090FC5D02600EF792E /* eve_evaluate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F00FC5D02600EF792E /* eve_evaluate.cpp */; };
-		34BAB20A0FC5D02600EF792E /* eve_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F10FC5D02600EF792E /* eve_parser.cpp */; };
-		34BAB20B0FC5D02600EF792E /* expression_filter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F20FC5D02600EF792E /* expression_filter.cpp */; };
-		34BAB20C0FC5D02600EF792E /* expression_parser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F30FC5D02600EF792E /* expression_parser.cpp */; };
-		34BAB20D0FC5D02600EF792E /* iomanip.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F40FC5D02600EF792E /* iomanip.cpp */; };
-		34BAB20E0FC5D02600EF792E /* iomanip_asl_cel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F50FC5D02600EF792E /* iomanip_asl_cel.cpp */; };
-		34BAB20F0FC5D02600EF792E /* istream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F60FC5D02600EF792E /* istream.cpp */; };
-		34BAB2100FC5D02600EF792E /* keyboard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F70FC5D02600EF792E /* keyboard.cpp */; };
-		34BAB2110FC5D02600EF792E /* lex_shared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F80FC5D02600EF792E /* lex_shared.cpp */; };
-		34BAB2120FC5D02600EF792E /* lex_stream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1F90FC5D02600EF792E /* lex_stream.cpp */; };
-		34BAB2130FC5D02600EF792E /* localization.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FA0FC5D02600EF792E /* localization.cpp */; };
-		34BAB2140FC5D02600EF792E /* memory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FB0FC5D02600EF792E /* memory.cpp */; };
-		34BAB2150FC5D02600EF792E /* name.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FC0FC5D02600EF792E /* name.cpp */; };
-		34BAB2160FC5D02600EF792E /* parser_shared.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FD0FC5D02600EF792E /* parser_shared.cpp */; };
-		34BAB2170FC5D02600EF792E /* string.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FE0FC5D02600EF792E /* string.cpp */; };
-		34BAB2180FC5D02600EF792E /* string_pool.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB1FF0FC5D02600EF792E /* string_pool.cpp */; };
-		34BAB2190FC5D02600EF792E /* token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2000FC5D02600EF792E /* token.cpp */; };
-		34BAB21A0FC5D02600EF792E /* typeinfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2010FC5D02600EF792E /* typeinfo.cpp */; };
-		34BAB21B0FC5D02600EF792E /* virtual_machine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB2020FC5D02600EF792E /* virtual_machine.cpp */; };
 		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
 		34C4495F1182716E0071E09A /* SerializeEmpire.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44957118271590071E09A /* SerializeEmpire.cpp */; };
 		34C449601182716E0071E09A /* SerializeMultiplayerCommon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */; };
@@ -488,6 +469,12 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeLayout.cpp; sourceTree = "<group>"; };
+		2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeLayout.h; sourceTree = "<group>"; };
+		2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerListWnd.cpp; sourceTree = "<group>"; };
+		2F60966412EEAD2200F58913 /* PlayerListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerListWnd.h; sourceTree = "<group>"; };
+		2F60966A12EEAF0200F58913 /* GroupBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupBox.cpp; sourceTree = "<group>"; };
+		2F60966C12EEAF2C00F58913 /* GroupBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GroupBox.h; sourceTree = "<group>"; };
 		3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CombatOrder.cpp; sourceTree = "<group>"; };
 		3402E2330F5A300600DF6FE7 /* CombatOrder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CombatOrder.h; sourceTree = "<group>"; };
 		3402E2370F5A30D600DF6FE7 /* BatchedGeometry.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BatchedGeometry.cpp; sourceTree = "<group>"; };
@@ -1496,11 +1483,7 @@
 		47B616090CF09ADC00318761 /* alutVersion.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutVersion.c; sourceTree = "<group>"; };
 		47B6160A0CF09ADC00318761 /* alutWaveform.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = alutWaveform.c; sourceTree = "<group>"; };
 		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		47F266830CF1B87C003860F4 /* build_config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_config.py; sourceTree = "<group>"; };
-		47F266840CF1B87C003860F4 /* build_support.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_support.py; sourceTree = "<group>"; };
 		47F266880CF1B87C003860F4 /* RELEASE-NOTES-V03.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "RELEASE-NOTES-V03.txt"; sourceTree = "<group>"; };
-		47F266890CF1B87C003860F4 /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
-		47F2668A0CF1B87C003860F4 /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -2486,6 +2469,7 @@
 		4710233E0CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
+				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
 				34C9B34711DA2ECA003695F4 /* ClrConstants.h */,
 				34BAB0C40FC5CF9E00EF792E /* adobe */,
 				34BAB0C10FC5CDC400EF792E /* AdamGlue.h */,
@@ -2605,6 +2589,7 @@
 		471023900CEF3AAC00A7DF2B /* src */ = {
 			isa = PBXGroup;
 			children = (
+				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
 				34C9B34311DA2E95003695F4 /* ClrConstants.cpp */,
 				34BAB21C0FC5D06000EF792E /* adobe */,
 				34BAB1AF0FC5CFE500EF792E /* GIL */,
@@ -2722,11 +2707,7 @@
 		471D59B00A988A2A00DA9C21 /* FreeOrion */ = {
 			isa = PBXGroup;
 			children = (
-				47F266830CF1B87C003860F4 /* build_config.py */,
-				47F266840CF1B87C003860F4 /* build_support.py */,
 				47F266880CF1B87C003860F4 /* RELEASE-NOTES-V03.txt */,
-				47F266890CF1B87C003860F4 /* SConscript */,
-				47F2668A0CF1B87C003860F4 /* SConstruct */,
 				47102F9D0CEF562700A7DF2B /* AI */,
 				471023380CEF3AAB00A7DF2B /* GG */,
 				471D5C580A98A3F900DA9C21 /* client */,
@@ -2904,6 +2885,10 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
+				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
+				2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */,
+				2F60966412EEAD2200F58913 /* PlayerListWnd.h */,
 				348D0F5B1194D6230034C679 /* EntityRenderer.cpp */,
 				348D0F5C1194D6230034C679 /* EntityRenderer.h */,
 				34A7028E118360090013F8C6 /* CombatCamera.cpp */,
@@ -3368,7 +3353,14 @@
 			isa = PBXProject;
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "FreeOrion" */;
 			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+			);
 			mainGroup = 08FB7794FE84155DC02AAC07 /* FreeOrion */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3514,31 +3506,6 @@
 				471024A90CEF3DF100A7DF2B /* PluginInterface.cpp in Sources */,
 				343EC6340F3F513700782AD3 /* UnicodeCharsets.cpp in Sources */,
 				34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */,
-				34BAB2030FC5D02600EF792E /* adam.cpp in Sources */,
-				34BAB2040FC5D02600EF792E /* adam_evaluate.cpp in Sources */,
-				34BAB2050FC5D02600EF792E /* adam_parser.cpp in Sources */,
-				34BAB2060FC5D02600EF792E /* any_regular.cpp in Sources */,
-				34BAB2070FC5D02600EF792E /* basic_sheet.cpp in Sources */,
-				34BAB2080FC5D02600EF792E /* eve.cpp in Sources */,
-				34BAB2090FC5D02600EF792E /* eve_evaluate.cpp in Sources */,
-				34BAB20A0FC5D02600EF792E /* eve_parser.cpp in Sources */,
-				34BAB20B0FC5D02600EF792E /* expression_filter.cpp in Sources */,
-				34BAB20C0FC5D02600EF792E /* expression_parser.cpp in Sources */,
-				34BAB20D0FC5D02600EF792E /* iomanip.cpp in Sources */,
-				34BAB20E0FC5D02600EF792E /* iomanip_asl_cel.cpp in Sources */,
-				34BAB20F0FC5D02600EF792E /* istream.cpp in Sources */,
-				34BAB2100FC5D02600EF792E /* keyboard.cpp in Sources */,
-				34BAB2110FC5D02600EF792E /* lex_shared.cpp in Sources */,
-				34BAB2120FC5D02600EF792E /* lex_stream.cpp in Sources */,
-				34BAB2130FC5D02600EF792E /* localization.cpp in Sources */,
-				34BAB2140FC5D02600EF792E /* memory.cpp in Sources */,
-				34BAB2150FC5D02600EF792E /* name.cpp in Sources */,
-				34BAB2160FC5D02600EF792E /* parser_shared.cpp in Sources */,
-				34BAB2170FC5D02600EF792E /* string.cpp in Sources */,
-				34BAB2180FC5D02600EF792E /* string_pool.cpp in Sources */,
-				34BAB2190FC5D02600EF792E /* token.cpp in Sources */,
-				34BAB21A0FC5D02600EF792E /* typeinfo.cpp in Sources */,
-				34BAB21B0FC5D02600EF792E /* virtual_machine.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3552,6 +3519,9 @@
 				47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */,
 				471032540CEF6C9700A7DF2B /* ServerNetworking.cpp in Sources */,
 				471032600CEF6D0D00A7DF2B /* ServerFSM.cpp in Sources */,
+				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
+				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
+				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3660,6 +3630,9 @@
 				34ACA4C10FFFD2DB00500F40 /* chmain.mm in Sources */,
 				34ACA4C20FFFD2DB00500F40 /* OgreController.mm in Sources */,
 				3415B0A010851BB200009F19 /* CombatSetupWnd.cpp in Sources */,
+				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
+				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
+				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3733,10 +3706,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/Frameworks\\\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -3752,15 +3722,11 @@
 				);
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/dep/local/include/graphviz",
+					"$(SRCROOT)/../UI/ogdf/",
 				);
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(SRCROOT)/dep/local/lib/graphviz",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
 				);
@@ -3779,6 +3745,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = i386;
+				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/dep/Frameworks";
 				GCC_PREFIX_HEADER = "";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -3792,7 +3759,6 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
 					"${SOURCE_ROOT}/dep/local/include/python",
-					"$(SOURCE_ROOT)/dep/local/include/graphviz",
 					"$(SOURCE_ROOT)/dep/local/include/bullet",
 					"$(SOURCE_ROOT)/dep/Frameworks/Cg.framework/Headers",
 					"$(SOURCE_ROOT)/dep/local/include",
@@ -3812,6 +3778,7 @@
 				OTHER_LDFLAGS = "";
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				STRIP_INSTALLED_PRODUCT = NO;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -4107,6 +4074,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = Common;
+				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
@@ -4131,6 +4099,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = GG;
+				SEPARATE_STRIP = NO;
 				ZERO_LINK = YES;
 			};
 			name = Debug;
@@ -4152,10 +4121,7 @@
 				);
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				PREBINDING = NO;
 				PRODUCT_NAME = freeoriond;
@@ -4186,8 +4152,6 @@
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
-					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 				);
@@ -4216,6 +4180,7 @@
 				INSTALL_PATH = /usr/local/lib;
 				PREBINDING = NO;
 				PRODUCT_NAME = ClientCommon;
+				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
@@ -4237,6 +4202,7 @@
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				PREBINDING = NO;
 				PRODUCT_NAME = FREEALUT;
+				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/OpenAL/alut";
 				ZERO_LINK = YES;
 			};
