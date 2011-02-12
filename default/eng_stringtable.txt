@@ -3221,10 +3221,10 @@ DESC_CAN_ADD_STARLANE_CONNECTION
 DESC_CAN_ADD_STARLANE_CONNECTION_NOT
 that can not have starlanes added connecting to all systems that contain objects%1%
 
-DESC_CAN_ADD_STARLANE_CONNECTION
+DESC_CAN_REMOVE_STARLANE_CONNECTION
  that can have starlanes removed that connect to all systems that contain objects%1%
 
-DESC_CAN_ADD_STARLANE_CONNECTION_NOT
+DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
 that can not have starlanes removed that connect to all systems that contain objects%1%
 
 DESC_EXPLORED_BY_SINGLE_EMPIRE
