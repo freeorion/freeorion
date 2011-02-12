@@ -106,7 +106,7 @@ TechTreeLayout::Node* TechTreeLayout::Column::Seek(Node* m, int direction) {
     Node* n = 0;
     int i = m->m_row;
     while(n == 0 || n == m) {
-        if (i < 0 || i >= m_column.size()) {
+        if (i < 0 || i >= static_cast<int>(m_column.size())) {
             return 0;
         }
         n = m_column[i];
@@ -126,6 +126,7 @@ bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
     int t_row = m->m_row;
     m->m_row = n->m_row;
     n->m_row = t_row;
+    return true;
 }
 
 ////////////////
