@@ -327,16 +327,6 @@ private:
     bool                m_enabled;
 };
 
-
-////////////////////////////////////////////////////////////
-// MapWnd::GLBuffer
-////////////////////////////////////////////////////////////
-MapWnd::GLBuffer::GLBuffer() :
-    m_name(0),
-    m_size(0)
-{}
-
-
 ////////////////////////////////////////////////////////////
 // MapWndPopup
 ////////////////////////////////////////////////////////////
@@ -1043,16 +1033,14 @@ void MapWnd::RenderGalaxyGas()
     glEnableClientState(GL_VERTEX_ARRAY);
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
          it != m_galaxy_gas_quad_vertices.end();
          ++it)
     {
         glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-        glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-        glVertexPointer(2, GL_FLOAT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-        glTexCoordPointer(2, GL_FLOAT, 0, 0);
-        glDrawArrays(GL_QUADS, 0, it->second.m_size);
+        it->second.activate();
+        m_star_texture_coords.activate();
+        glDrawArrays(GL_QUADS, 0, it->second.size());
     }
 
     glDisableClientState(GL_TEXTURE_COORD_ARRAY);
@@ -1072,46 +1060,41 @@ void MapWnd::RenderSystems()
     if (GetOptionsDB().Get<bool>("UI.optimized-system-rendering")) {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
-        if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.m_name) {
+        if (0.5f < HALO_SCALE_FACTOR && m_star_texture_coords.size()) {
             glMatrixMode(GL_TEXTURE);
             glTranslatef(0.5f, 0.5f, 0.0f);
             glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
             glTranslatef(-0.5f, -0.5f, 0.0f);
-            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+            for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
                  it != m_star_halo_quad_vertices.end(); ++it)
             {
-                if (!it->second.m_name)
+                if (!it->second.size())
                     continue;
 
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-                glVertexPointer(2, GL_FLOAT, 0, 0);
-                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-                glTexCoordPointer(2, GL_FLOAT, 0, 0);
-                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+                it->second.activate();
+                m_star_texture_coords.activate();
+                glDrawArrays(GL_QUADS, 0, it->second.size());
             }
             glLoadIdentity();
             glMatrixMode(GL_MODELVIEW);
         }
 
-        if (m_star_texture_coords.m_name && GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
-            for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
+        if (m_star_texture_coords.size() && GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
+            for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
                  it != m_star_core_quad_vertices.end(); ++it)
             {
-                if (!it->second.m_name)
+                if (!it->second.size())
                     continue;
 
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-                glBindBuffer(GL_ARRAY_BUFFER, it->second.m_name);
-                glVertexPointer(2, GL_FLOAT, 0, 0);
-                glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-                glTexCoordPointer(2, GL_FLOAT, 0, 0);
-                glDrawArrays(GL_QUADS, 0, it->second.m_size);
+                
+                it->second.activate();
+                
+                m_star_texture_coords.activate();
+                glDrawArrays(GL_QUADS, 0, it->second.size());
             }
         }
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     } else {
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
         glPushMatrix();
@@ -1162,7 +1145,7 @@ void MapWnd::RenderSystems()
                     m_scanline_shader->Use();
                     m_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, true);
-                    glUseProgram(0);
+                    m_scanline_shader->stopUse();
                 }
             }
 
@@ -1190,7 +1173,7 @@ void MapWnd::RenderStarlanes()
 {
     bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
 
-    if (m_starlane_vertices.m_name && (m_starlane_colors.m_name || !coloured)) {
+    if (m_starlane_vertices.size() && (m_starlane_colors.size() || !coloured)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
 
@@ -1210,15 +1193,13 @@ void MapWnd::RenderStarlanes()
         else
             glColor(UNOWNED_LANE_COLOUR);
 
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
-        glVertexPointer(2, GL_FLOAT, 0, 0);
+        m_starlane_vertices.activate();
 
         if (coloured) {
-            glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
-            glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+            m_starlane_colors.activate();
         }
 
-        glDrawArrays(GL_LINES, 0, m_starlane_vertices.m_size);
+        glDrawArrays(GL_LINES, 0, m_starlane_vertices.size());
 
         glLineWidth(1.0);
 
@@ -1230,71 +1211,9 @@ void MapWnd::RenderStarlanes()
         glDisable(GL_LINE_STIPPLE);
 
 
-    } else if (!m_starlane_vertices.m_name) {
-        // render lanes without buffers
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
-        glColor(UNOWNED_LANE_COLOUR);
-
-        glDisable(GL_TEXTURE_2D);
-        glEnable(GL_LINE_SMOOTH);
-        glEnable(GL_LINE_STIPPLE);
-
-        glLineWidth(static_cast<GLfloat>(GetOptionsDB().Get<double>("UI.starlane-thickness")));
-        glLineStipple(1, 0xffff);   // solid line / no stipple
-
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        EmpireManager& manager = HumanClientApp::GetApp()->Empires();
-        const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-
-        glBegin(GL_LINES);
-
-        // for every system icon, render lanes
-        for (std::map<int, SystemIcon*>::const_iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it) {
-            int system_id = it->first;
-
-            // skip systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
-                continue;
-
-            const System* start_system = GetEmpireKnownObject<System>(system_id, empire_id);
-            if (!start_system) {
-                Logger().errorStream() << "MapWnd::RenderStarlanes couldn't get system with id " << system_id;
-                continue;
-            }
-
-            // render system's starlanes
-            for (System::const_lane_iterator lane_it = start_system->begin_lanes(); lane_it != start_system->end_lanes(); ++lane_it) {
-                bool lane_is_wormhole = lane_it->second;
-                if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-                int lane_end_sys_id = lane_it->first;
-
-                // skip lanes to systems that don't actually exist
-                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
-                    continue;
-
-                const System* dest_system = GetEmpireKnownObject<System>(lane_it->first, empire_id);
-                if (!dest_system)
-                    continue;
-
-                // get lane endpoint positions
-                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-
-                glVertex2d(lane_endpoints.X1, lane_endpoints.Y1);
-                glVertex2d(lane_endpoints.X2, lane_endpoints.Y2);
-            }
-        }
-
-        glEnd();
-
-        glLineWidth(1.0);
-
-        glEnable(GL_TEXTURE_2D);
-        glDisable(GL_LINE_SMOOTH);
-        glDisable(GL_LINE_STIPPLE);
-    }
-
-    if (m_starlane_fleet_supply_vertices.m_name && m_starlane_fleet_supply_colors.m_name && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
+    } 
+    
+    if (m_starlane_fleet_supply_vertices.size() && m_starlane_fleet_supply_colors.size() && GetOptionsDB().Get<bool>("UI.fleet-supply-lines")) {
         // render fleet supply lines
         const GLushort PATTERN = 0x8080;    // = 1000000010000000  -> widely space small dots
         const int GLUSHORT_BIT_LENGTH = sizeof(GLushort) * 8;
@@ -1314,11 +1233,9 @@ void MapWnd::RenderStarlanes()
         glEnableClientState(GL_VERTEX_ARRAY);
         glEnableClientState(GL_COLOR_ARRAY);
 
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
-        glVertexPointer(2, GL_FLOAT, 0, 0);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
-        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
-        glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.m_size);
+        m_starlane_fleet_supply_vertices.activate();
+        m_starlane_fleet_supply_colors.activate();
+        glDrawArrays(GL_LINES, 0, m_starlane_fleet_supply_vertices.size());
 
         glPopClientAttrib();
         glPopAttrib();
@@ -1878,7 +1795,7 @@ void MapWnd::InitTurnRendering()
     boost::timer timer;
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
-        m_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
+        m_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
             ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
     }
 
@@ -1951,33 +1868,22 @@ void MapWnd::InitTurnRendering()
 void MapWnd::InitSystemRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers";
-    if (HumanClientApp::GetApp()->GLVersion() < 1.5f) {
-        Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers aborting due to GL version below 1.5";
-        return;
-    }
+
     boost::timer timer;
 
-    // temp storage
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_core_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_star_halo_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, std::vector<float> > raw_galaxy_gas_quad_vertices;
-    std::vector<float> raw_star_texture_coords;
-
-
+    // clear out all the old buffers
+    ClearSystemRenderingBuffers();
+    
     // Generate texture coordinates to be used for subsequent vertex buffer creation.
     // Note these coordinates assume the texture is twice as large as it should
     // be.  This allows us to use one set of texture coords for everything, even
     // though the star-halo textures must be rendered at sizes as much as twice
     // as large as the star-disc textures.
     for (std::size_t i = 0; i < m_system_icons.size(); ++i) {
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(-0.5);
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(1.5);
-        raw_star_texture_coords.push_back(1.5);
+        m_star_texture_coords.store(1.5,-0.5);
+        m_star_texture_coords.store(-0.5,-0.5);
+        m_star_texture_coords.store(-0.5,1.5);
+        m_star_texture_coords.store(1.5,1.5);
     }
 
 
@@ -2004,30 +1910,22 @@ void MapWnd::InitSystemRenderingBuffers()
             glBindTexture(GL_TEXTURE_2D, icon->DiscTexture()->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            std::vector<float>& core_vertices = raw_star_core_quad_vertices[icon->DiscTexture()];
-            core_vertices.push_back(icon_lr_x);
-            core_vertices.push_back(icon_ul_y);
-            core_vertices.push_back(icon_ul_x);
-            core_vertices.push_back(icon_ul_y);
-            core_vertices.push_back(icon_ul_x);
-            core_vertices.push_back(icon_lr_y);
-            core_vertices.push_back(icon_lr_x);
-            core_vertices.push_back(icon_lr_y);
+            GL2DVertexBuffer& core_vertices = m_star_core_quad_vertices[icon->DiscTexture()];
+            core_vertices.store(icon_lr_x,icon_ul_y);
+            core_vertices.store(icon_ul_x,icon_ul_y);
+            core_vertices.store(icon_ul_x,icon_lr_y);
+            core_vertices.store(icon_lr_x,icon_lr_y);
         }
 
         if (icon->HaloTexture()) {
             glBindTexture(GL_TEXTURE_2D, icon->HaloTexture()->OpenGLId());
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-            std::vector<float>& halo_vertices = raw_star_halo_quad_vertices[icon->HaloTexture()];
-            halo_vertices.push_back(icon_lr_x);
-            halo_vertices.push_back(icon_ul_y);
-            halo_vertices.push_back(icon_ul_x);
-            halo_vertices.push_back(icon_ul_y);
-            halo_vertices.push_back(icon_ul_x);
-            halo_vertices.push_back(icon_lr_y);
-            halo_vertices.push_back(icon_lr_x);
-            halo_vertices.push_back(icon_lr_y);
+            GL2DVertexBuffer& halo_vertices = m_star_halo_quad_vertices[icon->HaloTexture()];
+            halo_vertices.store(icon_lr_x,icon_ul_y);
+            halo_vertices.store(icon_ul_x,icon_ul_y);
+            halo_vertices.store(icon_ul_x,icon_lr_y);
+            halo_vertices.store(icon_lr_x,icon_lr_y);
         }
 
 
@@ -2070,133 +1968,66 @@ void MapWnd::InitSystemRenderingBuffers()
             const float GAS_X4 = static_cast<float>(system->X() + (X4r * GAS_SIZE));
             const float GAS_Y4 = static_cast<float>(system->Y() + (Y4r * GAS_SIZE));
 
-            std::vector<float>& gas_vertices = raw_galaxy_gas_quad_vertices[gaseous_texture];
-            // rotated upper right
-            gas_vertices.push_back(GAS_X1);
-            gas_vertices.push_back(GAS_Y1);
-            // rotated upper left
-            gas_vertices.push_back(GAS_X2);
-            gas_vertices.push_back(GAS_Y2);
-            // rotated lower left
-            gas_vertices.push_back(GAS_X3);
-            gas_vertices.push_back(GAS_Y3);
-            // rotated lower right
-            gas_vertices.push_back(GAS_X4);
-            gas_vertices.push_back(GAS_Y4);
+            GL2DVertexBuffer& gas_vertices = m_galaxy_gas_quad_vertices[gaseous_texture];
+            
+            gas_vertices.store(GAS_X1,GAS_Y1); // rotated upper right
+            gas_vertices.store(GAS_X2,GAS_Y2); // rotated upper left
+            gas_vertices.store(GAS_X3,GAS_Y3); // rotated lower left
+            gas_vertices.store(GAS_X4,GAS_Y4); // rotated lower right
         }
     }
-
-    // clear out all the old buffers
-    ClearSystemRenderingBuffers();
 
     // create new buffers
 
     // star cores
-    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it =
-             raw_star_core_quad_vertices.begin();
-         it != raw_star_core_quad_vertices.end();
+    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it =
+             m_star_core_quad_vertices.begin();
+         it != m_star_core_quad_vertices.end();
          ++it)
     {
-        GLuint& name = m_star_core_quad_vertices[it->first].m_name;
-        glGenBuffers(1, &name);
-        glBindBuffer(GL_ARRAY_BUFFER, name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     it->second.size() * sizeof(float),
-                     &it->second[0],
-                     GL_STATIC_DRAW);
-        m_star_core_quad_vertices[it->first].m_size = it->second.size() / 2;
+        m_star_core_quad_vertices[it->first].createServerBuffer();
     }
 
     // star halos
-    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it = raw_star_halo_quad_vertices.begin();
-         it != raw_star_halo_quad_vertices.end(); ++it)
+    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
+         it != m_star_halo_quad_vertices.end(); ++it)
     {
-        GLuint& name = m_star_halo_quad_vertices[it->first].m_name;
-        glGenBuffers(1, &name);
-        glBindBuffer(GL_ARRAY_BUFFER, name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     it->second.size() * sizeof(float),
-                     &it->second[0],
-                     GL_STATIC_DRAW);
-        m_star_halo_quad_vertices[it->first].m_size = it->second.size() / 2;
+        m_star_halo_quad_vertices[it->first].createServerBuffer();
     }
 
     // galaxy gas
-    for (std::map<boost::shared_ptr<GG::Texture>, std::vector<float> >::const_iterator it = raw_galaxy_gas_quad_vertices.begin();
-         it != raw_galaxy_gas_quad_vertices.end(); ++it)
+    for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
+         it != m_galaxy_gas_quad_vertices.end(); ++it)
     {
-        GLuint& name = m_galaxy_gas_quad_vertices[it->first].m_name;
-        glGenBuffers(1, &name);
-        glBindBuffer(GL_ARRAY_BUFFER, name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     it->second.size() * sizeof(float),
-                     &it->second[0],
-                     GL_STATIC_DRAW);
-        m_galaxy_gas_quad_vertices[it->first].m_size = it->second.size() / 2;
+        m_galaxy_gas_quad_vertices[it->first].createServerBuffer();
     }
-
 
     // fill buffers with star textures
-    if (!raw_star_texture_coords.empty()) {
-        glGenBuffers(1, &m_star_texture_coords.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_star_texture_coords.m_name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     raw_star_texture_coords.size() * sizeof(float),
-                     &raw_star_texture_coords[0],
-                     GL_STATIC_DRAW);
-    }
-    m_star_texture_coords.m_size = raw_star_texture_coords.size() / 2;
+    m_star_texture_coords.createServerBuffer();
 
-    // cleanup
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
     Logger().debugStream() << "MapWnd::InitSystemRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::ClearSystemRenderingBuffers()
 {
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
-         it != m_star_core_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
     m_star_core_quad_vertices.clear();
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_star_halo_quad_vertices.begin();
-         it != m_star_halo_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
     m_star_halo_quad_vertices.clear();
 
-    for (std::map<boost::shared_ptr<GG::Texture>, GLBuffer>::const_iterator it = m_galaxy_gas_quad_vertices.begin();
-         it != m_galaxy_gas_quad_vertices.end(); ++it)
-    {
-        glDeleteBuffers(1, &it->second.m_name);
-    }
     m_galaxy_gas_quad_vertices.clear();
 
-    if (m_star_texture_coords.m_name) {
-        glDeleteBuffers(1, &m_star_texture_coords.m_name);
-        m_star_texture_coords.m_name = 0;
-    }
-
-
+    m_star_texture_coords.clear();
 }
 
 void MapWnd::InitStarlaneRenderingBuffers()
 {
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers";
-    if (HumanClientApp::GetApp()->GLVersion() < 1.5f) {
-        Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers aborting due to GL version below 1.5";
-        return;
-    }
     boost::timer timer;
 
+    // clear old buffers
+    ClearStarlaneRenderingBuffers();
+
     // temp storage
-    std::vector<float>              raw_starlane_vertices;
-    std::vector<unsigned char>      raw_starlane_colors;
-    std::vector<float>              raw_starlane_supply_vertices;
-    std::vector<unsigned char>      raw_starlane_supply_colors;
     std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
@@ -2254,10 +2085,10 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
 
                 // add vertices for this full-length starlane
-                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].X1));
-                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].Y1));
-                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].X2));
-                raw_starlane_vertices.push_back(static_cast<float>(m_starlane_endpoints[lane].Y2));
+                m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X1),
+                                          static_cast<float>(m_starlane_endpoints[lane].Y1));
+                m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X2),
+                                          static_cast<float>(m_starlane_endpoints[lane].Y2));
 
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
@@ -2282,15 +2113,15 @@ void MapWnd::InitStarlaneRenderingBuffers()
                 }
 
                 // vertex colours for starlane
-                raw_starlane_colors.push_back(lane_colour.r);
-                raw_starlane_colors.push_back(lane_colour.g);
-                raw_starlane_colors.push_back(lane_colour.b);
-                raw_starlane_colors.push_back(lane_colour.a);
-                raw_starlane_colors.push_back(lane_colour.r);
-                raw_starlane_colors.push_back(lane_colour.g);
-                raw_starlane_colors.push_back(lane_colour.b);
-                raw_starlane_colors.push_back(lane_colour.a);
-
+                m_starlane_colors.store(lane_colour.r,
+                                        lane_colour.g,
+                                        lane_colour.b,
+                                        lane_colour.a);
+                m_starlane_colors.store(lane_colour.r,
+                                        lane_colour.g,
+                                        lane_colour.b,
+                                        lane_colour.a);
+                
                 //Logger().debugStream() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
 
@@ -2316,20 +2147,20 @@ void MapWnd::InitStarlaneRenderingBuffers()
                         rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
                         LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
 
-                        raw_starlane_vertices.push_back(lane_endpoints.X1);
-                        raw_starlane_vertices.push_back(lane_endpoints.Y1);
-                        raw_starlane_vertices.push_back((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f);         // half way along starlane
-                        raw_starlane_vertices.push_back((lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
+                        m_starlane_vertices.store(lane_endpoints.X1,
+                                                  lane_endpoints.Y1);
+                        m_starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
+                                                  (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
 
                         const GG::Clr& lane_colour = empire->Color();
-                        raw_starlane_colors.push_back(lane_colour.r);
-                        raw_starlane_colors.push_back(lane_colour.g);
-                        raw_starlane_colors.push_back(lane_colour.b);
-                        raw_starlane_colors.push_back(lane_colour.a);
-                        raw_starlane_colors.push_back(lane_colour.r);
-                        raw_starlane_colors.push_back(lane_colour.g);
-                        raw_starlane_colors.push_back(lane_colour.b);
-                        raw_starlane_colors.push_back(lane_colour.a);
+                        m_starlane_colors.store(lane_colour.r,
+                                                lane_colour.g,
+                                                lane_colour.b,
+                                                lane_colour.a);
+                        m_starlane_colors.store(lane_colour.r,
+                                                lane_colour.g,
+                                                lane_colour.b,
+                                                lane_colour.a);
 
                         //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
 
@@ -2355,103 +2186,49 @@ void MapWnd::InitStarlaneRenderingBuffers()
 
             // coordinates map is oblivious to lane direction, so we need to take care of it here
             if (lane_it->first == lane.first) { 
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
+                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X1,
+                                                       m_starlane_endpoints[lane].Y1);
+                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X2,
+                                                       m_starlane_endpoints[lane].Y2);
             } else {
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X2);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y2);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].X1);
-                raw_starlane_supply_vertices.push_back(m_starlane_endpoints[lane].Y1);
+                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X2,
+                                                       m_starlane_endpoints[lane].Y2);
+                m_starlane_fleet_supply_vertices.store(m_starlane_endpoints[lane].X1,
+                                                       m_starlane_endpoints[lane].Y1);
             }
 
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
-            raw_starlane_supply_colors.push_back(empire->Color().r);
-            raw_starlane_supply_colors.push_back(empire->Color().g);
-            raw_starlane_supply_colors.push_back(empire->Color().b);
-            raw_starlane_supply_colors.push_back(empire->Color().a);
+            m_starlane_fleet_supply_colors.store(empire->Color().r,
+                                                 empire->Color().g,
+                                                 empire->Color().b,
+                                                 empire->Color().a);
+            m_starlane_fleet_supply_colors.store(empire->Color().r,
+                                                 empire->Color().g,
+                                                 empire->Color().b,
+                                                 empire->Color().a);
         }
     }
 
-    // clear old buffers
-    ClearStarlaneRenderingBuffers();
 
     // fill new buffers
-    if (!raw_starlane_vertices.empty()) {
-        glGenBuffers(1, &m_starlane_vertices.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_vertices.m_name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     raw_starlane_vertices.size() * sizeof(float),
-                     &raw_starlane_vertices[0],
-                     GL_STATIC_DRAW);
-        m_starlane_vertices.m_size = raw_starlane_vertices.size() / 2;
-    }
+    m_starlane_vertices.createServerBuffer();
+    m_starlane_colors.createServerBuffer();
+    m_starlane_vertices.harmonizeBufferType(m_starlane_colors);    
+    
+    m_starlane_fleet_supply_vertices.createServerBuffer();
+    m_starlane_fleet_supply_colors.createServerBuffer();
+    m_starlane_fleet_supply_vertices.harmonizeBufferType(m_starlane_fleet_supply_colors);
 
-    if (!raw_starlane_colors.empty()) {
-        glGenBuffers(1, &m_starlane_colors.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_colors.m_name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     raw_starlane_colors.size() * sizeof(unsigned char),
-                     &raw_starlane_colors[0],
-                     GL_STATIC_DRAW);
-        m_starlane_colors.m_size = raw_starlane_colors.size() / 4;
-    }
-
-    if (!raw_starlane_supply_vertices.empty()) {
-        glGenBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_vertices.m_name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     raw_starlane_supply_vertices.size() * sizeof(float),
-                     &raw_starlane_supply_vertices[0],
-                     GL_STATIC_DRAW);
-        m_starlane_fleet_supply_vertices.m_size = raw_starlane_supply_vertices.size() / 2;
-    }
-
-    if (!raw_starlane_supply_colors.empty()) {
-        glGenBuffers(1, &m_starlane_fleet_supply_colors.m_name);
-        glBindBuffer(GL_ARRAY_BUFFER, m_starlane_fleet_supply_colors.m_name);
-        glBufferData(GL_ARRAY_BUFFER,
-                     raw_starlane_supply_colors.size() * sizeof(unsigned char),
-                     &raw_starlane_supply_colors[0],
-                     GL_STATIC_DRAW);
-        m_starlane_fleet_supply_colors.m_size = raw_starlane_supply_colors.size() / 4;
-    }
-
-    // cleanup
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     Logger().debugStream() << "MapWnd::InitStarlaneRenderingBuffers time: " << (timer.elapsed() * 1000.0);
 }
 
 void MapWnd::ClearStarlaneRenderingBuffers()
 {
-    if (m_starlane_vertices.m_name) {
-        glDeleteBuffers(1, &m_starlane_vertices.m_name);
-        m_starlane_vertices.m_name = 0;
-    }
+    m_starlane_vertices.clear();
+    m_starlane_colors.clear();
 
-    if (m_starlane_colors.m_name) {
-        glDeleteBuffers(1, &m_starlane_colors.m_name);
-        m_starlane_colors.m_name = 0;
-    }
-
-    if (m_starlane_fleet_supply_vertices.m_name) {
-        glDeleteBuffers(1, &m_starlane_fleet_supply_vertices.m_name);
-        m_starlane_fleet_supply_vertices.m_name = 0;
-    }
-
-    if (m_starlane_fleet_supply_colors.m_name) {
-        glDeleteBuffers(1, &m_starlane_fleet_supply_colors.m_name);
-        m_starlane_fleet_supply_colors.m_name = 0;
-    }
-
-
-
-
+    m_starlane_fleet_supply_vertices.clear();
+    m_starlane_fleet_supply_colors.clear();
 }
 
 LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2)

@@ -523,6 +523,10 @@ public:
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
     {
+        if (!s_scanline_shader)
+            s_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
+                                                                                                     ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
+        
         const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
@@ -554,18 +558,14 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if (GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
+        if (s_scanline_shader && GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
             GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
-            if (!s_scanline_shader)
-                s_scanline_shader = boost::shared_ptr<ShaderProgram>(new ShaderProgram("",
-                    ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
-
             float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
             s_scanline_shader->Use();
             s_scanline_shader->Bind("scanline_spacing", fog_scanline_spacing);
             CircleArc(ul, lr, 0.0, TWO_PI, true);
-            glUseProgram(0);
+            s_scanline_shader->stopUse();
         }
     }
 

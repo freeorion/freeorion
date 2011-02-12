@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 
+#include "../client/human/HumanClientApp.h"
 
 namespace {
     void CHECK_ERROR(const char* fn, const char* e) {
@@ -116,6 +117,14 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     m_link_succeeded = status;
 
     GetProgramLog(m_program_id, m_program_log);
+}
+
+ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader)
+{
+    if (HumanClientApp::GetApp()->GLVersion() >= 2.0f) 
+        return new ShaderProgram(vertex_shader,fragment_shader);
+    
+    return 0;
 }
 
 ShaderProgram::~ShaderProgram()
@@ -313,4 +322,9 @@ void ShaderProgram::Use()
     glGetError();
     glUseProgram(m_program_id);
     CHECK_ERROR("ShaderProgram::Use", "glUseProgram()");
+}
+
+void ShaderProgram::stopUse()
+{
+    glUseProgram(0);
 }

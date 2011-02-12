@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */; };
+		2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */; };
 		2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */; };
 		2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2F60966A12EEAF0200F58913 /* GroupBox.cpp */; };
 		2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 47102FA40CEF565700A7DF2B /* MessageQueue.cpp */; };
@@ -471,6 +472,8 @@
 /* Begin PBXFileReference section */
 		2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TechTreeLayout.cpp; sourceTree = "<group>"; };
 		2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TechTreeLayout.h; sourceTree = "<group>"; };
+		2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLClientAndServerBuffer.cpp; sourceTree = "<group>"; };
+		2F276A3A130401E000153050 /* GLClientAndServerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLClientAndServerBuffer.h; sourceTree = "<group>"; };
 		2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PlayerListWnd.cpp; sourceTree = "<group>"; };
 		2F60966412EEAD2200F58913 /* PlayerListWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PlayerListWnd.h; sourceTree = "<group>"; };
 		2F60966A12EEAF0200F58913 /* GroupBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GroupBox.cpp; sourceTree = "<group>"; };
@@ -2885,6 +2888,8 @@
 		471D5CA40A98A3F900DA9C21 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				2F276A39130401E000153050 /* GLClientAndServerBuffer.cpp */,
+				2F276A3A130401E000153050 /* GLClientAndServerBuffer.h */,
 				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
 				2F22EC0512F7F4CF00456CDE /* TechTreeLayout.h */,
 				2F60966312EEAD2200F58913 /* PlayerListWnd.cpp */,
@@ -3633,6 +3638,7 @@
 				2F60966512EEAD2200F58913 /* PlayerListWnd.cpp in Sources */,
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
+				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

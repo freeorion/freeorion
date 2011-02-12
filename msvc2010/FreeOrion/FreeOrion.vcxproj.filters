@@ -489,6 +489,9 @@
     <ClInclude Include="..\..\UI\TechTreeLayout.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
@@ -1049,6 +1052,9 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp">
+      <Filter>Source Files\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>

@@ -171,6 +171,7 @@ set(THIS_EXE_SOURCES
     ../../UI/IntroScreen.cpp
     ../../UI/LinkText.cpp
     ../../UI/MapWnd.cpp
+    ../../UI/GLClientAndServerBuffer.cpp
     ../../UI/MultiplayerLobbyWnd.cpp
     ../../UI/OptionsWnd.cpp
     ../../UI/DesignWnd.cpp
