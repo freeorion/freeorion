@@ -1124,6 +1124,8 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
+    const UniverseObject* capitol = objects.Object(empire->CapitolID());
+    ScriptingContext sc(capitol);
 
     locations.insert(loc);
 
@@ -1133,7 +1135,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
         Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get its own hull with name " << m_hull;
         return false;
     }
-    hull->Location()->Eval(locations, non_locations, Condition::MATCHES);
+    hull->Location()->Eval(sc, locations, non_locations, Condition::MATCHES);
     if (locations.empty())
         return false;
 
@@ -1148,7 +1150,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
             Logger().errorStream() << "ShipDesign::ProductionLocation  ShipDesign couldn't get part with name " << part_name;
             return false;
         }
-        part->Location()->Eval(locations, non_locations, Condition::MATCHES);
+        part->Location()->Eval(sc, locations, non_locations, Condition::MATCHES);
         if (locations.empty())
             return false;
     }

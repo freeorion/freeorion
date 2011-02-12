@@ -8,6 +8,7 @@
 #include "Enums.h"
 #include "Parser.h"
 #include "ParserUtil.h"
+#include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../util/MultiplayerCommon.h"
@@ -307,10 +308,12 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
         Logger().debugStream() << "BuildingType::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
+    const UniverseObject* capitol = objects.Object(empire->CapitolID());
+    ScriptingContext sc(capitol);
 
     Condition::ObjectSet potential_targets; potential_targets.insert(location);
     Condition::ObjectSet matched_targets;
-    m_location->Eval(matched_targets, potential_targets);
+    m_location->Eval(sc, matched_targets, potential_targets);
 
     return !matched_targets.empty();
 }
