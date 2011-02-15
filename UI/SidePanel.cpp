@@ -523,10 +523,11 @@ public:
         m_initial_rotation(RandZeroToOne()),
         m_star_type(star_type)
     {
-        if (!s_scanline_shader)
+        if (!s_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
             s_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
-                                                                                                     ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
-        
+                ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
+        }
+
         const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
