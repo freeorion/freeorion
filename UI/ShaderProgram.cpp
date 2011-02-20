@@ -14,10 +14,9 @@ namespace {
     void CHECK_ERROR(const char* fn, const char* e) {
         GLenum error = glGetError();
         if (error != GL_NO_ERROR) {
-            std::cerr << fn << " () :"
-                      << " GL error on " << e << ": "
-                      << "'" << gluErrorString(error) << "'"
-                      << std::endl;
+            Logger().errorStream() << fn << " () :"
+                                   << " GL error on " << e << ": "
+                                   << "'" << gluErrorString(error) << "'";
         }
     }
 
