@@ -407,14 +407,10 @@ namespace {
     void AddOptions(OptionsDB& db)
     {
         db.AddFlag("tech-demo",             "OPTIONS_DB_TECH_DEMO",                 false);
-        db.Add("combat.enable-glow",        "OPTIONS_DB_COMBAT_ENABLE_GLOW",
-               true, Validator<bool>());
-        db.Add("combat.enable-skybox",      "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",
-               true, Validator<bool>());
-        db.Add("combat.enable-lens-flare",  "OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE",
-               true, Validator<bool>());
-        db.Add("combat.filled-selection",   "OPTIONS_DB_COMBAT_FILLED_SELECTION",
-               false, Validator<bool>());
+        db.Add("combat.enable-glow",        "OPTIONS_DB_COMBAT_ENABLE_GLOW",        true, Validator<bool>());
+        db.Add("combat.enable-skybox",      "OPTIONS_DB_COMBAT_ENABLE_SKYBOX",      true, Validator<bool>());
+        db.Add("combat.enable-lens-flare",  "OPTIONS_DB_COMBAT_ENABLE_LENS_FLARE",  true, Validator<bool>());
+        db.Add("combat.filled-selection",   "OPTIONS_DB_COMBAT_FILLED_SELECTION",   false, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
