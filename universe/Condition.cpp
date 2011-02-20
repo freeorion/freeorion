@@ -14,8 +14,10 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
+#include <boost/graph/adjacency_list.hpp>
+#include <boost/graph/st_connected.hpp>
+
 using boost::io::str;
-using boost::lexical_cast;
 
 extern int g_indent;
 
@@ -96,10 +98,10 @@ Condition::Number::~Number()
 std::string Condition::Number::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                                lexical_cast<std::string>(m_high->Eval()) :
+                                boost::lexical_cast<std::string>(m_high->Eval()) :
                                 m_high->Description();
     std::string description_str = "DESC_NUMBER";
     if (negated)
@@ -172,10 +174,10 @@ Condition::Turn::~Turn()
 std::string Condition::Turn::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            lexical_cast<std::string>(m_high->Eval()) :
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     std::string description_str = "DESC_TURN";
     if (negated)
@@ -484,7 +486,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
 std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const
 {
-    std::string number_str = ValueRef::ConstantExpr(m_number) ? lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
+    std::string number_str = ValueRef::ConstantExpr(m_number) ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
 
     if (m_sorting_method == SORT_RANDOM) {
         std::string description_str = "DESC_NUMBER_OF";
@@ -494,7 +496,7 @@ std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) con
                    % number_str
                    % m_condition->Description());
     } else {
-        std::string sort_key_str = ValueRef::ConstantExpr(m_sort_key) ? lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
+        std::string sort_key_str = ValueRef::ConstantExpr(m_sort_key) ? boost::lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
 
         std::string description_str, temp;
         switch (m_sorting_method) {
@@ -617,7 +619,7 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         if (negated)
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str))
-                   % UserString(lexical_cast<std::string>(m_affiliation))
+                   % UserString(boost::lexical_cast<std::string>(m_affiliation))
                    % value_str);
     }
 }
@@ -746,7 +748,7 @@ std::string Condition::Homeworld::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
-                        UserString(lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -875,7 +877,7 @@ Condition::Type::~Type()
 std::string Condition::Type::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_type) ?
-                                UserString(lexical_cast<std::string>(m_type->Eval())) :
+                                UserString(boost::lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
     std::string description_str = "DESC_TYPE";
     if (negated)
@@ -959,7 +961,7 @@ std::string Condition::Building::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
-                        UserString(lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -1170,7 +1172,7 @@ std::string Condition::PlanetType::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_types[i]) ?
-                        UserString(lexical_cast<std::string>(m_types[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
@@ -1244,7 +1246,7 @@ std::string Condition::PlanetSize::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_sizes[i]) ?
-                        UserString(lexical_cast<std::string>(m_sizes[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_sizes[i]->Eval())) :
                         m_sizes[i]->Description();
         if (2 <= m_sizes.size() && i < m_sizes.size() - 2) {
             values_str += ", ";
@@ -1318,7 +1320,7 @@ std::string Condition::PlanetEnvironment::Description(bool negated/* = false*/) 
     std::string values_str;
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_environments[i]) ?
-                        UserString(lexical_cast<std::string>(m_environments[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_environments[i]->Eval())) :
                         m_environments[i]->Description();
         if (2 <= m_environments.size() && i < m_environments.size() - 2) {
             values_str += ", ";
@@ -1393,7 +1395,7 @@ std::string Condition::Species::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
-                        UserString(lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -1476,7 +1478,7 @@ std::string Condition::FocusType::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_names[i]) ?
-            UserString(lexical_cast<std::string>(m_names[i]->Eval())) :
+            UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
             m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -1552,7 +1554,7 @@ std::string Condition::StarType::Description(bool negated/* = false*/) const
     std::string values_str;
     for (unsigned int i = 0; i < m_types.size(); ++i) {
         values_str += ValueRef::ConstantExpr(m_types[i]) ?
-                        UserString(lexical_cast<std::string>(m_types[i]->Eval())) :
+                        UserString(boost::lexical_cast<std::string>(m_types[i]->Eval())) :
                         m_types[i]->Description();
         if (2 <= m_types.size() && i < m_types.size() - 2) {
             values_str += ", ";
@@ -1655,10 +1657,10 @@ Condition::DesignHasPart::~DesignHasPart()
 std::string Condition::DesignHasPart::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            lexical_cast<std::string>(m_high->Eval()) :
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     std::string description_str = "DESC_DESIGN_HAS_PART";
     if (negated)
@@ -1714,10 +1716,10 @@ Condition::DesignHasPartClass::~DesignHasPartClass()
 std::string Condition::DesignHasPartClass::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            lexical_cast<std::string>(m_high->Eval()) :
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     std::string description_str = "DESC_DESIGN_HAS_PART_CLASS";
     if (negated)
@@ -1778,7 +1780,7 @@ std::string Condition::Chance::Description(bool negated/* = false*/) const
         if (negated)
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str)) %
-                                  lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(), 1.0)) * 100));
+                                  boost::lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(), 1.0)) * 100));
     } else {
         std::string description_str = "DESC_CHANCE";
         if (negated)
@@ -1816,16 +1818,16 @@ Condition::MeterValue::~MeterValue()
 std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            lexical_cast<std::string>(m_high->Eval()) :
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     std::string description_str = "DESC_METER_VALUE_CURRENT";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str))
-               % UserString(lexical_cast<std::string>(m_meter))
+               % UserString(boost::lexical_cast<std::string>(m_meter))
                % low_str
                % high_str);
 }
@@ -1917,16 +1919,16 @@ Condition::EmpireStockpileValue::~EmpireStockpileValue()
 std::string Condition::EmpireStockpileValue::Description(bool negated/* = false*/) const
 {
     std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            lexical_cast<std::string>(m_low->Eval()) :
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            lexical_cast<std::string>(m_high->Eval()) :
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
                             m_high->Description();
     std::string description_str = "DESC_EMPIRE_STOCKPILE_VALUE";
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str))
-               % UserString(lexical_cast<std::string>(m_stockpile))
+               % UserString(boost::lexical_cast<std::string>(m_stockpile))
                % low_str
                % high_str);
 }
@@ -2095,7 +2097,7 @@ Condition::WithinDistance::~WithinDistance()
 std::string Condition::WithinDistance::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_distance) ?
-                                lexical_cast<std::string>(m_distance->Eval()) :
+                                boost::lexical_cast<std::string>(m_distance->Eval()) :
                                 m_distance->Description();
     std::string description_str = "DESC_WITHIN_DISTANCE";
     if (negated)
@@ -2166,7 +2168,7 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 
 std::string Condition::WithinStarlaneJumps::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
+    std::string value_str = ValueRef::ConstantExpr(m_jumps) ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
     std::string description_str = "DESC_WITHIN_STARLANE_JUMPS";
     if (negated)
         description_str += "_NOT";
@@ -2304,7 +2306,7 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 }
 
 ///////////////////////////////////////////////////////////
-// CanAddStarlaneConnection                             //
+// CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
 Condition::CanAddStarlaneConnection::CanAddStarlaneConnection(const ConditionBase* condition) :
     m_condition(condition)
@@ -2368,8 +2370,125 @@ bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_co
 }
 
 ///////////////////////////////////////////////////////////
-// CanRemoveStarlaneConnection                             //
+// CanRemoveStarlaneConnection                           //
 ///////////////////////////////////////////////////////////
+namespace {
+    struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
+
+    struct GraphImpl {
+        typedef boost::property<vertex_system_id_t, int,
+                                boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
+
+        // declare main graph types, including properties declared above
+        typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS,
+                                      vertex_property_t> SystemGraph;
+
+        // declare property map types for properties declared above
+        typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
+        typedef boost::property_map<SystemGraph, vertex_system_id_t>::type              SystemIDPropertyMap;
+
+        SystemGraph system_graph;   ///< a graph in which the systems are vertices and the starlanes are edges
+    };
+
+    // returns the \a graph index for system with id \a system_id
+    template <class Graph>
+    int SystemGraphIndex(const Graph& graph, int system_id)
+    {
+        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
+        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
+
+        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
+            const int loop_sys_id = sys_id_property_map[i];    // get system ID of this vertex
+            if (loop_sys_id == system_id)
+                return i;
+        }
+
+        Logger().errorStream() << "SystemGraphIndex cannot be found due to invalid system ID: " << system_id;
+        return -1;
+    }
+
+    void InitializeStarlaneGraph(GraphImpl& starlane_graph_impl,
+                                 const std::map<int, std::set<int> >& system_starlanes_map)
+    {
+        // clean up old contents of input graph
+        for (int i = static_cast<int>(boost::num_vertices(starlane_graph_impl.system_graph)) - 1; i >= 0; --i) {
+            boost::clear_vertex(i, starlane_graph_impl.system_graph);
+            boost::remove_vertex(i, starlane_graph_impl.system_graph);
+        }
+
+        GraphImpl::SystemIDPropertyMap sys_id_property_map =
+            boost::get(vertex_system_id_t(), starlane_graph_impl.system_graph);
+
+        std::map<int, int> system_id_graph_index_reverse_lookup_map;    // key is system ID, value is index in starlane_graph_impl.system_graph of system's vertex
+
+        // add vertices
+        unsigned int i = 0;
+        for (std::map<int, std::set<int> >::const_iterator map_it = system_starlanes_map.begin();
+             map_it != system_starlanes_map.end(); ++map_it, ++i)
+        {
+            int system_id = map_it->first;
+
+            // add a vertex to the graph for this system, and assign it the system's universe ID as a property
+            boost::add_vertex(starlane_graph_impl.system_graph);
+            sys_id_property_map[i] = system_id;
+            // add record of index in starlane_graph_impl.system_graph of this system
+            system_id_graph_index_reverse_lookup_map[system_id] = i;
+        }
+
+        // add edges
+        for (std::map<int, std::set<int> >::const_iterator map_it = system_starlanes_map.begin();
+             map_it != system_starlanes_map.end(); ++map_it)
+        {
+            int system1_id = map_it->first;
+            // find lane start graph index
+            std::map<int, int>::const_iterator lookup1_it = system_id_graph_index_reverse_lookup_map.find(system1_id);
+            if (lookup1_it == system_id_graph_index_reverse_lookup_map.end())
+                continue;
+            int system1_index = lookup1_it->second;
+            // add edge for each valid starlane
+            const std::set<int>& system_starlanes = map_it->second;
+            for (std::set<int>::const_iterator lane_it = system_starlanes.begin();
+                 lane_it != system_starlanes.end(); ++lane_it)
+            {
+                int system2_id = *lane_it;
+                // skip null lanes
+                if (system2_id == system1_id)
+                    continue;
+                // find lane end graph index
+                std::map<int, int>::const_iterator lookup2_it = system_id_graph_index_reverse_lookup_map.find(system2_id);
+                if (lookup2_it == system_id_graph_index_reverse_lookup_map.end())
+                    continue;
+                int system2_index = lookup2_it->second;
+                // add edge between vertices
+                boost::add_edge(system1_index, system2_index, starlane_graph_impl.system_graph);
+            }
+        }
+    }
+
+    /** Returns true or false to indicate whether the systems with ids
+      * \a system1_id and system2_id are connected by a series of starlanes. */
+    template <class Graph>
+    bool SystemsConnected(const Graph& graph, int system1_id, int system2_id)
+    {
+        if (system1_id == system2_id)
+            return true;    // early exit if systems are the same
+
+        int system1_index = SystemGraphIndex(graph, system1_id);
+        int system2_index = SystemGraphIndex(graph, system2_id);
+        if (system1_index == -1 || system2_index == -1) {
+            Logger().errorStream() << "Couldn't find valid graph index for systems " << system1_id << " or " << system2_id;
+            return false;
+        }
+
+        try {
+            return boost::graph::st_connected(graph, system1_index, system2_index);
+        } catch(...) {
+            Logger().errorStream() << "Error checking graph connectivity in Condition";
+        }
+        return false;
+    }
+}
+
 Condition::CanRemoveStarlaneConnection::CanRemoveStarlaneConnection(const ConditionBase* condition) :
     m_condition(condition)
 {}
@@ -2404,18 +2523,27 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
         return false;
     }
 
-    ObjectMap& objects = GetUniverse().Objects();
+    const ObjectMap& objects = GetMainObjectMap();
+
+    // get system for candidate object
+    int candidate_system_id = candidate->SystemID();
+    const System* candidate_system = objects.Object<System>(candidate_system_id);
+    if (!candidate_system)
+        return false;
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
-    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+    for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
         subcondition_non_matches.insert(it->second);
     ObjectSet subcondition_matches;
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
+    if (subcondition_matches.empty())
+        return false;
+
     // assemble all systems in or containing objects in subcondition matches
-    ObjectSet destination_systems;
+    std::set<const System*> destination_systems;
     for (ObjectSet::const_iterator it = subcondition_matches.begin(); it != subcondition_matches.end(); ++it)
         if (const System* system = objects.Object<System>((*it)->SystemID()))
             destination_systems.insert(system);
@@ -2423,11 +2551,45 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     if (destination_systems.empty())
         return false;
 
-    // can the candidate object have starlanes to all destination systems?
-    for (ObjectSet::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
-        return false;
+    // does the candidate object have starlanes to all systems containing subcondition matches?
+    for (std::set<const System*>::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {
+        if (!candidate_system->HasStarlaneTo((*it)->ID()) || !(*it)->HasStarlaneTo(candidate_system->ID()))
+            return false;
     }
 
+    // create starlane graph, fill with system info, exclusing lanes to
+    // subcondition-matches from candidate
+    std::map<int, std::set<int> > system_lanes;
+    std::vector<const System*> systems = objects.FindObjects<System>();
+
+    //for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
+    //    const System* loop_system = *system_it;
+    //    int loop_system_id = loop_system->ID();
+    //    system_lanes[loop_system_id];   // ensure there's at least an empty lane set for this system
+
+    //    // Add all lanes for each system to system_lanes map, except for lanes
+    //    // connecting between the candidate and any subcondition matcing system
+    //    // (and also lanes from subcondition matches to the candidate system)
+    //    for (System::const_lane_iterator lane_it = loop_system->begin_lanes(); lane_it != loop_system->end_lanes(); ++lane_it) {
+    //        if (loop_system_id != candidate_system_id ||
+    //            destination_systems.find(*lane_it) == destination_systems.end() ||
+    //            false)
+    //        {
+    //            system_lanes[loop_system_id].insert(*lane_it);
+    //        }
+    //    }
+    //}
+
+    GraphImpl graph_impl;
+    InitializeStarlaneGraph(graph_impl, system_lanes);
+
+    // In the starlanes graph that excludes the starlanes being tested, is
+    // connectivity still preserved between systems connected by those starlanes?
+    // To test, check if any of those pairs of systems are disconnected in the
+    // test graph.
+    for (std::set<const System*>::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {}
+
+    //SystemsConnected(graph_impl
     return true;
 }
 
