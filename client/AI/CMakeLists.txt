@@ -131,7 +131,7 @@ if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
     set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${GIGI_GIGI_LIBRARY} ${ZLIB_LIBRARY})
 else ()
-    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES})
+    set(THIS_EXE_LINK_LIBS ${THIS_EXE_LINK_LIBS} ${Boost_LIBRARIES} ${ZLIB_LIBRARY})
 endif ()
 
 executable_all_variants(freeorionca)
