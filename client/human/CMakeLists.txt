@@ -112,7 +112,9 @@ set(THIS_EXE_SOURCES
     ../../universe/ValueRefParser.cpp
     ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
+    ../../util/binreloc.c
     ../../util/DataTable.cpp
+    ../../util/Directories.cpp
     ../../util/GZStream.cpp
     ../../util/Math.cpp
     ../../util/MultiplayerCommon.cpp
@@ -128,8 +130,6 @@ set(THIS_EXE_SOURCES
     ../../util/SerializeUniverse.cpp
     ../../util/SitRepEntry.cpp
     ../../util/VarText.cpp
-    ../../util/binreloc.c
-    ../../util/Directories.cpp
     ../../util/XMLDoc.cpp
     ../../log4cpp/src/Appender.cpp
     ../../log4cpp/src/AppenderSkeleton.cpp
