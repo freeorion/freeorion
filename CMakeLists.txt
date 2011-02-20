@@ -442,15 +442,15 @@ else ()
             Plugin_ParticleFX.dll
             RenderSystem_GL.dll
             alut.dll
-            boost_date_time-vc90-mt-1_42.dll
-            boost_filesystem-vc90-mt-1_42.dll
-            boost_iostreams-vc90-mt-1_42.dll
-            boost_python-vc90-mt-1_42.dll
-            boost_regex-vc90-mt-1_42.dll
-            boost_serialization-vc90-mt-1_42.dll
-            boost_signals-vc90-mt-1_42.dll
-            boost_system-vc90-mt-1_42.dll
-            boost_thread-vc90-mt-1_42.dll
+            boost_date_time-vc90-mt-1_44.dll
+            boost_filesystem-vc90-mt-1_44.dll
+            boost_iostreams-vc90-mt-1_44.dll
+            boost_python-vc90-mt-1_44.dll
+            boost_regex-vc90-mt-1_44.dll
+            boost_serialization-vc90-mt-1_44.dll
+            boost_signals-vc90-mt-1_44.dll
+            boost_system-vc90-mt-1_44.dll
+            boost_thread-vc90-mt-1_44.dll
             glew32.dll
             jpeg.dll
             libexpat.dll
