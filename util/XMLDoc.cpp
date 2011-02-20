@@ -74,10 +74,10 @@ namespace {
     typedef chlit<unsigned char> chlit_t;
 
     // XML grammar rules
-    rule<> document, prolog, element, Misc, Reference,CData, doctypedecl, 
-    XMLDecl, SDDecl, VersionInfo, EncodingDecl, VersionNum, Eq, 
-    EmptyElemTag, STag, content, ETag, Attribute, AttValue, CharData, 
-    Comment, CDSect, CharRef, EntityRef, EncName, Name, Comment1, S;
+    rule<> document, prolog, element, Misc, Reference, CData, doctypedecl,
+           XMLDecl, SDDecl, VersionInfo, EncodingDecl, VersionNum, Eq,
+           EmptyElemTag, STag, content, ETag, Attribute, AttValue, CharData,
+           Comment, CDSect, CharRef, EntityRef, EncName, Name, Comment1, S;
 
     // XML Character classes
     chset_t Char("\x9\xA\xD\x20-\xFF");
@@ -355,13 +355,11 @@ std::string              XMLDoc::s_temp_attr_name;
 
 XMLDoc::XMLDoc(const std::string& root_tag/*= "XMLDoc"*/) :
     root_node(XMLElement(root_tag, true))
-{
-}
+{}
 
 XMLDoc::XMLDoc(const std::istream& is) :
     root_node(XMLElement())
-{
-}
+{}
 
 std::ostream& XMLDoc::WriteDoc(std::ostream& os, bool whitespace/* = true*/) const
 {
