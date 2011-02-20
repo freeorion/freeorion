@@ -98,8 +98,8 @@ int mainConfigOptionsSetup(int argc, char* argv[])
 
 
         // read config.xml and set options entries from it, if present
-        XMLDoc doc;
         {
+            XMLDoc doc;
             try {
                 boost::filesystem::ifstream ifs(GetConfigPath());
                 if (ifs) {
@@ -116,14 +116,13 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().SetFromCommandLine(argc, argv);
 
 
-#ifdef FREEORION_MACOSX
         // Handle the case where the resource-dir does not exist anymore
         // gracefully by resetting it to the standard path into the
         // application bundle.  This may happen if a previous installed
         // version of FreeOrion was residing in a different directory.
-        if (!boost::filesystem::exists(boost::filesystem::path(GetOptionsDB().Get<std::string>("resource-dir"))))
-            GetOptionsDB().Set<std::string>("resource-dir", (GetRootDataDir() / "default").directory_string());
-#endif
+        if (!boost::filesystem::exists(GetResourceDir()))
+            GetOptionsDB().Set<std::string>("resource-dir", "");
+
 
         // did the player request generation of config.xml, saving the default (or current) options to disk?
         if (GetOptionsDB().Get<bool>("generate-config-xml")) {
@@ -180,7 +179,7 @@ int mainSetupAndRunOgre()
         log_manager = new LogManager();
         log_manager->createLog((GetUserDir() / "ogre.log").string(), true, false);
 
-        root = new Root((GetBinDir() / "ogre_plugins.cfg").string());
+        root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
 
 #if defined(OGRE_STATIC_LIB)
         octree_plugin = new Ogre::OctreePlugin;
@@ -236,7 +235,7 @@ int mainSetupAndRunOgre()
 
         //EntityRenderer entity_renderer(scene_manager);
 
-        HumanClientApp app(root, window, scene_manager, camera, viewport);
+        HumanClientApp app(root, window, scene_manager, camera, viewport, (GetRootDataDir() / "OISInput.cfg").string());
 
 #ifdef FREEORION_MACOSX
         ois_input_plugin = new OISInput;

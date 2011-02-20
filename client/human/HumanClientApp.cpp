@@ -158,9 +158,10 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
                                Ogre::RenderWindow* window,
                                Ogre::SceneManager* scene_manager,
                                Ogre::Camera* camera,
-                               Ogre::Viewport* viewport) :
+                               Ogre::Viewport* viewport,
+                               const std::string& ois_input_cfg_file_name) :
     ClientApp(),
-    OgreGUI(window, (GetBinDir() / "OISInput.cfg").string()),
+    OgreGUI(window, ois_input_cfg_file_name),
     m_fsm(0),
     m_single_player_game(true),
     m_game_started(false),
@@ -213,7 +214,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
 
     boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
-        new GG::TextBoxBrowseInfoWnd(GG::X(400), GG::GUI::GetGUI()->GetFont(ClientUI::Font(), ClientUI::Pts()),
+        new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
