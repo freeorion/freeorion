@@ -776,6 +776,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\TechTreeLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\TechTreeLayout.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\Ui\TechTreeWnd.cpp"
 				>
 			</File>
