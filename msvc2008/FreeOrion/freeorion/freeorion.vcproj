@@ -608,6 +608,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\UI\GLClientAndServerBuffer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\..\UI\GLClientAndServerBuffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\UI\InfoPanels.cpp"
 				>
 			</File>

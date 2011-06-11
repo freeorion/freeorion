@@ -4422,6 +4422,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
 
         empire->SetCapitolID(home_planet->ID());
 
+        empire->AddExploredSystem(home_planet->SystemID());
+
         home_planet->SetSpecies(empire_starting_species);
         if (Species* species = species_manager.GetSpecies(empire_starting_species))
             species->AddHomeworld(homeworld_id);
