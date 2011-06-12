@@ -52,7 +52,7 @@ private:
     void                MusicVolumeOption();
     void                VolumeOption(const std::string& toggle_option_name, const std::string& volume_option_name, const std::string& text,
                                      VolumeSliderHandler volume_slider_handler, bool toggle_value);
-    void                FileOptionImpl(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory);
+    void                FileOptionImpl(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path);
     void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = 0);
     void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = 0);
     void                FileOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = 0);

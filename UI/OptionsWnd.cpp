@@ -75,8 +75,9 @@ namespace {
 
     struct BrowseForPathButtonFunctor
     {
-        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, CUIEdit* edit, bool directory) :
-            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory) {}
+        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters,
+                                   CUIEdit* edit, bool directory, bool return_relative_path) :
+            m_path(path), m_filters(filters), m_edit(edit), m_directory(directory), m_return_relative_path(return_relative_path) {}
 
         void operator()()
         {
@@ -86,7 +87,9 @@ namespace {
                     dlg.SelectDirectories(true);
                 dlg.Run();
                 if (!dlg.Result().empty()) {
-                    fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
+                    fs::path path = m_return_relative_path ?
+                        RelativePath(m_path, fs::path(*dlg.Result().begin())) :
+                        fs::complete(*dlg.Result().begin());
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }
@@ -95,10 +98,11 @@ namespace {
             }
         }
 
-        fs::path m_path;
-        std::vector<std::pair<std::string, std::string> > m_filters;
-        CUIEdit* m_edit;
-        bool m_directory;
+        fs::path                                            m_path;
+        std::vector<std::pair<std::string, std::string> >   m_filters;
+        CUIEdit*                                            m_edit;
+        bool                                                m_directory;
+        bool                                                m_return_relative_path;
     };
 
     bool ValidStringtableFile(const std::string& file)
@@ -410,7 +414,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
     GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
 }
 
-void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory)
+void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
@@ -435,7 +439,7 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
-    GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory));
+    GG::Connect(button->ClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
@@ -452,7 +456,7 @@ void OptionsWnd::FileOption(const std::string& option_name, const std::string& t
 
 void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
 {
-    FileOptionImpl(option_name, text, path, filters, string_validator, false);
+    FileOptionImpl(option_name, text, path, filters, string_validator, false, false);
 }
 
 void OptionsWnd::SoundFileOption(const std::string& option_name, const std::string& text)
@@ -462,7 +466,7 @@ void OptionsWnd::SoundFileOption(const std::string& option_name, const std::stri
 
 void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path)
 {
-    FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), ValidDirectory, true);
+    FileOptionImpl(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), ValidDirectory, true, false);
 }
 
 void OptionsWnd::ColorOption(const std::string& option_name, const std::string& text)
@@ -490,51 +494,9 @@ void OptionsWnd::ColorOption(const std::string& option_name, const std::string& 
 
 void OptionsWnd::FontOption(const std::string& option_name, const std::string& text)
 {
-    const GG::Y DROPLIST_HEIGHT(ClientUI::Pts() + 4);
-    const GG::Y DROPLIST_DROP_HEIGHT = DROPLIST_HEIGHT * 5;
-    GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
-    CUIDropDownList* drop_list = new CUIDropDownList(GG::X0, GG::Y0, GG::X1, DROPLIST_HEIGHT, DROPLIST_DROP_HEIGHT);
-    drop_list->SetStyle(GG::LIST_NOSORT);
-    std::set<std::string> filenames;
-    fs::directory_iterator end_it;
-    for (fs::directory_iterator it(GetResourceDir()); it != end_it; ++it) {
-        try {
-            if (fs::exists(*it)) {
-                std::string filename = it->filename();
-                if (boost::algorithm::ends_with(filename, FONT_FILE_SUFFIX))
-                    filenames.insert(filename);
-            }
-        } catch (const fs::filesystem_error& e) {
-            // ignore files for which permission is denied, and rethrow other exceptions
-            if (e.code() != boost::system::posix_error::permission_denied)
-                throw;
-        }
-    }
-    drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
-    GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 2, 1, 0, LAYOUT_MARGIN);
-    layout->Add(text_control, 0, 0);
-    layout->Add(drop_list, 1, 0, 1, 1, GG::ALIGN_VCENTER);
-    row->Resize(GG::Pt(ROW_WIDTH, text_control->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
-    row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
-    m_current_option_list->Insert(row);
-    std::string current_font = GetOptionsDB().Get<std::string>(option_name);
-    assert(boost::algorithm::ends_with(current_font, FONT_FILE_SUFFIX));
-    int index = -1;
-    for (std::set<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
-        GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(boost::algorithm::erase_last_copy(*it, FONT_FILE_SUFFIX));
-        font_row->SetName(*it);
-        drop_list->Insert(font_row);
-        if (*it == current_font)
-            index = drop_list->NumRows() - 1;
-    }
-    if (index != -1)
-        drop_list->Select(index);
-    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    drop_list->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(drop_list->SelChangedSignal, DropListIndexSetOptionFunctor(option_name, drop_list));
+    FileOption(option_name, text, GetRootDataDir() / "default",
+               std::make_pair<std::string, std::string>(option_name, "*" + FONT_FILE_SUFFIX),
+               &ValidFontFile);
 }
 
 void OptionsWnd::ResolutionOption()
@@ -750,8 +712,8 @@ void OptionsWnd::Init()
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));
-    FileOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"),    GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + FONT_FILE_SUFFIX), &ValidFontFile);
-    FileOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"),   GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + FONT_FILE_SUFFIX), &ValidFontFile);
+    FontOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"));
+    FontOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONT_SIZES"));
     IntOption("UI.font-size",                   UserString("OPTIONS_FONT_TEXT"));
