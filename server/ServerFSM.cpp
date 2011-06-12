@@ -429,7 +429,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         boost::filesystem::path save_dir(GetSaveDir());
         const std::string& save_filename = m_lobby_data->m_save_games[new_file_index];
         try {
-            LoadEmpireSaveGameData((save_dir / save_filename).file_string(),
+            LoadEmpireSaveGameData((save_dir / save_filename).string(),
                                    m_lobby_data->m_save_game_empire_data);
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
@@ -535,7 +535,7 @@ sc::result MPLobby::react(const StartMPGame& msg)
             std::string save_filename = m_lobby_data->m_save_games[m_lobby_data->m_save_file_index];
 
             try {
-                LoadGame((save_dir / save_filename).file_string(),
+                LoadGame((save_dir / save_filename).string(),
                          *m_server_save_game_data,
                          m_player_save_game_data,
                          GetUniverse(),

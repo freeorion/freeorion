@@ -132,7 +132,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
                     GetOptionsDB().GetXML().WriteDoc(ofs);
                 } else {
                     std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                    std::cerr << GetConfigPath().file_string() << std::endl;
+                    std::cerr << GetConfigPath().string() << std::endl;
                 }
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;

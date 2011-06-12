@@ -1796,7 +1796,7 @@ void MapWnd::InitTurnRendering()
 
     if (!m_scanline_shader && GetOptionsDB().Get<bool>("UI.system-fog-of-war")) {
         m_scanline_shader = boost::shared_ptr<ShaderProgram>(ShaderProgram::shaderProgramFactory("",
-            ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").file_string())));
+            ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").string())));
     }
 
     const ObjectMap& known_objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());

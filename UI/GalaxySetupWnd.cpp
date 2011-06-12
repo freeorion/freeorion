@@ -509,9 +509,9 @@ void GalaxySetupWnd::OkClicked()
             GetOptionsDB().GetXML().WriteDoc(ofs);
         } else {
             std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-            std::cerr << GetConfigPath().file_string() << std::endl;
+            std::cerr << GetConfigPath().string() << std::endl;
             Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-            Logger().errorStream() << GetConfigPath().file_string();
+            Logger().errorStream() << GetConfigPath().string();
         }
     }
 

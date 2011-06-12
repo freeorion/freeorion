@@ -641,7 +641,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
 
     // Load resource paths from config file
     Ogre::ConfigFile cf;
-    cf.load((ClientUI::ArtDir() / "combat" / "resources.cfg").file_string());
+    cf.load((ClientUI::ArtDir() / "combat" / "resources.cfg").string());
 
     // Go through all sections & settings in the file
     Ogre::ConfigFile::SectionIterator section_it = cf.getSectionIterator();
@@ -653,7 +653,7 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
              ++it) {
             Ogre::String type_name = it->first, path_name = it->second;
             Ogre::ResourceGroupManager::getSingleton().addResourceLocation(
-                (ClientUI::ArtDir() / path_name).file_string(),
+                (ClientUI::ArtDir() / path_name).string(),
                 type_name, section_name);
         }
     }

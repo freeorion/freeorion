@@ -41,7 +41,7 @@ namespace {
     const std::string STRINGTABLE_FILE_SUFFIX = "_stringtable.txt";
     const std::string MUSIC_FILE_SUFFIX = ".ogg";
     const std::string SOUND_FILE_SUFFIX = ".wav";
-    const std::string FONT_SUFFIX = ".ttf";
+    const std::string FONT_FILE_SUFFIX = ".ttf";
 
     class PlaceholderWnd : public GG::Wnd
     {
@@ -79,21 +79,21 @@ namespace {
             m_path(path), m_filters(filters), m_edit(edit), m_directory(directory) {}
 
         void operator()()
-            {
-                try {
-                    FileDlg dlg(m_path.directory_string(), m_edit->Text(), false, false, m_filters);
-                    if (m_directory)
-                        dlg.SelectDirectories(true);
-                    dlg.Run();
-                    if (!dlg.Result().empty()) {
-                        fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
-                        *m_edit << path.file_string();
-                        m_edit->EditedSignal(m_edit->Text());
-                    }
-                } catch (const FileDlg::BadInitialDirectory& e) {
-                    ClientUI::MessageBox(e.what(), true);
+        {
+            try {
+                FileDlg dlg(m_path.string(), m_edit->Text(), false, false, m_filters);
+                if (m_directory)
+                    dlg.SelectDirectories(true);
+                dlg.Run();
+                if (!dlg.Result().empty()) {
+                    fs::path path = m_directory ? fs::complete(*dlg.Result().begin()) : RelativePath(m_path, fs::path(*dlg.Result().begin()));
+                    *m_edit << path.string();
+                    m_edit->EditedSignal(m_edit->Text());
                 }
+            } catch (const FileDlg::BadInitialDirectory& e) {
+                ClientUI::MessageBox(e.what(), true);
             }
+        }
 
         fs::path m_path;
         std::vector<std::pair<std::string, std::string> > m_filters;
@@ -104,7 +104,13 @@ namespace {
     bool ValidStringtableFile(const std::string& file)
     {
         return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
-            fs::exists(GetResourceDir() / file) && !fs::is_directory(GetResourceDir() / file);
+            fs::exists(file) && !fs::is_directory(file);
+    }
+
+    bool ValidFontFile(const std::string& file)
+    {
+        return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
+            fs::exists(file) && !fs::is_directory(file);
     }
 
     bool ValidMusicFile(const std::string& file)
@@ -174,10 +180,10 @@ namespace {
         DropListIndexSetOptionFunctor(const std::string& option_name, CUIDropDownList* drop_list) :
             m_option_name(option_name), m_drop_list(drop_list) {}
         void operator()(GG::DropDownList::iterator it)
-            {
-                assert(it != m_drop_list->end());
-                GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());
-            }
+        {
+            assert(it != m_drop_list->end());
+            GetOptionsDB().Set<std::string>(m_option_name, (*it)->Name());
+        }
         const std::string m_option_name;
         CUIDropDownList* m_drop_list;
     };
@@ -496,7 +502,7 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
         try {
             if (fs::exists(*it)) {
                 std::string filename = it->filename();
-                if (boost::algorithm::ends_with(filename, FONT_SUFFIX))
+                if (boost::algorithm::ends_with(filename, FONT_FILE_SUFFIX))
                     filenames.insert(filename);
             }
         } catch (const fs::filesystem_error& e) {
@@ -513,10 +519,10 @@ void OptionsWnd::FontOption(const std::string& option_name, const std::string& t
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     std::string current_font = GetOptionsDB().Get<std::string>(option_name);
-    assert(boost::algorithm::ends_with(current_font, FONT_SUFFIX));
+    assert(boost::algorithm::ends_with(current_font, FONT_FILE_SUFFIX));
     int index = -1;
     for (std::set<std::string>::const_iterator it = filenames.begin(); it != filenames.end(); ++it) {
-        GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(boost::algorithm::erase_last_copy(*it, FONT_SUFFIX));
+        GG::ListBox::Row* font_row = new CUISimpleDropDownListRow(boost::algorithm::erase_last_copy(*it, FONT_FILE_SUFFIX));
         font_row->SetName(*it);
         drop_list->Insert(font_row);
         if (*it == current_font)
@@ -740,12 +746,12 @@ void OptionsWnd::Init()
     BoolOption("UI.fleet-autoselect",           UserString("OPTIONS_AUTOSELECT_FLEET"));
     BoolOption("UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption("UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"), GetResourceDir(), std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
+    FileOption("stringtable-filename",          UserString("OPTIONS_LANGUAGE"),     GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + STRINGTABLE_FILE_SUFFIX), &ValidStringtableFile);
     IntOption("UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     EndSection();
     BeginSection(UserString("OPTIONS_FONTS"));
-    FontOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"));
-    FontOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"));
+    FileOption("UI.font",                       UserString("OPTIONS_FONT_TEXT"),    GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + FONT_FILE_SUFFIX), &ValidFontFile);
+    FileOption("UI.title-font",                 UserString("OPTIONS_FONT_TITLE"),   GetRootDataDir() / "default", std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"), "*" + FONT_FILE_SUFFIX), &ValidFontFile);
     EndSection();
     BeginSection(UserString("OPTIONS_FONT_SIZES"));
     IntOption("UI.font-size",                   UserString("OPTIONS_FONT_TEXT"));
@@ -755,10 +761,6 @@ void OptionsWnd::Init()
     DoubleOption("UI.tech-layout-horz-spacing", UserString("OPTIONS_HORIZONTAL"));
     DoubleOption("UI.tech-layout-vert-spacing", UserString("OPTIONS_VERTICAL"));
     EndSection();
-    //BeginSection(UserString("OPTIONS_CHAT"));
-    //IntOption("UI.chat-edit-history",           UserString("OPTIONS_CHAT_HISTORY"));
-    //IntOption("UI.chat-hide-interval",          UserString("OPTIONS_CHAT_HIDE"));
-    //EndSection();
     BeginSection(UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption("UI.autogenerated-effects-descriptions", UserString("OPTIONS_AUTO_EFFECT_DESC"));
     EndSection();
@@ -860,7 +862,7 @@ void OptionsWnd::Init()
 
     // Directories tab
     BeginPage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name
+    DirectoryOption("resource-dir",                 UserString("OPTIONS_FOLDER_SETTINGS"),  GetRootDataDir());  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
     DirectoryOption("save-dir",                     UserString("OPTIONS_FOLDER_SAVE"),      GetUserDir());
     EndPage();
 
@@ -886,9 +888,9 @@ void OptionsWnd::DoneClicked()
             GetOptionsDB().GetXML().WriteDoc(ofs);
         } else {
             std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-            std::cerr << GetConfigPath().file_string() << std::endl;
+            std::cerr << GetConfigPath().string() << std::endl;
             Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-            Logger().errorStream() << GetConfigPath().file_string();
+            Logger().errorStream() << GetConfigPath().string();
         }
     }
 

@@ -205,7 +205,9 @@ namespace {
 
     void LoadShipNames(std::vector<std::string>& names)
     {
-        boost::filesystem::ifstream ifs(GetResourceDir() / "shipnames.txt");
+        std::string file_name = "shipnames.txt";
+
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);

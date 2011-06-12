@@ -93,7 +93,7 @@ ServerApp::ServerApp() :
 
     s_app = this;
 
-    const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").file_string());
+    const std::string SERVER_LOG_FILENAME((GetUserDir() / "freeoriond.log").string());
 
     // a platform-independent way to erase the old log
     std::ofstream temp(SERVER_LOG_FILENAME.c_str());
@@ -130,9 +130,9 @@ namespace {
     std::string AIClientExe()
     {
 #ifdef FREEORION_WIN32
-        return (GetBinDir() / "freeorionca.exe").file_string();
+        return (GetBinDir() / "freeorionca.exe").string();
 #else
-        return (GetBinDir() / "freeorionca").file_string();
+        return (GetBinDir() / "freeorionca").string();
 #endif
     }
 }

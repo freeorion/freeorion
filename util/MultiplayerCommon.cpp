@@ -33,25 +33,37 @@ namespace fs = boost::filesystem;
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          (GetRootDataDir() / "default").directory_string());
-        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              (GetUserDir() / "save").directory_string());
+        db.Add<std::string>("resource-dir",         "OPTIONS_DB_RESOURCE_DIR",          (GetRootDataDir() / "default").string());
+        db.Add<std::string>('S', "save-dir",        "OPTIONS_DB_SAVE_DIR",              (GetUserDir() / "save").string());
         db.Add<std::string>("log-level",            "OPTIONS_DB_LOG_LEVEL",             "DEBUG");
-        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  "eng_stringtable.txt");
+        db.Add<std::string>("stringtable-filename", "OPTIONS_DB_STRINGTABLE_FILENAME",  (GetRootDataDir() / "default" / "eng_stringtable.txt").string());
         db.AddFlag("test-3d-combat",                "OPTIONS_DB_TEST_3D_COMBAT",        false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     const double TWO_PI = 8.0 * std::atan(1.0);
 
+    std::string GetDefaultStringTableFileName() {
+        return (GetResourceDir() / "eng_stringtable.txt").string();
+    }
+
+    std::string GetStringTableFileName() {
+        std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
+        if (option_filename.empty())
+            return GetDefaultStringTableFileName();
+        else
+            return option_filename;
+    }
+
     const StringTable_& GetStringTable() {
         static std::auto_ptr<StringTable_> string_table(
-            new StringTable_((GetResourceDir() / GetOptionsDB().Get<std::string>("stringtable-filename")).file_string()));
+            new StringTable_(GetStringTableFileName()));
         return *string_table;
     }
 
     const StringTable_& GetDefaultStringTable() {
         static std::auto_ptr<StringTable_> default_string_table(
-            new StringTable_((GetResourceDir() / GetOptionsDB().GetDefault<std::string>("stringtable-filename")).file_string()));
+            new StringTable_(GetDefaultStringTableFileName()));
         return *default_string_table;
     }
 
@@ -489,6 +501,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
         try {
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
             if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
                 std::string filename = it->filename();
                 // disallow filenames that begin with a dot, and filenames with spaces in them
@@ -497,6 +510,7 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
                     m_save_games.push_back(filename);
                 }
             }
+#endif
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
             if (e.code() != boost::system::posix_error::permission_denied)

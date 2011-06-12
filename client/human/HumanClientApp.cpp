@@ -177,7 +177,7 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 #endif
     m_fsm = new HumanClientFSM(*this);
 
-    const std::string LOG_FILENAME((GetUserDir() / "freeorion.log").file_string());
+    const std::string LOG_FILENAME((GetUserDir() / "freeorion.log").string());
 
     // a platform-independent way to erase the old log We cannot use
     // boost::filesystem::ofstream here, as stupid b::f won't allow us
@@ -262,9 +262,9 @@ bool HumanClientApp::SinglePlayerGame() const
 void HumanClientApp::StartServer()
 {
 #ifdef FREEORION_WIN32
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").file_string();
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond.exe").string();
 #else
-    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").file_string();
+    const std::string SERVER_CLIENT_EXE = (GetBinDir() / "freeoriond").string();
 #endif
     std::vector<std::string> args;
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
@@ -770,9 +770,9 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
                 GetOptionsDB().GetXML().WriteDoc(ofs);
             } else {
                 std::cerr << UserString("UNABLE_TO_WRITE_CONFIG_XML") << std::endl;
-                std::cerr << GetConfigPath().file_string() << std::endl;
+                std::cerr << GetConfigPath().string() << std::endl;
                 Logger().errorStream() << UserString("UNABLE_TO_WRITE_CONFIG_XML");
-                Logger().errorStream() << GetConfigPath().file_string();
+                Logger().errorStream() << GetConfigPath().string();
             }
         }
     }
@@ -840,10 +840,10 @@ void HumanClientApp::Autosave(bool new_game)
     namespace fs = boost::filesystem;
     fs::path save_dir(GetSaveDir());
 
-    Logger().debugStream() << "Autosaving to: " << (save_dir / save_filename).file_string();
+    Logger().debugStream() << "Autosaving to: " << (save_dir / save_filename).string();
 
     try {
-        SaveGame((save_dir / save_filename).file_string());
+        SaveGame((save_dir / save_filename).string());
     } catch (const std::exception& e) {
         Logger().errorStream() << "Autosave failed: " << e.what();
         std::cerr << "Autosave failed: " << e.what() << std::endl;

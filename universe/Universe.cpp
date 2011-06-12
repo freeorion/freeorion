@@ -44,7 +44,7 @@ namespace {
     {
         static DataTableMap map;
         if (map.empty())
-            LoadDataTables((GetResourceDir() / "universe_tables.txt").file_string(), map);
+            LoadDataTables((GetResourceDir() / "universe_tables.txt").string(), map);
         return map;
     }
 

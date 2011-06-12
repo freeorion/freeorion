@@ -53,9 +53,9 @@ namespace fs = boost::filesystem;
 fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
 fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                    { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.font")).file_string(); }
-std::string ClientUI::BoldFont()                { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.font-bold")).file_string(); }
-std::string ClientUI::TitleFont()               { return (GetResourceDir() / GetOptionsDB().Get<std::string>("UI.title-font")).file_string(); }
+std::string ClientUI::Font()                    { return GetOptionsDB().Get<std::string>("UI.font"); }
+std::string ClientUI::BoldFont()                { return GetOptionsDB().Get<std::string>("UI.font-bold"); }
+std::string ClientUI::TitleFont()               { return GetOptionsDB().Get<std::string>("UI.title-font"); }
 
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
@@ -402,10 +402,10 @@ namespace {
         db.Add<std::string>("UI.sound.balanced-focus",          "OPTIONS_DB_UI_SOUND_BALANCED_FOCUS",           "balanced_select.wav");
 
         // fonts
-        db.Add<std::string>("UI.font",          "OPTIONS_DB_UI_FONT",                       "DejaVuSans.ttf");
-        db.Add<std::string>("UI.font-bold",     "OPTIONS_DB_UI_FONT_BOLD",                  "DejaVuSans-Bold.ttf");
+        db.Add<std::string>("UI.font",          "OPTIONS_DB_UI_FONT",                       (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
+        db.Add<std::string>("UI.font-bold",     "OPTIONS_DB_UI_FONT_BOLD",                  (GetRootDataDir() / "default" / "DejaVuSans-Bold.ttf").string());
         db.Add("UI.font-size",                  "OPTIONS_DB_UI_FONT_SIZE",                  12,                     RangedValidator<int>(4, 40));
-        db.Add<std::string>("UI.title-font",    "OPTIONS_DB_UI_TITLE_FONT",                 "DejaVuSans.ttf");
+        db.Add<std::string>("UI.title-font",    "OPTIONS_DB_UI_TITLE_FONT",                 (GetRootDataDir() / "default" / "DejaVuSans.ttf").string());
         db.Add("UI.title-font-size",            "OPTIONS_DB_UI_TITLE_FONT_SIZE",            12,                     RangedValidator<int>(4, 40));
 
         // colors
@@ -677,9 +677,9 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 {
     boost::shared_ptr<GG::Texture> retval;
     try {
-        retval = HumanClientApp::GetApp()->GetTexture(path.file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture(path.string(), mipmap);
     } catch(...) {
-        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").file_string(), mipmap);
+        retval = HumanClientApp::GetApp()->GetTexture((ClientUI::ArtDir() / "misc" / "missing.png").string(), mipmap);
     }
 #ifdef FREEORION_MACOSX
     if (!mipmap)
@@ -701,7 +701,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
 {
     namespace fs = boost::filesystem;
     assert(fs::is_directory(dir));
-    const std::string KEY = dir.directory_string() + "/" + prefix;
+    const std::string KEY = dir.string() + "/" + prefix;
     PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it == m_prefixed_textures.end()) {
         prefixed_textures_it = m_prefixed_textures.insert(std::make_pair(KEY, TexturesAndDist())).first;

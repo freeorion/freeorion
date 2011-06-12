@@ -305,7 +305,13 @@ void InitBinDir(const std::string& argv0) {
 #endif
 
 const fs::path GetResourceDir() {
-    return fs::path(GetOptionsDB().Get<std::string>("resource-dir"));
+    // if resource dir option has been set, use specified location.  otherwise,
+    // use default location
+    std::string options_resource_dir = GetOptionsDB().Get<std::string>("resource-dir");
+    if (!options_resource_dir.empty() && fs::is_directory(fs::path(options_resource_dir)) && fs::exists(fs::path(options_resource_dir)))
+        return fs::path(options_resource_dir);
+
+    return fs::path(GetOptionsDB().GetDefault<std::string>("resource-dir"));
 }
 
 const fs::path GetConfigPath() {
@@ -314,7 +320,13 @@ const fs::path GetConfigPath() {
 }
 
 const fs::path GetSaveDir() {
-    return fs::path(GetOptionsDB().Get<std::string>("save-dir"));
+    // if save dir option has been set, use specified location.  otherwise,
+    // use default location
+    std::string options_save_dir = GetOptionsDB().Get<std::string>("save-dir");
+    if (!options_save_dir.empty())
+        return fs::path(options_save_dir);
+
+    return fs::path(GetOptionsDB().GetDefault<std::string>("save-dir"));
 }
 
 fs::path RelativePath(const fs::path& from, const fs::path& to) {

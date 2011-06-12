@@ -113,7 +113,7 @@ Sound::~Sound()
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 {
     ALenum m_openal_error;
-    std::string filename = path.file_string();
+    std::string filename = path.string();
     FILE *m_f = 0;
     vorbis_info *m_ogg_info;
     m_music_loops = 0;
@@ -200,7 +200,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
     if (!GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
-    std::string filename = path.file_string();
+    std::string filename = path.string();
     ALuint m_current_buffer;
     ALenum m_source_state;
     int m_i;
@@ -252,7 +252,7 @@ void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = 
 void Sound::FreeSound(const boost::filesystem::path& path)
 {
     ALenum m_openal_error;
-    std::string filename = path.file_string();
+    std::string filename = path.string();
     std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
    
     if (it != m_buffers.end()) {
