@@ -710,8 +710,13 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->path().filename().string(), prefix))
+                    textures.push_back(ClientUI::GetTexture(*it, mipmap));
+#else
                 if (fs::exists(*it) && !fs::is_directory(*it) && boost::algorithm::starts_with(it->filename(), prefix))
                     textures.push_back(ClientUI::GetTexture(*it, mipmap));
+#endif
             } catch (const fs::filesystem_error& e) {
                 // ignore files for which permission is denied, and rethrow other exceptions
                 if (e.code() != boost::system::posix_error::permission_denied)

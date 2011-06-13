@@ -474,7 +474,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
             std::vector<std::pair<std::string, std::string> > save_file_types;
             save_file_types.push_back(std::pair<std::string, std::string>(UserString("GAME_MENU_SAVE_FILES"), "*.sav"));
 
-            FileDlg dlg(GetSaveDir().native_file_string(), "", false, false, save_file_types);
+            FileDlg dlg(GetSaveDir().string(), "", false, false, save_file_types);
             dlg.Run();
             if (!dlg.Result().empty())
                 filename = *dlg.Result().begin();

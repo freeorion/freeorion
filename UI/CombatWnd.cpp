@@ -251,8 +251,13 @@ namespace {
                     try {
                         if (fs::exists(*it) &&
                             !fs::is_directory(*it) &&
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                            boost::algorithm::starts_with(it->path().filename().string(), type_it->second)) {
+                            current_textures.insert(it->path().filename().string().substr(0, type_it->second.size() + 2));
+#else
                             boost::algorithm::starts_with(it->filename(), type_it->second)) {
                             current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+#endif
                         }
                     } catch (const fs::filesystem_error& e) {
                         // ignore files for which permission is denied, and rethrow other exceptions
@@ -283,8 +288,13 @@ namespace {
                     try {
                         if (fs::exists(*it) &&
                             !fs::is_directory(*it) &&
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                            boost::algorithm::starts_with(it->path().filename().string(), type_it->second)) {
+                            current_textures.insert(it->path().filename().string().substr(0, type_it->second.size() + 2));
+#else
                             boost::algorithm::starts_with(it->filename(), type_it->second)) {
                             current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+#endif
                         }
                     } catch (const fs::filesystem_error& e) {
                         // ignore files for which permission is denied, and rethrow other exceptions
@@ -310,8 +320,13 @@ namespace {
                 try {
                     if (fs::exists(*it) &&
                         !fs::is_directory(*it) &&
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                        boost::algorithm::starts_with(it->path().filename().string(), ASTEROID_BASE_NAME)) {
+                        asteroid_sets.insert(it->path().filename().string().substr(0, ASTEROID_BASE_NAME.size() + 2));
+#else
                         boost::algorithm::starts_with(it->filename(), ASTEROID_BASE_NAME)) {
                         asteroid_sets.insert(it->filename().substr(0, ASTEROID_BASE_NAME.size() + 2));
+#endif
                     }
                 } catch (const fs::filesystem_error& e) {
                     // ignore files for which permission is denied, and rethrow other exceptions
@@ -765,8 +780,13 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
                     try {
                         if (fs::exists(*it) &&
                             !fs::is_directory(*it) &&
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                            boost::algorithm::starts_with(it->path().filename().string(), type_it->second)) {
+                            current_textures.insert(it->path().filename().string().substr(0, type_it->second.size() + 2));
+#else
                             boost::algorithm::starts_with(it->filename(), type_it->second)) {
                             current_textures.insert(it->filename().substr(0, type_it->second.size() + 2));
+#endif
                         }
                     } catch (const fs::filesystem_error& e) {
                         // ignore files for which permission is denied, and rethrow other exceptions

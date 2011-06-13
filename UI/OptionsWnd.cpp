@@ -89,7 +89,11 @@ namespace {
                 if (!dlg.Result().empty()) {
                     fs::path path = m_return_relative_path ?
                         RelativePath(m_path, fs::path(*dlg.Result().begin())) :
-                        fs::complete(*dlg.Result().begin());
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+                    fs::absolute(*dlg.Result().begin());
+#else
+                    fs::complete(*dlg.Result().begin());
+#endif
                     *m_edit << path.string();
                     m_edit->EditedSignal(m_edit->Text());
                 }
