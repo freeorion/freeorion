@@ -47,9 +47,6 @@ void InitDirs(const std::string& argv0)
     if (g_initialized)
         return;
 
-    if (fs::path::default_name_check_writable())
-        fs::path::default_name_check(fs::native);
-
     // store working dir
     fs::initial_path();
     fs::path bundle_path;
@@ -139,9 +136,6 @@ void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
-    if (fs::path::default_name_check_writable())
-        fs::path::default_name_check(fs::native);
-
     /* store working dir.  some implimentations get the value of initial_path
      * from the value of current_path the first time initial_path is called,
      * so it is necessary to call initial_path as soon as possible after
@@ -167,8 +161,6 @@ void InitDirs(const std::string& argv0) {
 }
 
 const fs::path GetUserDir() {
-    if (fs::path::default_name_check_writable())
-        fs::path::default_name_check(fs::native);
     static fs::path p = fs::path(getenv("HOME")) / ".freeorion";
     return p;
 }
@@ -260,8 +252,6 @@ void InitDirs(const std::string& argv0) {
     if (g_initialized)
         return;
 
-    fs::path::default_name_check(fs::native);
-
     fs::path local_dir = GetUserDir();
     if (!exists(local_dir))
         fs::create_directories(local_dir);
@@ -276,8 +266,6 @@ void InitDirs(const std::string& argv0) {
 }
 
 const fs::path GetUserDir() {
-    if (fs::path::default_name_check_writable())
-        fs::path::default_name_check(fs::native);
     static fs::path p = fs::path(std::string(getenv("APPDATA"))) / "FreeOrion";
     return p;
 }
@@ -331,8 +319,13 @@ const fs::path GetSaveDir() {
 
 fs::path RelativePath(const fs::path& from, const fs::path& to) {
     fs::path retval;
+#if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
+    fs::path from_abs = fs::absolute(from);
+    fs::path to_abs = fs::absolute(to);
+#else
     fs::path from_abs = fs::complete(from);
     fs::path to_abs = fs::complete(to);
+#endif
     fs::path::iterator from_it = from_abs.begin();
     fs::path::iterator end_from_it = from_abs.end();
     fs::path::iterator to_it = to_abs.begin();

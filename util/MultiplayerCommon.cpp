@@ -497,20 +497,23 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 
     // build a list of save files
     fs::path save_dir(GetSaveDir());
-    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << save_dir.native_file_string();
+    Logger().debugStream() << "MultiplayerLobbyData::MultiplayerLobbyData save dir path: " << save_dir.string();
     fs::directory_iterator end_it;
     for (fs::directory_iterator it(save_dir); it != end_it; ++it) {
         try {
 #if defined(BOOST_FILESYSTEM_VERSION) && BOOST_FILESYSTEM_VERSION == 3
-            if (fs::exists(*it) && !fs::is_directory(*it) && it->filename()[0] != '.') {
-                std::string filename = it->filename();
+            if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename().string()[0] != '.') {
+                std::string filename = it->path().filename().string();
+#else
+            if (fs::exists(*it) && !fs::is_directory(*it) && it->path().filename()[0] != '.') {
+                std::string filename = it->path().filename();
+#endif
                 // disallow filenames that begin with a dot, and filenames with spaces in them
                 if (filename.find('.') != 0 && filename.find(' ') == std::string::npos &&
                     filename.find(MP_SAVE_FILE_EXTENSION) == filename.size() - MP_SAVE_FILE_EXTENSION.size()) {
                     m_save_games.push_back(filename);
                 }
             }
-#endif
         } catch (const fs::filesystem_error& e) {
             // ignore files for which permission is denied, and rethrow other exceptions
             if (e.code() != boost::system::posix_error::permission_denied)
