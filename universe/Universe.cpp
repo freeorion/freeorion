@@ -48,25 +48,6 @@ namespace {
         return map;
     }
 
-    /** Used to short-circuit the use of BFS (breadth-first search) or
-      * Dijkstra's algorithm for pathfinding when it finds the desired
-      * destination system. */
-    struct PathFindingShortCircuitingVisitor : public boost::base_visitor<PathFindingShortCircuitingVisitor>
-    {
-        typedef boost::on_finish_vertex event_filter;
-
-        struct FoundDestination {}; // exception type thrown when destination is found
-
-        PathFindingShortCircuitingVisitor(int dest_system) : destination_system(dest_system) {}
-        template <class Vertex, class Graph>
-        void operator()(Vertex u, Graph& g)
-        {
-            if (static_cast<int>(u) == destination_system)
-                throw FoundDestination();
-        }
-        const int destination_system;
-    };
-
     void LoadSystemNames(std::list<std::string>& names)
     {
         boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
@@ -90,6 +71,27 @@ namespace {
             }
         }
     }
+}
+
+namespace SystemPathing {
+    /** Used to short-circuit the use of BFS (breadth-first search) or
+      * Dijkstra's algorithm for pathfinding when it finds the desired
+      * destination system. */
+    struct PathFindingShortCircuitingVisitor : public boost::base_visitor<PathFindingShortCircuitingVisitor>
+    {
+        typedef boost::on_finish_vertex event_filter;
+
+        struct FoundDestination {}; // exception type thrown when destination is found
+
+        PathFindingShortCircuitingVisitor(int dest_system) : destination_system(dest_system) {}
+        template <class Vertex, class Graph>
+        void operator()(Vertex u, Graph& g)
+        {
+            if (static_cast<int>(u) == destination_system)
+                throw FoundDestination();
+        }
+        const int destination_system;
+    };
 
     ////////////////////////////////////////////////////////////////
     // templated implementations of Universe graph search methods //
@@ -271,6 +273,7 @@ namespace {
         return retval;
     }
 }
+using namespace SystemPathing;  // to keep GCC 4.2 on OSX happy
 
 const int ALL_EMPIRES = -1;
 
