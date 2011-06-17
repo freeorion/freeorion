@@ -417,7 +417,7 @@ void ServerNetworking::AcceptNextConnection()
 {
     PlayerConnectionPtr next_connection =
         PlayerConnection::NewConnection(
-            m_player_connection_acceptor.io_service(),
+            m_player_connection_acceptor.get_io_service(),
             m_nonplayer_message_callback,
             m_player_message_callback,
             boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
