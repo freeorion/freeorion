@@ -7,6 +7,12 @@
 #include "PathingEngineFwd.h"
 #include "../../universe/Ship.h"
 
+#ifdef FREEORION_MACOSX
+#  ifdef check
+#    undef check
+#  endif
+#endif
+
 #include <boost/ptr_container/ptr_vector.hpp>
 
 #include <set>
