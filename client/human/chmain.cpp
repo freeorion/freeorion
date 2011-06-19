@@ -1,5 +1,4 @@
 #ifdef OGRE_STATIC_LIB
-#include "OgrePlugins/OgreCgPlugin.h"
 #include "OgrePlugins/OgreOctreePlugin.h"
 #include "OgrePlugins/OgreParticleFXPlugin.h"
 #include "OgrePlugins/OgreGLPlugin.h"
