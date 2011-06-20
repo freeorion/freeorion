@@ -19,6 +19,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
+#include "../util/Directories.h"
 
 #include "OptionsWnd.h" // TODO: Remove this later, once the InGameMenu is in use for F10 presses instead.
 
@@ -370,6 +371,7 @@ namespace {
     {
         if (!paged_geometry) {
             paged_geometry = new Forests::PagedGeometry;
+            paged_geometry->setTempDir((GetUserDir() / "PagedGeometry").string() + "/");    // PagedGeometry internally saves by to tempdir + fileNamePNG so the "/" must be specified here to make "PagedGeometry" a directory and not a prefix to the filename
             paged_geometry->setCoordinateSystem(Ogre::Vector3::UNIT_Z);
             paged_geometry->setCamera(camera);
             paged_geometry->setPageSize(250);
@@ -672,6 +674,12 @@ CombatWnd::CombatWnd(Ogre::SceneManager* scene_manager,
                 type_name, section_name);
         }
     }
+
+    // Also add resource path for user directory
+    boost::filesystem::path pg_dir(GetUserDir() / "PagedGeometry");
+    if (!exists(pg_dir))
+        boost::filesystem::create_directories(pg_dir);
+    Ogre::ResourceGroupManager::getSingleton().addResourceLocation(pg_dir.string(), "FileSystem", "General");
 
     // Initialise, parse scripts etc
     Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
