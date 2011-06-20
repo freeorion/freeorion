@@ -186,16 +186,18 @@ PythonAI::PythonAI() {
 #endif
         Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
 
+        Logger().debugStream() << "Python version: " << Py_GetVersion();
+        Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
+        Logger().debugStream() << "Python module search path: " << Py_GetPath();
+
+        Logger().debugStream() << "Initializing C++ interfaces for Python";
+
         initfreeOrionLogger();          // allows the "freeOrionLogger" C++ module to be imported within Python code
         initfreeOrionAIInterface();     // allows the "freeOrionAIInterface" C++ module to be imported within Python code
     } catch (...) {
         Logger().errorStream() << "Unable to initialize Python interpreter.";
         return;
     }
-
-    Logger().debugStream() << "Python version: " << Py_GetVersion();
-    Logger().debugStream() << "Python prefix: " << Py_GetPrefix();
-    Logger().debugStream() << "Python module search path: " << Py_GetPath();
 
     try {
         // get main namespace, needed to run other interpreted code
