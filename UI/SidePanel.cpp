@@ -528,6 +528,8 @@ public:
                 ReadFile((GetRootDataDir() / "default" / "shaders" / "scanlines.frag").string())));
         }
 
+        s_instances_counter++;
+
         const std::map<std::string, PlanetAtmosphereData>& atmosphere_data = GetPlanetAtmosphereData();
         std::map<std::string, PlanetAtmosphereData>::const_iterator it = atmosphere_data.find(m_planet_data.filename);
         if (it != atmosphere_data.end()) {
@@ -536,6 +538,13 @@ public:
             m_atmosphere_alpha = atmosphere.alpha;
             m_atmosphere_planet_rect = GG::Rect(GG::X1, GG::Y1, m_atmosphere_texture->DefaultWidth() - 4, m_atmosphere_texture->DefaultHeight() - 4);
         }
+    }
+
+    ~RotatingPlanetControl()
+    {
+        s_instances_counter--;
+        if (!s_instances_counter)
+            s_scanline_shader.reset();
     }
 
     virtual void Render()
@@ -559,7 +568,8 @@ public:
         }
 
         // render fog of war over planet if it's not visible to this client's player
-        if (s_scanline_shader && GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
+        if (s_scanline_shader &&
+            GetUniverse().GetObjectVisibilityByEmpire(m_planet.ID(), HumanClientApp::GetApp()->EmpireID()) <= VIS_BASIC_VISIBILITY &&
             GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
         {
             float fog_scanline_spacing = static_cast<float>(GetOptionsDB().Get<double>("UI.system-fog-of-war-spacing"));
@@ -587,9 +597,10 @@ private:
     StarType                        m_star_type;
 
     static boost::shared_ptr<ShaderProgram> s_scanline_shader;
+    static int                              s_instances_counter;
 };
 boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
-
+int RotatingPlanetControl::s_instances_counter = 0;
 
 ////////////////////////////////////////////////
 // SidePanel::PlanetPanel

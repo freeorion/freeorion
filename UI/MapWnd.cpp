@@ -3685,6 +3685,8 @@ void MapWnd::Sanitize()
     for (std::map<int, SystemIcon*>::iterator it = m_system_icons.begin(); it != m_system_icons.end(); ++it)
         delete it->second;
     m_system_icons.clear();
+
+    m_scanline_shader.reset();
 }
 
 bool MapWnd::ReturnToMap()
