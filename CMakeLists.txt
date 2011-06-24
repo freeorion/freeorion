@@ -59,7 +59,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS ${MINIMUM_BOOST_COMPONENT
 if (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIRS})
 else ()
-    message(FATAL_ERROR "Boost libraries not found.")
+    message(FATAL_ERROR "Boost libraries (>=${MINIMUM_BOOST_VERSION}) not found")
 endif ()
 
 if (NOT BOOST_SIGNALS_NAMESPACE STREQUAL "signals")

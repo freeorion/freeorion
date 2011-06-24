@@ -175,15 +175,17 @@ namespace {
 
         double X = first_ship->X(), Y = first_ship->Y();
 
+        std::set<int> ship_old_fleet_ids;
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         const ObjectMap& objects = GetUniverse().Objects();
 
         // verify that all fleets are at the same system and position and owned by the same empire
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            const Ship* ship = objects.Object<Ship>(*it);
+            int ship_id = *it;
+            const Ship* ship = objects.Object<Ship>(ship_id);
             if (!ship) {
-                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
+                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << ship_id;
                 return;
             }
             if (ship->SystemID() != system_id) {
@@ -198,6 +200,8 @@ namespace {
                 Logger().errorStream() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
                 return;
             }
+
+            ship_old_fleet_ids.insert(ship->FleetID());
         }
 
 
@@ -216,6 +220,19 @@ namespace {
         // fleet receiving drops is in a system
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+
+        // delete empty fleets
+        for (std::set<int>::const_iterator it = ship_old_fleet_ids.begin(); it != ship_old_fleet_ids.end(); ++it) {
+            int fleet_id = *it;
+            const Fleet* fleet = objects.Object<Fleet>(fleet_id);
+            if (!fleet) {
+                Logger().errorStream() << "CreateNewFleetFromShips couldn't get fleet with id " << fleet_id;
+                continue;
+            }
+            if (fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, fleet_id)));
+        }
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
