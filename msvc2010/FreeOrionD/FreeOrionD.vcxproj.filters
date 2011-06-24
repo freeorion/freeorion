@@ -706,7 +706,7 @@
       <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\dmain.cpp">
-      <Filter>Header Files\server</Filter>
+      <Filter>Source Files\server</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

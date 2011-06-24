@@ -54,7 +54,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/boost_1_44;../../GG/;../include;../../../include/OGRE;../../../include/OIS</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include/;../../../Boost/include/boost_1_46_1;../../GG/;../include;../../../include/OGRE;../../../include/OIS</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGiOgrePlugin_OIS_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK</PreprocessorDefinitions>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
