@@ -446,7 +446,7 @@ namespace {
         db.Add("UI.tooltip-delay",              "OPTIONS_DB_UI_TOOLTIP_DELAY",              100,        RangedValidator<int>(0, 3000));
         db.Add("UI.multiple-fleet-windows",     "OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS",     false);
         db.Add("UI.fleet-autoselect",           "OPTIONS_DB_UI_FLEET_AUTOSELECT",           true);
-        db.Add("UI.window-quickclose",          "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",          true);
+        db.Add("UI.window-quickclose",          "OPTIONS_DB_UI_WINDOW_QUICKCLOSE",          false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
