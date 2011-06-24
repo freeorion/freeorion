@@ -87,13 +87,13 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         // add entries in options DB that have no other obvious place
         GetOptionsDB().AddFlag('h', "help",                 "OPTIONS_DB_HELP",                  false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  "OPTIONS_DB_GENERATE_CONFIG_XML",   false);
-        GetOptionsDB().AddFlag('m', "music-off",            "OPTIONS_DB_MUSIC_OFF",             true);
-        GetOptionsDB().Add<std::string>("bg-music",         "OPTIONS_DB_BG_MUSIC",      "artificial_intelligence_v3.ogg");
         GetOptionsDB().AddFlag('f', "fullscreen",           "OPTIONS_DB_FULLSCREEN",            STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("reset-fullscreen-size",         "OPTIONS_DB_RESET_FSSIZE",          true);
         GetOptionsDB().AddFlag('q', "quickstart",           "OPTIONS_DB_QUICKSTART",            false);
         GetOptionsDB().AddFlag("auto-advance-first-turn",   "OPTIONS_DB_AUTO_FIRST_TURN",       false);
         GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(),false);
+        GetOptionsDB().Add("UI.sound.music-enabled",        "OPTIONS_DB_MUSIC_ON",              true);
+        GetOptionsDB().Add("UI.sound.enabled",              "OPTIONS_DB_SOUND_ON",              true);
 
 
         // read config.xml and set options entries from it, if present
@@ -139,7 +139,7 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         }
 
     } catch (const std::invalid_argument& e) {
-        std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
+        std::cerr << "main() caught exception(std::invalid_argument): " << e.what() << std::endl;
         Sleep(3000);
         return 1;
     } catch (const std::runtime_error& e) {
@@ -269,7 +269,7 @@ int mainSetupAndRunOgre()
         // do nothing
         std::cout << "mainSetupAndRunOgre caught CleanQuit" << std::endl;
     } catch (const std::invalid_argument& e) {
-        Logger().errorStream() << "main() caught exception(std::invalid_arg): " << e.what();
+        Logger().errorStream() << "main() caught exception(std::invalid_argument): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
     } catch (const std::runtime_error& e) {
         Logger().errorStream() << "main() caught exception(std::runtime_error): " << e.what();

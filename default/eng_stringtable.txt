@@ -304,8 +304,11 @@ Print this help message.
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
 
-OPTIONS_DB_MUSIC_OFF
-Disables music in the game.
+OPTIONS_DB_SOUND_ON
+Enables sound in the game.
+
+OPTIONS_DB_MUSIC_ON
+Enables music in the game.
 
 OPTIONS_DB_BG_MUSIC
 Sets the background track to play.

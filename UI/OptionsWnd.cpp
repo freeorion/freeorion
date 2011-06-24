@@ -111,26 +111,50 @@ namespace {
 
     bool ValidStringtableFile(const std::string& file)
     {
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
         return boost::algorithm::ends_with(file, STRINGTABLE_FILE_SUFFIX) &&
             fs::exists(file) && !fs::is_directory(file);
+        } catch (std::exception ex) {
+        }
+        return false;
     }
 
     bool ValidFontFile(const std::string& file)
     {
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
         return boost::algorithm::ends_with(file, FONT_FILE_SUFFIX) &&
             fs::exists(file) && !fs::is_directory(file);
+        } catch (std::exception ex) {
+        }
+        return false;
     }
 
     bool ValidMusicFile(const std::string& file)
     {
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
         return boost::algorithm::ends_with(file, MUSIC_FILE_SUFFIX) &&
-            fs::exists(ClientUI::SoundDir() / file) && !fs::is_directory(ClientUI::SoundDir() / file);
+            fs::exists(file) && !fs::is_directory(file);
+        } catch (std::exception ex) {
+        }
+        return false;
     }
 
     bool ValidSoundFile(const std::string& file)
     {
+        // putting this in try-catch block prevents crash with error output along the lines of:
+        // main() caught exception(std::exception): boost::filesystem::path: invalid name ":" in path: ":\FreeOrion\default"
+        try {
         return boost::algorithm::ends_with(file, SOUND_FILE_SUFFIX) &&
-            fs::exists(ClientUI::SoundDir() / file) && !fs::is_directory(ClientUI::SoundDir() / file);
+            fs::exists(file) && !fs::is_directory(file);
+        } catch (std::exception ex) {
+        }
+        return false;
     }
 
     bool ValidDirectory(const std::string& file)
@@ -141,8 +165,8 @@ namespace {
             fs::path path = fs::path(file);
             return fs::exists(path) && fs::is_directory(path);
         } catch (std::exception ex) {
-            return false;
-        }        
+        }
+        return false;
     }
 
     template <class T>
@@ -374,11 +398,11 @@ void OptionsWnd::MusicVolumeOption()
     GG::ListBox::Row* row = new GG::ListBox::Row();
     CUIStateButton* button = new CUIStateButton(GG::X0, GG::Y0, GG::X1, GG::Y1, UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT);
     button->Resize(button->MinUsableSize());
-    button->SetCheck(!GetOptionsDB().Get<bool>("music-off"));
-    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("music-volume"));
+    button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
+    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
     assert(validator);
     CUISlider* slider = new CUISlider(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
-    slider->SlideTo(GetOptionsDB().Get<int>("music-volume"));
+    slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
@@ -386,9 +410,9 @@ void OptionsWnd::MusicVolumeOption()
     row->push_back(new RowContentsWnd(row->Width(), row->Height(), layout, m_indentation_level));
     m_current_option_list->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("music-off")));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("music-volume")));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
     GG::Connect(button->CheckedSignal, &OptionsWnd::MusicClicked, this);
     GG::Connect(slider->SlidSignal, &OptionsWnd::MusicVolumeSlid, this);
 }
@@ -418,7 +442,9 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
     GG::Connect(slider->SlidAndStoppedSignal, volume_slider_handler, this);
 }
 
-void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path)
+void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::string& text, const fs::path& path,
+                                const std::vector<std::pair<std::string, std::string> >& filters,
+                                StringValidator string_validator, bool directory, bool relative_path)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::TextControl* text_control = new GG::TextControl(GG::X0, GG::Y0, text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT, GG::INTERACTIVE);
@@ -448,24 +474,28 @@ void OptionsWnd::FileOptionImpl(const std::string& option_name, const std::strin
         edit->SetTextColor(GG::CLR_RED);
 }
 
-void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, StringValidator string_validator/* = 0*/)
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
+                            StringValidator string_validator/* = 0*/)
 {
     FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator);
 }
 
-void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator/* = 0*/)
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
+                            const std::pair<std::string, std::string>& filter, StringValidator string_validator/* = 0*/)
 {
     FileOption(option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator);
 }
 
-void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
+void OptionsWnd::FileOption(const std::string& option_name, const std::string& text, const fs::path& path,
+                            const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
 {
     FileOptionImpl(option_name, text, path, filters, string_validator, false, false);
 }
 
 void OptionsWnd::SoundFileOption(const std::string& option_name, const std::string& text)
 {
-    FileOption(option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"), "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
+    FileOption(option_name, text, ClientUI::SoundDir(), std::make_pair(UserString("OPTIONS_SOUND_FILE"),
+               "*" + SOUND_FILE_SUFFIX), ValidSoundFile);
 }
 
 void OptionsWnd::DirectoryOption(const std::string& option_name, const std::string& text, const boost::filesystem::path& path)
@@ -667,7 +697,7 @@ void OptionsWnd::Init()
     BeginSection(UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption();
     VolumeOption("UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), &OptionsWnd::UISoundsVolumeSlid, UI_sound_enabled);
-    FileOption("bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+    FileOption("UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
     EndSection();
@@ -865,21 +895,18 @@ void OptionsWnd::DoneClicked()
 
 void OptionsWnd::MusicClicked(bool checked)
 {
-    if (!checked)
-    {
-        GetOptionsDB().Set("music-off", true);
+    if (checked) {
+        GetOptionsDB().Set("UI.sound.music-enabled", true);
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+    } else {
+        GetOptionsDB().Set("UI.sound.music-enabled", false);
         Sound::GetSound().StopMusic();
-    }
-    else
-    {
-        GetOptionsDB().Set("music-off", false);
-        Sound::GetSound().PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
     }
 }
 
 void OptionsWnd::MusicVolumeSlid(int pos, int low, int high)
 {
-    GetOptionsDB().Set("music-volume", pos);
+    GetOptionsDB().Set("UI.sound.music-volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
@@ -887,5 +914,5 @@ void OptionsWnd::UISoundsVolumeSlid(int pos, int low, int high)
 {
     GetOptionsDB().Set("UI.sound.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }

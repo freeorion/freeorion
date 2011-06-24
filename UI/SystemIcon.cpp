@@ -26,7 +26,7 @@
 
 namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
-    void PlaySystemIconRolloverSound() {if (PlaySounds()) Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
+    void PlaySystemIconRolloverSound() {if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
 
     const double        PI = 3.1415926535;
     const unsigned int  MAX_TRIES = 128;     // most allowed unique fleetbutton locations

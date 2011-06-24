@@ -92,7 +92,6 @@ namespace {
         db.Add("autosave.single-player",    "OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER",    true,   Validator<bool>());
         db.Add("autosave.multiplayer",      "OPTIONS_DB_AUTOSAVE_MULTIPLAYER",      false,  Validator<bool>());
         db.Add("autosave.turns",            "OPTIONS_DB_AUTOSAVE_TURNS",            1,      RangedValidator<int>(1, 50));
-        db.Add("music-volume",              "OPTIONS_DB_MUSIC_VOLUME",              255,    RangedValidator<int>(1, 255));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -203,10 +202,10 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
     m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
 
-    if (!(GetOptionsDB().Get<bool>("music-off")))
-        Sound::GetSound().PlayMusic(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("bg-music"), -1);
+    if ((GetOptionsDB().Get<bool>("UI.sound.music-enabled")))
+        Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
 
-    Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("music-volume"));
+    Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("UI.sound.music-volume"));
     Sound::GetSound().SetUISoundsVolume(GetOptionsDB().Get<int>("UI.sound.volume"));
 
     EnableFPS();

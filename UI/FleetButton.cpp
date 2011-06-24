@@ -363,11 +363,11 @@ void FleetButton::RenderRollover() {
 }
 
 void FleetButton::PlayFleetButtonRolloverSound() {
-    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-rollover"), true);
 }
 
 void FleetButton::PlayFleetButtonOpenSound() {
-    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);
 }
 
 

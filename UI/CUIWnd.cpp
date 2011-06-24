@@ -16,11 +16,11 @@
 
 namespace {
     void PlayMinimizeSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
     void PlayMaximizeSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
     void PlayCloseSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 
     const double BUTTON_DIMMING_SCALE_FACTOR = 0.75;
 }

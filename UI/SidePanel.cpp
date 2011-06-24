@@ -40,13 +40,13 @@ namespace {
     const int       EDGE_PAD(3);
     const double    TWO_PI(2.0*3.1415926536);
 
-    void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
-    void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
-    void        PlayIndustryFocusClickSound()  {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.industry-focus"), true);}
-    void        PlayResearchFocusClickSound()  {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.research-focus"), true);}
-    void        PlayMiningFocusClickSound()    {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.mining-focus"), true);}
-    void        PlayTradeFocusClickSound()     {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.trade-focus"), true);}
-    void        PlayBalancedFocusClickSound()  {Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"), true);}
+    void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
+    void        PlayFarmingFocusClickSound()   {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.farming-focus"), true);}
+    void        PlayIndustryFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.industry-focus"), true);}
+    void        PlayResearchFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.research-focus"), true);}
+    void        PlayMiningFocusClickSound()    {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.mining-focus"), true);}
+    void        PlayTradeFocusClickSound()     {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.trade-focus"), true);}
+    void        PlayBalancedFocusClickSound()  {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.balanced-focus"), true);}
 
     struct RotatingPlanetData {
         RotatingPlanetData(const XMLElement& elem) {

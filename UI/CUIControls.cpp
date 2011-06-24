@@ -21,10 +21,10 @@
 
 namespace {
     void PlayButtonClickSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
     void PlayTurnButtonClickSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
 
     struct PlayButtonCheckSound
     {
@@ -32,22 +32,22 @@ namespace {
         void operator()(bool checked) const
         {
             if (!m_play_only_when_checked || checked)
-                Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+                Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         }
         const bool m_play_only_when_checked;
     };
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
 
     void PlayDropDownListOpenSound()
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    { Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
     {
@@ -89,7 +89,7 @@ void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         SetState(BN_ROLLOVER);
     }
 }
@@ -237,7 +237,7 @@ void CUIArrowButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!Disabled()) {
         if (State() != BN_ROLLOVER)
-            Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         SetState(BN_ROLLOVER);
     }
 }
@@ -566,7 +566,7 @@ void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
     if (!m_being_dragged && !m_mouse_here) {
-        Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
         m_mouse_here = true;
     }
 }
@@ -693,7 +693,7 @@ void CUIDropDownList::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
-    Sound::GetSound().PlaySound(ClientUI::SoundDir() / GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true);
     m_mouse_here = true;
 }
 
