@@ -1105,7 +1105,7 @@ namespace {
             push_back(new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(Value(h) - 6), h - 6, ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC));
             push_back(new GG::TextControl(GG::X0, GG::Y0, Width() - GG::X(Value(h)), h, UserString(species->Name()),
                                           ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT | GG::FORMAT_VCENTER));
-            GG::X first_col_width(Value(h) - 6);
+            GG::X first_col_width(Value(h) - 10);
             SetColWidth(0, first_col_width);
             SetColWidth(1, w - first_col_width);
         }

@@ -61,11 +61,13 @@ namespace {
         class TypeRow : public GG::DropDownList::Row {
         public:
             TypeRow() :
+                GG::DropDownList::Row(),
                 type(Networking::INVALID_CLIENT_TYPE)
             {
                 push_back(UserString("NO_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
             }
             TypeRow(Networking::ClientType type_, bool show_add_drop = false) :
+                GG::DropDownList::Row(GG::X1, GG::Y1, "PlayerTypeSelectorRow"),
                 type(type_)
             {
                 switch (type) {
@@ -98,10 +100,9 @@ namespace {
         {}
 
         TypeSelector(GG::X w, GG::Y h, Networking::ClientType client_type, bool disabled) :
-            CUIDropDownList(GG::X0, GG::Y0, w, h - 8, h)
+            CUIDropDownList(GG::X0, GG::Y0, w, std::max(GG::Y1, h - 8), h)
         {
             SetStyle(GG::LIST_NOSORT);
-
             if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 if (disabled) {
                     // For AI players on non-hosts, have "AI" shown (disabled)
@@ -174,10 +175,8 @@ namespace {
         NewGamePlayerRow(const PlayerSetupData& player_data, int player_id, bool disabled) :
             PlayerRow(player_data, player_id)
         {
-            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
-
             // human / AI / observer indicator / selector
-            TypeSelector* type_drop = new TypeSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
             push_back(type_drop);
             if (disabled)
                 type_drop->Disable();
