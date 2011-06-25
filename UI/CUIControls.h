@@ -437,7 +437,7 @@ class SpeciesSelector : public CUIDropDownList
 {
 public:
     /** \name Structors */ //@{
-    explicit SpeciesSelector(GG::X w, GG::Y h);                                         ///< populates with all species in SpeciesManager
+    SpeciesSelector(GG::X w, GG::Y h);                                                  ///< populates with all species in SpeciesManager
     SpeciesSelector(GG::X w, GG::Y h, const std::vector<std::string>& species_names);   ///< populates with the species in \a species_names
     //@}
 
@@ -461,7 +461,7 @@ class EmpireColorSelector : public CUIDropDownList
 {
 public:
     /** \name Structors */ //@{
-    EmpireColorSelector(GG::Y h);
+    explicit EmpireColorSelector(GG::Y h);
     //@}
 
     /** \name Accessors */ //@{

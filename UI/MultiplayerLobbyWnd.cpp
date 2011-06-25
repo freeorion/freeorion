@@ -34,6 +34,11 @@ namespace {
     const GG::Y ROW_HEIGHT_PAD(6);
     const GG::X EMPIRE_NAME_WIDTH(150);
 
+    // Shows information about a single player in the mulitplayer lobby.
+    // This inclues whether the player is a human or AI player, or an observer,
+    // the player's name, empire's name and colour, and the starting species.
+    // Can also be used to allow some of that information to be changed by
+    // players or the host.
     struct PlayerRow : GG::ListBox::Row {
         PlayerRow() :
             m_player_data(),
@@ -49,11 +54,135 @@ namespace {
         boost::signal<void ()>  DataChangedSignal;
     };
 
+    // indicates and allows manipulation of player type
+    class TypeSelector : public CUIDropDownList {
+    private:
+        // fills player type selection droplist in player row
+        class TypeRow : public GG::DropDownList::Row {
+        public:
+            TypeRow() :
+                type(Networking::INVALID_CLIENT_TYPE)
+            {
+                push_back(UserString("NO_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            }
+            TypeRow(Networking::ClientType type_, bool show_add_drop = false) :
+                type(type_)
+            {
+                switch (type) {
+                case Networking::CLIENT_TYPE_AI_PLAYER:
+                    if (show_add_drop)
+                        push_back(UserString("ADD_AI_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    else
+                        push_back(UserString("AI_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    break;
+                case Networking::CLIENT_TYPE_HUMAN_OBSERVER:
+                    push_back(UserString("OBSERVER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    break;
+                case Networking::CLIENT_TYPE_HUMAN_PLAYER:
+                    push_back(UserString("HUMAN_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    break;
+                default:
+                    if (show_add_drop)
+                        push_back(UserString("DROP_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    else
+                        push_back(UserString("NO_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                }
+            }
+
+            Networking::ClientType type;
+        };
+
+    public:
+        TypeSelector() :
+            CUIDropDownList(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Y1)
+        {}
+
+        TypeSelector(GG::X w, GG::Y h, Networking::ClientType client_type, bool disabled) :
+            CUIDropDownList(GG::X0, GG::Y0, w, h - 8, h)
+        {
+            SetStyle(GG::LIST_NOSORT);
+
+            if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (disabled) {
+                    // For AI players on non-hosts, have "AI" shown (disabled)
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER));      // static "AI" display
+                    Select(0);
+                } else {
+                    // For AI players on host, have "AI" shown on droplist, with "Drop" shown as alternate selection to remove the AI
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER));      // "AI" display
+                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    SetDropHeight(h * 3);
+                    Select(0);
+                }
+            } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                       client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            {
+                if (disabled) {
+                    // For human players on other players non-host, have "AI" or "Observer" indicator (disabled)
+                    Insert(new TypeRow(client_type));
+                    Select(0);
+                } else {
+                    // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
+                    // TODO: For human players on own non-host, have "Player" and "Observer" options
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
+                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
+                    SetDropHeight(h * 4);
+                    if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                        Select(0);
+                    else
+                        Select(1);
+                }
+            } else {
+                if (disabled) {
+                    // For empty row on non-host, should probably have no row... could also put "None" (disabled)
+                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE));
+                    Select(0);
+                } else {
+                    // For empty row on host, have "None" and "Add AI" options on droplist
+                    Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE));        // "None" display
+                    Insert(new TypeRow(Networking::CLIENT_TYPE_AI_PLAYER, true));// "Add AI" option
+                    SetDropHeight(h * 3);
+                    Select(0);
+                }
+            }
+
+            GG::Connect(SelChangedSignal, &TypeSelector::SelectionChanged, this);
+        }
+
+        void SelectionChanged(GG::DropDownList::iterator it)
+        {
+            const GG::ListBox::Row* row = 0;
+            if (it != this->end())
+                row = *it;
+            if (!row)
+                return;
+
+            const TypeRow* type_row = boost::polymorphic_downcast<const TypeRow*>(row);
+            if (!type_row)
+                return;
+
+            TypeChangedSignal(type_row->type);
+        }
+
+        mutable boost::signal<void (Networking::ClientType)> TypeChangedSignal;
+    };
+
+
+    // Row for indicating / manipulating info about a player when creating a new game
     struct NewGamePlayerRow : PlayerRow {
         NewGamePlayerRow(const PlayerSetupData& player_data, int player_id, bool disabled) :
             PlayerRow(player_data, player_id)
         {
             Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
+
+            // human / AI / observer indicator / selector
+            TypeSelector* type_drop = new TypeSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            push_back(type_drop);
+            if (disabled)
+                type_drop->Disable();
+            else
+                GG::Connect(type_drop->TypeChangedSignal,           &NewGamePlayerRow::PlayerTypeChanged,   this);
 
             // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
@@ -62,28 +191,35 @@ namespace {
             CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
                                         ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
             push_back(edit);
+            if (disabled)
+                edit->Disable();
+            else
+                GG::Connect(edit->EditedSignal,                     &NewGamePlayerRow::EmpireNameChanged,   this);
 
             // empire colour selector
             EmpireColorSelector* color_selector = new EmpireColorSelector(PLAYER_ROW_HEIGHT);
             color_selector->SelectColor(m_player_data.m_empire_color);
             push_back(color_selector);
+            if (disabled)
+                color_selector->Disable();
+            else
+                GG::Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,        this);
 
+            // species selector
             SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT);
             push_back(species_selector);
-
-            if (disabled) {
-                edit->Disable();
-                color_selector->Disable();
+            if (disabled)
                 species_selector->Disable();
-            } else {
-                Connect(edit->EditedSignal,                     &NewGamePlayerRow::NameChanged,     this);
-                Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,    this);
-                Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,  this);
-            }
+            else
+                GG::Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,      this);
         }
 
     private:
-        void NameChanged(const std::string& str) {
+        void PlayerTypeChanged(Networking::ClientType type) {
+            m_player_data.m_client_type = type;
+            DataChangedSignal();
+        }
+        void EmpireNameChanged(const std::string& str) {
             m_player_data.m_empire_name = str;
             DataChangedSignal();
         }
@@ -97,8 +233,7 @@ namespace {
         }
     };
 
-    struct LoadGamePlayerRow : PlayerRow
-    {
+    struct LoadGamePlayerRow : PlayerRow {
         LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled) :
             PlayerRow(player_data, player_id),
             m_empire_list(0),
@@ -151,8 +286,7 @@ namespace {
         }
 
     private:
-        void EmpireChanged(GG::DropDownList::iterator selected_it)
-        {
+        void EmpireChanged(GG::DropDownList::iterator selected_it) {
             assert(selected_it != m_empire_list->end());
             std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
             std::advance(it, m_empire_list->IteratorToIndex(selected_it));
@@ -169,16 +303,16 @@ namespace {
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
     };
 
-    const GG::X    LOBBY_WND_WIDTH(800);
-    const GG::Y    LOBBY_WND_HEIGHT(600);
-    const int           CONTROL_MARGIN = 5; // gap to leave between controls in the window
-    const GG::X    GALAXY_SETUP_PANEL_WIDTH(250);
-    const GG::Y    SAVED_GAMES_LIST_ROW_HEIGHT(22);
-    const GG::Y    SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
-    const GG::X    CHAT_WIDTH(250);
-    GG::Pt              g_preview_ul;
-    const GG::Pt        PREVIEW_SZ(GG::X(248), GG::Y(186));
-    const int           PREVIEW_MARGIN = 3;
+    const GG::X     LOBBY_WND_WIDTH(800);
+    const GG::Y     LOBBY_WND_HEIGHT(600);
+    const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
+    const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
+    const GG::Y     SAVED_GAMES_LIST_ROW_HEIGHT(22);
+    const GG::Y     SAVED_GAMES_LIST_DROP_HEIGHT(10 * SAVED_GAMES_LIST_ROW_HEIGHT);
+    const GG::X     CHAT_WIDTH(250);
+    GG::Pt          g_preview_ul;
+    const GG::Pt    PREVIEW_SZ(GG::X(248), GG::Y(186));
+    const int       PREVIEW_MARGIN = 3;
 }
 
 MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
@@ -215,7 +349,7 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
 
     const GG::Y RADIO_BN_HT(ClientUI::Pts() + 4);
 
-    m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2 * CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
+    m_galaxy_setup_panel = new GalaxySetupPanel(CHAT_WIDTH + 2*CONTROL_MARGIN, RADIO_BN_HT, GALAXY_SETUP_PANEL_WIDTH);
 
     m_new_load_game_buttons =
         new GG::RadioButtonGroup(CHAT_WIDTH + CONTROL_MARGIN, GG::Y(CONTROL_MARGIN),
@@ -238,6 +372,11 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     GG::Y y = std::max(m_saved_games_list->LowerRight().y, m_preview_image->LowerRight().y) + CONTROL_MARGIN;
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
+
+    m_players_lb_player_type_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
+                                                         UserString("MULTIPLAYER_PLAYER_LIST_TYPES"),
+                                                         ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
+
     m_players_lb_player_name_column_label = new GG::TextControl(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, TEXT_HEIGHT,
                                                                 UserString("MULTIPLAYER_PLAYER_LIST_NAMES"),
                                                                 ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
@@ -254,12 +393,13 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
                                                                         UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"),
                                                                         ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT);
 
-    GG::Layout* layout = new GG::Layout(x, y, ClientWidth() - CONTROL_MARGIN - x, TEXT_HEIGHT, 1, 4);
+    GG::Layout* layout = new GG::Layout(x + CONTROL_MARGIN, y, ClientWidth() - 2*CONTROL_MARGIN - x, TEXT_HEIGHT, 1, 4);
     layout->SetMinimumRowHeight(0, TEXT_HEIGHT);
-    layout->Add(m_players_lb_player_name_column_label,          0, 0);
-    layout->Add(m_players_lb_empire_name_column_label,          0, 1);
-    layout->Add(m_players_lb_empire_colour_column_label,        0, 2);
-    layout->Add(m_players_lb_species_or_original_player_label,  0, 3);
+    layout->Add(m_players_lb_player_type_label,                 0, 0);
+    layout->Add(m_players_lb_player_name_column_label,          0, 1);
+    layout->Add(m_players_lb_empire_name_column_label,          0, 2);
+    layout->Add(m_players_lb_empire_colour_column_label,        0, 3);
+    layout->Add(m_players_lb_species_or_original_player_label,  0, 4);
     AttachChild(layout);
 
     y += TEXT_HEIGHT + CONTROL_MARGIN;
@@ -299,21 +439,20 @@ MultiplayerLobbyWnd::MultiplayerLobbyWnd(bool host,
     m_saved_games_list->Disable();
 
     if (!m_host) {
-        for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i) {
+        for (std::size_t i = 0; i < m_new_load_game_buttons->NumButtons(); ++i)
             m_new_load_game_buttons->DisableButton(i);
-        }
         m_galaxy_setup_panel->Disable();
         m_saved_games_list->Disable();
     }
 
     if (m_host) {
-        Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiplayerLobbyWnd::NewLoadClicked,           this);
-        Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiplayerLobbyWnd::GalaxySetupPanelChanged,  this);
-        Connect(m_saved_games_list->SelChangedSignal,           &MultiplayerLobbyWnd::SaveGameChanged,          this);
-        GG::Connect(m_start_game_bn->ClickedSignal, start_game_callback);
+        GG::Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiplayerLobbyWnd::NewLoadClicked,           this);
+        GG::Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiplayerLobbyWnd::GalaxySetupPanelChanged,  this);
+        GG::Connect(m_saved_games_list->SelChangedSignal,           &MultiplayerLobbyWnd::SaveGameChanged,          this);
+        GG::Connect(m_start_game_bn->ClickedSignal,                 start_game_callback);
     }
-    Connect(m_galaxy_setup_panel->ImageChangedSignal,           &MultiplayerLobbyWnd::PreviewImageChanged,      this);
-    GG::Connect(m_cancel_bn->ClickedSignal, cancel_callback);
+    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,           &MultiplayerLobbyWnd::PreviewImageChanged,      this);
+    GG::Connect(m_cancel_bn->ClickedSignal,                         cancel_callback);
 }
 
 bool MultiplayerLobbyWnd::LoadGameSelected() const
@@ -476,9 +615,6 @@ bool MultiplayerLobbyWnd::PopulatePlayerList()
         }
     }
 
-    m_players_lb->SetNumCols(4);
-    m_players_lb->SetColAlignment(3, GG::ALIGN_RIGHT);
-
     if (m_lobby_data.m_new_game) {
         m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES"));
     } else {
@@ -502,21 +638,40 @@ bool MultiplayerLobbyWnd::PlayerDataAcceptable() const
 {
     std::set<std::string> empire_names;
     std::set<unsigned int> empire_colors;
+    int num_players_excluding_observers(0);
+
     for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
         const PlayerRow& row = dynamic_cast<const PlayerRow&>(**it);
-        if (row.m_player_data.m_empire_name.empty())
+        if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            row.m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        {
+            num_players_excluding_observers++;
+
+            // all non-observers must have unique non-blank names and colours
+
+            if (row.m_player_data.m_empire_name.empty())
+                return false;
+
+            empire_names.insert(row.m_player_data.m_empire_name);
+
+            unsigned int color_as_uint =
+                row.m_player_data.m_empire_color.r << 24 |
+                row.m_player_data.m_empire_color.g << 16 |
+                row.m_player_data.m_empire_color.b << 8 |
+                row.m_player_data.m_empire_color.a;
+            empire_colors.insert(color_as_uint);
+        } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+            // do nothing special for this player
+        } else {
+            // unrecognized client type!
             return false;
-        empire_names.insert(row.m_player_data.m_empire_name);
-        unsigned int color_as_uint =
-            row.m_player_data.m_empire_color.r << 24 |
-            row.m_player_data.m_empire_color.g << 16 |
-            row.m_player_data.m_empire_color.b << 8 |
-            row.m_player_data.m_empire_color.a;
-        empire_colors.insert(color_as_uint);
+        }
     }
-    return empire_names.size() == m_players_lb->NumRows() &&
-        empire_colors.size() == m_players_lb->NumRows();
+    // any duplicate names or colours will means that the number of active
+    // players and number of colours / names won't match
+    return empire_names.size() == num_players_excluding_observers &&
+           empire_colors.size() == num_players_excluding_observers;
 }
 
 bool MultiplayerLobbyWnd::CanStart() const
-{ return PlayerDataAcceptable() && (LoadGameSelected() || 1 < m_players_lb->NumRows()); }
+{ return PlayerDataAcceptable(); }

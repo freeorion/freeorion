@@ -57,8 +57,17 @@ Human
 AI_PLAYER
 AI
 
+ADD_AI_PLAYER
+Add AI
+
 OBSERVER
-Obs
+Observer
+
+NO_PLAYER
+None
+
+DROP_PLAYER
+Drop
 
 HOST
 Host
@@ -884,6 +893,9 @@ The host player has terminated this game setup.
 
 MULTIPLAYER_GAME_START_CONDITIONS
 Unique empire names and colours required
+
+MULTIPLAYER_PLAYER_LIST_TYPES
+Type
 
 MULTIPLAYER_PLAYER_LIST_NAMES
 Player

@@ -70,6 +70,7 @@ private:
     GalaxySetupPanel*       m_galaxy_setup_panel;
     CUIDropDownList*        m_saved_games_list;
     GG::StaticGraphic*      m_preview_image;
+    GG::TextControl*        m_players_lb_player_type_label;
     GG::TextControl*        m_players_lb_player_name_column_label;
     GG::TextControl*        m_players_lb_empire_name_column_label;
     GG::TextControl*        m_players_lb_empire_colour_column_label;
