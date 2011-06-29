@@ -60,6 +60,7 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/convenience.hpp>
 #include <boost/system/system_error.hpp>
 
 
