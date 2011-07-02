@@ -59,10 +59,10 @@ public:
         HOST_SP_GAME,           ///< sent when a client wishes to establish a single player game at the server
         HOST_MP_GAME,           ///< sent when a client wishes to establish a multiplayer game at the server
         JOIN_GAME,              ///< sent when a client wishes to join a game being established at the server
+        HOST_ID,                ///< sent to clients when the server changes the ID of the host player
         LOBBY_UPDATE,           ///< used to synchronize multiplayer lobby dialogs among different players, when a user changes a setting, or the server updates the state
         LOBBY_CHAT,             ///< used to send chat messages in the multiplayer lobby
-        LOBBY_HOST_ABORT,       ///< sent to server (by the "host" client only) when a multiplayer game is to be cancelled while it is still being set up in the multiplayer lobby
-        LOBBY_EXIT,             ///< sent to server (by a non-"host" client only) when a player leaves the multiplayer lobby
+        LOBBY_EXIT,             ///< sent to server by clients when a player leaves the multiplayer lobby, or by server to clients when a player leaves the multiplayer lobby
         START_MP_GAME,          ///< sent to server (by the "host" client only) when the settings in the MP lobby are satisfactory and it is time to start the game
         SAVE_GAME,              ///< sent to server (by the "host" client only) when a game is to be saved, or from the server to the clients when the game is being saved
         LOAD_GAME,              ///< sent to server (by the "host" client only) when a game is to be loaded
@@ -193,6 +193,9 @@ Message HostMPGameMessage(const std::string& host_player_name);
 /** creates a JOIN_GAME message.  The sender's player name and client type are sent in the message.*/
 Message JoinGameMessage(const std::string& player_name, Networking::ClientType client_type);
 
+/** creates a HOST_ID message.  The player ID of the host is sent in the message. */
+Message HostIDMessage(int host_player_id);
+
 /** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
                          const EmpireManager& empires, const Universe& universe, const SpeciesManager& species,
@@ -314,18 +317,6 @@ Message LobbyChatMessage(int sender, int receiver, const std::string& text);
 /** creates an LOBBY_CHAT message containing a chat string from \sender to be displayed in \a receiver's lobby dialog.
     This message should only be sent by the server.*/
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& text);
-
-/** creates an LOBBY_HOST_ABORT message.  This message should only be sent by the host player.*/
-Message LobbyHostAbortMessage(int sender);
-
-/** creates an LOBBY_HOST_ABORT message.  This message should only be sent by the server.*/
-Message ServerLobbyHostAbortMessage(int receiver);
-
-/** creates an LOBBY_EXIT message.  This message should only be sent by a non-host player.*/
-Message LobbyExitMessage(int sender);
-
-/** creates an LOBBY_EXIT message.  This message should only be sent by the server.*/
-Message ServerLobbyExitMessage(int sender, int receiver);
 
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
 Message StartMPGameMessage(int player_id);

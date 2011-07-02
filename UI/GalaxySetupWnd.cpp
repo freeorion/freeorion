@@ -292,9 +292,9 @@ void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 ////////////////////////////////////////////////
 // GalaxySetupWnd
 ////////////////////////////////////////////////
-GalaxySetupWnd::GalaxySetupWnd() : 
-    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2, 
-           (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT, 
+GalaxySetupWnd::GalaxySetupWnd() :
+    CUIWnd(UserString("GSETUP_WINDOW_TITLE"), (HumanClientApp::GetApp()->AppWidth() - GAL_SETUP_WND_WD) / 2,
+           (HumanClientApp::GetApp()->AppHeight() - GAL_SETUP_WND_HT) / 2, GAL_SETUP_WND_WD, GAL_SETUP_WND_HT,
            GG::INTERACTIVE | GG::MODAL),
     m_ended_with_ok(false),
     m_galaxy_setup_panel(0),

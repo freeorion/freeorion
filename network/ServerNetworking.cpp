@@ -51,13 +51,6 @@ namespace {
     private:
         int m_id;
     };
-
-    struct PlayerIDLess
-    {
-        typedef bool result_type;
-        bool operator()(const PlayerConnectionPtr& lhs, const PlayerConnectionPtr& rhs)
-            { return lhs->PlayerID() < rhs->PlayerID(); }
-    };
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -69,7 +62,6 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
                                    ConnectionFn disconnected_callback) :
     m_socket(io_service),
     m_ID(INVALID_PLAYER_ID),
-    m_host(false),
     m_new_connection(true),
     m_client_type(Networking::INVALID_CLIENT_TYPE),
     m_nonplayer_message_callback(nonplayer_message_callback),
@@ -89,9 +81,6 @@ int PlayerConnection::PlayerID() const
 const std::string& PlayerConnection::PlayerName() const
 { return m_player_name; }
 
-bool PlayerConnection::Host() const
-{ return m_host; }
-
 Networking::ClientType PlayerConnection::GetClientType() const
 { return m_client_type; }
 
@@ -101,11 +90,11 @@ void PlayerConnection::Start()
 void PlayerConnection::SendMessage(const Message& message)
 { WriteMessage(m_socket, message); }
 
-void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, bool host, Networking::ClientType client_type)
+void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type)
 {
     if (TRACE_EXECUTION)
         Logger().debugStream() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                               << id << ", " << player_name << ", " << host << ", " << client_type << ")";
+                               << id << ", " << player_name << ", " << client_type << ")";
     // ensure that this connection isn't already established
     if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
         Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
@@ -116,6 +105,8 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, b
         Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to establish a player with an invalid id: " << id;
         return;
     }
+    // TODO (maybe): Verify that no other players have this ID in server networking
+
     if (player_name.empty()) {
         Logger().errorStream() << "PlayerConnection::EstablishPlayer attempting to establish a player with an empty name";
         return;
@@ -126,8 +117,14 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, b
     }
     m_ID = id;
     m_player_name = player_name;
-    m_host = host;
     m_client_type = client_type;
+}
+
+void PlayerConnection::SetClientType(Networking::ClientType client_type)
+{
+    m_client_type = client_type;
+    if (m_client_type == Networking::INVALID_CLIENT_TYPE)
+        Logger().errorStream() << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
 }
 
 PlayerConnectionPtr
@@ -258,6 +255,7 @@ ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
+    m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_discovery_server(new DiscoveryServer(io_service)),
     m_player_connection_acceptor(io_service),
     m_nonplayer_message_callback(nonplayer_message_callback),
@@ -300,17 +298,27 @@ ServerNetworking::const_established_iterator ServerNetworking::established_end()
                                       m_player_connections.end());
 }
 
-int ServerNetworking::GreatestPlayerID() const
+int ServerNetworking::NewPlayerID() const
 {
-    // Return the max ID, but be careful not to return INVALID_PLAYER_ID --
-    // the implicit max ID when none are defined is the predefined host id.
-    PlayerConnections::const_iterator it =
-        std::max_element(m_player_connections.begin(), m_player_connections.end(),
-                         PlayerIDLess());
-    int retval = it == m_player_connections.end() ? HOST_PLAYER_ID : (*it)->PlayerID();
-    if (retval == INVALID_PLAYER_ID)
-        retval = HOST_PLAYER_ID;
-    return retval;
+    int biggest_current_player_id(0);
+    for (PlayerConnections::const_iterator it = m_player_connections.begin(); it != m_player_connections.end(); ++it) {
+        int player_id = (*it)->PlayerID();
+        if (player_id != INVALID_PLAYER_ID && player_id > biggest_current_player_id)
+            biggest_current_player_id = (*it)->PlayerID();
+    }
+    return biggest_current_player_id + 1;
+}
+
+int ServerNetworking::HostPlayerID() const
+{
+    return m_host_player_id;
+}
+
+bool ServerNetworking::PlayerIsHost(int player_id) const
+{
+    if (player_id == Networking::INVALID_PLAYER_ID)
+        return false;
+    return player_id == m_host_player_id;
 }
 
 void ServerNetworking::SendMessage(const Message& message,
@@ -398,6 +406,11 @@ void ServerNetworking::HandleNextEvent()
         m_event_queue.pop();
         f();
     }
+}
+
+void ServerNetworking::SetHostPlayerID(int host_player_id)
+{
+    m_host_player_id = host_player_id;
 }
 
 void ServerNetworking::Init()

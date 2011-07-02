@@ -17,7 +17,7 @@ class CUIStateButton;
 class EmpireColorSelector;
 struct GalaxySetupData;
 
-/** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiplayerLobbyWnd. */
+/** Encapsulates the galaxy setup options so that they may be reused in the GalaxySetupWnd and the MultiPlayerLobbyWnd. */
 class GalaxySetupPanel : public GG::Control
 {
 public:

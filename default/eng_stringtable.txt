@@ -277,6 +277,9 @@ Your last opponent has been defeated and you are victorious!
 INVALID_CLIENT_SAVE_DATA_RECEIVED
 The server received invalid client save data.  Some may be ignored.
 
+NON_HOST_SAVE_REQUEST_IGNORED
+The server received an invalid save game request from your client.  You are not the host, so you cannot save the game.
+
 UNABLE_TO_WRITE_CONFIG_XML
 Error when writing config.xml file.  Unable to save options.
 

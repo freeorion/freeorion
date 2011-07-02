@@ -1,15 +1,9 @@
 // -*- C++ -*-
-#ifndef _MultiplayerLobbyWnd_h_
-#define _MultiplayerLobbyWnd_h_
+#ifndef _MultiPlayerLobbyWnd_h_
+#define _MultiPlayerLobbyWnd_h_
 
-#ifndef _CUIWnd_h_
 #include "CUIWnd.h"
-#endif
-
-#ifndef _GalaxySetupWnd_h_
 #include "GalaxySetupWnd.h"
-#endif
-
 #include "../util/MultiplayerCommon.h"
 
 #include <vector>
@@ -26,13 +20,11 @@ class TextControl;
 }
 
 /** multiplayer lobby window */
-class MultiplayerLobbyWnd : public CUIWnd
+class MultiPlayerLobbyWnd : public CUIWnd
 {
 public:
     /** \name Structors */ //@{
-    MultiplayerLobbyWnd(bool host,
-                        const CUIButton::ClickedSignalType::slot_type& start_game_callback,
-                        const CUIButton::ClickedSignalType::slot_type& cancel_callback);
+    MultiPlayerLobbyWnd();
     //@}
 
     /** \name Accessors */ //@{
@@ -45,7 +37,7 @@ public:
 
     void            ChatMessage(int player_id, const std::string& msg);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
-    void            LobbyExit(int player_id);
+    void            Refresh();
     //@}
 
 private:
@@ -54,15 +46,16 @@ private:
     void            GalaxySetupPanelChanged();
     void            SaveGameChanged(GG::DropDownList::iterator it);
     void            PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
-    void            PlayerDataChanged();
+    void            PlayerDataChangedLocally();
     bool            PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
     void            SendUpdate();
     bool            PlayerDataAcceptable() const;
     bool            CanStart() const;
+    bool            ThisClientIsHost() const;
+    void            StartGameClicked();
+    void            CancelClicked();
 
     MultiplayerLobbyData    m_lobby_data;   ///< a copy of the most recently received lobby update
-
-    bool                    m_host;
 
     CUIMultiEdit*           m_chat_box;
     CUIEdit*                m_chat_input_edit;
@@ -81,4 +74,4 @@ private:
     GG::TextControl*        m_start_conditions_text;
 };
 
-#endif // _MultiplayerLobbyWnd_h_
+#endif // _MultiPlayerLobbyWnd_h_

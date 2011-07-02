@@ -188,7 +188,7 @@ void CreditsWnd::Render()
 // IntroScreen
 /////////////////////////////////
 IntroScreen::IntroScreen() :
-    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::ONTOP),
+    GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::Flags<GG::WndFlag>()),
     m_single_player(0),
     m_quick_start(0),
     m_multi_player(0),
@@ -325,7 +325,7 @@ void IntroScreen::OnMultiPlayer()
 {
     delete m_credits_wnd;
     m_credits_wnd = 0;
-    HumanClientApp::GetApp()->MulitplayerGame();
+    HumanClientApp::GetApp()->MultiPlayerGame();
 }
 
 void IntroScreen::OnLoadGame()

@@ -279,14 +279,16 @@ void HumanClientApp::StartServer()
 void HumanClientApp::FreeServer()
 {
     m_server_process.Free();
-    SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
 void HumanClientApp::KillServer()
 {
     m_server_process.Kill();
-    SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
@@ -400,34 +402,38 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
         m_connected = true;
 }
 
-void HumanClientApp::MulitplayerGame()
+void HumanClientApp::MultiPlayerGame()
 {
+    if (Networking().Connected()) {
+        Logger().errorStream() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
+        return;
+    }
+
     ServerConnectWnd server_connect_wnd;
     bool failed = false;
-    while (!failed && !Networking().Connected()) {
-        server_connect_wnd.Run();
+    server_connect_wnd.Run();
 
-        if (server_connect_wnd.Result().second == "") {
-            failed = true;
-        } else {
-            std::string server_name = server_connect_wnd.Result().second;
-            if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-                if (!GetOptionsDB().Get<bool>("force-external-server")) {
-                    HumanClientApp::GetApp()->StartServer();
-                    HumanClientApp::GetApp()->FreeServer();
-                    server_name = "localhost";
-                }                
-                server_name = GetOptionsDB().Get<std::string>("external-server-address");
+    std::string server_name = server_connect_wnd.Result().second;
+
+    if (server_name.empty()) {
+        failed = true;
+    } else {
+        if (server_name == "HOST GAME SELECTED") {
+            if (!GetOptionsDB().Get<bool>("force-external-server")) {
+                HumanClientApp::GetApp()->StartServer();
+                HumanClientApp::GetApp()->FreeServer();
+                server_name = "localhost";
             }
-            unsigned int start_time = Ticks();
-            while (!Networking().ConnectToServer(server_name)) {
-                if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                    ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                    if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-                        KillServer();
-                    failed = true;
-                    break;
-                }
+            server_name = GetOptionsDB().Get<std::string>("external-server-address");
+        }
+        unsigned int start_time = Ticks();
+        while (!Networking().ConnectToServer(server_name)) {
+            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+                if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
+                    KillServer();
+                failed = true;
+                break;
             }
         }
     }
@@ -442,6 +448,16 @@ void HumanClientApp::MulitplayerGame()
         }
         m_connected = true;
     }
+}
+
+void HumanClientApp::StartMultiPlayerGameFromLobby()
+{
+    m_fsm->process_event(StartMPGameClicked());
+}
+
+void HumanClientApp::CancelMultiplayerGameFromLobby()
+{
+    m_fsm->process_event(CancelMPGameClicked());
 }
 
 void HumanClientApp::SaveGame(const std::string& filename)
@@ -510,7 +526,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         Logger().debugStream() << "HumanClientApp::LoadSinglePlayerGame() connected to server";
 
         m_connected = true;
-        SetPlayerID(Networking::HOST_PLAYER_ID);
+        m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
+        m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
         SetEmpireID(ALL_EMPIRES);
 
         SinglePlayerSetupData setup_data;
@@ -711,10 +728,9 @@ void HumanClientApp::HandleMessage(Message& msg)
     case Message::HOST_MP_GAME:         m_fsm->process_event(HostMPGame(msg));          break;
     case Message::HOST_SP_GAME:         m_fsm->process_event(HostSPGame(msg));          break;
     case Message::JOIN_GAME:            m_fsm->process_event(JoinGame(msg));            break;
+    case Message::HOST_ID:              m_fsm->process_event(HostID(msg));              break;
     case Message::LOBBY_UPDATE:         m_fsm->process_event(LobbyUpdate(msg));         break;
     case Message::LOBBY_CHAT:           m_fsm->process_event(LobbyChat(msg));           break;
-    case Message::LOBBY_HOST_ABORT:     m_fsm->process_event(LobbyHostAbort(msg));      break;
-    case Message::LOBBY_EXIT:           m_fsm->process_event(LobbyNonHostExit(msg));    break;
     case Message::SAVE_GAME:            m_fsm->process_event(::SaveGame(msg));          break;
     case Message::GAME_START:           m_fsm->process_event(GameStart(msg));           break;
     case Message::TURN_UPDATE:          m_fsm->process_event(TurnUpdate(msg));          break;
@@ -791,7 +807,7 @@ void HumanClientApp::StartGame()
     Orders().Reset();
 }
 
-void HumanClientApp::Autosave(bool new_game)
+void HumanClientApp::Autosave()
 {
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
@@ -857,7 +873,8 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     m_game_started = false;
     Networking().DisconnectFromServer();
     m_server_process.RequestTermination();
-    SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
     m_ui->GetMapWnd()->Sanitize();
 

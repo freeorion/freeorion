@@ -27,10 +27,9 @@ struct MessageEventBase
     (HostMPGame)                               \
     (HostSPGame)                               \
     (JoinGame)                                 \
+    (HostID)                                   \
     (LobbyUpdate)                              \
     (LobbyChat)                                \
-    (LobbyHostAbort)                           \
-    (LobbyNonHostExit)                         \
     (SaveGame)                                 \
     (GameStart)                                \
     (TurnUpdate)                               \

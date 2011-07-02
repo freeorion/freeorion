@@ -42,7 +42,7 @@ namespace {
         }
         ServerNetworking& networking = server->Networking();
 
-        ServerNetworking::established_iterator host_it = networking.GetPlayer(Networking::HOST_PLAYER_ID);
+        ServerNetworking::established_iterator host_it = networking.GetPlayer(networking.HostPlayerID());
         if (host_it == networking.established_end()) {
             Logger().errorStream() << "SendMessageToHost couldn't get host player.";
             return;
@@ -146,7 +146,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 
     int id = player_connection->PlayerID();
     // this will not usually happen, since the host client process usually owns the server process, and will usually take it down if it fails
-    if (player_connection->Host()) {
+    if (Server().m_networking.PlayerIsHost(id)) {
         // if the host dies, there's really nothing else we can do -- the game's over
         std::string message = player_connection->PlayerName();
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
@@ -206,10 +206,12 @@ sc::result Idle::react(const HostMPGame& msg)
 
     Logger().debugStream() << "Idle::react(HostMPGame) about to establish host";
 
-    // establish host player with hard-coded host-player ID and as a human player.  todo: allow non-player hosts?
-    player_connection->EstablishPlayer(Networking::HOST_PLAYER_ID, host_player_name, true, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    int host_player_id = server.m_networking.NewPlayerID();
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    server.m_networking.SetHostPlayerID(host_player_id);
+
     Logger().debugStream() << "Idle::react(HostMPGame) about to send acknowledgement to host";
-    player_connection->SendMessage(HostMPAckMessage(Networking::HOST_PLAYER_ID));
+    player_connection->SendMessage(HostMPAckMessage(host_player_id));
 
     server.m_single_player_game = false;
 
@@ -245,8 +247,10 @@ sc::result Idle::react(const HostSPGame& msg)
     }
 
 
-    player_connection->EstablishPlayer(Networking::HOST_PLAYER_ID, host_player_name, true, Networking::CLIENT_TYPE_HUMAN_PLAYER);
-    player_connection->SendMessage(HostSPAckMessage(Networking::HOST_PLAYER_ID));
+    int host_player_id = server.m_networking.NewPlayerID();
+    player_connection->EstablishPlayer(host_player_id, host_player_name, Networking::CLIENT_TYPE_HUMAN_PLAYER);
+    server.m_networking.SetHostPlayerID(host_player_id);
+    player_connection->SendMessage(HostSPAckMessage(host_player_id));
 
     server.m_single_player_game = true;
 
@@ -266,10 +270,10 @@ MPLobby::MPLobby(my_context c) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
-    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(Networking::HOST_PLAYER_ID));
+    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(server.m_networking.HostPlayerID()));
 
     // assign host player info from connection to lobby data players list
-    PlayerSetupData& player_setup_data = m_lobby_data->m_players[Networking::HOST_PLAYER_ID];
+    PlayerSetupData& player_setup_data = m_lobby_data->m_players[server.m_networking.HostPlayerID()];
 
     player_setup_data.m_player_name =           player_connection->PlayerName();
     player_setup_data.m_empire_name =           player_connection->PlayerName();    // default empire name to same as player name, for lack of a better choice
@@ -278,7 +282,7 @@ MPLobby::MPLobby(my_context c) :
     // leaving save game empire id as default
     player_setup_data.m_client_type =           player_connection->GetClientType();
 
-    server.m_networking.SendMessage(ServerLobbyUpdateMessage(Networking::HOST_PLAYER_ID, *m_lobby_data));
+    server.m_networking.SendMessage(ServerLobbyUpdateMessage(server.m_networking.HostPlayerID(), *m_lobby_data));
 }
 
 MPLobby::~MPLobby()
@@ -290,29 +294,59 @@ sc::result MPLobby::react(const Disconnection& d)
     ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
+    // if there are no humans left, it's time to terminate
+    if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
+        Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+        server.Exit(1);
+    }
+
+    // if the disconnected player wasn't in the lobby, don't need to do anything
     int id = player_connection->PlayerID();
-    if (m_lobby_data->m_players.find(id) != m_lobby_data->m_players.end()) {
-        // this will not usually happen, since the host process usually owns the server process, and will usually take it down if it fails
-        if (player_connection->Host()) {
-            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
-                if (*it != player_connection)
-                    (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->PlayerID()));
-            }
-            Logger().debugStream() << "MPLobby.Disconnection : Host player disconnected; server terminating.";
-            server.Exit(1);
-        } else {
-            m_lobby_data->m_players.erase(id);
-            for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
-                if (*it != player_connection)
-                    (*it)->SendMessage(ServerLobbyExitMessage(id, (*it)->PlayerID()));
+    if (m_lobby_data->m_players.find(id) == m_lobby_data->m_players.end()) {
+        Logger().debugStream() << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
+        return discard_event();
+    }
+
+    // did the host disconnect?  this may happen if the host crashes instead of exiting cleanly
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
+        // disconnect was the host.  need to pick a new host and inform players.
+        int new_host_id = Networking::INVALID_PLAYER_ID;
+
+        // scan through players for a human to host
+        for (ServerNetworking::established_iterator players_it = server.m_networking.established_begin();
+                players_it != server.m_networking.established_end(); ++players_it)
+        {
+            PlayerConnectionPtr player_connection = *players_it;
+            if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+            {
+                new_host_id = player_connection->PlayerID();
             }
         }
 
-        // independently of everything else, if there are no humans left, it's time to terminate
-        if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
-            Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
+        if (new_host_id == Networking::INVALID_PLAYER_ID) {
+            // couldn't find a host... abort
+            Logger().debugStream() << "MPLobby.Disconnection : Host disconnected and couldn't find a replacement.  server terminating";
             server.Exit(1);
+            return discard_event();
         }
+
+        // set new host ID and inform players
+        server.m_networking.SetHostPlayerID(new_host_id);
+        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+            if (*it != player_connection)
+                (*it)->SendMessage(HostIDMessage(new_host_id));
+        }
+    }
+
+    // remove disconnected player from lobby
+    m_lobby_data->m_players.erase(id);
+
+    // send updated lobby data to players after disconnection-related changes
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data));
     }
 
     return discard_event();
@@ -331,11 +365,14 @@ sc::result MPLobby::react(const JoinGame& msg)
     // TODO: check if player name is unique.  If not, modify it slightly to be unique.
 
     // assign unique player ID to newly connected player
-    int player_id = server.m_networking.GreatestPlayerID() + 1;
+    int player_id = server.m_networking.NewPlayerID();
 
     // establish player with requested client type and acknowldge via connection
-    player_connection->EstablishPlayer(player_id, player_name, false, client_type);
+    player_connection->EstablishPlayer(player_id, player_name, client_type);
     player_connection->SendMessage(JoinAckMessage(player_id));
+
+    // inform player of host
+    player_connection->SendMessageA(HostIDMessage(server.m_networking.HostPlayerID()));
 
     // assign player info from connection to lobby data players list
     PlayerSetupData& player_setup_data = m_lobby_data->m_players[player_id];
@@ -373,8 +410,11 @@ sc::result MPLobby::react(const JoinGame& msg)
     // TODO: generate a default empire name, or get one from the list of empire names
     player_setup_data.m_empire_name = player_name;
 
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it)
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
         (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data));
+    }
 
     return discard_event();
 }
@@ -405,6 +445,22 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     // directly configurable lobby data
     m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;
     m_lobby_data->m_players =       incoming_lobby_data.m_players;
+
+    // update player connection types according to modified lobby selections
+    for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
+         player_connection_it != server.m_networking.established_end(); ++player_connection_it)
+    {
+        PlayerConnectionPtr player_connection = *player_connection_it;
+        int player_id = player_connection->PlayerID();
+
+        std::map<int, PlayerSetupData>::iterator player_setup_it = m_lobby_data->m_players.find(player_id);
+        if (player_setup_it == m_lobby_data->m_players.end()) {
+            Logger().errorStream() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
+            continue;
+        }
+        Networking::ClientType client_type = player_setup_it->second.m_client_type;
+        player_connection->SetClientType(client_type);
+    }
 
     // to determine if a new save file was selected, check if the selected file
     // index is different, and the new file index is in the valid range
@@ -473,44 +529,6 @@ sc::result MPLobby::react(const LobbyChat& msg)
     return discard_event();
 }
 
-sc::result MPLobby::react(const LobbyHostAbort& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyHostAbort";
-    ServerApp& server = Server();
-    const Message& message = msg.m_message;
-
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if ((*it)->PlayerID() != message.SendingPlayer()) {
-            (*it)->SendMessage(ServerLobbyHostAbortMessage((*it)->PlayerID()));
-        }
-    }
-
-    Sleep(1000); // HACK! Add a delay here so the messages can propagate; setting socket linger does not appear to work
-
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ) {
-        PlayerConnectionPtr player_connection = *it++;
-        if (player_connection->PlayerID() != message.SendingPlayer())
-            server.m_networking.Disconnect(player_connection);
-    }
-
-    return discard_event();
-}
-
-sc::result MPLobby::react(const LobbyNonHostExit& msg)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.LobbyNonHostExit";
-    ServerApp& server = Server();
-    const Message& message = msg.m_message;
-
-    m_lobby_data->m_players.erase(message.SendingPlayer());
-    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-        if ((*it)->PlayerID() != message.SendingPlayer())
-            (*it)->SendMessage(ServerLobbyExitMessage(message.SendingPlayer(), (*it)->PlayerID()));
-    }
-
-    return discard_event();
-}
-
 sc::result MPLobby::react(const StartMPGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.StartMPGame";
@@ -518,7 +536,7 @@ sc::result MPLobby::react(const StartMPGame& msg)
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    if (player_connection->Host()) {
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
         if (m_lobby_data->m_new_game) {
             // if all expected player already connected, can skip waiting for
             // MP joiners and go directly to playing game
@@ -588,6 +606,20 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     ServerApp& server = Server();
     std::vector<PlayerSetupData>& players = m_single_player_setup_data->m_players;
 
+    // Ensure all players have unique non-empty names   // TODO: the uniqueness part...
+    unsigned int player_num = 1;
+    for (std::vector<PlayerSetupData>::iterator psd_it = players.begin(); psd_it != players.end(); ++psd_it) {
+        if (psd_it->m_player_name.empty()) {
+            if (psd_it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                psd_it->m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                psd_it->m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                psd_it->m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+            else
+                psd_it->m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
+        }
+    }
 
     if (m_single_player_setup_data->m_new_game) {
         // DO NOTHING
@@ -663,7 +695,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     ExtractMessageData(message, player_name, client_type);
 
-    int player_id = server.m_networking.GreatestPlayerID() + 1;
+    int player_id = server.m_networking.NewPlayerID();
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -675,7 +707,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, false, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -688,10 +720,11 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             Logger().errorStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
+            // TODO: send message to attempted joiner saying game is full
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, false, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -809,7 +842,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
     Networking::ClientType client_type(Networking::INVALID_CLIENT_TYPE);
     ExtractMessageData(message, player_name, client_type);
 
-    int player_id = server.m_networking.GreatestPlayerID() + 1;
+    int player_id = server.m_networking.NewPlayerID();
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -821,7 +854,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, false, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type);
             player_connection->SendMessage(JoinAckMessage(player_id));
 
             // remove name from expected names list, so as to only allow one connection per AI
@@ -837,7 +870,7 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, false, client_type);
+            player_connection->EstablishPlayer(player_id, player_name, client_type);
             player_connection->SendMessage(JoinAckMessage(player_id));
         }
     } else {
@@ -901,7 +934,7 @@ sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
     boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     ExtractMessageData(message, *single_player_setup_data);
 
-    if (player_connection->Host() && !single_player_setup_data->m_new_game) {
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID()) && !single_player_setup_data->m_new_game) {
         Empires().Clear();
         player_connection->SendMessage(HostSPAckMessage(player_connection->PlayerID()));
         player_connection->SendMessage(JoinAckMessage(player_connection->PlayerID()));
@@ -910,7 +943,7 @@ sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
         return transit<WaitingForSPGameJoiners>();
     }
 
-    if (!player_connection->Host()) {
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
         Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
                                << " attempted to initiate a new game or game load, but is not the host. "
                                << "Terminating connection.";
@@ -1017,10 +1050,12 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    if (!player_connection->Host()) {
+    if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
+        return discard_event();
         Logger().errorStream() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
-                               << " attempted to initiate a game save, but is not the host.  Terminating connection.";
-        server.m_networking.Disconnect(player_connection);
+                               << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
+        player_connection->SendMessage(ErrorMessage("NON_HOST_SAVE_REQUEST_IGNORED"));
+        return discard_event();
     }
 
     context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
@@ -1044,7 +1079,7 @@ WaitingForSaveData::WaitingForSaveData(my_context c) :
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
-        bool host = (player_id == Networking::HOST_PLAYER_ID);
+        bool host = server.m_networking.PlayerIsHost(player_id);
         player->SendMessage(ServerSaveGameMessage(player_id, host));
         m_needed_reponses.insert(player_id);
     }
@@ -1165,7 +1200,8 @@ sc::result ProcessingTurn::react(const ProcessTurn& u)
     {
         PlayerConnectionPtr player_ctn = *player_it;
         if (player_ctn->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER ||
-            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            player_ctn->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
             // inform all players that this player is playing a turn
             for (ServerNetworking::const_established_iterator recipient_player_it = server.m_networking.established_begin();

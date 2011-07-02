@@ -82,11 +82,6 @@ struct WaitingForMPJoinAck;
 struct IntroMenuIdle;
 struct MPLobby;
 
-// Substates of MPLobby
-struct MPLobbyIdle;
-struct HostMPLobby;
-struct NonHostMPLobby;
-
 // Substates of PlayingGame
 struct WaitingForTurnData;
 struct PlayingTurn;
@@ -99,18 +94,14 @@ struct ResolvingCombat;
 class HumanClientApp;
 class CombatWnd;
 class IntroScreen;
-class MultiplayerLobbyWnd;
+class MultiPlayerLobbyWnd;
 
 #define CLIENT_ACCESSOR private: HumanClientApp& Client() { return context<HumanClientFSM>().m_client; }
 
 /** Note that empty idle states are needed for several states.  They are needed
   * when a state has internal states (and so because of the requirements of
   * Boost.StateChart, must have an initial internal state), but the state does
-  * not logically have an initial state that is always correct to use.  for
-  * instance, MPLobby must always be in one of its internal substates
-  * HostMPLobby, or NonHostMPLobby, but it is inappropriate to make either of
-  * these be the "default" (initial) internal state.  For this reason, a
-  * do-nothing internal state MPLobbyIdle is created instead. */
+  * not logically have an initial state that is always correct to use. */
 #define EMPTY_IDLE_STATE(name)                                          \
     struct name##Idle : boost::statechart::simple_state<name##Idle, name> \
     {                                                                   \
@@ -224,16 +215,18 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
 
 
 /** The human client state in which the multiplayer lobby is active. */
-struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
+struct MPLobby : boost::statechart::state<MPLobby, IntroMenu>
 {
-    typedef boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle> Base;
+    typedef boost::statechart::state<MPLobby, IntroMenu> Base;
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<Disconnection>,
+        boost::statechart::custom_reaction<HostID>,
         boost::statechart::custom_reaction<LobbyUpdate>,
         boost::statechart::custom_reaction<LobbyChat>,
-        boost::statechart::custom_reaction<LobbyHostAbort>,
-        boost::statechart::custom_reaction<LobbyNonHostExit>,
+        boost::statechart::custom_reaction<CancelMPGameClicked>,
+        boost::statechart::custom_reaction<StartMPGameClicked>,
+        boost::statechart::custom_reaction<GameStart>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -241,57 +234,13 @@ struct MPLobby : boost::statechart::state<MPLobby, IntroMenu, MPLobbyIdle>
     ~MPLobby();
 
     boost::statechart::result react(const Disconnection& d);
+    boost::statechart::result react(const HostID& msg);
     boost::statechart::result react(const LobbyUpdate& msg);
     boost::statechart::result react(const LobbyChat& msg);
-    boost::statechart::result react(const LobbyHostAbort& msg);
-    boost::statechart::result react(const LobbyNonHostExit& msg);
-    boost::statechart::result react(const Error& msg);
-
-    std::auto_ptr<MultiplayerLobbyWnd> m_lobby_wnd;
-
-    CLIENT_ACCESSOR
-};
-
-
-/** The initial substate of MPLobby. */
-EMPTY_IDLE_STATE(MPLobby);
-
-
-/** The multiplayer lobby substate for host player mode. */
-struct HostMPLobby : boost::statechart::state<HostMPLobby, MPLobby>
-{
-    typedef boost::statechart::state<HostMPLobby, MPLobby> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<StartMPGameClicked>,
-        boost::statechart::custom_reaction<CancelMPGameClicked>
-    > reactions;
-
-    HostMPLobby(my_context ctx);
-    ~HostMPLobby();
-
+    boost::statechart::result react(const CancelMPGameClicked& a);
     boost::statechart::result react(const StartMPGameClicked& a);
-    boost::statechart::result react(const CancelMPGameClicked& a);
-
-    CLIENT_ACCESSOR
-};
-
-
-/** The multiplayer lobby substate for non-host player (joiner) mode. */
-struct NonHostMPLobby : boost::statechart::state<NonHostMPLobby, MPLobby>
-{
-    typedef boost::statechart::state<NonHostMPLobby, MPLobby> Base;
-
-    typedef boost::mpl::list<
-        boost::statechart::custom_reaction<GameStart>,
-        boost::statechart::custom_reaction<CancelMPGameClicked>
-    > reactions;
-
-    NonHostMPLobby(my_context ctx);
-    ~NonHostMPLobby();
-
     boost::statechart::result react(const GameStart& msg);
-    boost::statechart::result react(const CancelMPGameClicked& a);
+    boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
 };
@@ -304,6 +253,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     typedef boost::statechart::simple_state<PlayingGame, HumanClientFSM, WaitingForTurnData> Base;
 
     typedef boost::mpl::list<
+        boost::statechart::custom_reaction<HostID>,
         boost::statechart::custom_reaction<PlayerChat>,
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<PlayerStatus>,
@@ -317,6 +267,7 @@ struct PlayingGame : boost::statechart::simple_state<PlayingGame, HumanClientFSM
     PlayingGame();
     ~PlayingGame();
 
+    boost::statechart::result react(const HostID& msg);
     boost::statechart::result react(const PlayerChat& msg);
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const PlayerStatus& msg);

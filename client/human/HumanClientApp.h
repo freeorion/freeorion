@@ -15,7 +15,7 @@
 
 
 struct HumanClientFSM;
-class MultiplayerLobbyWnd;
+class MultiPlayerLobbyWnd;
 namespace Ogre {
     class Root;
     class RenderWindow;
@@ -52,10 +52,12 @@ public:
     void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                KillServer();                   ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                NewSinglePlayerGame(bool quickstart = false);
-    void                MulitplayerGame();
+    void                MultiPlayerGame();                              ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
+    void                StartMultiPlayerGameFromLobby();                ///< begins
+    void                CancelMultiplayerGameFromLobby();               ///< cancels out of multiplayer game
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     void                EndGame();                                      ///< kills the server (if appropriate) and ends the current game, leaving the application in its start state
-    void                LoadSinglePlayerGame(std::string filename = ""); ///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
+    void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void                SetSaveFileName(const std::string& filename);   ///< records the current game's filename
 
     Ogre::SceneManager* SceneManager();
@@ -75,7 +77,7 @@ public:
 
     static std::pair<int, int>  GetWindowWidthHeight(Ogre::RenderSystem* render_system);
 
-    static HumanClientApp*      GetApp();                   ///< returns HumanClientApp pointer to the single instance of the app
+    static HumanClientApp*      GetApp();               ///< returns HumanClientApp pointer to the single instance of the app
 
 private:
     virtual void    HandleSystemEvents();
@@ -88,7 +90,7 @@ private:
     void            HandleWindowClose();
 
     void            StartGame();
-    void            Autosave(bool new_game);            ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
+    void            Autosave();                         ///< autosaves the current game, iff autosaves are enabled, and m_turns_since_autosave % autosaves.turns == 0
     void            EndGame(bool suppress_FSM_reset);
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
@@ -108,14 +110,11 @@ private:
 
     friend struct HumanClientFSM;
     friend struct IntroMenu;
-    friend struct MPLobby;
     friend struct PlayingGame;
     friend struct WaitingForSPHostAck;
     friend struct WaitingForMPHostAck;
     friend struct WaitingForMPJoinAck;
-    friend struct MPLobbyIdle;
-    friend struct HostMPLobby;
-    friend struct NonHostMPLobby;
+    friend struct MPLobby;
     friend struct WaitingForTurnData;
     friend struct PlayingTurn;
     friend struct WaitingForTurnDataIdle;

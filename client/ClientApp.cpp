@@ -14,7 +14,6 @@ ClientApp* ClientApp::s_app = 0;
 
 ClientApp::ClientApp() :
     m_universe(),
-    m_player_id(Networking::INVALID_PLAYER_ID),
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
 {
@@ -31,7 +30,7 @@ ClientApp::~ClientApp()
 {}
 
 int ClientApp::PlayerID() const
-{ return m_player_id; }
+{ return m_networking.PlayerID(); }
 
 int ClientApp::EmpireID() const
 { return m_empire_id; }
@@ -85,19 +84,19 @@ const std::map<int, PlayerInfo>& ClientApp::Players() const
 
 void ClientApp::StartTurn()
 {
-    m_networking.SendMessage(TurnOrdersMessage(m_player_id, m_orders));
+    m_networking.SendMessage(TurnOrdersMessage(m_networking.PlayerID(), m_orders));
     m_orders.Reset();
 }
 
 void ClientApp::SendCombatSetup()
 {
-    m_networking.SendMessage(CombatTurnOrdersMessage(m_player_id, m_combat_orders));
+    m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
     m_combat_orders.clear();
 }
 
 void ClientApp::StartCombatTurn()
 {
-    m_networking.SendMessage(CombatTurnOrdersMessage(m_player_id, m_combat_orders));
+    m_networking.SendMessage(CombatTurnOrdersMessage(m_networking.PlayerID(), m_combat_orders));
     m_combat_orders.clear();
 }
 
@@ -119,7 +118,7 @@ ClientNetworking& ClientApp::Networking()
 int ClientApp::GetNewObjectID()
 {
     Message msg;
-    m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_player_id), msg);
+    m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty()) {
         throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
@@ -130,7 +129,7 @@ int ClientApp::GetNewObjectID()
 int ClientApp::GetNewDesignID()
 {
     Message msg;
-    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_player_id), msg);
+    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_networking.PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty()) {
         throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
@@ -140,9 +139,6 @@ int ClientApp::GetNewDesignID()
 
 ClientApp* ClientApp::GetApp()
 { return s_app; }
-
-void ClientApp::SetPlayerID(int id)
-{ m_player_id = id; }
 
 void ClientApp::SetEmpireID(int id)
 { m_empire_id = id; }

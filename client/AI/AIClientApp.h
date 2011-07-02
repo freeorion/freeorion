@@ -32,11 +32,11 @@ public:
    const AIBase*        GetAI();        ///< returns pointer to AIBase implementation of AI for this client
 
 private:
-   void Run();              ///< initializes app state, then executes main event handler/render loop (PollAndRender())
+   void                 Run();          ///< initializes app state, then executes main event handler/render loop (PollAndRender())
 
-   void HandleMessage(const Message& msg);
+   void                 HandleMessage(const Message& msg);
 
-   AIBase*              m_AI;     ///< implementation of AI logic
+   AIBase*              m_AI;           ///< implementation of AI logic
 
    std::string          m_player_name;
 

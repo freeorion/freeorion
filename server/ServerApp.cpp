@@ -152,14 +152,11 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         if (psd.m_client_type != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;
 
-        // give nameless AIs a name
+        // check that AIs have a name, as they will be sorted lated based on it
         std::string player_name = psd.m_player_name;
         if (player_name.empty()) {
-            player_name = "AI_" + boost::lexical_cast<std::string>(i);
-            Logger().errorStream() << "ServerApp::CreateAIClients creating player with no name.  Giving default name:" << player_name;
-            // as of this writing, the ServerFSM is expecting a specific set of
-            // player names, and changing an empty player name here will likely
-            // cause problems with that.  TODO: Something about this.
+            Logger().errorStream() << "ServerApp::CreateAIClients can't create a player with no name.";
+            return;
         }
 
         // TODO: add other command line args to AI client invocation as needed
@@ -229,8 +226,6 @@ void ServerApp::HandleMessage(Message msg, PlayerConnectionPtr player_connection
     case Message::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
     case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
-    case Message::LOBBY_HOST_ABORT:         m_fsm->process_event(LobbyHostAbort(msg, player_connection));   break;
-    case Message::LOBBY_EXIT:               m_fsm->process_event(LobbyNonHostExit(msg, player_connection)); break;
     case Message::SAVE_GAME:                m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
     case Message::COMBAT_TURN_ORDERS:       m_fsm->process_event(CombatTurnOrders(msg, player_connection)); break;
@@ -272,37 +267,15 @@ void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_c
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm->process_event(Disconnection(player_connection)); }
 
-namespace {
-    void CheckNumberOfHostEstablishedPlayerConnections(const ServerNetworking& networking)
-    {
-        // safety check: number of hosts
-        int num_hosts = 0;
-        for (ServerNetworking::const_established_iterator it = networking.established_begin();
-             it != networking.established_end(); ++it)
-        {
-            const PlayerConnectionPtr player_connection = *it;
-
-            if (player_connection->Host())
-                ++num_hosts;    // count hosts; there can be only one
-        }
-        if (num_hosts != 1) {
-            Logger().errorStream() << "CheckNumberOfHostEstablishedPlayerConnections: found more than one host player connection!";
-        }
-    }
-}
-
 void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data)
 {
-    CheckNumberOfHostEstablishedPlayerConnections(m_networking);
-
     // associate player IDs with player setup data.  the player connection with
-    // id == Networking::HOST_PLAYER_ID should be the human player in
+    // id == m_networking.HostPlayerID() should be the human player in
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
     std::map<int, PlayerSetupData> player_id_setup_data;
 
     const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
-    ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
 
     for (std::vector<PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
          setup_data_it != player_setup_data.end(); ++setup_data_it)
@@ -312,23 +285,31 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which player setup data is for
             // a human player, and assigning that setup data to the host player id
-            player_id_setup_data[Networking::HOST_PLAYER_ID] = psd;
+            player_id_setup_data[m_networking.HostPlayerID()] = psd;
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All AI player setup data, as determined from their client type, is
-            // assigned to player IDs of established AI players
+            // assigned to player IDs of established AI players with the appropriate names
 
-            // cycle to find next established AI player
-            while (established_player_it != m_networking.established_end()) {
+            // find player connection with same name as this player setup data
+            bool found_matched_name_connection = false;
+            const std::string& player_name = psd.m_player_name;
+            for (ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+                 established_player_it != m_networking.established_end(); ++established_player_it)
+            {
                 const PlayerConnectionPtr player_connection = *established_player_it;
-                ++established_player_it;
-                // if player is an AI, assign it to this 
-                if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER &&
+                    player_connection->PlayerName() == player_name)
+                {
+                    // assign name-matched AI client's player setup data to appropriate AI connection
                     int player_id = player_connection->PlayerID();
                     player_id_setup_data[player_id] = psd;
+                    found_matched_name_connection = true;
                     break;
                 }
             }
+            if (!found_matched_name_connection)
+                Logger().errorStream() << "ServerApp::NewSPGameInit couldn't find player setup data for player with name: " << player_name;
         } else {
             // do nothing for any other player type, until another player type is implemented
             Logger().errorStream() << "ServerApp::NewSPGameInit skipping unsupported client type in player setup data";
@@ -340,8 +321,6 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
 
 void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data)
 {
-    CheckNumberOfHostEstablishedPlayerConnections(m_networking);
-
     Logger().debugStream() << "ServerApp::NewMPGameInit lobby data players:";
 
     // associate player IDs with player setup data.
@@ -358,8 +337,12 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
                                   " starting species: " << psd.m_starting_species_name <<
                                   " client type: " << psd.m_client_type;
 
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER || psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
+            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        {
             player_id_setup_data[player_id] = psd;
+        }
     }
 
     NewGameInit(multiplayer_lobby_data, player_id_setup_data);
@@ -378,20 +361,48 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size()) {
         Logger().errorStream() << "ServerApp::NewGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.  Could be ok... so not aborting, but might crash";
     }
-    // validate some connection info
+
+    // validate some connection info / determine which players need empires created
+    std::map<int, PlayerSetupData> active_players_id_setup_data;
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
          player_connection_it != m_networking.established_end(); ++player_connection_it)
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
         Networking::ClientType client_type = player_connection->GetClientType();
-        if (client_type != Networking::CLIENT_TYPE_AI_PLAYER && client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            Logger().errorStream() << "ServerApp::NewGameInit found player connection with unsupported client type.";
+        int player_id = player_connection->PlayerID();
+
+        std::map<int, PlayerSetupData>::const_iterator player_id_setup_data_it = player_id_setup_data.find(player_id);
+        if (player_id_setup_data_it == player_id_setup_data.end()) {
+            Logger().errorStream() << "ServerApp::NewGameInit couldn't find player setup data for player with ID " << player_id;
+            return;
+        }
+        const PlayerSetupData& psd = player_id_setup_data_it->second;
+        if (psd.m_client_type != client_type) {
+            Logger().errorStream() << "ServerApp::NewGameInit found inconsistent client type between player connection (" << client_type << ") and player setup data (" << psd.m_client_type << ")";
+            return;
+        }
+        if (psd.m_player_name != player_connection->PlayerName()) {
+            Logger().errorStream() << "ServerApp::NewGameInit found inconsistent player names: " << psd.m_player_name << " and " << player_connection->PlayerName();
+            return;
         }
         if (player_connection->PlayerName().empty()) {
             Logger().errorStream() << "ServerApp::NewGameInit found player connection with empty name!";
+            return;
+        }
+
+        if (client_type == Networking::CLIENT_TYPE_AI_PLAYER || client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            active_players_id_setup_data[player_id] = player_id_setup_data_it->second;
+        } else if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+            // do nothing
+        } else {
+            Logger().errorStream() << "ServerApp::NewGameInit found player connection with unsupported client type.";
         }
     }
 
+    if (active_players_id_setup_data.empty()) {
+        Logger().errorStream() << "ServerApp::NewGameInit found no active players!";
+        return;
+    }
 
     // clear previous game player state info
     m_turn_sequence.clear();
@@ -410,14 +421,14 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     m_universe.CreateUniverse(galaxy_setup_data.m_size,             galaxy_setup_data.m_shape,
                               galaxy_setup_data.m_age,              galaxy_setup_data.m_starlane_freq,
                               galaxy_setup_data.m_planet_density,   galaxy_setup_data.m_specials_freq,
-                              player_id_setup_data);
+                              active_players_id_setup_data);
     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_current_turn = 1;
 
 
-    // record empires for each player: ID of empire and player should be the same when creating a new game.
-    for (std::map<int, PlayerSetupData>::const_iterator player_setup_it = player_id_setup_data.begin();
-         player_setup_it != player_id_setup_data.end(); ++player_setup_it)
+    // record empires for each active player: ID of empire and player should be the same when creating a new game.
+    for (std::map<int, PlayerSetupData>::const_iterator player_setup_it = active_players_id_setup_data.begin();
+         player_setup_it != active_players_id_setup_data.end(); ++player_setup_it)
     {
         m_player_empire_ids[player_setup_it->first] = player_setup_it->first;
     }
@@ -432,8 +443,6 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
         int empire_id = PlayerEmpireID(player_id);
         if (Empires().Lookup(empire_id))
             AddEmpireTurn(empire_id);
-        else
-            Logger().errorStream() << "ServerApp::LoadGameInit couldn't find empire with id " << empire_id << " to add to turn processing for player widh id " << player_id;
     }
 
 
@@ -445,15 +454,11 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     {
         const PlayerConnectionPtr player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
-
         int empire_id = PlayerEmpireID(player_id);
-        if (empire_id == ALL_EMPIRES)
-            Logger().errorStream() << "ServerApp::NewGameInit: couldn't find an empire for player with id " << player_id;
-
         player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
                                                 empire_id,
                                                 player_connection->GetClientType(),
-                                                player_connection->Host());
+                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
     }
 
 
@@ -500,8 +505,6 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                                boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
-    CheckNumberOfHostEstablishedPlayerConnections(m_networking);
-
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::map<int, int> player_id_to_save_game_data_index;
 
@@ -514,7 +517,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which entry in player_save_game_data was
             // a human player, and assigning that saved player data to the host player ID
-            player_id_to_save_game_data_index[Networking::HOST_PLAYER_ID] = i;
+            player_id_to_save_game_data_index[m_networking.HostPlayerID()] = i;
 
         } else if (psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // All saved AI player data, as determined from their client type, is
@@ -544,8 +547,6 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                                const std::vector<PlayerSaveGameData>& player_save_game_data,
                                boost::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
-    CheckNumberOfHostEstablishedPlayerConnections(m_networking);
-
     // Need to determine which data in player_save_game_data should be assigned to which established player
     std::map<int, int> player_id_to_save_game_data_index;
 
@@ -713,7 +714,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         player_info_map[player_id] = PlayerInfo(player_connection->PlayerName(),
                                                 empire_id,
                                                 player_connection->GetClientType(),
-                                                player_connection->Host());
+                                                m_networking.PlayerIsHost(player_connection->PlayerID()));
     }
 
 
@@ -1746,7 +1747,7 @@ void ServerApp::PostCombatProcessTurns()
         players[player_id] = PlayerInfo(player->PlayerName(),
                                         PlayerEmpireID(player_id),
                                         player->GetClientType(),
-                                        player->Host());
+                                        m_networking.PlayerIsHost(player_id));
     }
 
     // send new-turn updates to all players

@@ -13,7 +13,6 @@ namespace Networking {
     extern const int DISCOVERY_PORT;
     extern const int MESSAGE_PORT;
     extern const int SOCKET_LINGER_TIME;
-    extern const int HOST_PLAYER_ID;
     extern const int INVALID_PLAYER_ID;
 
     enum ClientType {

@@ -70,8 +70,6 @@ struct MessageEventBase
         (StartMPGame)                           \
         (LobbyUpdate)                           \
         (LobbyChat)                             \
-        (LobbyHostAbort)                        \
-        (LobbyNonHostExit)                      \
         (JoinGame)                              \
         (SaveGameRequest)                       \
         (TurnOrders)                            \
@@ -82,14 +80,14 @@ struct MessageEventBase
         (PlayerChat)
 
 
-#define DECLARE_MESSAGE_EVENT(r, data, name)                            \
-    struct name :                                                       \
-        sc::event<name>,                                 \
-        MessageEventBase                                                \
-    {                                                                   \
-        name(Message& message, PlayerConnectionPtr& player_connection) : \
-            MessageEventBase(message, player_connection)                \
-            {}                                                          \
+#define DECLARE_MESSAGE_EVENT(r, data, name)                                \
+    struct name :                                                           \
+        sc::event<name>,                                                    \
+        MessageEventBase                                                    \
+    {                                                                       \
+        name(Message& message, PlayerConnectionPtr& player_connection) :    \
+            MessageEventBase(message, player_connection)                    \
+            {}                                                              \
     };
 
 BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)
@@ -163,8 +161,6 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<LobbyUpdate>,
         sc::custom_reaction<LobbyChat>,
-        sc::custom_reaction<LobbyHostAbort>,
-        sc::custom_reaction<LobbyNonHostExit>,
         sc::custom_reaction<StartMPGame>
     > reactions;
 
@@ -175,8 +171,6 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
     sc::result react(const JoinGame& msg);
     sc::result react(const LobbyUpdate& msg);
     sc::result react(const LobbyChat& msg);
-    sc::result react(const LobbyHostAbort& msg);
-    sc::result react(const LobbyNonHostExit& msg);
     sc::result react(const StartMPGame& msg);
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;

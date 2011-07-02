@@ -73,11 +73,10 @@ public:
 
 protected:
     /** \name Mutators */ //@{
-    void SetPlayerID(int id);                           ///< sets the player ID of this client
-    void SetEmpireID(int id);                           ///< sets the empire ID of this client
-    void SetCurrentTurn(int turn);                      ///< sets the current game turn
-    int& EmpireIDRef();                                 ///< returns the empire ID of this client
-    int& CurrentTurnRef();                              ///< returns the current game turn
+    void SetEmpireID(int id);       ///< sets the empire ID of this client
+    void SetCurrentTurn(int turn);  ///< sets the current game turn
+    int& EmpireIDRef();             ///< returns the empire ID of this client
+    int& CurrentTurnRef();          ///< returns the current game turn
     //@}
 
     Universe                  m_universe;
@@ -85,7 +84,6 @@ protected:
     OrderSet                  m_orders;
     CombatOrderSet            m_combat_orders;
     ClientNetworking          m_networking;
-    int                       m_player_id;
     int                       m_empire_id;
     int                       m_current_turn;
     std::map<int, PlayerInfo> m_player_info;    ///< indexed by player id, contains info about all players in the game

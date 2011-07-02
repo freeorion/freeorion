@@ -56,6 +56,15 @@ public:
 
     /** Returns true iff there is at least one incoming message available. */
     bool MessageAvailable() const;
+
+    /** Returns the ID of the player on this client. */
+    int PlayerID() const;
+
+    /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
+    int HostPlayerID() const;
+
+    /** Returns whether the indicated player ID is the host. */
+    bool PlayerIsHost(int player_id) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -90,6 +99,12 @@ public:
 
     /** Disconnects the client from the server. */
     void DisconnectFromServer();
+
+    /** Sets player ID for this client. */
+    void SetPlayerID(int player_id);
+
+    /** Sets Host player ID. */
+    void SetHostPlayerID(int host_player_id);
     //@}
 
 private:
@@ -112,17 +127,20 @@ private:
     void SendMessageImpl(Message message);
     void DisconnectFromServerImpl();
 
-    boost::asio::io_service          m_io_service;
-    boost::asio::ip::tcp::socket     m_socket;
-    mutable boost::mutex             m_mutex;
-    MessageQueue                     m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
-    std::list<Message>               m_outgoing_messages;
-    bool                             m_connected;         // accessed from multiple threads
-    bool                             m_cancel_retries;
+    int                             m_player_id;
+    int                             m_host_player_id;
 
-    MessageHeaderBuffer              m_incoming_header;
-    Message                          m_incoming_message;
-    MessageHeaderBuffer              m_outgoing_header;
+    boost::asio::io_service         m_io_service;
+    boost::asio::ip::tcp::socket    m_socket;
+    mutable boost::mutex            m_mutex;
+    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
+    std::list<Message>              m_outgoing_messages;
+    bool                            m_connected;         // accessed from multiple threads
+    bool                            m_cancel_retries;
+
+    MessageHeaderBuffer             m_incoming_header;
+    Message                         m_incoming_message;
+    MessageHeaderBuffer             m_outgoing_header;
 
     enum {
         HEADER_SIZE =

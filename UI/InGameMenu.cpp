@@ -38,23 +38,23 @@ InGameMenu::InGameMenu():
     // call to InGameMenu::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(InGameMenu::MinimizedWidth(), MinSize().y));
 
-    //add children
     AttachChild(m_save_btn);
     AttachChild(m_load_btn);
     AttachChild(m_options_btn);
     AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
-    //attach signals
-    GG::Connect(m_save_btn->ClickedSignal, &InGameMenu::Save, this);
-    GG::Connect(m_load_btn->ClickedSignal, &InGameMenu::Load, this);
-    GG::Connect(m_options_btn->ClickedSignal, &InGameMenu::Options, this);
-    GG::Connect(m_exit_btn->ClickedSignal, &InGameMenu::Exit, this);
-    GG::Connect(m_done_btn->ClickedSignal, &InGameMenu::Done, this);
+    GG::Connect(m_save_btn->ClickedSignal,      &InGameMenu::Save,      this);
+    GG::Connect(m_load_btn->ClickedSignal,      &InGameMenu::Load,      this);
+    GG::Connect(m_options_btn->ClickedSignal,   &InGameMenu::Options,   this);
+    GG::Connect(m_exit_btn->ClickedSignal,      &InGameMenu::Exit,      this);
+    GG::Connect(m_done_btn->ClickedSignal,      &InGameMenu::Done,      this);
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
-        if (HumanClientApp::GetApp()->PlayerID() != Networking::HOST_PLAYER_ID)
+        // only host can save multiplayer games
+        if (!HumanClientApp::GetApp()->Networking().PlayerIsHost(HumanClientApp::GetApp()->PlayerID()))
             m_save_btn->Disable();
+        // need lobby to load a multiplayer game; menu load of a file is insufficient
         m_load_btn->Disable();
     }
 }

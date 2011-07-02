@@ -11,7 +11,9 @@
 #include "../universe/Species.h"
 #include "../util/OptionsDB.h"
 #include "../util/Serialize.h"
-
+#ifdef FREEORION_BUILD_SERVER
+#  include "../server/ServerApp.h"
+#endif
 #include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -53,9 +55,9 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::HOST_SP_GAME)
     GG_ENUM_MAP_INSERT(Message::HOST_MP_GAME)
     GG_ENUM_MAP_INSERT(Message::JOIN_GAME)
+    GG_ENUM_MAP_INSERT(Message::HOST_ID)
     GG_ENUM_MAP_INSERT(Message::LOBBY_UPDATE)
     GG_ENUM_MAP_INSERT(Message::LOBBY_CHAT)
-    GG_ENUM_MAP_INSERT(Message::LOBBY_HOST_ABORT)
     GG_ENUM_MAP_INSERT(Message::LOBBY_EXIT)
     GG_ENUM_MAP_INSERT(Message::START_MP_GAME)
     GG_ENUM_MAP_INSERT(Message::SAVE_GAME)
@@ -125,8 +127,10 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
 
     if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown) --> ";
-    else if (msg.SendingPlayer() == Networking::HOST_PLAYER_ID)
+#ifdef FREEORION_BUILD_SERVER
+    else if (msg.SendingPlayer() == ServerApp::GetApp()->Networking().HostPlayerID())
         os << "(host) --> ";
+#endif
     else
         os << " --> ";
 
@@ -134,8 +138,10 @@ std::ostream& operator<<(std::ostream& os, const Message& msg)
 
     if (msg.ReceivingPlayer() == Networking::INVALID_PLAYER_ID)
         os << "(server/unknown)";
-    else if (msg.ReceivingPlayer() == Networking::HOST_PLAYER_ID)
+#ifdef FREEORION_BUILD_SERVER
+    else if (msg.SendingPlayer() == ServerApp::GetApp()->Networking().HostPlayerID())
         os << "(host)";
+#endif
 
     os << " \"" << msg.Text() << "\"\n";
 
@@ -277,6 +283,12 @@ Message JoinGameMessage(const std::string& player_name, Networking::ClientType c
            << BOOST_SERIALIZATION_NVP(client_type);
     }
     return Message(Message::JOIN_GAME, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
+}
+
+Message HostIDMessage(int host_player_id)
+{
+    return Message(Message::HOST_ID, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID,
+                   boost::lexical_cast<std::string>(host_player_id));
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
@@ -588,26 +600,6 @@ Message LobbyChatMessage(int sender, int receiver, const std::string& data)
 Message ServerLobbyChatMessage(int sender, int receiver, const std::string& data)
 {
     return Message(Message::LOBBY_CHAT, sender, receiver, data);
-}
-
-Message LobbyHostAbortMessage(int sender)
-{
-    return Message(Message::LOBBY_HOST_ABORT, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
-}
-
-Message ServerLobbyHostAbortMessage(int receiver)
-{
-    return Message(Message::LOBBY_HOST_ABORT, Networking::INVALID_PLAYER_ID, receiver, DUMMY_EMPTY_MESSAGE);
-}
-
-Message LobbyExitMessage(int sender)
-{
-    return Message(Message::LOBBY_EXIT, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE);
-}
-
-Message ServerLobbyExitMessage(int sender, int receiver)
-{
-    return Message(Message::LOBBY_EXIT, sender, receiver, DUMMY_EMPTY_MESSAGE);
 }
 
 Message StartMPGameMessage(int player_id)

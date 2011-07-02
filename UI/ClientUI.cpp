@@ -7,6 +7,7 @@
 #include "MapWnd.h"
 #include "ChatWnd.h"
 #include "PlayerListWnd.h"
+#include "MultiplayerLobbyWnd.h"
 #include "Sound.h"
 #include "../util/AppInterface.h"
 
@@ -463,14 +464,16 @@ ClientUI::ClientUI() :
     m_message_wnd(0),
     m_player_list_wnd(0),
     m_intro_screen(0),
+    m_multiplayer_lobby_wnd(0),
     m_combat_wnd(0)
 {
     s_the_UI = this;
 
-    m_message_wnd =         new MessageWnd(GG::X0,      GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,  PANEL_WIDTH,    PANEL_HEIGHT);
-    m_player_list_wnd =     new PlayerListWnd(GG::X0,   m_message_wnd->UpperLeft().y - PANEL_HEIGHT,    PANEL_WIDTH,    PANEL_HEIGHT);
-    m_map_wnd =             new MapWnd();
-    m_intro_screen =        new IntroScreen();
+    m_message_wnd =             new MessageWnd(GG::X0,      GG::GUI::GetGUI()->AppHeight() - PANEL_HEIGHT,  PANEL_WIDTH,    PANEL_HEIGHT);
+    m_player_list_wnd =         new PlayerListWnd(GG::X0,   m_message_wnd->UpperLeft().y - PANEL_HEIGHT,    PANEL_WIDTH,    PANEL_HEIGHT);
+    m_map_wnd =                 new MapWnd();
+    m_intro_screen =            new IntroScreen();
+    m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
 
     if (GetOptionsDB().Get<bool>("tech-demo")) {
         if (HumanClientApp* app = HumanClientApp::GetApp()) {
@@ -485,6 +488,7 @@ ClientUI::~ClientUI()
     delete m_message_wnd;
     delete m_player_list_wnd;
     delete m_intro_screen;
+    delete m_multiplayer_lobby_wnd;
     delete m_combat_wnd;
     s_the_UI = 0;
 }
@@ -500,6 +504,9 @@ PlayerListWnd* ClientUI::GetPlayerListWnd()
 
 IntroScreen* ClientUI::GetIntroScreen()
 { return m_intro_screen; }
+
+MultiPlayerLobbyWnd* ClientUI::GetMultiPlayerLobbyWnd()
+{ return m_multiplayer_lobby_wnd; }
 
 CombatWnd* ClientUI::GetCombatWnd()
 { return m_combat_wnd; }

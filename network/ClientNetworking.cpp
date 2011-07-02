@@ -123,6 +123,8 @@ namespace {
 // ClientNetworking
 ////////////////////////////////////////////////
 ClientNetworking::ClientNetworking() :
+    m_player_id(Networking::INVALID_PLAYER_ID),
+    m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_io_service(),
     m_socket(m_io_service),
     m_incoming_messages(m_mutex),
@@ -138,6 +140,23 @@ bool ClientNetworking::Connected() const
 
 bool ClientNetworking::MessageAvailable() const
 { return !m_incoming_messages.Empty(); }
+
+int ClientNetworking::PlayerID() const
+{
+    return m_player_id;
+}
+
+int ClientNetworking::HostPlayerID() const
+{
+    return m_host_player_id;
+}
+
+bool ClientNetworking::PlayerIsHost(int player_id) const
+{
+    if (player_id == Networking::INVALID_PLAYER_ID)
+        return false;
+    return player_id == m_host_player_id;
+}
 
 ClientNetworking::ServerList ClientNetworking::DiscoverLANServers()
 {
@@ -213,6 +232,16 @@ void ClientNetworking::DisconnectFromServer()
     if (Connected())
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
     Sleep(1000); // HACK! wait a bit for the disconnect to occur
+}
+
+void ClientNetworking::SetPlayerID(int player_id)
+{
+    m_player_id = player_id;
+}
+
+void ClientNetworking::SetHostPlayerID(int host_player_id)
+{
+    m_host_player_id = host_player_id;
 }
 
 void ClientNetworking::SendMessage(Message message)

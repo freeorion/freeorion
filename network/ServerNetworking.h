@@ -77,8 +77,14 @@ public:
         PlayerConnection object. */
     const_established_iterator established_end() const;
 
-    /** Returns the highest player ID of all the established players. */
-    int GreatestPlayerID() const;
+    /** Returns the ID number for new player, which will be larger than the ID of all the established players. */
+    int NewPlayerID() const;
+
+    /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
+    int HostPlayerID() const;
+
+    /** Returns whether the indicated player ID is the host. */
+    bool PlayerIsHost(int player_id) const;
     //@}
 
     /** \name Mutators */ //@{
@@ -118,6 +124,9 @@ public:
     /** Dequeues and executes the next event in the queue.  Results in a noop
         if the queue is empty. */
     void HandleNextEvent();
+
+    /** Sets Host player ID. */
+    void SetHostPlayerID(int host_player_id);
     //@}
 
 private:
@@ -128,14 +137,16 @@ private:
     void DisconnectImpl(PlayerConnectionPtr player_connection);
     void EnqueueEvent(const NullaryFn& fn);
 
-    DiscoveryServer*               m_discovery_server;
-    boost::asio::ip::tcp::acceptor m_player_connection_acceptor;
-    PlayerConnections              m_player_connections;
-    std::queue<NullaryFn>          m_event_queue;
+    int                             m_host_player_id;
 
-    MessageAndConnectionFn m_nonplayer_message_callback;
-    MessageAndConnectionFn m_player_message_callback;
-    ConnectionFn           m_disconnected_callback;
+    DiscoveryServer*                m_discovery_server;
+    boost::asio::ip::tcp::acceptor  m_player_connection_acceptor;
+    PlayerConnections               m_player_connections;
+    std::queue<NullaryFn>           m_event_queue;
+
+    MessageAndConnectionFn          m_nonplayer_message_callback;
+    MessageAndConnectionFn          m_player_message_callback;
+    ConnectionFn                    m_disconnected_callback;
 };
 
 /** Encapsulates the connection to a single player.  This object should have
@@ -166,17 +177,13 @@ public:
         any. */
     const std::string& PlayerName() const;
 
-    /** Returns true iff the player associated with this connection, if any,
-        is the host of the current game. */
-    bool Host() const;
-
     /** Returns the type of client associated with this connection (AI client,
       * human client, ...) */
     Networking::ClientType GetClientType() const;
     //@}
 
     /** \name Mutators */ //@{
-    /** Starts the connection reading incoming messages on it socket. */
+    /** Starts the connection reading incoming messages on its socket. */
     void Start();
 
     /** Sends \a message to out on the connection. */
@@ -184,7 +191,10 @@ public:
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
-    void EstablishPlayer(int id, const std::string& player_name, bool host, Networking::ClientType client_type);
+    void EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type);
+
+    /** Sets this connection's client type. */
+    void SetClientType(Networking::ClientType client_type);
     //@}
 
     mutable boost::signal<void (const NullaryFn&)> EventSignal;
@@ -214,7 +224,6 @@ private:
     Message                         m_incoming_message;
     int                             m_ID;
     std::string                     m_player_name;
-    bool                            m_host;
     bool                            m_new_connection;
     Networking::ClientType          m_client_type;
 
