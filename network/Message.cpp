@@ -249,14 +249,26 @@ void HeaderToBuffer(const Message& message, int* header_buf)
 ////////////////////////////////////////////////
 // Message named ctors
 ////////////////////////////////////////////////
-Message ErrorMessage(const std::string& problem)
+Message ErrorMessage(const std::string& problem, bool fatal/* = true*/)
 {
-    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, problem);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(problem)
+           << BOOST_SERIALIZATION_NVP(fatal);
+    }
+    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message ErrorMessage(int player_id, const std::string& problem)
+Message ErrorMessage(int player_id, const std::string& problem, bool fatal/* = true*/)
 {
-    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, player_id, problem);
+    std::ostringstream os;
+    {
+        FREEORION_OARCHIVE_TYPE oa(os);
+        oa << BOOST_SERIALIZATION_NVP(problem)
+           << BOOST_SERIALIZATION_NVP(fatal);
+    }
+    return Message(Message::ERROR, Networking::INVALID_PLAYER_ID, player_id, os.str());
 }
 
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data)
@@ -650,6 +662,22 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
+void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal)
+{
+    try {
+        std::istringstream is(msg.Text());
+        FREEORION_IARCHIVE_TYPE ia(is);
+        ia >> BOOST_SERIALIZATION_NVP(problem)
+           >> BOOST_SERIALIZATION_NVP(fatal);
+    } catch (const std::exception& err) {
+        Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& problem, bool& fatal) failed!  "
+                               << "Message:\n"
+                               << msg.Text() << "\n"
+                               << "Error: " << err.what();
+        throw err;
+    }
+}
+
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data)
 {
     try {
@@ -727,7 +755,7 @@ void ExtractMessageData(const Message& msg, std::string& player_name, Networking
            >> BOOST_SERIALIZATION_NVP(client_type);
     } catch (const std::exception& err) {
         Logger().errorStream() << "ExtractMessageData(const Message& msg, std::string& player_name, "
-                               << "Networking::ClientType client_type)) failed!  Message:\n"
+                               << "Networking::ClientType client_type) failed!  Message:\n"
                                << msg.Text() << "\n"
                                << "Error: " << err.what();
         throw err;

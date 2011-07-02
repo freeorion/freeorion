@@ -181,8 +181,8 @@ std::ostream& operator<<(std::ostream& os, const Message& msg);
 ////////////////////////////////////////////////
 
 /** creates an ERROR message*/
-Message ErrorMessage(const std::string& problem);
-Message ErrorMessage(int player_id, const std::string& problem);
+Message ErrorMessage(const std::string& problem, bool fatal = true);
+Message ErrorMessage(int player_id, const std::string& problem, bool fatal = true);
 
 /** creates a HOST_SP_GAME message*/
 Message HostSPGameMessage(const SinglePlayerSetupData& setup_data);
@@ -340,6 +340,8 @@ Message CombatTurnOrdersMessage(int sender, const CombatOrderSet& combat_orders)
 ////////////////////////////////////////////////
 // Message data extractors
 ////////////////////////////////////////////////
+
+void ExtractMessageData(const Message& msg, std::string& problem, bool& fatal);
 
 void ExtractMessageData(const Message& msg, MultiplayerLobbyData& lobby_data);
 

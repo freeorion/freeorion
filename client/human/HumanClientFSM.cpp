@@ -132,11 +132,19 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg)
 boost::statechart::result WaitingForSPHostAck::react(const Error& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForSPHostAck.Error";
-    const Message& message = msg.m_message;
-    ClientUI::MessageBox(UserString(message.Text()), true);
-    Logger().errorStream() << "WaitingForSPHostAck::react(const Error& msg) error: " << message.Text();
-    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
-    return transit<IntroMenu>();
+    std::string problem;
+    bool fatal;
+    ExtractMessageData(msg.m_message, problem, fatal);
+
+    Logger().errorStream() << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
+    ClientUI::MessageBox(UserString(problem), true);
+
+    if (fatal) {
+        //Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        return transit<IntroMenu>();
+    } else {
+        return discard_event();
+    }
 }
 
 
@@ -284,11 +292,19 @@ boost::statechart::result MPLobby::react(const GameStart& msg)
 boost::statechart::result MPLobby::react(const Error& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) MPLobby.Error";
-    const Message& message = msg.m_message;
-    ClientUI::MessageBox(UserString(message.Text()), true);
-    Logger().errorStream() << "MPLobby::react(const Error& msg) error: " << message.Text();
-    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
-    return discard_event();
+    std::string problem;
+    bool fatal;
+    ExtractMessageData(msg.m_message, problem, fatal);
+
+    Logger().errorStream() << "MPLobby::react(const Error& msg) error: " << problem;
+    ClientUI::MessageBox(UserString(problem), true);
+
+    if (fatal) {
+        //Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        return transit<IntroMenu>();
+    } else {
+        return discard_event();
+    }
 }
 
 
@@ -430,11 +446,19 @@ boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg)
 boost::statechart::result PlayingGame::react(const Error& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Error";
-    const Message& message = msg.m_message;
-    ClientUI::MessageBox(UserString(message.Text()), true);
-    Logger().errorStream() << "PlayingGame::react(const Error& msg) error: " << message.Text();
-    // TODO: add m_fatal and Fatal() members to Error message.  use to decide whether to transit to IntroMenu if Fatal.
-    return transit<IntroMenu>();
+    std::string problem;
+    bool fatal;
+    ExtractMessageData(msg.m_message, problem, fatal);
+
+    Logger().errorStream() << "PlayingGame::react(const Error& msg) error: " << problem;
+    ClientUI::MessageBox(UserString(problem), true);
+
+    if (fatal) {
+        Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        return transit<IntroMenu>();
+    } else {
+        return discard_event();
+    }
 }
 
 

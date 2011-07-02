@@ -237,7 +237,7 @@ sc::result Idle::react(const HostSPGame& msg)
         host_player_name = GetHostNameFromSinglePlayerSetupData(*single_player_setup_data);
     } catch (const std::exception& e) {
         PlayerConnectionPtr& player_connection = msg.m_player_connection;
-        player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+        player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
         return discard_event();
     }
     // validate host name (was found and wasn't empty)
@@ -490,7 +490,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
             PlayerConnectionPtr& player_connection = msg.m_player_connection;
-            player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+            player_connection->SendMessage(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", false));
             // revert to old save file
             m_lobby_data->m_save_file_index = old_file_index;
         }
@@ -560,7 +560,7 @@ sc::result MPLobby::react(const StartMPGame& msg)
                          Empires(),
                          GetSpeciesManager());
             } catch (const std::exception&) {
-                SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
                 return discard_event();
             }
 
@@ -642,7 +642,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
             LoadPlayerSaveGameData(m_single_player_setup_data->m_filename,
                                    player_save_game_data);
         } catch (const std::exception& e) {
-            SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+            SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
             post_event(LoadSaveFileFailed());
             return;
         }
@@ -746,7 +746,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
                          Empires(),
                          GetSpeciesManager());
             } catch (const std::exception&) {
-                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
                 return transit<Idle>();
             }
 
@@ -776,7 +776,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
                          Empires(),
                          GetSpeciesManager());
             } catch (const std::exception&) {
-                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE"));
+                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
                 return transit<Idle>();
             }
 
@@ -972,7 +972,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
     Empire* empire = server.GetPlayerEmpire(player_id);
     if (!empire) {
         Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"));
+        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS", false));
         return discard_event();
     }
 
@@ -986,7 +986,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
             Logger().errorStream() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
                                    << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
                                    << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
-            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE"));
+            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), "ORDERS_FOR_WRONG_EMPIRE", false));
             return discard_event();
         }
     }
@@ -1054,7 +1054,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
         return discard_event();
         Logger().errorStream() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
                                << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
-        player_connection->SendMessage(ErrorMessage("NON_HOST_SAVE_REQUEST_IGNORED"));
+        player_connection->SendMessage(ErrorMessage("NON_HOST_SAVE_REQUEST_IGNORED", false));
         return discard_event();
     }
 
@@ -1108,8 +1108,9 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
         ExtractMessageData(message, received_orders, ui_data_available, *ui_data, save_state_string_available, save_state_string);
     } catch (const std::exception& e) {
         Logger().debugStream() << "WaitingForSaveData::react(const ClientSaveData& msg) received invalid save data from player " << player_connection->PlayerName();
-        player_connection->SendMessage(ErrorMessage("INVALID_CLIENT_SAVE_DATA_RECEIVED"));
-        // use whatever portion of message data was extracted, and leave the rest as defaults.
+        player_connection->SendMessage(ErrorMessage("INVALID_CLIENT_SAVE_DATA_RECEIVED", false));
+
+        // TODO: use whatever portion of message data was extracted, and leave the rest as defaults.
     }
 
     // store recieved orders or already existing orders.  I'm not sure what's
@@ -1163,7 +1164,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg)
                      Empires(),
                      GetSpeciesManager());
         } catch (const std::exception&) {
-            SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE"));
+            SendMessageToAllPlayers(ErrorMessage("UNABLE_TO_WRITE_SAVE_FILE", false));
         }
 
         context<WaitingForTurnEnd>().m_save_filename = "";
