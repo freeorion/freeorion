@@ -1588,6 +1588,10 @@ void MapWnd::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_ke
 
 void MapWnd::EnableOrderIssuing(bool enable/* = true*/)
 {
+    // disallow order enabling if there is no empire for this client
+    if (HumanClientApp::GetApp()->EmpireID() == ALL_EMPIRES)
+        enable = false;
+
     m_turn_update->Disable(!enable);
     m_side_panel->EnableOrderIssuing(enable);
     m_production_wnd->EnableOrderIssuing(enable);

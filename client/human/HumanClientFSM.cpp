@@ -286,6 +286,7 @@ boost::statechart::result MPLobby::react(const GameStart& msg)
     Client().m_ui->GetMapWnd()->Sanitize();
     Client().m_ui->GetMessageWnd()->Show();
     Client().m_ui->GetPlayerListWnd()->Show();
+
     return transit<PlayingGame>();
 }
 
@@ -306,7 +307,6 @@ boost::statechart::result MPLobby::react(const Error& msg)
         return discard_event();
     }
 }
-
 
 
 ////////////////////////////////////////////////////////////
@@ -609,9 +609,12 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
     Client().m_ui->GetPlayerListWnd()->Refresh();
-    Client().m_ui->GetMapWnd()->EnableOrderIssuing();
+    Client().m_ui->GetMapWnd()->EnableOrderIssuing(Client().EmpireID() != ALL_EMPIRES);
 
-    if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
+    if (Client().EmpireID() == ALL_EMPIRES)
+        post_event(TurnEnded());
+
+    else if (GetOptionsDB().Get<bool>("auto-advance-first-turn")) {
         static bool once = true;
         if (once) {
             post_event(AutoAdvanceFirstTurn());
