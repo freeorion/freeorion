@@ -65,9 +65,10 @@ namespace {
         queue_index(queue_index_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-        double total_cost;
-        int minimum_turns;
-        boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(build.item);
+        double total_cost(1.0);
+        int minimum_turns(1.0);
+        if (empire)
+            boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(build.item);
         double per_turn_cost = total_cost / std::max(1, minimum_turns);
         double progress = empire->ProductionStatus(queue_index);
         if (progress == -1.0)
@@ -359,6 +360,8 @@ void ProductionWnd::ProductionQueueChangedSlot()
 void ProductionWnd::UpdateQueue()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
     m_queue_lb->Clear();
@@ -377,6 +380,8 @@ void ProductionWnd::UpdateQueue()
 void ProductionWnd::UpdateInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     const ProductionQueue& queue = empire->GetProductionQueue();
     double PPs = empire->ProductionPoints();
     double total_queue_cost = queue.TotalPPsSpent();

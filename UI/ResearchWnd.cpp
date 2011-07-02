@@ -65,7 +65,9 @@ namespace {
         // this space intentionally left blank to line up with ProductionWnd's QueueRow implementation
 
         double per_turn_cost = tech->PerTurnCost();
-        double progress = empire->ResearchStatus(tech->Name());
+        double progress = 0.0;
+        if (empire)
+            progress = empire->ResearchStatus(tech->Name());
         if (progress == -1.0)
             progress = 0.0;
 
@@ -285,6 +287,9 @@ void ResearchWnd::ResearchQueueChangedSlot()
 void ResearchWnd::UpdateQueue()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
+
     const ResearchQueue& queue = empire->GetResearchQueue();
     std::size_t first_visible_queue_row = std::distance(m_queue_lb->begin(), m_queue_lb->FirstRowShown());
     m_queue_lb->Clear();
@@ -303,6 +308,8 @@ void ResearchWnd::UpdateQueue()
 void ResearchWnd::UpdateInfoPanel()
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     double RPs = empire->ResourceProduction(RE_RESEARCH);
     double total_queue_cost = queue.TotalRPsSpent();
@@ -320,6 +327,8 @@ void ResearchWnd::UpdateInfoPanel()
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     if (!queue.InQueue(tech)) {
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
@@ -330,6 +339,8 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    if (!empire)
+        return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     const int id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();

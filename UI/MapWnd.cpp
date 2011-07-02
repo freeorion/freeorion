@@ -1635,10 +1635,6 @@ void MapWnd::InitTurn()
     //// END DEBUG
 
     Empire* this_client_empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (!this_client_empire) {
-        Logger().errorStream() << "MapWnd::InitTurn couldn't get an empire!";
-        return;
-    }
 
 
     // update effect accounting and meter estimates
@@ -1654,8 +1650,12 @@ void MapWnd::InitTurn()
 
 
     boost::timer timer;
-    const std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
-    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(this_client_empire->EmpireID());
+
+    const std::set<int>& this_client_known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
+    //std::map<int, std::set<int> > this_client_known_starlanes;
+    //if (this_client_empire)
+        //std::map<int, std::set<int> > this_client_known_starlanes = this_client_empire->KnownStarlanes();
 
     // get ids of not-destroyed systems known to this empire.
     std::set<int> this_client_known_systems;
@@ -1698,8 +1698,7 @@ void MapWnd::InitTurn()
     // are there any sitreps to show?
     m_sitrep_panel->Update();
 
-    //empire = manager.Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (this_client_empire->NumSitRepEntries() > 0)
+    if (this_client_empire && this_client_empire->NumSitRepEntries() > 0)
         ShowSitRep();
 
 
@@ -1715,14 +1714,15 @@ void MapWnd::InitTurn()
 
     // empire is recreated each turn based on turn update from server, so connections of signals emitted from
     // the empire must be remade each turn (unlike connections to signals from the sidepanel)
-    GG::Connect(this_client_empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
-    GG::Connect(this_client_empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
-    GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
-    GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
-    GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
-    GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
-    GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
-
+    if (this_client_empire) {
+        GG::Connect(this_client_empire->GetResourcePool(RE_FOOD)->ChangedSignal,            &MapWnd::RefreshFoodResourceIndicator,      this, 0);
+        GG::Connect(this_client_empire->GetResourcePool(RE_MINERALS)->ChangedSignal,        &MapWnd::RefreshMineralsResourceIndicator,  this, 0);
+        GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this, 0);
+        GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this, 0);
+        GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this, 0);
+        GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this, 1);
+        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &SidePanel::Update);
+    }
 
     m_toolbar->Show();
     m_FPS->Show();
@@ -1751,7 +1751,7 @@ void MapWnd::InitTurn()
     Logger().debugStream() << "MapWnd::InitTurn m_production_wnd refresh time: " << (timer.elapsed() * 1000.0);
 
 
-    if (turn_number == 1) {
+    if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
         if (const UniverseObject* obj = objects.Object(this_client_empire->CapitolID())) {
             SelectSystem(obj->SystemID());
@@ -1760,6 +1760,8 @@ void MapWnd::InitTurn()
 
         // default the tech tree to be centred on something interesting
         m_research_wnd->Reset();
+    } else if (turn_number == 1 && !this_client_empire) {
+        CenterOnMapCoord(0.0, 0.0);
     }
 
 

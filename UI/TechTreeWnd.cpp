@@ -678,10 +678,10 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
 {
     SetChildClippingMode(ClipToClient);
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire->TechResearched(m_tech->Name())) {
+    if (empire && empire->TechResearched(m_tech->Name())) {
         SetColor(ClientUI::KnownTechFillColor());
         m_border_color = ClientUI::KnownTechTextAndBorderColor();
-    } else if (empire->ResearchableTech(m_tech->Name())) {
+    } else if (empire && empire->ResearchableTech(m_tech->Name())) {
         SetColor(ClientUI::ResearchableTechFillColor());
         m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
     } else {
@@ -2356,7 +2356,9 @@ void TechTreeWnd::TechDoubleClickedSlot(const Tech* tech)
 {
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     std::string name = tech->Name();
-    const TechStatus tech_status = empire->GetTechStatus(name);
+    TechStatus tech_status = TS_UNRESEARCHABLE;
+    if (empire)
+        tech_status = empire->GetTechStatus(name);
 
     // if tech can be researched already, just add it
     if (tech_status == TS_RESEARCHABLE) {
