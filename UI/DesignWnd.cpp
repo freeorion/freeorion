@@ -300,10 +300,7 @@ void PartsListBox::Populate() {
     const GG::X TOTAL_WIDTH = ClientWidth() - ClientUI::ScrollWidth();
     const int NUM_COLUMNS = std::max(1, Value(TOTAL_WIDTH / (SLOT_CONTROL_WIDTH + GG::X(PAD))));
 
-    const int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = Empires().Lookup(empire_id);
-    if (!empire)
-        return;
+    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());  // may be 0
     const PartTypeManager& manager = GetPartTypeManager();
 
     int cur_col = NUM_COLUMNS;
@@ -331,7 +328,7 @@ void PartsListBox::Populate() {
         if (!can_mount_in_shown_slot_type)
             continue;
 
-        bool part_available = empire->ShipPartAvailable(part->Name());
+        bool part_available = empire ? empire->ShipPartAvailable(part->Name()) : true;
         if (!(part_available && m_availabilities_shown.first) && !(!part_available && m_availabilities_shown.second))
             continue;   // part is available but available parts shouldn't be shown, or part isn't available and not available parts shouldn't be shown
 
@@ -1074,16 +1071,13 @@ void BasesListBox::PopulateWithCompletedDesigns() {
                 row->Resize(row_size);
             }
         }
-    } else {
+    } else if (showing_available) {
         // add all known / existing designs
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             int design_id = it->first;
-            bool available = empire->ShipDesignAvailable(design_id);
-            if ((available && showing_available) || (!available && showing_unavailable)) {
-                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-                Insert(row);
-                row->Resize(row_size);
-            }
+            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+            Insert(row);
+            row->Resize(row_size);
         }
     }
 }
