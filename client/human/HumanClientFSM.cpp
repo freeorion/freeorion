@@ -168,6 +168,24 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg)
     return transit<MPLobby>();
 }
 
+boost::statechart::result WaitingForMPHostAck::react(const Error& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPHostAck.Error";
+    std::string problem;
+    bool fatal;
+    ExtractMessageData(msg.m_message, problem, fatal);
+
+    Logger().errorStream() << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
+    ClientUI::MessageBox(UserString(problem), true);
+
+    if (fatal) {
+        //Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        return transit<IntroMenu>();
+    } else {
+        return discard_event();
+    }
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForMPJoinAck
@@ -186,6 +204,24 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg)
     Client().m_networking.SetPlayerID(msg.m_message.ReceivingPlayer());
 
     return transit<MPLobby>();
+}
+
+boost::statechart::result WaitingForMPJoinAck::react(const Error& msg)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) WaitingForMPJoinAck.Error";
+    std::string problem;
+    bool fatal;
+    ExtractMessageData(msg.m_message, problem, fatal);
+
+    Logger().errorStream() << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
+    ClientUI::MessageBox(UserString(problem), true);
+
+    if (fatal) {
+        //Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+        return transit<IntroMenu>();
+    } else {
+        return discard_event();
+    }
 }
 
 
@@ -361,8 +397,8 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg)
 boost::statechart::result PlayingGame::react(const Disconnection& d)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(HumanClientFSM) PlayingGame.Disconnection";
+    Client().EndGame(true);
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
-    Client().EndGame();
     return transit<IntroMenu>();
 }
 
@@ -418,6 +454,10 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
     std::string reason_message;
     bool error = false;
     switch (reason) {
+    case Message::LOCAL_CLIENT_DISCONNECT:
+        Client().EndGame(true);
+        reason_message = UserString("SERVER_LOST");
+        break;
     case Message::HOST_DISCONNECTED:
     case Message::NONHOST_DISCONNECTED:
         Client().EndGame(true);
@@ -430,7 +470,6 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
         break;
     }
     ClientUI::MessageBox(reason_message, error);
-    ClientUI::MessageBox(UserString("SERVER_GAME_END"));
     return transit<IntroMenu>();
 }
 
@@ -611,6 +650,12 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     Client().m_ui->GetPlayerListWnd()->Refresh();
     Client().m_ui->GetMapWnd()->EnableOrderIssuing(Client().EmpireID() != ALL_EMPIRES);
 
+    // if not controlling an empire, the player (observer) can't do anything
+    // other than waiting for more turn updates.  Turn updates received when not
+    // in WaitingForTurnData state will be ignored, and the Turn button is
+    // disabled.  So, posting TurnEnded here has the effect of automatically
+    // keeping observers in the WaitingForTurnData state so they can receive
+    // updates from the server.
     if (Client().EmpireID() == ALL_EMPIRES)
         post_event(TurnEnded());
 

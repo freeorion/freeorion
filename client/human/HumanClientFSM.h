@@ -182,13 +182,15 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
     typedef boost::statechart::simple_state<WaitingForMPHostAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<HostMPGame>
+        boost::statechart::custom_reaction<HostMPGame>,
+        boost::statechart::custom_reaction<Error>
     > reactions;
 
     WaitingForMPHostAck();
     ~WaitingForMPHostAck();
 
     boost::statechart::result react(const HostMPGame& a);
+    boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
 };
@@ -202,13 +204,15 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
     typedef boost::statechart::simple_state<WaitingForMPJoinAck, HumanClientFSM> Base;
 
     typedef boost::mpl::list<
-        boost::statechart::custom_reaction<JoinGame>
+        boost::statechart::custom_reaction<JoinGame>,
+        boost::statechart::custom_reaction<Error>
     > reactions;
 
     WaitingForMPJoinAck();
     ~WaitingForMPJoinAck();
 
     boost::statechart::result react(const JoinGame& a);
+    boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
 };
