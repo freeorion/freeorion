@@ -122,7 +122,7 @@ ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_sha
 {
     if (HumanClientApp::GetApp()->GLVersion() >= 2.0f) 
         return new ShaderProgram(vertex_shader,fragment_shader);
-    
+
     return 0;
 }
 

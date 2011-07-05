@@ -94,6 +94,9 @@ private:
     void            EndGame(bool suppress_FSM_reset);
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
+    void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
+
+
     HumanClientFSM*             m_fsm;
     Process                     m_server_process;       ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
     boost::shared_ptr<ClientUI> m_ui;                   ///< the one and only ClientUI object!

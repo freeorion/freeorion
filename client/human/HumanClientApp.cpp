@@ -246,8 +246,8 @@ HumanClientApp::HumanClientApp(Ogre::Root* root,
 
 HumanClientApp::~HumanClientApp()
 {
-    if (Networking().Connected())
-        Networking().DisconnectFromServer();
+    if (m_networking.Connected())
+        m_networking.DisconnectFromServer();
     m_server_process.RequestTermination();
     delete m_fsm;
 }
@@ -312,7 +312,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
     bool failed = false;
     if (quickstart || galaxy_wnd.EndedWithOk()) {
         unsigned int start_time = Ticks();
-        while (!Networking().ConnectToLocalHostServer()) {
+        while (!m_networking.ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 failed = true;
@@ -389,7 +389,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                 setup_data.m_players.push_back(ai_setup_data);
             }
 
-            Networking().SendMessage(HostSPGameMessage(setup_data));
+            m_networking.SendMessage(HostSPGameMessage(setup_data));
             m_fsm->process_event(HostSPGameRequested(WAITING_FOR_NEW_GAME));
         }
     } else {
@@ -404,7 +404,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
 
 void HumanClientApp::MultiPlayerGame()
 {
-    if (Networking().Connected()) {
+    if (m_networking.Connected()) {
         Logger().errorStream() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
     }
@@ -427,7 +427,7 @@ void HumanClientApp::MultiPlayerGame()
             server_name = GetOptionsDB().Get<std::string>("external-server-address");
         }
         unsigned int start_time = Ticks();
-        while (!Networking().ConnectToServer(server_name)) {
+        while (!m_networking.ConnectToServer(server_name)) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
@@ -440,10 +440,10 @@ void HumanClientApp::MultiPlayerGame()
 
     if (!failed) {
         if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-            Networking().SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
+            m_networking.SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
             m_fsm->process_event(HostMPGameRequested());
         } else {
-            Networking().SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
+            m_networking.SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
             m_fsm->process_event(JoinMPGameRequested());
         }
         m_connected = true;
@@ -463,7 +463,7 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 void HumanClientApp::SaveGame(const std::string& filename)
 {
     Message response_msg;
-    Networking().SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
+    m_networking.SendSynchronousMessage(HostSaveGameMessage(PlayerID(), filename), response_msg);
     if (response_msg.Type() != Message::SAVE_GAME) {
         Logger().errorStream() << "HumanClientApp::SaveGame sent synchronous HostSaveGameMessage, but received back message of wrong type: " << response_msg.Type();
         throw std::runtime_error("HumanClientApp::SaveGame synchronous message received invalid response message type");
@@ -515,7 +515,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         }
 
         unsigned int start_time = Ticks();
-        while (!Networking().ConnectToLocalHostServer()) {
+        while (!m_networking.ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 KillServer();
@@ -537,7 +537,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/)
         // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
 
 
-        Networking().SendMessage(HostSPGameMessage(setup_data));
+        m_networking.SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested(WAITING_FOR_LOADED_GAME));
     }
 }
@@ -698,16 +698,12 @@ void HumanClientApp::StartTurn()
 void HumanClientApp::HandleSystemEvents()
 {
     OgreGUI::HandleSystemEvents();
-    if (m_connected && !Networking().Connected()) {
+    if (m_connected && !m_networking.Connected()) {
         m_connected = false;
-        // Note that Disconnections are handled with a post_event instead of a process_event.  This is because a
-        // Disconnection inherently precipitates a transition out of any state S that handles it, and if another event
-        // that also causes a transition out of S is currently active (e.g. MPLobby), a double-destruction of S will
-        // occur.
-        m_fsm->post_event(Disconnection());
-    } else if (Networking().MessageAvailable()) {
+        DisconnectedFromServer();
+    } else if (m_networking.MessageAvailable()) {
         Message msg;
-        Networking().GetMessage(msg);
+        m_networking.GetMessage(msg);
         HandleMessage(msg);
     }
 }
@@ -756,7 +752,7 @@ void HumanClientApp::HandleSaveGameDataRequest()
         std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << MessageTypeStr(Message::SAVE_GAME) << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
-    Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+    m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
 }
 
 void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h)
@@ -868,10 +864,8 @@ void HumanClientApp::Autosave()
 void HumanClientApp::EndGame(bool suppress_FSM_reset)
 {
     Logger().debugStream() << "HumanClientApp::EndGame";
-    if (!suppress_FSM_reset)
-        m_fsm->process_event(ResetToIntroMenu());
     m_game_started = false;
-    Networking().DisconnectFromServer();
+    m_networking.DisconnectFromServer();
     m_server_process.RequestTermination();
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -882,6 +876,9 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset)
     m_empires.Clear();
     m_orders.Reset();
     m_combat_orders.clear();
+
+    if (!suppress_FSM_reset)
+        m_fsm->process_event(ResetToIntroMenu());
 }
 
 void HumanClientApp::UpdateFPSLimit()
@@ -894,6 +891,12 @@ void HumanClientApp::UpdateFPSLimit()
         SetMaxFPS(0.0); // disable fps limit
         Logger().debugStream() << "Disabled FPS limit";
     }
+}
+
+void HumanClientApp::DisconnectedFromServer()
+{
+    Logger().debugStream() << "HumanClientApp::DisconnectedFromServer";
+    m_fsm->process_event(Disconnection());
 }
 
 void HumanClientApp::Exit(int code)

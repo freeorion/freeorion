@@ -543,7 +543,7 @@ public:
     ~RotatingPlanetControl()
     {
         s_instances_counter--;
-        if (!s_instances_counter)
+        if (!s_instances_counter && s_scanline_shader)
             s_scanline_shader.reset();
     }
 
