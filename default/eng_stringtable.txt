@@ -298,6 +298,9 @@ You do not control an empire and cannot issue orders.
 ORDERS_FOR_WRONG_EMPIRE
 Orders were sent for an empire you do not control.
 
+SERVER_ALREADY_HOSTING_GAME
+This server is already hosting a game.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################

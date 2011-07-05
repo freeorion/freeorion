@@ -446,6 +446,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;
     m_lobby_data->m_players =       incoming_lobby_data.m_players;
 
+    std::vector<PlayerConnectionPtr> player_connections_to_drop;
+
     // update player connection types according to modified lobby selections
     for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)
@@ -456,10 +458,26 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         std::map<int, PlayerSetupData>::iterator player_setup_it = m_lobby_data->m_players.find(player_id);
         if (player_setup_it == m_lobby_data->m_players.end()) {
             Logger().errorStream() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
+            player_connections_to_drop.push_back(player_connection);
             continue;
         }
         Networking::ClientType client_type = player_setup_it->second.m_client_type;
-        player_connection->SetClientType(client_type);
+
+        if (client_type != Networking::INVALID_CLIENT_TYPE) {
+            // update player connection type for lobby change
+            player_connection->SetClientType(client_type);
+        } else {
+            // drop connections for players who were dropped from lobby
+            m_lobby_data->m_players.erase(player_setup_it);
+            player_connections_to_drop.push_back(player_connection);
+        }
+    }
+
+    // drop players to be dropped.  Doing this in separate loop to avoid messing up iteration above
+    for (std::vector<PlayerConnectionPtr>::iterator drop_con_it = player_connections_to_drop.begin();
+         drop_con_it != player_connections_to_drop.end(); ++drop_con_it)
+    {
+        server.m_networking.Disconnect(*drop_con_it);
     }
 
     // to determine if a new save file was selected, check if the selected file
@@ -588,6 +606,22 @@ sc::result MPLobby::react(const StartMPGame& msg)
     context<ServerFSM>().m_server_save_game_data = m_server_save_game_data;
 
     return transit<WaitingForMPGameJoiners>();
+}
+
+sc::result MPLobby::react(const HostMPGame& msg)
+{
+    Logger().errorStream() << "MPLobby::react(const HostMPGame& msg) recived HostMPGame message but is already in the MP Lobby.  Aborting connection";
+    msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
+    Server().m_networking.Disconnect(msg.m_player_connection);
+    return discard_event();
+}
+
+sc::result MPLobby::react(const HostSPGame& msg)
+{
+    Logger().errorStream() << "MPLobby::react(const HostSPGame& msg) recived HostSPGame message but is already in the MP Lobby.  Aborting connection";
+    msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
+    Server().m_networking.Disconnect(msg.m_player_connection);
+    return discard_event();
 }
 
 

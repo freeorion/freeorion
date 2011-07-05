@@ -161,7 +161,9 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<LobbyUpdate>,
         sc::custom_reaction<LobbyChat>,
-        sc::custom_reaction<StartMPGame>
+        sc::custom_reaction<StartMPGame>,
+        sc::custom_reaction<HostMPGame>,
+        sc::custom_reaction<HostSPGame>
     > reactions;
 
     MPLobby(my_context c);
@@ -172,6 +174,8 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
     sc::result react(const LobbyUpdate& msg);
     sc::result react(const LobbyChat& msg);
     sc::result react(const StartMPGame& msg);
+    sc::result react(const HostMPGame& msg);
+    sc::result react(const HostSPGame& msg);
 
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
