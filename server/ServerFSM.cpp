@@ -294,49 +294,28 @@ sc::result MPLobby::react(const Disconnection& d)
     ServerApp& server = Server();
     PlayerConnectionPtr& player_connection = d.m_player_connection;
 
+    Logger().debugStream() << "MPLobby::react(Disconnection) player id: " << player_connection->PlayerID();
+    Logger().debugStream() << "Remaining player ids: ";
+    for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
+         it != server.m_networking.established_end(); ++it)
+    {
+        Logger().debugStream() << " ... " << (*it)->PlayerID();
+    }
+
     // if there are no humans left, it's time to terminate
     if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
         Logger().debugStream() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
         server.Exit(1);
     }
 
-    // if the disconnected player wasn't in the lobby, don't need to do anything
+    if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
+        SelectNewHost();
+
+    // if the disconnected player wasn't in the lobby, don't need to do anything more
     int id = player_connection->PlayerID();
     if (m_lobby_data->m_players.find(id) == m_lobby_data->m_players.end()) {
         Logger().debugStream() << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
         return discard_event();
-    }
-
-    // did the host disconnect?  this may happen if the host crashes instead of exiting cleanly
-    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        // disconnect was the host.  need to pick a new host and inform players.
-        int new_host_id = Networking::INVALID_PLAYER_ID;
-
-        // scan through players for a human to host
-        for (ServerNetworking::established_iterator players_it = server.m_networking.established_begin();
-                players_it != server.m_networking.established_end(); ++players_it)
-        {
-            PlayerConnectionPtr player_connection = *players_it;
-            if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-                player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-            {
-                new_host_id = player_connection->PlayerID();
-            }
-        }
-
-        if (new_host_id == Networking::INVALID_PLAYER_ID) {
-            // couldn't find a host... abort
-            Logger().debugStream() << "MPLobby.Disconnection : Host disconnected and couldn't find a replacement.  server terminating";
-            server.Exit(1);
-            return discard_event();
-        }
-
-        // set new host ID and inform players
-        server.m_networking.SetHostPlayerID(new_host_id);
-        for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
-            if (*it != player_connection)
-                (*it)->SendMessage(HostIDMessage(new_host_id));
-        }
     }
 
     // remove disconnected player from lobby
@@ -473,7 +452,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         }
     }
 
-    // drop players to be dropped.  Doing this in separate loop to avoid messing up iteration above
+    // drop players.  Doing this in separate loop to avoid messing up iteration above.
+    // these disconnections will lead to a Disconnect events being generated
+    // and MPLobby::react(Disconnect) being called.  If this disconnects the
+    // host, then a new host will be selected within that function.
     for (std::vector<PlayerConnectionPtr>::iterator drop_con_it = player_connections_to_drop.begin();
          drop_con_it != player_connections_to_drop.end(); ++drop_con_it)
     {
@@ -513,7 +495,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
             m_lobby_data->m_save_file_index = old_file_index;
         }
     }
-
 
     // propegate lobby changes to players, so everyone has the latest updated
     // version of the lobby data
@@ -622,6 +603,43 @@ sc::result MPLobby::react(const HostSPGame& msg)
     msg.m_player_connection->SendMessage(ErrorMessage("SERVER_ALREADY_HOSTING_GAME", true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
+}
+
+void MPLobby::SelectNewHost()
+{
+    ServerApp& server = Server();
+    int new_host_id = Networking::INVALID_PLAYER_ID;
+    int old_host_id = server.m_networking.HostPlayerID();
+
+    Logger().debugStream() << "MPLobby::SelectNewHost old host id: " << old_host_id;
+
+    // scan through players for a human to host
+    for (ServerNetworking::established_iterator players_it = server.m_networking.established_begin();
+            players_it != server.m_networking.established_end(); ++players_it)
+    {
+        PlayerConnectionPtr player_connection = *players_it;
+        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        {
+            new_host_id = player_connection->PlayerID();
+        }
+    }
+
+    if (new_host_id == Networking::INVALID_PLAYER_ID) {
+        // couldn't find a host... abort
+        Logger().debugStream() << "MPLobby.Disconnection : Host disconnected and couldn't find a replacement.  server terminating";
+        server.m_networking.SendMessage(ErrorMessage("SERVER_UNABLE_TO_SELECT_HOST", true));
+        server.Exit(1);
+    }
+
+    // set new host ID
+    server.m_networking.SetHostPlayerID(new_host_id);
+
+    // inform players.
+    for (ServerNetworking::const_iterator it = server.m_networking.begin(); it != server.m_networking.end(); ++it) {
+        if ((*it)->PlayerID() != old_host_id)
+            (*it)->SendMessage(HostIDMessage(new_host_id));
+    }
 }
 
 

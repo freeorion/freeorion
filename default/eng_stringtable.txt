@@ -301,6 +301,9 @@ Orders were sent for an empire you do not control.
 SERVER_ALREADY_HOSTING_GAME
 This server is already hosting a game.
 
+SERVER_UNABLE_TO_SELECT_HOST
+The server was unable to select a new host.
+
 ######################################
 # Command Line and OptionsDB Options #
 ######################################
