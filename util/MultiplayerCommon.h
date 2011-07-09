@@ -129,6 +129,9 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
+bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
+
 
 /** The data needed to establish a new single player game.  If \a m_new_game
   * is true, a new game is to be started, using the remaining members besides

@@ -468,6 +468,20 @@ PlayerSetupData::PlayerSetupData() :
     m_client_type(Networking::INVALID_CLIENT_TYPE)
 {}
 
+bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
+{
+    return
+        lhs.m_client_type == rhs.m_client_type &&
+        lhs.m_empire_color == rhs.m_empire_color &&
+        lhs.m_empire_name == rhs.m_empire_name &&
+        lhs.m_player_name == rhs.m_player_name &&
+        lhs.m_save_game_empire_id == rhs.m_save_game_empire_id &&
+        lhs.m_starting_species_name == rhs.m_starting_species_name;
+}
+
+bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
+{ return !(lhs == rhs); }
+
 
 /////////////////////////////////////////////////////
 // SinglePlayerSetupData

@@ -438,16 +438,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     MultiplayerLobbyData incoming_lobby_data;
     ExtractMessageData(message, incoming_lobby_data);
 
-    // check if new lobby data adds or removes a player (AI or human)
-    // if so, the server needs to send a lobby update back to the sending
-    // player to inform them of the result.
-    bool add_or_drop_occurred = false;
-    // change in size indicates an add or drop
-    if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size())
-        add_or_drop_occurred = true;
-    // may also mark this true below when dropping connections or erasing
-    // lobby data for dropped AIs
-
+    // check if new lobby data changed player setup data.  if so, need to echo
+    // back to sender with updated lobby details.
+    bool player_setup_data_changed = (incoming_lobby_data.m_players != m_lobby_data->m_players);
 
     // store incoming lobby data.  clients can only change some of
     // this information (galaxy setup data, whether it is a new game and what
@@ -523,7 +516,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
          drop_con_it != player_connections_to_drop.end(); ++drop_con_it)
     {
         server.m_networking.Disconnect(*drop_con_it);
-        add_or_drop_occurred = true;
     }
 
     // remove empty lobby player entries.  these will occur if AIs are dropped
@@ -536,7 +528,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
             std::list<std::pair<int, PlayerSetupData> >::iterator erase_it = player_setup_it;
             ++player_setup_it;
             m_lobby_data->m_players.erase(erase_it);
-            add_or_drop_occurred = true;
         } else {
             ++player_setup_it;
         }
@@ -631,7 +622,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
         // after a player is added or dropped.  otherwise, messages can just go
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
-        if (new_save_file_selected || add_or_drop_occurred || player_id != message.SendingPlayer())
+        if (new_save_file_selected || player_setup_data_changed || player_id != message.SendingPlayer())
             player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
     }
 
