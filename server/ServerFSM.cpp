@@ -143,33 +143,27 @@ ServerApp& ServerFSM::Server()
 void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d)
 {
     PlayerConnectionPtr& player_connection = d.m_player_connection;
-
     int id = player_connection->PlayerID();
-    // this will not usually happen, since the host client process usually owns the server process, and will usually take it down if it fails
-    if (Server().m_networking.PlayerIsHost(id)) {
-        // if the host dies, there's really nothing else we can do -- the game's over
-        std::string message = player_connection->PlayerName();
-        for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
-            if ((*it)->PlayerID() != id) {
-                (*it)->SendMessage(EndGameMessage((*it)->PlayerID(), Message::HOST_DISCONNECTED, player_connection->PlayerName()));
-            }
-        }
-        Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Host player disconnected; server terminating.";
-        Sleep(2000); // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
-        m_server.Exit(1);
-    } else if (m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end()) { // player abnormally disconnected during a regular game
-        Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id) 
+
+    // Did an active player (AI or Human) disconnect?  If so, game is over
+    if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+    {
+        // can continue !
+    } else if ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+                player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) &&
+                m_server.m_eliminated_players.find(id) == m_server.m_eliminated_players.end())
+    {
+        // player abnormally disconnected during a regular game
+        Logger().debugStream() << "ServerFSM::HandleNonLobbyDisconnection : Lost connection to player #" << boost::lexical_cast<std::string>(id)
                                << ", named \"" << player_connection->PlayerName() << "\"; server terminating.";
         std::string message = player_connection->PlayerName();
         for (ServerNetworking::const_established_iterator it = m_server.m_networking.established_begin(); it != m_server.m_networking.established_end(); ++it) {
             if ((*it)->PlayerID() != id) {
                 // in the future we may find a way to recover from this, but for now we will immediately send a game ending message as well
-                (*it)->SendMessage(EndGameMessage((*it)->PlayerID(), Message::NONHOST_DISCONNECTED, player_connection->PlayerName()));
+                (*it)->SendMessage(EndGameMessage((*it)->PlayerID(), Message::PLAYER_DISCONNECT, player_connection->PlayerName()));
             }
         }
     }
-
-    // TODO: Add a way to have AIs play without humans... for AI debugging purposes
 
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {

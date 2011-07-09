@@ -458,8 +458,7 @@ boost::statechart::result PlayingGame::react(const EndGame& msg)
         Client().EndGame(true);
         reason_message = UserString("SERVER_LOST");
         break;
-    case Message::HOST_DISCONNECTED:
-    case Message::NONHOST_DISCONNECTED:
+    case Message::PLAYER_DISCONNECT:
         Client().EndGame(true);
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;

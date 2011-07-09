@@ -105,8 +105,7 @@ public:
 
     enum EndGameReason {
         LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
-        HOST_DISCONNECTED,      ///< the host player suddenly lost connection to the server
-        NONHOST_DISCONNECTED,   ///< a non-host player suddenly lost connection to the server
+        PLAYER_DISCONNECT,      ///< an active player (not an observer) was disconnected
         YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
     };
 
