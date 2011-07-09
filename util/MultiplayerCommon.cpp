@@ -275,6 +275,14 @@ const std::vector<GG::Clr>& EmpireColors()
             colors.push_back(XMLToClr(doc.root_node.Child(i)));
         }
     }
+    if (colors.empty()) {
+        colors.push_back(GG::Clr(  0, 255,   0, 255));
+        colors.push_back(GG::Clr(  0,   0, 255, 255));
+        colors.push_back(GG::Clr(255,   0,   0, 255));
+        colors.push_back(GG::Clr(  0, 255, 255, 255));
+        colors.push_back(GG::Clr(255, 255,   0, 255));
+        colors.push_back(GG::Clr(255,   0, 255, 255));
+    }
     return colors;
 }
 
@@ -452,7 +460,6 @@ SaveGameEmpireData::SaveGameEmpireData(int empire_id, const std::string& empire_
 // PlayerSetupData
 /////////////////////////////////////////////////////
 PlayerSetupData::PlayerSetupData() :
-    //m_player_id(Networking::INVALID_PLAYER_ID),
     m_player_name(),
     m_empire_name(),
     m_empire_color(GG::Clr(0, 0, 0, 0)),

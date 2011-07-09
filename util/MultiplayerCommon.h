@@ -158,12 +158,12 @@ struct MultiplayerLobbyData : public GalaxySetupData
     explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
     //@}
 
-    bool                                m_new_game;
-    int                                 m_save_file_index;
-    std::map<int, PlayerSetupData>      m_players;              // indexed by player id
+    bool                                        m_new_game;
+    int                                         m_save_file_index;
+    std::list<std::pair<int, PlayerSetupData> > m_players;              // <player_id, PlayerSetupData>
 
-    std::vector<std::string>            m_save_games;
-    std::map<int, SaveGameEmpireData>   m_save_game_empire_data;// indexed by empire_id
+    std::vector<std::string>                    m_save_games;
+    std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id
 
 private:
     friend class boost::serialization::access;

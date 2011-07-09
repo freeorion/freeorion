@@ -104,6 +104,7 @@ public:
     };
 
     enum EndGameReason {
+        LOCAL_CLIENT_DISCONNECT,///< the local player's client networking detected a disconnection from the server
         HOST_DISCONNECTED,      ///< the host player suddenly lost connection to the server
         NONHOST_DISCONNECTED,   ///< a non-host player suddenly lost connection to the server
         YOU_ARE_ELIMINATED      ///< the receiving player is eliminated from the game
@@ -292,8 +293,7 @@ Message VictoryDefeatMessage(int receiver, Message::VictoryOrDefeat victory_or_d
     This message should only be sent by the server.*/
 Message PlayerEliminatedMessage(int receiver, int empire_id, const std::string& empire_name);
 
-/** creates an END_GAME message used to terminate an active game.  Only END_GAME messages sent from the server
-    are considered valid.*/
+/** creates an END_GAME message used to terminate an active game. */
 Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
 
 

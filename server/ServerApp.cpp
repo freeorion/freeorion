@@ -325,7 +325,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
 
     // associate player IDs with player setup data.
     std::map<int, PlayerSetupData> player_id_setup_data;
-    for (std::map<int, PlayerSetupData>::const_iterator player_setup_it = multiplayer_lobby_data.m_players.begin();
+    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator player_setup_it = multiplayer_lobby_data.m_players.begin();
          player_setup_it != multiplayer_lobby_data.m_players.end(); ++player_setup_it)
     {
         int player_id = player_setup_it->first;
@@ -552,7 +552,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
 
 
     ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
-    const std::map<int, PlayerSetupData>& player_setup_data = lobby_data.m_players;
+    const std::list<std::pair<int, PlayerSetupData> >& player_setup_data = lobby_data.m_players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
     // * PlayerSetupData contains an empire ID that the player will be controlling.
@@ -563,7 +563,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
     //    empire id for each player id.
 
     // assign all saved game data to a player ID
-    for (std::map<int, PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
+    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator setup_data_it = player_setup_data.begin();
          setup_data_it != player_setup_data.end(); ++setup_data_it)
     {
         int player_id =                 setup_data_it->first;

@@ -124,7 +124,6 @@ namespace {
                     Select(0);
                 } else {
                     // For human players on host, have "Player", "Observer", and "Drop" options.  TODO: have "Ban" option.
-                    // TODO: For human players on own non-host, have "Player" and "Observer" options
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_PLAYER));   // "Human" display / option
                     Insert(new TypeRow(Networking::CLIENT_TYPE_HUMAN_OBSERVER)); // "Observer" display / option
                     Insert(new TypeRow(Networking::INVALID_CLIENT_TYPE, true));  // "Drop" option
@@ -186,6 +185,9 @@ namespace {
             // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                return; // observers don't need to pick an empire or species
+
             // empire name editable text
             CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
                                         ClientUI::GetFont(), GG::CLR_ZERO, ClientUI::TextColor(), GG::CLR_ZERO);
@@ -232,6 +234,7 @@ namespace {
         }
     };
 
+    // Row for player info when loading a game
     struct LoadGamePlayerRow : PlayerRow {
         LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled) :
             PlayerRow(player_data, player_id),
@@ -300,6 +303,22 @@ namespace {
         EmpireColorSelector*                     m_color_selector;
         CUIDropDownList*                         m_empire_list;
         const std::map<int, SaveGameEmpireData>& m_save_game_empire_data;
+    };
+
+    // Row for indicating that an AI client should be added to the game
+    struct EmptyPlayerRow : PlayerRow {
+        EmptyPlayerRow() :
+            PlayerRow()
+        {
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, Networking::INVALID_CLIENT_TYPE, false);
+            push_back(type_drop);
+            GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
+        }
+    private:
+        void PlayerTypeChanged(Networking::ClientType type) {
+            m_player_data.m_client_type = type;
+            DataChangedSignal();
+        }
     };
 
     const GG::X     LOBBY_WND_WIDTH(800);
@@ -461,7 +480,21 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
         std::string text = m_chat_input_edit->Text();
         HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
         m_chat_input_edit->SetText("");
-        *m_chat_box += m_lobby_data.m_players[HumanClientApp::GetApp()->PlayerID()].m_player_name + ": " + text + "\n";
+
+        // look up this client's player name by ID
+        std::string player_name;
+        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
+             it != m_lobby_data.m_players.end(); ++it)
+        {
+            if (it->first == HumanClientApp::GetApp()->PlayerID() && it->first != Networking::INVALID_PLAYER_ID) {
+                player_name = it->second.m_player_name;
+                break;
+            }
+        }
+
+        // put message just sent in chat box (local echo)
+        *m_chat_box += player_name + ": " + text + "\n";
+
     } else if (m_start_game_bn && !m_start_game_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         m_start_game_bn->ClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
@@ -471,8 +504,29 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
 
 void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg)
 {
-    std::map<int, PlayerSetupData>::iterator it = m_lobby_data.m_players.find(player_id);
-    *m_chat_box += (it != m_lobby_data.m_players.end() ? (it->second.m_player_name + ": ") : "[unknown]: ") + msg + '\n';
+    // look up player name by ID
+    std::string player_name;
+    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
+            it != m_lobby_data.m_players.end(); ++it)
+    {
+        if (it->first == HumanClientApp::GetApp()->PlayerID() && it->first != Networking::INVALID_PLAYER_ID) {
+            player_name = it->second.m_player_name;
+            break;
+        }
+    }
+
+    // show message with player name in chat box
+    *m_chat_box += player_name + ": " + msg + '\n';
+}
+
+namespace {
+    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
+        Logger().debugStream() << "PlayerSetupData:";
+        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
+            Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
+                                   << it->second.m_player_name << ", "
+                                   << it->second.m_client_type;
+    }
 }
 
 void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
@@ -491,8 +545,10 @@ void MultiPlayerLobbyWnd::LobbyUpdate(const MultiplayerLobbyData& lobby_data)
 
     bool send_update_back = PopulatePlayerList();
 
-    if (ThisClientIsHost() && send_update_back)
+    if (send_update_back && ThisClientIsHost())
         SendUpdate();
+
+    LogPlayerSetupData(m_lobby_data.m_players);
 }
 
 void MultiPlayerLobbyWnd::Refresh()
@@ -560,8 +616,18 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally()
 {
     m_lobby_data.m_players.clear();
     for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
-        const PlayerRow* row = boost::polymorphic_downcast<const PlayerRow*>(*it);
-        m_lobby_data.m_players[row->m_player_id] = row->m_player_data;
+        const PlayerRow* row = dynamic_cast<const PlayerRow*>(*it);
+        if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(row)) {
+            // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
+            if (empty_row->m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                m_lobby_data.m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, row->m_player_data));
+
+            // empty rows that are still showing no player don't need to be sent to the server.
+
+        } else {
+            // all other row types pass along data directly
+            m_lobby_data.m_players.push_back(std::make_pair(row->m_player_id, row->m_player_data));
+        }
     }
 
     m_start_game_bn->Disable(!ThisClientIsHost() || !CanStart());
@@ -575,7 +641,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList()
     m_players_lb->Clear();
 
     // repopulate list with rows built from current lobby data
-    for (std::map<int, PlayerSetupData>::iterator player_setup_it = m_lobby_data.m_players.begin();
+    for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data.m_players.begin();
          player_setup_it != m_lobby_data.m_players.end(); ++player_setup_it)
     {
         int data_player_id = player_setup_it->first;
@@ -603,6 +669,15 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList()
                 send_update_back_retval = true;
             }
         }
+    }
+
+    // on host, add extra empty row, which the hose can use to select
+    // "Add AI" to add an AI to the game.  This row's details are treated
+    // specially when sending a lobby update to the server.
+    if (ThisClientIsHost()) {
+        EmptyPlayerRow* row = new EmptyPlayerRow();
+        m_players_lb->Insert(row);
+        Connect(row->DataChangedSignal, &MultiPlayerLobbyWnd::PlayerDataChangedLocally, this);
     }
 
     if (m_lobby_data.m_new_game) {
@@ -652,8 +727,12 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const
         } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
             // do nothing special for this player
         } else {
-            // unrecognized client type!
-            return false;
+            if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(*it)) {
+                // ignore empty player row
+            } else {
+                Logger().errorStream() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";
+                return false;
+            }
         }
     }
     // any duplicate names or colours will means that the number of active
