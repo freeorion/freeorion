@@ -311,7 +311,10 @@ namespace {
             m_player_data.m_empire_color =          it->second.m_color;
             m_player_data.m_save_game_empire_id =   it->second.m_empire_id;
             m_color_selector->SelectColor(m_player_data.m_empire_color);
-            boost::polymorphic_downcast<GG::TextControl*>(operator[](3))->SetText(it->second.m_player_name);
+
+            // set previous player name indication
+            boost::polymorphic_downcast<GG::TextControl*>(operator[](4))->SetText(it->second.m_player_name);
+
             DataChangedSignal();
         }
 
