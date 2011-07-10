@@ -316,7 +316,7 @@ sc::result MPLobby::react(const Disconnection& d)
     // if player is in lobby, need to remove it
     int id = player_connection->PlayerID();
     bool player_was_in_lobby = false;
-    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data->m_players.begin();
+    for (std::list<std::pair<int, PlayerSetupData> >::iterator it = m_lobby_data->m_players.begin();
          it != m_lobby_data->m_players.end(); ++it)
     {
         if (it->first == id) {
@@ -394,7 +394,7 @@ sc::result MPLobby::react(const JoinGame& msg)
     player_connection->SendMessage(JoinAckMessage(player_id));
 
     // inform player of host
-    player_connection->SendMessageA(HostIDMessage(server.m_networking.HostPlayerID()));
+    player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
 
     // assign player info from defaults or from connection to lobby data players list
     PlayerSetupData player_setup_data;
@@ -502,7 +502,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     // update player connection types according to modified lobby selections,
     // while recording connections that are to be dropped
     std::vector<PlayerConnectionPtr> player_connections_to_drop;
-    for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
+    for (ServerNetworking::established_iterator player_connection_it = server.m_networking.established_begin();
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)
     {
         PlayerConnectionPtr player_connection = *player_connection_it;
