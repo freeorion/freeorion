@@ -274,7 +274,6 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
     // PlayerSetupData.  AI player connections are assigned one of the remaining
     // PlayerSetupData entries that is for an AI player.
     std::map<int, PlayerSetupData> player_id_setup_data;
-
     const std::vector<PlayerSetupData>& player_setup_data = single_player_setup_data.m_players;
 
     for (std::vector<PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
@@ -321,27 +320,70 @@ void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_d
 
 void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data)
 {
-    Logger().debugStream() << "ServerApp::NewMPGameInit lobby data players:";
-
-    // associate player IDs with player setup data.
+    // associate player IDs with player setup data by matching player IDs when
+    // available (human) and names (for AI clients which didn't have an ID
+    // before now because the lobby data was set up without connected/established
+    // clients for the AIs.
     std::map<int, PlayerSetupData> player_id_setup_data;
-    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator player_setup_it = multiplayer_lobby_data.m_players.begin();
-         player_setup_it != multiplayer_lobby_data.m_players.end(); ++player_setup_it)
+    const std::list<std::pair<int, PlayerSetupData> >& player_setup_data = multiplayer_lobby_data.m_players;
+
+    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator setup_data_it = player_setup_data.begin();
+         setup_data_it != player_setup_data.end(); ++setup_data_it)
     {
-        int player_id = player_setup_it->first;
-        const PlayerSetupData& psd = player_setup_it->second;;
-
-        Logger().debugStream() << " ... Player: " << psd.m_player_name <<
-                                  " id: " << player_id <<
-                                  " empire name: " << psd.m_empire_name <<
-                                  " starting species: " << psd.m_starting_species_name <<
-                                  " client type: " << psd.m_client_type;
-
+        const PlayerSetupData& psd = setup_data_it->second;
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER ||
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         {
-            player_id_setup_data[player_id] = psd;
+            // Human players have consistent IDs, so these can be easily
+            // matched between established player connections and setup data.
+
+            // find player connection with same ID as this player setup data
+            bool found_matched_id_connection = false;
+            int player_id = setup_data_it->first;
+            for (ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+                 established_player_it != m_networking.established_end(); ++established_player_it)
+            {
+                const PlayerConnectionPtr player_connection = *established_player_it;
+                if (player_connection->PlayerID() == player_id)
+                {
+                    player_id_setup_data[player_id] = psd;
+                    found_matched_id_connection = true;
+                    break;
+                }
+            }
+            if (!found_matched_id_connection)
+                Logger().errorStream() << "ServerApp::NewMPGameInit couldn't find player setup data for human player with id: " << player_id;
+
+        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            // All AI player setup data, as determined from their client type, is
+            // assigned to player IDs of established AI players with the appropriate names
+
+            // find player connection with same name as this player setup data
+            bool found_matched_name_connection = false;
+            const std::string& player_name = psd.m_player_name;
+            for (ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
+                 established_player_it != m_networking.established_end(); ++established_player_it)
+            {
+                const PlayerConnectionPtr player_connection = *established_player_it;
+                if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER &&
+                    player_connection->PlayerName() == player_name)
+                {
+                    // assign name-matched AI client's player setup data to appropriate AI connection
+                    int player_id = player_connection->PlayerID();
+                    player_id_setup_data[player_id] = psd;
+                    found_matched_name_connection = true;
+                    break;
+                }
+            }
+            if (!found_matched_name_connection)
+                Logger().errorStream() << "ServerApp::NewMPGameInit couldn't find player setup data for AI player with name: " << player_name;
+
+        } else {
+            // do nothing for any other player type, until another player type
+            // is implemented.  human observers don't need to be put into the
+            // map of id to player setup data, as they don't need empires to be
+            // created for them.
+            Logger().errorStream() << "ServerApp::NewMPGameInit skipping unsupported client type in player setup data";
         }
     }
 
@@ -358,9 +400,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
         return;
     }
     // ensure number of players connected and for which data are provided are consistent
-    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size()) {
-        Logger().errorStream() << "ServerApp::NewGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.  Could be ok... so not aborting, but might crash";
-    }
+    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size())
+        Logger().debugStream() << "ServerApp::NewGameInit has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
 
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_players_id_setup_data;

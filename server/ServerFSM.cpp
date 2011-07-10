@@ -930,30 +930,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg)
         return discard_event();
     }
 
-    // if all expected players have connected, proceed to start new or load game
-    if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
-        Logger().debugStream() << "WaitingForSPGameJoiners::react(const JoinGame& msg): all " << m_num_expected_players << " joined.  starting game...";
-        if (m_single_player_setup_data->m_new_game) {
-            server.NewSPGameInit(*m_single_player_setup_data);
-        } else {
-            try {
-                LoadGame(m_single_player_setup_data->m_filename,
-                         *m_server_save_game_data,
-                         m_player_save_game_data,
-                         GetUniverse(),
-                         Empires(),
-                         GetSpeciesManager());
-            } catch (const std::exception&) {
-                SendMessageToHost(ErrorMessage("UNABLE_TO_READ_SAVE_FILE", true));
-                return transit<Idle>();
-            }
-
-            server.LoadSPGameInit(m_player_save_game_data,
-                                  m_server_save_game_data);
-        }
-        return transit<PlayingGame>();
-    }
-
+    post_event(CheckStartConditions());
     return discard_event();
 }
 
@@ -962,6 +939,7 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u)
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForSPGameJoiners.CheckStartConditions";
     ServerApp& server = Server();
 
+    // if all expected players have connected, proceed to start new or load game
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         if (m_single_player_setup_data->m_new_game) {
             server.NewSPGameInit(*m_single_player_setup_data);
@@ -1024,6 +1002,11 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     }
 
     server.CreateAIClients(player_setup_data);
+
+    // force immediate check if all expected AIs are present, so that the FSM
+    // won't get stuck in this state waiting for JoinGame messages that will
+    // never come since no other AIs are left to join
+    post_event(CheckStartConditions());
 }
 
 WaitingForMPGameJoiners::~WaitingForMPGameJoiners()
@@ -1076,7 +1059,19 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg)
         return discard_event();
     }
 
-    // if all expected players have connected, proceed to start new or load game
+    // force immediate check if all expected AIs are present, so that the FSM
+    // won't get stuck in this state waiting for JoinGame messages that will
+    // never come since no other AIs are left to join
+    post_event(CheckStartConditions());
+
+    return discard_event();
+}
+
+sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForMPGameJoiners.CheckStartConditions";
+    ServerApp& server = Server();
+
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         if (m_player_save_game_data.empty())
             server.NewMPGameInit(*m_lobby_data);
