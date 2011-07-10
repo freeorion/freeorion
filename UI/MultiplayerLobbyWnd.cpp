@@ -185,8 +185,13 @@ namespace {
             // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
 
-            if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                return; // observers don't need to pick an empire or species
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
+                // observers don't need to pick an empire or species
+                push_back("", ClientUI::GetFont());
+                push_back("", ClientUI::GetFont());
+                push_back("", ClientUI::GetFont());
+                return;
+            }
 
             // empire name editable text
             CUIEdit* edit = new CUIEdit(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, m_player_data.m_empire_name,
@@ -241,7 +246,13 @@ namespace {
             m_empire_list(0),
             m_save_game_empire_data(save_game_empire_data)
         {
-            Resize(GG::Pt(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT + ROW_HEIGHT_PAD));
+            // human / AI / observer indicator / selector
+            TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, player_data.m_client_type, disabled);
+            push_back(type_drop);
+            if (disabled)
+                type_drop->Disable();
+            else
+                GG::Connect(type_drop->TypeChangedSignal,           &LoadGamePlayerRow::PlayerTypeChanged,   this);
 
             // player name text
             push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
@@ -288,6 +299,10 @@ namespace {
         }
 
     private:
+        void PlayerTypeChanged(Networking::ClientType type) {
+            m_player_data.m_client_type = type;
+            DataChangedSignal();
+        }
         void EmpireChanged(GG::DropDownList::iterator selected_it) {
             assert(selected_it != m_empire_list->end());
             std::map<int, SaveGameEmpireData>::const_iterator it = m_save_game_empire_data.begin();
@@ -313,6 +328,11 @@ namespace {
             TypeSelector* type_drop = new TypeSelector(GG::X(90), PLAYER_ROW_HEIGHT, Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
             GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
+            // extra entries to make layout consistent
+            push_back("", ClientUI::GetFont());
+            push_back("", ClientUI::GetFont());
+            push_back("", ClientUI::GetFont());
+            push_back("", ClientUI::GetFont());
         }
     private:
         void PlayerTypeChanged(Networking::ClientType type) {
@@ -648,7 +668,7 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList()
         PlayerSetupData& psd = player_setup_it->second;
 
         if (m_lobby_data.m_new_game) {
-            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row
+            bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             NewGamePlayerRow* row = new NewGamePlayerRow(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
             Connect(row->DataChangedSignal, &MultiPlayerLobbyWnd::PlayerDataChangedLocally, this);
