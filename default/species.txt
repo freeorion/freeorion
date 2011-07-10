@@ -1,4 +1,2869 @@
 Species
+    name = "SP_HUMAN"
+    description = "SP_HUMAN_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Terran
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Adequate
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/human.png"
+
+Species
+    name = "SP_SCYLIOR"
+    description = "SP_SCYLIOR_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Ocean
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/scylior.png"
+
+Species
+    name = "SP_GYISACHE"
+    description = "SP_GYISACHE_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Swamp
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Poor
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/gyisache.png"
+
+Species
+    name = "SP_CHATO"
+    description = "SP_CHATO_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Toxic
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Adequate
+        type = Toxic        environment = Good
+        type = Inferno      environment = Adequate
+        type = Radiated     environment = Poor
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/chato-matou-gormoshk.png"
+
+Species
+    name = "SP_EGASSEM"
+    description = "SP_EGASSEM_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Inferno
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Good
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Poor
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/egassem.png"
+
+Species
     name = "SP_TRITH"
     description = "SP_TRITH_DESC"
     foci = [
@@ -572,8 +3437,8 @@ Species
     graphic = "icons/species/trith.png"
 
 Species
-    name = "SP_GYISACHE"
-    description = "SP_GYISACHE"
+    name = "SP_CRAY"
+    description = "SP_CRAY_DESC"
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -850,7 +3715,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetFoodConsumption Value + Target.Population * 1.0
+            effects = SetFoodConsumption Value + Target.Population * 1
 
         EffectsGroup
             scope = Source
@@ -1002,7 +3867,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_INDUSTRY"
-            effects = SetTargetIndustry Value + Target.Population * 2.0
+            effects = SetTargetIndustry Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -1112,19 +3977,1180 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Barren
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
     ]
     environments = [
-        type = Swamp        environment = Poor
+        type = Swamp        environment = Hostile
         type = Toxic        environment = Hostile
-        type = Inferno      environment = Hostile
-        type = Radiated     environment = Hostile
-        type = Barren       environment = Hostile
-        type = Tundra       environment = Poor
-        type = Desert       environment = Adequate
-        type = Terran       environment = Good
-        type = Ocean        environment = Adequate
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Good
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Poor
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
         type = Asteroids    environment = Uninhabitable
         type = Gasgiant     environment = Uninhabitable
     ]
-    graphic = "icons/species/gyisache.png"
-    
+    graphic = "icons/species/cray.png"
+
+Species
+    name = "SP_HHHOH"
+    description = "SP_HHHOH_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Tundra
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Poor
+        type = Barren       environment = Adequate
+        type = Tundra       environment = Good
+        type = Desert       environment = Adequate
+        type = Terran       environment = Poor
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/hhhoh.png"
+
+Species
+    name = "SP_EAXAW"
+    description = "SP_EAXAW_DESC"
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+
+        Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"
+
+        Focus
+            name = "FOCUS_HEAVY_MINING"
+            description = "FOCUS_HEAVY_MINING_DESC"
+            location = And [
+                Number low = 1 high = 999 And [
+                    Building "BLD_HEAVY_MINE_PROCESSOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                TargetPopulation low = 1 high = 999
+            ]
+            graphic = "icons/building/heavy_mining_processor.png"
+
+        Focus
+            name = "FOCUS_INDUSTRY"
+            description = "FOCUS_INDUSTRY_DESC"
+            location = Or [
+                TargetPopulation low = 1 high = 999
+                Contains Building "BLD_GAS_GIANT_GEN"
+            ]
+            graphic = "icons/focus/industry.png"
+
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+
+        Focus
+            name = "FOCUS_LOGISTICS"
+            description = "FOCUS_LOGISTICS_DESC"
+            location = OwnerHasTech name = "SHP_FLEET_LOGISTICS"
+            graphic = "icons/focus/supply.png"
+
+        Focus
+            name = "FOCUS_REPLIC_FARMING"
+            description = "FOCUS_REPLIC_FARMING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_farming.png"
+
+        Focus
+            name = "FOCUS_REPLIC_MINING"
+            description = "FOCUS_REPLIC_MINING_DESC"
+            location = Or [
+                Contains Building "BLD_REPLICATORS"
+                And [
+                   Contains Building "BLD_TRANSFORMER"
+                   OwnerHasTech "PRO_MATENG_REPLIC"
+                ]
+            ]
+            graphic = "icons/focus/replic_mining.png"
+
+        Focus
+            name = "FOCUS_STEALTH"
+            description = "FOCUS_STEALTH_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_CLOAK"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "SHP_PLANET_CLOAK"
+                ]
+            ]
+            graphic = "icons/focus/stealth.png"
+
+        Focus
+            name = "FOCUS_BIOTERROR"
+            description = "FOCUS_BIOTERROR_DESC"
+            location = Or [
+                Contains Building "BLD_BIOTERROR_PROJECTOR"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "GRO_BIOTERROR"
+                ]
+            ]
+            graphic = "icons/focus/bioterror.png"
+
+        Focus
+            name = "FOCUS_STARGATE"
+            description = "FOCUS_STARGATE_DESC"
+            location = Or [
+                Contains Building "BLD_STARGATE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_STARGATE"
+                ]
+            ]
+            graphic = "icons/focus/stargate.png"
+
+        Focus
+            name = "FOCUS_PLANET_DRIVE"
+            description = "FOCUS_PLANET_DRIVE_DESC"
+            location = Or [
+                Contains Building "BLD_PLANET_DRIVE"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "CON_PLANET_DRIVE"
+                ]
+            ]
+            graphic = "icons/focus/planet_drive.png"
+
+        Focus
+            name = "FOCUS_DISTORTION"
+            description = "FOCUS_DISTORTION_DESC"
+            location = Or [
+                Contains Building "BLD_SPATIAL_DISTORT_GEN"
+                And [
+                    Contains Building "BLD_TRANSFORMER"
+                    OwnerHasTech "LRN_SPATIAL_DISTORT_GEN"
+                ]
+            ]
+            graphic = "icons/focus/distortion.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            effects = SetHealth Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
+            effects = SetHealth Target.TargetHealth
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 25
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 10
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Good
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 30
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Huge
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Large
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Medium
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Small
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Adequate
+                Planet size = Tiny
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 25
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Planet environment = [Uninhabitable Hostile Poor]
+            effects = SetTargetHealth Value + 20
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetTargetConstruction Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetFoodConsumption Value + Target.Population * 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            effects = SetFarming Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            effects = SetMining Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            effects = SetIndustry Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            effects = SetResearch Value - 1
+
+        EffectsGroup
+            scope = Source
+            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
+            effects = SetFarming Target.TargetFarming
+
+        EffectsGroup
+            scope = Source
+            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
+            effects = SetMining Target.TargetMining
+
+        EffectsGroup
+            scope = Source
+            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
+            effects = SetIndustry Target.TargetIndustry
+
+        EffectsGroup
+            scope = Source
+            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
+            effects = SetResearch Target.TargetResearch
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population * 2.0
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 1.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Poor
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_FARMING"
+                Planet environment = Hostile
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Tiny
+            ]
+            effects = SetTargetMining Value + 40 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Small
+            ]
+            effects = SetTargetMining Value + 30 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Medium
+            ]
+            effects = SetTargetMining Value + 20 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Large
+            ]
+            effects = SetTargetMining Value + 10 + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus type = "FOCUS_MINING"
+                Planet size = Huge
+            ]
+            effects = SetTargetMining Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_MINING"
+                Planet type = Asteroids
+            ]
+            effects = SetTargetMining Value + 30
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                Not OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 10
+                SetTargetPopulation Value * 0.5
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Focus "FOCUS_HEAVY_MINING"
+                OwnerHasTech "PRO_ENVIRO_MINING"
+            ]
+            effects = [
+                SetTargetHealth Value - 5
+                SetTargetPopulation Value * 0.75
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_INDUSTRY"
+            effects = SetTargetIndustry Value + Target.Population * 2
+
+        EffectsGroup
+            scope = Source
+            activation = Focus type = "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_LOGISTICS"
+            effects = SetSupply Value + Target.Population * 0.5
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_FARMING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetFarming Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            activation = Focus "FOCUS_REPLIC_MINING"
+            stackinggroup = "REPLICATION_STACK"
+            effects = [
+                SetTargetMining Value + Target.TargetIndustry / 4
+                SetTargetIndustry Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_STEALTH"
+            effects = SetStealth Value + 20
+
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy EnemyOf Source.Owner
+                WithinStarlaneJumps 4 Source
+                Not Number low = 1 high = 999 And [
+                    Building "BLD_GENOME_BANK"
+                    OwnedBy TheEmpire RootCandidate.Owner
+                ]
+            ]
+            activation = Focus "FOCUS_BIOTERROR"
+            effects = SetHealth Value - 4
+
+        EffectsGroup
+            scope = And [
+                WithinDistance 0 Source
+                Fleet
+            ]
+            activation = And [
+                ContainedBy Contains And [
+                    Building "BLD_STARGATE_ACTIVATOR"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+                Focus "FOCUS_STARGATE"
+            ]
+            effects = MoveTo And [
+                Focus "FOCUS_STARGATE"
+                Contains And [
+                    Building "BLD_STARGATE_BEACON"
+                    OwnedBy TheEmpire Source.Owner
+                ]
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = [
+                MoveTo And [
+                    OwnedBy TheEmpire Source.Owner
+                    WithinStarlaneJumps 1 Source
+                    Contains And [
+                        Building name = "BLD_PLANET_BEACON"
+                        OwnedBy TheEmpire Source.Owner
+                    ]
+                ]
+                SetPopulation Value / 2
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                WithinStarlaneJumps 1 Building name = "BLD_PLANET_BEACON"
+                Not WithinDistance 200 Building name = "BLD_LIGHTHOUSE"
+                Random probability = 0.5
+                Focus "FOCUS_PLANET_DRIVE"
+            ]
+            effects = Destroy
+
+        EffectsGroup
+            scope = And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                Fleet
+                Not Stationary
+                OwnedBy EnemyOf Source.Owner
+            ]
+            activation = Focus "FOCUS_DISTORTION"
+            effects = MoveTo And [
+                WithinStarlaneJumps 1 Source
+                Not WithinDistance 0 Source
+                System
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            effects = SetPlanetType Desert
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet environment = Hostile
+                Not Turn low = 1 high = 99999
+            ]
+            effects = [
+                SetTargetPopulation Value + 15
+                SetTargetHealth Value + 25
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Poor
+        type = Tundra       environment = Adequate
+        type = Desert       environment = Good
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/eaxaw.png"
