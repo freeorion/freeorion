@@ -49,6 +49,9 @@ No
 EMPIRE
 Empire
 
+PLAYER
+Player
+
 HUMAN_PLAYER
 Human
 

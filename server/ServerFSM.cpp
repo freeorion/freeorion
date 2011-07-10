@@ -10,9 +10,10 @@
 #include "../util/Directories.h"
 #include "../util/OrderSet.h"
 #include "../util/OptionsDB.h"
+#include "../util/Random.h"
 
 #include <boost/filesystem/path.hpp>
-
+#include <boost/filesystem/fstream.hpp>
 
 namespace {
     const bool TRACE_EXECUTION = true;
@@ -264,6 +265,7 @@ MPLobby::MPLobby(my_context c) :
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
+    const SpeciesManager& sm = GetSpeciesManager();
     const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(server.m_networking.HostPlayerID()));
 
     int host_id = server.m_networking.HostPlayerID();
@@ -276,7 +278,8 @@ MPLobby::MPLobby(my_context c) :
     player_setup_data.m_player_name =           player_connection->PlayerName();
     player_setup_data.m_empire_name =           player_connection->PlayerName();    // default empire name to same as player name, for lack of a better choice
     player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
-    // leaving starting species name as default
+    if (!sm.empty())
+        player_setup_data.m_starting_species_name = sm.begin()->first;
     // leaving save game empire id as default
     player_setup_data.m_client_type =           player_connection->GetClientType();
 
@@ -374,6 +377,7 @@ sc::result MPLobby::react(const JoinGame& msg)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) MPLobby.JoinGame";
     ServerApp& server = Server();
+    const SpeciesManager& sm = GetSpeciesManager();
     const Message& message = msg.m_message;
     PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
@@ -392,14 +396,20 @@ sc::result MPLobby::react(const JoinGame& msg)
     // inform player of host
     player_connection->SendMessageA(HostIDMessage(server.m_networking.HostPlayerID()));
 
-    // assign player info from connection to lobby data players list
+    // assign player info from defaults or from connection to lobby data players list
     PlayerSetupData player_setup_data;
     player_setup_data.m_player_name = player_name;
     player_setup_data.m_client_type = client_type;
     player_setup_data.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
-
     // TODO: generate a default empire name, or get one from the list of empire names
     player_setup_data.m_empire_name = player_name;
+    // default to "Human" species if available.  otherwise use first in species manager.
+    if (!sm.empty()) {
+        if (sm.GetSpecies("SP_HUMAN"))
+            player_setup_data.m_starting_species_name = "SP_HUMAN";
+        else
+            player_setup_data.m_starting_species_name = sm.begin()->first;
+    }
 
     // after setting all details, push into lobby data
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
@@ -419,7 +429,36 @@ namespace {
         for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
             Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
                                    << it->second.m_player_name << ", "
-                                   << it->second.m_client_type;
+                                   << it->second.m_client_type << ", "
+                                   << it->second.m_starting_species_name;
+    }
+
+    void LoadEmpireNames(std::list<std::string>& names) {
+        boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
+        while (ifs) {
+            std::string latest_name;
+            std::getline(ifs, latest_name);
+            if (!latest_name.empty())
+                names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
+        }
+    }
+
+    const std::string& GenerateEmpireName() {
+        // load default empire names
+        static std::list<std::string> empire_names;
+        if (empire_names.empty())
+            LoadEmpireNames(empire_names);
+
+        if (!empire_names.empty()) {
+            // pick a name from the list of empire names
+            int empire_name_idx = RandSmallInt(0, static_cast<int>(empire_names.size()) - 1);
+            std::list<std::string>::iterator it = empire_names.begin();
+            std::advance(it, empire_name_idx);
+            return *it;
+        } else {
+            // use a generic name
+            return UserString("EMPIRE");
+        }
     }
 }
 
@@ -546,27 +585,21 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))
                 psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
             if (psd.m_player_name.empty())
-                psd.m_player_name = "AI_" + boost::lexical_cast<std::string>(AI_count++);
+                psd.m_player_name = UserString("AI_PLAYER") + "_" + boost::lexical_cast<std::string>(AI_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = psd.m_player_name;
-            if (psd.m_starting_species_name.empty()) {
-                const SpeciesManager& sm = GetSpeciesManager();
-                if (!sm.empty())
-                    psd.m_starting_species_name = sm.begin()->first;
-            }
+                psd.m_empire_name = GenerateEmpireName();
+            if (psd.m_starting_species_name.empty())
+                psd.m_starting_species_name = GetSpeciesManager().RandomSpeciesName();
 
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))
                 psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
             if (psd.m_player_name.empty())
-                psd.m_player_name = "Player_" + boost::lexical_cast<std::string>(nameless_player_count++);
+                psd.m_player_name = UserString("PLAYER") + "_" + boost::lexical_cast<std::string>(nameless_player_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = psd.m_player_name;
-            if (psd.m_starting_species_name.empty()) {
-                const SpeciesManager& sm = GetSpeciesManager();
-                if (!sm.empty())
-                    psd.m_starting_species_name = sm.begin()->first;
-            }
+                psd.m_empire_name = GenerateEmpireName();
+            if (psd.m_starting_species_name.empty())
+                psd.m_starting_species_name = GetSpeciesManager().RandomSpeciesName();
         }
     }
 

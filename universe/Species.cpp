@@ -5,6 +5,7 @@
 #include "Condition.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
+#include "../util/Random.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -312,6 +313,20 @@ bool SpeciesManager::empty() const {
 
 int SpeciesManager::NumSpecies() const {
     return m_species.size();
+}
+
+namespace {
+    const std::string EMPTY_STRING;
+}
+
+const std::string& SpeciesManager::RandomSpeciesName() const {
+    if (m_species.empty())
+        return EMPTY_STRING;
+
+    int species_idx = RandSmallInt(0, static_cast<int>(m_species.size()) - 1);
+    std::map<std::string, Species*>::const_iterator it = m_species.begin();
+    std::advance(it, species_idx);
+    return it->first;
 }
 
 void SpeciesManager::ClearSpeciesHomeworlds() {

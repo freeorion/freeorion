@@ -213,6 +213,7 @@ namespace {
 
             // species selector
             SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT);
+            species_selector->SelectSpecies(m_player_data.m_starting_species_name);
             push_back(species_selector);
             if (disabled)
                 species_selector->Disable();
@@ -548,7 +549,8 @@ namespace {
         for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
             Logger().debugStream() << boost::lexical_cast<std::string>(it->first) << " : "
                                    << it->second.m_player_name << ", "
-                                   << it->second.m_client_type;
+                                   << it->second.m_client_type << ", "
+                                   << it->second.m_starting_species_name;
     }
 }
 

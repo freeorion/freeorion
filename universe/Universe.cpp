@@ -40,35 +40,30 @@ namespace {
 namespace {
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
-    DataTableMap& UniverseDataTables()
-    {
+    DataTableMap& UniverseDataTables() {
         static DataTableMap map;
         if (map.empty())
             LoadDataTables((GetResourceDir() / "universe_tables.txt").string(), map);
         return map;
     }
 
-    void LoadSystemNames(std::list<std::string>& names)
-    {
+    void LoadSystemNames(std::list<std::string>& names) {
         boost::filesystem::ifstream ifs(GetResourceDir() / "starnames.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
-            if (latest_name != "") {
+            if (!latest_name.empty())
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-            }
         }
     }
 
-    void LoadEmpireNames(std::list<std::string>& names)
-    {
+    void LoadEmpireNames(std::list<std::string>& names) {
         boost::filesystem::ifstream ifs(GetResourceDir() / "empire_names.txt");
         while (ifs) {
             std::string latest_name;
             std::getline(ifs, latest_name);
-            if (latest_name != "") {
+            if (!latest_name.empty())
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
-            }
         }
     }
 }

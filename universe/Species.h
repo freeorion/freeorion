@@ -112,10 +112,10 @@ public:
     const Species*          GetSpecies(const std::string& name) const;
     Species*                GetSpecies(const std::string& name);
 
-    /** iterator to the first building type */
+    /** iterator to the first species */
     iterator                begin() const;
 
-    /** iterator to the last + 1th building type */
+    /** iterator to the last + 1th species */
     iterator                end() const;
 
     /** returns true iff this SpeciesManager is empty. */
@@ -123,6 +123,10 @@ public:
 
     /** returns the number of species stored in this manager. */
     int                     NumSpecies() const;
+
+    /** returns the name of a species in this manager, or an empty string if
+      * this manager is empty. */
+    const std::string&      RandomSpeciesName() const;
 
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
