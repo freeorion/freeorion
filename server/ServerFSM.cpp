@@ -727,7 +727,8 @@ sc::result MPLobby::react(const StartMPGame& msg)
         return discard_event();
     }
 
-    // copy locally stored data to common server fsm context so it can be retreived in WaitingForMPGameJoiners
+    // copy locally stored data to common server fsm context so it can be
+    // retreived in WaitingForMPGameJoiners
     context<ServerFSM>().m_lobby_data = m_lobby_data;
     context<ServerFSM>().m_player_save_game_data = m_player_save_game_data;
     context<ServerFSM>().m_server_save_game_data = m_server_save_game_data;
@@ -1107,48 +1108,19 @@ sc::result PlayingGame::react(const PlayerChat& msg)
     return discard_event();
 }
 
+
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEnd
 ////////////////////////////////////////////////////////////
 WaitingForTurnEnd::WaitingForTurnEnd(my_context c) :
     my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd";
+}
 
 WaitingForTurnEnd::~WaitingForTurnEnd()
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd"; }
-
-sc::result WaitingForTurnEnd::react(const HostSPGame& msg)
 {
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEnd.HostSPGame";
-    ServerApp& server = Server();
-    const Message& message = msg.m_message;
-    PlayerConnectionPtr& player_connection = msg.m_player_connection;
-
-    boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
-    ExtractMessageData(message, *single_player_setup_data);
-
-    if (server.m_networking.PlayerIsHost(player_connection->PlayerID()) && !single_player_setup_data->m_new_game) {
-        Empires().Clear();
-        player_connection->SendMessage(HostSPAckMessage(player_connection->PlayerID()));
-        player_connection->SendMessage(JoinAckMessage(player_connection->PlayerID()));
-        server.m_single_player_game = true;
-        context<ServerFSM>().m_single_player_setup_data = single_player_setup_data;
-        return transit<WaitingForSPGameJoiners>();
-    }
-
-    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
-                               << " attempted to initiate a new game or game load, but is not the host. "
-                               << "Terminating connection.";
-    }
-    if (single_player_setup_data->m_new_game) {
-        Logger().errorStream() << "WaitingForTurnEnd.HostSPGame : Player #" << message.SendingPlayer()
-                               << " attempted to start a new game without ending the current one. "
-                               << "Terminating connection.";
-    }
-    server.m_networking.Disconnect(player_connection);
-
-    return discard_event();
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEnd";
 }
 
 sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
@@ -1197,16 +1169,13 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
         player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(), message.SendingPlayer(), Message::WAITING));
     }
 
-    if (server.AllOrdersReceived()) {
-        // if all players have submitted orders, proceed to turn processing
-        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
-        post_event(ProcessTurn());
-        return transit<ProcessingTurn>();
+    // inform player who just submitted of their new status.  Note: not sure why
+    // this only needs to be send to the submitting player and not all others as
+    // well ...
+    server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS));
 
-    } else {
-        // if still waiting for other players, inform the player who just submitted orders
-        server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS));
-    }
+    // check conditions for ending this turn
+    post_event(CheckTurnEndConditions());
 
     return discard_event();
 }
@@ -1225,6 +1194,21 @@ sc::result WaitingForTurnEnd::react(const RequestDesignID& msg)
     return discard_event();
 }
 
+sc::result WaitingForTurnEnd::react(const CheckTurnEndConditions& c)
+{
+    ServerApp& server = Server();
+    if ((server.AllOrdersReceived() /* && minium_time_passed */)
+        /* || maximum_time_passed*/)
+    {
+        // if all players have submitted orders, proceed to turn processing
+        if (TRACE_EXECUTION) Logger().debugStream() << "WaitingForTurnEnd.TurnOrders : All orders received.";
+        post_event(ProcessTurn());
+        return transit<ProcessingTurn>();
+    }
+
+    return discard_event();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForTurnEndIdle
@@ -1233,8 +1217,6 @@ WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
     my_base(c)
 {
     if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle";
-    // enforce minimum turn time
-    Sleep(1000);
 }
 
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
@@ -1258,6 +1240,14 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
     context<WaitingForTurnEnd>().m_save_filename = message.Text();  // store requested save file name in Base state context so that sibling state can retreive it
 
     return transit<WaitingForSaveData>();
+}
+
+sc::result WaitingForTurnEndIdle::react(const TimerExpired& t)
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.TimerExpired";
+    ServerApp& server = Server();
+    post_event(CheckTurnEndConditions());
+    return discard_event();
 }
 
 

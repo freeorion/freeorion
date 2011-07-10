@@ -133,7 +133,7 @@ public:
       * are victorious.  Informs players of victories or eliminations, and
       * disconnects eliminated players. */
     void                CheckForEmpireEliminationOrVictory();
-    
+
     void AddEmpireCombatTurn(int empire_id);
 
     void ClearEmpireCombatTurns();
@@ -241,8 +241,8 @@ private:
 
     static ServerApp*               s_app;
 
-    // Give FSM and its states direct access.  We are using the FSM code as a control-flow mechanism; it is all
-    // notionally part of this class.
+    // Give FSM and its states direct access.  We are using the FSM code as a
+    // control-flow mechanism; it is all notionally part of this class.
     friend struct ServerFSM;
     friend struct Idle;
     friend struct MPLobby;

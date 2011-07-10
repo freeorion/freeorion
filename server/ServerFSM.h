@@ -38,9 +38,11 @@ struct Disconnection : sc::event<Disconnection>
     PlayerConnectionPtr& m_player_connection;
 };
 
-struct LoadSaveFileFailed : sc::event<LoadSaveFileFailed>                {};
-struct CheckStartConditions : sc::event<CheckStartConditions>            {};
-struct ProcessTurn : sc::event<ProcessTurn>                              {};
+struct LoadSaveFileFailed : sc::event<LoadSaveFileFailed>               {};
+struct CheckStartConditions : sc::event<CheckStartConditions>           {};
+struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
+struct ProcessTurn : sc::event<ProcessTurn>                             {};
+struct TimerExpired : sc::event<TimerExpired>                           {};
 
 struct ResolveCombat : sc::event<ResolveCombat>
 {
@@ -51,7 +53,7 @@ struct ResolveCombat : sc::event<ResolveCombat>
 };
 
 // TODO: For prototyping only.
-struct CombatComplete : sc::event<CombatComplete>                        {};
+struct CombatComplete : sc::event<CombatComplete>                       {};
 
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
@@ -98,7 +100,8 @@ BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)
 // Top-level server states
 struct Idle;
 struct MPLobby;
-struct WaitingForJoiners;
+struct WaitingForSPGameJoiners;
+struct WaitingForMPGameJoiners;
 struct PlayingGame;
 
 // Substates of PlayingGame
@@ -270,19 +273,19 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd>
 struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForTurnEndIdle>
 {
     typedef boost::mpl::list<
-        sc::custom_reaction<HostSPGame>,
         sc::custom_reaction<TurnOrders>,
         sc::custom_reaction<RequestObjectID>,
-        sc::custom_reaction<RequestDesignID>
+        sc::custom_reaction<RequestDesignID>,
+        sc::custom_reaction<CheckTurnEndConditions>
     > reactions;
 
     WaitingForTurnEnd(my_context c);
     ~WaitingForTurnEnd();
 
-    sc::result react(const HostSPGame& msg);
     sc::result react(const TurnOrders& msg);
     sc::result react(const RequestObjectID& msg);
     sc::result react(const RequestDesignID& msg);
+    sc::result react(const CheckTurnEndConditions& c);
 
     std::string m_save_filename;
 
@@ -294,13 +297,15 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
 struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd>
 {
     typedef boost::mpl::list<
-        sc::custom_reaction<SaveGameRequest>
+        sc::custom_reaction<SaveGameRequest>,
+        sc::custom_reaction<TimerExpired>
     > reactions;
 
     WaitingForTurnEndIdle(my_context c);
     ~WaitingForTurnEndIdle();
 
     sc::result react(const SaveGameRequest& msg);
+    sc::result react(const TimerExpired& t);
 
     SERVER_ACCESSOR
 };
@@ -314,9 +319,9 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd>
     typedef boost::mpl::list<
         sc::custom_reaction<ClientSaveData>,
         sc::deferral<SaveGameRequest>,
-        sc::deferral<HostSPGame>,
         sc::deferral<TurnOrders>,
-        sc::deferral<PlayerChat>
+        sc::deferral<PlayerChat>,
+        sc::deferral<TimerExpired>
     > reactions;
 
     WaitingForSaveData(my_context c);
