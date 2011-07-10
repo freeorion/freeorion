@@ -512,7 +512,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
 
         // get lobby data for this player connection
         bool found_player_lobby_data = false;
-        std::list<std::pair<int, PlayerSetupData> >::const_iterator player_setup_it = m_lobby_data->m_players.begin();
+        std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
         while (player_setup_it != m_lobby_data->m_players.end()) {
             if (player_setup_it->first == player_id) {
                 found_player_lobby_data = true;
@@ -1231,7 +1231,11 @@ sc::result WaitingForTurnEnd::react(const RequestDesignID& msg)
 ////////////////////////////////////////////////////////////
 WaitingForTurnEndIdle::WaitingForTurnEndIdle(my_context c) :
     my_base(c)
-{ if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle"; }
+{
+    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle";
+    // enforce minimum turn time
+    Sleep(1000);
+}
 
 WaitingForTurnEndIdle::~WaitingForTurnEndIdle()
 { if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) ~WaitingForTurnEndIdle"; }
