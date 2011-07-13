@@ -114,7 +114,6 @@
     <ClInclude Include="..\..\log4cpp\log4cpp\config.h" />
     <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h" />
     <ClInclude Include="..\..\network\Message.h" />
-    <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
     <ClInclude Include="..\..\network\ServerNetworking.h" />
     <ClInclude Include="..\..\server\SaveLoad.h" />
@@ -248,7 +247,6 @@
     <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp" />
     <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
-    <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />

@@ -179,8 +179,6 @@ struct MPLobby : sc::state<MPLobby, ServerFSM>
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
 
-    void        SelectNewHost();
-
     boost::shared_ptr<MultiplayerLobbyData> m_lobby_data;
     std::vector<PlayerSaveGameData>         m_player_save_game_data;
     boost::shared_ptr<ServerSaveGameData>   m_server_save_game_data;

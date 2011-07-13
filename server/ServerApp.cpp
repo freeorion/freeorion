@@ -267,6 +267,41 @@ void ServerApp::HandleNonPlayerMessage(Message msg, PlayerConnectionPtr player_c
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm->process_event(Disconnection(player_connection)); }
 
+void ServerApp::SelectNewHost()
+{
+    int new_host_id = Networking::INVALID_PLAYER_ID;
+    int old_host_id = m_networking.HostPlayerID();
+
+    Logger().debugStream() << "ServerApp::SelectNewHost old host id: " << old_host_id;
+
+    // scan through players for a human to host
+    for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
+            players_it != m_networking.established_end(); ++players_it)
+    {
+        PlayerConnectionPtr player_connection = *players_it;
+        if (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        {
+            new_host_id = player_connection->PlayerID();
+        }
+    }
+
+    if (new_host_id == Networking::INVALID_PLAYER_ID) {
+        // couldn't find a host... abort
+        Logger().debugStream() << "ServerApp::SelectNewHost : Host disconnected and couldn't find a replacement.";
+        m_networking.SendMessage(ErrorMessage("SERVER_UNABLE_TO_SELECT_HOST", false));
+    }
+
+    // set new host ID
+    m_networking.SetHostPlayerID(new_host_id);
+
+    // inform players.
+    for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
+        if ((*it)->PlayerID() != old_host_id)
+            (*it)->SendMessage(HostIDMessage(new_host_id));
+    }
+}
+
 void ServerApp::NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data)
 {
     // associate player IDs with player setup data.  the player connection with

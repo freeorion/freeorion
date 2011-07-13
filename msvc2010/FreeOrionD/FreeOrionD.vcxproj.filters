@@ -155,9 +155,6 @@
     <ClInclude Include="..\..\network\Message.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\network\MessageQueue.h">
-      <Filter>Header Files\network</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\network\Networking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
@@ -553,9 +550,6 @@
       <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\network\Message.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\network\MessageQueue.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\util\OptionsDB.cpp">
