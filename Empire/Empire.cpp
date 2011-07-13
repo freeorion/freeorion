@@ -2585,7 +2585,7 @@ void Empire::CheckProductionProgress()
                     continue;
                 }
 
-                Building* building = new Building(m_id, m_production_queue[i].item.name);
+                Building* building = new Building(m_id, m_production_queue[i].item.name, m_id);
 
                 int building_id = universe.Insert(building);
 
@@ -2637,7 +2637,7 @@ void Empire::CheckProductionProgress()
 
 
                 // add ship
-                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name);
+                Ship* ship = new Ship(m_id, m_production_queue[i].item.design_id, species_name, m_id);
                 // set active meters that have associated max meters to an
                 // initial very large value, so that when the active meters are
                 // later clamped, they will equal the max meter after effects

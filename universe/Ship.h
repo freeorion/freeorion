@@ -19,17 +19,19 @@ public:
 
     /** \name Structors */ //@{
     Ship();                                         ///< default ctor
-    Ship(int empire_id, int design_id, const std::string& species_name);    ///< general ctor taking ship's empire and design id, and species name.
+    Ship(int empire_id, int design_id, const std::string& species_name,
+         int produced_by_empire_id = ALL_EMPIRES);  ///< general ctor taking ship's empire and design id, species name and production empire id.
 
     virtual Ship*               Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;           ///< returns user-readable string indicating the type of UniverseObject this is
 
-    const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                         DesignID() const;   ///< returns the design id of the ship
-    int                         FleetID() const;    ///< returns the ID of the fleet the ship is residing in
+    const ShipDesign*           Design() const;             ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                         DesignID() const;           ///< returns the design id of the ship
+    int                         FleetID() const;            ///< returns the ID of the fleet the ship is residing in
+    int                         ProducedByEmpireID() const; ///< returns the empire ID of the empire that produced this ship
 
     virtual const std::string&  PublicName(int empire_id) const;
     virtual std::string         Dump() const;
@@ -88,6 +90,7 @@ private:
     ConsumablesMap  m_missiles;
     PartMeters      m_part_meters;
     std::string     m_species_name;
+    int             m_produced_by_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>

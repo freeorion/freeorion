@@ -30,15 +30,17 @@ Ship::Ship() :
     m_design_id(ShipDesign::INVALID_DESIGN_ID),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
-    m_ordered_colonize_planet_id(INVALID_OBJECT_ID)
+    m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
+    m_produced_by_empire_id(ALL_EMPIRES)
 {}
 
-Ship::Ship(int empire_id, int design_id, const std::string& species_name) :
+Ship::Ship(int empire_id, int design_id, const std::string& species_name, int produced_by_empire_id/* = ALL_EMPIRES*/) :
     m_design_id(design_id),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
-    m_species_name(species_name)
+    m_species_name(species_name),
+    m_produced_by_empire_id(produced_by_empire_id)
 {
     if (!GetShipDesign(design_id))
         throw std::invalid_argument("Attempted to construct a Ship with an invalid design id");
@@ -159,6 +161,7 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
                 this->m_part_meters =               copied_ship->m_part_meters;
+                this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             }
         }
     }
@@ -215,6 +218,11 @@ int Ship::DesignID() const {
 
 int Ship::FleetID() const {
     return m_fleet_id;
+}
+
+int Ship::ProducedByEmpireID() const
+{
+    return m_produced_by_empire_id;
 }
 
 bool Ship::IsArmed() const {

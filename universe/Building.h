@@ -19,7 +19,8 @@ class Building : public UniverseObject
 public:
     /** \name Structors */ //@{
     Building();                                                         ///< default ctor
-    Building(int empire_id, const std::string& building_type);          ///< basic ctor
+    Building(int empire_id, const std::string& building_type,
+             int produced_by_empire_id = ALL_EMPIRES);                  ///< basic ctor
 
     virtual Building*       Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
     //@}
@@ -35,6 +36,7 @@ public:
 
     const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
     int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
+    int                     ProducedByEmpireID() const;         ///< returns the empire ID of the empire that produced this building
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -57,6 +59,8 @@ private:
     std::string m_building_type;
     int         m_planet_id;
     bool        m_ordered_scrapped;
+    int         m_produced_by_empire_id;
+
 
     friend class boost::serialization::access;
     template <class Archive>

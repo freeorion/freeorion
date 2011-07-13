@@ -127,7 +127,8 @@ void Building::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)
         & BOOST_SERIALIZATION_NVP(m_building_type)
         & BOOST_SERIALIZATION_NVP(m_planet_id)
-        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped);
+        & BOOST_SERIALIZATION_NVP(m_ordered_scrapped)
+        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
 }
 
 template <class Archive>
@@ -169,7 +170,8 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_fighters)
         & BOOST_SERIALIZATION_NVP(m_missiles)
         & BOOST_SERIALIZATION_NVP(m_part_meters)
-        & BOOST_SERIALIZATION_NVP(m_species_name);
+        & BOOST_SERIALIZATION_NVP(m_species_name)
+        & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
 }
 
 template

@@ -52,14 +52,16 @@ Building::Building() :
     UniverseObject(),
     m_building_type(""),
     m_planet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false)
+    m_ordered_scrapped(false),
+    m_produced_by_empire_id(ALL_EMPIRES)
 {}
 
-Building::Building(int empire_id, const std::string& building_type) :
+Building::Building(int empire_id, const std::string& building_type, int produced_by_empire_id/* = ALL_EMPIRES*/) :
     UniverseObject(),
     m_building_type(building_type),
     m_planet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false)
+    m_ordered_scrapped(false),
+    m_produced_by_empire_id(produced_by_empire_id)
 {
     AddOwner(empire_id);
     const BuildingType* type = GetBuildingType();
@@ -103,7 +105,8 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id)
         this->m_planet_id =                 copied_building->m_planet_id;
 
         if (vis >= VIS_FULL_VISIBILITY) {
-            this->m_ordered_scrapped =  copied_building->m_ordered_scrapped;
+            this->m_ordered_scrapped =      copied_building->m_ordered_scrapped;
+            this->m_produced_by_empire_id = copied_building->m_produced_by_empire_id;
         }
     }
 }
@@ -134,6 +137,11 @@ const std::string& Building::BuildingTypeName() const
 int Building::PlanetID() const
 {
     return m_planet_id;
+}
+
+int Building::ProducedByEmpireID() const
+{
+    return m_produced_by_empire_id;
 }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const

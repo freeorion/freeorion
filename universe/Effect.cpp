@@ -1183,7 +1183,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const
         return;
     }
 
-    Building* building = new Building(ALL_EMPIRES, building_type_name);
+    Building* building = new Building(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         Logger().errorStream() << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -1298,7 +1298,7 @@ void CreateShip::Execute(const ScriptingContext& context) const
     //        fleet = ship->FleetID();
     //// etc.
 
-    Ship* ship = new Ship(empire_id, design_id, species_name);
+    Ship* ship = new Ship(empire_id, design_id, species_name, ALL_EMPIRES);
     if (!ship) {
         Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
         return;
