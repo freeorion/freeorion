@@ -1998,7 +1998,8 @@ void DesignWnd::MainPanel::DoLayout() {
 
 void DesignWnd::MainPanel::DesignChanged() {
     m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
-    if (m_hull && !(m_hull->Name()).empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (client_empire_id != ALL_EMPIRES && m_hull && !(m_hull->Name()).empty() && ShipDesign::ValidDesign(m_hull->Name(), Parts()))
         m_confirm_button->Disable(false);
     else
         m_confirm_button->Disable(true);
