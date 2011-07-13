@@ -1242,14 +1242,6 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg)
     return transit<WaitingForSaveData>();
 }
 
-sc::result WaitingForTurnEndIdle::react(const TimerExpired& t)
-{
-    if (TRACE_EXECUTION) Logger().debugStream() << "(ServerFSM) WaitingForTurnEndIdle.TimerExpired";
-    ServerApp& server = Server();
-    post_event(CheckTurnEndConditions());
-    return discard_event();
-}
-
 
 ////////////////////////////////////////////////////////////
 // WaitingForSaveData

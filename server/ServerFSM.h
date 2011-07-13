@@ -42,7 +42,6 @@ struct LoadSaveFileFailed : sc::event<LoadSaveFileFailed>               {};
 struct CheckStartConditions : sc::event<CheckStartConditions>           {};
 struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
-struct TimerExpired : sc::event<TimerExpired>                           {};
 
 struct ResolveCombat : sc::event<ResolveCombat>
 {
@@ -297,15 +296,13 @@ struct WaitingForTurnEnd : sc::state<WaitingForTurnEnd, PlayingGame, WaitingForT
 struct WaitingForTurnEndIdle : sc::state<WaitingForTurnEndIdle, WaitingForTurnEnd>
 {
     typedef boost::mpl::list<
-        sc::custom_reaction<SaveGameRequest>,
-        sc::custom_reaction<TimerExpired>
+        sc::custom_reaction<SaveGameRequest>
     > reactions;
 
     WaitingForTurnEndIdle(my_context c);
     ~WaitingForTurnEndIdle();
 
     sc::result react(const SaveGameRequest& msg);
-    sc::result react(const TimerExpired& t);
 
     SERVER_ACCESSOR
 };
@@ -320,8 +317,7 @@ struct WaitingForSaveData : sc::state<WaitingForSaveData, WaitingForTurnEnd>
         sc::custom_reaction<ClientSaveData>,
         sc::deferral<SaveGameRequest>,
         sc::deferral<TurnOrders>,
-        sc::deferral<PlayerChat>,
-        sc::deferral<TimerExpired>
+        sc::deferral<PlayerChat>
     > reactions;
 
     WaitingForSaveData(my_context c);
