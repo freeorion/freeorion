@@ -2442,6 +2442,8 @@ STAR_NEUTRON
 neutron
 STAR_BLACK
 black hole
+STAR_NONE
+no star
 
 
 # PlanetTypes

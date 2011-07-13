@@ -137,7 +137,7 @@ std::string System::Dump() const
 {
     std::stringstream os;
     os << UniverseObject::Dump();
-    os << " star type: " << m_star
+    os << " star type: " << UserString(GG::GetEnumMap<StarType>().FromEnum(m_star))
        << " starlanes: ";
     //typedef std::map<int, bool> StarlaneMap;
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end();) {

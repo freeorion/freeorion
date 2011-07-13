@@ -120,7 +120,8 @@ std::string Building::Dump() const
 {
     std::stringstream os;
     os << UniverseObject::Dump();
-    os << " building type: " << m_building_type;
+    os << " building type: " << m_building_type
+       << " produced by empire id: " << m_produced_by_empire_id;
     return os.str();
 }
 

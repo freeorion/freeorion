@@ -179,6 +179,7 @@ std::string Ship::Dump() const
     os << " design id: " << m_design_id
        << " fleet id: " << m_fleet_id
        << " species name: " << m_species_name
+       << " produced by empire id: " << m_produced_by_empire_id
        << " fighters: ";
     //typedef std::map<std::string, std::pair<std::size_t, std::size_t> > ConsumablesMap;
     for (ConsumablesMap::const_iterator it = m_fighters.begin(); it != m_fighters.end();) {

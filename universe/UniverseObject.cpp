@@ -169,7 +169,14 @@ std::string UniverseObject::Dump() const
        << this->ID() << ": "
        << this->Name()
        << (system ? ("  at: " + system->Name()) : "")
-       << "  Meters: ";
+       << " owners: ";
+    for (std::set<int>::const_iterator it = m_owners.begin(); it != m_owners.end(); ++it)
+        os << *it << " ";
+    os << " created on turn: " << m_created_on_turn
+       << " specials: ";
+    for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
+        os << *it;
+    os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         os << UserString(GG::GetEnumMap<MeterType>().FromEnum(it->first))
            << ": " << it->second.Current() << "  ";

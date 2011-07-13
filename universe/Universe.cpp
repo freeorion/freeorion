@@ -4454,19 +4454,19 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
 
 
         // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
-        Building* building = new Building(empire_id, "BLD_SHIPYARD_BASE");
+        Building* building = new Building(empire_id, "BLD_SHIPYARD_BASE", empire_id);
         int building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
-        building = new Building(empire_id, "BLD_SHIPYARD_ORBITAL_DRYDOCK");
+        building = new Building(empire_id, "BLD_SHIPYARD_ORBITAL_DRYDOCK", empire_id);
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
-        building = new Building(empire_id, "BLD_CULTURE_ARCHIVES");
+        building = new Building(empire_id, "BLD_CULTURE_ARCHIVES", empire_id);
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
-        building = new Building(empire_id, "BLD_IMPERIAL_PALACE");
+        building = new Building(empire_id, "BLD_IMPERIAL_PALACE", empire_id);
         building_id = Insert(building);
         home_planet->AddBuilding(building_id);
 
@@ -4506,7 +4506,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
                     }
 
                     // create new ship
-                    Ship* ship = new Ship(empire_id, design_id, empire_starting_species);
+                    Ship* ship = new Ship(empire_id, design_id, empire_starting_species, empire_id);
                     if (!ship) {
                         Logger().errorStream() << "unable to create new ship!";
                         break;
