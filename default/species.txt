@@ -539,22 +539,6 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Terran
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
-            ]
     ]
     environments = [
         type = Swamp        environment = Poor
@@ -1111,22 +1095,6 @@ Species
                 WithinStarlaneJumps 1 Source
                 Not WithinDistance 0 Source
                 System
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Ocean
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
             ]
     ]
     environments = [
@@ -1685,22 +1653,6 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Swamp
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
-            ]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -2257,22 +2209,6 @@ Species
                 WithinStarlaneJumps 1 Source
                 Not WithinDistance 0 Source
                 System
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Toxic
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
             ]
     ]
     environments = [
@@ -2831,22 +2767,6 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Inferno
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
-            ]
     ]
     environments = [
         type = Swamp        environment = Poor
@@ -3403,22 +3323,6 @@ Species
                 WithinStarlaneJumps 1 Source
                 Not WithinDistance 0 Source
                 System
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Radiated
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
             ]
     ]
     environments = [
@@ -3977,22 +3881,6 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Barren
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
-            ]
     ]
     environments = [
         type = Swamp        environment = Hostile
@@ -4550,22 +4438,6 @@ Species
                 Not WithinDistance 0 Source
                 System
             ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Tundra
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
-            ]
     ]
     environments = [
         type = Swamp        environment = Hostile
@@ -5122,22 +4994,6 @@ Species
                 WithinStarlaneJumps 1 Source
                 Not WithinDistance 0 Source
                 System
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = Not Turn low = 1 high = 99999
-            effects = SetPlanetType Desert
-
-        EffectsGroup
-            scope = Source
-            activation = And [
-                Planet environment = Hostile
-                Not Turn low = 1 high = 99999
-            ]
-            effects = [
-                SetTargetPopulation Value + 15
-                SetTargetHealth Value + 25
             ]
     ]
     environments = [

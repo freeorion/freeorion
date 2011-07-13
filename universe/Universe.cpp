@@ -4423,10 +4423,26 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
         empire->AddExploredSystem(home_planet->SystemID());
 
         home_planet->SetSpecies(empire_starting_species);
-        if (Species* species = species_manager.GetSpecies(empire_starting_species))
+        if (Species* species = species_manager.GetSpecies(empire_starting_species)) {
             species->AddHomeworld(homeworld_id);
-        else
+
+            // set homeword's planet type to the preferred type for this species
+            const std::map<PlanetType, PlanetEnvironment>& spte = species->PlanetEnvironments();
+            if (!spte.empty()) {
+                // invert map from planet type to environments to map from
+                // environments to type, sorted by environment
+                std::map<PlanetEnvironment, PlanetType> sept;
+                for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = spte.begin(); it != spte.end(); ++it)
+                    sept[it->second] = it->first;
+                // assuming enum values are ordered in increasing goodness...
+                PlanetType preferred_planet_type = sept.rbegin()->second;
+
+                home_planet->SetType(preferred_planet_type);
+            }
+
+        } else {
             Logger().errorStream() << "Universe::GenerateEmpires Couldn't get species \"" << empire_starting_species << "\" to set with homeworld id " << homeworld_id;
+        }
 
         // find a focus to give planets by default.  use first defined available focus.
         // the planet's AvailableFoci function should return a vector of all names of
