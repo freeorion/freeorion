@@ -1667,6 +1667,18 @@ void ServerApp::PostCombatProcessTurns()
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
+    // check for loss of empire capitols
+    for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
+        int capitol_id = empire_it->second->CapitolID();
+        if (const UniverseObject* capitol = GetObject(capitol_id)) {
+            if (!capitol->OwnedBy(empire_it->first))
+                empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        } else {
+            empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        }
+    }
+
+
     // process production and growth phase
 
     // notify players that production and growth is being processed
@@ -1760,6 +1772,17 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
     Logger().debugStream() << objects.Dump();
 
+
+    // check for loss of empire capitols
+    for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
+        int capitol_id = empire_it->second->CapitolID();
+        if (const UniverseObject* capitol = GetObject(capitol_id)) {
+            if (!capitol->OwnedBy(empire_it->first))
+                empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        } else {
+            empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        }
+    }
 
 
     // store initial values of meters for this turn.

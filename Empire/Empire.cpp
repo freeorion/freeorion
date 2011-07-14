@@ -1164,15 +1164,8 @@ int Empire::StockpileID(ResourceType res) const
 
 void Empire::SetCapitolID(int id)
 {
-    const Universe& universe = GetUniverse();
-    const Planet* planet = universe.Objects().Object<Planet>(id);
-    if (planet) {
-        const std::set<int>& owners = planet->Owners();
-        if (owners.size() == 1 && *owners.begin() == EmpireID()) {
-            m_capitol_id = id;
-        }
-    }
-};
+    m_capitol_id = id;
+}
 
 Meter* Empire::GetMeter(const std::string& name)
 {
@@ -1420,7 +1413,6 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     }
 }
 
-
 bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int location) const
 {
     if (item.build_type == BT_BUILDING)
@@ -1431,6 +1423,7 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
         throw std::invalid_argument("Empire::BuildableItem was passed a ProductionItem with an invalid BuildType");
     return false;
 }
+
 int Empire::NumSitRepEntries() const
 {
     return m_sitrep_entries.size();
