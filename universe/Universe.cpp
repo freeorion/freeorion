@@ -286,32 +286,36 @@ ObjectMap::~ObjectMap()
     // Otherwise, the pointed-to UniverseObjects will be leaked memory...
 }
 
-void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id)
+void ObjectMap::Copy(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/)
 {
     if (&copied_map == this)
         return;
 
     // loop through objects in copied map, copying or cloning each depending
     // on whether there already is a corresponding object in this map
-    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it) {
-        int object_id = it->first;
+    for (ObjectMap::const_iterator it = copied_map.const_begin(); it != copied_map.const_end(); ++it)
+        this->Copy(it->second, empire_id);
+}
 
-        // can empire see object at all?  if not, skip copying object's info
-        if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
-            continue;
+void ObjectMap::Copy(const UniverseObject* obj, int empire_id/* = ALL_EMPIRES*/)
+{
+    if (!obj)
+        return;
+    int object_id = obj->ID();
 
-        // copy object...
-        const UniverseObject* copy_from_object = it->second;
-        if (UniverseObject* copy_to_object = this->Object(object_id)) {
-            copy_to_object->Copy(copy_from_object, empire_id);          // there already is a version of this object present in this ObjectMap, so just update it
-        } else {
-            UniverseObject* clone = copy_from_object->Clone(empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
-            this->Insert(object_id, clone);
-        }
+    // can empire see object at all?  if not, skip copying object's info
+    if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
+        return;
+
+    if (UniverseObject* copy_to_object = this->Object(object_id)) {
+        copy_to_object->Copy(obj, empire_id);           // there already is a version of this object present in this ObjectMap, so just update it
+    } else {
+        UniverseObject* clone = obj->Clone(empire_id);  // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
+        this->Insert(object_id, clone);
     }
 }
 
-void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id)
+void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/* = ALL_EMPIRES*/)
 {
     if (&copied_map == this)
         return;
@@ -325,20 +329,10 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id)
         if (GetUniverse().GetObjectVisibilityByEmpire(object_id, empire_id) <= VIS_NO_VISIBILITY)
             continue;
 
-        // copy object...  Note that the difference between this function and
-        // the ObjectMap::Copy function is that any copied object here is
-        // copied completely, whereas Copy only transfers the visible
-        // information about each object that is copied.  If an object is
-        // basic or partially visible, this function will still copy all
-        // information about it in the copied_map.
-        const UniverseObject* copy_from_object = it->second;
-        if (UniverseObject* copy_to_object = this->Object(object_id)) {
-            copy_to_object->Copy(copy_from_object, ALL_EMPIRES);            // there already is a version of this object present in this ObjectMap, so just update it
-        } else {
-            UniverseObject* clone = copy_from_object->Clone(ALL_EMPIRES);   // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
-            this->Insert(object_id, clone);
-        }
-    }
+        // if object is at all visible, copy all information, not just info
+        // appropriate for the actual visibility level.
+        this->Copy(it->second, ALL_EMPIRES);
+   }
 }
 
 ObjectMap* ObjectMap::Clone(int empire_id) const

@@ -350,9 +350,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         return;
 
     const System* system = combat_info.objects.Object<System>(combat_info.system_id);
-    if (!system) {
+    if (!system)
         Logger().errorStream() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
-    }
 
 
     Logger().debugStream() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
@@ -377,8 +376,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         all_combat_object_IDs.push_back(it->first);
     }
 
-    SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object from the vector
-
 
     // map from empire to set of IDs of objects that empire's objects
     // could target.  presently valid targets are objects not owned by
@@ -387,11 +384,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     for (std::vector<int>::const_iterator object_it = all_combat_object_IDs.begin(); object_it != all_combat_object_IDs.end(); ++object_it) {
         int object_id = *object_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
-        //if (universe_object_cast<const System*>(obj))
-        //    continue;
-        //if (universe_object_cast<const Fleet*>(obj))
-        //    continue;
-
         const std::set<int>& owners = obj->Owners();
 
         for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin(); empire_it != combat_info.empire_ids.end(); ++empire_it) {
@@ -411,6 +403,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
 
         // select attacking object in battle
+        SmallIntDistType object_num_dist = SmallIntDist(0, all_combat_object_IDs.size() - 1);  // to pick an object id from the vector
         int attacker_index = object_num_dist();
         int attacker_id = all_combat_object_IDs.at(attacker_index);
 
@@ -460,7 +453,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
 
         Logger().debugStream() << "Attacker: " << attacker->Dump();
 
-        SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object from the vector
+        SmallIntDistType target_id_num_dist = SmallIntDist(0, valid_target_ids.size() - 1);  // to pick an object id from the vector
 
         // select target object
         int target_index = target_id_num_dist();
@@ -516,11 +509,22 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                 const std::set<int>& attacker_owners = attacker->Owners();
                 if (attacker_owners.size() == 1) {
                     int attacker_owner = *attacker_owners.begin();
-                    if (!planet->OwnedBy(attacker_owner))
+                    if (!planet->OwnedBy(attacker_owner)) {
+                        // conquer for new owner
                         planet->Conquer(attacker_owner);
+                        // update old owner on status of planet
+                    }
                 }
             }
-        }    
+        }
+    }
+
+    // ensure every participant knows what happened.  TODO: this should probably
+    // be more discriminating about what info is or isn't copied.
+    for (std::map<int, ObjectMap>::iterator it = combat_info.empire_known_objects.begin();
+         it != combat_info.empire_known_objects.end(); ++it)
+    {
+        it->second.Copy(combat_info.objects);
     }
 
     Logger().debugStream() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();

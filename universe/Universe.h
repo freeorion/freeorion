@@ -139,6 +139,15 @@ public:
       * are left unchanged. */
     void                                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
+    /** Copies the passed \a object into this ObjectMap, overwriting any
+      * existing information about that object or creating a new object in this
+      * map as appropriate with UniverseObject::Copy or UniverseObject::Clone.
+      * The object is fully copied if \a empire_id is ALL_EMPIRES, but if
+      * another empire id is specified, then the copied informatio is limited
+      * by passed that \a empire_id to Copy or Clone of the object.  The
+      * passed object is unchanged. */
+    void                                Copy(const UniverseObject* obj, int empire_id = ALL_EMPIRES);
+
     /** Copies the objects of the ObjectMap \a copied_map that are visible to
       * the empire with id \a empire_id into this ObjectMap.  Copied objects
       * are complete copies of all information in \a copied_map about objects
