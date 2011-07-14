@@ -1114,20 +1114,40 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet locations;
     Condition::ObjectSet non_locations;
 
-    ObjectMap& objects = GetMainObjectMap();
+    const ObjectMap& objects = GetMainObjectMap();
 
-    UniverseObject* loc = objects.Object(location_id);
-    if (!loc) return false;
+    const UniverseObject* location = objects.Object(location_id);
+    if (!location) return false;
 
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {
         Logger().debugStream() << "ShipDesign::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
-    const UniverseObject* capitol = objects.Object(empire->CapitolID());
-    ScriptingContext sc(capitol);
 
-    locations.insert(loc);
+    // get a source object, which is owned by the empire with the passed-in
+    // empire id.  this is used in conditions to reference which empire is
+    // doing the producing.  Ideally this will be the capitol, but any object
+    // owned by the empire will work.
+    const UniverseObject* source = objects.Object(empire->CapitolID());
+    if (!source && location->OwnedBy(empire_id))
+        source = location;
+    // still no valid source?!  scan through all objects to find one owned by this empire
+    if (!source) {
+        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+            if (obj_it->second->OwnedBy(empire_id)) {
+                source = obj_it->second;
+                break;
+            }
+        }
+    }
+    // if this empire doesn't own ANYTHING, then how is it producing anyway?
+    if (!source)
+        return false;
+
+    ScriptingContext sc(source);
+
+    locations.insert(location);
 
     // apply hull location conditions to potential location
     const HullType* hull = GetHull();

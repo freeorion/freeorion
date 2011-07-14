@@ -317,8 +317,28 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
         Logger().debugStream() << "BuildingType::ProductionLocation: Unable to get pointer to empire " << empire_id;
         return false;
     }
-    const UniverseObject* capitol = objects.Object(empire->CapitolID());
-    ScriptingContext sc(capitol);
+
+    // get a source object, which is owned by the empire with the passed-in
+    // empire id.  this is used in conditions to reference which empire is
+    // doing the building.  Ideally this will be the capitol, but any object
+    // owned by the empire will work.
+    const UniverseObject* source = objects.Object(empire->CapitolID());
+    if (!source && location->OwnedBy(empire_id))
+        source = location;
+    // still no valid source?!  scan through all objects to find one owned by this empire
+    if (!source) {
+        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+            if (obj_it->second->OwnedBy(empire_id)) {
+                source = obj_it->second;
+                break;
+            }
+        }
+    }
+    // if this empire doesn't own ANYTHING, then how is it building anyway?
+    if (!source)
+        return false;
+
+    ScriptingContext sc(source);
 
     Condition::ObjectSet potential_targets; potential_targets.insert(location);
     Condition::ObjectSet matched_targets;
