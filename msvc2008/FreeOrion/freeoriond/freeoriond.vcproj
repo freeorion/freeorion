@@ -378,14 +378,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\..\network\MessageQueue.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\..\network\MessageQueue.h"
-				>
-			</File>
-			<File
 				RelativePath="..\..\..\network\Networking.cpp"
 				>
 			</File>
