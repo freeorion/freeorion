@@ -1084,14 +1084,9 @@ void SidePanel::PlanetPanel::Refresh()
     }
 
 
-    // set up planet panel differently for owned and unowned planets...
-    if (owner == OS_NONE && !SHOW_ALL_PLANET_PANELS) {
-        // show only the environment and size information and (if applicable) buildings and specials
-        DetachChild(m_population_panel);
-        DetachChild(m_resource_panel);
-        DetachChild(m_military_panel);
-    } else {
-        // show population, resource and military panels, but hide environement / size indicator that's used only for uncolonized planets
+    if (planet->CurrentMeterValue(METER_POPULATION) > 0 || SHOW_ALL_PLANET_PANELS) {
+        // show population, resource and military panels, but hide environement
+        // size indicator that's used only for uncolonized planets
         AttachChild(m_population_panel);
         if (m_population_panel)
             m_population_panel->Refresh();
@@ -1101,6 +1096,10 @@ void SidePanel::PlanetPanel::Refresh()
         AttachChild(m_military_panel);
         if (m_military_panel)
             m_military_panel->Refresh();
+    } else {
+        DetachChild(m_population_panel);
+        DetachChild(m_resource_panel);
+        DetachChild(m_military_panel);
     }
 
     const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
@@ -1109,7 +1108,8 @@ void SidePanel::PlanetPanel::Refresh()
     // that can colonize, or the planet has been ordered to be colonized already
     // this turn)
     if (!Disabled() &&
-        owner == OS_NONE &&
+        (owner == OS_NONE || owner == OS_SELF) &&
+        planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
         ship &&
         !planet->IsAboutToBeColonized() &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
