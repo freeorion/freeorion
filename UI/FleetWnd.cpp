@@ -175,17 +175,18 @@ namespace {
 
         double X = first_ship->X(), Y = first_ship->Y();
 
-        std::set<int> ship_old_fleet_ids;
 
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         const ObjectMap& objects = GetUniverse().Objects();
 
-        // verify that all fleets are at the same system and position and owned by the same empire
+        // verify that all fleets are at the same system and position and owned
+        // by the same empire.  also collect all fleet ids from which ships are
+        // being taken
+        std::set<int> original_fleet_ids;
         for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            int ship_id = *it;
-            const Ship* ship = objects.Object<Ship>(ship_id);
+            const Ship* ship = objects.Object<Ship>(*it);
             if (!ship) {
-                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << ship_id;
+                Logger().errorStream() << "CreateNewFleetFromShips couldn't get ship with id " << first_ship_id;
                 return;
             }
             if (ship->SystemID() != system_id) {
@@ -200,8 +201,9 @@ namespace {
                 Logger().errorStream() << "CreateNewFleetFromShips passed ships not owned by this client's empire";
                 return;
             }
-
-            ship_old_fleet_ids.insert(ship->FleetID());
+            int fleet_id = ship->FleetID();
+            if (fleet_id != UniverseObject::INVALID_OBJECT_ID)
+                original_fleet_ids.insert(fleet_id);
         }
 
 
@@ -217,21 +219,17 @@ namespace {
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
 
-        // fleet receiving drops is in a system
+        // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
 
-        // delete empty fleets
-        for (std::set<int>::const_iterator it = ship_old_fleet_ids.begin(); it != ship_old_fleet_ids.end(); ++it) {
-            int fleet_id = *it;
-            const Fleet* fleet = objects.Object<Fleet>(fleet_id);
-            if (!fleet) {
-                Logger().errorStream() << "CreateNewFleetFromShips couldn't get fleet with id " << fleet_id;
-                continue;
-            }
-            if (fleet->Empty())
+
+        // delete empty fleets from which ships may have been taken
+        for (std::set<int>::const_iterator it = original_fleet_ids.begin(); it != original_fleet_ids.end(); ++it) {
+            const Fleet* fleet = objects.Object<Fleet>(*it);
+            if (fleet && fleet->Empty())
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(empire_id, fleet_id)));
+                    new DeleteFleetOrder(empire_id, fleet->ID())));
         }
     }
 
@@ -1754,6 +1752,13 @@ public:
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new FleetTransferOrder(empire_id, dropped_ship_fleet_id, m_fleet_id, ship_ids)));
+
+        // delete old fleet if now empty
+        const ObjectMap& objects = GetUniverse().Objects();
+        if (const Fleet* dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
+            if (dropped_ship_old_fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
+                    new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
