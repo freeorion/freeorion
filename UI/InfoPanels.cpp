@@ -947,7 +947,11 @@ void ResourcePanel::FocusDropListSelectionChanged(GG::DropDownList::iterator sel
 
 void ResourcePanel::EnableOrderIssuing(bool enable/* = true*/)
 {
-    m_focus_drop->Disable(!enable);
+    const UniverseObject* obj = GetObject(m_rescenter_id);
+    if (!enable || !obj || !obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        m_focus_drop->Disable();
+    else
+        m_focus_drop->Disable(false);
 }
 
 
