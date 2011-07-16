@@ -248,6 +248,7 @@ private:
   * any species in the current game Universe. */
 struct Condition::Homeworld : Condition::ConditionBase
 {
+    Homeworld();
     Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
     virtual ~Homeworld();
     virtual std::string Description(bool negated = false) const;
