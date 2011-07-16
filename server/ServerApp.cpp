@@ -558,6 +558,12 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
 
+    // self-allocate resources on unowned planets, so natives don't starve
+    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
+    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
+            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
+
 
     // send new game start messages
     Logger().debugStream() << "ServerApp::NewGameInit: Sending GameStartMessages to players";
@@ -760,6 +766,12 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
+
+    // self-allocate resources on unowned planets, so natives don't starve
+    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
+    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
+            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
 
 
     // compile information about players to send out to other players at start of game.
@@ -1717,6 +1729,13 @@ void ServerApp::PostCombatProcessTurns()
         empire->InitResourcePools();                // determines population centers and resource centers of empire, tells resource pools the centers and groups of systems that can share resources (note that being able to share resources doesn't mean a system produces resources)
         empire->UpdateResourcePools();              // determines how much of each resources is available in each resource sharing group
     }
+
+    // self-allocate resources on unowned planets, so natives don't starve
+    std::vector<Planet*> planets = m_universe.Objects().FindObjects<Planet>();
+    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
+            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
+
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
     Logger().debugStream() << objects.Dump();

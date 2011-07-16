@@ -220,6 +220,13 @@ namespace AIInterface {
         EmpireManager& manager = AIClientApp::GetApp()->Empires();
         for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
             it->second->UpdateResourcePools();
+
+        Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        // self-allocate resources on unowned planets, so natives don't starve
+        std::vector<Planet*> planets = universe.Objects().FindObjects<Planet>();
+        for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+            if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
+                (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
     }
 
     int IssueFleetMoveOrder(int fleet_id, int destination_id) {

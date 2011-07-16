@@ -1737,6 +1737,14 @@ void MapWnd::InitTurn()
     timer.restart();
     for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
         it->second->UpdateResourcePools();
+
+    // self-allocate resources on unowned planets, so natives don't starve
+    std::vector<Planet*> planets = GetUniverse().Objects().FindObjects<Planet>();
+    for (std::vector<Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+        if ((*it)->Unowned() && (*it)->CurrentMeterValue(METER_POPULATION) > 0.0)
+            (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
+
+
     Logger().debugStream() << "MapWnd::InitTurn getting known starlanes and visible systems time: " << (timer.elapsed() * 1000.0);
 
 
