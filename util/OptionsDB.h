@@ -210,7 +210,6 @@ public:
         OptionAddedSignal(name);
     }
 
-
     /** removes an Option */
     void        Remove(const std::string& name);
 

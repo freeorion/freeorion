@@ -94,6 +94,8 @@ int mainConfigOptionsSetup(int argc, char* argv[])
         GetOptionsDB().Add<std::string>("load", "OPTIONS_DB_LOAD", "", Validator<std::string>(),false);
         GetOptionsDB().Add("UI.sound.music-enabled",        "OPTIONS_DB_MUSIC_ON",              true);
         GetOptionsDB().Add("UI.sound.enabled",              "OPTIONS_DB_SOUND_ON",              true);
+        GetOptionsDB().Add<std::string>("version-string",   "OPTIONS_DB_VERSION_STRING",
+                                        FreeOrionVersionString(),      Validator<std::string>(),true);
 
 
         // read config.xml and set options entries from it, if present
@@ -103,7 +105,12 @@ int mainConfigOptionsSetup(int argc, char* argv[])
                 boost::filesystem::ifstream ifs(GetConfigPath());
                 if (ifs) {
                     doc.ReadDoc(ifs);
-                    GetOptionsDB().SetFromXML(doc);
+                    // reject config files from out-of-date version
+                    if (doc.root_node.ContainsChild("version-string") &&
+                        doc.root_node.Child("version-string").Text() == FreeOrionVersionString())
+                    {
+                        GetOptionsDB().SetFromXML(doc);
+                    }
                 }
             } catch (const std::exception&) {
                 std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML") << std::endl;
