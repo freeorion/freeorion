@@ -56,6 +56,8 @@ CombatInfo::CombatInfo(int system_id_) :
         const std::set<int>& owners = ship->Owners();
         for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
             empire_ids.insert(*owner_it);
+        if (owners.empty())
+            empire_ids.insert(ALL_EMPIRES);
 
         // add copy of ship to full / complete copy of objects in system
         Ship* copy = ship->Clone();
@@ -76,6 +78,8 @@ CombatInfo::CombatInfo(int system_id_) :
         const std::set<int>& owners = planet->Owners();
         for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
             empire_ids.insert(*owner_it);
+        if (owners.empty())
+            empire_ids.insert(ALL_EMPIRES);
 
         // add copy of ship to full / complete copy of objects in system
         Planet* copy = planet->Clone();
@@ -91,6 +95,8 @@ CombatInfo::CombatInfo(int system_id_) :
     // system
     for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
         int empire_id = *empire_it;
+        if (empire_id == ALL_EMPIRES)
+            continue;
         System* visibility_limited_copy = system->Clone(empire_id);
         empire_known_objects[empire_id].Insert(system_id, visibility_limited_copy);
     }
@@ -105,6 +111,8 @@ CombatInfo::CombatInfo(int system_id_) :
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
+            if (empire_id == ALL_EMPIRES)
+                continue;
             if (universe.GetObjectVisibilityByEmpire(ship_id, empire_id) >= VIS_BASIC_VISIBILITY) {
                 Ship* visibility_limited_copy = ship->Clone(empire_id);
                 empire_known_objects[empire_id].Insert(ship_id, visibility_limited_copy);
@@ -122,6 +130,8 @@ CombatInfo::CombatInfo(int system_id_) :
 
         for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
+            if (empire_id == ALL_EMPIRES)
+                continue;
             if (universe.GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
                 Planet* visibility_limited_copy = planet->Clone(empire_id);
                 empire_known_objects[empire_id].Insert(planet_id, visibility_limited_copy);
@@ -367,8 +377,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     std::vector<int> all_combat_object_IDs;
     for (ObjectMap::iterator it = combat_info.objects.begin(); it != combat_info.objects.end(); ++it) {
         const UniverseObject* obj = it->second;
-        if (obj->Unowned())
-            continue;
         if (universe_object_cast<const System*>(obj))
             continue;
         if (universe_object_cast<const Fleet*>(obj))
@@ -384,12 +392,19 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     for (std::vector<int>::const_iterator object_it = all_combat_object_IDs.begin(); object_it != all_combat_object_IDs.end(); ++object_it) {
         int object_id = *object_it;
         const UniverseObject* obj = combat_info.objects.Object(object_id);
+
+        // which empire(s) own(s) this object
         const std::set<int>& owners = obj->Owners();
 
+        // for all empires, can they attack this object?
         for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin(); empire_it != combat_info.empire_ids.end(); ++empire_it) {
             int empire_id = *empire_it;
-            if (owners.find(empire_id) == owners.end())
+            if ((empire_id == ALL_EMPIRES && !owners.empty()) ||
+                (empire_id != ALL_EMPIRES && owners.find(empire_id) == owners.end())
+               )
+            {
                 empire_valid_targets[empire_id].push_back(object_id);
+            }
         }
     }
 
@@ -397,7 +412,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // something, if it is able to do so.  The number of rounds scales with the
     // number of objects, so the total actions per object is the same for
     // battles, roughly independent of number of objects in the battle
-    const int NUM_COMBAT_ROUNDS = 20*all_combat_object_IDs.size();
+    const int NUM_COMBAT_ROUNDS = 10*all_combat_object_IDs.size();
 
     for (int round = 1; round <= NUM_COMBAT_ROUNDS; ++round) {
         Logger().debugStream() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Round " << round;
@@ -431,16 +446,11 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         // TODO: skip buildings?
 
 
-        // select object from valid targets for this object's owner.  assuming
-        // this object has only one onwer.
+        // select object from valid targets for this object's owner.
         const std::set<int>& owners = attacker->Owners();
-        if (owners.empty()) {
-            //Logger().debugStream() << "skipping unowned attacker object: " << attacker->Name() << "(" << attacker->ID() << ")";
-            continue;
-        }
 
         // get attacker owner id
-        int attacker_owner_id = *owners.begin();
+        int attacker_owner_id = owners.empty() ? ALL_EMPIRES : *owners.begin();
 
         // get valid targets set for attacker owner
         std::map<int, std::vector<int> >::iterator target_vec_it = empire_valid_targets.find(attacker_owner_id);
@@ -498,24 +508,37 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                 // all empires in battle know object was destroyed
                 for (std::set<int>::const_iterator it = combat_info.empire_ids.begin(); it != combat_info.empire_ids.end(); ++it) {
                     int empire_id = *it;
-                    combat_info.destroyed_object_knowers[empire_id].insert(target_id);
+                    if (empire_id != ALL_EMPIRES)
+                        combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                 }
             }
         // and capture of planets
         } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
-            if (planet->Unowned())
+            // can only conquer populated planets, or planets with an owner
+            if (target->CurrentMeterValue(METER_POPULATION) == 0.0 && target->Unowned())
                 continue;
-            if (target->CurrentMeterValue(METER_CONSTRUCTION) <= 0.0) {
-                const std::set<int>& attacker_owners = attacker->Owners();
-                if (attacker_owners.size() == 1) {
-                    int attacker_owner = *attacker_owners.begin();
-                    if (!planet->OwnedBy(attacker_owner)) {
-                        // conquer for new owner
-                        planet->Conquer(attacker_owner);
-                        // update old owner on status of planet
-                    }
-                }
-            }
+
+            // conquering requires knocking construction to 0
+            if (target->CurrentMeterValue(METER_CONSTRUCTION) > 0.0)
+                continue;
+
+            // can only be conquered by a single attacker who is an empire
+            const std::set<int>& attacker_owners = attacker->Owners();
+            if (attacker_owners.size() != 1)
+                continue;
+
+            // get attacker empire.  shouldn't be possible to get ALL_EMPIRES
+            // as a result here, but to be safe...
+            int attacker_owner = *attacker_owners.begin();
+            if (attacker_owner == ALL_EMPIRES)
+                continue;
+
+            // can't conquer self!
+            if (planet->OwnedBy(attacker_owner))
+                continue;
+
+            // conquer for new owner
+            planet->Conquer(attacker_owner);
         }
     }
 

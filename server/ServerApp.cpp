@@ -976,10 +976,15 @@ namespace {
 
             for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
                 ids_of_empires_with_fleets_here.insert(*it);
+            if (owners.empty())
+                ids_of_empires_with_fleets_here.insert(ALL_EMPIRES);
 
-            if (fleet->HasArmedShips())
+            if (fleet->HasArmedShips()) {
                 for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
                     ids_of_empires_with_combat_fleets_here.insert(*it);
+                if (owners.empty())
+                    ids_of_empires_with_combat_fleets_here.insert(ALL_EMPIRES);
+            }
         }
     }
 
@@ -1002,6 +1007,8 @@ namespace {
 
             for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
                 ids_of_empires_with_planets_here.insert(*it);
+            if (owners.empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                ids_of_empires_with_planets_here.insert(ALL_EMPIRES);
         }
     }
 
@@ -1020,7 +1027,7 @@ namespace {
 
         // combat can occur if one empire has a combat fleet and another empire
         // has any fleet
-        if (!ids_of_empires_with_combat_fleets_here.empty() && ids_of_empires_with_fleets_here.size() > ids_of_empires_with_combat_fleets_here.size())
+        if (!ids_of_empires_with_combat_fleets_here.empty() && ids_of_empires_with_fleets_here.size() > 1)
             return true;
 
 
@@ -1049,11 +1056,6 @@ namespace {
                 }
             }
         }
-
-
-        // combat can also occur if there are space monsters and at least
-        // one empire's fleets or planets
-        // TODO: Find space monsters.
 
         return false;   // no possible conditions for combat were found
     }

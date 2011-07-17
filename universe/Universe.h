@@ -608,6 +608,9 @@ private:
       * that aren't homeworld systems).*/
     void    PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);
 
+    /** Adds non-empire-affiliated native populations to planets. */
+    void    GenerateNatives();
+
     /** Creates starlanes and adds them systems already generated. */
     void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid);
 

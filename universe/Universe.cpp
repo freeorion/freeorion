@@ -21,6 +21,8 @@
 #include "Species.h"
 #include "Parser.h"
 #include "ParserUtil.h"
+#include "Condition.h"
+#include "ValueRef.h"
 
 
 #include <boost/filesystem/fstream.hpp>
@@ -3825,10 +3827,9 @@ namespace {
             UniverseObject* obj = it->second;
 
             for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
-                if (!obj->Owners().empty())
-                    if (Meter* meter = obj->GetMeter(meter_it->first))
-                        if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
-                            meter->SetCurrent(targetmax_meter->Current());
+                if (Meter* meter = obj->GetMeter(meter_it->first))
+                    if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
+                        meter->SetCurrent(targetmax_meter->Current());
         }
     }
 }
@@ -3907,6 +3908,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
+    GenerateNatives();
 
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
 
@@ -4017,6 +4019,64 @@ void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials
             system->Insert(planet, orbit);  // add planet to system map
 
             planet->SetOrbitalPeriod(orbit, tidal_lock);
+        }
+    }
+}
+
+namespace {
+    static const Condition::Not homeworld_jumps_filter(
+        new Condition::WithinStarlaneJumps(
+            new ValueRef::Constant<int>(1),
+            new Condition::Homeworld()
+        )
+    );
+}
+
+void Universe::GenerateNatives()
+{
+    Logger().debugStream() << "GenerateNatives";
+    SpeciesManager& species_manager = GetSpeciesManager();
+
+    std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
+    Condition::ObjectSet planet_set;
+    std::copy(planet_vec.begin(), planet_vec.end(), std::inserter(planet_set, planet_set.end()));
+
+    // select only planets far away from player homeworlds
+    Condition::ObjectSet native_safe_planet_set;
+    homeworld_jumps_filter.Eval(native_safe_planet_set, planet_set);
+    Logger().debugStream() << " ... native safe planets: " << native_safe_planet_set.size();
+
+    std::vector<Planet*> native_safe_planets;
+    for (Condition::ObjectSet::iterator it = native_safe_planet_set.begin(); it != native_safe_planet_set.end(); ++it)
+        if (const Planet* planet = dynamic_cast<const Planet*>(*it))
+            native_safe_planets.push_back(const_cast<Planet*>(planet));
+
+    for (std::vector<Planet*>::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
+        if (RandZeroToOne() > 0.5) {
+            Planet* planet = *it;
+            PlanetType planet_type = planet->Type();
+            Logger().debugStream() << "Attempting to add natives to planet " << planet->Name() << " of type " << planet_type;
+
+            // find species that like this planet type
+            std::vector<std::string> suitable_species;
+            for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it)
+                if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
+                    suitable_species.push_back(species_it->first);
+            if (suitable_species.empty())
+                continue;
+            Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
+
+            // pick a species and assign to the planet
+            int species_idx = RandSmallInt(0, suitable_species.size() - 1);
+            const std::string& species_name = suitable_species.at(species_idx);
+            planet->SetSpecies(species_name);
+
+            // find a focus to give planets by default.  use first defined available focus.
+            std::vector<std::string> available_foci = planet->AvailableFoci();
+            if (!available_foci.empty())
+                planet->SetFocus(*available_foci.begin());
+
+            Logger().debugStream() << "Added native " << UserString(species_name) << " to planet " << planet->Name();
         }
     }
 }

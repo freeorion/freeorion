@@ -490,6 +490,9 @@ void Planet::Reset()
 
 void Planet::Conquer(int conquerer)
 {
+    if (conquerer == ALL_EMPIRES)
+        return;
+
     m_just_conquered = true;
     Empire* empire = Empires().Lookup(conquerer);
     if (!empire) {
