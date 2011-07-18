@@ -10,6 +10,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 Planet
+                OwnedBy TheEmpire Source.Owner
                 Contains Source
             ]
             effects = [
@@ -33,22 +34,25 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Planet                
+                Planet
+                OwnedBy TheEmpire Source.Owner
                 Contains Source
             ]
             effects = SetEmpireCapital
-            
-        EffectsGroup
-            scope = And [
-                Contains Source
-                Planet                
-            ]
-            stackinggroup = "IMERIAL_PALACE_SUPPLY_EFFECT"
-            effects = SetSupply Value + 3
-            
+
         EffectsGroup
             scope = And [
                 Planet
+                OwnedBy TheEmpire Source.Owner
+                Contains Source
+            ]
+            stackinggroup = "IMERIAL_PALACE_SUPPLY_EFFECT"
+            effects = SetSupply Value + 3
+
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.Owner
                 Contains Source
             ]
             activation = Not Number low = 1 high = 999 And [
