@@ -65,6 +65,7 @@ public:
     int                                 NextSystemID() const;               ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
     double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
     bool                                CanChangeDirectionEnRoute() const;  ///< Returns true iff this fleet can change its direction while in interstellar space.
+    bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
     bool                                HasColonyShips() const;             ///< Returns true if there is at least one colony ship in the fleet.
     int                                 NumShips() const;                   ///< Returns number of ships in fleet.

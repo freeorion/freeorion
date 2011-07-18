@@ -546,6 +546,17 @@ bool Fleet::CanChangeDirectionEnRoute() const
     return false;
 }
 
+bool Fleet::HasMonsters() const
+{
+    const ObjectMap& objects = GetMainObjectMap();
+    for (Fleet::const_iterator it = begin(); it != end(); it++) {
+        if (const Ship* ship = objects.Object<Ship>(*it))
+            if (ship->IsMonster())
+                return true;
+    }
+    return false;
+}
+
 bool Fleet::HasArmedShips() const
 {
     const ObjectMap& objects = GetMainObjectMap();

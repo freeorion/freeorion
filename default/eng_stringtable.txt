@@ -223,31 +223,31 @@ Ancient ship design with advanced weaponry and defensive systems.
 SM_KRILL
 Krill
 
-SM_KRILL
+SM_KRILL_DESC
 Small swarm of space-born life forms that feed on gas and dust.
 
 SM_TREE
 Solar Tree
 
-SM_TREE
+SM_TREE_DESC
 Large branching space-born tree with filamentous branches.
 
 SM_FLOATER
 Floater
 
-SM_FLOATER
+SM_FLOATER_DESC
 Gas-filled bulbous sac drifting through space.
 
 SM_SQUID
 Space Squid
 
-SM_SQUID
+SM_SQUID_DESC
 Tentacled agressive hunter.
 
 SM_DRAGON
 Vacuum Dragon
 
-SM_DRAGON
+SM_DRAGON_DESC
 Terrifying giant monster that prowls space for prey.
 
 ##############################

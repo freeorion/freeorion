@@ -40,6 +40,28 @@ namespace {
 }
 
 namespace {
+    /** Wrapper for boost::timer that outputs time during which this object
+      * existed.  Created in the scope of a function, and passed the appropriate
+      * name, it will output to Logger().debugStream() the time elapsed while
+      * the function was executing. */
+    class ScopedTimer {
+    public:
+        ScopedTimer(const std::string& timed_name = "scoped timer") :
+            m_timer(),
+            m_name(timed_name)
+        {}
+        ~ScopedTimer() {
+            if (m_timer.elapsed() * 1000.0 > 2) {
+                Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
+            }
+        }
+    private:
+        boost::timer    m_timer;
+        std::string     m_name;
+    };
+}
+
+namespace {
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables() {
@@ -1421,6 +1443,8 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     // process all effects groups in set provided
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
+        ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups process one effects group");
+
         // create non_targets and targets sets for current effects group
         Effect::TargetSet target_set;                                    // initially empty
         Effect::TargetSet potential_target_set = all_potential_targets;  // copy again each iteration, so previous iterations don't affect starting potential targets of next iteration
@@ -1428,8 +1452,12 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
 
-        // get set of target objects for this effects group from potential targets specified
-        effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
+        {
+            ScopedTimer update_timer2("... ... Universe::StoreTargetsAndCausesOfEffectsGroups get target set");
+            // get set of target objects for this effects group from potential targets specified
+            effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
+        }
+        //effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
 
         // abort if no targets
         if (target_set.empty())
@@ -1456,6 +1484,8 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group");
+
         // if other EffectsGroups with the same stacking group have affected some of the targets in
         // the scope of the current EffectsGroup, skip them
 
@@ -4097,12 +4127,13 @@ void Universe::GenerateSpaceMonsters()
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     std::vector<std::pair<int, const ShipDesign*> > monster_ship_designs;
 
-    for (PredefinedShipDesignManager::generic_iterator it = predefined_ship_designs.begin_generic();
-         it != predefined_ship_designs.end_generic(); ++it)
+    for (PredefinedShipDesignManager::iterator it = predefined_ship_designs.begin_monsters();
+         it != predefined_ship_designs.end_monsters(); ++it)
     {
-        const ShipDesign* design = GetShipDesign(it->second);
-        if (design && !design->Producible())    // reject buildable ships.  remainder are monsters as of this writing.
-            monster_ship_designs.push_back(std::make_pair(it->second, design));
+        int monster_design_id = predefined_ship_designs.GenericDesignID(it->first);
+        const ShipDesign* design = GetShipDesign(monster_design_id);
+        if (design)
+            monster_ship_designs.push_back(std::make_pair(monster_design_id, design));
     }
 
     if (monster_ship_designs.empty())
@@ -4159,7 +4190,7 @@ void Universe::GenerateSpaceMonsters()
 
         fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
 
-        Logger().debugStream() << "Added monster " << UserString(monster_design.second->Name()) << " to system " << system->Name();
+        Logger().debugStream() << "Added monster " << monster_design.second->Name() << " to system " << system->Name();
     }
 }
 

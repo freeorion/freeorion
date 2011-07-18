@@ -380,7 +380,8 @@ public:
     ShipDesign(); ///< default ctor
     ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-               const std::string& graphic, const std::string& model, bool name_desc_in_stringtable = false);
+               const std::string& graphic, const std::string& model,
+               bool name_desc_in_stringtable = false, bool monster = false);
     //@}
 
     /** \name Accessors */ //@{
@@ -418,6 +419,7 @@ public:
 
     bool                            CanColonize() const;
     bool                            IsArmed() const;
+    bool                            IsMonster() const;
 
     /** Returns a map from ranges to stats for only the SR weapons in this
         design. */
@@ -491,6 +493,7 @@ private:
 
     std::string                 m_hull;
     std::vector<std::string>    m_parts;
+    bool                        m_is_monster;
 
     std::string                 m_graphic;
     std::string                 m_3D_model;
@@ -544,16 +547,28 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns iterator pointing to first ship design. */
-    iterator                            begin() const;
+    iterator            begin() const;
 
     /** Returns iterator pointing one past last ship design. */
-    iterator                            end() const;
+    iterator            end() const;
+
+    /** Returns iterator pointing to first monster design. */
+    iterator            begin_monsters() const;
+
+    /** Returns iterator pointing one past last monster design. */
+    iterator            end_monsters() const;
 
     /** Returns iterator pointing to first generic design name and id. */
-    generic_iterator                    begin_generic() const;
+    generic_iterator    begin_generic() const;
 
     /** Returns iterator pointing one past the last generic design name and id. */
-    generic_iterator                    end_generic() const;
+    generic_iterator    end_generic() const;
+
+    /** Returns the ID for the generic (not created by any empire) design in
+      * the Universe for the predefined design with the specified \a name.  If
+      * there is no generic design available for the specified \a name, then
+      * INVALID_DESIGN_ID is returned. */
+    int                 GenericDesignID(const std::string& name) const;
     //@}
 
     /** Adds designs in this manager to the specified \a empire using that
@@ -578,6 +593,7 @@ private:
     ~PredefinedShipDesignManager();
 
     std::map<std::string, ShipDesign*>  m_ship_designs;
+    std::map<std::string, ShipDesign*>  m_monster_designs;
     mutable std::map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
 
     static PredefinedShipDesignManager* s_instance;
@@ -635,6 +651,7 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)
+        & BOOST_SERIALIZATION_NVP(m_is_monster)
         & BOOST_SERIALIZATION_NVP(m_graphic)
         & BOOST_SERIALIZATION_NVP(m_3D_model)
         & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);

@@ -36,6 +36,7 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;
     virtual std::string         Dump() const;
 
+    bool                        IsMonster() const;
     bool                        IsArmed() const;
     bool                        CanColonize() const;
     const std::string&          SpeciesName() const;

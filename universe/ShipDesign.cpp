@@ -850,6 +850,7 @@ ShipDesign::ShipDesign() :
     m_3D_model(""),
     m_name_desc_in_stringtable(false),
     m_is_armed(false),
+    m_is_monster(false),
     m_detection(0.0),
     m_colony_capacity(0.0),
     m_stealth(0.0),
@@ -874,7 +875,8 @@ ShipDesign::ShipDesign() :
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description, int designed_by_empire_id,
                        int designed_on_turn, const std::string& hull, const std::vector<std::string>& parts,
-                       const std::string& graphic, const std::string& model, bool name_desc_in_stringtable) :
+                       const std::string& graphic, const std::string& model,
+                       bool name_desc_in_stringtable, bool monster) :
     m_id(UniverseObject::INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
@@ -886,6 +888,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     m_3D_model(model),
     m_name_desc_in_stringtable(name_desc_in_stringtable),
     m_is_armed(false),
+    m_is_monster(monster),
     m_detection(0.0),
     m_colony_capacity(0.0),
     m_stealth(0.0),
@@ -1087,6 +1090,10 @@ bool ShipDesign::CanColonize() const {
 
 bool ShipDesign::IsArmed() const {
     return m_is_armed;
+}
+
+bool ShipDesign::IsMonster() const {
+    return m_is_monster;
 }
 
 const std::string& ShipDesign::Hull() const {
@@ -1433,7 +1440,7 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     result =
         parse(input.c_str(),
-              as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
+              as_lower_d[*ship_design_p[store_ship_design_(var(m_monster_designs), arg1)]]
               >> end_p,
               skip_p);
     if (!result.full)
@@ -1491,31 +1498,24 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
     return retval;
 }
 
-const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
-    m_design_generic_ids.clear();   // std::map<std::string, int>
+namespace {
+    void AddDesignToUniverse(std::map<std::string, int>& design_generic_ids, ShipDesign* design, bool monster) {
+        if (!design)
+            return;
 
-    Universe& universe = GetUniverse();
-
-    for (iterator it = begin(); it != end(); ++it) {
-        ShipDesign* d = it->second;
-
-        if (it->first != d->Name(false)) {
-            Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
-        }
-
-        ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), ALL_EMPIRES,
-                                          d->DesignedOnTurn(), d->Hull(), d->Parts(),
-                                          d->Graphic(), d->Model(), true);
+        ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false), ALL_EMPIRES,
+                                          design->DesignedOnTurn(), design->Hull(), design->Parts(),
+                                          design->Graphic(), design->Model(), true, monster);
 
         if (!copy) {
-            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << d->Name();
-            return m_design_generic_ids;
+            Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
+            return;
         }
 
         const ShipDesign& design_ref = *copy;
 
         bool already_added = false;
-
+        Universe& universe = GetUniverse();
         /* check if there already exists this same design in the universe. */
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             const ShipDesign* existing_design = it->second;
@@ -1528,7 +1528,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
 
             if (DesignsTheSame(existing_design_ref, design_ref)) {
                 Logger().debugStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse found there already is an exact duplicate of a design to be added, so is not re-adding it";
-                m_design_generic_ids[design_ref.Name(false)] = existing_design_ref.ID();
+                design_generic_ids[design_ref.Name(false)] = existing_design_ref.ID();
                 already_added = true;
                 break;
             }
@@ -1536,7 +1536,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
 
         if (already_added) {
             delete copy;
-            continue;
+            return;
         }
 
         // design is apparently new, so add it to the universe
@@ -1545,7 +1545,7 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
         if (new_design_id == ShipDesign::INVALID_DESIGN_ID) {
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToUniverse Unable to get new design id";
             delete copy;
-            return m_design_generic_ids;
+            return;
         }
 
         bool success = universe.InsertShipDesignID(copy, new_design_id);
@@ -1553,10 +1553,24 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
         if (!success) {
             Logger().errorStream() << "Empire::AddShipDesign Unable to add new design to universe";
             delete copy;
-            return m_design_generic_ids;
+            return;
         }
 
-        m_design_generic_ids[design_ref.Name(false)] = new_design_id;
+        design_generic_ids[design_ref.Name(false)] = new_design_id;
+    };
+}
+
+const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
+    m_design_generic_ids.clear();   // std::map<std::string, int>
+
+    for (iterator it = begin(); it != end(); ++it) {
+        ShipDesign* d = it->second;
+        AddDesignToUniverse(m_design_generic_ids, d, false);
+    }
+
+    for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
+        ShipDesign* d = it->second;
+        AddDesignToUniverse(m_design_generic_ids, d, true);
     }
 
     return m_design_generic_ids;
@@ -1575,6 +1589,14 @@ PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const {
     return m_ship_designs.end();
 }
 
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin_monsters() const {
+    return m_monster_designs.begin();
+}
+
+PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end_monsters() const {
+    return m_monster_designs.end();
+}
+
 PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::begin_generic() const {
     return m_design_generic_ids.begin();
 }
@@ -1583,6 +1605,12 @@ PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_g
     return m_design_generic_ids.end();
 }
 
+int PredefinedShipDesignManager::GenericDesignID(const std::string& name) const {
+    std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
+    if (it == m_design_generic_ids.end())
+        return ShipDesign::INVALID_DESIGN_ID;
+    return it->second;
+}
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
