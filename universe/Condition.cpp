@@ -1387,6 +1387,10 @@ Condition::Species::Species(const std::vector<const ValueRef::ValueRefBase<std::
     m_names(names)
 {}
 
+Condition::Species::Species() :
+    m_names()
+{}
+
 Condition::Species::~Species()
 {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -1417,11 +1421,13 @@ std::string Condition::Species::Description(bool negated/* = false*/) const
 
 std::string Condition::Species::Dump() const
 {
-    std::string retval = DumpIndent() + "Species name = ";
-    if (m_names.size() == 1) {
-        retval += m_names[0]->Dump() + "\n";
+    std::string retval = DumpIndent() + "Species";
+    if (m_names.empty()) {
+        // do nothing else
+    } else if (m_names.size() == 1) {
+        retval += " name = " + m_names[0]->Dump() + "\n";
     } else {
-        retval += "[ ";
+        retval += " name = [ ";
         for (unsigned int i = 0; i < m_names.size(); ++i) {
             retval += m_names[i]->Dump() + " ";
         }
@@ -1447,17 +1453,25 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(local_context) == planet->SpeciesName())
-                return true;
+        if (m_names.empty()) {
+            return !planet->SpeciesName().empty();  // match any species name
+        } else {
+            // match only specified species names
+            for (unsigned int i = 0; i < m_names.size(); ++i)
+                if (m_names[i]->Eval(local_context) == planet->SpeciesName())
+                    return true;
         }
     }
     // is it a ship?
     const Ship* ship = universe_object_cast<const Ship*>(candidate);
     if (ship) {
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            if (m_names[i]->Eval(local_context) == ship->SpeciesName())
-                return true;
+        if (m_names.empty()) {
+            return !ship->SpeciesName().empty();    // match any specie name
+        } else {
+            // match only specified species names
+            for (unsigned int i = 0; i < m_names.size(); ++i)
+                if (m_names[i]->Eval(local_context) == ship->SpeciesName())
+                    return true;
         }
     }
     return false;

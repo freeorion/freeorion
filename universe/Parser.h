@@ -100,7 +100,8 @@ extern boost::spirit::classic::rule<Scanner, EffectClosure::context_t> effect_p;
 // Top Level Parsers                                      //
 ////////////////////////////////////////////////////////////
 struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure, BuildingType*, std::string,
-                                                             std::string, double, int, double, Condition::ConditionBase*,
+                                                             std::string, double, int, double, bool,
+                                                             Condition::ConditionBase*,
                                                              std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                              std::string>
 {
@@ -110,9 +111,10 @@ struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure
     member4 production_cost;
     member5 production_time;
     member6 maintenance_cost;
-    member7 location;
-    member8 effects_groups;
-    member9 graphic;
+    member7 producible;
+    member8 location;
+    member9 effects_groups;
+    member10 graphic;
 };
 
 struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*, std::string, std::string,
@@ -186,7 +188,7 @@ struct PartStatsClosure : boost::spirit::classic::closure<PartStatsClosure, Part
 };
 
 struct PartClosure : boost::spirit::classic::closure<PartClosure, PartType*, std::string, std::string, ShipPartClass,
-                                                     PartTypeStats, double, int, std::vector<ShipSlotType>,
+                                                     PartTypeStats, double, int, bool, std::vector<ShipSlotType>,
                                                      Condition::ConditionBase*,
                                                      std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                      std::string>
@@ -198,10 +200,11 @@ struct PartClosure : boost::spirit::classic::closure<PartClosure, PartType*, std
     member5 stats;
     member6 cost;
     member7 production_time;
-    member8 mountable_slot_types;
-    member9 location;
-    member10 effects_groups;
-    member11 graphic;
+    member8 producible;
+    member9 mountable_slot_types;
+    member10 location;
+    member11 effects_groups;
+    member12 graphic;
 };
 
 struct HullStatsClosure : boost::spirit::classic::closure<HullStatsClosure, HullTypeStats, double,
@@ -216,7 +219,7 @@ struct HullStatsClosure : boost::spirit::classic::closure<HullStatsClosure, Hull
 };
 
 struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std::string, std::string,
-                                                     HullTypeStats, double, int, std::vector<HullType::Slot>,
+                                                     HullTypeStats, double, int, bool, std::vector<HullType::Slot>,
                                                      Condition::ConditionBase*,
                                                      std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                      std::string>
@@ -227,10 +230,11 @@ struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std
     member4 stats;
     member5 cost;
     member6 production_time;
-    member7 slots;
-    member8 location;
-    member9 effects_groups;
-    member10 graphic;
+    member7 producible;
+    member8 slots;
+    member9 location;
+    member10 effects_groups;
+    member11 graphic;
 };
 
 struct ShipDesignClosure : boost::spirit::classic::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,

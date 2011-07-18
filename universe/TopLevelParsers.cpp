@@ -155,7 +155,7 @@ namespace {
     ParamLabel model_label("model");
     ParamLabel string_lookup_label("lookup_strings");
     ParamLabel researchable_label("researchable");
-    ParamLabel producable_label("producible");
+    ParamLabel producible_label("producible");
 
 
     Effect::EffectsGroup* const NULL_EFF = 0;
@@ -184,6 +184,8 @@ namespace {
              >> description_label >>        name_p[building_type_p.description = arg1]
              >> buildcost_label >>          real_p[building_type_p.production_cost = arg1]
              >> buildtime_label >>          int_p[building_type_p.production_time = arg1]
+             >> ((producible_label >>       true_false_p[building_type_p.producible = arg1]) |
+                                            eps_p[building_type_p.producible = val(true)])
              >> maintenancecost_label >>    real_p[building_type_p.maintenance_cost = arg1]
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
@@ -338,12 +340,14 @@ namespace {
              >> part_stats_p[part_p.stats = arg1]
              >> buildcost_label >>          real_p[part_p.cost = arg1]
              >> buildtime_label >>          int_p[part_p.production_time = arg1]
+             >> ((producible_label >>       true_false_p[part_p.producible = arg1]) |
+                                            eps_p[part_p.producible = val(true)])
              >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >>           condition_p[part_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
-                                           part_p.stats, part_p.cost, part_p.production_time, val(true),
+                                           part_p.stats, part_p.cost, part_p.production_time, part_p.producible,
                                            part_p.mountable_slot_types, part_p.location,
                                            part_p.effects_groups, part_p.graphic)];
 
@@ -375,12 +379,14 @@ namespace {
              >> hull_stats_p[hull_p.stats = arg1]
              >> buildcost_label >>          real_p[hull_p.cost = arg1]
              >> buildtime_label >>          int_p[hull_p.production_time = arg1]
+             >> ((producible_label >>       true_false_p[hull_p.producible = arg1]) |
+                                            eps_p[hull_p.producible = val(true)])
              >> !(slots_label >>            slot_vec_p[hull_p.slots = arg1])
              >> location_label >>           condition_p[hull_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description,
-                                           hull_p.stats, hull_p.cost, hull_p.production_time, val(true),
+                                           hull_p.stats, hull_p.cost, hull_p.production_time, hull_p.producible,
                                            hull_p.slots, hull_p.location,
                                            hull_p.effects_groups, hull_p.graphic)];
 

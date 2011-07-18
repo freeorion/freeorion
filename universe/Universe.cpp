@@ -3911,6 +3911,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateNatives();
 
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
+    GenerateSpaceMonsters();
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 
@@ -4030,12 +4031,18 @@ namespace {
             new Condition::Homeworld()
         )
     );
+
+    static const Condition::Not unpopulated_filter(
+        new Condition::Contains(
+            new Condition::Species()
+        )
+    );
 }
 
 void Universe::GenerateNatives()
 {
     Logger().debugStream() << "GenerateNatives";
-    SpeciesManager& species_manager = GetSpeciesManager();
+    const SpeciesManager& species_manager = GetSpeciesManager();
 
     std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
     Condition::ObjectSet planet_set;
@@ -4051,39 +4058,109 @@ void Universe::GenerateNatives()
         if (const Planet* planet = dynamic_cast<const Planet*>(*it))
             native_safe_planets.push_back(const_cast<Planet*>(planet));
 
+    // randomly add species to planets
     for (std::vector<Planet*>::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
-        if (RandZeroToOne() > 0.5) {
-            Planet* planet = *it;
-            PlanetType planet_type = planet->Type();
-            Logger().debugStream() << "Attempting to add natives to planet " << planet->Name() << " of type " << planet_type;
+        if (RandZeroToOne() < 0.5)
+            continue;
 
-            // find species that like this planet type
-            std::vector<std::string> suitable_species;
-            for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it)
-                if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
-                    suitable_species.push_back(species_it->first);
-            if (suitable_species.empty())
-                continue;
-            Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
+        Planet* planet = *it;
+        PlanetType planet_type = planet->Type();
+        Logger().debugStream() << "Attempting to add natives to planet " << planet->Name() << " of type " << planet_type;
 
-            // pick a species and assign to the planet
-            int species_idx = RandSmallInt(0, suitable_species.size() - 1);
-            const std::string& species_name = suitable_species.at(species_idx);
-            planet->SetSpecies(species_name);
+        // find species that like this planet type
+        std::vector<std::string> suitable_species;
+        for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it)
+            if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
+                suitable_species.push_back(species_it->first);
+        if (suitable_species.empty())
+            continue;
+        Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
 
-            // find a focus to give planets by default.  use first defined available focus.
-            std::vector<std::string> available_foci = planet->AvailableFoci();
-            if (!available_foci.empty())
-                planet->SetFocus(*available_foci.begin());
+        // pick a species and assign to the planet
+        int species_idx = RandSmallInt(0, suitable_species.size() - 1);
+        const std::string& species_name = suitable_species.at(species_idx);
+        planet->SetSpecies(species_name);
 
-            Logger().debugStream() << "Added native " << UserString(species_name) << " to planet " << planet->Name();
-        }
+        // find a focus to give planets by default.  use first defined available focus.
+        std::vector<std::string> available_foci = planet->AvailableFoci();
+        if (!available_foci.empty())
+            planet->SetFocus(*available_foci.begin());
+
+        Logger().debugStream() << "Added native " << UserString(species_name) << " to planet " << planet->Name();
     }
 }
 
 void Universe::GenerateSpaceMonsters()
 {
+    Logger().debugStream() << "GenerateSpaceMonsters";
 
+    const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
+    std::vector<std::pair<int, const ShipDesign*> > monster_ship_designs;
+
+    for (PredefinedShipDesignManager::generic_iterator it = predefined_ship_designs.begin_generic();
+         it != predefined_ship_designs.end_generic(); ++it)
+    {
+        const ShipDesign* design = GetShipDesign(it->second);
+        if (design && !design->Producible())    // reject buildable ships.  remainder are monsters as of this writing.
+            monster_ship_designs.push_back(std::make_pair(it->second, design));
+    }
+
+    if (monster_ship_designs.empty())
+        return;
+
+    std::vector<System*> system_vec = Objects().FindObjects<System>();
+    Condition::ObjectSet system_set;
+    std::copy(system_vec.begin(), system_vec.end(), std::inserter(system_set, system_set.end()));
+
+    // select only unpopulated systems (that have no species-labelled objects in them)
+    Condition::ObjectSet unpopulated_systems_set;
+    unpopulated_filter.Eval(unpopulated_systems_set, system_set);
+    Logger().debugStream() << " ... unpopulated systems: " << unpopulated_systems_set.size();
+
+    std::vector<System*> unpopulated_systems;
+    for (Condition::ObjectSet::iterator it = unpopulated_systems_set.begin(); it != unpopulated_systems_set.end(); ++it)
+        if (const System* system = dynamic_cast<const System*>(*it))
+            unpopulated_systems.push_back(const_cast<System*>(system));
+
+    if (unpopulated_systems.empty())
+        return;
+
+    // randomly add monsters to systems
+    for (std::vector<System*>::iterator it = unpopulated_systems.begin(); it != unpopulated_systems.end(); ++it) {
+        if (RandZeroToOne() < 0.5)
+            continue;
+
+        System* system = *it;
+        Logger().debugStream() << "Attempting to add monsters to system " << system->Name();
+
+        // pick a monster and add it to the system
+        int monster_idx = RandSmallInt(0, monster_ship_designs.size() - 1);
+        std::pair<int, const ShipDesign*>& monster_design = monster_ship_designs.at(monster_idx);
+
+        // create fleet for monster
+        const std::string& fleet_name = UserString("MONSTERS");
+        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
+        if (!fleet) {
+            Logger().errorStream() << "unable to create new fleet!";
+            break;
+        }
+        Insert(fleet);
+        system->Insert(fleet);
+
+        // create new monster ship
+        Ship* ship = new Ship(ALL_EMPIRES, monster_design.first, "", ALL_EMPIRES);
+        if (!ship) {
+            Logger().errorStream() << "unable to create new ship!";
+            break;
+        }
+
+        ship->Rename(monster_design.second->Name());
+        int ship_id = Insert(ship);
+
+        fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
+
+        Logger().debugStream() << "Added monster " << UserString(monster_design.second->Name()) << " to system " << system->Name();
+    }
 }
 
 void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
@@ -4362,7 +4439,6 @@ void Universe::NamePlanets()
         }
     }
 }
-
 
 void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
 {

@@ -440,6 +440,7 @@ private:
 struct Condition::Species : Condition::ConditionBase
 {
     Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    Species();
     virtual ~Species();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;

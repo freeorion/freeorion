@@ -540,6 +540,7 @@ const ShipDesign* GetShipDesign(int ship_design_id);
 class PredefinedShipDesignManager {
 public:
     typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
+    typedef std::map<std::string, int>::const_iterator generic_iterator;
 
     /** \name Accessors */ //@{
     /** Returns iterator pointing to first ship design. */
@@ -547,6 +548,12 @@ public:
 
     /** Returns iterator pointing one past last ship design. */
     iterator                            end() const;
+
+    /** Returns iterator pointing to first generic design name and id. */
+    generic_iterator                    begin_generic() const;
+
+    /** Returns iterator pointing one past the last generic design name and id. */
+    generic_iterator                    end_generic() const;
     //@}
 
     /** Adds designs in this manager to the specified \a empire using that

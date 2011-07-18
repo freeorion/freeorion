@@ -1,0 +1,64 @@
+ShipDesign
+    name = "SM_KRILL"
+    description = "SM_KRILL_DESC"
+    lookup_strings = true
+    hull = "SH_WEAK_MONSTER_BODY"
+    parts = [
+        "AR_ROCK_PLATE"
+        "PD_PULSE_LASER"
+        ""
+    ]
+    graphic = "icons/monsters/krill.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_TREE"
+    description = "SM_TREE_DESC"
+    lookup_strings = true
+    hull = "SH_IMMOBILE_MONSTER_BODY"
+    parts = "SH_DEFENSE_GRID"
+    graphic = "icons/monsters/tree.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_FLOATER"
+    description = "SM_FLOATER_DESC"
+    lookup_strings = true
+    hull = "SH_WEAK_MONSTER_BODY"
+    parts = [
+        "SP_DISTORTION_MODULATOR"
+        "SH_DEFLECTOR"
+        "DT_SENSORS"
+    ]
+    graphic = "icons/monsters/floater.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_SQUID"
+    description = "SM_SQUID_DESC"
+    lookup_strings = true
+    hull = "SH_STRONG_MONSTER_BODY"
+    parts = [
+        "SR_LASER"
+        "DT_OPTICAL_SCANNER"
+        ""
+        ""
+        "FU_ZERO_FUEL"
+    ]
+    graphic = "icons/monsters/squid.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_DRAGON"
+    description = "SM_DRAGON_DESC"
+    lookup_strings = true
+    hull = "SH_STRONG_MONSTER_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        "LR_NUCLEAR_MISSILE"
+        "DT_OPTICAL_SCANNER"
+        "AR_ROCK_PLATE"
+        "FU_ZERO_FUEL"
+    ]
+    graphic = "icons/monsters/dragon.png"
+    model = "seed"

@@ -1392,21 +1392,46 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     Logger().debugStream() << "Initializing PredefinedShipDesignManager";
 
-    std::string file_name = "premade_ship_designs.txt";
+    using namespace boost::spirit::classic;
+    using namespace phoenix;
     std::string input;
+    parse_info<const char*> result;
 
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+
+    // load start of game ship designs
+    std::string designs_file_name = "premade_ship_designs.txt";
+
+    boost::filesystem::ifstream ifs(GetResourceDir() / designs_file_name);
     if (ifs) {
         std::getline(ifs, input, '\0');
         ifs.close();
     } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
+        Logger().errorStream() << "Unable to open data file " << designs_file_name;
         return;
     }
 
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    parse_info<const char*> result =
+    result =
+        parse(input.c_str(),
+              as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
+              >> end_p,
+              skip_p);
+    if (!result.full)
+        ReportError(input.c_str(), result);
+
+
+    // Load space monster ship designs
+    std::string monsters_file_name = "space_monsters.txt";
+
+    boost::filesystem::ifstream ifs2(GetResourceDir() / monsters_file_name);
+    if (ifs2) {
+        std::getline(ifs2, input, '\0');
+        ifs2.close();
+    } else {
+        Logger().errorStream() << "Unable to open data file " << monsters_file_name;
+        return;
+    }
+
+    result =
         parse(input.c_str(),
               as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
               >> end_p,
@@ -1440,6 +1465,8 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
 
     for (iterator it = begin(); it != end(); ++it) {
         ShipDesign* d = it->second;
+        if (!d->Producible())
+            continue;
 
         if (it->first != d->Name(false)) {
             Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
@@ -1546,6 +1573,14 @@ PredefinedShipDesignManager::iterator PredefinedShipDesignManager::begin() const
 
 PredefinedShipDesignManager::iterator PredefinedShipDesignManager::end() const {
     return m_ship_designs.end();
+}
+
+PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::begin_generic() const {
+    return m_design_generic_ids.begin();
+}
+
+PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_generic() const {
+    return m_design_generic_ids.end();
 }
 
 
