@@ -9,8 +9,8 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = And [
-                Contains Source
                 Planet
+                Contains Source
             ]
             effects = [
                 SetTargetResearch Value + 5
@@ -33,8 +33,8 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = And [
-                Contains Source
                 Planet                
+                Contains Source
             ]
             effects = SetEmpireCapital
             

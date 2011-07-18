@@ -26,7 +26,7 @@ ShipDesign
     lookup_strings = true
     hull = "SH_WEAK_MONSTER_BODY"
     parts = [
-        "SP_DISTORTION_MODULATOR"
+        ""
         "SH_DEFLECTOR"
         "DT_SENSORS"
     ]

@@ -483,11 +483,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -1040,11 +1040,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -1597,11 +1597,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -2154,11 +2154,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -2711,11 +2711,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -3268,11 +3268,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -3825,11 +3825,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -4382,11 +4382,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -4939,11 +4939,11 @@ Species
                 Fleet
             ]
             activation = And [
+                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
