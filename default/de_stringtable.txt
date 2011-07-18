@@ -2609,7 +2609,7 @@ Aktuellen Werten von %1% auf %2% ändern
 DESC_SET_EMPIRE_STOCKPILE
 Ändert das Lager des Objekteigentümers von %1%  auf %2%
 
-DESC_SET_EMPIRE_CAPITOL
+DESC_SET_EMPIRE_CAPITAL
 Macht den Planeten zum Hauptplaneten
 
 DESC_SET_PLANET_TYPE
@@ -2709,10 +2709,10 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  der keine Heimatwelt ist
 
-DESC_CAPITOL
+DESC_CAPITAL
  der der Hauptplanet eines Imperiums ist
 
-DESC_CAPITOL_NOT
+DESC_CAPITAL_NOT
  der nicht der Hauptplanet eines Imperiums ist
 
 DESC_TYPE

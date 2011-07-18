@@ -200,7 +200,7 @@ namespace {
         SetShipPartMeterRule            set_ship_part_meter;
         SetEmpireMeterRule              set_empire_meter;
         SetEmpireStockpileRule          set_empire_stockpile;
-        EmpireParamRule                 set_empire_capitol;
+        EmpireParamRule                 set_empire_capital;
         SetPlanetTypeRule               set_planet_type;
         SetPlanetSizeRule               set_planet_size;
         StringRefVecRule                set_species;
@@ -368,12 +368,12 @@ namespace {
                [set_empire_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_empire_stockpile.empire, set_empire_stockpile.stockpile_type, set_empire_stockpile.value)])
             );
 
-        set_empire_capitol =
-            ( (str_p("setempirecapitol")
-              [set_empire_capitol.this_ = new_<Effect::SetEmpireCapitol>()])
-            | (str_p("setempirecapitol")
-               >> empire_label >> int_expr_p[set_empire_capitol.empire = arg1]
-              [set_empire_capitol.this_ = new_<Effect::SetEmpireCapitol>(set_empire_capitol.empire)])
+        set_empire_capital =
+            ( (str_p("setempirecapital")
+              [set_empire_capital.this_ = new_<Effect::SetEmpireCapital>()])
+            | (str_p("setempirecapital")
+               >> empire_label >> int_expr_p[set_empire_capital.empire = arg1]
+              [set_empire_capital.this_ = new_<Effect::SetEmpireCapital>(set_empire_capital.empire)])
             );
 
         set_planet_type =
@@ -511,7 +511,7 @@ namespace {
             | set_ship_part_meter[effect_p.this_ = arg1]
             | set_empire_meter[effect_p.this_ = arg1]
             | set_empire_stockpile[effect_p.this_ = arg1]
-            | set_empire_capitol[effect_p.this_ = arg1]
+            | set_empire_capital[effect_p.this_ = arg1]
             | set_planet_type[effect_p.this_ = arg1]
             | set_planet_size[effect_p.this_ = arg1]
             | set_species[effect_p.this_ = arg1]

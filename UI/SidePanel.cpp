@@ -759,11 +759,11 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
     // apply formatting tags around planet name to indicate:
     //    Italic for homeworlds
-    //    Bold for capitol(s)
+    //    Bold for capital(s)
     //    Underline for shipyard(s), and
-    bool capitol = false, homeworld = false, has_shipyard = false;
+    bool capital = false, homeworld = false, has_shipyard = false;
 
-    // need to check all empires for capitols
+    // need to check all empires for capitals
     const EmpireManager& empire_manager = Empires();
     for (EmpireManager::const_iterator empire_it = empire_manager.begin(); empire_it != empire_manager.end(); ++empire_it) {
         const Empire* empire = empire_it->second;
@@ -771,8 +771,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
             Logger().errorStream() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
             continue;
         }
-        if (empire->CapitolID() == m_planet_id) {
-            capitol = true;
+        if (empire->CapitalID() == m_planet_id) {
+            capital = true;
             break;
         }
     }
@@ -808,7 +808,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     if (has_shipyard)
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
     boost::shared_ptr<GG::Font> font;
-    if (capitol)
+    if (capital)
         font = ClientUI::GetBoldFont(ClientUI::Pts()*4/3);
     else
         font = ClientUI::GetFont(ClientUI::Pts()*4/3);

@@ -132,19 +132,6 @@ void Building::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void BuildingType::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
-        & BOOST_SERIALIZATION_NVP(m_production_cost)
-        & BOOST_SERIALIZATION_NVP(m_production_time)
-        & BOOST_SERIALIZATION_NVP(m_maintenance_cost)
-        & BOOST_SERIALIZATION_NVP(m_location)
-        & BOOST_SERIALIZATION_NVP(m_effects)
-        & BOOST_SERIALIZATION_NVP(m_graphic);
-}
-
-template <class Archive>
 void Fleet::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(UniverseObject)

@@ -2758,7 +2758,7 @@ Establecer actual %1% to %2%
 DESC_SET_EMPIRE_STOCKPILE
 Establece las existencias de %1% del dueño del objeto a %2%
 
-DESC_SET_EMPIRE_CAPITOL
+DESC_SET_EMPIRE_CAPITAL
 Convierte al dueño del objeto en capital del planeta
 
 DESC_SET_PLANET_TYPE
@@ -2861,10 +2861,10 @@ que es un mundo hogar
 DESC_HOMEWORLD_NOT
 que no es un mundo hogar
 
-DESC_CAPITOL
+DESC_CAPITAL
 que es un planeta capital del imperio
 
-DESC_CAPITOL_NOT
+DESC_CAPITAL_NOT
 que no es un planeta capital del imperio
 
 DESC_TYPE

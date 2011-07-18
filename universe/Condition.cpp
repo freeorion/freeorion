@@ -830,38 +830,38 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const
 }
 
 ///////////////////////////////////////////////////////////
-// Capitol                                               //
+// Capital                                               //
 ///////////////////////////////////////////////////////////
-Condition::Capitol::Capitol()
+Condition::Capital::Capital()
 {}
 
-std::string Condition::Capitol::Description(bool negated/* = false*/) const
+std::string Condition::Capital::Description(bool negated/* = false*/) const
 {
-    std::string description_str = "DESC_CAPITOL";
+    std::string description_str = "DESC_CAPITAL";
     if (negated)
         description_str += "_NOT";
     return UserString(description_str);
 }
 
-std::string Condition::Capitol::Dump() const
+std::string Condition::Capital::Dump() const
 {
-    return DumpIndent() + "Capitol\n";
+    return DumpIndent() + "Capital\n";
 }
 
-bool Condition::Capitol::Match(const ScriptingContext& local_context) const
+bool Condition::Capital::Match(const ScriptingContext& local_context) const
 {
     const UniverseObject* candidate = local_context.condition_local_candidate;
     if (!candidate) {
-        Logger().errorStream() << "Capitol::Match passed no candidate object";
+        Logger().errorStream() << "Capital::Match passed no candidate object";
         return false;
     }
     int candidate_id = candidate->ID();
 
-    // check if any empire's capitol's ID is that candidate object's id.
-    // if it is, the candidate object is a capitol.
+    // check if any empire's capital's ID is that candidate object's id.
+    // if it is, the candidate object is a capital.
     const EmpireManager& empires = Empires();
     for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
-        if (it->second->CapitolID() == candidate_id)
+        if (it->second->CapitalID() == candidate_id)
             return true;
     return false;
 }

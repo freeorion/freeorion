@@ -50,7 +50,7 @@ public:
 
     /** Marks the empire with ID \a id as eliminated, and cleans up that empire
       * if it exists (or does nothing if that empire doesn't exist).  Cleanup
-      * involves clearing queues, resetting the capitol, and cleaning up other
+      * involves clearing queues, resetting the capital, and cleaning up other
       * state info not relevant to an eliminated empire. */
     void            EliminateEmpire(int id);
 

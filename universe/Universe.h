@@ -611,6 +611,9 @@ private:
     /** Adds non-empire-affiliated native populations to planets. */
     void    GenerateNatives();
 
+    /** Adds space monsters to systems. */
+    void    GenerateSpaceMonsters();
+
     /** Creates starlanes and adds them systems already generated. */
     void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid);
 

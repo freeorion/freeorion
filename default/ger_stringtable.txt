@@ -2499,8 +2499,8 @@ Set current %1% to %2%
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the object's owner to %2%
 
-DESC_SET_EMPIRE_CAPITOL
-Makes the object the object's owner's capitol planet
+DESC_SET_EMPIRE_CAPITAL
+Makes the object the object's owner's capital planet
 
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%
@@ -2597,11 +2597,11 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  that is not a homeworld
 
-DESC_CAPITOL
- that is an empire's capitol planet
+DESC_CAPITAL
+ that is an empire's capital planet
 
-DESC_CAPITOL_NOT
- that is not an empire's capitol planet
+DESC_CAPITAL_NOT
+ that is not an empire's capital planet
 
 DESC_TYPE
  that is a %1%

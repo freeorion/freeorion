@@ -1077,7 +1077,7 @@ namespace {
 ////////////
 Empire::Empire() :
     m_id(-1),
-    m_capitol_id(UniverseObject::INVALID_OBJECT_ID),
+    m_capital_id(UniverseObject::INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -1090,7 +1090,7 @@ Empire::Empire(const std::string& name, const std::string& player_name, int empi
     m_name(name),
     m_player_name(player_name),
     m_color(color),
-    m_capitol_id(UniverseObject::INVALID_OBJECT_ID),
+    m_capital_id(UniverseObject::INVALID_OBJECT_ID),
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
@@ -1141,9 +1141,9 @@ const GG::Clr& Empire::Color() const
     return m_color;
 }
 
-int Empire::CapitolID() const
+int Empire::CapitalID() const
 {
-    return m_capitol_id;
+    return m_capital_id;
 }
 
 int Empire::StockpileID(ResourceType res) const
@@ -1152,7 +1152,7 @@ int Empire::StockpileID(ResourceType res) const
     case RE_MINERALS:
     case RE_FOOD:
     case RE_TRADE:
-        return m_capitol_id;
+        return m_capital_id;
         break;
     case RE_INDUSTRY:
     case RE_RESEARCH:
@@ -1162,9 +1162,9 @@ int Empire::StockpileID(ResourceType res) const
     }
 }
 
-void Empire::SetCapitolID(int id)
+void Empire::SetCapitalID(int id)
 {
-    m_capitol_id = id;
+    m_capital_id = id;
 }
 
 Meter* Empire::GetMeter(const std::string& name)
@@ -1436,7 +1436,7 @@ void Empire::EliminationCleanup()
     // the production queue that might actually cause some problems if left
     // uncleared after elimination
 
-    m_capitol_id = UniverseObject::INVALID_OBJECT_ID;
+    m_capital_id = UniverseObject::INVALID_OBJECT_ID;
     // m_techs
     m_research_queue.clear();
     m_research_progress.clear();
@@ -2616,16 +2616,16 @@ void Empire::CheckProductionProgress()
 
                 // get species for this ship.  use popcenter species if build
                 // location is a popcenter, or use ship species if build
-                // location is a ship, or use empire capitol species if there
-                // is a valid capitol, or otherwise ???
+                // location is a ship, or use empire capital species if there
+                // is a valid capital, or otherwise ???
                 // TODO: Add more fallbacks if necessary
                 std::string species_name;
                 if (const PopCenter* location_pop_center = dynamic_cast<const PopCenter*>(build_location))
                     species_name = location_pop_center->SpeciesName();
                 else if (const Ship* location_ship = universe_object_cast<const Ship*>(build_location))
                     species_name = location_ship->SpeciesName();
-                else if (const Planet* capitol_planet = objects.Object<Planet>(this->CapitolID()))
-                    species_name = capitol_planet->SpeciesName();
+                else if (const Planet* capital_planet = objects.Object<Planet>(this->CapitalID()))
+                    species_name = capital_planet->SpeciesName();
                 // else give up...
 
 

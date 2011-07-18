@@ -1681,14 +1681,14 @@ void ServerApp::PostCombatProcessTurns()
     m_universe.UpdateEmpireLatestKnownObjectsAndVisibilityTurns();
 
 
-    // check for loss of empire capitols
+    // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
-        int capitol_id = empire_it->second->CapitolID();
-        if (const UniverseObject* capitol = GetObject(capitol_id)) {
-            if (!capitol->OwnedBy(empire_it->first))
-                empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        int capital_id = empire_it->second->CapitalID();
+        if (const UniverseObject* capital = GetObject(capital_id)) {
+            if (!capital->OwnedBy(empire_it->first))
+                empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
         } else {
-            empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+            empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
         }
     }
 
@@ -1794,14 +1794,14 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << objects.Dump();
 
 
-    // check for loss of empire capitols
+    // check for loss of empire capitals
     for (EmpireManager::iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
-        int capitol_id = empire_it->second->CapitolID();
-        if (const UniverseObject* capitol = GetObject(capitol_id)) {
-            if (!capitol->OwnedBy(empire_it->first))
-                empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+        int capital_id = empire_it->second->CapitalID();
+        if (const UniverseObject* capital = GetObject(capital_id)) {
+            if (!capital->OwnedBy(empire_it->first))
+                empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
         } else {
-            empire_it->second->SetCapitolID(UniverseObject::INVALID_OBJECT_ID);
+            empire_it->second->SetCapitalID(UniverseObject::INVALID_OBJECT_ID);
         }
     }
 

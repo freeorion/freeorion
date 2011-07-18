@@ -120,7 +120,7 @@ namespace {
         Rule                    source;
         Rule                    target;
         StringRefVecRule        homeworld;
-        Rule                    capitol;
+        Rule                    capital;
         StringRefVecRule        building;
         StringRefVecRule        species;
         PlanetTypeRule          planet_type;
@@ -165,9 +165,9 @@ namespace {
             >> !(name_label >> string_ref_vector[homeworld.names = arg1])
             [homeworld.this_ = new_<Condition::Homeworld>(homeworld.names)];
 
-        capitol =
-            str_p("capitol")
-            [capitol.this_ = new_<Condition::Capitol>()];
+        capital =
+            str_p("capital")
+            [capital.this_ = new_<Condition::Capital>()];
 
         building =
             str_p("building")

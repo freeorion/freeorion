@@ -697,7 +697,14 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 }
 
 boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
-{ return GG::GUI::GetGUI()->GetFont(Font(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+{
+    try {
+        return GG::GUI::GetGUI()->GetFont(Font(), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+    } catch (const GG::Font::BadFile&) {
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font"),
+                                          pts, RequiredCharsets().begin(), RequiredCharsets().end());
+    }
+}
 
 boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
 { return GG::GUI::GetGUI()->GetFont(BoldFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }

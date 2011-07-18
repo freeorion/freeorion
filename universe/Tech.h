@@ -27,10 +27,39 @@ struct ItemSpec;
 class Tech
 {
 public:
+    /** Helper struct for parsing tech definitions */
+    struct TechInfo {
+        TechInfo()
+        {}
+        TechInfo(const std::string& name_, const std::string& description_, const std::string& short_description_,
+                 const std::string& category_, TechType type_, double research_cost_, int research_turns_,
+                 bool researchable_) :
+            name(name_), description(description_), short_description(short_description_),
+            category(category_), type(type_), research_cost(research_cost_),
+            research_turns(research_turns_), researchable(researchable_)
+        {}
+        std::string     name;
+        std::string     description;
+        std::string     short_description;
+        std::string     category;
+        TechType        type;
+        double          research_cost;
+        int             research_turns;
+        bool            researchable;
+    };
+
     /** \name Structors */ //@{
     /** basic ctor */
-    Tech(const std::string& name, const std::string& description, const std::string& category,
-         const std::string& short_description, TechType type, double research_cost, int research_turns,
+    Tech(const std::string& name, const std::string& description, const std::string& short_description,
+         const std::string& category, TechType type, double research_cost, int research_turns,
+         bool researchable,
+         const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+         const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+         const std::string& graphic);
+
+    /** basic ctor taking helper struct to reduce number of direct parameters
+      * in order to making parsing work. */
+    Tech(const TechInfo& tech_info,
          const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic);
@@ -45,9 +74,10 @@ public:
     const std::string&  Category() const;           //!< retursn the name of the category to which this tech belongs
     double              ResearchCost() const;       //!< returns the total research cost in RPs required to research this tech
     double              PerTurnCost() const;        //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
-    int                 ResearchTime() const;      //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
+    int                 ResearchTime() const;       //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
+    bool                Researchable() const;       //!< returns whether this tech is researchable by players and appears on the tech tree
 
-    /** returns the effects that are applied to the discovering empire's capitol when this tech is researched;
+    /** returns the effects that are applied to the discovering empire's capital when this tech is researched;
         not all techs have effects, in which case this returns 0 */
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&  Effects() const;
 
@@ -61,20 +91,21 @@ private:
     Tech(const Tech&);                  // disabled
     const Tech& operator=(const Tech&); // disabled
 
-    std::string                m_name;
-    std::string                m_description;
-    std::string                m_short_description;
-    std::string                m_category;
-    TechType                   m_type;
-    double                     m_research_cost;
-    int                        m_research_turns;
+    std::string                 m_name;
+    std::string                 m_description;
+    std::string                 m_short_description;
+    std::string                 m_category;
+    TechType                    m_type;
+    double                      m_research_cost;
+    int                         m_research_turns;
+    bool                        m_researchable;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
-                               m_effects;
-    std::set<std::string>      m_prerequisites;
-    std::vector<ItemSpec>      m_unlocked_items;
-    std::string                m_graphic;
+                                m_effects;
+    std::set<std::string>       m_prerequisites;
+    std::vector<ItemSpec>       m_unlocked_items;
+    std::string                 m_graphic;
 
-    std::set<std::string>      m_unlocked_techs;
+    std::set<std::string>       m_unlocked_techs;
 
     friend class TechManager;
 };

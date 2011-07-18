@@ -35,8 +35,6 @@ class Special;
 class Species;
 class FocusType;
 class BuildingType;
-class Tech;
-class ShipDesign;
 struct TechCategory;
 struct FleetPlan;
 
@@ -150,23 +148,16 @@ struct CategoryClosure : boost::spirit::classic::closure<CategoryClosure, TechCa
     member4 colour;
 };
 
-struct TechClosure : boost::spirit::classic::closure<TechClosure, Tech*, std::string, std::string, std::string,
-                                                     std::string, TechType, double, int,
+struct TechClosure : boost::spirit::classic::closure<TechClosure, Tech*, Tech::TechInfo,
                                                      std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                      std::set<std::string>, std::vector<ItemSpec>, std::string>
 {
     member1 this_;
-    member2 name;
-    member3 description;
-    member4 short_description;
-    member5 category;
-    member6 tech_type;
-    member7 research_cost;
-    member8 research_turns;
-    member9 effects_groups;
-    member10 prerequisites;
-    member11 unlocked_items;
-    member12 graphic;
+    member2 tech_info;
+    member3 effects_groups;
+    member4 prerequisites;
+    member5 unlocked_items;
+    member6 graphic;
 };
 
 struct ItemSpecClosure : boost::spirit::classic::closure<ItemSpecClosure, ItemSpec, UnlockableItemType, std::string>

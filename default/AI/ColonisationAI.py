@@ -14,8 +14,8 @@ def getColonyFleets():
     # get supplyable systems
     empire = fo.getEmpire()
     universe = fo.getUniverse()
-    capitolID = empire.capitolID
-    homeworld = universe.getPlanet(capitolID)
+    capitalID = empire.capitalID
+    homeworld = universe.getPlanet(capitalID)
     speciesName = homeworld.speciesName
     species = fo.getSpecies(speciesName)
 
@@ -117,8 +117,8 @@ def evaluatePlanet(planetID, missionType, fleetSupplyablePlanetIDs, species, emp
 
     # give preference to closest worlds
     empireID = empire.empireID
-    capitolID = empire.capitolID
-    homeworld = universe.getPlanet(capitolID)
+    capitalID = empire.capitalID
+    homeworld = universe.getPlanet(capitalID)
     homeSystemID = homeworld.systemID
     evalSystemID = planet.systemID
     leastJumpsPath = len(universe.leastJumpsPath(homeSystemID, evalSystemID, empireID))

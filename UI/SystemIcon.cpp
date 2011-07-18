@@ -89,8 +89,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // get system name
     const std::string& system_name = ApparentSystemName(system, HumanClientApp::GetApp()->EmpireID(), hide_empty_or_missing_names);
 
-    // loop through planets in system, checking if any are a homeworld, capitol or have a shipyard
-    bool capitol = false, homeworld = false, has_shipyard = false;
+    // loop through planets in system, checking if any are a homeworld, capital or have a shipyard
+    bool capital = false, homeworld = false, has_shipyard = false;
 
     std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
     for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
@@ -101,11 +101,11 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
             continue;
         }
 
-        // is planet a capitol?
-        if (!capitol) {
+        // is planet a capital?
+        if (!capital) {
             for (EmpireManager::const_iterator empire_it = empire_manager.begin(); empire_it != empire_manager.end(); ++empire_it) {
-                if (empire_it->second->CapitolID() == planet_id)
-                    capitol = true;
+                if (empire_it->second->CapitalID() == planet_id)
+                    capital = true;
             }
         }
 
@@ -140,9 +140,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     // apply formatting tags around planet name to indicate:
     //    Italic for homeworlds
-    //    Bold for capitol(s)
+    //    Bold for capital(s)
     //    Underline for shipyard(s), and
-    // need to check all empires for homeworld or capitols
+    // need to check all empires for homeworld or capitals
 
     // wrap with formatting tags
     std::string wrapped_system_name = system_name;
@@ -151,7 +151,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     if (has_shipyard)
         wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
     boost::shared_ptr<GG::Font> font;
-    if (capitol)
+    if (capital)
         font = ClientUI::GetBoldFont(font_size);
     else
         font = ClientUI::GetFont(font_size);

@@ -81,6 +81,20 @@ struct PlanetTypeEnvironmentMapClosure : boost::spirit::classic::closure<PlanetT
     member3 env;
 };
 
+struct TechInfoClosure : boost::spirit::classic::closure<TechInfoClosure, Tech::TechInfo, std::string, std::string, std::string,
+                                                         std::string, TechType, double, int, bool>
+{
+    member1 this_;
+    member2 name;
+    member3 description;
+    member4 short_description;
+    member5 category;
+    member6 tech_type;
+    member7 research_cost;
+    member8 research_turns;
+    member9 researchable;
+};
+
 namespace {
     rule<Scanner, EffectsGroupClosure::context_t>               effects_group_p;
     rule<Scanner, SlotClosure::context_t>                       slot_p;
@@ -89,6 +103,7 @@ namespace {
     rule<Scanner, FocusTypeClosure::context_t>                  focus_type_p;
     rule<Scanner, FocusTypeVecClosure::context_t>               focus_type_vec_p;
     rule<Scanner, PlanetTypeEnvironmentMapClosure::context_t>   planet_type_environment_map_p;
+    rule<Scanner, TechInfoClosure::context_t>                   tech_info_p;
 
     ParamLabel scope_label("scope");
     ParamLabel activation_label("activation");
@@ -139,6 +154,8 @@ namespace {
     ParamLabel ships_label("ships");
     ParamLabel model_label("model");
     ParamLabel string_lookup_label("lookup_strings");
+    ParamLabel researchable_label("researchable");
+    ParamLabel producable_label("producible");
 
 
     Effect::EffectsGroup* const NULL_EFF = 0;
@@ -171,8 +188,9 @@ namespace {
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[building_type_p.graphic = arg1])
-            [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description, building_type_p.production_cost,
-                                                        building_type_p.production_time, building_type_p.maintenance_cost, building_type_p.location,
+            [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description,
+                                                        building_type_p.production_cost, building_type_p.production_time, val(true),
+                                                        building_type_p.maintenance_cost, building_type_p.location,
                                                         building_type_p.effects_groups, building_type_p.graphic)];
 
         special_p =
@@ -234,15 +252,26 @@ namespace {
              >> colour_label >>     colour_p[category_p.colour = arg1])
             [category_p.this_ = new_<TechCategory>(category_p.name, category_p.graphic, category_p.colour)];
 
+        tech_info_p = (
+                name_label >>               name_p[tech_info_p.name = arg1]
+             >> description_label >>        name_p[tech_info_p.description = arg1]
+             >> shortdescription_label >>   name_p[tech_info_p.short_description = arg1]
+             >> ((techtype_label >>         tech_type_p[tech_info_p.tech_type = arg1]) |
+                                            eps_p[tech_info_p.tech_type = val(TT_THEORY)])
+             >> category_label >>           name_p[tech_info_p.category = arg1]
+             >> ((researchcost_label >>     real_p[tech_info_p.research_cost = arg1]) |
+                                            eps_p[tech_info_p.research_cost = val(1.0)])
+             >> ((researchturns_label >>    int_p[tech_info_p.research_turns = arg1]) |
+                                            eps_p[tech_info_p.research_turns = val(1)])
+             >> ((researchable_label >>     true_false_p[tech_info_p.researchable = arg1]) |
+                                            eps_p[tech_info_p.researchable = val(true)]))
+            [tech_info_p.this_ = construct_<Tech::TechInfo>(tech_info_p.name, tech_info_p.description, tech_info_p.short_description,
+                                                            tech_info_p.category, tech_info_p.tech_type, tech_info_p.research_cost,
+                                                            tech_info_p.research_turns, tech_info_p.researchable)];
+
         tech_p =
             (str_p("tech")
-             >> name_label >>               name_p[tech_p.name = arg1]
-             >> description_label >>        name_p[tech_p.description = arg1]
-             >> shortdescription_label >>   name_p[tech_p.short_description = arg1]
-             >> techtype_label >>           tech_type_p[tech_p.tech_type = arg1]
-             >> category_label >>           name_p[tech_p.category = arg1]
-             >> researchcost_label >>       real_p[tech_p.research_cost = arg1]
-             >> researchturns_label >>      int_p[tech_p.research_turns = arg1]
+             >> tech_info_p[tech_p.tech_info = arg1]
              >> prerequisites_label
              >> (name_p[insert_(tech_p.prerequisites, arg1)] |
                  ('[' >> *(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']'))
@@ -251,8 +280,7 @@ namespace {
                  | ('[' >> *(item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']'))
              >> !(effectsgroups_label >>    effects_group_vec_p[tech_p.effects_groups = arg1])
              >> graphic_label >> file_name_p[tech_p.graphic = arg1])
-            [tech_p.this_ = new_<Tech>(tech_p.name, tech_p.description, tech_p.short_description, tech_p.category,
-                                       tech_p.tech_type, tech_p.research_cost, tech_p.research_turns,
+            [tech_p.this_ = new_<Tech>(tech_p.tech_info,
                                        tech_p.effects_groups, tech_p.prerequisites, tech_p.unlocked_items,
                                        tech_p.graphic)];
 
@@ -315,7 +343,7 @@ namespace {
              >> !(effectsgroups_label >>    effects_group_vec_p[part_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[part_p.graphic = arg1])
             [part_p.this_ = new_<PartType>(part_p.name, part_p.description, part_p.part_class,
-                                           part_p.stats, part_p.cost, part_p.production_time,
+                                           part_p.stats, part_p.cost, part_p.production_time, val(true),
                                            part_p.mountable_slot_types, part_p.location,
                                            part_p.effects_groups, part_p.graphic)];
 
@@ -352,7 +380,7 @@ namespace {
              >> !(effectsgroups_label >>    effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description,
-                                           hull_p.stats, hull_p.cost, hull_p.production_time,
+                                           hull_p.stats, hull_p.cost, hull_p.production_time, val(true),
                                            hull_p.slots, hull_p.location,
                                            hull_p.effects_groups, hull_p.graphic)];
 

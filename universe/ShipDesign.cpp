@@ -394,7 +394,7 @@ PartType::PartType() :
 PartType::PartType(
     const std::string& name, const std::string& description,
     ShipPartClass part_class, const PartTypeStats& stats, double production_cost, int production_time,
-    std::vector<ShipSlotType> mountable_slot_types,
+    bool producible, std::vector<ShipSlotType> mountable_slot_types,
     const Condition::ConditionBase* location,
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
     const std::string& graphic) :
@@ -404,6 +404,7 @@ PartType::PartType(
     m_stats(stats),
     m_production_cost(production_cost),
     m_production_time(production_time),
+    m_producible(producible),
     m_mountable_slot_types(mountable_slot_types),
     m_location(location),
     m_effects(),
@@ -552,6 +553,10 @@ int PartType::ProductionTime() const {
     return m_production_time;
 }
 
+bool PartType::Producible() const {
+    return m_producible;
+}
+
 const std::string& PartType::Graphic() const {
     return m_graphic;
 }
@@ -616,8 +621,8 @@ HullType::HullType() :
 HullType::HullType(const std::string& name, const std::string& description,
                    double fuel, double battle_speed, double starlane_speed,
                    double stealth, double structure,
-                   double production_cost, int production_time, const std::vector<Slot>& slots,
-                   const Condition::ConditionBase* location,
+                   double production_cost, int production_time, bool producible,
+                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
@@ -629,6 +634,7 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_structure(structure),
     m_production_cost(production_cost),
     m_production_time(production_time),
+    m_producible(producible),
     m_slots(slots),
     m_location(location),
     m_effects(),
@@ -643,12 +649,10 @@ HullType::HullType(const std::string& name, const std::string& description,
         m_effects.push_back(*it);
 }
 
-
-
 HullType::HullType(const std::string& name, const std::string& description,
                    const HullTypeStats& stats,
-                   double production_cost, int production_time, const std::vector<Slot>& slots,
-                   const Condition::ConditionBase* location,
+                   double production_cost, int production_time, bool producible,
+                   const std::vector<Slot>& slots, const Condition::ConditionBase* location,
                    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                    const std::string& graphic) :
     m_name(name),
@@ -660,6 +664,7 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_structure(stats.m_structure),
     m_production_cost(production_cost),
     m_production_time(production_time),
+    m_producible(producible),
     m_slots(slots),
     m_location(location),
     m_effects(),
@@ -733,6 +738,10 @@ double HullType::ProductionCost() const {
 
 int HullType::ProductionTime() const {
     return m_production_time;
+}
+
+bool HullType::Producible() const {
+    return m_producible;
 }
 
 unsigned int HullType::NumSlots() const {
@@ -967,6 +976,10 @@ int ShipDesign::ProductionTime() const {
         return 1;
 }
 
+bool ShipDesign::Producible() const {
+    return m_producible;
+}
+
 double ShipDesign::StarlaneSpeed() const
 { return m_starlane_speed; }
 
@@ -1127,9 +1140,9 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     // get a source object, which is owned by the empire with the passed-in
     // empire id.  this is used in conditions to reference which empire is
-    // doing the producing.  Ideally this will be the capitol, but any object
+    // doing the producing.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = objects.Object(empire->CapitolID());
+    const UniverseObject* source = objects.Object(empire->CapitalID());
     if (!source && location->OwnedBy(empire_id))
         source = location;
     // still no valid source?!  scan through all objects to find one owned by this empire
@@ -1232,6 +1245,7 @@ void ShipDesign::BuildStatCaches()
 
     m_production_time = hull->ProductionTime();
     m_production_cost = hull->ProductionCost();
+    m_producible =      hull->Producible();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
     m_stealth =         hull->Stealth();
@@ -1252,7 +1266,9 @@ void ShipDesign::BuildStatCaches()
         }
 
         m_production_time = std::max(m_production_time, part->ProductionTime()); // assume hull and parts are built in parallel
-        m_production_cost += part->ProductionCost();                               // add up costs of all parts
+        m_production_cost += part->ProductionCost();                             // add up costs of all parts
+        if (!part->Producible())
+            m_producible = false;
 
         switch (part->Class()) {
         case PC_SHORT_RANGE: {

@@ -2509,11 +2509,11 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  that is not a homeworld***
 
-DESC_CAPITOL
- that is an empire's capitol planet***
+DESC_CAPITAL
+ that is an empire's capital planet***
 
-DESC_CAPITOL_NOT
- that is not an empire's capitol planet***
+DESC_CAPITAL_NOT
+ that is not an empire's capital planet***
 
 DESC_TYPE
  qui est un %1%

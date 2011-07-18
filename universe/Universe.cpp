@@ -1343,7 +1343,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
 
-            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitolID(), ECT_TECH, tech->Name(),
+            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitalID(), ECT_TECH, tech->Name(),
                                                  target_objects, targets_causes_map);
         }
     }
@@ -4081,6 +4081,11 @@ void Universe::GenerateNatives()
     }
 }
 
+void Universe::GenerateSpaceMonsters()
+{
+
+}
+
 void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
 {
     if (freq == LANES_NONE)
@@ -4358,6 +4363,7 @@ void Universe::NamePlanets()
     }
 }
 
+
 void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
 {
     Logger().debugStream() << "Generating " << player_setup_data.size() << " empires";
@@ -4472,7 +4478,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std
         home_planet->AddOwner(empire_id);
         //home_system->AddOwner(empire_id);   // should be redundant
 
-        empire->SetCapitolID(home_planet->ID());
+        empire->SetCapitalID(home_planet->ID());
 
         empire->AddExploredSystem(home_planet->SystemID());
 

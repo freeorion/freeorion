@@ -39,7 +39,7 @@ namespace Condition {
     struct Source;
     struct Target;
     struct Homeworld;
-    struct Capitol;
+    struct Capital;
     struct Type;
     struct Building;
     struct HasSpecial;
@@ -264,10 +264,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches planets that are an empire's capitol. */
-struct Condition::Capitol : Condition::ConditionBase
+/** Matches planets that are an empire's capital. */
+struct Condition::Capital : Condition::ConditionBase
 {
-    Capitol();
+    Capital();
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -931,7 +931,7 @@ void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Condition::Capitol::serialize(Archive& ar, const unsigned int version)
+void Condition::Capital::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }

@@ -831,22 +831,22 @@ std::string SetEmpireStockpile::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// SetEmpireCapitol                                      //
+// SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
-SetEmpireCapitol::SetEmpireCapitol() :
+SetEmpireCapital::SetEmpireCapital() :
     m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner"))
 {}
 
-SetEmpireCapitol::SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id) :
+SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
 {}
 
-SetEmpireCapitol::~SetEmpireCapitol()
+SetEmpireCapital::~SetEmpireCapital()
 {
     delete m_empire_id;
 }
 
-void SetEmpireCapitol::Execute(const ScriptingContext& context) const
+void SetEmpireCapital::Execute(const ScriptingContext& context) const
 {
     int empire_id = m_empire_id->Eval(context);
 
@@ -860,22 +860,22 @@ void SetEmpireCapitol::Execute(const ScriptingContext& context) const
 
     const std::set<int>& owners = planet->Owners();
     if (owners.size() != 1)
-        return; // don't want to set multiple empires' capitols to this location...
+        return; // don't want to set multiple empires' capitals to this location...
 
-    empire->SetCapitolID(planet->ID());
+    empire->SetCapitalID(planet->ID());
 }
 
-std::string SetEmpireCapitol::Description() const
+std::string SetEmpireCapital::Description() const
 {
     std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
                                 Empires().Lookup(m_empire_id->Eval())->Name() :
                                 m_empire_id->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITOL")) % empire_str);
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITAL")) % empire_str);
 }
 
-std::string SetEmpireCapitol::Dump() const
+std::string SetEmpireCapital::Dump() const
 {
-    return DumpIndent() + "SetEmpireCapitol empire = " + m_empire_id->Dump() + "\n";
+    return DumpIndent() + "SetEmpireCapital empire = " + m_empire_id->Dump() + "\n";
 }
 
 

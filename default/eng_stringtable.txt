@@ -323,6 +323,9 @@ Print this help message.
 OPTIONS_DB_GENERATE_CONFIG_XML
 Uses default settings, settings from any existing config.xml file, and settings given on the command line to generate a config.xml file.  This will overwrite the current config.xml file, if it exists.
 
+OPTIONS_DB_VERSION_STRING
+Tracks the FreeOrion version for which config.xml was generated.  Config.xml for different versions will be ignored.
+
 OPTIONS_DB_SOUND_ON
 Enables sound in the game.
 
@@ -2444,7 +2447,8 @@ STAR_BLACK
 black hole
 STAR_NONE
 no star
-
+INVALID_STAR_TYPE
+unknown star type
 
 # PlanetTypes
 
@@ -3023,8 +3027,8 @@ Set %2% of the %1% empire to %3%
 DESC_SET_EMPIRE_STOCKPILE
 Sets the stockpile of %1% of the %3% empire to %2%
 
-DESC_SET_EMPIRE_CAPITOL
-Makes the object the capitol planet of the %1% empire
+DESC_SET_EMPIRE_CAPITAL
+Makes the object the capital planet of the %1% empire
 
 DESC_SET_PLANET_TYPE
 Changes the planet's type to %1%
@@ -3153,11 +3157,11 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  that is not a homeworld of species %1%
 
-DESC_CAPITOL
- that is an empire's capitol planet
+DESC_CAPITAL
+ that is an empire's capital planet
 
-DESC_CAPITOL_NOT
- that is not an empire's capitol planet
+DESC_CAPITAL_NOT
+ that is not an empire's capital planet
 
 DESC_TYPE
  that is a %1%
@@ -5151,7 +5155,7 @@ Megalith
 BLD_MEGALITH_DESC
 '''The Megalith is an abnormally massive starscraper, kilometers in diameter, and an inspiration to architects empire-wide.
 
-This building sets the owner empire's capitol, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to resource supply range, and has all resource meters able to reach target in a single turn.  Furthermore, all colonies belonging the empire receive a +1 bonus to resource supply range.'''
+This building sets the owner empire's capital, overriding any existing Imperial Palace.  The planet on which it is built receives a +2 bonus to resource supply range, and has all resource meters able to reach target in a single turn.  Furthermore, all colonies belonging the empire receive a +1 bonus to resource supply range.'''
 
 BLD_SPACE_ELEVATOR
 Space Elevator

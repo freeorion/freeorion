@@ -292,7 +292,7 @@ public:
 
     const GG::Clr&          Color() const;                                          ///< Returns the Empire's color
 
-    int                     CapitolID() const;                                      ///< Returns the numeric ID of the empire's capitol
+    int                     CapitalID() const;                                      ///< Returns the numeric ID of the empire's capital
     int                     StockpileID(ResourceType res = INVALID_RESOURCE_TYPE) const;    ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
     const std::set<std::string>&    AvailableTechs() const;                         ///< Returns the set of all available techs.
@@ -391,8 +391,8 @@ public:
 
     /** \name Mutators */ //@{
     /** If the object with id \a id is a planet owned by this empire, sets that
-      * planet to be this empire's capitol, and otherwise does nothing. */
-    void                    SetCapitolID(int id);
+      * planet to be this empire's capital, and otherwise does nothing. */
+    void                    SetCapitalID(int id);
 
     /** Returns the alignment meter with the indicated \a name, if any, or 0 if
       * no such alignment meter exists. */
@@ -445,7 +445,7 @@ public:
 
     std::string             NewShipName();                                  ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire
 
-    void                    EliminationCleanup();                           ///< Cleans up empire after it is eliminated.  Queues are cleared, capitol is reset, and other state info not relevant to an eliminated empire is cleared
+    void                    EliminationCleanup();                           ///< Cleans up empire after it is eliminated.  Queues are cleared, capital is reset, and other state info not relevant to an eliminated empire is cleared
 
     /** Inserts the a pointer to given SitRep entry into the empire's sitrep list.
      *  \warning When you call this method, you are transferring ownership
@@ -550,7 +550,7 @@ private:
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
-    int                             m_capitol_id;               ///< the ID of the empire's capitol planet
+    int                             m_capital_id;               ///< the ID of the empire's capital planet
 
     std::set<std::string>           m_techs;                    ///< list of acquired technologies.  These are string names referencing Tech objects
 

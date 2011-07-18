@@ -78,8 +78,8 @@ public:
 
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
-                 double production_cost, int production_time, double maintenance_cost,
-                 const Condition::ConditionBase* location,
+                 double production_cost, int production_time, bool producible,
+                 double maintenance_cost, const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
 
@@ -93,6 +93,7 @@ public:
     double                          ProductionCost() const;         ///< returns the number of production points required to build this building
     double                          PerTurnCost() const;            ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime() const;         ///< returns the number of turns required to build this building
+    bool                            Producible() const;             ///< returns whether this building type is producible by players and appears on the production screen
     double                          MaintenanceCost() const;        ///< returns the number of monetary points required per turn to operate this building
     const Condition::ConditionBase* Location() const;               ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
@@ -114,14 +115,11 @@ private:
     std::string                                                 m_description;
     double                                                      m_production_cost;
     int                                                         m_production_time;
+    bool                                                        m_producible;
     double                                                      m_maintenance_cost;
     const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
 };
 
 /** Holds all FreeOrion building types.  Types may be looked up by name. */

@@ -26,7 +26,7 @@ namespace Effect {
     class SetShipPartMeter;
     class SetEmpireMeter;
     class SetEmpireStockpile;
-    class SetEmpireCapitol;
+    class SetEmpireCapital;
     class SetPlanetType;
     class SetPlanetSize;
     class SetSpecies;
@@ -246,15 +246,15 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Makes the target planet the capitol of its owner's empire.  If the target
+/** Makes the target planet the capital of its owner's empire.  If the target
   * object is not a planet, does not have an owner, or has more than one owner
   * the effect does nothing. */
-class Effect::SetEmpireCapitol : public Effect::EffectBase
+class Effect::SetEmpireCapital : public Effect::EffectBase
 {
 public:
-    SetEmpireCapitol();
-    SetEmpireCapitol(const ValueRef::ValueRefBase<int>* empire_id);
-    virtual ~SetEmpireCapitol();
+    SetEmpireCapital();
+    SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~SetEmpireCapital();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -710,7 +710,7 @@ void Effect::SetEmpireStockpile::serialize(Archive& ar, const unsigned int versi
 }
 
 template <class Archive>
-void Effect::SetEmpireCapitol::serialize(Archive& ar, const unsigned int version)
+void Effect::SetEmpireCapital::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);

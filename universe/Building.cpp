@@ -206,14 +206,15 @@ BuildingType::BuildingType() :
 {}
 
 BuildingType::BuildingType(const std::string& name, const std::string& description,
-                           double production_cost, int production_time, double maintenance_cost,
-                           const Condition::ConditionBase* location,
+                           double production_cost, int production_time, bool producible,
+                           double maintenance_cost, const Condition::ConditionBase* location,
                            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                            const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_production_cost(production_cost),
     m_production_time(production_time),
+    m_producible(producible),
     m_maintenance_cost(maintenance_cost),
     m_location(location),
     m_effects(effects),
@@ -287,6 +288,11 @@ int BuildingType::ProductionTime() const
         return 1;
 }
 
+bool BuildingType::Producible() const
+{
+    return m_producible;
+}
+
 double BuildingType::MaintenanceCost() const
 {
     return m_maintenance_cost;
@@ -320,9 +326,9 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 
     // get a source object, which is owned by the empire with the passed-in
     // empire id.  this is used in conditions to reference which empire is
-    // doing the building.  Ideally this will be the capitol, but any object
+    // doing the building.  Ideally this will be the capital, but any object
     // owned by the empire will work.
-    const UniverseObject* source = objects.Object(empire->CapitolID());
+    const UniverseObject* source = objects.Object(empire->CapitalID());
     if (!source && location->OwnedBy(empire_id))
         source = location;
     // still no valid source?!  scan through all objects to find one owned by this empire

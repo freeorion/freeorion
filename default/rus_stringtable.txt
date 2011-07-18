@@ -2431,7 +2431,7 @@ DESC_COMPLEX_SET_METER_CURRENT
 DESC_SET_EMPIRE_STOCKPILE
 Устанавить запас %1% владельца объекта к %2%
 
-DESC_SET_EMPIRE_CAPITOL
+DESC_SET_EMPIRE_CAPITAL
 Сделать объект столичной планетой владельца объекта
 
 DESC_SET_PLANET_TYPE
@@ -2528,10 +2528,10 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  это не родной мир
 
-DESC_CAPITOL
+DESC_CAPITAL
  это столичная планета империи
 
-DESC_CAPITOL_NOT
+DESC_CAPITAL_NOT
  это не столичная планета империи
 
 DESC_TYPE

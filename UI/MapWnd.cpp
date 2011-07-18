@@ -1765,7 +1765,7 @@ void MapWnd::InitTurn()
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (const UniverseObject* obj = objects.Object(this_client_empire->CapitolID())) {
+        if (const UniverseObject* obj = objects.Object(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -3878,10 +3878,10 @@ void MapWnd::ShowProduction()
     m_btn_production->MarkSelectedGray();
 
     // if no system is currently shown in sidepanel, default to this empire's
-    // home system (ie. where the capitol is)
+    // home system (ie. where the capital is)
     if (SidePanel::SystemID() == UniverseObject::INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID()))
-            if (const UniverseObject* obj = GetObject(empire->CapitolID()))
+            if (const UniverseObject* obj = GetObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -4348,7 +4348,7 @@ void MapWnd::UpdateEmpireResourcePools()
 
 bool MapWnd::ZoomToHomeSystem()
 {
-    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitolID();
+    int id = Empires().Lookup(HumanClientApp::GetApp()->EmpireID())->CapitalID();
 
     if (id != UniverseObject::INVALID_OBJECT_ID) {
         const UniverseObject *object = GetObject(id);

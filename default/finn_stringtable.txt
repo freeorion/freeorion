@@ -2500,7 +2500,7 @@ Asettaa nykyinen %1% - %2%
 DESC_SET_EMPIRE_STOCKPILE
 Asettaa kohteen omistajan %1% varannon %2%
 
-DESC_SET_EMPIRE_CAPITOL
+DESC_SET_EMPIRE_CAPITAL
 Tekee kohteesta kohteen omistajan pääplaneetan
 
 DESC_SET_PLANET_TYPE
@@ -2598,10 +2598,10 @@ DESC_HOMEWORLD
 DESC_HOMEWORLD_NOT
  joka ei ole kotiplaneetta
 
-DESC_CAPITOL
+DESC_CAPITAL
  joka on imperiumin pääplaneetta
 
-DESC_CAPITOL_NOT
+DESC_CAPITAL_NOT
  joka ei ole imperiumin pääplaneetta
 
 DESC_TYPE

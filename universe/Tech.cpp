@@ -115,7 +115,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 Tech::Tech(const std::string& name, const std::string& description, const std::string& short_description,
            const std::string& category, TechType type, double research_cost, int research_turns,
-           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+           bool researchable, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
            const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
            const std::string& graphic) :
     m_name(name),
@@ -125,6 +125,25 @@ Tech::Tech(const std::string& name, const std::string& description, const std::s
     m_type(type),
     m_research_cost(research_cost),
     m_research_turns(research_turns),
+    m_researchable(researchable),
+    m_effects(effects),
+    m_prerequisites(prerequisites),
+    m_unlocked_items(unlocked_items),
+    m_graphic(graphic)
+{}
+
+Tech::Tech(const TechInfo& tech_info,
+           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
+           const std::string& graphic) :
+    m_name(tech_info.name),
+    m_description(tech_info.description),
+    m_short_description(tech_info.short_description),
+    m_category(tech_info.category),
+    m_type(tech_info.type),
+    m_research_cost(tech_info.research_cost),
+    m_research_turns(tech_info.research_turns),
+    m_researchable(tech_info.researchable),
     m_effects(effects),
     m_prerequisites(prerequisites),
     m_unlocked_items(unlocked_items),
@@ -244,6 +263,11 @@ int Tech::ResearchTime() const
         return m_research_turns;
     else
         return 1;
+}
+
+bool Tech::Researchable() const
+{
+    return m_researchable;
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects() const
