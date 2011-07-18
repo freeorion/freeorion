@@ -220,6 +220,35 @@ Dragon Tooth
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems.
 
+SM_KRILL
+Krill
+
+SM_KRILL
+Small swarm of space-born life forms that feed on gas and dust.
+
+SM_TREE
+Solar Tree
+
+SM_TREE
+Large branching space-born tree with filamentous branches.
+
+SM_FLOATER
+Floater
+
+SM_FLOATER
+Gas-filled bulbous sac drifting through space.
+
+SM_SQUID
+Space Squid
+
+SM_SQUID
+Tentacled agressive hunter.
+
+SM_DRAGON
+Vacuum Dragon
+
+SM_DRAGON
+Terrifying giant monster that prowls space for prey.
 
 ##############################
 # Predefined Starting Fleets #
@@ -236,6 +265,9 @@ Scout Fleet
 
 FN_COLONY_FLEET
 Colony Fleet
+
+MONSTERS
+Monsters
 
 ##########################
 # Status Update Messages #
@@ -5947,3 +5979,21 @@ Colony Base Hull
 
 SH_COLONY_BASE_DESC
 A hull designed to create a colony on another planet in system.  It cannot move between systems or move quickly in-system.
+
+SH_WEAK_MONSTER_BODY
+Weak Body
+
+SH_WEAK_MONSTER_BODY_DESC
+Small frail body that is unable to withstand significant damage.
+
+SH_IMMOBILE_MONSTER_BODY
+Immobile Body
+
+SH_IMMOBILE_MONSTER_BODY_DESC
+Rigid tree-like body that is unable to move between systems.
+
+SH_STRONG_MONSTER_BODY
+Strong Body
+
+SH_STRONG_MONSTER_BODY_DESC
+Large strong body with fearsome natural weapons and strong natural armour.
