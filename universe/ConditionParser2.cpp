@@ -162,6 +162,7 @@ namespace {
         StringRule                  design_has_hull;
         DesignHasPartRule           design_has_part;
         DesignHasPartClassRule      design_has_part_class;
+        IntRefRule                  produced_by_empire;
         DoubleRefRule               random;
         StockpileRule               owner_stockpile;
         IntRefVecRule               visible_to_empire;
@@ -262,6 +263,11 @@ namespace {
                                                                                design_has_part_class.int_ref_1,
                                                                                design_has_part_class.part_class)];
 
+        produced_by_empire =
+            (str_p("producedbyempire")
+             >> empire_label >> int_expr_p[fleet_supplyable.int_ref = arg1])
+            [produced_by_empire.this_ = new_<Condition::ProducedByEmpire>(produced_by_empire.int_ref)];
+
         random =
             (str_p("random")
              >> probability_label
@@ -313,6 +319,7 @@ namespace {
             | design_has_hull[condition2_p.this_ = arg1]
             | design_has_part[condition2_p.this_ = arg1]
             | design_has_part_class[condition2_p.this_ = arg1]
+            | produced_by_empire[condition2_p.this_ = arg1]
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
             | visible_to_empire[condition2_p.this_ = arg1]

@@ -53,6 +53,7 @@ namespace Condition {
     struct DesignHasHull;
     struct DesignHasPart;
     struct DesignHasPartClass;
+    struct ProducedByEmpire;
     struct Chance;
     struct MeterValue;
     struct EmpireStockpileValue;
@@ -551,6 +552,24 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches ships or buildings produced by the empire with id \a id.*/
+struct Condition::ProducedByEmpire : Condition::ConditionBase
+{
+    ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~ProducedByEmpire();
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>* m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct Condition::Chance : Condition::ConditionBase
 {
@@ -1037,6 +1056,13 @@ void Condition::DesignHasPartClass::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_class);
+}
+
+template <class Archive>
+void Condition::ProducedByEmpire::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
 
 template <class Archive>

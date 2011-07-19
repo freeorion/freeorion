@@ -1719,7 +1719,9 @@ bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasPartClass::DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, ShipPartClass part_class) :
+Condition::DesignHasPartClass::DesignHasPartClass(const ValueRef::ValueRefBase<int>* low,
+                                                  const ValueRef::ValueRefBase<int>* high,
+                                                  ShipPartClass part_class) :
     m_low(low),
     m_high(high),
     m_class(part_class)
@@ -1775,6 +1777,54 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
             return (low <= count && count < high);
         }
     }
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// ProducedByEmpire                                    //
+///////////////////////////////////////////////////////////
+Condition::ProducedByEmpire::ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+    m_empire_id(empire_id)
+{}
+
+Condition::ProducedByEmpire::~ProducedByEmpire()
+{
+    delete m_empire_id;
+}
+
+std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const
+{
+    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
+                                 Empires().Lookup(m_empire_id->Eval())->Name() :
+                                 m_empire_id->Description();
+
+    std::string description_str = "DESC_PRODUCED_BY_EMPIRE";
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % empire_str);
+}
+
+std::string Condition::ProducedByEmpire::Dump() const
+{
+    return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump();
+}
+
+bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "ProducedByEmpire::Match passed no candidate object";
+        return false;
+    }
+
+    if (const ::Building* building = universe_object_cast<const ::Building*>(candidate))
+        return building->ProducedByEmpireID() == m_empire_id->Eval(local_context);
+
+    if (const ::Ship* ship = universe_object_cast<const Ship*>(candidate))
+        return ship->ProducedByEmpireID() == m_empire_id->Eval(local_context);
+
     return false;
 }
 

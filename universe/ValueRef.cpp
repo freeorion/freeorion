@@ -571,6 +571,13 @@ namespace ValueRef {
             return object->CreationTurn();
         } else if (boost::iequals(property_name, "Age")) {
             return object->AgeInTurns();
+        } else if (boost::iequals(property_name, "ProducedByEmpireID")) {
+            if (const Ship* ship = universe_object_cast<const Ship*>(object))
+                return ship->ProducedByEmpireID();
+            else if (const Building* building = universe_object_cast<const Building*>(object))
+                return building->ProducedByEmpireID();
+            else
+                return ALL_EMPIRES;
         } else if (boost::iequals(property_name, "DesignID")) {
             if (const Ship* ship = universe_object_cast<const Ship*>(object))
                 return ship->DesignID();

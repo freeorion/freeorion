@@ -2948,6 +2948,9 @@ ID
 DESC_VAR_AGE
 age in turns
 
+DESC_VAR_PRODUCEDBYEMPIREID
+producer
+
 DESC_VAR_CREATIONTURN
 turn of creation
 
@@ -3290,6 +3293,12 @@ DESC_CHANCE
 DESC_CHANCE_NOT
  with a probability of 1 - %1%
 
+DESC_PRODUCED_BY_EMPIRE
+ that was produced by %1% empire
+
+DESC_PRODUCED_BY_EMPIRE_NOT
+ that was not produced by %1% empire
+ 
 DESC_METER_VALUE_MAX
  that has a max %1% between %2% and %3%
 

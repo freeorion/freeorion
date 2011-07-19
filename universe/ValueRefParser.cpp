@@ -11,8 +11,8 @@ using namespace phoenix;
 // final variable tokens: object property names that have the appropriate type
 // for the ValueRef return type.
 SimpleRule int_variable_final =
-    str_p("owner") | "id" | "creationturn" | "age" | "designid"
-    | "fleetid" | "planetid" | "systemid" | "finaldestinationid"
+    str_p("owner") | "id" | "creationturn" | "age" | "producedbyempireid"
+    | "designid" | "fleetid" | "planetid" | "systemid" | "finaldestinationid"
     | "nextsystemid" | "previoussystemid" | "numships";
 
 SimpleRule double_variable_final =
