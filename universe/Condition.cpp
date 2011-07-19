@@ -1466,7 +1466,7 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const
     const Ship* ship = universe_object_cast<const Ship*>(candidate);
     if (ship) {
         if (m_names.empty()) {
-            return !ship->SpeciesName().empty();    // match any specie name
+            return !ship->SpeciesName().empty();    // match any species name
         } else {
             // match only specified species names
             for (unsigned int i = 0; i < m_names.size(); ++i)

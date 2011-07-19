@@ -38,6 +38,10 @@ namespace {
 
     const std::string   EMPTY_STRING;
 
+    /** Returns a name to show for a system on the map, for the specified system
+      * viewed by the specified empire (usually this client's empire).  If
+      * blank_unexplored_and_none is true, then the names of unexplored systems
+      * and systems that have no star will be returned as an empty string. */
     const std::string& ApparentSystemName(const System* system, int empire_id, bool blank_unexplored_and_none) {
         //Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
         if (!system)
@@ -57,7 +61,20 @@ namespace {
         }
 
         if (system->GetStarType() == STAR_NONE) {
-            if (blank_unexplored_and_none)
+            // determine if there are any planets in the system
+            const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+            std::vector<const Planet*> planets = objects.FindObjects<Planet>();
+            bool system_has_planets = false;
+            for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+                if ((*it)->SystemID() == system->SystemID()) {
+                    system_has_planets = true;
+                    break;
+                }
+            }
+
+            if (system_has_planets)
+                return system->Name();
+            else if (blank_unexplored_and_none)
                 return EMPTY_STRING;
             else
                 return UserString("EMPTY_SPACE");

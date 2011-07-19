@@ -116,7 +116,7 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
                     this->m_starlanes_wormholes.erase(lane_end_sys_id);
             }
 
-            if (vis < VIS_FULL_VISIBILITY && copied_system->m_star != STAR_NONE) {
+            if (vis < VIS_FULL_VISIBILITY) {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
                 // should know system names even if they don't own the system
@@ -468,7 +468,7 @@ void System::AddStarlane(int id)
     if (!HasStarlaneTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
-        Logger().debugStream() << "System " << this->Dump() << " added starlane to system " << id;
+        Logger().debugStream() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
     }
 }
 
