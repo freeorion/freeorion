@@ -777,8 +777,10 @@ bool MultiPlayerLobbyWnd::ThisClientIsHost() const
 
 void MultiPlayerLobbyWnd::StartGameClicked()
 {
-    if (CanStart() && ThisClientIsHost())
+    if (CanStart() && ThisClientIsHost()) {
+        m_start_game_bn->Disable();
         HumanClientApp::GetApp()->StartMultiPlayerGameFromLobby();
+    }
 }
 
 void MultiPlayerLobbyWnd::CancelClicked()

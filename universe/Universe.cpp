@@ -4090,7 +4090,7 @@ void Universe::GenerateNatives()
 
     // randomly add species to planets
     for (std::vector<Planet*>::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
-        if (RandZeroToOne() < 0.5)
+        if (RandZeroToOne() < 0.3)
             continue;
 
         Planet* planet = *it;
