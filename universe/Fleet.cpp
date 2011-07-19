@@ -170,6 +170,10 @@ const std::string& Fleet::PublicName(int empire_id) const
     // foreign fleet is called "Decoy"
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
+    else if (Unowned() && HasMonsters())
+        return UserString("MONSTERS");
+    else if (Unowned())
+        return UserString("FW_ROGUE_FLEET");
     else
         return UserString("FW_FOREIGN_FLEET");
 }

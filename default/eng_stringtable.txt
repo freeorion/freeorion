@@ -220,6 +220,9 @@ Dragon Tooth
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems.
 
+SM_MONSTER
+Monster
+
 SM_KRILL
 Krill
 
@@ -1784,9 +1787,17 @@ Battle Fleet
 FW_FOREIGN_FLEET
 Foreign fleet
 
+# the name that is used for fleets that no player controls
+FW_ROGUE_FLEET
+Rogue Fleet
+
 # the name that is used for ships the player does not control
 FW_FOREIGN_SHIP
 Foreign ship
+
+# the name that is used for ships that no player controls
+FW_ROGUE_SHIP
+Rogue Ship
 
 SHIP_SPEED_STAT_TITLE
 Speed

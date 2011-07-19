@@ -277,6 +277,13 @@ const std::string& Ship::PublicName(int empire_id) const {
     // ship's name is "Scout"
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
         return Name();
+    else if (Unowned() && IsMonster())
+        if (const ShipDesign* design = Design())
+            return design->Name();
+        else
+            return UserString("SM_MONSTER");
+    else if (Unowned())
+        return UserString("FW_ROGUE_SHIP");
     else
         return UserString("FW_FOREIGN_SHIP");
 }
