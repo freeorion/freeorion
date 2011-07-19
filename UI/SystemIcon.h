@@ -23,9 +23,6 @@ public:
     OwnerColoredSystemName(int system_id, int font_size, bool hide_empty_or_missing_names = false,
                            GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
     virtual void Render();
-
-private:
-    std::vector<GG::TextControl*> m_subcontrols;
 };
 
 /** a GUI control that allows interaction with a star system.  This class allows user interaction with star systems on

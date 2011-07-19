@@ -89,17 +89,20 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     // get system name
     const std::string& system_name = ApparentSystemName(system, HumanClientApp::GetApp()->EmpireID(), hide_empty_or_missing_names);
 
-    // loop through planets in system, checking if any are a homeworld, capital or have a shipyard
-    bool capital = false, homeworld = false, has_shipyard = false;
+    // loop through planets in system, checking if any are a homeworld, capital
+    // or have a shipyard, or have neutral population
+    bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
-    std::vector<int> planet_ids = system->FindObjectIDs<Planet>();
-    for (std::vector<int>::const_iterator it = planet_ids.begin(); it != planet_ids.end(); ++it) {
-        int planet_id = *it;
-        const Planet* planet = objects.Object<Planet>(planet_id);
-        if (!planet) {
-            Logger().errorStream() << "OwnerColoredSystemName couldn't get planet with ID " << planet_id;
-            continue;
-        }
+    std::vector<const Planet*> system_planets;
+    std::vector<const Planet*> planets = objects.FindObjects<Planet>();
+    for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it)
+        if ((*it)->SystemID() == system_id)
+            system_planets.push_back(*it);
+
+    std::set<int> owner_empire_ids;
+    for (std::vector<const Planet*>::const_iterator it = system_planets.begin(); it != system_planets.end(); ++it) {
+        const Planet* planet = *it;
+        int planet_id = planet->ID();
 
         // is planet a capital?
         if (!capital) {
@@ -131,8 +134,19 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
                 // annoying hard-coded building name here... not sure how better to deal with it
                 if (building->BuildingTypeName() == "BLD_SHIPYARD_BASE") {
                     has_shipyard = true;
-                    break;
                 }
+            }
+        }
+
+        if (!has_neutrals) {
+            if (planet->Unowned() && !planet->SpeciesName().empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                has_neutrals = true;
+        }
+
+        if (!has_player_planet) {
+            if (!planet->Unowned()) {
+                has_player_planet = true;
+                std::copy(planet->Owners().begin(), planet->Owners().end(), std::inserter(owner_empire_ids, owner_empire_ids.end()));
             }
         }
     }
@@ -156,60 +170,17 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     else
         font = ClientUI::GetFont(font_size);
 
-
-    GG::X width(0);
-    const std::set<int>& owners = system->Owners();
-    if (owners.size() <= 1) {
-        GG::Clr text_color = ClientUI::SystemNameTextColor();
-        if (!owners.empty())
-            text_color = Empires().Lookup(*owners.begin())->Color();
-        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
-        m_subcontrols.push_back(text);
-        AttachChild(m_subcontrols.back());
-        width += m_subcontrols.back()->Width();
-    } else {
-        // alternative backup code for system name colour:  when more than
-        // one empire owns system, use unowned system name colour
-        GG::Clr text_color = ClientUI::SystemNameTextColor();
-        GG::TextControl* text = new ShadowedTextControl(width, GG::Y0, wrapped_system_name, font, text_color);
-        m_subcontrols.push_back(text);
-        AttachChild(m_subcontrols.back());
-        width += m_subcontrols.back()->Width();
-
-        // the following is commented out because it doesn't interact well
-        // with formatting tags surrounding systen name text.  I think the
-        // problem arises when text like "<u>Aegir</u>" is the system name
-        // as in this case, the number of displayed characters is different
-        // from the number of actual characters in the raw name text.  This
-        // might be causing problems with the last_char_pos < wrapped_system_name.size
-        // check, as the last_char_pos counts starting at the A character
-        // and should only range from 0 to 4, but the raw system name text
-        // is 12 characters long with the formatting tags, leading out out
-        // of array bounds errors.
-
-        //GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE;
-        //std::vector<GG::Font::LineData> lines;
-        //GG::Pt extent = font->DetermineLines(wrapped_system_name, format, GG::X(1000), lines);
-        //if (lines.empty()) {
-        //    Logger().errorStream() << "OwnerColoredSystemName got empty lines for name: \"" << wrapped_system_name << "\"";
-        //    return;
-        //}
-        //unsigned int first_char_pos = 0;
-        //unsigned int last_char_pos = 0;
-        //GG::X pixels_per_owner = extent.x / static_cast<int>(owners.size()) + 1; // the +1 is to make sure there is not a stray character left off the end
-        //int owner_idx = 1;
-        //for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it, ++owner_idx) {
-        //    while (last_char_pos < wrapped_system_name.size() && lines[0].char_data[last_char_pos].extent < (owner_idx * pixels_per_owner)) {
-        //        ++last_char_pos;
-        //    }
-        //    m_subcontrols.push_back(new ShadowedTextControl(width, GG::Y0, wrapped_system_name.substr(first_char_pos, last_char_pos - first_char_pos), 
-        //                                                font, Empires().Lookup(*it)->Color()));
-        //    AttachChild(m_subcontrols.back());
-        //    first_char_pos = last_char_pos;
-        //    width += m_subcontrols.back()->Width();
-        //}
+    GG::Clr text_color = ClientUI::SystemNameTextColor();
+    if (has_player_planet) {
+        if (owner_empire_ids.size() == 1)
+            text_color = Empires().Lookup(*owner_empire_ids.begin())->Color();
+    } else if (has_neutrals) {
+            text_color = ClientUI::TextColor();
     }
-    Resize(GG::Pt(width, m_subcontrols[0]->Height()));
+
+    GG::TextControl* text = new ShadowedTextControl(GG::X0, GG::Y0, wrapped_system_name, font, text_color);
+    AttachChild(text);
+    Resize(GG::Pt(text->Width(), text->Height()));
 }
 
 void OwnerColoredSystemName::Render()

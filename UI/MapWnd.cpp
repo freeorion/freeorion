@@ -4244,13 +4244,12 @@ void MapWnd::UpdateMeterEstimates(int object_id, bool update_contained_objects)
 
         const UniverseObject* cur_object = objects.Object(cur_object_id);
         if (!cur_object) {
-            Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object...";
-            return;
+            Logger().errorStream() << "MapWnd::UpdateMeterEstimates tried to get an invalid object with id " << cur_object_id;
+            continue;
         }
 
         // add current object to list
         objects_set.insert(cur_object_id);
-
 
         // add contained objects within current object to list of objects to process, if requested.  assumes no objects contain themselves (which could cause infinite loops)
         if (update_contained_objects) {
