@@ -604,6 +604,69 @@ Condition::EmpireAffiliation::~EmpireAffiliation()
     delete m_empire_id;
 }
 
+namespace {
+    bool EmpireAffiliationSimpleMatch(const UniverseObject* candidate, int empire_id,
+                                      EmpireAffiliationType affiliation, bool exclusive)
+    {
+        if (!candidate)
+            return false;
+
+        switch (affiliation) {
+        case AFFIL_SELF:
+            if (exclusive) {
+                // candidate object owned only by specified empire
+                return candidate->WhollyOwnedBy(empire_id);
+            } else {
+                // candidate object owned by specified empire, and possibly others
+                return candidate->OwnedBy(empire_id);
+            }
+            break;
+        case AFFIL_ENEMY:
+            if (exclusive) {
+                // candidate has an owner, but isn't owned by specified empire
+                return (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id));
+            } else {
+                // at least one of candidate's owners is not specified empire, but specified empire may also own candidate
+                return (candidate->Owners().size() > 1 ||
+                        (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id))
+                       );
+            }
+            break;
+        case AFFIL_ALLY:
+            // TODO
+            break;
+        default:
+            break;
+        }
+        return false;
+    }
+}
+
+void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    if (ValueRef::ConstantExpr(m_empire_id)) {
+        // evaluate empire id once, and use to check all candidate objects
+        int empire_id = m_empire_id->Eval();
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = EmpireAffiliationSimpleMatch(*temp, empire_id, m_affiliation, m_exclusive);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
     std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
@@ -648,34 +711,7 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 
     int empire_id = m_empire_id->Eval(local_context);
 
-    switch (m_affiliation) {
-    case AFFIL_SELF:
-        if (m_exclusive) {
-            // candidate object owned only by specified empire
-            return candidate->WhollyOwnedBy(empire_id);
-        } else {
-            // candidate object owned by specified empire, and possibly others
-            return candidate->OwnedBy(empire_id);
-        }
-        break;
-    case AFFIL_ENEMY:
-        if (m_exclusive) {
-            // candidate has an owner, but isn't owned by specified empire
-            return (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id));
-        } else {
-            // at least one of candidate's owners is not specified empire, but specified empire may also own candidate
-            return (candidate->Owners().size() > 1 ||
-                    (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id))
-                   );
-        }
-        break;
-    case AFFIL_ALLY:
-        // TODO
-        break;
-    default:
-        break;
-    }
-    return false;
+    return EmpireAffiliationSimpleMatch(candidate, empire_id, m_affiliation, m_exclusive);
 }
 
 ///////////////////////////////////////////////////////////
