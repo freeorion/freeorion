@@ -17,7 +17,7 @@
 
 namespace {
     // The time it takes to recenter on a new point, in seconds.
-    const Ogre::Real CAMERA_MOVE_TIME = 0.33333;
+    const Ogre::Real CAMERA_MOVE_TIME = 0.33333f;
     const int CAMERA_ANIMATION_STEPS = 8;
     const Ogre::Real TIME_INCREMENT = CAMERA_MOVE_TIME / CAMERA_ANIMATION_STEPS;
 
@@ -26,7 +26,7 @@ namespace {
 
     const Ogre::Real IGNORE_DISTANCE = FLT_MAX;
 
-    const Ogre::Real NEAR_CLIP = 0.01;
+    const Ogre::Real NEAR_CLIP = 0.01f;
     const Ogre::Real FAR_CLIP = 4.0 * SystemRadius();
 
     const Ogre::Real MAX_ZOOM_OUT_DISTANCE = 2.0 * SystemRadius();

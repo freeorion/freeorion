@@ -220,7 +220,7 @@ namespace {
             planet_type_p[constant.this_ = new_<RefConst>(arg1)]
             | int_p[constant.this_ = new_<RefConst>(static_cast_<PlanetType>(arg1))];
 
-        variable_final = str_p("planettype");
+        variable_final = str_p("planettype") | str_p("nextbetterplanettype");
     }
 
     template <>

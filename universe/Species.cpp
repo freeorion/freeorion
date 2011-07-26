@@ -213,6 +213,75 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
         return it->second;
 }
 
+namespace {
+    PlanetType RingNextPlanetType(PlanetType current_type) {
+        PlanetType next(PlanetType(int(current_type)+1));
+        if (next >= NUM_PLANET_TYPES)
+            next = PT_SWAMP;
+        return next;
+    }
+    PlanetType RingPreviousPlanetType(PlanetType current_type) {
+        PlanetType next(PlanetType(int(current_type)-1));
+        if (next <= INVALID_PLANET_TYPE)
+            next = PT_OCEAN;
+        return next;
+    }
+}
+
+PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
+{
+    // some types can't be terraformed
+    if (initial_planet_type == PT_GASGIANT)
+        return PT_GASGIANT;
+    if (initial_planet_type == PT_ASTEROIDS)
+        return PT_ASTEROIDS;
+    if (initial_planet_type == INVALID_PLANET_TYPE)
+        return INVALID_PLANET_TYPE;
+    if (initial_planet_type == NUM_PLANET_TYPES)
+        return NUM_PLANET_TYPES;
+    // and sometimes there's no variation data
+    if (m_planet_environments.empty())
+        return initial_planet_type;
+
+    // determine which environment rating is the best available for this species
+    PlanetEnvironment best_environment = PE_UNINHABITABLE;
+    //std::set<PlanetType> best_types;
+    for (std::map<PlanetType, PlanetEnvironment>::const_iterator it = m_planet_environments.begin();
+         it != m_planet_environments.end(); ++it)
+    {
+        if (it->second == best_environment) {
+            //best_types.insert(it->first);
+        } else if (it->second > best_environment) {
+            best_environment = it->second;
+            //best_types.clear();
+            //best_types.insert(it->first);
+        }
+    }
+
+    // if no improvement available, abort early
+    PlanetEnvironment initial_environment = GetPlanetEnvironment(initial_planet_type);
+    if (initial_environment >= best_environment)
+        return initial_planet_type;
+
+    // find which of the best types is closest to the current type
+    int forward_steps_to_best = 0;
+    for (PlanetType type = RingNextPlanetType(initial_planet_type); type != initial_planet_type; type = RingNextPlanetType(type)) {
+        forward_steps_to_best++;
+        if (GetPlanetEnvironment(type) == best_environment)
+            break;
+    }
+    int backward_steps_to_best = 0;
+    for (PlanetType type = RingPreviousPlanetType(initial_planet_type); type != initial_planet_type; type = RingPreviousPlanetType(type)) {
+        backward_steps_to_best++;
+        if (GetPlanetEnvironment(type) == best_environment)
+            break;
+    }
+    if (forward_steps_to_best >= backward_steps_to_best)
+        return RingNextPlanetType(initial_planet_type);
+    else
+        return RingPreviousPlanetType(initial_planet_type);
+}
+
 const std::string& Species::Graphic() const {
     return m_graphic;
 }

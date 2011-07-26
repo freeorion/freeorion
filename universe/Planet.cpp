@@ -192,23 +192,35 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
     const Species* species = 0;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
-
         if (this_planet_species_name.empty())
             return PE_UNINHABITABLE;
-
-        species = GetSpecies(this->SpeciesName());
-        if (!species) {
-            Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get own species with name \"" << this->SpeciesName() << "\"";
-            return PE_UNINHABITABLE;
-        }
+        species = GetSpecies(this_planet_species_name);
     } else {
         species = GetSpecies(species_name);
-        if (!species) {
-            Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
-            return PE_UNINHABITABLE;
-        }
+    }
+    if (!species) {
+        Logger().errorStream() << "Planet::EnvironmentForSpecies couldn't get species with name \"" << species_name << "\"";
+        return PE_UNINHABITABLE;
     }
     return species->GetPlanetEnvironment(m_type);
+}
+
+PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name/* = ""*/) const
+{
+    const Species* species = 0;
+    if (species_name.empty()) {
+        const std::string& this_planet_species_name = this->SpeciesName();
+        if (this_planet_species_name.empty())
+            return m_type;
+        species = GetSpecies(this_planet_species_name);
+    } else {
+        species = GetSpecies(species_name);
+    }
+    if (!species) {
+        Logger().errorStream() << "Planet::NextBetterPlanetTypeForSpecies couldn't get species with name \"" << species_name << "\"";
+        return m_type;
+    }
+    return species->NextBetterPlanetType(m_type);
 }
 
 Year Planet::OrbitalPeriod() const

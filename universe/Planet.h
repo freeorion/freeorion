@@ -100,6 +100,7 @@ public:
     PlanetSize                  Size() const {return m_size;}
 
     PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
+    PlanetType                  NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
 
     Year                        OrbitalPeriod() const;
     Radian                      InitialOrbitalPosition() const;

@@ -331,14 +331,18 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(PlanetType)
 
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        if (!object) {
+            Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            return INVALID_PLANET_TYPE;
+        }
+
         if (boost::iequals(property_name, "PlanetType")) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
-            if (!object) {
-                Logger().errorStream() << "Variable<PlanetType>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
-                return INVALID_PLANET_TYPE;
-            }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->Type();
+        } else if (boost::iequals(property_name, "NextBetterPlanetType")) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->NextBetterPlanetTypeForSpecies();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetType.");
         }

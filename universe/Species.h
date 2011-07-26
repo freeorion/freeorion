@@ -75,8 +75,9 @@ public:
     std::string                     Dump() const;       ///< returns a data file format representation of this object
     const std::vector<FocusType>&   Foci() const;       ///< returns the focus types this species can use, indexed by name
     const std::map<PlanetType, PlanetEnvironment>&
-                                    PlanetEnvironments() const;                         ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
-    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const; ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+                                    PlanetEnvironments() const;                                 ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
+    PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
