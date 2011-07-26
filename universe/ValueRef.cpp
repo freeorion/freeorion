@@ -17,11 +17,13 @@
 int g_indent = 0;
 
 
+///////////////////////////////////////////////////////////
+// ScriptingContext                                      //
+///////////////////////////////////////////////////////////
 ScriptingContext::ScriptingContext() :
     source(0),
     effect_target(0),
     condition_root_candidate(0),
-    condition_parent_candidate(0),
     condition_local_candidate(0)
 {}
 
@@ -29,7 +31,6 @@ ScriptingContext::ScriptingContext(const UniverseObject* source_) :
     source(source_),
     effect_target(0),
     condition_root_candidate(0),
-    condition_parent_candidate(0),
     condition_local_candidate(0)
 {}
 
@@ -37,7 +38,6 @@ ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject
     source(source_),
     effect_target(target_),
     condition_root_candidate(0),
-    condition_parent_candidate(0),
     condition_local_candidate(0)
 {}
 
@@ -47,7 +47,6 @@ ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject
     source(source_),
     effect_target(target_),
     condition_root_candidate(0),
-    condition_parent_candidate(0),
     condition_local_candidate(0),
     current_value(current_value_)
 {}
@@ -57,7 +56,6 @@ ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
     source(parent_context.source),
     effect_target(parent_context.effect_target),
     condition_root_candidate(parent_context.condition_root_candidate),
-    condition_parent_candidate(parent_context.condition_parent_candidate),
     condition_local_candidate(parent_context.condition_local_candidate),
     current_value(current_value_)
 {}
@@ -69,7 +67,6 @@ ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
     condition_root_candidate(   parent_context.condition_root_candidate ?
                                     parent_context.condition_root_candidate :
                                     condition_local_candidate),                 // if parent context doesn't already have a root candidate, the new local candidate is the root
-    condition_parent_candidate( parent_context.condition_local_candidate),      // parent_context's local candidate is this new context's parent candidate
     condition_local_candidate(  condition_local_candidate),                     // new local candidate
     current_value(              parent_context.current_value)
 {}
@@ -77,12 +74,10 @@ ScriptingContext::ScriptingContext(const ScriptingContext& parent_context,
 ScriptingContext::ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
                                    const boost::any& current_value_,
                                    const UniverseObject* condition_root_candidate_,
-                                   const UniverseObject* condition_parent_candidate_,
                                    const UniverseObject* condition_local_candidate_) :
     source(source_),
     effect_target(0),
     condition_root_candidate(condition_root_candidate_),
-    condition_parent_candidate(condition_parent_candidate_),
     condition_local_candidate(condition_local_candidate_),
     current_value(current_value_)
 {}
@@ -107,7 +102,6 @@ namespace {
         //Logger().debugStream() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
         //    << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
         //    << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
-        //    << " parent c: " << (context.condition_parent_candidate ? context.condition_parent_candidate->Name() : "0")
         //    << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
         const UniverseObject* obj(0);
@@ -115,7 +109,6 @@ namespace {
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
         case ValueRef::EFFECT_TARGET_REFERENCE:                 obj = context.effect_target;                break;
         case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE:     obj = context.condition_local_candidate;    break;
-        case ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE:    obj = context.condition_parent_candidate;   break;
         case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:      obj = context.condition_root_candidate;     break;
         default:
             return 0;
@@ -143,21 +136,29 @@ namespace {
         return obj;
     }
 
-    std::string ReconstructName(const std::vector<std::string>& name,
+    std::string ReconstructName(const std::vector<std::string>& property_name,
                                 ValueRef::ReferenceType ref_type)
     {
         std::string retval;
         switch (ref_type) {
         case ValueRef::SOURCE_REFERENCE:                    retval = "Source";          break;
-        case ValueRef::EFFECT_TARGET_REFERENCE:             retval = "Target";          break;
+        case ValueRef::EFFECT_TARGET_REFERENCE: {
+            // "Value" is actually a reference to the target object, but we
+            // don't want to output "Target.Value", so if "Value" is the
+            // property name, skip prepending "Target".  Otherwise, prepend
+            // target as with other direct object references.
+
+            if (!boost::iequals(property_name[0], "Value"))
+                retval = "Target";
+            break;
+        }
         case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
-        case ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE:retval = "ParentCandidate"; break;
         case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
         default:                                            retval = "?????";   break;
         }
-        for (unsigned int i = 0; i < name.size(); ++i) {
+        for (unsigned int i = 0; i < property_name.size(); ++i) {
             retval += '.';
-            retval += name[i];
+            retval += property_name[i];
         }
         return retval;
     }
@@ -670,7 +671,7 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
-        if (m_stat_type == NUMBER)
+        if (m_stat_type == COUNT)
             return static_cast<double>(condition_matches.size());
 
         // evaluate property for each condition-matched object
@@ -686,7 +687,7 @@ namespace ValueRef {
         Condition::ObjectSet condition_matches;
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
-        if (m_stat_type == NUMBER)
+        if (m_stat_type == COUNT)
             return static_cast<int>(condition_matches.size());
 
         // evaluate property for each condition-matched object

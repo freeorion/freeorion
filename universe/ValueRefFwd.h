@@ -12,7 +12,6 @@ namespace ValueRef {
         SOURCE_REFERENCE,                   // ValueRef::Variable is evaluated on the source object
         EFFECT_TARGET_REFERENCE,            // ValueRef::Variable is evaluated on the target object of an effect while it is being executed
         CONDITION_LOCAL_CANDIDATE_REFERENCE,// ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will reference the local candidate, and not the candidate of an enclosing condition.
-        CONDITION_PARENT_CANDIDATE_REFERENCE,//ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a root condition, this will reference any object, but in a subcondition of another condition, the enclosing condition's candidate object will be reference.
         CONDITION_ROOT_CANDIDATE_REFERENCE  // ValueRef::Variable is evaluated on an object that is a candidate to be matched by a condition.  In a subcondition, this will still reference the root candidate, and not the candidate of the local condition.
     };
     template <class T> struct ValueRefBase;
@@ -20,7 +19,7 @@ namespace ValueRef {
     template <class T> struct Variable;
     template <class T> struct Statistic;
     enum StatisticType {
-        NUMBER, // returns the number of objects matching the condition
+        COUNT,  // returns the number of objects matching the condition
         SUM,    // returns the sum of the property values of all objects matching the condition
         MEAN,   // returns the mean of the property values of all objects matching the condition
         RMS,    // returns the sqrt of the mean of the squares of the property values of all objects matching the condition

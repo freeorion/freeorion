@@ -3294,10 +3294,10 @@ DESC_CHANCE_NOT
  with a probability of 1 - %1%
 
 DESC_PRODUCED_BY_EMPIRE
- that was produced by %1% empire
+ that was produced by the %1% empire
 
 DESC_PRODUCED_BY_EMPIRE_NOT
- that was not produced by %1% empire
+ that was not produced by the %1% empire
  
 DESC_METER_VALUE_MAX
  that has a max %1% between %2% and %3%
@@ -3317,17 +3317,11 @@ DESC_EMPIRE_STOCKPILE_VALUE
 DESC_EMPIRE_STOCKPILE_VALUE_NOT
  that doesn't belong to an empire with a %1% stockpile between %2% and %3%
 
-DESC_VISIBLE_TO_SINGLE_EMPIRE
+DESC_VISIBLE_TO_EMPIRE
  that is visible to the %1% empire
 
-DESC_VISIBLE_TO_SINGLE_EMPIRE_NOT
+DESC_VISIBLE_TO_EMPIRE_NOT
  that is not visible to the %1% empire
-
-DESC_VISIBLE_TO_EMPIRES
- that is visible to one of the %1% empires
-
-DESC_VISIBLE_TO_EMPIRES_NOT
- that is not visible to one of the %1% empires
 
 DESC_WITHIN_DISTANCE
  that is within %1% of any object%2%
@@ -3353,18 +3347,12 @@ DESC_CAN_REMOVE_STARLANE_CONNECTION
 DESC_CAN_REMOVE_STARLANE_CONNECTION_NOT
 that can not have starlanes removed that connect to all systems that contain objects%1%
 
-DESC_EXPLORED_BY_SINGLE_EMPIRE
+DESC_EXPLORED_BY_EMPIRE
  that has been explored by the %1% empire
 
-DESC_EXPLORED_BY_SINGLE_EMPIRE_NOT
+DESC_EXPLORED_BY_EMPIRE_NOT
  that has not been explored by the %1% empire
 
-DESC_EXPLORED_BY_EMPIRES
- that has been explored by one of the %1% empires
-
-DESC_EXPLORED_BY_EMPIRES_NOT
- that has not been explored by any of the %1% empires
- 
 DESC_STATIONARY
  that is stationary
 

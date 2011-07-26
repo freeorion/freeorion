@@ -43,23 +43,20 @@ struct ScriptingContext {
                      const boost::any& current_value_);
 
     /** For recusrive evaluation of Conditions.  Keeps source and effect_target
-      * from input context, but sets local candidate with input object, and
-      * sets new context's parent candidate to the input context's local
-      * candidate.  If there is no root candidate in the parent context, then
-      * the input object becomes the root candidate. */
+      * from input context, but sets local candidate with input object, and if
+      * there is no root candidate in the parent context, then the input object
+      * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
                      const UniverseObject* condition_local_candidate);
 
     ScriptingContext(const UniverseObject* source_, UniverseObject* target_,
                      const boost::any& current_value_,
                      const UniverseObject* condition_root_candidate_,
-                     const UniverseObject* condition_parent_candidate_,
                      const UniverseObject* condition_local_candidate_);
 
     const UniverseObject*   source;
     UniverseObject*         effect_target;
     const UniverseObject*   condition_root_candidate;
-    const UniverseObject*   condition_parent_candidate;
     const UniverseObject*   condition_local_candidate;
     const boost::any        current_value;
 };
@@ -85,6 +82,10 @@ struct ValueRef::ValueRefBase
       * evaluating expressions that do not depend on context. */
     T                   Eval() const { return Eval(::ScriptingContext()); }
 
+    virtual bool        RootCandidateInvariant() const { return false; }
+    virtual bool        LocalCandidateInvariant() const { return false; }
+    virtual bool        TargetInvariant() const { return false; }
+
     virtual std::string Description() const = 0;
     virtual std::string Dump() const = 0; ///< returns a text description of this type of special
 
@@ -103,6 +104,11 @@ struct ValueRef::Constant : public ValueRef::ValueRefBase<T>
     T Value() const;
 
     virtual T Eval(const ScriptingContext& context) const;
+
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        LocalCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -128,6 +134,11 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     const std::vector<std::string>& PropertyName() const;
 
     virtual T                       Eval(const ScriptingContext& context) const;
+
+    virtual bool                    RootCandidateInvariant() const;
+    virtual bool                    LocalCandidateInvariant() const;
+    virtual bool                    TargetInvariant() const;
+
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
 
@@ -159,6 +170,10 @@ struct ValueRef::Statistic : public ValueRef::Variable<T>
     const Condition::ConditionBase* SamplingCondition() const;
 
     virtual T                       Eval(const ScriptingContext& context) const;
+
+    virtual bool                    RootCandidateInvariant() const;
+    virtual bool                    LocalCandidateInvariant() const;
+    virtual bool                    TargetInvariant() const;
 
     virtual std::string             Description() const;
     virtual std::string             Dump() const;
@@ -199,7 +214,10 @@ struct ValueRef::StaticCast : public ValueRef::Variable<ToType>
     StaticCast(const ValueRef::Variable<FromType>* value_ref);
     ~StaticCast();
 
-    virtual double Eval(const ScriptingContext& context) const;
+    virtual double      Eval(const ScriptingContext& context) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        LocalCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -221,6 +239,9 @@ struct ValueRef::StringCast : public ValueRef::Variable<std::string>
     ~StringCast();
 
     virtual std::string Eval(const ScriptingContext& context) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        LocalCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -247,6 +268,9 @@ struct ValueRef::Operation : public ValueRef::ValueRefBase<T>
     const ValueRefBase<T>* RHS() const;
 
     virtual T Eval(const ScriptingContext& context) const;
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        LocalCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
@@ -370,6 +394,18 @@ const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
 {
     return m_property_name;
 }
+
+template <class T>
+bool ValueRef::Variable<T>::RootCandidateInvariant() const
+{ return m_ref_type != CONDITION_ROOT_CANDIDATE_REFERENCE; }
+
+template <class T>
+bool ValueRef::Variable<T>::LocalCandidateInvariant() const
+{ return m_ref_type != CONDITION_LOCAL_CANDIDATE_REFERENCE; }
+
+template <class T>
+bool ValueRef::Variable<T>::TargetInvariant() const
+{ return m_ref_type != EFFECT_TARGET_REFERENCE; }
 
 template <class T>
 std::string ValueRef::Variable<T>::Description() const
@@ -503,6 +539,23 @@ void ValueRef::Statistic<T>::GetObjectPropertyValues(const ScriptingContext& con
 }
 
 template <class T>
+bool ValueRef::Statistic<T>::RootCandidateInvariant() const
+{ return ValueRef::Variable<T>::RootCandidateInvariant() && m_sampling_condition->RootCandidateInvariant(); }
+
+template <class T>
+bool ValueRef::Statistic<T>::LocalCandidateInvariant() const
+{
+    // don't need to check if sampling condition is LocalCandidateInvariant, as
+    // all conditions aren't, but that refers to their own local candidate.  no
+    // condition is explicitly dependent on the parent context's local candidate.
+    return ValueRef::Variable<T>::LocalCandidateInvariant();
+}
+
+template <class T>
+bool ValueRef::Statistic<T>::TargetInvariant() const
+{ return ValueRef::Variable<T>::TargetInvariant() && m_sampling_condition->TargetInvariant(); }
+
+template <class T>
 std::string ValueRef::Statistic<T>::Description() const
 {
     return "Statistic Desc";
@@ -577,7 +630,7 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
         return T(0);
 
     switch (m_stat_type) {
-        case NUMBER: {
+        case COUNT: {
             return T(object_property_values.size());
             break;
         }
@@ -769,6 +822,18 @@ double ValueRef::StaticCast<FromType, ToType>::Eval(const ScriptingContext& cont
 }
 
 template <class FromType, class ToType>
+bool ValueRef::StaticCast<FromType, ToType>::RootCandidateInvariant() const
+{ return m_value_ref->RootCandidateInvariant(); }
+
+template <class FromType, class ToType>
+bool ValueRef::StaticCast<FromType, ToType>::LocalCandidateInvariant() const
+{ return m_value_ref->LocalCandidateInvariant(); }
+
+template <class FromType, class ToType>
+bool ValueRef::StaticCast<FromType, ToType>::TargetInvariant() const
+{ return m_value_ref->TargetInvariant(); }
+
+template <class FromType, class ToType>
 std::string ValueRef::StaticCast<FromType, ToType>::Description() const
 {
     return m_value_ref->Description();
@@ -806,6 +871,18 @@ std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context
 {
     return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
 }
+
+template <class FromType>
+bool ValueRef::StringCast<FromType>::RootCandidateInvariant() const
+{ return m_value_ref->RootCandidateInvariant(); }
+
+template <class FromType>
+bool ValueRef::StringCast<FromType>::LocalCandidateInvariant() const
+{ return m_value_ref->LocalCandidateInvariant(); }
+
+template <class FromType>
+bool ValueRef::StringCast<FromType>::TargetInvariant() const
+{ return m_value_ref->TargetInvariant(); }
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Description() const
@@ -901,6 +978,36 @@ T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const
 namespace ValueRef {
     template <>
     std::string Operation<std::string>::Eval(const ScriptingContext& context) const;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::RootCandidateInvariant() const
+{
+    if (m_operand1 && !m_operand1->RootCandidateInvariant())
+        return false;
+    if (m_operand2 && !m_operand2->RootCandidateInvariant())
+        return false;
+    return true;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::LocalCandidateInvariant() const
+{
+    if (m_operand1 && !m_operand1->LocalCandidateInvariant())
+        return false;
+    if (m_operand2 && !m_operand2->LocalCandidateInvariant())
+        return false;
+    return true;
+}
+
+template <class T>
+bool ValueRef::Operation<T>::TargetInvariant() const
+{
+    if (m_operand1 && !m_operand1->TargetInvariant())
+        return false;
+    if (m_operand2 && !m_operand2->TargetInvariant())
+        return false;
+    return true;
 }
 
 template <class T>

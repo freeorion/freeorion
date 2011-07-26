@@ -263,12 +263,10 @@ namespace {
             [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("localcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("value")
-            [variable.this_ = new_<RefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))];
     }
 
     template <>
@@ -299,13 +297,6 @@ namespace {
             | str_p("localcandidate") >> '.' >> (!(variable_container >> ".") >> double_variable_final)
             [variable.this_ = new_<CastDoubleRefVar>(new_<DoubleRefVar>(val(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2)))]
 
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
-            [variable.this_ = new_<CastIntRefVar>(new_<IntRefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2)))]
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> double_variable_final)
-            [variable.this_ = new_<CastDoubleRefVar>(new_<DoubleRefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2)))]
-
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
@@ -316,7 +307,7 @@ namespace {
             | str_p("currentturn")
             [variable.this_ = new_<CastIntRefVar>(new_<IntRefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2)))]
             | str_p("value")
-            [variable.this_ = new_<RefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))];
     }
 
     template <>
@@ -329,15 +320,13 @@ namespace {
             [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("localcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
 
             | str_p("currentturn")
             [variable.this_ = new_<RefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("value")
-            [variable.this_ = new_<RefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))];
     }
 
     template <>
@@ -360,11 +349,6 @@ namespace {
             | str_p("localcandidate") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
             [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2)))]
 
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
-            [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
-            | str_p("parentcandidate") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
-            [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(ValueRef::CONDITION_PARENT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2)))]
-
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> variable_final)
             [variable.this_ = new_<RefVar>(val(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE), construct_<std::string>(arg1, arg2))]
             | str_p("rootcandidate") >> '.' >> (!(variable_container >> ".") >> int_variable_final)
@@ -373,7 +357,7 @@ namespace {
             | str_p("currentturn")
             [variable.this_ = new_<CastRefVar>(new_<IntRefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2)))]
             | str_p("value")
-            [variable.this_ = new_<RefVar>(val(ValueRef::NON_OBJECT_REFERENCE), construct_<std::string>(arg1, arg2))];
+            [variable.this_ = new_<RefVar>(val(ValueRef::EFFECT_TARGET_REFERENCE), construct_<std::string>(arg1, arg2))];
     }
 
     template <class T>
@@ -393,7 +377,7 @@ namespace {
     {
         statistic =
             ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-             [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             [statistic.this_ = new_<RefStat>(val(""), val(ValueRef::COUNT), statistic.sampling_condition)])
              | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
                   | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
                   | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]
@@ -414,7 +398,7 @@ namespace {
     {
         statistic =
             ((str_p("number") >> condition_label >> condition_p[statistic.sampling_condition = arg1])
-             [statistic.this_ = new_<RefStat>(val("dummy"), val(ValueRef::NUMBER), statistic.sampling_condition)])
+             [statistic.this_ = new_<RefStat>(val("dummy"), val(ValueRef::COUNT), statistic.sampling_condition)])
              | (((str_p("sum")[statistic.stat_type = val(ValueRef::SUM)]
                   | str_p("mean")[statistic.stat_type = val(ValueRef::MEAN)]
                   | str_p("rms")[statistic.stat_type = val(ValueRef::RMS)]

@@ -165,7 +165,8 @@ namespace {
         IntRefRule                  produced_by_empire;
         DoubleRefRule               random;
         StockpileRule               owner_stockpile;
-        IntRefVecRule               visible_to_empire;
+        IntRefRule                  visible_to_empire;
+        IntRefRule                  explored_by_empire;
         Rule                        stationary;
         IntRefRule                  fleet_supplyable;
         IntRefConditionRule         resource_supply_connected;
@@ -265,8 +266,13 @@ namespace {
 
         produced_by_empire =
             (str_p("producedbyempire")
-             >> empire_label >> int_expr_p[fleet_supplyable.int_ref = arg1])
+             >> empire_label >> int_expr_p[produced_by_empire.int_ref = arg1])
             [produced_by_empire.this_ = new_<Condition::ProducedByEmpire>(produced_by_empire.int_ref)];
+
+        explored_by_empire =
+            (str_p("exploredbyempire")
+             >> empire_label >> int_expr_p[explored_by_empire.int_ref = arg1])
+            [explored_by_empire.this_ = new_<Condition::ExploredByEmpire>(explored_by_empire.int_ref)];
 
         random =
             (str_p("random")
@@ -284,10 +290,8 @@ namespace {
 
         visible_to_empire =
             (str_p("visibletoempire")
-             >> empire_label
-             >> (int_expr_p[push_back_(visible_to_empire.int_ref_vec, arg1)]
-                 | ('[' >> +(int_expr_p[push_back_(visible_to_empire.int_ref_vec, arg1)]) >> ']')))
-            [visible_to_empire.this_ = new_<Condition::VisibleToEmpire>(visible_to_empire.int_ref_vec)];
+             >> empire_label >> int_expr_p[visible_to_empire.int_ref = arg1])
+            [visible_to_empire.this_ = new_<Condition::VisibleToEmpire>(visible_to_empire.int_ref)];
 
         stationary =
             str_p("stationary")
@@ -320,6 +324,7 @@ namespace {
             | design_has_part[condition2_p.this_ = arg1]
             | design_has_part_class[condition2_p.this_ = arg1]
             | produced_by_empire[condition2_p.this_ = arg1]
+            | explored_by_empire[condition2_p.this_ = arg1]
             | random[condition2_p.this_ = arg1]
             | owner_stockpile[condition2_p.this_ = arg1]
             | visible_to_empire[condition2_p.this_ = arg1]
