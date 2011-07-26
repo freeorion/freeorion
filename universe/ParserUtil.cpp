@@ -10,7 +10,7 @@
 using namespace boost::spirit::classic;
 using namespace phoenix;
 
-const Skip skip_p;
+const Skip skip_p = Skip();
 
 const function<push_back_impl> push_back_ =             push_back_impl();
 const function<insert_impl> insert_ =                   insert_impl();
