@@ -1059,7 +1059,7 @@ namespace {
         for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
              it != m_effects_groups.end(); ++it)
         {
-            const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
+            //const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
             Logger().debugStream() << " ... " /*<< p->Dump()*/;
         }
 //#endif
@@ -2838,9 +2838,9 @@ void Empire::InitResourcePools()
     // determine if each object owned by this empire is a ResourceCenter and/or PopCenter (could be one, neither or both)
     for (std::vector<const UniverseObject*>::const_iterator it = object_vec.begin(); it != object_vec.end(); ++it) {
         const UniverseObject* obj = *it;
-        if (const ResourceCenter* rc = dynamic_cast<const ResourceCenter*>(obj))
+        if (dynamic_cast<const ResourceCenter*>(obj))
             res_vec.push_back(obj->ID());
-        if (const PopCenter* pc = dynamic_cast<const PopCenter*>(obj))
+        if (dynamic_cast<const PopCenter*>(obj))
             pop_vec.push_back(obj->ID());
     }
 

@@ -1735,13 +1735,12 @@ void MoveTo::Execute(const ScriptingContext& context) const
 
         } else {
             // need to create a new fleet for ship
-            Fleet* new_fleet = 0;
             if (System* dest_system = GetObject<System>(destination->SystemID())) {
-                new_fleet = CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
+                CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
             } else {
-                new_fleet = CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
+                CreateNewFleet(destination->X(), destination->Y(), ship);   // creates new fleet and inserts ship into fleet
             }
         }
 
