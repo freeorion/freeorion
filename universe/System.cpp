@@ -265,7 +265,7 @@ System::const_orbit_iterator System::end() const
 
 bool System::Contains(int object_id) const
 {
-    // checks if this system object thicks it contains an object with the
+    // checks if this system object thinks it contains an object with the
     // indicated ID.  does not check if there exists such an object or whether
     // that object thinks it is in this system
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it)
