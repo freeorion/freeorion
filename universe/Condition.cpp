@@ -3435,7 +3435,7 @@ namespace {
         double distance2 = distance*distance;
 
         // is candidate object close enough to any of the passed-in objects?
-        for (Condition::ObjectSet::iterator it = from_objects.begin(); it != from_objects.end(); ++it) {
+        for (Condition::ObjectSet::const_iterator it = from_objects.begin(); it != from_objects.end(); ++it) {
             double delta_x = candidate->X() - (*it)->X();
             double delta_y = candidate->Y() - (*it)->Y();
             if (delta_x*delta_x + delta_y*delta_y < distance2)
@@ -3635,7 +3635,7 @@ namespace {
             return false;
 
         // is candidate object close enough to any subcondition matches?
-        for (Condition::ObjectSet::iterator it = from_objects.begin(); it != from_objects.end(); ++it) {
+        for (Condition::ObjectSet::const_iterator it = from_objects.begin(); it != from_objects.end(); ++it) {
             if (jump_limit == 0) {
                 // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
                 double delta_x = (*it)->X() - candidate->X();
@@ -3763,7 +3763,7 @@ namespace {
 
         // assemble all systems that are or that contain subcondition matches
         Condition::ObjectSet destination_systems;
-        for (Condition::ObjectSet::iterator it = destination_objects.begin(); it != destination_objects.end(); ++it)
+        for (Condition::ObjectSet::const_iterator it = destination_objects.begin(); it != destination_objects.end(); ++it)
             if (const System* system = objects.Object< ::System>((*it)->SystemID()))
                 destination_systems.insert(system);
 
