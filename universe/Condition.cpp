@@ -1609,9 +1609,8 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase<::PlanetType>*>& types) :
-    m_types(types)
-{}
+Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
+    m_types(types){}
 
 Condition::PlanetType::~PlanetType()
 {
@@ -1621,7 +1620,7 @@ Condition::PlanetType::~PlanetType()
 }
 
 namespace {
-    bool PlanetTypeSimpleMatch(const UniverseObject* candidate, const std::vector<::PlanetType>& types)
+    bool PlanetTypeSimpleMatch(const UniverseObject* candidate, const std::vector< ::PlanetType>& types)
     {
         if (!candidate)
             return false;
@@ -1648,7 +1647,7 @@ void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectS
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetType>*>::const_iterator it = m_types.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
             it != m_types.end(); ++it)
         {
             if (!(*it)->LocalCandidateInvariant()) {
@@ -1659,9 +1658,9 @@ void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectS
     }
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
-        std::vector<::PlanetType> types;
+        std::vector< ::PlanetType> types;
         // get all types from valuerefs
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetType>*>::const_iterator it = m_types.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
              it != m_types.end(); ++it)
         {
             types.push_back((*it)->Eval(parent_context));
@@ -1688,7 +1687,7 @@ void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectS
 
 bool Condition::PlanetType::RootCandidateInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetType>*>::const_iterator it = m_types.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
         if (!(*it)->RootCandidateInvariant())
@@ -1699,7 +1698,7 @@ bool Condition::PlanetType::RootCandidateInvariant() const
 
 bool Condition::PlanetType::TargetInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetType>*>::const_iterator it = m_types.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
@@ -1760,7 +1759,7 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
         planet = objects.Object<Planet>(building->PlanetID());
     }
     if (planet) {
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetType>*>::const_iterator it = m_types.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>::const_iterator it = m_types.begin();
              it != m_types.end(); ++it)
         {
             if ((*it)->Eval(ScriptingContext(local_context)) == planet->Type())
@@ -1773,7 +1772,7 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>& sizes) :
+Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
     m_sizes(sizes)
 {}
 
@@ -1785,7 +1784,7 @@ Condition::PlanetSize::~PlanetSize()
 }
 
 namespace {
-    bool PlanetSizeSimpleMatch(const UniverseObject* candidate, const std::vector<::PlanetSize>& sizes)
+    bool PlanetSizeSimpleMatch(const UniverseObject* candidate, const std::vector< ::PlanetSize>& sizes)
     {
         if (!candidate)
             return false;
@@ -1800,7 +1799,7 @@ namespace {
         }
         if (planet) {
             // is it one of the specified building types?
-            for (std::vector<::PlanetSize>::const_iterator it = sizes.begin();
+            for (std::vector< ::PlanetSize>::const_iterator it = sizes.begin();
                  it != sizes.end(); ++it)
             {
                 if (planet->Size() == *it)
@@ -1817,7 +1816,7 @@ void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectS
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>::const_iterator it = m_sizes.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
             it != m_sizes.end(); ++it)
         {
             if (!(*it)->LocalCandidateInvariant()) {
@@ -1828,9 +1827,9 @@ void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectS
     }
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
-        std::vector<::PlanetSize> sizes;
+        std::vector< ::PlanetSize> sizes;
         // get all types from valuerefs
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>::const_iterator it = m_sizes.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
              it != m_sizes.end(); ++it)
         {
             sizes.push_back((*it)->Eval(parent_context));
@@ -1857,7 +1856,7 @@ void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectS
 
 bool Condition::PlanetSize::RootCandidateInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>::const_iterator it = m_sizes.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
          it != m_sizes.end(); ++it)
     {
         if (!(*it)->RootCandidateInvariant())
@@ -1868,7 +1867,7 @@ bool Condition::PlanetSize::RootCandidateInvariant() const
 
 bool Condition::PlanetSize::TargetInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetSize>*>::const_iterator it = m_sizes.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>::const_iterator it = m_sizes.begin();
          it != m_sizes.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
@@ -1940,7 +1939,7 @@ bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>& environments) :
+Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
     m_environments(environments)
 {}
 
@@ -1952,7 +1951,7 @@ Condition::PlanetEnvironment::~PlanetEnvironment()
 }
 
 namespace {
-    bool PlanetEnvironmentSimpleMatch(const UniverseObject* candidate, const std::vector<::PlanetEnvironment>& environments)
+    bool PlanetEnvironmentSimpleMatch(const UniverseObject* candidate, const std::vector< ::PlanetEnvironment>& environments)
     {
         if (!candidate)
             return false;
@@ -1967,7 +1966,7 @@ namespace {
         }
         if (planet) {
             // is it one of the specified building types?
-            for (std::vector<::PlanetEnvironment>::const_iterator it = environments.begin();
+            for (std::vector< ::PlanetEnvironment>::const_iterator it = environments.begin();
                  it != environments.end(); ++it)
             {
                 if (planet->EnvironmentForSpecies() == *it)
@@ -1984,7 +1983,7 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, 
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
              it != m_environments.end(); ++it)
         {
             if (!(*it)->LocalCandidateInvariant()) {
@@ -1995,9 +1994,9 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, 
     }
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
-        std::vector<::PlanetEnvironment> environments;
+        std::vector< ::PlanetEnvironment> environments;
         // get all types from valuerefs
-        for (std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
              it != m_environments.end(); ++it)
         {
             environments.push_back((*it)->Eval(parent_context));
@@ -2024,7 +2023,7 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, 
 
 bool Condition::PlanetEnvironment::RootCandidateInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
         if (!(*it)->RootCandidateInvariant())
@@ -2035,7 +2034,7 @@ bool Condition::PlanetEnvironment::RootCandidateInvariant() const
 
 bool Condition::PlanetEnvironment::TargetInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>::const_iterator it = m_environments.begin();
          it != m_environments.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
@@ -2465,7 +2464,7 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase<::StarType>*>& types) :
+Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
     m_types(types)
 {}
 
@@ -2477,7 +2476,7 @@ Condition::StarType::~StarType()
 }
 
 namespace {
-    bool StarTypeSimpleMatch(const UniverseObject* candidate, const std::vector<::StarType>& types)
+    bool StarTypeSimpleMatch(const UniverseObject* candidate, const std::vector< ::StarType>& types)
     {
         if (!candidate)
             return false;
@@ -2497,7 +2496,7 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // check each valueref for invariance to local candidate
-        for (std::vector<const ValueRef::ValueRefBase<::StarType>*>::const_iterator it = m_types.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
             it != m_types.end(); ++it)
         {
             if (!(*it)->LocalCandidateInvariant()) {
@@ -2508,9 +2507,9 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
     }
     if (simple_eval_safe) {
         // evaluate types once, and use to check all candidate objects
-        std::vector<::StarType> types;
+        std::vector< ::StarType> types;
         // get all types from valuerefs
-        for (std::vector<const ValueRef::ValueRefBase<::StarType>*>::const_iterator it = m_types.begin();
+        for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
              it != m_types.end(); ++it)
         {
             types.push_back((*it)->Eval(parent_context));
@@ -2537,7 +2536,7 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
 
 bool Condition::StarType::RootCandidateInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::StarType>*>::const_iterator it = m_types.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
         if (!(*it)->RootCandidateInvariant())
@@ -2548,7 +2547,7 @@ bool Condition::StarType::RootCandidateInvariant() const
 
 bool Condition::StarType::TargetInvariant() const
 {
-    for (std::vector<const ValueRef::ValueRefBase<::StarType>*>::const_iterator it = m_types.begin();
+    for (std::vector<const ValueRef::ValueRefBase< ::StarType>*>::const_iterator it = m_types.begin();
          it != m_types.end(); ++it)
     {
         if (!(*it)->TargetInvariant())
@@ -3765,7 +3764,7 @@ namespace {
         // assemble all systems that are or that contain subcondition matches
         Condition::ObjectSet destination_systems;
         for (Condition::ObjectSet::iterator it = destination_objects.begin(); it != destination_objects.end(); ++it)
-            if (const System* system = objects.Object<::System>((*it)->SystemID()))
+            if (const System* system = objects.Object< ::System>((*it)->SystemID()))
                 destination_systems.insert(system);
 
         if (destination_systems.empty())
