@@ -73,7 +73,16 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Planet.Species
+            effects = [
+                CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Species
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_SHIP"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "text" data = "SD_DRAGON_TOOTH"
+                    ]
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source
@@ -82,7 +91,16 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
+            effects = [
+                CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_BUILDING"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
+                    ]
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source
@@ -92,7 +110,16 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = GiveTechToOwner "SHP_PLANET_CLOAK"
+            effects = [
+                GiveTechToOwner "SHP_PLANET_CLOAK"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_PLANET_CLOAK"
+                    ]
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source
@@ -102,7 +129,16 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = GiveTechToOwner "SHP_DEATH_RAY"
+            effects = [
+                GiveTechToOwner "SHP_DEATH_RAY"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_DEATH_RAY"
+                    ]
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source
@@ -111,7 +147,16 @@ Special
                 OwnerHasTech "LRN_XENOARCH_RESTORE"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = GiveTechToOwner "SHP_MULTISPEC_SHIELD"
+            effects = [
+                GiveTechToOwner "SHP_MULTISPEC_SHIELD"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                    ]
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source

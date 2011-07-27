@@ -3153,6 +3153,15 @@ Effect-generated SitRepEntry! species: %species% building: %buildingtype%
 TEST_EFFECT_MESSAGE2
 Effect SitRepEntry using int ValueRef! empire: %empire% design: %shipdesign% planet: %planet%
 
+EFFECT_ANCIENT_SHIP
+Ancient Ruins in %planet% have revealed the ship %text%.
+
+EFFECT_ANCIENT_BUILDING
+Ancient Ruins in %planet% have revealed a %buildingtype% building.
+
+EFFECT_ANCIENT_TECH
+Ancient Ruins in %planet% have revealed the %tech% technology.
+
 # Conditions
 
 DESC_ALL
