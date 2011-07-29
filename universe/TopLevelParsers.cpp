@@ -234,12 +234,18 @@ namespace {
             (str_p("species")
              >> name_label >>               name_p[species_p.name = arg1]
              >> description_label >>        name_p[species_p.description = arg1]
+             >> (str_p("planetbound")[species_p.can_produce_ships = val(false)]
+               | eps_p               [species_p.can_produce_ships = val(true)])
+             >> (str_p("spacebound")[species_p.can_colonize = val(false)]
+               | eps_p              [species_p.can_colonize = val(true)])
              >> !(foci_label >>             focus_type_vec_p[species_p.foci = arg1])
              >> !(effectsgroups_label >>    effects_group_vec_p[species_p.effects_groups = arg1])
              >> !(environments_label >>     planet_type_environment_map_p[species_p.environments = arg1])
              >> graphic_label >>            file_name_p[species_p.graphic = arg1])
             [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.foci,
-                                             species_p.environments, species_p.effects_groups, species_p.graphic)];
+                                             species_p.environments, species_p.effects_groups,
+                                             species_p.can_produce_ships, species_p.can_colonize,
+                                             species_p.graphic)];
 
         item_spec_p =
             (str_p("item")

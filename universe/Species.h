@@ -7,6 +7,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/iterator/filter_iterator.hpp>
 
 #include <string>
 #include <vector>
@@ -65,6 +66,7 @@ public:
             const std::vector<FocusType>& foci,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+            bool can_colonize, bool can_produce_ships,
             const std::string& graphic);
     //@}
 
@@ -80,6 +82,8 @@ public:
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    bool                            CanColonize() const;///< returns whether this species can colonize planets
+    bool                            CanProduceShips() const;///< returns whether this species can produce ships
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
     //@}
 
@@ -97,6 +101,8 @@ private:
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             m_effects;
+    bool                                    m_can_colonize;
+    bool                                    m_can_produce_ships;
     std::string                             m_graphic;
 };
 
@@ -104,8 +110,12 @@ private:
 /** Holds all FreeOrion species.  Types may be looked up by name. */
 class SpeciesManager
 {
+private:
+    struct PlayableSpecies
+    { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
 public:
-    typedef std::map<std::string, Species*>::const_iterator iterator;
+    typedef std::map<std::string, Species*>::const_iterator     iterator;
+    typedef boost::filter_iterator<PlayableSpecies, iterator>   playable_iterator;
 
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
@@ -113,17 +123,20 @@ public:
     const Species*          GetSpecies(const std::string& name) const;
     Species*                GetSpecies(const std::string& name);
 
-    /** iterator to the first species */
+    /** iterators for all species */
     iterator                begin() const;
-
-    /** iterator to the last + 1th species */
     iterator                end() const;
+
+    /** iterators for playble species. */
+    playable_iterator       playable_begin() const;
+    playable_iterator       playable_end() const;
 
     /** returns true iff this SpeciesManager is empty. */
     bool                    empty() const;
 
     /** returns the number of species stored in this manager. */
     int                     NumSpecies() const;
+    int                     NumPlayableSpecies() const;
 
     /** returns the name of a species in this manager, or an empty string if
       * this manager is empty. */

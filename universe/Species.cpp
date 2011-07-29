@@ -22,7 +22,7 @@ namespace {
         void operator()(std::map<std::string, Species*>& species_map, const T& species) const
         {
             if (species_map.find(species->Name()) != species_map.end()) {
-                std::string error_str = "ERROR: More than one building type in species.txt has the name " + species->Name();
+                std::string error_str = "ERROR: More than one species in species.txt has the name " + species->Name();
                 throw std::runtime_error(error_str.c_str());
             }
             species_map[species->Name()] = species;
@@ -88,12 +88,15 @@ Species::Species(const std::string& name, const std::string& description,
                  const std::vector<FocusType>& foci,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
+                 bool can_colonize, bool can_produce_ships,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_foci(foci),
     m_planet_environments(planet_environments),
     m_effects(effects),
+    m_can_colonize(can_colonize),
+    m_can_produce_ships(can_produce_ships),
     m_graphic(graphic)
 {}
 
@@ -282,6 +285,12 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
         return RingPreviousPlanetType(initial_planet_type);
 }
 
+bool Species::CanColonize() const
+{ return m_can_colonize; }
+
+bool Species::CanProduceShips() const
+{ return m_can_produce_ships; }
+
 const std::string& Species::Graphic() const {
     return m_graphic;
 }
@@ -317,6 +326,10 @@ void Species::SetHomeworlds(const std::set<int>& homeworld_ids) {
 /////////////////////////////////////////////////
 // static(s)
 SpeciesManager* SpeciesManager::s_instance = 0;
+
+bool SpeciesManager::PlayableSpecies::operator()(
+    const std::map<std::string, Species*>::value_type& species_map_iterator) const
+{ return species_map_iterator.second->CanColonize() && species_map_iterator.second->CanProduceShips(); }
 
 SpeciesManager::SpeciesManager() {
     if (s_instance)
@@ -376,12 +389,24 @@ SpeciesManager::iterator SpeciesManager::end() const {
     return m_species.end();
 }
 
+SpeciesManager::playable_iterator SpeciesManager::playable_begin() const {
+    return playable_iterator(PlayableSpecies(), m_species.begin(), m_species.end());
+}
+
+SpeciesManager::playable_iterator SpeciesManager::playable_end() const {
+    return playable_iterator(PlayableSpecies(), m_species.end(), m_species.end());
+}
+
 bool SpeciesManager::empty() const {
     return m_species.empty();
 }
 
 int SpeciesManager::NumSpecies() const {
     return m_species.size();
+}
+
+int SpeciesManager::NumPlayableSpecies() const {
+    return std::distance(playable_begin(), playable_end());
 }
 
 namespace {
