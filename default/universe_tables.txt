@@ -101,4 +101,4 @@ Freq                            0       1000    3000    8000
 # per how many stars should natives or monsters appear?
 <1x4>
 LifeFormFrequency               None    Low     Medium  High
-Freq                            0       25      10      5
+Freq                            0       8       3       1

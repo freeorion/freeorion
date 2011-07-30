@@ -1,4 +1,78 @@
 Species
+    name = "SP_TEST"
+    description = "SP_TEST_DESC"
+    Planetbound
+    SpaceBound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Good
+        type = Inferno      environment = Good
+        type = Radiated     environment = Good
+        type = Barren       environment = Good
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/scylior.png"
+
+Species
+    name = "SP_TEST2"
+    description = "SP_TEST_DESC2"
+    Planetbound
+    SpaceBound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Good
+        type = Inferno      environment = Good
+        type = Radiated     environment = Good
+        type = Barren       environment = Good
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/aerial-01.png"
+
+Species
     name = "SP_HUMAN"
     description = "SP_HUMAN_DESC"
     foci = [
@@ -483,11 +557,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -1040,11 +1114,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -1597,11 +1671,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -2154,11 +2228,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -2711,11 +2785,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -3268,11 +3342,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -3825,11 +3899,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -4382,11 +4456,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
@@ -4939,11 +5013,11 @@ Species
                 Fleet
             ]
             activation = And [
-                Focus "FOCUS_STARGATE"
                 ContainedBy Contains And [
                     Building "BLD_STARGATE_ACTIVATOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
+                Focus "FOCUS_STARGATE"
             ]
             effects = MoveTo And [
                 Focus "FOCUS_STARGATE"
