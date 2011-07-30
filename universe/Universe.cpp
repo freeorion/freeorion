@@ -4092,6 +4092,14 @@ namespace {
 void Universe::GenerateNatives(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateNatives";
+
+    int inverse_native_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
+    double native_chance(0.0);
+    if (inverse_native_chance > 0)
+        native_chance = 1.0 / static_cast<double>(inverse_native_chance);
+    else
+        return;
+
     const SpeciesManager& species_manager = GetSpeciesManager();
 
     std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
@@ -4110,7 +4118,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
 
     // randomly add species to planets
     for (std::vector<Planet*>::iterator it = native_safe_planets.begin(); it != native_safe_planets.end(); ++it) {
-        if (RandZeroToOne() < 0.3)
+        if (RandZeroToOne() > native_chance)
             continue;
 
         Planet* planet = *it;
@@ -4143,6 +4151,13 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
 void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateSpaceMonsters";
+
+    int inverse_monster_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
+    double monster_chance(0.0);
+    if (inverse_monster_chance > 0)
+        monster_chance = 1.0 / static_cast<double>(inverse_monster_chance);
+    else
+        return;
 
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     std::vector<std::pair<int, const ShipDesign*> > monster_ship_designs;
@@ -4178,7 +4193,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
 
     // randomly add monsters to systems
     for (std::vector<System*>::iterator it = unpopulated_systems.begin(); it != unpopulated_systems.end(); ++it) {
-        if (RandZeroToOne() < 0.5)
+        if (RandZeroToOne() > monster_chance)
             continue;
 
         System* system = *it;

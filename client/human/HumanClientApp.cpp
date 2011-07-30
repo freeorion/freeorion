@@ -297,7 +297,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
         try {
             StartServer();
-        } catch (std::runtime_error err) {
+        } catch (const std::runtime_error& err) {
             Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
             ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
             return;
@@ -333,10 +333,11 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
             // GalaxySetupData
             setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
             setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
-            setup_data.m_age =              GetOptionsDB().Get<Age>("GameSetup.galaxy-age");
-            setup_data.m_starlane_freq =    GetOptionsDB().Get<StarlaneFrequency>("GameSetup.starlane-frequency");
-            setup_data.m_planet_density =   GetOptionsDB().Get<PlanetDensity>("GameSetup.planet-density");
-            setup_data.m_specials_freq =    GetOptionsDB().Get<SpecialsFrequency>("GameSetup.specials-frequency");
+            setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age");
+            setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency");
+            setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density");
+            setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
+            setup_data.m_life_freq =        GetOptionsDB().Get<GalaxySetupOption>("GameSetup.life-frequency");
 
 
             // SinglePlayerSetupData contains a map of PlayerSetupData, for
@@ -417,15 +418,30 @@ void HumanClientApp::MultiPlayerGame()
 
     if (server_name.empty()) {
         failed = true;
-    } else {
+    }
+
+    if (!failed) {
         if (server_name == "HOST GAME SELECTED") {
             if (!GetOptionsDB().Get<bool>("force-external-server")) {
-                HumanClientApp::GetApp()->StartServer();
-                HumanClientApp::GetApp()->FreeServer();
+                try {
+                    StartServer();
+                    FreeServer();
+                } catch (const std::runtime_error& err) {
+                    Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
+                    failed = true;
+                }
                 server_name = "localhost";
             }
             server_name = GetOptionsDB().Get<std::string>("external-server-address");
         }
+    }
+
+    if (failed) {
+        ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+        return;
+    }
+
+    if (!failed) {
         unsigned int start_time = Ticks();
         while (!m_networking.ConnectToServer(server_name)) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
@@ -627,6 +643,13 @@ void HumanClientApp::Reinitialize()
         else
             window->resize(width, height);
     }
+
+//#ifdef FREEORION_MACOSX
+//#endif
+//    HandleWindowResize(GG::X(window->getWidth()), GG::Y(window->getHeight()));
+//    window->windowMovedOrResized();
+//    if (OgreGUI* ogui = dynamic_cast<OgreGUI*>(GG::GUI::GetGUI()))
+//        ogui->WindowResizedSignal(GG::X(window->getWidth()), GG::Y(window->getHeight()));
 }
 
 float HumanClientApp::GLVersion() const
