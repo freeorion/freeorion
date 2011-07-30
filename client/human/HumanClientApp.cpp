@@ -411,59 +411,46 @@ void HumanClientApp::MultiPlayerGame()
     }
 
     ServerConnectWnd server_connect_wnd;
-    bool failed = false;
     server_connect_wnd.Run();
 
     std::string server_name = server_connect_wnd.Result().second;
 
-    if (server_name.empty()) {
-        failed = true;
-    }
-
-    if (!failed) {
-        if (server_name == "HOST GAME SELECTED") {
-            if (!GetOptionsDB().Get<bool>("force-external-server")) {
-                try {
-                    StartServer();
-                    FreeServer();
-                } catch (const std::runtime_error& err) {
-                    Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
-                    failed = true;
-                }
-                server_name = "localhost";
-            }
-            server_name = GetOptionsDB().Get<std::string>("external-server-address");
-        }
-    }
-
-    if (failed) {
-        ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+    if (server_name.empty())
         return;
-    }
 
-    if (!failed) {
-        unsigned int start_time = Ticks();
-        while (!m_networking.ConnectToServer(server_name)) {
-            if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
-                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-                    KillServer();
-                failed = true;
-                break;
+    if (server_name == "HOST GAME SELECTED") {
+        if (!GetOptionsDB().Get<bool>("force-external-server")) {
+            try {
+                StartServer();
+                FreeServer();
+            } catch (const std::runtime_error& err) {
+                Logger().errorStream() << "Couldn't start server.  Got error message: " << err.what();
+                ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+                return;
             }
+            server_name = "localhost";
+        }
+        server_name = GetOptionsDB().Get<std::string>("external-server-address");
+    }
+
+    unsigned int start_time = Ticks();
+    while (!m_networking.ConnectToServer(server_name)) {
+        if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
+            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+            if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
+                KillServer();
+            return;
         }
     }
 
-    if (!failed) {
-        if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-            m_networking.SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
-            m_fsm->process_event(HostMPGameRequested());
-        } else {
-            m_networking.SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
-            m_fsm->process_event(JoinMPGameRequested());
-        }
-        m_connected = true;
+    if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
+        m_networking.SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
+        m_fsm->process_event(HostMPGameRequested());
+    } else {
+        m_networking.SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
+        m_fsm->process_event(JoinMPGameRequested());
     }
+    m_connected = true;
 }
 
 void HumanClientApp::StartMultiPlayerGameFromLobby()
