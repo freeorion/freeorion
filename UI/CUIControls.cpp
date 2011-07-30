@@ -1116,7 +1116,7 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     CUIDropDownList(GG::X0, GG::Y0, w, h - 8, 6 * h)
 {
     const SpeciesManager& sm = GetSpeciesManager();
-    for (SpeciesManager::iterator it = sm.begin(); it != sm.end(); ++it)
+    for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
         Insert(new SpeciesRow(it->second, w, h - 4));
     if (!this->Empty())
         Select(this->begin());
