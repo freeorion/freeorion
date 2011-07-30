@@ -430,10 +430,11 @@ void Sleep(int ms)
 GalaxySetupData::GalaxySetupData():
     m_size(100),
     m_shape(SPIRAL_2),
-    m_age(AGE_MATURE),
-    m_starlane_freq(LANES_SEVERAL),
-    m_planet_density(PD_AVERAGE),
-    m_specials_freq(SPECIALS_UNCOMMON)
+    m_age(GALAXY_SETUP_MEDIUM),
+    m_starlane_freq(GALAXY_SETUP_MEDIUM),
+    m_planet_density(GALAXY_SETUP_MEDIUM),
+    m_specials_freq(GALAXY_SETUP_MEDIUM),
+    m_life_freq(GALAXY_SETUP_MEDIUM)
 {}
 
 

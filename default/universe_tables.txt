@@ -8,8 +8,9 @@
 # TABLE_NAME [COLUMN LABELS]
 # ...
 
-<3x8>
+<4x8>
 DensityModToPlanetSizeDist      NoWorld     Planetoid   Small   Medium  Large   Massive AsteroidField   GasGiant
+NoneUnused                      9999        0           0       0       0       0       0               0
 LowDensity                      90          0           0       0       0       0       0               0
 AverageDensity                  70          0           0       0       0       0       0               0
 HighDensity                     50          0           0       0       0       0       0               0
@@ -73,25 +74,31 @@ Neutron                         -10    5       5       30           20      0   
 Blackhole                       -10    -10     -10     15           30      0       -30     -30     -30     0               0
 NoStar                          -60    -60     -60     -60          -50     -60     -60     -60     -60     0               0
 
-<3x8>
-UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
-Young                           10      20      0       0       0       0       0         30
-Mature                          -5       0      10      20      0       10      10        15
-Ancient                         -20      -10    0       10      20      20      20        0
+<4x8>
+UniverseAgeModToStarTypeDist    Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
+NoneUnused                      0       0       0       0       0       0       0           0
+Young                           10      20      0       0       0       0       0           30
+Mature                          -5       0      10      20      0       10      10          15
+Ancient                         -20      -10    0       10      20      20      20          0
 
 <1x8>
-BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole NoStar
-Base                            30      40      50      40      30      0       0         60
+BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
+Base                            30      40      50      40      30      0       0           60
 
-# This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why VeryMany has the lowest value.
-<1x6>
-MaxJumpsBetweenSystems          None    Few     Some    Several Many    VeryMany
-Max                             0       8       5       3       2       1
+# This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why High has the lowest value.
+<1x4>
+MaxJumpsBetweenSystems          None    Low     Medium  High
+Max                             0       8       3       1
 
 <1x1>
 MaxStarlaneLength               120
 
 # since only integer values are expected in this file, each value X below will be taken to be X / 10,000 in the code
 <1x4>
-SpecialsFrequency               None    Rare    Uncommon        Common
-Freq                            0       1000    3000            8000
+SpecialsFrequency               None    Low     Medium  High
+Freq                            0       1000    3000    8000
+
+# per how many stars should natives or monsters appear?
+<1x4>
+LifeFormFrequency               None    Low     Medium  High
+Freq                            0       25      10      5

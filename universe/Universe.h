@@ -414,9 +414,10 @@ public:
     /** Generates systems and planets, assigns homeworlds and populates them
       * with people, industry and bases, and places starting fleets.  Uses
       * predefined galaxy shapes. */
-    void            CreateUniverse(int size, Shape shape, Age age,
-                                   StarlaneFrequency starlane_freq, PlanetDensity planet_density,
-                                   SpecialsFrequency specials_freq,
+    void            CreateUniverse(int size, Shape shape,
+                                   GalaxySetupOption age, GalaxySetupOption starlane_freq,
+                                   GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
+                                   GalaxySetupOption life_freq,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Clears main ObjectMap, empires' latest known objects map, and
@@ -606,16 +607,16 @@ private:
 
     /** Generates planets for all systems that have empty object maps (ie those
       * that aren't homeworld systems).*/
-    void    PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq);
+    void    PopulateSystems(GalaxySetupOption density, GalaxySetupOption specials_freq);
 
     /** Adds non-empire-affiliated native populations to planets. */
-    void    GenerateNatives();
+    void    GenerateNatives(GalaxySetupOption freq);
 
     /** Adds space monsters to systems. */
-    void    GenerateSpaceMonsters();
+    void    GenerateSpaceMonsters(GalaxySetupOption freq);
 
     /** Creates starlanes and adds them systems already generated. */
-    void    GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid);
+    void    GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid);
 
     /** Resizes the system graph to the appropriate size and populates
       * m_system_distances.  Uses the Universe latest known set of objects for

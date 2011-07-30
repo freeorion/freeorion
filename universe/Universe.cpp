@@ -2493,7 +2493,9 @@ namespace {
     SmallIntDistType    g_hundred_dist              = SmallIntDist(1, 100);         // a linear distribution [1, 100] used in most universe generation
     const int           MAX_ATTEMPTS_PLACE_SYSTEM   = 100;
 
-    double CalcNewPosNearestNeighbour(const std::pair<double, double>& position,const std::vector<std::pair<double, double> >& positions) {
+    double CalcNewPosNearestNeighbour(const std::pair<double, double>& position,
+                                      const std::vector<std::pair<double, double> >& positions)
+    {
         if (positions.size() == 0)
             return 0.0;
 
@@ -2510,7 +2512,9 @@ namespace {
         return lowest_dist;
     }
 
-    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int arms, unsigned int stars, double width, double height) {
+    void SpiralGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions,
+                                   unsigned int arms, unsigned int stars, double width, double height)
+    {
         double arm_offset     = RandDouble(0.0,2.0*PI);
         double arm_angle      = 2.0*PI / arms;
         double arm_spread     = 0.3 * PI / arms;
@@ -2563,7 +2567,9 @@ namespace {
         }
     }
 
-    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double,double> >& positions, unsigned int stars, double width, double height) {
+    void EllipticalGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions,
+                                       unsigned int stars, double width, double height)
+    {
         const double ellipse_width_vs_height = RandDouble(0.4, 0.6);
         const double rotation = RandDouble(0.0, PI),
                      rotation_sin = std::sin(rotation),
@@ -2618,7 +2624,9 @@ namespace {
         }
     }
 
-    void ClusterGalaxyCalcPositions(std::vector<std::pair<double,double> >& positions, unsigned int clusters, unsigned int stars, double width, double height) {
+    void ClusterGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int clusters,
+                                    unsigned int stars, double width, double height)
+    {
         assert(clusters);
         assert(stars);
 
@@ -2697,7 +2705,9 @@ namespace {
         }
     }
 
-    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars, double width, double height) {
+    void RingGalaxyCalcPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars,
+                                 double width, double height)
+    {
         double RING_WIDTH = width / 4.0;
         double RING_RADIUS = (width - RING_WIDTH) / 2.0;
 
@@ -2731,7 +2741,9 @@ namespace {
         }
     }
 
-    void IrregularGalaxyPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars, double width, double height) {
+    void IrregularGalaxyPositions(std::vector<std::pair<double, double> >& positions, unsigned int stars,
+                                  double width, double height)
+    {
         Logger().debugStream() << "IrregularGalaxyPositions";
 
         unsigned int positions_placed = 0;
@@ -2769,9 +2781,10 @@ namespace {
         Logger().debugStream() << "... placed " << positions_placed << " systems";
     }
 
-
-    System* GenerateSystem(Universe &universe, Age age, double x, double y) {
+    System* GenerateSystem(Universe &universe, GalaxySetupOption age, double x, double y) {
         //Logger().debugStream() << "GenerateSystem at (" << x << ", " << y << ")";
+        if (age <= GALAXY_SETUP_NONE || age > GALAXY_SETUP_HIGH)
+            age = GALAXY_SETUP_MEDIUM;
 
         const std::vector<int>& base_star_type_dist = UniverseDataTables()["BaseStarTypeDist"][0];
         const std::vector<std::vector<int> >& universe_age_mod_to_star_type_dist = UniverseDataTables()["UniverseAgeModToStarTypeDist"];
@@ -2818,7 +2831,7 @@ namespace {
         return system;
     }
 
-    void GenerateStarField(Universe &universe, Age age, const std::vector<std::pair<double, double> >& positions, 
+    void GenerateStarField(Universe &universe, GalaxySetupOption age, const std::vector<std::pair<double, double> >& positions, 
                            Universe::AdjacencyGrid& adjacency_grid, double adjacency_box_size)
     {
         Logger().debugStream() << "GenerateStarField with " << positions.size() << " positions";
@@ -3394,7 +3407,9 @@ namespace {
 
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
-    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems) {
+    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray,
+                                    std::vector<System*> &systems)
+    {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that
         // start at the start or destination of the new lane
         int curSys, dest1, dest2;
@@ -3565,7 +3580,8 @@ namespace {
 
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
-    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray, std::vector<System*> &systems)
+    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray,
+                          std::vector<System*> &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
         // at the start or destination of the new lane
@@ -3656,7 +3672,9 @@ namespace {
     /** Grows trees to connect stars...  takes an array of sets of potential
       * starlanes for each star, and puts the starlanes of the tree into
       * another set. */
-    void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray, std::vector<std::set<int> >& laneSetArray) {
+    void GrowSpanningTrees(std::vector<int> roots, std::vector<std::set<int> >& potentialLaneSetArray,
+                           std::vector<std::set<int> >& laneSetArray)
+    {
         // array to keep track of whether a given system (index #) has been connected to by growing tree algorithm
         std::vector<int> treeOfSystemArray; // which growing tree a particular system has been assigned to
 
@@ -3864,8 +3882,10 @@ namespace {
     }
 }
 
-void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency starlane_freq, PlanetDensity planet_density,
-                              SpecialsFrequency specials_freq, const std::map<int, PlayerSetupData>& player_setup_data)
+void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, GalaxySetupOption starlane_freq,
+                              GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
+                              GalaxySetupOption life_freq,
+                              const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_RELEASE
     ClockSeed();
@@ -3938,10 +3958,10 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
-    GenerateNatives();
+    GenerateNatives(life_freq);
 
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
-    GenerateSpaceMonsters();
+    GenerateSpaceMonsters(life_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 
@@ -3966,7 +3986,7 @@ void Universe::CreateUniverse(int size, Shape shape, Age age, StarlaneFrequency 
     UpdateEmpireObjectVisibilities();
 }
 
-void Universe::PopulateSystems(PlanetDensity density, SpecialsFrequency specials_freq)
+void Universe::PopulateSystems(GalaxySetupOption density, GalaxySetupOption specials_freq)
 {
     Logger().debugStream() << "PopulateSystems";
 
@@ -4069,7 +4089,7 @@ namespace {
     );
 }
 
-void Universe::GenerateNatives()
+void Universe::GenerateNatives(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateNatives";
     const SpeciesManager& species_manager = GetSpeciesManager();
@@ -4120,7 +4140,7 @@ void Universe::GenerateNatives()
     }
 }
 
-void Universe::GenerateSpaceMonsters()
+void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateSpaceMonsters";
 
@@ -4194,9 +4214,9 @@ void Universe::GenerateSpaceMonsters()
     }
 }
 
-void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& adjacency_grid)
+void Universe::GenerateStarlanes(GalaxySetupOption freq, const AdjacencyGrid& adjacency_grid)
 {
-    if (freq == LANES_NONE)
+    if (freq == GALAXY_SETUP_NONE)
         return;
 
     int numSys, s1, s2, s3; // numbers of systems, indices in vec_sys
@@ -4227,7 +4247,7 @@ void Universe::GenerateStarlanes(StarlaneFrequency freq, const AdjacencyGrid& ad
 
     // convert passed StarlaneFrequency freq into maximum number of starlane jumps between systems that are
     // "adjacent" in the delauney triangulation.  (separated by a single potential starlane).
-    // these numbers can and should be tweaked or extended
+    // these numbers can be tweaked
     int maxJumpsBetweenSystems = UniverseDataTables()["MaxJumpsBetweenSystems"][0][freq];
 
     numSys = sys_vec.size();  // (actually = number of systems + 1)
@@ -4471,7 +4491,8 @@ void Universe::NamePlanets()
     }
 }
 
-void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids, const std::map<int, PlayerSetupData>& player_setup_data)
+void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
+                               const std::map<int, PlayerSetupData>& player_setup_data)
 {
     Logger().debugStream() << "Generating " << player_setup_data.size() << " empires";
     // create empires and assign homeworlds, names, colors, and fleet ranges to each one

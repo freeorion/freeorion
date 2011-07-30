@@ -60,12 +60,13 @@ struct GalaxySetupData
     GalaxySetupData(); ///< default ctor.
     //@}
 
-    int               m_size;
-    Shape             m_shape;
-    Age               m_age;
-    StarlaneFrequency m_starlane_freq;
-    PlanetDensity     m_planet_density;
-    SpecialsFrequency m_specials_freq;
+    int                 m_size;
+    Shape               m_shape;
+    GalaxySetupOption   m_age;
+    GalaxySetupOption   m_starlane_freq;
+    GalaxySetupOption   m_planet_density;
+    GalaxySetupOption   m_specials_freq;
+    GalaxySetupOption   m_life_freq;
 
 private:
     friend class boost::serialization::access;

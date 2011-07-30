@@ -27,7 +27,7 @@ public:
     typedef boost::signal<void ()>                               SettingsChangedSignalType; ///< emitted when the any of the settings controls changes
     typedef boost::signal<void (boost::shared_ptr<GG::Texture>)> ImageChangedSignalType;    ///< emitted when the galaxy preview image changes
     //@}
-   
+
     /** \name Slot Types */ //@{
     typedef SettingsChangedSignalType::slot_type SettingsChangedSlotType; ///< type of functor(s) invoked on a SettingsChangedSignalType
     typedef ImageChangedSignalType::slot_type    ImageChangedSlotType;    ///< type of functor(s) invoked on a ImageChangedSignalType
@@ -40,10 +40,11 @@ public:
     /** \name Accessors*/ //!@{
     int                             Systems() const;                //!< Returns the number of star systems to use in generating the galaxy
     Shape                           GetShape() const;               //!< Returns the shape of the galaxy
-    Age                             GetAge() const;                 //!< Returns the age of the galaxy
-    StarlaneFrequency               GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
-    PlanetDensity                   GetPlanetDensity() const;       //!< Returns the density of planets within systems
-    SpecialsFrequency               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
+    GalaxySetupOption               GetAge() const;                 //!< Returns the age of the galaxy
+    GalaxySetupOption               GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
+    GalaxySetupOption               GetPlanetDensity() const;       //!< Returns the density of planets within systems
+    GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
+    GalaxySetupOption               GetLifeFrequency() const;       //!< Returns the frequency of natives and space monsters
 
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
@@ -61,8 +62,6 @@ public:
 
 private:
     void Init();
-    void AttachSignalChildren();
-    void DetachSignalChildren();
     void SettingChanged_(int);
     void SettingChanged(GG::ListBox::iterator);
     void ShapeChanged(GG::ListBox::iterator it);
@@ -73,6 +72,7 @@ private:
     CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
     CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
     CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
+    CUIDropDownList*    m_life_freq_list;       //!< The frequency of natives and monsters
 
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };
@@ -105,8 +105,6 @@ public:
 
 private:
     void Init();
-    void AttachSignalChildren();
-    void DetachSignalChildren();
     void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
     void EmpireNameChanged(const std::string& name);
     void PlayerNameChanged(const std::string& name);

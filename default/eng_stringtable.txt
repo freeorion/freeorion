@@ -703,6 +703,9 @@ The number of starlanes in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 The frequency of specials appearing in the galaxy to be generated.
 
+OPTIONS_DB_GAMESETUP_LIFE_FREQUENCY
+The frequency of natives and monsters in the galaxy to be generated.
+
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 The name used in the game for your empire.
 
@@ -1012,6 +1015,8 @@ GSETUP_PLANET_DENSITY
 Planet Density
 GSETUP_SPECIALS_FREQ
 Specials Frequency
+GSETUP_LIFE_FREQ
+Life Frequency
 
 GSETUP_2ARM
 Spiral, 2-arm
@@ -1030,6 +1035,12 @@ Ring
 
 GSETUP_NONE
 None
+GSETUP_LOW
+Low
+GSETUP_MEDIUM
+Medium
+GSETUP_HIGH
+High
 
 GSETUP_YOUNG
 Young
@@ -1038,52 +1049,10 @@ Mature
 GSETUP_ANCIENT
 Ancient
 
-GSETUP_FEW
-Few
-GSETUP_SOME
-Some
-GSETUP_SEVERAL
-Several
-GSETUP_MANY
-Many
-GSETUP_VERY_MANY
-Very Many
-
-GSETUP_LOW
-Low
-GSETUP_MEDIUM
-Medium
-GSETUP_HIGH
-High
-
-GSETUP_RARE
-Rare
-GSETUP_UNCOMMON
-Uncommon
-GSETUP_COMMON
-Common
-
-
 #Error messages####
 
 GSETUP_ERR_NOEXIST
 does not exist.
-
-
-###########################
-# Empire Selection Screen #
-###########################
-
-#Window Title####
-
-ESELECT_WINDOW_TITLE
-Empire Selection
-
-
-#Static text####
-
-ESELECT_EMPIRE_NAME
-Empire Name:
 
 ###########################
 # About Dialog            #

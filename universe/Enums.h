@@ -289,98 +289,27 @@ namespace GG {
 GG_ENUM_STREAM_IN(Shape)
 GG_ENUM_STREAM_OUT(Shape)
 
-
-/** types of Universe ages*/
-enum Age {
-    INVALID_AGE = -1,
-    AGE_YOUNG,
-    AGE_MATURE,
-    AGE_ANCIENT,
-    NUM_UNIVERSE_AGES   ///< keep this last, the number of universe age options
+/** General-use option for galaxy setup picks with "more" or "less" options. */
+enum GalaxySetupOption {
+    INVALID_GALAXY_SETUP_OPTION = -1,
+    GALAXY_SETUP_NONE,
+    GALAXY_SETUP_LOW,
+    GALAXY_SETUP_MEDIUM,
+    GALAXY_SETUP_HIGH,
+    NUM_GALAXY_SETUP_OPTIONS
 };
 
 namespace GG {
-    GG_ENUM_MAP_BEGIN(Age)
-    GG_ENUM_MAP_INSERT(INVALID_AGE)
-    GG_ENUM_MAP_INSERT(AGE_YOUNG)
-    GG_ENUM_MAP_INSERT(AGE_MATURE)
-    GG_ENUM_MAP_INSERT(AGE_ANCIENT)
+    GG_ENUM_MAP_BEGIN(GalaxySetupOption)
+    GG_ENUM_MAP_INSERT(INVALID_GALAXY_SETUP_OPTION)
+    GG_ENUM_MAP_INSERT(GALAXY_SETUP_NONE)
+    GG_ENUM_MAP_INSERT(GALAXY_SETUP_LOW)
+    GG_ENUM_MAP_INSERT(GALAXY_SETUP_MEDIUM)
+    GG_ENUM_MAP_INSERT(GALAXY_SETUP_HIGH)
     GG_ENUM_MAP_END
 }
-GG_ENUM_STREAM_IN(Age)
-GG_ENUM_STREAM_OUT(Age)
-
-
-/** types of Planet Density during universe generation */
-enum PlanetDensity {
-    INVALID_PLANET_DENSITY = -1,
-    PD_LOW,
-    PD_AVERAGE,
-    PD_HIGH,
-    NUM_UNIVERSE_PLANET_DENSITIES   ///< keep this last, the number of planet density options
-};
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(PlanetDensity)
-    GG_ENUM_MAP_INSERT(INVALID_PLANET_DENSITY)
-    GG_ENUM_MAP_INSERT(PD_LOW)
-    GG_ENUM_MAP_INSERT(PD_AVERAGE)
-    GG_ENUM_MAP_INSERT(PD_HIGH)
-    GG_ENUM_MAP_END
-}
-GG_ENUM_STREAM_IN(PlanetDensity)
-GG_ENUM_STREAM_OUT(PlanetDensity)
-
-
-/** starlane frequencies during universe generation */
-enum StarlaneFrequency {
-    INVALID_STARLANE_FREQENCY = -1,
-    LANES_NONE,
-    LANES_FEW,
-    LANES_SOME,
-    LANES_SEVERAL,
-    LANES_MANY,
-    LANES_VERY_MANY,
-    NUM_STARLANE_FREQENCIES     ///< keep this last, the number of starlane frequency options
-};
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(StarlaneFrequency)
-    GG_ENUM_MAP_INSERT(INVALID_STARLANE_FREQENCY)
-    GG_ENUM_MAP_INSERT(LANES_NONE)
-    GG_ENUM_MAP_INSERT(LANES_FEW)
-    GG_ENUM_MAP_INSERT(LANES_SOME)
-    GG_ENUM_MAP_INSERT(LANES_SEVERAL)
-    GG_ENUM_MAP_INSERT(LANES_MANY)
-    GG_ENUM_MAP_INSERT(LANES_VERY_MANY)
-    GG_ENUM_MAP_END
-}
-GG_ENUM_STREAM_IN(StarlaneFrequency)
-GG_ENUM_STREAM_OUT(StarlaneFrequency)
-
-
-/** specials frequencies during universe generation */
-enum SpecialsFrequency {
-    INVALID_SPECIALS_FREQENCY = -1,
-    SPECIALS_NONE,
-    SPECIALS_RARE,
-    SPECIALS_UNCOMMON,
-    SPECIALS_COMMON,
-    NUM_SPECIALS_FREQENCIES         ///< keep this last, the number of specials frequency options
-};
-
-namespace GG {
-    GG_ENUM_MAP_BEGIN(SpecialsFrequency)
-    GG_ENUM_MAP_INSERT(INVALID_SPECIALS_FREQENCY)
-    GG_ENUM_MAP_INSERT(SPECIALS_NONE)
-    GG_ENUM_MAP_INSERT(SPECIALS_RARE)
-    GG_ENUM_MAP_INSERT(SPECIALS_UNCOMMON)
-    GG_ENUM_MAP_INSERT(SPECIALS_COMMON)
-    GG_ENUM_MAP_END
-}
-GG_ENUM_STREAM_IN(SpecialsFrequency)
-GG_ENUM_STREAM_OUT(SpecialsFrequency)
-
+GG_ENUM_STREAM_IN(GalaxySetupOption)
+GG_ENUM_STREAM_OUT(GalaxySetupOption)
 
 /** types of diplomatic empire affiliations to another empire*/
 enum EmpireAffiliationType {
