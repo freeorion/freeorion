@@ -644,12 +644,14 @@ void HumanClientApp::Reinitialize()
             window->resize(width, height);
     }
 
-//#ifdef FREEORION_MACOSX
-//#endif
-//    HandleWindowResize(GG::X(window->getWidth()), GG::Y(window->getHeight()));
-//    window->windowMovedOrResized();
-//    if (OgreGUI* ogui = dynamic_cast<OgreGUI*>(GG::GUI::GetGUI()))
-//        ogui->WindowResizedSignal(GG::X(window->getWidth()), GG::Y(window->getHeight()));
+#ifdef FREEORION_MACOSX
+    // These lines seem to be necessary on OSX to make fullscreen / windowed
+    // transitions better.  There are still reportedly issues going from
+    // fullscreen to windowed, however.
+    HandleWindowResize(GG::X(window->getWidth()), GG::Y(window->getHeight()));
+    if (OgreGUI* ogui = dynamic_cast<OgreGUI*>(GG::GUI::GetGUI()))
+        ogui->WindowResizedSignal(GG::X(window->getWidth()), GG::Y(window->getHeight()));
+#endif
 }
 
 float HumanClientApp::GLVersion() const
