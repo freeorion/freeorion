@@ -429,6 +429,10 @@ void ColonizeOrder::ExecuteImpl() const
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get species with name " << species_name;
         return;
     }
+    if (!species->CanColonize()) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl species " << species_name << " can't colonize!";
+        return;
+    }
     Planet* planet = GetObject<Planet>(m_planet);
     if (!planet) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
@@ -684,7 +688,7 @@ void ProductionQueueOrder::ExecuteImpl() const
 
     Empire* empire = Empires().Lookup(EmpireID());
     if (m_build_type == BT_BUILDING)
-        empire->PlaceBuildInQueue(m_build_type, m_item_name, m_number, m_location);
+        empire->PlaceBuildInQueue(BT_BUILDING, m_item_name, m_number, m_location);
     else if (m_build_type == BT_SHIP)
         empire->PlaceBuildInQueue(BT_SHIP, m_design_id, m_number, m_location);
     else if (m_new_quantity != INVALID_QUANTITY)
