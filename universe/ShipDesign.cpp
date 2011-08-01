@@ -1139,25 +1139,25 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     const ObjectMap& objects = GetMainObjectMap();
 
     const UniverseObject* location = objects.Object(location_id);
-    if (!location) return false;
+    if (!location)
+        return false;
 
     // currently ships can only be built at planets, and by species that are
     // not planetbound
-    if (const Planet* planet = universe_object_cast<const Planet*>(location)) {
-        const std::string& species_name = planet->SpeciesName();
-        if (species_name.empty())
-            return false;
-        const Species* species = GetSpecies(species_name);
-        if (!species)
-            return false;
-        if (!species->CanProduceShips())
-            return false;
-        // also, species that can't colonize can't produce colony ships
-        if (this->CanColonize() && !species->CanColonize())
-            return false;
-    } else {
+    const Planet* planet = universe_object_cast<const Planet*>(location);
+    if (!planet)
         return false;
-    }
+    const std::string& species_name = planet->SpeciesName();
+    if (species_name.empty())
+        return false;
+    const Species* species = GetSpecies(species_name);
+    if (!species)
+        return false;
+    if (!species->CanProduceShips())
+        return false;
+    // also, species that can't colonize can't produce colony ships
+    if (this->CanColonize() && !species->CanColonize())
+        return false;
 
     Empire* empire = Empires().Lookup(empire_id);
     if (!empire) {

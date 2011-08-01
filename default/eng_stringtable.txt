@@ -2270,6 +2270,21 @@ has achieved a sole-survivor victory.
 # Species          #
 ####################
 
+PLANETBOUND
+Planetbound - cannot build ships
+
+SPACEFARING
+Spacefaring - can build ships
+
+SPACEBOUND
+Spacebound - cannot colonize planets
+
+CAN_COLONIZE
+Can Colonize - can build colony ships
+
+ENVIRONMENTAL_PREFERENCES
+Environmental Preferences
+
 SP_HUMAN
 Human
 

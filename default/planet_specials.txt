@@ -538,9 +538,4 @@ Special
 Special
     name = "RESONANT_MOON_SPECIAL"
     description = "RESONANT_MOON_SPECIAL_DESC"
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = SetTargetConstruction Value + 0
     graphic = "icons/specials_huge/resonant_moon.png"
