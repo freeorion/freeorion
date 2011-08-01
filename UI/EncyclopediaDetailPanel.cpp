@@ -55,6 +55,12 @@ namespace {
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n";
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
@@ -95,8 +101,37 @@ namespace {
             const Universe& universe = GetUniverse();
             for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
                 retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
-        }
 
+        } else if (dir_name == "ENC_SHIP") {
+            const Universe& universe = GetUniverse();
+            std::vector<const Ship*> ships = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<Ship>();
+            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it)
+                retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+
+        } else if (dir_name == "ENC_FLEET") {
+            const Universe& universe = GetUniverse();
+            std::vector<const Fleet*> fleets = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<Fleet>();
+            for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
+                retval += LinkTaggedIDText(VarText::FLEET_ID_TAG, (*fleet_it)->ID(), (*fleet_it)->Name()) + "  ";
+
+        } else if (dir_name == "ENC_PLANET") {
+            const Universe& universe = GetUniverse();
+            std::vector<const Planet*> planets = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<Planet>();
+            for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it)
+                retval += LinkTaggedIDText(VarText::PLANET_ID_TAG, (*planet_it)->ID(), (*planet_it)->Name()) + "  ";
+
+        } else if (dir_name == "ENC_BUILDING") {
+            const Universe& universe = GetUniverse();
+            std::vector<const Building*> buildings = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<Building>();
+            for (std::vector<const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it)
+                retval += LinkTaggedIDText(VarText::BUILDING_ID_TAG, (*building_it)->ID(), (*building_it)->Name()) + "  ";
+
+        } else if (dir_name == "ENC_SYSTEM") {
+            const Universe& universe = GetUniverse();
+            std::vector<const System*> systems = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<System>();
+            for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it)
+                retval += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, (*system_it)->ID(), (*system_it)->Name()) + "  ";
+        }
         return retval;
     }
 }
