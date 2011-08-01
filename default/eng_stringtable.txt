@@ -2038,6 +2038,12 @@ Incomplete Ship Design
 ENC_EMPIRE
 Empire
 
+EMPIRE_CAPITAL
+Capital:
+
+NO_CAPITAL
+No Known Capital
+
 ENC_SHIP
 Ship
 
