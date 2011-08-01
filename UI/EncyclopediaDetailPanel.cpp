@@ -38,63 +38,63 @@ namespace {
 
 namespace {
     std::string LinkTaggedText(const std::string& tag, const std::string& stringtable_entry) {
-        return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">" + "\n";
+        return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">";
     }
 
     std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text) {
-        return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">" + "\n";
+        return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">";
     }
 
     std::string PediaDirText(const std::string& dir_name) {
         std::string retval;
 
         if (dir_name == "ENC_INDEX") {
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART");
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL");
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH");
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE");
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL");
-            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES");
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n";
 
         } else if (dir_name == "ENC_SHIP_PART") {
             const PartTypeManager& part_type_manager = GetPartTypeManager();
             for (PartTypeManager::iterator it = part_type_manager.begin(); it != part_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first);
+                retval += LinkTaggedText(VarText::SHIP_PART_TAG, it->first) + "\n";
 
         } else if (dir_name == "ENC_SHIP_HULL") {
             const HullTypeManager& hull_type_manager = GetHullTypeManager();
             for (HullTypeManager::iterator it = hull_type_manager.begin(); it != hull_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first);
+                retval += LinkTaggedText(VarText::SHIP_HULL_TAG, it->first) + "\n";
 
         } else if (dir_name == "ENC_TECH") {
             std::vector<std::string> tech_names = GetTechManager().TechNames();
             for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
-                retval += LinkTaggedText(VarText::TECH_TAG, *it);
+                retval += LinkTaggedText(VarText::TECH_TAG, *it) + "\n";
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
             for (BuildingTypeManager::iterator it = building_type_manager.begin(); it != building_type_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first);
+                retval += LinkTaggedText(VarText::BUILDING_TYPE_TAG, it->first) + "\n";
 
         } else if (dir_name == "ENC_SPECIAL") {
             const std::vector<std::string> special_names = SpecialNames();
             for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
-                retval += LinkTaggedText(VarText::SPECIAL_TAG, *it);
+                retval += LinkTaggedText(VarText::SPECIAL_TAG, *it) + "\n";
 
         } else if (dir_name == "ENC_SPECIES") {
             const SpeciesManager& species_manager = GetSpeciesManager();
             for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it)
-                retval += LinkTaggedText(VarText::SPECIES_TAG, it->first);
+                retval += LinkTaggedText(VarText::SPECIES_TAG, it->first) + "\n";
 
         } else if (dir_name == "ENC_EMPIRE") {
             const EmpireManager& empire_manager = Empires();
             for (EmpireManager::const_iterator it = empire_manager.begin(); it != empire_manager.end(); ++it)
-                retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name());
+                retval += LinkTaggedIDText(VarText::EMPIRE_ID_TAG, it->first, it->second->Name()) + "\n";
 
         } else if (dir_name == "ENC_SHIP_DESIGN") {
             const Universe& universe = GetUniverse();
             for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
-                retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name());
+                retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
         }
 
         return retval;
@@ -323,18 +323,19 @@ void EncyclopediaDetailPanel::LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Fl
     }
 }
 
-
 void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, const std::string& data) {
     using boost::lexical_cast;
     try {
-
-        if (link_type == VarText::PLANET_ID_TAG ||
-            link_type == VarText::SYSTEM_ID_TAG ||
-            link_type == VarText::FLEET_ID_TAG  ||
-            link_type == VarText::SHIP_ID_TAG ||
-            link_type == VarText::BUILDING_ID_TAG)
-        {
-            this->SetObject(data);
+        if (link_type == VarText::PLANET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToPlanet(lexical_cast<int>(data));
+        } else if (link_type == VarText::SYSTEM_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToSystem(lexical_cast<int>(data));
+        } else if (link_type == VarText::FLEET_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToFleet(lexical_cast<int>(data));
+        } else if (link_type == VarText::SHIP_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToShip(lexical_cast<int>(data));
+        } else if (link_type == VarText::BUILDING_ID_TAG) {
+            ClientUI::GetClientUI()->ZoomToBuilding(lexical_cast<int>(data));
 
         } else if (link_type == VarText::EMPIRE_ID_TAG) {
             this->SetEmpire(lexical_cast<int>(data));
@@ -520,13 +521,10 @@ void EncyclopediaDetailPanel::Refresh() {
                 }
 
                 std::string link_text;
-                if (!TAG.empty()) {
-                    link_text = "<" + TAG + " " + item.name + ">"
-                                + UserString(item.name)
-                                + "</" + TAG + ">";
-                } else {
+                if (!TAG.empty())
+                    link_text = LinkTaggedText(TAG, item.name);
+                else
                     link_text = UserString(item.name);
-                }
 
                 detailed_description += str(FlexibleFormat(UserString("ENC_TECH_DETAIL_UNLOCKED_ITEM_STR"))
                     % UserString(boost::lexical_cast<std::string>(unlocked_items[i].type))
@@ -541,7 +539,7 @@ void EncyclopediaDetailPanel::Refresh() {
             return;
         }
 
-        // Buildings
+        // Building types
         name = UserString(m_items_it->second);
         texture = ClientUI::BuildingTexture(m_items_it->second);
         turns = building_type->ProductionTime();
@@ -591,17 +589,36 @@ void EncyclopediaDetailPanel::Refresh() {
             detailed_description += UserString("CAN_COLONIZE");
         else
             detailed_description += UserString("SPACEBOUND");
-        // environmental preferences
+        // homeworld
         detailed_description += "\n\n";
+        if (species->Homeworlds().empty()) {
+            detailed_description += UserString("NO_HOMEWORLD") + "\n";
+        } else {
+            detailed_description += UserString("HOMEWORLD") + "\n";
+            for (std::set<int>::const_iterator hw_it = species->Homeworlds().begin();
+                 hw_it != species->Homeworlds().end(); ++hw_it)
+            {
+                if (const Planet* homeworld = GetUniverse().Objects().Object<Planet>(*hw_it))
+                    detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, *hw_it, homeworld->Name()) + "\n";
+                else
+                    detailed_description += UserString("UNKNOWN_PLANET") + "\n";
+            }
+        }
+        // occupied planets: todo
+
+        // environmental preferences
+        detailed_description += "\n";
         const std::map<PlanetType, PlanetEnvironment>& pt_env_map = species->PlanetEnvironments();
         if (!pt_env_map.empty()) {
-            detailed_description += UserString("ENVIRONMENTAL_PREFERENCES") + "\n\n";
+            detailed_description += UserString("ENVIRONMENTAL_PREFERENCES") + "\n";
             for (std::map<PlanetType, PlanetEnvironment>::const_iterator pt_env_it = pt_env_map.begin();
                  pt_env_it != pt_env_map.end(); ++pt_env_it)
             {
                 detailed_description += UserString(boost::lexical_cast<std::string>(pt_env_it->first)) + " : " +
                                         UserString(boost::lexical_cast<std::string>(pt_env_it->second)) + "\n";
             }
+        } else {
+            detailed_description += "\n";
         }
 
         if (GetOptionsDB().Get<bool>("UI.autogenerated-effects-descriptions") && !species->Effects().empty()) {

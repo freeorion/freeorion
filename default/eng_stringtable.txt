@@ -2270,6 +2270,15 @@ has achieved a sole-survivor victory.
 # Species          #
 ####################
 
+HOMEWORLD
+Homeworld:
+
+NO_HOMEWORLD
+No Known Homeworld
+
+UNKNOWN_PLANET
+Unknown Planet
+
 PLANETBOUND
 Planetbound - cannot build ships
 
@@ -2283,7 +2292,7 @@ CAN_COLONIZE
 Can Colonize - can build colony ships
 
 ENVIRONMENTAL_PREFERENCES
-Environmental Preferences
+Environmental Preferences:
 
 SP_HUMAN
 Human
