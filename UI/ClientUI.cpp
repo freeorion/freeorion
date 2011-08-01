@@ -549,8 +549,10 @@ bool ClientUI::ZoomToShip(int id)
 
 bool ClientUI::ZoomToBuilding(int id)
 {
-    if (const Building* building = GetMainObjectMap().Object<Building>(id))
-        return ZoomToBuildingType(building->BuildingTypeName());
+    if (const Building* building = GetMainObjectMap().Object<Building>(id)) {
+        ZoomToBuildingType(building->BuildingTypeName());
+        return ZoomToPlanet(building->PlanetID());
+    }
     return false;
 }
 
