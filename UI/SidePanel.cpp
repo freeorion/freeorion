@@ -959,8 +959,7 @@ namespace {
         // in the right system, and does it have a valid species?
         if (ship->SystemID() != system_id ||
             !ship->CanColonize() ||
-            !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()) ||
-            ship->SpeciesName().empty())
+            !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
         {
             return 0;
         }

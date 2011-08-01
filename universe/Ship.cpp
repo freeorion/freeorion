@@ -5,6 +5,7 @@
 #include "Fleet.h"
 #include "Predicates.h"
 #include "ShipDesign.h"
+#include "Species.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
@@ -234,7 +235,6 @@ bool Ship::IsMonster() const {
         return false;
 }
 
-
 bool Ship::IsArmed() const {
     const ShipDesign* design = Design();
     if (design)
@@ -244,10 +244,18 @@ bool Ship::IsArmed() const {
 }
 
 bool Ship::CanColonize() const {
+    if (m_species_name.empty())
+        return false;
+    const Species* species = GetSpecies(m_species_name);
+    if (!species)
+        return false;
+    if (!species->CanColonize())
+        return false;
+
     const ShipDesign* design = Design();
-    if (design)
-        return design->CanColonize();
-    else
+    if (!design)
+        return false;
+    if (!design->CanColonize())
         return false;
 }
 
