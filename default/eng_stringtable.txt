@@ -2291,6 +2291,9 @@ Spacebound - cannot colonize planets
 CAN_COLONIZE
 Can Colonize - can build colony ships
 
+OCCUPIED_PLANETS
+Occupied Planets:
+
 ENVIRONMENTAL_PREFERENCES
 Environmental Preferences:
 

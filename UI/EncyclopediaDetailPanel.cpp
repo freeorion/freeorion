@@ -639,7 +639,26 @@ void EncyclopediaDetailPanel::Refresh() {
                     detailed_description += UserString("UNKNOWN_PLANET") + "\n";
             }
         }
-        // occupied planets: todo
+
+        // occupied planets
+        const Universe& universe = GetUniverse();
+        std::vector<const Planet*> planets = universe.EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID()).FindObjects<Planet>();
+        std::vector<const Planet*> species_occupied_planets;
+        for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+            const Planet* planet = *planet_it;
+            if (planet->SpeciesName() == m_items_it->second)
+                species_occupied_planets.push_back(planet);
+        }
+        if (!species_occupied_planets.empty()) {
+            detailed_description += "\n" + UserString("OCCUPIED_PLANETS") + "\n";
+            for (std::vector<const Planet*>::const_iterator planet_it = species_occupied_planets.begin();
+                 planet_it != species_occupied_planets.end(); ++planet_it)
+            {
+                const Planet* planet = *planet_it;
+                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), planet->Name()) + "  ";
+            }
+            detailed_description += "\n";
+        }
 
         // environmental preferences
         detailed_description += "\n";
