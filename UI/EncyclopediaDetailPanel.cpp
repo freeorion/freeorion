@@ -698,35 +698,56 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
     } else if (m_items_it->first == "ENC_SHIP_DESIGN") {
-        if (boost::lexical_cast<int>(m_items_it->second) != UniverseObject::INVALID_OBJECT_ID) {
-            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(m_items_it->second));
-            if (!design) {
-                Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << m_items_it->second;
-                return;
-            }
-
-            // Ship Designs
-            name = design->Name();
-            texture = ClientUI::ShipIcon(design->ID());
-            turns = design->ProductionTime();
-            cost = design->PerTurnCost();
-            cost_units = UserString("ENC_PP");
-            general_type = UserString("ENC_SHIP_DESIGN");
-            detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
-                % design->Description()
-                % static_cast<int>(design->SRWeapons().size())
-                % static_cast<int>(design->LRWeapons().size())
-                % static_cast<int>(design->FWeapons().size())
-                % static_cast<int>(design->PDWeapons().size())
-                % design->Structure()
-                % design->Shields()
-                % design->Detection()
-                % design->BattleSpeed()
-                % design->StarlaneSpeed()
-                % design->Fuel()
-                % design->ColonyCapacity()
-                % design->Stealth());
+        int design_id = boost::lexical_cast<int>(m_items_it->second);
+        const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(m_items_it->second));
+        if (!design) {
+            Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find ShipDesign with id " << m_items_it->second;
+            return;
         }
+
+        // Ship Designs
+        name = design->Name();
+        texture = ClientUI::ShipIcon(design_id);
+        turns = design->ProductionTime();
+        cost = design->PerTurnCost();
+        cost_units = UserString("ENC_PP");
+        general_type = UserString("ENC_SHIP_DESIGN");
+        detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
+            % design->Description()
+            % static_cast<int>(design->SRWeapons().size())
+            % static_cast<int>(design->LRWeapons().size())
+            % static_cast<int>(design->FWeapons().size())
+            % static_cast<int>(design->PDWeapons().size())
+            % design->Structure()
+            % design->Shields()
+            % design->Detection()
+            % design->BattleSpeed()
+            % design->StarlaneSpeed()
+            % design->Fuel()
+            % design->ColonyCapacity()
+            % design->Stealth());
+
+        // ships of this design
+        std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
+        std::vector<const Ship*> design_ships;
+        for (std::vector<const Ship*>::const_iterator ship_it = all_ships.begin();
+             ship_it != all_ships.end(); ++ship_it)
+        {
+            const Ship* ship = *ship_it;
+            if (ship->DesignID() == design_id)
+                design_ships.push_back(ship);
+        }
+        if (!design_ships.empty()) {
+            detailed_description += "\n\n" + UserString("SHIPS_OF_DESIGN");
+            for (std::vector<const Ship*>::const_iterator ship_it = design_ships.begin();
+                 ship_it != design_ships.end(); ++ship_it)
+            {
+                detailed_description += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_SHIPS_OF_DESIGN");
+        }
+
 
     } else if (m_items_it->first == INCOMPLETE_DESIGN) {
         boost::shared_ptr<const ShipDesign> incomplete_design = m_incomplete_design.lock();

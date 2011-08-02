@@ -2032,6 +2032,12 @@ Species
 ENC_SHIP_DESIGN
 Ship Design
 
+SHIPS_OF_DESIGN
+Ships of this Design: 
+
+NO_SHIPS_OF_DESIGN
+No Known Ships of this Design
+
 ENC_INCOMPETE_SHIP_DESIGN
 Incomplete Ship Design
 
