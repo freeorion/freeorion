@@ -2053,6 +2053,18 @@ No Known Capital
 ENC_SHIP
 Ship
 
+ENC_MONSTER
+Monster Type
+
+MONSTER_TYPES
+Monster Types
+
+MONSTER_OBJECTS
+Monsters: 
+
+NO_MONSTER_OBJECTS
+No Known Monsters
+
 ENC_FLEET
 Fleet
 

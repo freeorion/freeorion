@@ -3788,6 +3788,7 @@ void MapWnd::ShowPedia()
         m_pedia_panel->SetIndex();
     m_pedia_panel->Show();
     m_pedia_panel->Refresh();
+    GG::GUI::GetGUI()->MoveUp(m_pedia_panel);
 
     // indicate selection on button
     m_btn_pedia->MarkSelectedGray();

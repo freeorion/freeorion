@@ -61,7 +61,9 @@ namespace {
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n";
+            retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n";
             retval += LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n";
@@ -104,12 +106,34 @@ namespace {
 
         } else if (dir_name == "ENC_SHIP_DESIGN") {
             for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
-                retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
+                if (!it->second->IsMonster())
+                    retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
 
         } else if (dir_name == "ENC_SHIP") {
             std::vector<const Ship*> ships = objects.FindObjects<Ship>();
             for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it)
                 retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+
+        } else if (dir_name == "ENC_MONSTER") {
+            // monster objects
+            std::vector<const Ship*> ships = objects.FindObjects<Ship>();
+            std::vector<const Ship*> monsters;
+            for (std::vector<const Ship*>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it)
+                if ((*ship_it)->IsMonster())
+                    monsters.push_back(*ship_it);
+            if (!monsters.empty()) {
+                retval += UserString("MONSTER_OBJECTS");
+                for (std::vector<const Ship*>::const_iterator ship_it = monsters.begin(); ship_it != monsters.end(); ++ship_it)
+                    retval += LinkTaggedIDText(VarText::SHIP_ID_TAG, (*ship_it)->ID(), (*ship_it)->Name()) + "  ";
+            } else {
+                retval += UserString("NO_MONSTER_OBJECTS");
+            }
+
+            // monster types
+            retval += "\n\n" + UserString("MONSTER_TYPES") + "\n";
+            for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it)
+                if (it->second->IsMonster())
+                    retval += LinkTaggedIDText(VarText::DESIGN_ID_TAG, it->first, it->second->Name()) + "\n";
 
         } else if (dir_name == "ENC_FLEET") {
             std::vector<const Fleet*> fleets = objects.FindObjects<Fleet>();
@@ -711,7 +735,7 @@ void EncyclopediaDetailPanel::Refresh() {
         turns = design->ProductionTime();
         cost = design->PerTurnCost();
         cost_units = UserString("ENC_PP");
-        general_type = UserString("ENC_SHIP_DESIGN");
+        general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % design->Description()
             % static_cast<int>(design->SRWeapons().size())
