@@ -2421,7 +2421,25 @@ SP_FIFTYSEVEN
 Fifty-seven
 
 SP_FIFTYSEVEN_DESC
-Math-obsessed sky-serpents, singing planet-wide fractal songs.
+'''Math-obsessed sky-serpents, singing planet-wide fractal songs.
+
+++ research
++ no ethos
+- slow population growth
+- cannot produce minerals or PP
+
+Biology:
+Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side.  Various fins provide fine control.  Entirely blind, they rely on smell, hearing, an exquisitely honed presure sensitivity, and when the need arises bursts of echolocation.  Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton.  Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
+
+Personality:
+The Fifty-Seven show little interest in the rest of the galaxy, or indeed in the parts of their planet that they don't use.  The bulk of their attention individually, and culturally is focused on math.  They do seem eager for new mathematical puzzles, so if research problems can be phrased properly...
+
+Homeworld:
+High g swamp world with a very dense atmosphere.
+
+Reason for Staying:
+The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.'''
+
 
 SP_TEST
 Testing...
