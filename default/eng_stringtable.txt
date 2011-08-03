@@ -2323,103 +2323,86 @@ Environmental Preferences:
 
 SP_HUMAN
 Human
-
 SP_HUMAN_DESC
 Mostly Harmless. Prefer Terran planets.
 
 SP_SCYLIOR
 Scylior
-
 SP_SCYLIOR_DESC
 Three-tentacled, aquatic Nautiloid. Prefer Ocean planets.
 
 SP_GYISACHE
 Gyisache
-
 SP_GYISACHE_DESC
 Cowardly, freakish sheep-like herbivores. Prefer Swamp planets.
 
 SP_CHATO
 Chato'matou'Gormoshk
-
 SP_CHATO_DESC
 Sessile crystalline entities which ride the animal Gormoshk. Prefer Toxic planets.
 
 SP_EGASSEM
 Egassem
-
 SP_EGASSEM_DESC
 Super massive, nuclear, lava-dwelling, crystalline amoebas. Prefer Inferno planets.
 
 SP_TRITH
 Trith
-
 SP_TRITH_DESC
 Bereaved xenophobic telepaths. Prefer Radiated planets.
 
 SP_CRAY
 Cray
-
 SP_CRAY_DESC
 Cheerful enthusiastic robots. Prefer Barren planets.
 
 SP_HHHOH
 Hhhoh
-
 SP_HHHOH_DESC
 Huge, slow, multi-trunked Mammoths. Prefer Tundra planets.
 
 SP_EAXAW
 Eaxaw
-
 SP_EAXAW_DESC
 Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 
 SP_CYNOS
 Cynos
-
 SP_CYNOS_DESC
 Walking plants sustained by a giant non-sentient mother plant.
 
 SP_DERTHREAN
 Derthrean
-
 SP_DERTHREAN_DESC
 Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
 
 SP_GEORGE
 George
-
 SP_GEORGE_DESC
 A single, childish Telelpathic entity that consists of tons of centipedeoids
 
 SP_PHINNERT
 Phinnert
-
 SP_PHINNERT_DESC
 Flying Monkeys.
 
 SP_SSLITH
 Sslith
-
 SP_SSLITH_DESC
-Flat, aquatic, plyable creatures
+Flat, aquatic, plyable creatures.
 
 SP_LAENFA
 Laenfa
-
 SP_LAENFA_DESC
 Sneaky, telepathic, sentient vines.
 
 SP_TAEGHIRUS
 T'aeghirus
-
 SP_TAEGHIRUS_DESC
 Weak, flightless birds, united in total mutual cooperation.
 
 SP_FIFTYSEVEN
 Fifty-seven
-
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 
@@ -2440,15 +2423,43 @@ High g swamp world with a very dense atmosphere.
 Reason for Staying:
 The Fifty-Seven are in constant contact with most of the rest of their species, participating in a complex fractal 'song' that may also be a way to test complex mathematical hypotheses and/or some sort of social or artistic expression. Leaving the fractal song is apparently extremely unattractive.'''
 
+SP_SETINON
+Setinon
+SP_SETINON_DESC
+Individualistic sentient microscopic cells
+
+SP_SILEXIAN
+Silexian
+SP_SILEXIAN_DESC
+Gleaming gardener robots, left on their own.
+
+SP_NYMNMN
+Nymnmn
+SP_NYMNMN_DESC
+Planet-wide sapient magnetic waveforms.
+
+SP_TRENCHERS
+Trenchers
+SP_TRENCHERS_DESC
+Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
+
+SP_BEIGEGOO
+Beige Goo
+SP_BEIGEGOO_DESC
+Insane, intensely private, planet-engulfing nanite swarm .
+
+
+
 
 SP_TEST
 Testing...
 SP_TEST_DESC
 Testing....
+
 SP_TEST2
-Testing...
+Testing 2...
 SP_TEST_DESC2
-Testing....
+Testing 2....
 
 ####################
 # Specials         #
