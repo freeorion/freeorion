@@ -1,4 +1,319 @@
 Species
+    name = "SP_CYNOS"
+    description = "SP_CYNOS_DESC"
+    Planetbound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/cynos.png"
+
+Species
+    name = "SP_DERTHREAN"
+    description = "SP_DERTHREAN_DESC"
+    Planetbound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/derthrean.png"
+
+Species
+    name = "SP_GEORGE"
+    description = "SP_GEORGE_DESC"
+    Planetbound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+       Focus
+            name = "FOCUS_MINING"
+            description = "FOCUS_MINING_DESC"
+            location = Or [
+                And [
+                    Or [
+                        TargetPopulation low = 1 high = 999
+                        OwnerHasTech "PRO_ORBITAL_MINE"
+                    ]
+                    Not Planet type = [Asteroids GasGiant]
+                ]
+                And [
+                    OwnerHasTech "PRO_ASTEROID_MINE"
+                    Planet type = Asteroids
+                ]
+            ]
+            graphic = "icons/focus/mining.png"            
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+            
+    ]
+    environments = [
+        type = Swamp        environment = Hostile
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Poor
+        type = Tundra       environment = Good
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Poor
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/george.png"
+
+Species
+    name = "SP_LAENFA"
+    description = "SP_LAENFA_DESC"
+    Planetbound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/laenfa.png"
+
+Species
+    name = "SP_PHINNERT"
+    description = "SP_PHINNERT_DESC"
+    Planetbound
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Poor
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/phinnert.png"
+
+Species
+    name = "SP_SSLITH"
+    description = "SP_SSLITH_DESC"
+    Planetbound
+
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Poor
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Adequate
+        type = Ocean        environment = Good
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/sslith.png"
+    
+Species
+    name = "SP_TAEGHIRUS"
+    description = "SP_TAEGHIRUS_DESC"
+    Planetbound
+
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Good
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/t-aeghirus.png"    
+    
+Species
+    name = "SP_FIFTYSEVEN"
+    description = "SP_FIFTYSEVEN_DESC"
+    Planetbound
+
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+            
+        Focus
+            name = "FOCUS_RESEARCH"
+            description = "FOCUS_RESEARCH_DESC"
+            location = Planet
+            graphic = "icons/focus/research.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Good
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Poor
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Poor
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/fifty-seven.png"
+
+Species
     name = "SP_TEST"
     description = "SP_TEST_DESC"
     Planetbound
@@ -33,7 +348,7 @@ Species
         type = Asteroids    environment = Uninhabitable
         type = Gasgiant     environment = Uninhabitable
     ]
-    graphic = "icons/species/scylior.png"
+    graphic = "icons/species/quadruped-05.png"
 
 Species
     name = "SP_TEST2"
@@ -71,6 +386,8 @@ Species
         type = Gasgiant     environment = Uninhabitable
     ]
     graphic = "icons/species/aerial-01.png"
+
+
 
 Species
     name = "SP_HUMAN"

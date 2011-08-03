@@ -2375,6 +2375,62 @@ Eaxaw
 SP_EAXAW_DESC
 Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 
+SP_CYNOS
+Cynos
+
+SP_CYNOS_DESC
+Walking plants sustained by a giant non-sentient mother plant.
+
+SP_DERTHREAN
+Derthrean
+
+SP_DERTHREAN_DESC
+Pacifistic, bioengineering, pain-ridden, floating plant/virus synthesis.
+
+SP_GEORGE
+George
+
+SP_GEORGE_DESC
+A single, childish Telelpathic entity that consists of tons of centipedeoids
+
+SP_PHINNERT
+Phinnert
+
+SP_PHINNERT_DESC
+Flying Monkeys.
+
+SP_SSLITH
+Sslith
+
+SP_SSLITH_DESC
+Flat, aquatic, plyable creatures
+
+SP_LAENFA
+Laenfa
+
+SP_LAENFA_DESC
+Sneaky, telepathic, sentient vines.
+
+SP_TAEGHIRUS
+T'aeghirus
+
+SP_TAEGHIRUS_DESC
+Weak, flightless birds, united in total mutual cooperation.
+
+SP_FIFTYSEVEN
+Fifty-seven
+
+SP_FIFTYSEVEN_DESC
+Math-obsessed sky-serpents, singing planet-wide fractal songs.
+
+SP_TEST
+Testing...
+SP_TEST_DESC
+Testing....
+SP_TEST2
+Testing...
+SP_TEST_DESC2
+Testing....
 
 ####################
 # Specials         #
