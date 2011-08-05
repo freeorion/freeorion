@@ -205,6 +205,7 @@ PythonAI::PythonAI() {
         s_main_namespace = extract<dict>(main_module.attr("__dict__"));
     } catch (error_already_set err) {
         Logger().errorStream() << "Unable to set up main namespace in Python.";
+        PyErr_Print();
         return;
     }
 
