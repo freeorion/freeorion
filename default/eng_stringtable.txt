@@ -2448,18 +2448,36 @@ Beige Goo
 SP_BEIGEGOO_DESC
 Insane, intensely private, planet-engulfing nanite swarm .
 
+SP_KOBUNTURA
+Kobuntura
+SP_KOBUNTURA_DESC
+Sentient magnetic dust formations with a fascination for building and construction.
 
+SP_ETTY
+Etty
+SP_ETTY_DESC
+cybernetic plants.
+
+SP_UGMORRS
+Ugmorrs
+SP_UGMORRS_DESC
+Lava-dwelling yeast piles, which form temporary golems.
+
+SP_GISGUFGTHRIM
+'''Gis Guf G'thrim'''
+SP_GISGUFGTHRIM_DESC
+Shelled herbivores that live off a singular planets-sized colonial gel.
 
 
 SP_TEST
-Testing...
+Testing Guinea Pig
 SP_TEST_DESC
-Testing....
+'''Try all your exparamental scripting on this guy, he'll appear a lot.'''
 
 SP_TEST2
-Testing 2...
+Test2 Creature
 SP_TEST_DESC2
-Testing 2....
+'''Try all your exparamental scripting on this guy, he'll appear a lot.'''
 
 ####################
 # Specials         #
