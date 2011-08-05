@@ -655,7 +655,7 @@ Part
     description = "CO_COLONY_POD_DESC"
     class = Colony
     capacity = 1
-    buildcost = 1000
+    buildcost = 250
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
@@ -669,7 +669,7 @@ Part
     description = "CO_SUSPEND_ANIM_POD_DESC"
     class = Colony
     capacity = 2
-    buildcost = 2000
+    buildcost = 500
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [
