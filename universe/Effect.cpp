@@ -1721,6 +1721,81 @@ std::string MoveTo::Dump() const
 
 
 ///////////////////////////////////////////////////////////
+// SetDestination                                        //
+///////////////////////////////////////////////////////////
+SetDestination::SetDestination(const Condition::ConditionBase* location_condition) :
+    m_location_condition(location_condition)
+{}
+
+SetDestination::~SetDestination()
+{
+    delete m_location_condition;
+}
+
+void SetDestination::Execute(const ScriptingContext& context) const
+{
+    if (!context.effect_target) {
+        Logger().errorStream() << "SetDestination::Execute given no target object";
+        return;
+    }
+
+    const Fleet* target_fleet = universe_object_cast<const Fleet*>(context.effect_target);
+    if (!target_fleet) {
+        Logger().errorStream() << "SetDestination::Execute acting on non-fleet target:";
+        context.effect_target->Dump();
+        return;
+    }
+
+    Universe& universe = GetUniverse();
+    ObjectMap& objects = universe.Objects();
+
+    // get all objects in an ObjectSet
+    Condition::ObjectSet potential_locations;
+    for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
+        potential_locations.insert(it->second);
+
+    Condition::ObjectSet valid_locations;
+
+    // apply location condition to determine valid location to move target to
+    m_location_condition->Eval(context, valid_locations, potential_locations);
+
+    // early exit if there are no valid locations - can't move anything if there's nowhere to move to
+    if (valid_locations.empty())
+        return;
+
+    // "randomly" pick a destination
+    UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
+
+
+
+    //std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, fleet->Owner());
+
+    //// if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
+    //// to the next system that it was just set to move to anyway.
+    //if (route_pair.first.empty())
+    //    route_pair.first.push_back(new_next_system);
+
+
+    //// set fleet with newly recalculated route
+    //fleet->SetRoute(route_pair.first);
+
+    // do the route setting
+    //target_fleet-
+}
+
+std::string SetDestination::Description() const
+{
+    std::string value_str = m_location_condition->Description();
+    return str(FlexibleFormat(UserString("DESC_SET_DESTINATION")) % value_str);
+}
+
+std::string SetDestination::Dump() const
+{
+    return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n";
+}
+
+
+///////////////////////////////////////////////////////////
 // Victory                                               //
 ///////////////////////////////////////////////////////////
 Victory::Victory(const std::string& reason_string) :

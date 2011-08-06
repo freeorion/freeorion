@@ -209,6 +209,7 @@ namespace {
         CreateBuildingRule              create_building;
         CreateShipRule                  create_ship;
         ConditionParamRule              move_to;
+        ConditionParamRule              set_destination;
         Rule                            destroy;
         StringRule                      victory;
         StringRule                      add_special;
@@ -428,6 +429,11 @@ namespace {
              >> destination_label >> condition_p[move_to.condition = arg1])
             [move_to.this_ = new_<Effect::MoveTo>(move_to.condition)];
 
+        set_destination =
+            (str_p("setdestination")
+             >> destination_label >> condition_p[set_destination.condition = arg1])
+            [set_destination.this_ = new_<Effect::SetDestination>(set_destination.condition)];
+
         destroy =
             str_p("destroy")
             [destroy.this_ = new_<Effect::Destroy>()];
@@ -514,6 +520,7 @@ namespace {
             | create_building[effect_p.this_ = arg1]
             | create_ship[effect_p.this_ = arg1]
             | move_to[effect_p.this_ = arg1]
+            | set_destination[effect_p.this_ = arg1]
             | destroy[effect_p.this_ = arg1]
             | victory[effect_p.this_ = arg1]
             | add_special[effect_p.this_ = arg1]

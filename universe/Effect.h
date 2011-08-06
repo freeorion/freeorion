@@ -44,6 +44,7 @@ namespace Effect {
     class MoveTo;
     class Victory;
     class GenerateSitRepMessage;
+    class SetDestination;
 
     typedef std::set<UniverseObject*> TargetSet;
 }
@@ -536,13 +537,37 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Moves an UniverseObject to a location of another UniverseObject with id
-  * \a object_id.  If there are are no objects id that id, nothing is done. */
+/** Moves an UniverseObject to a location of another UniverseObject that matches
+  * the condition \a location_condition.  If multiple objects match the
+  * condition, then one is chosen.  If no objects match the condition, then
+  * nothing is done. */
 class Effect::MoveTo : public Effect::EffectBase
 {
 public:
     MoveTo(const Condition::ConditionBase* location_condition);
     virtual ~MoveTo();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    const Condition::ConditionBase* m_location_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Sets the route of the target fleet to move to an UniverseObject that
+  * matches the condition \a location_condition.  If multiple objects match the
+  * condition, then one is chosen.  If no objects match the condition, then
+  * nothing is done. */
+class Effect::SetDestination : public Effect::EffectBase
+{
+public:
+    SetDestination(const Condition::ConditionBase* location_condition);
+    virtual ~SetDestination();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -789,6 +814,13 @@ void Effect::SetStarType::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void Effect::MoveTo::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_location_condition);
+}
+
+template <class Archive>
+void Effect::SetDestination::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_location_condition);

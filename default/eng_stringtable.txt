@@ -3232,6 +3232,9 @@ Changes the star's type to %1%
 DESC_MOVE_TO
 Moves the object to the location of an object%1%
 
+DESC_SET_DESTINATION
+Sets the destination of the object to an object%1%
+
 DESC_VICTORY
 Causes the object's owner to win the game
 

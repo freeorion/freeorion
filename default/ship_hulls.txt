@@ -1527,6 +1527,17 @@ Hull
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Source
+                Stationary
+            ]
+            activation = Random probability = 0.3
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps 1 Source
+            ]
     graphic = ""
     
 Hull
