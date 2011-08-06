@@ -49,7 +49,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name, int pr
     if (!m_species_name.empty() && !GetSpecies(m_species_name))
         Logger().debugStream() << "Ship created with invalid species name: " << m_species_name;
 
-    AddOwner(empire_id);
+    SetOwner(empire_id);
 
     UniverseObject::Init();
 
@@ -257,6 +257,8 @@ bool Ship::CanColonize() const {
         return false;
     if (!design->CanColonize())
         return false;
+
+    return true;
 }
 
 const std::string& Ship::SpeciesName() const {

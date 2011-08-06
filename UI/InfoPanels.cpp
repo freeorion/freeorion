@@ -436,7 +436,7 @@ void PopulationPanel::Update()
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     // determine ownership    
-    if(obj->Owners().empty()) 
+    if (obj->Unowned())
         owner = OS_NONE;  // uninhabited
     else {
         if (!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -751,7 +751,7 @@ void ResourcePanel::Render()
 
     // determine ownership
     /*const UniverseObject* obj = GetObject(m_rescenter_id);
-    if (obj->Owners().empty()) 
+    if (obj->Unowned())
         // uninhabited
     else {
         if(!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -816,9 +816,7 @@ void ResourcePanel::Update()
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
     // determine ownership
-    const std::set<int> owners = obj->Owners();
-
-    if (owners.empty()) {
+    if (obj->Unowned()) {
         owner = OS_NONE;  // uninhabited
     } else {
         if (!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1570,17 +1568,14 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     m_expand_button->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "downarrowmouseover.png"), GG::X0, GG::Y0, GG::X(32), GG::Y(32)));
     GG::Connect(m_expand_button->ClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
-    // get owners, connect their production queue changed signals to update this panel
+    // get owner, connect its production queue changed signal to update this panel
     const UniverseObject* planet = GetObject(m_planet_id);
     if (!planet)
         planet = GetEmpireKnownObject(m_planet_id, HumanClientApp::GetApp()->EmpireID());
     if (planet) {
-        const std::set<int>& owners = planet->Owners();
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-            if (const Empire* empire = Empires().Lookup(*it)) {
-                const ProductionQueue& queue = empire->GetProductionQueue();
-                GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
-            }
+        if (const Empire* empire = Empires().Lookup(planet->Owner())) {
+            const ProductionQueue& queue = empire->GetProductionQueue();
+            GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::Refresh, this);
         }
     }
 
@@ -1698,37 +1693,35 @@ void BuildingsPanel::Update()
     }
 
     // get in-progress buildings
-    // may in future need to do this for all empires, but for now, just doing the empires that own the planet
-    const std::set<int>& owners = plt->Owners();
-    for (std::set<int>::const_iterator own_it = owners.begin(); own_it != owners.end(); ++own_it) {
-        const Empire* empire = Empires().Lookup(*own_it);
-        if (!empire) continue;  // shouldn't be a problem... maybe put check for it later
-        const ProductionQueue& queue = empire->GetProductionQueue();
+    const Empire* empire = Empires().Lookup(plt->Owner());
+    if (!empire)
+        return;
 
-        int queue_index = 0;
-        for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it, ++queue_index) {
-            const ProductionQueue::Element elem = *queue_it;
+    const ProductionQueue& queue = empire->GetProductionQueue();
 
-            BuildType type = elem.item.build_type;
-            if (type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
-            int location = elem.location;
-            if (location != plt->ID()) continue;    // don't show buildings located elsewhere
+    int queue_index = 0;
+    for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it, ++queue_index) {
+        const ProductionQueue::Element elem = *queue_it;
 
-            const BuildingType* building_type = GetBuildingType(elem.item.name);
+        BuildType type = elem.item.build_type;
+        if (type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
+        int location = elem.location;
+        if (location != plt->ID()) continue;    // don't show buildings located elsewhere
 
-            double turn_cost;
-            int turns;
-            boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(type, elem.item.name);
+        const BuildingType* building_type = GetBuildingType(elem.item.name);
 
-            double progress = empire->ProductionStatus(queue_index);
-            if (progress == -1.0) progress = 0.0;
+        double turn_cost;
+        int turns;
+        boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(type, elem.item.name);
 
-            double partial_turn = std::fmod(progress, turn_cost) / turn_cost;
-            int turns_completed = static_cast<int>(progress / turn_cost);
+        double progress = empire->ProductionStatus(queue_index);
+        if (progress == -1.0) progress = 0.0;
 
-            BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type, turns, turns_completed, partial_turn);
-            m_building_indicators.push_back(ind);
-        }
+        double partial_turn = std::fmod(progress, turn_cost) / turn_cost;
+        int turns_completed = static_cast<int>(progress / turn_cost);
+
+        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type, turns, turns_completed, partial_turn);
+        m_building_indicators.push_back(ind);
     }
 }
 
@@ -2874,12 +2867,8 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         switch (info_it->cause_type) {
         case ECT_TECH:
-            if (source->Owners().size() == 1) {
-                empire_id = *(source->Owners().begin());
-                empire = EmpireManager().Lookup(empire_id);
-                if (empire)
+            if (empire = Empires().Lookup(source->Owner()))
                     name = empire->Name();
-            }
             text += boost::io::str(FlexibleFormat(UserString("TT_TECH")) % name % UserString(info_it->specific_cause));
             break;
 

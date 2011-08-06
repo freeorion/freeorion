@@ -134,8 +134,8 @@ void Missile::Init(const Ship& launcher,
                    const OpenSteer::Vec3& position_,
                    const OpenSteer::Vec3& direction)
 {
-    assert(launcher.Owners().size() == 1u);
-    m_empire_id = *launcher.Owners().begin();
+    assert(!launcher.Unowned());
+    m_empire_id = launcher.Owner();
 
     m_stats.m_damage =      launcher.GetMeter(METER_DAMAGE,     m_part_name)->Current();
     m_stats.m_ROF =         launcher.GetMeter(METER_ROF,        m_part_name)->Current();

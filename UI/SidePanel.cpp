@@ -1061,7 +1061,7 @@ void SidePanel::PlanetPanel::Refresh()
     // determine the ownership status of planet with respect to this client's player's empire
     enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
 
-    if (planet->Owners().empty() || planet->IsAboutToBeColonized()) {
+    if (planet->Unowned() || planet->IsAboutToBeColonized()) {
         owner = OS_NONE;
     } else {
         if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1073,8 +1073,8 @@ void SidePanel::PlanetPanel::Refresh()
 
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
-    if (!planet->Owners().empty() && m_planet_name) {
-        if (Empire* planet_empire = Empires().Lookup(*(planet->Owners().begin()))) {
+    if (!planet->Unowned() && m_planet_name) {
+        if (Empire* planet_empire = Empires().Lookup(planet->Owner())) {
             m_empire_colour = planet_empire->Color();
             m_planet_name->SetTextColor(planet_empire->Color());
         } else {
@@ -1376,6 +1376,8 @@ void SidePanel::PlanetPanel::ClickColonize()
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return;
 
     std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
@@ -1387,8 +1389,8 @@ void SidePanel::PlanetPanel::ClickColonize()
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
             return;
         }
-        if (!ship->OwnedBy(empire_id) || ship->Owners().size() > 1) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by just this client's player.";
+        if (!ship->OwnedBy(empire_id)) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize selected colony ship not owned by this client's empire.";
             return;
         }
         const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
@@ -2056,7 +2058,7 @@ void SidePanel::RefreshImpl()
     std::vector<int> owned_planets;
     for (std::vector<int>::const_iterator it = known_system_planet_ids.begin(); it != known_system_planet_ids.end(); ++it) {
         const Planet* planet = GetObject<Planet>(*it);
-        if (planet && planet->WhollyOwnedBy(empire_id))
+        if (planet && planet->OwnedBy(empire_id))
             owned_planets.push_back(*it);
     }
 

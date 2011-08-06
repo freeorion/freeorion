@@ -549,7 +549,7 @@ BuildingType
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_INDUSTRY"
             ]
             activation = OwnerHasTech "PRO_INDUSTRY_CENTER_III"
@@ -609,7 +609,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_FARMING"
             ]
             activation = Not WithinDistance 500 And [
@@ -622,7 +622,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_INDUSTRY"
             ]
             activation = Not WithinDistance 500 And [
@@ -635,7 +635,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
             activation = Not WithinDistance 500 And [
@@ -648,7 +648,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 PopulationCenter
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_MINING"
             ]
             activation = Not WithinDistance 500 And [
@@ -791,7 +791,7 @@ BuildingType
     buildcost = 800
     buildtime = 3
     maintenancecost = 0
-    location = OwnedExclusivelyBy TheEmpire Source.Owner
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope = Contains Source
@@ -821,7 +821,7 @@ BuildingType
             scope = And [
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
             ]
             activation = Star type = [Blue White]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -831,7 +831,7 @@ BuildingType
             scope = And [
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
             ]
             activation = Star type = [Yellow Orange]
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -841,7 +841,7 @@ BuildingType
             scope = And [
                 ContainedBy Contains Source
                 Focus "FOCUS_INDUSTRY"
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
             ]
             activation = Star type = Red
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
@@ -866,7 +866,7 @@ BuildingType
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
             activation = Source
@@ -948,7 +948,7 @@ BuildingType
     buildtime = 16
     maintenancecost = 0
     location = And [
-        OwnedExclusivelyBy TheEmpire Source.Owner
+        OwnedBy TheEmpire Source.Owner
         Not Planet environment = [Uninhabitable Good]
     ]
     effectsgroups = [
@@ -1044,7 +1044,7 @@ BuildingType
     buildtime = 1
     maintenancecost = 0
     location = And [
-        OwnedExclusivelyBy TheEmpire Source.Owner
+        OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
         EffectsGroup
@@ -1101,7 +1101,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 Focus "FOCUS_INDUSTRY"
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
             ]
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
@@ -1124,7 +1124,7 @@ BuildingType
     buildtime = 5
     maintenancecost = 0
     location = And [
-        OwnedExclusivelyBy TheEmpire Source.Owner
+        OwnedBy TheEmpire Source.Owner
         Not Planet type = Asteroids
     ]
     graphic = ""
@@ -1192,7 +1192,7 @@ BuildingType
     buildcost = 800
     buildtime = 3
     maintenancecost = 0
-    location = OwnedExclusivelyBy TheEmpire Source.Owner
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope = Contains Source
@@ -1225,7 +1225,7 @@ BuildingType
     buildcost = 450
     buildtime = 10
     maintenancecost = 0
-    location = OwnedExclusivelyBy TheEmpire Source.Owner
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope = And [

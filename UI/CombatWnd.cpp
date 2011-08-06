@@ -1870,7 +1870,7 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship)
 
     Ogre::MaterialPtr ship_material =
         Ogre::MaterialManager::getSingleton().getByName("ship");
-    std::string modified_material_name = ShipMaterialName(ship_design, *ship.Owners().begin());
+    std::string modified_material_name = ShipMaterialName(ship_design, ship.Owner());
     Ogre::MaterialPtr& modified_material = m_ship_materials[modified_material_name];
     if (!modified_material.get()) {
         modified_material = ship_material->clone(modified_material_name);
@@ -1889,8 +1889,8 @@ const Ogre::MaterialPtr& CombatWnd::GetShipMaterial(const Ship& ship)
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("skybox_light_color", GetSystemColor("sky_box_1"));
 
-    assert(ship.Owners().size() == 1u);
-    GG::Clr color = Empires().Lookup(*ship.Owners().begin())->Color();
+    assert(!ship.Unowned());
+    GG::Clr color = Empires().Lookup(ship.Owner())->Color();
     modified_material->getTechnique(0)->getPass(1)->getFragmentProgramParameters()->
         setNamedConstant("decal_color", Ogre::Vector3(color.r / 255.0, color.g / 255.0, color.b / 255.0));
 

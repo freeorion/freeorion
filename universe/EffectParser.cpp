@@ -204,8 +204,7 @@ namespace {
         SetPlanetTypeRule               set_planet_type;
         SetPlanetSizeRule               set_planet_size;
         StringRefVecRule                set_species;
-        EmpireParamRule                 add_owner;
-        EmpireParamRule                 remove_owner;
+        EmpireParamRule                 set_owner;
         CreatePlanetRule                create_planet;
         CreateBuildingRule              create_building;
         CreateShipRule                  create_ship;
@@ -391,15 +390,10 @@ namespace {
              >> name_label >> string_expr_p[set_species.name = arg1])
             [set_species.this_ = new_<Effect::SetSpecies>(set_species.name)];
 
-        add_owner =
-            (str_p("addowner")
-             >> empire_label >> int_expr_p[add_owner.empire = arg1])
-            [add_owner.this_ = new_<Effect::AddOwner>(add_owner.empire)];
-
-        remove_owner =
-            (str_p("removeowner")
-             >> empire_label >> int_expr_p[remove_owner.empire = arg1])
-            [remove_owner.this_ = new_<Effect::RemoveOwner>(remove_owner.empire)];
+        set_owner =
+            (str_p("setowner")
+             >> empire_label >> int_expr_p[set_owner.empire = arg1])
+            [set_owner.this_ = new_<Effect::SetOwner>(set_owner.empire)];
 
         create_planet =
             (str_p("createplanet")
@@ -515,8 +509,7 @@ namespace {
             | set_planet_type[effect_p.this_ = arg1]
             | set_planet_size[effect_p.this_ = arg1]
             | set_species[effect_p.this_ = arg1]
-            | add_owner[effect_p.this_ = arg1]
-            | remove_owner[effect_p.this_ = arg1]
+            | set_owner[effect_p.this_ = arg1]
             | create_planet[effect_p.this_ = arg1]
             | create_building[effect_p.this_ = arg1]
             | create_ship[effect_p.this_ = arg1]

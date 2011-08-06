@@ -167,6 +167,11 @@ int System::Orbits() const
     return m_orbits;
 }
 
+const std::set<int>& System::ControllingEmpireIDs() const
+{
+    return m_empires_with_planets_here;
+}
+
 int System::NumStarlanes() const
 {
     int retval = 0;
@@ -500,11 +505,14 @@ bool System::RemoveWormhole(int id)
     return retval;
 }
 
-void System::AddOwner(int id)
-{}  ///< adding owner to system objects is a no-op
-
-void System::RemoveOwner(int id)
-{}  ///< removing owner from system objects is a no-op
+void System::UpdateOwnership()
+{
+    m_empires_with_planets_here.clear();
+    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        if (Planet* planet = GetMainObjectMap().Object<Planet>(it->second))
+            if (!planet->Unowned())
+                m_empires_with_planets_here.insert(planet->Owner());
+}
 
 void System::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
@@ -659,21 +667,6 @@ System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const
             retval.insert(*it);
     }
     return retval;
-}
-
-void System::UpdateOwnership()
-{
-    std::set<int> owners = Owners();
-    for (std::set<int>::iterator it = owners.begin(); it != owners.end(); ++it) {
-        UniverseObject::RemoveOwner(*it);
-    }
-    for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
-        if (Planet* planet = GetMainObjectMap().Object<Planet>(it->second)) {
-            for (std::set<int>::const_iterator it2 = planet->Owners().begin(); it2 != planet->Owners().end(); ++it2) {
-                UniverseObject::AddOwner(*it2);
-            }
-        }
-    }
 }
 
 

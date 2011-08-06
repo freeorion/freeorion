@@ -566,8 +566,7 @@ enum CaptureResult {
     INVALID_CAPTURE_RESULT = -1,
     CR_CAPTURE,    // object has ownership by original empire(s) removed, and conquering empire added
     CR_DESTROY,    // object is destroyed
-    CR_RETAIN,     // object ownership unchanged: original empire(s) still own object
-    CR_SHARE       // object has ownership by conquering empire added, while still retaining ownership by original empire(s)
+    CR_RETAIN      // object ownership unchanged: original empire(s) still own object
 };
 
 /** Types of in-game things that might contain an EffectsGroup, or "cause" effects to occur */

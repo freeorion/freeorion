@@ -85,8 +85,8 @@ namespace {
                             const std::map<int, std::set<int> >& empires_by_starlane,
                             std::vector<CombatSetupGroup>& setup_groups)
     {
-        assert(arriving_fleets_by_starlane.begin()->second.back()->Owners().size() == 1u);
-        int owner = *arriving_fleets_by_starlane.begin()->second.back()->Owners().begin();
+        assert(!arriving_fleets_by_starlane.begin()->second.back()->Unowned());
+        int owner = arriving_fleets_by_starlane.begin()->second.back()->Owner();
         for (std::map<int, std::vector<Fleet*> >::const_iterator it = arriving_fleets_by_starlane.begin();
              it != arriving_fleets_by_starlane.end();
              ++it)
@@ -604,8 +604,8 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
             }
         } else if (Fleet* fleet =
                    universe_object_cast<Fleet*>(m_combat_universe[it->second])) {
-            assert(fleet->Owners().size() == 1u);
-            int owner = *fleet->Owners().begin();
+            assert(!fleet->Unowned());
+            int owner = fleet->Owner();
             if (fleet->ArrivedThisTurn()) {
                 int starlane = fleet->ArrivalStarlane();
                 arriving_fleets_by_starlane_by_empire[owner][starlane].push_back(fleet);

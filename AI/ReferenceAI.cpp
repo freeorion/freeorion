@@ -72,8 +72,8 @@ void ReferenceAI::Explore(Fleet* fleet) {
     int empire_id = AIInterface::EmpireID();
 
     // ensure this player owns this fleet
-    const std::set<int>& owners = fleet->Owners();
-    if (owners.size() != 1 || *(owners.begin()) != empire_id) return; // don't own fleet
+    if (!fleet->OwnedBy(empire_id))
+        return;
 
     const Empire* empire = AIInterface::GetEmpire();
     if (!empire) throw std::runtime_error("Couldn't get pointer to empire when telling fleet to Explore");
@@ -124,18 +124,16 @@ void ReferenceAI::SplitFleet(Fleet* fleet)
     int empire_id = AIInterface::EmpireID();
 
     // ensure this player owns this fleet
-    const std::set<int>& owners = fleet->Owners();
-
-    if (owners.size() != 1 || *(owners.begin()) != empire_id) return; // don't own fleet
+    if (!fleet->OwnedBy(empire_id))
+        return;
 
     // starting with second ship, pick ships to transfer to new fleets
     std::set<int> ship_ids_to_remove;
     for (Fleet::iterator ship_it = ++(fleet->begin()); ship_it != fleet->end(); ++ship_it) {
 
         const Ship* ship = objects.Object<Ship>(*ship_it);
-        const std::set<int>& ship_owners = ship->Owners();
-
-        if (ship_owners.size() != 1 || *(ship_owners.begin()) != empire_id) continue; // don't own ship
+        if (!ship->OwnedBy(empire_id))
+            continue;
 
         ship_ids_to_remove.insert(*ship_it);
     }

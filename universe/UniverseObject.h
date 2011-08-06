@@ -70,7 +70,7 @@ public:
     const std::string&          Name() const;                       ///< returns the name of this object; some valid objects will have no name
     double                      X() const;                          ///< the X-coordinate of this object
     double                      Y() const;                          ///< the Y-coordinate of this object
-    const std::set<int>&        Owners() const;                     ///< returns the set of IDs of Empires owning all or part of this object.  \note This may be empty or have an arbitrary number of elements.
+    int                         Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
     const std::set<std::string>&Specials() const;                   ///< returns the set of names of the Specials attached to this object
 
@@ -88,8 +88,7 @@ public:
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
 
     bool                        Unowned() const;                    ///< returns true iff there are no owners of this object
-    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire is an owner of this object
-    bool                        WhollyOwnedBy(int empire) const;    ///< returns true iff the empire with id \a empire is the only owner of this object
+    bool                        OwnedBy(int empire) const;          ///< returns true iff the empire with id \a empire owns this object
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
     virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
@@ -132,9 +131,8 @@ public:
     Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     void                    BackPropegateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
 
-    virtual void            AddOwner(int id);                       ///< adds the Empire with ID \a id to the list of owners of this object
-    virtual void            RemoveOwner(int id);                    ///< removes the Empire with ID \a id to the list of owners of this object
-    virtual void            ClearOwners();                          ///< removes all empires from list of owners of this object
+    virtual void            SetOwner(int id);                       ///< sets the empire that owns this object
+
     virtual void            SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
     virtual void            AddSpecial(const std::string& name);    ///< adds the Special \a name to this object, if it is not already present
     virtual void            RemoveSpecial(const std::string& name); ///< removes the Special \a name from this object, if it is already present
@@ -184,7 +182,7 @@ private:
     std::string                 m_name;
     double                      m_x;
     double                      m_y;
-    std::set<int>               m_owners;
+    int                         m_owner_empire_id;
     int                         m_system_id;
     std::set<std::string>       m_specials;
     std::map<MeterType, Meter>  m_meters;

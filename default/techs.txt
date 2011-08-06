@@ -233,7 +233,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
             effects = SetTargetResearch Value + 5
@@ -255,7 +255,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
@@ -329,7 +329,7 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
                 Star type = BlackHole
                 Focus "FOCUS_RESEARCH"
@@ -338,7 +338,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
                 Star type = Neutron
                 Focus "FOCUS_RESEARCH"
@@ -347,7 +347,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
                 Star type = [Blue White]
                 Focus "FOCUS_RESEARCH"
@@ -356,7 +356,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
                 Star type = [Red Orange Yellow]
                 Focus "FOCUS_RESEARCH"
@@ -455,10 +455,7 @@ Tech
                 Ship
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
-            effects = [
-                RemoveOwner Target.Owner
-                AddOwner Source.Owner
-            ]
+            effects = SetOwner Source.Owner
     graphic = ""
 
 Tech
@@ -767,7 +764,7 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                    OwnedExclusivelyBy TheEmpire Source.Owner
+                    OwnedBy TheEmpire Source.Owner
                     Focus "FOCUS_FARMING"
                     Planet environment = Good
             ]
@@ -775,7 +772,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_FARMING"
                 Planet environment = Adequate
             ]
@@ -796,7 +793,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
                 Not TargetPopulation low = 1 high = 999
             ]
@@ -929,7 +926,7 @@ Tech
     unlock = []
     effectsgroups =
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             effects = SetTargetFarming Value + 2
     graphic = "icons/tech/orbital_farming.png"
 
@@ -1432,14 +1429,14 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Ship
             ]
             effects = SetMaxFuel Value + 2
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
             ]
             effects = [
@@ -1449,7 +1446,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Focus "FOCUS_FARMING"
             ]
@@ -1457,7 +1454,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Focus "FOCUS_MINING"
             ]
@@ -1465,7 +1462,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Focus "FOCUS_INDUSTRY"
             ]
@@ -1473,7 +1470,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 PopulationCenter
                 Focus "FOCUS_RESEARCH"
             ]
@@ -2112,7 +2109,7 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet environment = Good
                 Planet size = Tiny
             ]
@@ -2120,7 +2117,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet environment = Good
                 Planet size = Small
             ]
@@ -2128,7 +2125,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet environment = Good
                 Planet size = Medium
             ]
@@ -2136,7 +2133,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet environment = Good
                 Planet size = Large
             ]
@@ -2144,7 +2141,7 @@ Tech
 
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet environment = Good
                 Planet size = Huge
             ]
@@ -3842,7 +3839,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
             ]
             effects = SetDefense Value + 5
@@ -3861,7 +3858,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_PLAN_BARRIER_SHLD"
@@ -3967,7 +3964,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
             ]
             effects = SetMaxDefense Value + 15
@@ -3998,7 +3995,7 @@ Tech
     effectsgroups =
         EffectsGroup
             scope = And [
-                OwnedExclusivelyBy TheEmpire Source.Owner
+                OwnedBy TheEmpire Source.Owner
                 Planet
             ]
             effects = SetMaxShield Value + 45

@@ -230,7 +230,7 @@ struct Condition::All : public Condition::ConditionBase
   * \a affilitation with Empire \a empire_id. */
 struct Condition::EmpireAffiliation : public Condition::ConditionBase
 {
-    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation, bool exclusive);
+    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
     virtual ~EmpireAffiliation();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
@@ -246,7 +246,6 @@ private:
 
     const ValueRef::ValueRefBase<int>* m_empire_id;
     EmpireAffiliationType              m_affiliation;
-    bool                               m_exclusive;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1138,8 +1137,7 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_affiliation)
-        & BOOST_SERIALIZATION_NVP(m_exclusive);
+        & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
 
 template <class Archive>

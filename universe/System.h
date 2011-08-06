@@ -65,6 +65,8 @@ public:
     StarType                GetStarType() const;                        ///< returns the type of star for this system
     int                     Orbits() const;                             ///< returns the number of orbits in this system
 
+    const std::set<int> &   ControllingEmpireIDs() const;               ///< returns empires which control planets in this system (may be empty)
+
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
     bool                    HasStarlaneTo(int id) const;                ///< returns true if there is a starlane from this system to the system with ID number \a id
@@ -148,9 +150,8 @@ public:
     bool                    RemoveStarlane(int id);         ///< removes a starlane between this system and the system with ID number \a id.  Returns false if there was no starlane from this system to system \a id.
     bool                    RemoveWormhole(int id);         ///< removes a wormhole between this system and the system with ID number \a id.  Returns false if there was no wormhole from this system to system \a id.
 
-    virtual void            AddOwner(int id);               ///< adding owner to system objects is a no-op
-    virtual void            RemoveOwner(int id);            ///< removing owner from system objects is a no-op
-    void                    UpdateOwnership();
+    virtual void            SetOwner(int id) {};            ///< adding owner to system objects is a no-op
+    void                    UpdateOwnership();              ///< refresh set of empire ids which control planets in this system
 
     orbit_iterator          begin();                        ///< begin iterator for all system objects
     orbit_iterator          end();                          ///< end iterator for all system objects
@@ -172,10 +173,11 @@ private:
       * \a empire_id */
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;
 
+    std::set<int>   m_empires_with_planets_here;    ///< ids of empires that control planets in this system
     StarType        m_star;
     int             m_orbits;
-    ObjectMultimap  m_objects;              ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
-    StarlaneMap     m_starlanes_wormholes;  ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
+    StarlaneMap     m_starlanes_wormholes;          ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
 
     friend class boost::serialization::access;
     template <class Archive>

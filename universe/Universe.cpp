@@ -1608,42 +1608,36 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
 }
 
 namespace {
-    /** Sets visibilities for indicated \a empires of object with \a object_id
+    /** Sets visibilities for indicated \a empire of object with \a object_id
       * in the passed-in \a empire_vis_map to \a vis */
     void SetEmpireObjectVisibility(Universe::EmpireObjectVisibilityMap& empire_vis_map,
                                    std::map<int, std::set<int> >& empire_known_design_ids,
-                                   const std::set<int>& empires,
-                                   int object_id,
-                                   Visibility vis)
+                                   int empire_id, int object_id, Visibility vis)
     {
-        for (std::set<int>::const_iterator empire_it = empires.begin(); empire_it != empires.end(); ++empire_it) {
-            int empire_id = *empire_it;
+        // get visibility map for empire and find object in it
+        Universe::ObjectVisibilityMap& vis_map = empire_vis_map[empire_id];
+        Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
 
-            // get visibility map for empire and find object in it
-            Universe::ObjectVisibilityMap& vis_map = empire_vis_map[empire_id];
-            Universe::ObjectVisibilityMap::iterator vis_map_it = vis_map.find(object_id);
+        // if object not already present, store default value (which may be replaced)
+        if (vis_map_it == vis_map.end()) {
+            vis_map[object_id] = VIS_NO_VISIBILITY;
 
-            // if object not already present, store default value (which may be replaced)
-            if (vis_map_it == vis_map.end()) {
-                vis_map[object_id] = VIS_NO_VISIBILITY;
+            // get iterator pointing at newly-created entry
+            vis_map_it = vis_map.find(object_id);
+        }
 
-                // get iterator pointing at newly-created entry
-                vis_map_it = vis_map.find(object_id);
-            }
+        // increase stored value if new visibility is higher than last recorded
+        if (vis > vis_map_it->second)
+            vis_map_it->second = vis;
 
-            // increase stored value if new visibility is higher than last recorded
-            if (vis > vis_map_it->second)
-                vis_map_it->second = vis;
-
-            // if object is a ship, empire also gets knowledge of its design
-            if (vis >= VIS_PARTIAL_VISIBILITY) {
-                if (const Ship* ship = GetObject<Ship>(object_id)) {
-                    int design_id = ship->DesignID();
-                    if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-                        Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
-                    } else {
-                        empire_known_design_ids[empire_id].insert(design_id);
-                    }
+        // if object is a ship, empire also gets knowledge of its design
+        if (vis >= VIS_PARTIAL_VISIBILITY) {
+            if (const Ship* ship = GetObject<Ship>(object_id)) {
+                int design_id = ship->DesignID();
+                if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+                    Logger().errorStream() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
+                } else {
+                    empire_known_design_ids[empire_id].insert(design_id);
                 }
             }
         }
@@ -1674,7 +1668,8 @@ void Universe::UpdateEmpireObjectVisibilities()
             all_empire_ids.insert(empire_it->first);
 
         for (ObjectMap::const_iterator obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it)
-            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, all_empire_ids, obj_it->first, VIS_FULL_VISIBILITY);
+            for (std::set<int>::const_iterator empire_it = all_empire_ids.begin(); empire_it != all_empire_ids.end(); ++empire_it)
+                SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, *empire_it, obj_it->first, VIS_FULL_VISIBILITY);
 
         return;
     }
@@ -1690,12 +1685,11 @@ void Universe::UpdateEmpireObjectVisibilities()
 
 
         // get owners of detector
-        const std::set<int> detector_owners = detector->Owners();
-        if (detector_owners.empty()) continue;  // no point in continuing if object has no owners... no-one can get vision from this object
-
+        if (detector->Unowned())
+            continue;
 
         // owners of an object get full visibility of it
-        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector_owners, detector_id, VIS_FULL_VISIBILITY);
+        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector->Owner(), detector_id, VIS_FULL_VISIBILITY);
 
 
         // get detection ability
@@ -1779,7 +1773,7 @@ void Universe::UpdateEmpireObjectVisibilities()
             int target_id = target->ID();
 
             // if target visible to detector, update visibility of target for all empires that own detector
-            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector_owners, target_id, target_visibility_to_detector);
+            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector->Owner(), target_id, target_visibility_to_detector);
         }
     }
 
@@ -1930,28 +1924,24 @@ void Universe::UpdateEmpireObjectVisibilities()
             int prev = fleet->PreviousSystemID();
             int next = fleet->NextSystemID();
 
-            // for each empire that owns the fleet, ensure that empire has
-            // at least basic visibility of the next and previous systems
-            // on the fleet's path
-            const std::set<int>& owners = fleet->Owners();
-            for (std::set<int>::const_iterator empire_it = owners.begin(); empire_it != owners.end(); ++empire_it) {
-                ObjectVisibilityMap& vis_map = m_empire_object_visibility[*empire_it];
+            // ensure fleet's owner has at least basic visibility of the next
+            // and previous systems on the fleet's path
+            ObjectVisibilityMap& vis_map = m_empire_object_visibility[fleet->Owner()];
 
-                ObjectVisibilityMap::iterator system_vis_it = vis_map.find(prev);
-                if (system_vis_it == vis_map.end()) {
-                    vis_map[prev] = VIS_BASIC_VISIBILITY;
-                } else {
-                    if (system_vis_it->second < VIS_BASIC_VISIBILITY)
-                        system_vis_it->second = VIS_BASIC_VISIBILITY;
-                }
+            ObjectVisibilityMap::iterator system_vis_it = vis_map.find(prev);
+            if (system_vis_it == vis_map.end()) {
+                vis_map[prev] = VIS_BASIC_VISIBILITY;
+            } else {
+                if (system_vis_it->second < VIS_BASIC_VISIBILITY)
+                    system_vis_it->second = VIS_BASIC_VISIBILITY;
+            }
 
-                system_vis_it = vis_map.find(next);
-                if (system_vis_it == vis_map.end()) {
-                    vis_map[next] = VIS_BASIC_VISIBILITY;
-                } else {
-                    if (system_vis_it->second < VIS_BASIC_VISIBILITY)
-                        system_vis_it->second = VIS_BASIC_VISIBILITY;
-                }
+            system_vis_it = vis_map.find(next);
+            if (system_vis_it == vis_map.end()) {
+                vis_map[next] = VIS_BASIC_VISIBILITY;
+            } else {
+                if (system_vis_it->second < VIS_BASIC_VISIBILITY)
+                    system_vis_it->second = VIS_BASIC_VISIBILITY;
             }
         }
     }
@@ -4618,11 +4608,8 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         Logger().debugStream() << "Universe::GenerateEmpires Setting " << home_system->Name() << " (Planet #" <<  home_planet->ID()
                                << ") to be home system for Empire " << empire_id;
 
-        home_planet->AddOwner(empire_id);
-        //home_system->AddOwner(empire_id);   // should be redundant
-
+        home_planet->SetOwner(empire_id);
         empire->SetCapitalID(home_planet->ID());
-
         empire->AddExploredSystem(home_planet->SystemID());
 
         home_planet->SetSpecies(empire_starting_species);

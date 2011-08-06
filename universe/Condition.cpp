@@ -644,10 +644,9 @@ std::string Condition::All::Dump() const
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation, bool exclusive) :
+Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
     m_empire_id(empire_id),
-    m_affiliation(affiliation),
-    m_exclusive(exclusive)
+    m_affiliation(affiliation)
 {}
 
 Condition::EmpireAffiliation::~EmpireAffiliation()
@@ -657,39 +656,22 @@ Condition::EmpireAffiliation::~EmpireAffiliation()
 
 namespace {
     bool EmpireAffiliationSimpleMatch(const UniverseObject* candidate, int empire_id,
-                                      EmpireAffiliationType affiliation, bool exclusive)
+                                      EmpireAffiliationType affiliation)
     {
         if (!candidate)
             return false;
 
         switch (affiliation) {
         case AFFIL_SELF:
-            if (exclusive) {
-                // candidate object owned only by specified empire
-                return candidate->WhollyOwnedBy(empire_id);
-            } else {
-                // candidate object owned by specified empire, and possibly others
-                return candidate->OwnedBy(empire_id);
-            }
+            return empire_id != ALL_EMPIRES && candidate->OwnedBy(empire_id);
             break;
         case AFFIL_ENEMY:
-            if (exclusive) {
-                // candidate has an owner, but isn't owned by specified empire
-                return (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id));
-            } else {
-                // at least one of candidate's owners is not specified empire, but specified empire may also own candidate
-                return (candidate->Owners().size() > 1 ||
-                        (!candidate->Owners().empty() && !candidate->OwnedBy(empire_id))
-                       );
-            }
-            break;
-        case AFFIL_ALLY:
-            // TODO
+            return empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(empire_id);
             break;
         default:
+            return false;
             break;
         }
-        return false;
     }
 }
 
@@ -709,7 +691,7 @@ void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, 
         ObjectSet::iterator end_it = from_set.end();
         for ( ; it != end_it; ) {
             ObjectSet::iterator temp = it++;
-            bool match = EmpireAffiliationSimpleMatch(*temp, empire_id, m_affiliation, m_exclusive);
+            bool match = EmpireAffiliationSimpleMatch(*temp, empire_id, m_affiliation);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
                 to_set.insert(*temp);
                 from_set.erase(temp);
@@ -734,12 +716,12 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
                                 Empires().Lookup(m_empire_id->Eval())->Name() :
                                 m_empire_id->Description();
     if (m_affiliation == AFFIL_SELF) {
-        std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION_SELF";
+        std::string description_str = "DESC_EMPIRE_AFFILIATION_SELF";
         if (negated)
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str)) % value_str);
     } else {
-        std::string description_str = m_exclusive ? "DESC_EMPIRE_AFFILIATION_EXCLUSIVE" : "DESC_EMPIRE_AFFILIATION";
+        std::string description_str = "DESC_EMPIRE_AFFILIATION";
         if (negated)
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str))
@@ -750,7 +732,7 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
 
 std::string Condition::EmpireAffiliation::Dump() const
 {
-    std::string retval = DumpIndent() + (m_exclusive ? "OwnedExclusivelyBy" : "OwnedBy");
+    std::string retval = DumpIndent() + "OwnedBy";
     retval += " affiliation = ";
     switch (m_affiliation) {
     case AFFIL_SELF:  retval += "TheEmpire"; break;
@@ -772,7 +754,7 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 
     int empire_id = m_empire_id->Eval(local_context);
 
-    return EmpireAffiliationSimpleMatch(candidate, empire_id, m_affiliation, m_exclusive);
+    return EmpireAffiliationSimpleMatch(candidate, empire_id, m_affiliation);
 }
 
 ///////////////////////////////////////////////////////////
@@ -3202,10 +3184,10 @@ namespace {
         if (!candidate)
             return false;
 
-        if (candidate->Owners().size() != 1)
+        if (candidate->Unowned())
             return false;
 
-        const Empire* empire = Empires().Lookup(*candidate->Owners().begin());
+        const Empire* empire = Empires().Lookup(candidate->Owner());
         if (!empire)
             return false;
 
@@ -3326,10 +3308,10 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
         return false;
     }
 
-    if (candidate->Owners().size() != 1)
+    if (candidate->Unowned())
         return false;
 
-    if (const Empire* empire = Empires().Lookup(*candidate->Owners().begin()))
+    if (const Empire* empire = Empires().Lookup(candidate->Owner()))
         return empire->TechResearched(m_name);
     else
         return false;

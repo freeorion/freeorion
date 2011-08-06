@@ -1187,7 +1187,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -1196,7 +1196,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -1744,7 +1744,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -1753,7 +1753,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -2301,7 +2301,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -2310,7 +2310,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -2858,7 +2858,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -2867,7 +2867,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -3415,7 +3415,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -3424,7 +3424,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -3972,7 +3972,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -3981,7 +3981,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -4529,7 +4529,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -4538,7 +4538,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -5086,7 +5086,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -5095,7 +5095,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -5643,7 +5643,7 @@ Species
             effects = SetSupply Value + Target.Population * 0.5
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_FARMING"
             stackinggroup = "REPLICATION_STACK"
             effects = [
@@ -5652,7 +5652,7 @@ Species
             ]
 
         EffectsGroup
-            scope = OwnedExclusivelyBy TheEmpire Source.Owner
+            scope = OwnedBy TheEmpire Source.Owner
             activation = Focus "FOCUS_REPLIC_MINING"
             stackinggroup = "REPLICATION_STACK"
             effects = [

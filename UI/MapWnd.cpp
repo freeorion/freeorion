@@ -1433,25 +1433,32 @@ void MapWnd::RenderVisibilityRadii() {
         if (known_destroyed_object_ids.find(object_id) != known_destroyed_object_ids.end())
             continue;
 
-        // if this object has the largest yet checked visibility range at this location, update the location's range
         const UniverseObject* obj = it->second;
-        if (const Meter* detection_meter = obj->GetMeter(METER_DETECTION)) {
-            double X = obj->X();
-            double Y = obj->Y();
-            double D = detection_meter->Current() - STEALTH_THRESHOLD;
-            if (D <= 0.0)
-                continue;   // skip objects that don't contribute detection (at the current stealth threshold)
-            const std::set<int>& owners = obj->Owners();
-            for (std::set<int>::const_iterator empire_it = owners.begin(); empire_it != owners.end(); ++empire_it) {
-                // find this empires entry for this location, if any
-                std::pair<int, std::pair<double, double> > key = std::make_pair(*empire_it, std::make_pair(X, Y));
-                std::map<std::pair<int, std::pair<double, double> >, double>::iterator range_it = empire_position_max_detection_ranges.find(key);
-                if (range_it != empire_position_max_detection_ranges.end()) {
-                    if (range_it->second < D) range_it->second = D; // update existing entry
-                } else {
-                    empire_position_max_detection_ranges[key] = D;  // add new entry to map
-                }
-            }
+
+        // skip unowned objects
+        if (obj->Unowned())
+            continue;
+
+        const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
+        if (!detection_meter)
+            continue;
+
+        // if this object has the largest yet checked visibility range at this location, update the location's range
+        double X = obj->X();
+        double Y = obj->Y();
+        double D = detection_meter->Current() - STEALTH_THRESHOLD;
+        // skip objects that don't contribute detection (at the current stealth threshold)
+        if (D <= 0.0)
+            continue;
+
+        // find this empires entry for this location, if any
+        std::pair<int, std::pair<double, double> > key = std::make_pair(obj->Owner(), std::make_pair(X, Y));
+        std::map<std::pair<int, std::pair<double, double> >, double>::iterator range_it =
+            empire_position_max_detection_ranges.find(key);
+        if (range_it != empire_position_max_detection_ranges.end()) {
+            if (range_it->second < D) range_it->second = D; // update existing entry
+        } else {
+            empire_position_max_detection_ranges[key] = D;  // add new entry to map
         }
     }
 
@@ -2547,36 +2554,23 @@ void MapWnd::SelectFleet(Fleet* fleet)
     // if there isn't a FleetWnd for this fleen open, need to open one
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
-        const std::set<int>& owners = fleet->Owners();
         System* system = GetObject<System>(fleet->SystemID());
-        int this_client_player_id = HumanClientApp::GetApp()->EmpireID();
-
 
         // create fleetwnd to show fleet to be selected (actual selection occurs below.
         if (system) {
-
             // determine whether this fleet's FleetWnd should be able to be manipulated by this
-            // this client's player.  players can only manipulate fleetwnds that contain their
-            // own fleets, so this client's player should only manipulate this fleet's fleetwnd
-            // if (one of) the fleet's owner(s) is this client's player.
-            //
+            // this client's empire.  players can only manipulate fleetwnds that contain their
+            // empire's fleets.
             // additionally, players can't give orders to fleets if they're away from a system
             // so even if the fleet is onwed by this client's player, if it's moving, the fleetwnd
             // is not manipulable.
-            bool read_only = true;
-            if (owners.find(this_client_player_id) != owners.end())
-                read_only = false;
+            bool read_only = (!fleet->Unowned() && fleet->Owner() == HumanClientApp::GetApp()->EmpireID());
 
             // get system in which fleet is located and (if possible) empire that owns it exclusively
             int system_id = system->ID();
 
-            int fleet_owner_empire_id = ALL_EMPIRES;
-            const std::set<int>& owners = fleet->Owners();
-            if (owners.size() == 1)
-                fleet_owner_empire_id = *(owners.begin());
-
             // create new fleetwnd in which to show selected fleet
-            fleet_wnd = manager.NewFleetWnd(system_id, fleet_owner_empire_id, read_only);
+            fleet_wnd = manager.NewFleetWnd(system_id, fleet->Owner(), read_only);
 
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
@@ -2645,10 +2639,8 @@ void MapWnd::SetFleetMovementLine(int fleet_id)
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const std::set<int>& owners = fleet->Owners();
-    if (owners.size() == 1)
-        if (Empire* empire = Empires().Lookup(*owners.begin()))
-            line_colour = empire->Color();
+    if (const Empire* empire = Empires().Lookup(fleet->Owner()))
+        line_colour = empire->Color();
 
     // create and store line
     m_fleet_lines[fleet_id] = MovementLineData(fleet->MovePath(), m_starlane_endpoints, line_colour);
@@ -2682,10 +2674,8 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
 
     // get colour: empire colour, or white if no single empire applicable
     GG::Clr line_colour = GG::CLR_WHITE;
-    const std::set<int>& owners = fleet->Owners();
-    if (owners.size() == 1)
-        if (Empire* empire = Empires().Lookup(*owners.begin()))
-            line_colour = empire->Color();
+    if (const Empire* empire = Empires().Lookup(fleet->Owner()))
+        line_colour = empire->Color();
 
     // create and store line
     m_projected_fleet_lines[fleet_id] = MovementLineData(path, m_starlane_endpoints, line_colour);
@@ -2887,14 +2877,8 @@ void MapWnd::RefreshFleetButtons()
             continue;
         }
 
-        // get owner of fleet
-        int empire_id = ALL_EMPIRES;
-        const std::set<int>& owners = fleet->Owners();
-        if (owners.size() == 1)
-            empire_id = *(owners.begin());
-
-        // store in map
-        departing_fleets[system][empire_id].push_back(fleet);
+        // store in map for this system and the fleet's owner empire
+        departing_fleets[system][fleet->Owner()].push_back(fleet);
     }
     departing_fleet_objects.clear();
 
@@ -2920,14 +2904,8 @@ void MapWnd::RefreshFleetButtons()
             continue;
         }
 
-        // get owner of fleet
-        int empire_id = ALL_EMPIRES;
-        const std::set<int>& owners = fleet->Owners();
-        if (owners.size() == 1)
-            empire_id = *(owners.begin());
-
-        // store in map
-        stationary_fleets[system][empire_id].push_back(fleet);
+        // store in map for the system and fleet's owner empire
+        stationary_fleets[system][fleet->Owner()].push_back(fleet);
     }
     stationary_fleet_objects.clear();
 
@@ -2952,14 +2930,8 @@ void MapWnd::RefreshFleetButtons()
             continue;
         }
 
-        // get owner of fleet
-        int empire_id = ALL_EMPIRES;
-        const std::set<int>& owners = fleet->Owners();
-        if (owners.size() == 1)
-            empire_id = *(owners.begin());
-
         // store in map
-        moving_fleets[std::make_pair(fleet->X(), fleet->Y())][empire_id].push_back(fleet);
+        moving_fleets[std::make_pair(fleet->X(), fleet->Y())][fleet->Owner()].push_back(fleet);
     }
     moving_fleet_objects.clear();
 
@@ -4312,7 +4284,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
                 continue;
 
             unowned_planets.insert(planet);
-            planet->AddOwner(empire_id);
+            planet->SetOwner(empire_id);
             planet->SetSpecies(species_name);
             Logger().debugStream() << "... Set planet(" << planet_id << "): " << planet->Name() << " species to " << species_name;
         }
@@ -4325,7 +4297,7 @@ void MapWnd::UpdateMeterEstimates(const std::vector<int>& objects_vec)
 
     // remove any temporary ownership added above
     for (std::set<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it) {
-        (*it)->RemoveOwner(empire_id);
+        (*it)->SetOwner(ALL_EMPIRES);
         (*it)->SetSpecies("");
     }
 

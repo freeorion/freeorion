@@ -518,14 +518,11 @@ namespace {
         if (ship->SystemID() != new_fleet->SystemID())
             return false;   // fleets need to be in same system.  probably redundant with checking position
 
-        const std::set<int>& ship_owners = ship->Owners();
-        const std::set<int>& fleet_owners = new_fleet->Owners();
+        if (ship->Unowned() || new_fleet->Unowned())
+            return false;   // need to own a ship to transfer it...
 
-        if (ship_owners.empty() || fleet_owners.empty())
-            return false;   // need to own a ship to move it...
-
-        if (ship_owners != fleet_owners)
-            return false;   // need to have same owner(s)
+        if (ship->Owner() != new_fleet->Owner())
+            return false;   // need to have same owner.
 
         // all tests passed.  can transfer
         return true;
@@ -541,8 +538,7 @@ namespace {
         if (ship->SystemID() != system_id)
             return false;   // ship at wrong system
 
-        const std::set<int>& owners = ship->Owners();
-        if (owners.find(empire) == owners.end())
+        if (!ship->OwnedBy(empire))
             return false;   // ship not owned by empire
 
         // all tests passed; valid ship
@@ -559,10 +555,10 @@ namespace {
         if (fleet->X() != target_fleet->X() || fleet->Y() != target_fleet->Y())
             return false;   // at different locations.
 
-        const std::set<int>& fleet_owners = fleet->Owners();
-        const std::set<int>& target_fleet_owners = target_fleet->Owners();
+        if (fleet->Unowned() || target_fleet->Unowned())
+            return false;
 
-        if (fleet_owners != target_fleet_owners)
+        if (fleet->Owner() != target_fleet->Owner())
             return false;   // different owners
 
         // all tests passed; can merge fleets
@@ -1998,9 +1994,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
 
     // verify that this client's player's empire owns this fleet.  if not, abort.
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const std::set<int>& owners = ship->Owners();
-
-    if (owners.find(empire_id) == owners.end())
+    if (!ship->OwnedBy(empire_id))
         return;
 
 
@@ -2645,9 +2639,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt)
     int empire_id = HumanClientApp::GetApp()->EmpireID();
 
     Fleet* fleet = GetObject<Fleet>(FleetInRow(it));
-    if (!fleet || fleet->Owners().size() != 1 || empire_id != *(fleet->Owners().begin())) {
+    if (!fleet || !fleet->OwnedBy(empire_id))
         return;
-    }
 
     const System* system = GetObject<System>(fleet->SystemID());    // may be null
 

@@ -522,20 +522,15 @@ namespace ValueRef {
             return object->InitialMeterValue(METER_FIGHTER_WEAPON_RANGE);
 
         } else if (boost::iequals(property_name, "TradeStockpile")) {
-            if (object->Owners().size() == 1) {
-                Empire* empire = Empires().Lookup(*object->Owners().begin());
+            if (Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
-            }
         } else if (boost::iequals(property_name, "MineralStockpile")) {
-            if (object->Owners().size() == 1) {
-                Empire* empire = Empires().Lookup(*object->Owners().begin());
+            if (Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_MINERALS);
-            }
         } else if (boost::iequals(property_name, "FoodStockpile")) {
-            if (object->Owners().size() == 1) {
-                Empire* empire = Empires().Lookup(*object->Owners().begin());
+            if (Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_FOOD);
-            }
+
         } else if (boost::iequals(property_name, "DistanceToSource")) {
             if (!context.source) {
                 Logger().errorStream() << "ValueRef::Variable<double>::Eval can't find distance to source because no source was passed";
@@ -566,10 +561,7 @@ namespace ValueRef {
         }
 
         if (boost::iequals(property_name, "Owner")) {
-            if (object->Owners().size() == 1)
-                return *object->Owners().begin();
-            else
-                return ALL_EMPIRES;
+            return object->Owner();
         } else if (boost::iequals(property_name, "ID")) {
             return object->ID();
         } else if (boost::iequals(property_name, "CreationTurn")) {

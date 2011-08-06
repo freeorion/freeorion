@@ -163,7 +163,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         if (!has_player_planet) {
             if (!planet->Unowned()) {
                 has_player_planet = true;
-                std::copy(planet->Owners().begin(), planet->Owners().end(), std::inserter(owner_empire_ids, owner_empire_ids.end()));
+                owner_empire_ids.insert(planet->Owner());
             }
         }
     }

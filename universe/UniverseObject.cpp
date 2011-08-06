@@ -8,8 +8,6 @@
 #include "Universe.h"
 #include "Predicates.h"
 
-#include <boost/lexical_cast.hpp>
-using boost::lexical_cast;
 #include <stdexcept>
 
 
@@ -26,7 +24,7 @@ UniverseObject::UniverseObject() :
     m_name(""),
     m_x(INVALID_POSITION),
     m_y(INVALID_POSITION),
-    m_owners(),
+    m_owner_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
     m_meters(),
     m_created_on_turn(-1)
@@ -42,7 +40,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y,
     m_name(name),
     m_x(x),
     m_y(y),
-    m_owners(owners),
+    m_owner_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
     m_meters(),
     m_created_on_turn(-1)
@@ -59,7 +57,7 @@ UniverseObject::UniverseObject(const UniverseObject& rhs) :
     m_name(rhs.m_name),
     m_x(rhs.m_x),
     m_y(rhs.m_y),
-    m_owners(rhs.m_owners),
+    m_owner_empire_id(rhs.m_owner_empire_id),
     m_system_id(rhs.m_system_id),
     m_specials(rhs.m_specials),
     m_meters(rhs.m_meters),
@@ -89,7 +87,7 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
 
-            this->m_owners =            copied_object->m_owners;
+            this->m_owner_empire_id =   copied_object->m_owner_empire_id;
             this->m_specials =          copied_object->m_specials;
             this->m_created_on_turn =   copied_object->m_created_on_turn;
 
@@ -139,9 +137,9 @@ int UniverseObject::AgeInTurns() const
     return CurrentTurn() - m_created_on_turn;
 }
 
-const std::set<int>& UniverseObject::Owners() const
+int UniverseObject::Owner() const
 {
-    return m_owners;
+    return m_owner_empire_id;
 }
 
 int UniverseObject::SystemID() const
@@ -169,10 +167,8 @@ std::string UniverseObject::Dump() const
        << this->ID() << ": "
        << this->Name()
        << (system ? ("  at: " + system->Name()) : "")
-       << " owners: ";
-    for (std::set<int>::const_iterator it = m_owners.begin(); it != m_owners.end(); ++it)
-        os << *it << " ";
-    os << " created on turn: " << m_created_on_turn
+       << " owner: " << m_owner_empire_id
+       << " created on turn: " << m_created_on_turn
        << " specials: ";
     for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
         os << *it;
@@ -243,17 +239,12 @@ void UniverseObject::AddMeter(MeterType meter_type)
 
 bool UniverseObject::Unowned() const 
 {
-    return m_owners.empty();
+    return m_owner_empire_id == ALL_EMPIRES;
 }
 
 bool UniverseObject::OwnedBy(int empire) const 
 {
-    return m_owners.find(empire) != m_owners.end();
-}
-
-bool UniverseObject::WhollyOwnedBy(int empire) const 
-{
-    return m_owners.size() == 1 && m_owners.find(empire) != m_owners.end();
+    return empire != ALL_EMPIRES && empire == m_owner_empire_id;
 }
 
 Visibility UniverseObject::GetVisibility(int empire_id) const
@@ -330,30 +321,15 @@ void UniverseObject::BackPropegateMeters()
             meter->BackPropegate();
 }
 
-void UniverseObject::AddOwner(int id)
+void UniverseObject::SetOwner(int id)
 {
-    if (id != ALL_EMPIRES && m_owners.find(id) == m_owners.end()) {
-        m_owners.insert(id);
-        StateChangedSignal();
+    if (m_owner_empire_id != id) {
+        m_owner_empire_id = id;
+        StateChangedSignal;
     }
-    /* TODO: if adding an owner to an object gives an the added owner an
+    /* TODO: if changing object ownership gives an the new owner an
      * observer in, or ownership of a previoiusly unexplored system, then need
      * to call empire->AddExploredSystem(system_id); */
-}
-
-void UniverseObject::RemoveOwner(int id)
-{
-    if (m_owners.find(id) != m_owners.end()) {
-        m_owners.erase(id);
-        StateChangedSignal();
-    }
-}
-
-void UniverseObject::ClearOwners()
-{
-    const std::set<int> initial_owners = m_owners;
-    for (std::set<int>::const_iterator it = initial_owners.begin(); it != initial_owners.end(); ++it)
-        RemoveOwner(*it);
 }
 
 void UniverseObject::SetSystem(int sys)

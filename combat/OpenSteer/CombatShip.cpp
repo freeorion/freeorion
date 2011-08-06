@@ -115,7 +115,7 @@ CombatShip::CombatShip(Ship* ship,
                        const std::map<int, UniverseObject*>& combat_universe,
                        PathingEngine& pathing_engine) :
     m_proximity_token(0),
-    m_empire_id(*ship->Owners().begin()),
+    m_empire_id(ship->Owner()),
     m_ship_id(ship->ID()),
     m_combat_universe(&combat_universe),
     m_mission_queue(),
@@ -177,7 +177,7 @@ bool CombatShip::IsShip() const
 { return true; }
 
 int CombatShip::Owner() const
-{ return *GetShip().Owners().begin(); }
+{ return GetShip().Owner(); }
 
 void CombatShip::LaunchFighters()
 {

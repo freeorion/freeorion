@@ -39,12 +39,11 @@ namespace {
         ConditionParser1Definition();
 
     private:
-        struct OwnedByClosure : boost::spirit::classic::closure<OwnedByClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, EmpireAffiliationType, bool>
+        struct OwnedByClosure : boost::spirit::classic::closure<OwnedByClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, EmpireAffiliationType>
         {
             member1 this_;
             member2 empire;
             member3 affiliation;
-            member4 exclusive;
         };
 
         struct StringRefVecClosure : boost::spirit::classic::closure<StringRefVecClosure, Condition::ConditionBase*,
@@ -147,10 +146,10 @@ namespace {
             [all.this_ = new_<Condition::All>()];
 
         owned_by =
-            ((str_p("ownedby")[owned_by.exclusive = val(false)] | str_p("ownedexclusivelyby")[owned_by.exclusive = val(true)])
+            str_p("ownedby")
              >> affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
-             >> empire_label >> int_expr_p[owned_by.empire = arg1])
-            [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.empire, owned_by.affiliation, owned_by.exclusive)];
+             >> empire_label >> int_expr_p[owned_by.empire = arg1]
+            [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.empire, owned_by.affiliation)];
 
         source =
             str_p("source")

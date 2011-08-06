@@ -2276,10 +2276,7 @@ void Empire::ConquerBuildsAtLocation(int location_id) {
                 if (!type)
                     throw std::invalid_argument("Empire::ConquerBuildsAtLocationFromEmpire: ProductionQueue item had an invalid BuildingType name");
 
-                std::set<int> item_owners;
-                item_owners.insert(from_empire_id);
-
-                CaptureResult result = type->GetCaptureResult(item_owners, m_id, location_id, true);
+                CaptureResult result = type->GetCaptureResult(from_empire_id, m_id, location_id, true);
 
                 if (result == CR_DESTROY) {
                     // item removed from current queue, NOT added to conquerer's queue

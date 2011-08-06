@@ -166,30 +166,20 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
     int owner_id = ALL_EMPIRES;
-
-    for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        const Fleet* fleet = *it;
-        const std::set<int>& fleet_owners = fleet->Owners();
-
-        // not sure how a fleet can have no owners, but ignore this case
-        if (fleet_owners.empty())
-            continue;
-
-        // check if multiple empires own this fleet
-        if (fleet_owners.size() != 1) {
-            owner_id = ALL_EMPIRES;
-            break;
+    if (fleets.empty()) {
+        // leave as ALL_EMPIRES
+    } else if (fleets.size() == 1) {
+        owner_id = (*fleets.begin())->Owner();
+    } else {
+        owner_id = (*fleets.begin())->Owner();
+        // use ALL_EMPIRES if there are multiple owners (including no owner and an owner)
+        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            const Fleet* fleet = *it;
+            if (fleet->Owner() != owner_id) {
+                owner_id = ALL_EMPIRES;
+                break;
+            }
         }
-
-        // check if owner of this fleet is a second owner of fleets
-        int fleet_owner = *(fleet_owners.begin());
-        if (owner_id != ALL_EMPIRES && fleet_owner != owner_id) {
-            owner_id = ALL_EMPIRES;
-            break;
-        }
-
-        // default: current fleet owner is first owner found, or is the same as previously found fleet owner
-        owner_id = fleet_owner;
     }
 
 

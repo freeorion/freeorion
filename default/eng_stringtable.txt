@@ -3208,11 +3208,8 @@ Changes the planet's size to %1%
 DESC_SET_SPECIES
 Changes the object's species to %1%
 
-DESC_ADD_OWNER
-Adds ownership by empire %1% to object
-
-DESC_REMOVE_OWNER
-Removes ownership by empire %1% from object
+DESC_SET_OWNER
+Sets %1% as the owner of object
 
 DESC_DESTROY
 Destroys object
@@ -3298,12 +3295,6 @@ DESC_EMPIRE_AFFILIATION_SELF
 
 DESC_EMPIRE_AFFILIATION_SELF_NOT
  that does not belong to %1% empire
-
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE
- that belongs only to %1% empire
-
-DESC_EMPIRE_AFFILIATION_SELF_EXCLUSIVE_NOT
- that does not belong only to %1% empire
 
 DESC_EMPIRE_AFFILIATION
  that belongs to an %1% of %2% empire

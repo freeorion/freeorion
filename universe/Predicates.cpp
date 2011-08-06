@@ -54,14 +54,13 @@ StationaryFleetVisitor::~StationaryFleetVisitor()
 
 StationaryFleetVisitor::StationaryFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
-{
-}
+{}
 
 UniverseObject* StationaryFleetVisitor::Visit(Fleet* obj) const
 {
     if ((obj->FinalDestinationID() == UniverseObject::INVALID_OBJECT_ID ||
-         obj->FinalDestinationID() == obj->SystemID()) && 
-        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+         obj->FinalDestinationID() == obj->SystemID()) &&
+        (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return 0;
 }
@@ -74,15 +73,14 @@ OrderedMovingFleetVisitor::~OrderedMovingFleetVisitor()
 
 OrderedMovingFleetVisitor::OrderedMovingFleetVisitor(int empire/* = ALL_EMPIRES*/) :
     empire_id(empire)
-{
-}
+{}
 
 UniverseObject* OrderedMovingFleetVisitor::Visit(Fleet* obj) const
 {
     if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
         obj->FinalDestinationID() != obj->SystemID() &&
         obj->SystemID() != UniverseObject::INVALID_OBJECT_ID && 
-        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+        (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return 0;
 }
@@ -102,7 +100,7 @@ UniverseObject* MovingFleetVisitor::Visit(Fleet* obj) const
 {
     if (obj->FinalDestinationID() != UniverseObject::INVALID_OBJECT_ID &&
         obj->SystemID() == UniverseObject::INVALID_OBJECT_ID && 
-        (empire_id == ALL_EMPIRES || (!obj->Owners().empty() && *obj->Owners().begin() == empire_id)))
+        (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
     return 0;
 }

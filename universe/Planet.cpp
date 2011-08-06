@@ -439,41 +439,10 @@ void Planet::SetAvailableTrade(double trade)
     m_available_trade = trade;
 }
 
-void Planet::AddOwner(int id)
-{
-    if (System* system = GetObject<System>(this->SystemID()))
-        system->UniverseObject::AddOwner(id);
-    else
-        Logger().errorStream() << "Planet::Addowner couldn't get system with id " << this->SystemID();
-
-    UniverseObject::AddOwner(id);
-}
-
-void Planet::RemoveOwner(int id)
-{
-    System* system = GetObject<System>(this->SystemID());
-
-    // check if Empire(id) is owner of at least one other planet in same system
-    std::vector<int> planets = system->FindObjectIDs<Planet>();
-    int empire_owned_planets_in_this_planet_system = 0;
-    for (std::vector<int>::const_iterator plt_it = planets.begin(); plt_it != planets.end(); ++plt_it)
-        if (Planet* planet = GetObject<Planet>(*plt_it))
-            if (planet->OwnedBy(id))
-                ++empire_owned_planets_in_this_planet_system;
-
-    // if this is the only planet owned by this planet's current owner, removing
-    // that owner means the empire owns no planets in this system, so loses
-    // any ownership of the system as well
-    if (empire_owned_planets_in_this_planet_system < 2)
-        system->UniverseObject::RemoveOwner(id);
-
-    UniverseObject::RemoveOwner(id);
-}
-
 void Planet::Reset()
 {
-    // remove owners
-    ClearOwners();
+    // remove owner
+    SetOwner(ALL_EMPIRES);
 
     // reset popcenter meters
     PopCenter::Reset();
@@ -525,12 +494,11 @@ void Planet::Conquer(int conquerer)
             const BuildingType* type = building->GetBuildingType();
 
             // determine what to do with building of this type...
-            const CaptureResult cap_result = type->GetCaptureResult(obj->Owners(), conquerer, this->ID(), false);
+            const CaptureResult cap_result = type->GetCaptureResult(obj->Owner(), conquerer, this->ID(), false);
 
             if (cap_result == CR_CAPTURE) {
-                // remove existing owners and replace with conquerer
-                obj->ClearOwners();
-                obj->AddOwner(conquerer);
+                // replace ownership
+                obj->SetOwner(conquerer);
             } else if (cap_result == CR_DESTROY) {
                 // destroy object
                 Logger().debugStream() << "Planet::Conquer destroying object: " << obj->Name();
@@ -538,18 +506,14 @@ void Planet::Conquer(int conquerer)
                 obj = 0;
             } else if (cap_result == CR_RETAIN) {
                 // do nothing
-            } else if (cap_result == CR_SHARE) {
-                // add conquerer, but retain any previous owners
-                obj->AddOwner(conquerer);
             }
         }
 
         // TODO: deal with any other UniverseObject subclasses...?
     }
 
-    // remove existing owners of planet itself and replace with conquerer
-    this->ClearOwners();
-    this->AddOwner(conquerer);
+    // replace ownership
+    SetOwner(conquerer);
 }
 
 void Planet::SetIsAboutToBeColonized(bool b)
@@ -613,14 +577,9 @@ void Planet::PopGrowthProductionResearchPhase()
     // then the planet has likely just starved.  Regardless, resetting the
     // planet keeps things consistent.
     if (GetMeter(METER_POPULATION)->Current() == 0.0) {
-        // generate starvation sitreps for any empire that owns this depopulated planet
-        const std::set<int>& owners = this->Owners();
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-            if (Empire* empire = Empires().Lookup(*it))
-                empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
-            else
-                Logger().errorStream() << "Planet::PopGrowthProductionResearchPhase couldn't get Empire with id " << *it << " to generate sitrep about starved planet";
-        }
+        // generate starvation sitrep for empire that owns this depopulated planet
+        if (Empire* empire = Empires().Lookup(this->Owner()))
+            empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
 
         // reset planet to empty and unowned
         Reset();

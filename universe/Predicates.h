@@ -99,16 +99,6 @@ struct OwnedVisitor : UniverseObjectVisitor
     const int empire_id;
 };
 
-/** returns obj iff \a obj is owned by \a only the empire with id \a empire, and \a obj is of type T. */
-template <class T>
-struct WhollyOwnedVisitor : UniverseObjectVisitor
-{
-    WhollyOwnedVisitor(int empire = ALL_EMPIRES);
-    virtual T* Visit(T* obj) const;
-    virtual ~WhollyOwnedVisitor() {}
-    const int empire_id;
-};
-
 // template implementations
 
 template <class T1, class T2>
@@ -159,20 +149,6 @@ template <class T>
 T* OwnedVisitor<T>::Visit(T* obj) const
 {
     if (obj->OwnedBy(empire_id))
-        return obj;
-    return 0;
-}
-
-template <class T>
-WhollyOwnedVisitor<T>::WhollyOwnedVisitor(int empire) :
-    empire_id(empire)
-{
-}
-
-template <class T>
-T* WhollyOwnedVisitor<T>::Visit(T* obj) const
-{
-    if (obj->WhollyOwnedBy(empire_id))
         return obj;
     return 0;
 }

@@ -973,19 +973,10 @@ namespace {
                 continue;
             }
 
-            const std::set<int>& owners = fleet->Owners();
+            ids_of_empires_with_fleets_here.insert(fleet->Owner()); // may be ALL_EMPIRES
 
-            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
-                ids_of_empires_with_fleets_here.insert(*it);
-            if (owners.empty())
-                ids_of_empires_with_fleets_here.insert(ALL_EMPIRES);
-
-            if (fleet->HasArmedShips()) {
-                for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
-                    ids_of_empires_with_combat_fleets_here.insert(*it);
-                if (owners.empty())
-                    ids_of_empires_with_combat_fleets_here.insert(ALL_EMPIRES);
-            }
+            if (fleet->HasArmedShips())
+                ids_of_empires_with_combat_fleets_here.insert(fleet->Owner());
         }
     }
 
@@ -1004,12 +995,10 @@ namespace {
                 continue;
             }
 
-            const std::set<int>& owners = planet->Owners();
-
-            for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
-                ids_of_empires_with_planets_here.insert(*it);
-            if (owners.empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+            if (planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) == 0.0)
                 ids_of_empires_with_planets_here.insert(ALL_EMPIRES);
+            else
+                ids_of_empires_with_planets_here.insert(planet->Owner());
         }
     }
 
@@ -1234,12 +1223,11 @@ namespace {
         }
 
         // get empire to give ownership of planet to
-        const std::set<int>& owners = ship->Owners();
-        if (owners.size() != 1) {
+        if (ship->Unowned()) {
             Logger().errorStream() << "ColonizePlanet couldn't get an empire to colonize with";
             return false;
         }
-        int empire_id = *owners.begin();
+        int empire_id = ship->Owner();
 
         // get colonist capacity of ship: sum of capacities of parts
         double colonist_capacity = 0.0;
@@ -1292,13 +1280,12 @@ namespace {
         planet->GetMeter(METER_TARGET_HEALTH)->SetCurrent(20.0);
         planet->BackPropegateMeters();
 
-        planet->AddOwner(empire_id);
+        planet->SetOwner(empire_id);
 
         const std::set<int>& planet_buildings = planet->Buildings();
         for (std::set<int>::const_iterator it = planet_buildings.begin(); it != planet_buildings.end(); ++it) {
             if (Building* building = objects.Object<Building>(*it)) {
-                building->ClearOwners();
-                building->AddOwner(empire_id); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
+                building->SetOwner(empire_id); // TODO: only add owner if empire has visibility of building.  Need to add a check for this every turn... maybe doesn't need to be done during colonization at all?
             } else {
                 Logger().errorStream() << "ColonizePlanet couldn't find building with id: " << *it;
             }
@@ -1323,11 +1310,9 @@ namespace {
             const Planet* planet = objects.Object<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
-            if (ship->Owners().size() != 1)
+            if (ship->Unowned())
                 continue;
-            int owner_empire_id = *ship->Owners().begin();
-            if (owner_empire_id == ALL_EMPIRES)
-                continue;
+            int owner_empire_id = ship->Owner();
             int ship_id = ship->ID();
             if (ship_id == UniverseObject::INVALID_OBJECT_ID)
                 continue;
@@ -1371,11 +1356,8 @@ namespace {
             std::vector<int> system_fleet_ids = system->FindObjectIDs<Fleet>();
             for (std::vector<int>::const_iterator fleet_it = system_fleet_ids.begin(); fleet_it != system_fleet_ids.end(); ++fleet_it) {
                 const Fleet* fleet = objects.Object<Fleet>(*fleet_it);
-                if (fleet->HasArmedShips()) {
-                    const std::set<int>& owners = fleet->Owners();
-                    for (std::set<int>::const_iterator owner_it = owners.begin(); owner_it != owners.end(); ++owner_it)
-                        empires_with_armed_ships_in_system.insert(*owner_it);
-                }
+                if (fleet->HasArmedShips())
+                    empires_with_armed_ships_in_system.insert(fleet->Owner());  // may include ALL_EMPIRES, which is fine; this makes monsters prevent colonization
             }
 
             // no empires can colonize if there are more than one empire's armed fleets in system
@@ -1543,14 +1525,11 @@ void ServerApp::PreCombatProcessTurns()
         // must be resolved as a combat.
 
         // SitRep for fleets having arrived at destinations, to all owners of those fleets
-        if (fleet->ArrivedThisTurn()) {
-            const std::set<int>& owners_set = fleet->Owners();
-            for (std::set<int>::const_iterator owners_it = owners_set.begin(); owners_it != owners_set.end(); ++owners_it) {
-                if (Empire* empire = empires.Lookup(*owners_it))
-                    empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
-                else
-                    Logger().errorStream() << "ServerApp::ProcessTurns couldn't find empire with id " << *owners_it << " to send a fleet arrival sitrep to for fleet " << fleet->ID();
-            }
+        if (fleet->ArrivedThisTurn() && !fleet->Unowned()) {
+            Empire* empire = empires.Lookup(fleet->Owner());
+            if (!empire)
+                continue;
+            empire->AddSitRepEntry(CreateFleetArrivedAtDestinationSitRep(fleet->SystemID(), fleet->ID()));
         }
     }
 
@@ -1928,13 +1907,10 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
     //const std::multimap<int, std::string>& marked_for_victory = m_universe.GetMarkedForVictory();
     //for (std::multimap<int, std::string>::const_iterator it = marked_for_victory.begin(); it != marked_for_victory.end(); ++it) {
     //    const UniverseObject* obj = objects.Object(it->first);
-    //    if (!obj) continue; // perhaps it was destroyed?
-    //    const std::set<int>& owners = obj->Owners();
-    //    if (owners.size() == 1) {
-    //        int empire_id = *owners.begin();
-    //        if (empires.Lookup(empire_id))
-    //            new_victors[EmpirePlayerID(empire_id)].insert(it->second);
-    //    }
+    //    if (!obj || obj->Unowned()) continue; // perhaps it was destroyed?
+    //    int empire_id = obj->Owner();
+    //    if (empires.Lookup(empire_id))
+    //        new_victors[EmpirePlayerID(empire_id)].insert(it->second);
     //}
 
     //// all enemies eliminated?
@@ -2038,7 +2014,7 @@ void ServerApp::CheckForEmpireEliminationOrVictory()
     //    // remove eliminated empire's ownership of UniverseObjects
     //    std::vector<UniverseObject*> object_vec = objects.FindObjects(OwnedVisitor<UniverseObject>(elim_empire_id));
     //    for (std::vector<UniverseObject*>::iterator obj_it = object_vec.begin(); obj_it != object_vec.end(); ++obj_it)
-    //        (*obj_it)->RemoveOwner(elim_empire_id);
+    //        (*obj_it)->SetOwner(ALL_EMPIRES);
 
     //    Logger().debugStream() << "ServerApp::ProcessTurns : Player " << it->first << " is eliminated and dumped";
     //    m_eliminated_players.insert(it->first);

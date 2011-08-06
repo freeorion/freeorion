@@ -198,9 +198,9 @@ namespace AIInterface {
             Universe::InhibitUniverseObjectSignals(true);
             for (std::vector<Planet*>::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
                  Planet* planet = *it;
-                 if (planet->Owners().empty()) {
+                 if (planet->Unowned()) {
                      unowned_planets.push_back(planet);
-                     planet->AddOwner(player_id);
+                     planet->SetOwner(player_id);
                  }
             }
         }
@@ -211,7 +211,7 @@ namespace AIInterface {
         if (pretend_unowned_planets_owned_by_this_ai_empire) {
             // remove temporary ownership added above
             for (std::vector<Planet*>::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
-                (*it)->RemoveOwner(player_id);
+                (*it)->SetOwner(ALL_EMPIRES);
             Universe::InhibitUniverseObjectSignals(false);
         }
     }
@@ -240,8 +240,8 @@ namespace AIInterface {
         }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
-        if (!fleet->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetMoveOrder : passed fleet_id of fleet not owned only by player";
+        if (!fleet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetMoveOrder : passed fleet_id of fleet not owned by player";
             return 0;
         }
 
@@ -269,8 +269,8 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueRenameOrder : passed an invalid object_id";
             return 0;
         }
-        if (!obj->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueRenameOrder : passed object_id of object not owned only by player";
+        if (!obj->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueRenameOrder : passed object_id of object not owned by player";
             return 0;
         }
 
@@ -298,8 +298,8 @@ namespace AIInterface {
                     return 0;
                 }
 
-                if (!obj->WhollyOwnedBy(empire_id)) {
-                    Logger().errorStream() << "AIInterface::IssueScrapOrder : passed object_id of object not owned only by player";
+                if (!obj->OwnedBy(empire_id)) {
+                    Logger().errorStream() << "AIInterface::IssueScrapOrder : passed object_id of object not owned by player";
                     return 0;
                 }
 
@@ -338,8 +338,8 @@ namespace AIInterface {
                 Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed an invalid ship_id";
                 return 0;
             }
-            if (!ship->WhollyOwnedBy(empire_id)) {
-                Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_id of ship not owned only by player";
+            if (!ship->OwnedBy(empire_id)) {
+                Logger().errorStream() << "AIInterface::IssueNewFleetOrder : passed ship_id of ship not owned by player";
                 return 0;
             }
         }
@@ -388,8 +388,8 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : ship is not in a system";
             return 0;
         }
-        if (!ship->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed ship_id of ship not owned only by player";
+        if (!ship->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed ship_id of ship not owned by player";
             return 0;
         }
 
@@ -403,8 +403,8 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : new fleet is not in a system";
             return 0;
         }
-        if (!fleet->WhollyOwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed fleet_id of fleet not owned only by player";
+        if (!fleet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueFleetTransferOrder : passed fleet_id of fleet not owned by player";
             return 0;
         }
 
@@ -446,11 +446,11 @@ namespace AIInterface {
         }
 
         // make sure player owns ship and its fleet
-        if (!fleet->WhollyOwnedBy(empire_id)) {
+        if (!fleet->OwnedBy(empire_id)) {
             Logger().errorStream() << "AIInterface::IssueColonizeOrder : empire does not own fleet of passed ship";
             return 0;
         }
-        if (!ship->WhollyOwnedBy(empire_id)) {
+        if (!ship->OwnedBy(empire_id)) {
             Logger().errorStream() << "AIInterface::IssueColonizeOrder : empire does not own passed ship";
             return 0;
         }
@@ -495,7 +495,7 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : no planet with passed planet_id";
             return 0;
         }
-        if (!planet->WhollyOwnedBy(empire_id)) {
+        if (!planet->OwnedBy(empire_id)) {
             Logger().errorStream() << "AIInterface::IssueChangeFocusOrder : empire does not own planet with passed planet_id";
             return 0;
         }

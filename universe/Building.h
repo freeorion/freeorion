@@ -102,11 +102,11 @@ public:
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
-      * empires with IDs \a from_empire_ids the planet (or other UniverseObject)
+      * empire with IDs \a from_empire_id the planet (or other UniverseObject)
       * with id \a location_id on which this type of Building is located (if 
       * \a as_production_item is false) or which is the location of a Production
       * Queue BuildItem for a building of this type (otherwise) */
-    CaptureResult                   GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,
+    CaptureResult                   GetCaptureResult(int from_empire_id, int to_empire_id,
                                                      int location_id, bool as_production_item) const;
     //@}
 

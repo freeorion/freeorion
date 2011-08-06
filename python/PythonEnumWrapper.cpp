@@ -115,7 +115,6 @@ namespace FreeOrionPython {
             .value("capture",       CR_CAPTURE)
             .value("destroy",       CR_DESTROY)
             .value("retain",        CR_RETAIN)
-            .value("share",         CR_SHARE)
         ;
         enum_<ShipSlotType>("shipSlotType")
             .value("external",      SL_EXTERNAL)

@@ -30,8 +30,7 @@ namespace Effect {
     class SetPlanetType;
     class SetPlanetSize;
     class SetSpecies;
-    class AddOwner;
-    class RemoveOwner;
+    class SetOwner;
     class CreatePlanet;
     class CreateBuilding;
     class CreateShip;
@@ -333,33 +332,13 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Adds empire \a empire_id as an owner of the target.  This has no effect if
-  * \a empire_id was already an owner of the target object. */
-class Effect::AddOwner : public Effect::EffectBase
+/** Sets empire \a empire_id as the owner of the target.  This has no effect if
+  * \a empire_id was already the owner of the target object. */
+class Effect::SetOwner : public Effect::EffectBase
 {
 public:
-    AddOwner(const ValueRef::ValueRefBase<int>* empire_id);
-    virtual ~AddOwner();
-
-    virtual void        Execute(const ScriptingContext& context) const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
-
-private:
-    const ValueRef::ValueRefBase<int>* m_empire_id;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-/** Removes empire \a empire_id as an owner of the target.  This has no effect
-  * if \a empire_id was not already an owner of the target object. */
-class Effect::RemoveOwner : public Effect::EffectBase
-{
-public:
-    RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id);
-    virtual ~RemoveOwner();
+    SetOwner(const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~SetOwner();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
@@ -738,14 +717,7 @@ void Effect::SetSpecies::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Effect::AddOwner::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
-        & BOOST_SERIALIZATION_NVP(m_empire_id);
-}
-
-template <class Archive>
-void Effect::RemoveOwner::serialize(Archive& ar, const unsigned int version)
+void Effect::SetOwner::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_empire_id);

@@ -514,7 +514,7 @@ CombatSetupWnd::CombatSetupWnd(
 
             // TODO: Temporary!  Serialization of CombatData currently sends
             // everything to everyone.  Fix this.
-            if (ship.Owners().find(HumanClientApp::GetApp()->EmpireID()) == ship.Owners().end())
+            if (!ship.OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 continue;
 
             Ogre::SceneNode* node = GetShipNode(ship);
@@ -685,10 +685,10 @@ void CombatSetupWnd::HandleMouseMoves(const GG::Pt& pt)
                 Ogre::SceneNode::ObjectIterator iterator = node->getAttachedObjectIterator();
                 assert(iterator.hasMoreElements());
                 Ogre::Entity* entity = boost::polymorphic_downcast<Ogre::Entity*>(iterator.getNext());
-                entity->setMaterialName(ShipMaterialName(*ship->Design(), *ship->Owners().begin()));
+                entity->setMaterialName(ShipMaterialName(*ship->Design(), ship->Owner()));
                 entity->setRenderQueueGroup(Ogre::RENDER_QUEUE_MAIN);
             } else {
-                std::string base_material_name = ShipMaterialName(*ship->Design(), *ship->Owners().begin());
+                std::string base_material_name = ShipMaterialName(*ship->Design(), ship->Owner());
                 std::string material_name = UNPLACEABLE_MATERIAL_PREFIX + base_material_name;
                 if (!Ogre::MaterialManager::getSingleton().resourceExists(material_name)) {
                     Ogre::MaterialPtr unmodified_material =

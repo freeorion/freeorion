@@ -1478,8 +1478,8 @@ sc::result ResolvingCombat::react(const CombatTurnOrders& msg)
         if (order.Type() == CombatOrder::SHIP_ORDER ||
             order.Type() == CombatOrder::SETUP_PLACEMENT_ORDER) {
             if (UniverseObject* object = GetObject(order.ID())) {
-                assert(object->Owners().size() == 1u);
-                owner_id = *object->Owners().begin();
+                assert(!object->Unowned());
+                owner_id = object->Owner();
             }
         } else if (order.Type() == CombatOrder::FIGHTER_ORDER) {
             CombatFighterPtr combat_fighter =

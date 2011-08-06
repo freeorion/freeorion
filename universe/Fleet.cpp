@@ -19,19 +19,6 @@ namespace {
     bool SystemHasNoVisibleStarlanes(int system_id, int empire_id) {
         return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id);
     }
-
-    /** returns true iff one of the empires with the indiated ids can provide
-      * fleet supply directly or has resource connections to the system with
-      * the id \a system_id 
-      * in short: decides whether a fleet gets resupplied at the indicated
-      *           system*/
-    bool FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(int system_id, const std::set<int>& owner_ids) {
-        for (std::set<int>::const_iterator it = owner_ids.begin(); it != owner_ids.end(); ++it)
-            if (const Empire* empire = Empires().Lookup(*it))
-                if (empire->FleetOrResourceSupplyableAtSystem(system_id))
-                    return true;
-        return false;
-    }
 }
 
 // static(s)
@@ -61,7 +48,7 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     m_arrival_starlane(INVALID_OBJECT_ID)
 {
     UniverseObject::Init();
-    AddOwner(owner);
+    SetOwner(owner);
 }
 
 Fleet* Fleet::Clone(int empire_id) const
@@ -213,21 +200,11 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
     //Logger().debugStream() << "Fleet " << this->Name() << " movePath fuel: " << fuel << " sys id: " << this->SystemID();
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
+    int owner = this->Owner();
     std::set<int> fleet_supplied_systems;
-    const std::set<int>& owners = this->Owners();
-    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it) {
-        const Empire* empire = Empires().Lookup(*it);
-        std::set<int> empire_fleet_supplied_systems;
-        if (empire)
-            empire_fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
-        fleet_supplied_systems.insert(empire_fleet_supplied_systems.begin(), empire_fleet_supplied_systems.end());
-    }
-
-
-    int owner = ALL_EMPIRES;
-    if (owners.size() == 1)
-        owner = *owners.begin();
-
+    const Empire* empire = Empires().Lookup(owner);
+    if (empire)
+        fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
     if (fuel < 1.0 && this->SystemID() != UniverseObject::INVALID_OBJECT_ID && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
@@ -791,13 +768,14 @@ void Fleet::MovementPhase()
 
     int prev_prev_system = m_prev_system;
 
-    // find if any of owners of fleet can resupply ships at the location of this fleet
-    if (FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(this->SystemID(), this->Owners())) {
-        // resupply all ships
+    Empire* empire = Empires().Lookup(this->Owner());
+
+    // if owner of fleet can resupply ships at the location of this fleet, then
+    // resupply all ships in this fleet
+    if (empire && empire->FleetOrResourceSupplyableAtSystem(this->SystemID()))
         for (Fleet::const_iterator ship_it = this->begin(); ship_it != this->end(); ++ship_it)
             if (Ship* ship = GetObject<Ship>(*ship_it))
                 ship->Resupply();
-    }
 
 
     System* current_system = GetObject<System>(SystemID());
@@ -846,9 +824,6 @@ void Fleet::MovementPhase()
     //    Logger().debugStream() << "... (" << it->x << ", " << it->y << ") at object id: " << it->object_id << " eta: " << it->eta << (it->turn_end ? " (end of turn)" : " (during turn)");
 
 
-    const std::set<int>& owners = this->Owners();
-
-
     // move fleet in sequence to MovePathNodes it can reach this turn
     double fuel_consumed = 0.0;
     for (it = move_path.begin(); it != move_path.end(); ++it) {
@@ -865,14 +840,13 @@ void Fleet::MovementPhase()
 
         if (system) {
             // node is a system.  explore system for all owners of this fleet
-            for (std::set<int>::const_iterator owners_it = owners.begin(); owners_it != owners.end(); ++owners_it)
-                if (Empire* empire = Empires().Lookup(*owners_it))
-                    empire->AddExploredSystem(it->object_id);
+            if (empire)
+                empire->AddExploredSystem(it->object_id);
 
             prev_prev_system = m_prev_system;
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
-            bool resupply_here = FleetOrResourceSupplyableAtSystemByAnyOfEmpiresWithIDs(system->ID(), this->Owners());
+            bool resupply_here = empire->FleetOrResourceSupplyableAtSystem(system->ID());
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {
@@ -973,9 +947,6 @@ void Fleet::CalculateRoute() const
 {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = GetMainObjectMap();
-    int owner = ALL_EMPIRES;
-    if (Owners().size() == 1)
-        owner = *Owners().begin();
 
     m_travel_distance = 0.0;
     m_travel_route.clear();
@@ -991,7 +962,7 @@ void Fleet::CalculateRoute() const
         if (!objects.Object<System>(m_moving_to))
             return; // destination system doesn't exist or doesn't exist in known universe, so can't move to it.  leave route empty.
 
-        std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, owner);
+        std::pair<std::list<int>, double> path = universe.ShortestPath(m_prev_system, m_moving_to, this->Owner());
         m_travel_route = path.first;
         m_travel_distance = path.second;
 
@@ -1001,11 +972,11 @@ void Fleet::CalculateRoute() const
 
     int dest_system_id = m_moving_to;
 
-    //if (universe.GetObjectVisibilityByEmpire(dest_system_id, owner) <= VIS_NO_VISIBILITY) {
+    //if (universe.GetObjectVisibilityByEmpire(dest_system_id, this->Owner()) <= VIS_NO_VISIBILITY) {
     //    // destination system isn't visible to this fleet's owner, so the fleet can't move to it
 
     //    // check if system to which fleet is moving is visible to the fleet's owner.  this should always be true, but just in case...
-    //    if (universe.GetObjectVisibilityByEmpire(m_next_system, owner) <= VIS_NO_VISIBILITY)
+    //    if (universe.GetObjectVisibilityByEmpire(m_next_system, this->Owner()) <= VIS_NO_VISIBILITY)
     //        return; // next system also isn't visible; leave route empty.
 
     //    // safety check: ensure supposedly visible object actually exists in known universe.
@@ -1021,7 +992,7 @@ void Fleet::CalculateRoute() const
     // if we're between systems, the shortest route may be through either one
     if (this->CanChangeDirectionEnRoute()) {
 
-        std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, dest_system_id, owner);
+        std::pair<std::list<int>, double> path1 = universe.ShortestPath(m_next_system, dest_system_id, this->Owner());
         const std::list<int>& sys_list1 = path1.first;
         if (sys_list1.empty()) {
             Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
@@ -1036,7 +1007,7 @@ void Fleet::CalculateRoute() const
         double dist_y = obj->Y() - this->Y();
         double dist1 = std::sqrt(dist_x*dist_x + dist_y*dist_y);
 
-        std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, dest_system_id, owner);
+        std::pair<std::list<int>, double> path2 = universe.ShortestPath(m_prev_system, dest_system_id, this->Owner());
         const std::list<int>& sys_list2 = path2.first;
         if (sys_list2.empty()) {
             Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
@@ -1062,7 +1033,7 @@ void Fleet::CalculateRoute() const
 
     } else {
 
-        std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, dest_system_id, owner);
+        std::pair<std::list<int>, double> route = universe.ShortestPath(m_next_system, dest_system_id, this->Owner());
         const std::list<int>& sys_list = route.first;
         if (sys_list.empty()) {
             Logger().errorStream() << "Fleet::CalculateRoute got empty route from ShortestPath";
@@ -1122,16 +1093,7 @@ void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_sys
     }
 
     // remove any extra systems from the route after the apparent destination
-
-    int fleet_owner = ALL_EMPIRES;
-    const std::set<int>& owners = Owners();
-    if (owners.size() == 1)
-        fleet_owner = *(owners.begin());
-    const Empire* empire = Empires().Lookup(fleet_owner);
-    if (!empire)                    // may occur for destroyed objects whose previous owner has since been eliminated
-        fleet_owner = ALL_EMPIRES;
-
-    std::list<int>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemHasNoVisibleStarlanes, _1, fleet_owner));
+    std::list<int>::iterator end_it = std::find_if(m_travel_route.begin(), visible_end_it, boost::bind(&SystemHasNoVisibleStarlanes, _1, this->Owner()));
     std::copy(m_travel_route.begin(), end_it, std::back_inserter(travel_route));
 
     // If no Systems in a nonempty route are known reachable, default to just

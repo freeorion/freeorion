@@ -67,18 +67,13 @@ namespace {
         if (!system || !ship)
             return 0;
 
-        int owner_empire_id = ALL_EMPIRES;
-        const std::set<int>& owners = ship->Owners();
-        if (!owners.empty())
-            owner_empire_id = *(owners.begin());
-
         int new_fleet_id = GetNewObjectID();
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
-        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), owner_empire_id);
+        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ship->Owner());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         universe.InsertID(fleet, new_fleet_id);
@@ -98,18 +93,13 @@ namespace {
         if (!ship)
             return 0;
 
-        int owner_empire_id = ALL_EMPIRES;
-        const std::set<int>& owners = ship->Owners();
-        if (!owners.empty())
-            owner_empire_id = *(owners.begin());
-
         int new_fleet_id = GetNewObjectID();
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
         std::string fleet_name = Fleet::GenerateFleetName(ship_ids, new_fleet_id);
 
-        Fleet* fleet = new Fleet(fleet_name, x, y, owner_empire_id);
+        Fleet* fleet = new Fleet(fleet_name, x, y, ship->Owner());
         fleet->GetMeter(METER_STEALTH)->SetCurrent(Meter::LARGE_VALUE);
 
         universe.InsertID(fleet, new_fleet_id);
@@ -125,11 +115,10 @@ namespace {
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
     void ExploreSystem(int system_id, const UniverseObject* target_object) {
-        if (!target_object) return;
-        const std::set<int>& owners = target_object->Owners();
-        if (!owners.empty())
-            if (Empire* owner_empire = Empires().Lookup(*owners.begin()))
-                owner_empire->AddExploredSystem(system_id);
+        if (!target_object)
+            return;
+        if (Empire* empire = Empires().Lookup(target_object->Owner()))
+            empire->AddExploredSystem(system_id);
     }
 
     /** Resets the previous and next systems of \a fleet and recalcultes /
@@ -159,19 +148,13 @@ namespace {
 
 
         // recalculate route from the shortest path between first system on path and final destination
-
-        int owner = ALL_EMPIRES;
-        const std::set<int>& owners = fleet->Owners();
-        if (!owners.empty())
-            owner = *owners.begin();
-
         int start_system = fleet->SystemID();
         if (start_system == UniverseObject::INVALID_OBJECT_ID)
             start_system = new_next_system;
 
         int dest_system = fleet->FinalDestinationID();
 
-        std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, owner);
+        std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, fleet->Owner());
 
         // if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
         // to the next system that it was just set to move to anyway.
@@ -181,19 +164,6 @@ namespace {
 
         // set fleet with newly recalculated route
         fleet->SetRoute(route_pair.first);
-    }
-
-    /** returns true of the owners of the two passed objects are the same, and both are owned, false otherwise */
-    bool SameOwners(const UniverseObject* obj1, const UniverseObject* obj2) {
-        if (!obj1 || !obj2) return false;
-
-        const std::set<int>& owners1 = obj1->Owners();
-        const std::set<int>& owners2 = obj2->Owners();
-
-        int owner1 = *owners1.begin();
-        int owner2 = *owners2.begin();
-
-        return owner1 == owner2;
     }
 
     bool PartMatchesEffect(const PartType& part,
@@ -858,10 +828,6 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const
     if (!planet)
         return;
 
-    const std::set<int>& owners = planet->Owners();
-    if (owners.size() != 1)
-        return; // don't want to set multiple empires' capitals to this location...
-
     empire->SetCapitalID(planet->ID());
 }
 
@@ -999,74 +965,35 @@ std::string SetSpecies::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// AddOwner                                              //
+// SetOwner                                              //
 ///////////////////////////////////////////////////////////
-AddOwner::AddOwner(const ValueRef::ValueRefBase<int>* empire_id) :
+SetOwner::SetOwner(const ValueRef::ValueRefBase<int>* empire_id) :
     m_empire_id(empire_id)
 {}
 
-AddOwner::~AddOwner()
+SetOwner::~SetOwner()
 {
     delete m_empire_id;
 }
 
-void AddOwner::Execute(const ScriptingContext& context) const
+void SetOwner::Execute(const ScriptingContext& context) const
 {
     int empire_id = m_empire_id->Eval(context);
-    if (Empires().Lookup(empire_id))
-        return;
     if (context.effect_target)
-        context.effect_target->AddOwner(empire_id);
+        context.effect_target->SetOwner(empire_id);
 }
 
-std::string AddOwner::Description() const
+std::string SetOwner::Description() const
 {
     std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
                                 Empires().Lookup(m_empire_id->Eval())->Name() :
                                 m_empire_id->Description();
-    return str(FlexibleFormat(UserString("DESC_ADD_OWNER")) % value_str);
+    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % value_str);
 }
 
-std::string AddOwner::Dump() const
+std::string SetOwner::Dump() const
 {
-    return DumpIndent() + "AddOwner empire = " + m_empire_id->Dump() + "\n";
-}
-
-
-///////////////////////////////////////////////////////////
-// RemoveOwner                                           //
-///////////////////////////////////////////////////////////
-RemoveOwner::RemoveOwner(const ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
-RemoveOwner::~RemoveOwner()
-{
-    delete m_empire_id;
-}
-
-void RemoveOwner::Execute(const ScriptingContext& context) const
-{
-    int empire_id = m_empire_id->Eval(context);
-    if (!Empires().Lookup(empire_id)) {
-        Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
-        return;
-    }
-    if (context.effect_target)
-        context.effect_target->RemoveOwner(empire_id);
-}
-
-std::string RemoveOwner::Description() const
-{
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
-    return str(FlexibleFormat(UserString("DESC_REMOVE_OWNER")) % value_str);
-}
-
-std::string RemoveOwner::Dump() const
-{
-    return DumpIndent() + "RemoveOwner empire = " + m_empire_id->Dump() + "\n";
+    return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n";
 }
 
 
@@ -1194,9 +1121,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const
 
     location->AddBuilding(new_building_id);
 
-    const std::set<int>& owners = location->Owners();
-    for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
-        building->AddOwner(*it);
+    building->SetOwner(location->Owner());
 }
 
 std::string CreateBuilding::Description() const
@@ -1717,7 +1642,7 @@ void MoveTo::Execute(const ScriptingContext& context) const
 
         Fleet* old_fleet = GetObject<Fleet>(ship->FleetID());
         Fleet* dest_fleet = universe_object_cast<Fleet*>(destination);  // may be 0 if destination is not a fleet
-        bool same_owners = SameOwners(ship, destination);
+        bool same_owners = ship->Owner() == destination->Owner();
         int dest_sys_id = destination->SystemID();
         int ship_sys_id = ship->SystemID();
 

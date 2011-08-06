@@ -63,7 +63,7 @@ Building::Building(int empire_id, const std::string& building_type, int produced
     m_ordered_scrapped(false),
     m_produced_by_empire_id(produced_by_empire_id)
 {
-    AddOwner(empire_id);
+    SetOwner(empire_id);
     const BuildingType* type = GetBuildingType();
     if (type)
         Rename(UserString(type->Name()));
@@ -179,7 +179,7 @@ void Building::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_MET
 
 void Building::Reset()
 {
-    ClearOwners();
+    SetOwner(ALL_EMPIRES);
     m_ordered_scrapped = false;
 }
 
@@ -353,7 +353,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     return !matched_targets.empty();
 }
 
-CaptureResult BuildingType::GetCaptureResult(const std::set<int>& from_empire_ids, int to_empire_id,
+CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id,
                                              int location_id, bool as_production_item) const
 {
     const Empire*   to_empire = Empires().Lookup(to_empire_id);
