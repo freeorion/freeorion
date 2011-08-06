@@ -1557,6 +1557,14 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 {
     m_supply_unobstructed_systems.clear();
 
+    // get systems with historically at least partial visibility
+    std::set<int> systems_with_at_least_partial_visibility_at_some_point;
+    for (std::set<int>::const_iterator sys_it = known_systems.begin(); sys_it != known_systems.end(); ++sys_it) {
+        const Universe::VisibilityTurnMap& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(*sys_it, m_id);
+        if (vis_turns.find(VIS_PARTIAL_VISIBILITY) != vis_turns.end())
+            systems_with_at_least_partial_visibility_at_some_point.insert(*sys_it);
+    }
+
     // get all fleets, or just fleets visible to this client's empire
     const std::vector<Fleet*> fleets = GetUniverse().Objects().FindObjects<Fleet>();
 
@@ -1574,15 +1582,24 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             systems_containing_obstructing_objects.insert(system_id);
     }
 
-    // check each potential supplyable system for whether it can propegate
-    // supply.  having no obstructing objects or having a friendly fleet means
-    // it can
+    // check each potential supplyable system for whether it can propegate supply.
     for (std::set<int>::const_iterator known_systems_it = known_systems.begin(); known_systems_it != known_systems.end(); ++known_systems_it) {
         int sys_id = *known_systems_it;
-        if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end())
+
+        // has empire ever seen this system with partial or better visibility?
+        if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) == systems_with_at_least_partial_visibility_at_some_point.end())
+            continue;
+
+        // if system is explored, then whether it can propegate supply depends
+        // on what friendly / enemy ships are in the system
+
+        if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()) {
+            // if there are friendly ships, supply can propegate
             m_supply_unobstructed_systems.insert(sys_id);
-        else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end())
+        } else if (systems_containing_obstructing_objects.find(sys_id) == systems_containing_obstructing_objects.end()) {
+            // if there are no friendly ships and no enemy ships, supply can propegate
             m_supply_unobstructed_systems.insert(sys_id);
+        }
         // otherwise, system contains no friendly fleets but does contain an
         // unfriendly fleet, so it is obstructed, so isn't included in the
         // unobstructed systems set

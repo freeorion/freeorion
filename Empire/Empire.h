@@ -201,11 +201,13 @@ struct ProductionQueue
     int                             ProjectsInProgress() const;         ///< Returns the number of production projects currently (perhaps partially) funded.
     double                          TotalPPsSpent() const;              ///< Returns the number of PPs currently spent on the projects in this queue.
 
-    /** Returns map from sets of system ids that can share resources to amount of PP available in those groups of systems */
+    /** Returns map from sets of system ids that can share resources to amount
+      * of PP available in those groups of systems */
     std::map<std::set<int>, double> AvailablePP(const std::map<ResourceType, boost::shared_ptr<ResourcePool> >& resource_pools) const;
 
-    /** Returns map from sets of system ids that can share resources to amount of PP allocated to production queue elements that have
-        build locations in systems in the group. */
+    /** Returns map from sets of system ids that can share resources to amount
+      * of PP allocated to production queue elements that have build locations
+      * in systems in the group. */
     std::map<std::set<int>, double> AllocatedPP() const;
 
 

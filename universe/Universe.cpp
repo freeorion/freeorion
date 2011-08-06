@@ -2424,9 +2424,8 @@ void Universe::GetEmpireObjectVisibilityTurnMap(EmpireObjectVisibilityTurnMap& e
     // include just requested empire's visibility turn information
     empire_object_visibility_turns.clear();
     EmpireObjectVisibilityTurnMap::const_iterator it = m_empire_object_visibility_turns.find(encoding_empire);
-    if (it != m_empire_object_visibility_turns.end()) {
+    if (it != m_empire_object_visibility_turns.end())
         empire_object_visibility_turns[encoding_empire] = it->second;
-    }
 }
 
 void Universe::GetEmpireKnownDestroyedObjects(ObjectKnowledgeMap& empire_known_destroyed_object_ids, int encoding_empire) const
