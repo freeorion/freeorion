@@ -3554,7 +3554,7 @@ namespace {
             // can just find the shortest path between the two systems
             std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(system_one->ID(), system_two->ID());
             if (!path.first.empty())    // if path.first is empty, no path exists between the systems
-                return static_cast<int>(path.first.size());
+                return static_cast<int>(path.first.size() - 1);
 
         } else if (system_one) {
             // just object one is / in a system.
