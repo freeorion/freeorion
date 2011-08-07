@@ -2023,6 +2023,9 @@ Technology
 ENC_SPECIAL
 Special
 
+OBJECTS_WITH_SPECIAL
+Objects with Special: 
+
 ENC_BUILDING_TYPE
 Building Type
 
