@@ -1185,11 +1185,10 @@ namespace {
             const CombatInfo& combat_info = it->second;
             const std::set<int>& empire_ids = combat_info.empire_ids;
             for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+
                 Empire* empire = Empires().Lookup(*empire_it);
-                if (!empire) {
-                    Logger().errorStream() << "CreateCombatSitReps couldn't get empire with id " << *empire_it;
+                if (!empire)
                     continue;
-                }
                 empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id));
             }
         }

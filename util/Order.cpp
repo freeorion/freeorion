@@ -266,7 +266,7 @@ void FleetMoveOrder::ExecuteImpl() const
     }
 
     // verify that empire specified in order owns specified fleet
-    if ( !fleet->OwnedBy(EmpireID()) ) {
+    if (!fleet->OwnedBy(EmpireID()) ) {
         Logger().errorStream() << "Empire with id " << EmpireID() << " order to move but does not own fleet with id " << FleetID();
         return;
     }
