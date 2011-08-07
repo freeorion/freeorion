@@ -1,12 +1,13 @@
 #include "Effect.h"
 
 #include "../util/AppInterface.h"
+#include "../util/Random.h"
+#include "../Empire/EmpireManager.h"
+#include "../Empire/Empire.h"
 #include "ValueRef.h"
 #include "Condition.h"
 #include "Universe.h"
 #include "UniverseObject.h"
-#include "../Empire/EmpireManager.h"
-#include "../Empire/Empire.h"
 #include "Building.h"
 #include "Planet.h"
 #include "System.h"
@@ -1764,7 +1765,10 @@ void SetDestination::Execute(const ScriptingContext& context) const
         return;
 
     // "randomly" pick a destination
-    UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
+    int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
+    Condition::ObjectSet::iterator obj_it = valid_locations.begin();
+    std::advance(obj_it, destination_idx);
+    UniverseObject* destination = const_cast<UniverseObject*>(*obj_it);
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
