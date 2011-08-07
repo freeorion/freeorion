@@ -1739,7 +1739,7 @@ void SetDestination::Execute(const ScriptingContext& context) const
         return;
     }
 
-    const Fleet* target_fleet = universe_object_cast<const Fleet*>(context.effect_target);
+    Fleet* target_fleet = universe_object_cast<Fleet*>(context.effect_target);
     if (!target_fleet) {
         Logger().errorStream() << "SetDestination::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -1765,22 +1765,29 @@ void SetDestination::Execute(const ScriptingContext& context) const
 
     // "randomly" pick a destination
     UniverseObject* destination = const_cast<UniverseObject*>(*valid_locations.begin());
+    int destination_system_id = destination->SystemID();
 
+    // early exit if destination is not / in a system
+    if (destination_system_id == UniverseObject::INVALID_OBJECT_ID)
+        return;
 
+    int start_system_id = target_fleet->SystemID();
+    if (start_system_id == UniverseObject::INVALID_OBJECT_ID)
+        start_system_id = target_fleet->NextSystemID();
+    // abort if no valid starting system
+    if (start_system_id == UniverseObject::INVALID_OBJECT_ID)
+        return;
 
-    //std::pair<std::list<int>, double> route_pair = universe.ShortestPath(start_system, dest_system, fleet->Owner());
+    // find shortest path for fleet's owner
+    std::pair<std::list<int>, double> short_path = universe.ShortestPath(start_system_id, destination_system_id, target_fleet->Owner());
+    const std::list<int>& route_list = short_path.first;
 
-    //// if shortest path is empty, the route may be impossible or trivial, so just set route to move fleet
-    //// to the next system that it was just set to move to anyway.
-    //if (route_pair.first.empty())
-    //    route_pair.first.push_back(new_next_system);
+    // check destination validity: disallow movement that's out of range
+    std::pair<int, int> eta = target_fleet->ETA(target_fleet->MovePath(route_list));
+    if (eta.first == Fleet::ETA_NEVER || eta.first == Fleet::ETA_OUT_OF_RANGE)
+        return;
 
-
-    //// set fleet with newly recalculated route
-    //fleet->SetRoute(route_pair.first);
-
-    // do the route setting
-    //target_fleet-
+    target_fleet->SetRoute(route_list);
 }
 
 std::string SetDestination::Description() const

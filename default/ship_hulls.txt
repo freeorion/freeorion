@@ -1530,13 +1530,15 @@ Hull
     effectsgroups =
         EffectsGroup
             scope = And [
-                Source
+                Fleet
                 Stationary
+                Contains Source
             ]
             activation = Random probability = 0.3
             effects = SetDestination destination = And [
                 System
                 WithinStarlaneJumps 1 Source
+                Not Contains Source
             ]
     graphic = ""
     
@@ -1574,4 +1576,17 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps 1 Source
+                Not Contains Source
+            ]
     graphic = ""
