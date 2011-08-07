@@ -317,6 +317,7 @@ enum EmpireAffiliationType {
     AFFIL_SELF,     ///< not an affiliation as such; this indicates that the given empire, rather than its affiliates
     AFFIL_ENEMY,    ///< enemies of the given empire
     AFFIL_ALLY,     ///< allies of the given empire
+    AFFIL_ANY,      ///< any empire
     NUM_AFFIL_TYPES ///< keep last, the number of affiliation types
 };
 
@@ -326,6 +327,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(AFFIL_ENEMY)
     GG_ENUM_MAP_INSERT(AFFIL_SELF)
     GG_ENUM_MAP_INSERT(AFFIL_ALLY)
+    GG_ENUM_MAP_INSERT(AFFIL_ANY)
     GG_ENUM_MAP_END
 }
 GG_ENUM_STREAM_IN(EmpireAffiliationType)

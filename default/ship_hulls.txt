@@ -1586,7 +1586,11 @@ Hull
             activation = Random probability = 0.3
             effects = SetDestination destination = And [
                 System
-                WithinStarlaneJumps 1 Source
                 Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
             ]
     graphic = ""

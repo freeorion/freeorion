@@ -146,10 +146,13 @@ namespace {
             [all.this_ = new_<Condition::All>()];
 
         owned_by =
-            str_p("ownedby")
+            (str_p("ownedby")
              >> affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
              >> empire_label >> int_expr_p[owned_by.empire = arg1]
-            [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.empire, owned_by.affiliation)];
+             [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.empire, owned_by.affiliation)])
+            | (str_p("ownedby")
+              >> affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
+              [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.affiliation)]);
 
         source =
             str_p("source")

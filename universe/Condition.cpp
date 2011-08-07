@@ -644,14 +644,21 @@ std::string Condition::All::Dump() const
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
+Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id,
+                                                EmpireAffiliationType affiliation) :
     m_empire_id(empire_id),
     m_affiliation(affiliation)
 {}
 
+Condition::EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
+   m_empire_id(0),
+   m_affiliation(affiliation)
+{}
+
 Condition::EmpireAffiliation::~EmpireAffiliation()
 {
-    delete m_empire_id;
+    if (m_empire_id)
+        delete m_empire_id;
 }
 
 namespace {
@@ -668,6 +675,8 @@ namespace {
         case AFFIL_ENEMY:
             return empire_id != ALL_EMPIRES && !candidate->Unowned() && !candidate->OwnedBy(empire_id);
             break;
+        case AFFIL_ANY:
+            return !candidate->Unowned();
         default:
             return false;
             break;
@@ -677,13 +686,13 @@ namespace {
 
 void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_empire_id) ||
-                            (m_empire_id->LocalCandidateInvariant() &&
+    bool simple_eval_safe = (!m_empire_id || ValueRef::ConstantExpr(m_empire_id)) ||
+                            ((!m_empire_id || m_empire_id->LocalCandidateInvariant()) &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         const UniverseObject* no_object(0);
-        int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
+        int empire_id = m_empire_id ? m_empire_id->Eval(ScriptingContext(parent_context, no_object)) : ALL_EMPIRES;
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
@@ -705,10 +714,10 @@ void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, 
 }
 
 bool Condition::EmpireAffiliation::RootCandidateInvariant() const
-{ return m_empire_id->RootCandidateInvariant(); }
+{ return m_empire_id ? m_empire_id->RootCandidateInvariant() : true; }
 
 bool Condition::EmpireAffiliation::TargetInvariant() const
-{ return m_empire_id->TargetInvariant(); }
+{ return m_empire_id ? m_empire_id->TargetInvariant() : true; }
 
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
@@ -720,6 +729,11 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
         if (negated)
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str)) % value_str);
+    } else if (m_affiliation == AFFIL_ANY) {
+        std::string description_str = "DESC_EMPIRE_AFFILIATION_ANY";
+        if (negated)
+            description_str += "_NOT";
+        return UserString(description_str);
     } else {
         std::string description_str = "DESC_EMPIRE_AFFILIATION";
         if (negated)
@@ -735,12 +749,14 @@ std::string Condition::EmpireAffiliation::Dump() const
     std::string retval = DumpIndent() + "OwnedBy";
     retval += " affiliation = ";
     switch (m_affiliation) {
-    case AFFIL_SELF:  retval += "TheEmpire"; break;
-    case AFFIL_ENEMY: retval += "EnemyOf"; break;
-    case AFFIL_ALLY:  retval += "AllyOf"; break;
+    case AFFIL_SELF:    retval += "TheEmpire";  break;
+    case AFFIL_ENEMY:   retval += "EnemyOf";    break;
+    case AFFIL_ALLY:    retval += "AllyOf";     break;
+    case AFFIL_ANY:     retval += "AnyEmpire";  break;
     default: retval += "?"; break;
     }
-    retval += " empire = " + m_empire_id->Dump() + "\n";
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump() + "\n";
     return retval;
 }
 
@@ -752,7 +768,7 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
         return false;
     }
 
-    int empire_id = m_empire_id->Eval(local_context);
+    int empire_id = m_empire_id ? m_empire_id->Eval(local_context) : ALL_EMPIRES;
 
     return EmpireAffiliationSimpleMatch(candidate, empire_id, m_affiliation);
 }

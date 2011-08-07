@@ -231,6 +231,7 @@ struct Condition::All : public Condition::ConditionBase
 struct Condition::EmpireAffiliation : public Condition::ConditionBase
 {
     EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
+    EmpireAffiliation(EmpireAffiliationType affiliation);
     virtual ~EmpireAffiliation();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;

@@ -2831,6 +2831,8 @@ AFFIL_ENEMY
 enemy
 AFFIL_ALLY
 ally
+AFFIL_ANY
+any
 
 
 # UnlockableItemTypes
@@ -3305,11 +3307,11 @@ DESC_EMPIRE_AFFILIATION
 DESC_EMPIRE_AFFILIATION_NOT
  that does not belong to an %1% of %2% empire
 
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE
- that belongs only to an %1% of %2% empire
+DESC_EMPIRE_AFFILIATION_ANY
+ that belongs to any empire
 
-DESC_EMPIRE_AFFILIATION_EXCLUSIVE_NOT
- that does not belong only to an %1% of %2% empire
+DESC_EMPIRE_AFFILIATION_ANY_NOT
+ that does not belong to an empire
 
 DESC_SELF
  that is the source object

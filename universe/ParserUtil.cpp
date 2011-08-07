@@ -107,7 +107,8 @@ namespace {
         affiliation_type_p.add
             ("theempire",   AFFIL_SELF)
             ("enemyof",     AFFIL_ENEMY)
-            ("allyof",      AFFIL_ALLY);
+            ("allyof",      AFFIL_ALLY)
+            ("anyempire",   AFFIL_ANY);
 
         unlockable_item_type_p.add
             ("building",    UIT_BUILDING)
