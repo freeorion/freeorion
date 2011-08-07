@@ -2551,7 +2551,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
     // find if there is a FleetWnd for this fleet already open.
     FleetWnd* fleet_wnd = manager.WndForFleet(fleet);
 
-    // if there isn't a FleetWnd for this fleen open, need to open one
+    // if there isn't a FleetWnd for this fleet open, need to open one
     if (!fleet_wnd) {
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
         System* system = GetObject<System>(fleet->SystemID());
@@ -2564,7 +2564,7 @@ void MapWnd::SelectFleet(Fleet* fleet)
             // additionally, players can't give orders to fleets if they're away from a system
             // so even if the fleet is onwed by this client's player, if it's moving, the fleetwnd
             // is not manipulable.
-            bool read_only = (!fleet->Unowned() && fleet->Owner() == HumanClientApp::GetApp()->EmpireID());
+            bool read_only = !fleet->OwnedBy(HumanClientApp::GetApp()->EmpireID());
 
             // get system in which fleet is located and (if possible) empire that owns it exclusively
             int system_id = system->ID();

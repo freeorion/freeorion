@@ -36,8 +36,6 @@ namespace {
 
     const GG::X         DATA_PANEL_TEXT_PAD = GG::X(4); // padding on the left and right of fleet/ship description
     const int           DATA_PANEL_BORDER = 1;          // how thick should the border around ship or fleet panel be
-
-
     const int           PAD = 4;
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";

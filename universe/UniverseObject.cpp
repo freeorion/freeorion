@@ -237,7 +237,7 @@ void UniverseObject::AddMeter(MeterType meter_type)
         m_meters[meter_type];
 }
 
-bool UniverseObject::Unowned() const 
+bool UniverseObject::Unowned() const
 {
     return m_owner_empire_id == ALL_EMPIRES;
 }
