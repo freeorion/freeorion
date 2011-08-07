@@ -2468,6 +2468,27 @@ SP_GISGUFGTHRIM
 SP_GISGUFGTHRIM_DESC
 Shelled herbivores that live off a singular planets-sized colonial gel.
 
+SP_HIDDENGARDENER
+Hidden Gardener
+SP_HIDDENGARDENER_DESC
+'''A sapient fungal network that tends it's plant food from beneath.
+
++++ Farming
+-- produces no other resources
+
+The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kms. It's actions and thoughts are slow.  Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden.  A Hidden Gardener by means of enzymes, the encapsulation and releases of seeds, and the control of water tends it's garden to produce precisely the rotting plant matter it needs to survive.
+
+Fungal type life-forms seldom have much use for brains of any type, but the Gardener's unusual, and thoughtful approach to providing itself with food provides enough additional energy to make it work.
+
+Their terran homeworld is an eerily park-like place with plants arrainged with unnatural precision, but no other signs of habitation.
+
+The wide ranging, delicate fungi-nets are too large and integrated into the soil to be moved off-planet.  And since the hidden gardeners reproduce by 'splitting' into two consciousnesses when a Gardener grows too wide-ranging to have a decent thought-latency, there are no small, young individuals to take off planet.'''
+
+SP_ABADDONNIANS
+Abaddonnians
+SP_ABADDONNIANS_DESC
+A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
+
 
 SP_TEST
 Testing Guinea Pig

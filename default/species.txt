@@ -741,7 +741,79 @@ Species
     ]
     graphic = "icons/species/gis-guf-gthrim.png"
 
+Species
+    name = "SP_HIDDENGARDENER"
+    description = "SP_HIDDENGARDENER_DESC"
+    Planetbound
 
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 50
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Hostile
+        type = Inferno      environment = Hostile
+        type = Radiated     environment = Hostile
+        type = Barren       environment = Hostile
+        type = Tundra       environment = Poor
+        type = Desert       environment = Adequate
+        type = Terran       environment = Good
+        type = Ocean        environment = Adequate
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/hidden-gardener.png"
+
+Species
+    name = "SP_ABADDONNIANS"
+    description = "SP_ABADDONNIANS_DESC"
+    Planetbound
+
+    foci = [
+        Focus
+            name = "FOCUS_FARMING"
+            description = "FOCUS_FARMING_DESC"
+            location = Planet
+            graphic = "icons/focus/farming.png"
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation 20
+                SetTargetHealth 20
+                SetTargetFarming 20
+            ]
+    ]
+    environments = [
+        type = Swamp        environment = Poor
+        type = Toxic        environment = Adequate
+        type = Inferno      environment = Good
+        type = Radiated     environment = Adequate
+        type = Barren       environment = Poor
+        type = Tundra       environment = Hostile
+        type = Desert       environment = Hostile
+        type = Terran       environment = Hostile
+        type = Ocean        environment = Hostile
+        type = Asteroids    environment = Uninhabitable
+        type = Gasgiant     environment = Uninhabitable
+    ]
+    graphic = "icons/species/hidden-gardener.png"
 
 Species
     name = "SP_HUMAN"
