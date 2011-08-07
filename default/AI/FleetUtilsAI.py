@@ -12,7 +12,7 @@ def splitFleet(fleetID):
     fleet = universe.getFleet(fleetID)
 
     if fleet == None: return
-    if not fleet.whollyOwnedBy(empireID): return
+    if not fleet.ownedBy(empireID): return
 
     for shipID in fleet.shipIDs:
         if len(fleet.shipIDs) <= 1: break # fleet with only one ship cannot be split
@@ -62,7 +62,7 @@ def getEmpireFleetIDs():
         fleet = universe.getFleet(fleetID)
 
         if (fleet == None): continue
-        if (not fleet.whollyOwnedBy(empireID)): continue
+        if (not fleet.ownedBy(empireID)): continue
 
         empireFleetIDs = empireFleetIDs + [fleetID]
 
