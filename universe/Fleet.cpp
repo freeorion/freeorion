@@ -846,7 +846,7 @@ void Fleet::MovementPhase()
             prev_prev_system = m_prev_system;
             m_prev_system = system->ID();               // passing a system, so update previous system of this fleet
 
-            bool resupply_here = empire->FleetOrResourceSupplyableAtSystem(system->ID());
+            bool resupply_here = empire ? empire->FleetOrResourceSupplyableAtSystem(system->ID()) : false;
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {
