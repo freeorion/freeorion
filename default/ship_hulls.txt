@@ -1535,6 +1535,7 @@ Hull
                 Contains Source
             ]
             activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 WithinStarlaneJumps 1 Source
@@ -1584,6 +1585,7 @@ Hull
                 Contains Source
             ]
             activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 Not Contains Source
