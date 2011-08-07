@@ -114,7 +114,7 @@ namespace {
     ParamLabel shortdescription_label("short_description");
     ParamLabel buildcost_label("buildcost");
     ParamLabel buildtime_label("buildtime");
-    ParamLabel maintenancecost_label("maintenancecost");
+    ParamLabel captureresult_label("captureresult");
     ParamLabel effectsgroups_label("effectsgroups");
     ParamLabel graphic_label("graphic");
     ParamLabel techtype_label("techtype");
@@ -186,13 +186,14 @@ namespace {
              >> buildtime_label >>          int_p[building_type_p.production_time = arg1]
              >> ((producible_label >>       true_false_p[building_type_p.producible = arg1]) |
                                             eps_p[building_type_p.producible = val(true)])
-             >> maintenancecost_label >>    real_p[building_type_p.maintenance_cost = arg1]
              >> location_label >>           condition_p[building_type_p.location = arg1]
+             >> (captureresult_label >>     capture_result_p[building_type_p.capture_result = arg1]
+                 | eps_p[building_type_p.capture_result = val(CR_CAPTURE)])
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[building_type_p.graphic = arg1])
             [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description,
                                                         building_type_p.production_cost, building_type_p.production_time, val(true),
-                                                        building_type_p.maintenance_cost, building_type_p.location,
+                                                        building_type_p.capture_result, building_type_p.location,
                                                         building_type_p.effects_groups, building_type_p.graphic)];
 
         special_p =

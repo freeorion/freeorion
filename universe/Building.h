@@ -79,7 +79,7 @@ public:
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
                  double production_cost, int production_time, bool producible,
-                 double maintenance_cost, const Condition::ConditionBase* location,
+                 CaptureResult capture_result, const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                  const std::string& graphic);
 
@@ -116,7 +116,7 @@ private:
     double                                                      m_production_cost;
     int                                                         m_production_time;
     bool                                                        m_producible;
-    double                                                      m_maintenance_cost;
+    CaptureResult                                               m_capture_result;
     const Condition::ConditionBase*                             m_location;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> > m_effects;
     std::string                                                 m_graphic;

@@ -100,7 +100,7 @@ extern boost::spirit::classic::rule<Scanner, EffectClosure::context_t> effect_p;
 // Top Level Parsers                                      //
 ////////////////////////////////////////////////////////////
 struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure, BuildingType*, std::string,
-                                                             std::string, double, int, double, bool,
+                                                             std::string, double, int, bool, CaptureResult,
                                                              Condition::ConditionBase*,
                                                              std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                              std::string>
@@ -110,8 +110,8 @@ struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure
     member3 description;
     member4 production_cost;
     member5 production_time;
-    member6 maintenance_cost;
-    member7 producible;
+    member6 producible;
+    member7 capture_result;
     member8 location;
     member9 effects_groups;
     member10 graphic;

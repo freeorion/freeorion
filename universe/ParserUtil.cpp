@@ -33,6 +33,7 @@ symbols<TechType>               tech_type_p;
 symbols<CombatFighterType>      combat_fighter_type_p;
 symbols<ShipPartClass>          part_class_p;
 symbols<ShipSlotType>           slot_type_p;
+symbols<CaptureResult>          capture_result_p;
 
 namespace {
     bool Init()
@@ -142,6 +143,11 @@ namespace {
         slot_type_p.add
             ("external",    SL_EXTERNAL)
             ("internal",    SL_INTERNAL);
+
+        capture_result_p.add
+            ("capture",     CR_CAPTURE)
+            ("destroy",     CR_DESTROY)
+            ("retain",      CR_RETAIN);
 
         return true;
     }

@@ -199,7 +199,7 @@ BuildingType::BuildingType() :
     m_description(""),
     m_production_cost(0.0),
     m_production_time(0),
-    m_maintenance_cost(0.0),
+    m_capture_result(CR_DESTROY),
     m_location(0),
     m_effects(0),
     m_graphic("")
@@ -207,7 +207,7 @@ BuildingType::BuildingType() :
 
 BuildingType::BuildingType(const std::string& name, const std::string& description,
                            double production_cost, int production_time, bool producible,
-                           double maintenance_cost, const Condition::ConditionBase* location,
+                           CaptureResult capture_result, const Condition::ConditionBase* location,
                            const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
                            const std::string& graphic) :
     m_name(name),
@@ -215,7 +215,7 @@ BuildingType::BuildingType(const std::string& name, const std::string& descripti
     m_production_cost(production_cost),
     m_production_time(production_time),
     m_producible(producible),
-    m_maintenance_cost(maintenance_cost),
+    m_capture_result(capture_result),
     m_location(location),
     m_effects(effects),
     m_graphic(graphic)
@@ -244,7 +244,7 @@ std::string BuildingType::Dump() const
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
     retval += DumpIndent() + "buildcost = " + lexical_cast<std::string>(m_production_cost) + "\n";
     retval += DumpIndent() + "buildtime = " + lexical_cast<std::string>(m_production_time) + "\n";
-    retval += DumpIndent() + "maintenancecost = " + lexical_cast<std::string>(m_maintenance_cost) + "\n";
+    retval += DumpIndent() + "captureresult = " + lexical_cast<std::string>(m_capture_result) + "\n";
     retval += DumpIndent() + "location = \n";
     ++g_indent;
     retval += m_location->Dump();
@@ -295,7 +295,7 @@ bool BuildingType::Producible() const
 
 double BuildingType::MaintenanceCost() const
 {
-    return m_maintenance_cost;
+    return 0.0;
 }
 
 const Condition::ConditionBase* BuildingType::Location() const {
@@ -356,13 +356,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id,
                                              int location_id, bool as_production_item) const
 {
-    const Empire*   to_empire = Empires().Lookup(to_empire_id);
-    UniverseObject* location =  GetMainObjectMap().Object(location_id);
-
-    if (as_production_item && location && to_empire)
-        return CR_CAPTURE;
-
-    return CR_CAPTURE;
+    return m_capture_result;
 }
 
 /////////////////////////////////////////////////
