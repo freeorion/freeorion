@@ -133,6 +133,7 @@ namespace {
             ("pointdefense",    PC_POINT_DEFENSE)
             ("shield",          PC_SHIELD)
             ("armour",          PC_ARMOUR)
+            ("troops",          PC_TROOPS)
             ("detection",       PC_DETECTION)
             ("stealth",         PC_STEALTH)
             ("fuel",            PC_FUEL)

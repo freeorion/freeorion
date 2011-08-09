@@ -483,6 +483,9 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
+    case PC_TROOPS:
+        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, boost::get<double>(m_stats)));
+        break;
     case PC_SHIELD:
         m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
         break;

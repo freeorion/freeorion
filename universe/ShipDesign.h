@@ -21,7 +21,7 @@ namespace Effect {
 }
 class Empire;
 
-/** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part types. */
+/** Part stats for the PC_SHORT_RANGE and PC_POINT_DEFENSE part classes. */
 struct DirectFireStats
 {
     DirectFireStats();
@@ -45,7 +45,7 @@ struct DirectFireStats
     }
 };
 
-/** Part stats for the PC_MISSILES part type. */
+/** Part stats for the PC_MISSILES part class. */
 struct LRStats
 {
     LRStats();
@@ -77,7 +77,7 @@ struct LRStats
     }
 };
 
-/** Part stats for the PC_FIGHTERS part type. */
+/** Part stats for the PC_FIGHTERS part class. */
 struct FighterStats
 {
     FighterStats();

@@ -172,6 +172,7 @@ enum MeterType {
     METER_MAX_SHIELD,
     METER_MAX_STRUCTURE,
     METER_MAX_DEFENSE,
+    METER_MAX_TROOPS,
 
     METER_POPULATION,
     METER_HEALTH,
@@ -186,6 +187,7 @@ enum MeterType {
     METER_SHIELD,
     METER_STRUCTURE,
     METER_DEFENSE,
+    METER_TROOPS,
 
     METER_FOOD_CONSUMPTION,
     METER_SUPPLY,
@@ -225,6 +227,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(METER_MAX_SHIELD)
     GG_ENUM_MAP_INSERT(METER_MAX_STRUCTURE)
     GG_ENUM_MAP_INSERT(METER_MAX_DEFENSE)
+    GG_ENUM_MAP_INSERT(METER_MAX_TROOPS)
 
     GG_ENUM_MAP_INSERT(METER_POPULATION)
     GG_ENUM_MAP_INSERT(METER_HEALTH)
@@ -239,6 +242,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(METER_SHIELD)
     GG_ENUM_MAP_INSERT(METER_STRUCTURE)
     GG_ENUM_MAP_INSERT(METER_DEFENSE)
+    GG_ENUM_MAP_INSERT(METER_TROOPS)
 
     GG_ENUM_MAP_INSERT(METER_FOOD_CONSUMPTION)
     GG_ENUM_MAP_INSERT(METER_SUPPLY)
@@ -472,6 +476,7 @@ enum ShipPartClass {
     PC_POINT_DEFENSE,       ///< short range direct weapons, good against fighters or incoming missiles, bad against ships
     PC_SHIELD,              ///< energy-based defense
     PC_ARMOUR,              ///< defensive material on hull of ship
+    PC_TROOPS,              ///< ground troops, used to conquer planets
     PC_DETECTION,           ///< range of vision and seeing through stealth
     PC_STEALTH,             ///< hiding from enemies
     PC_FUEL,                ///< distance that can be traveled away from resupply
@@ -490,6 +495,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(PC_POINT_DEFENSE)
     GG_ENUM_MAP_INSERT(PC_SHIELD)
     GG_ENUM_MAP_INSERT(PC_ARMOUR)
+    GG_ENUM_MAP_INSERT(PC_TROOPS)
     GG_ENUM_MAP_INSERT(PC_DETECTION)
     GG_ENUM_MAP_INSERT(PC_STEALTH)
     GG_ENUM_MAP_INSERT(PC_FUEL)
