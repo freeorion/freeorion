@@ -1182,6 +1182,7 @@ namespace {
              it != system_combat_info.end();
              ++it)
         {
+            // basic "combat occured" sitreps
             const CombatInfo& combat_info = it->second;
             const std::set<int>& empire_ids = combat_info.empire_ids;
             for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
@@ -1191,8 +1192,33 @@ namespace {
                     continue;
                 empire->AddSitRepEntry(CreateCombatSitRep(combat_info.system_id));
             }
+
+            // sitreps about destroyed objects
+            for (std::map<int, std::set<int> >::const_iterator empire_known_destroyed_objects_it = combat_info.destroyed_object_knowers.begin();
+                 empire_known_destroyed_objects_it != combat_info.destroyed_object_knowers.end(); ++empire_known_destroyed_objects_it)
+            {
+                int empire_id = empire_known_destroyed_objects_it->first;
+                Empire* empire = Empires().Lookup(empire_id);
+                if (!empire)
+                    continue;
+
+                const std::set<int>& destroyed_object_ids = empire_known_destroyed_objects_it->second;
+                for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
+                     dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
+                {
+                    int destroyed_object_id = *dest_obj_it;
+                    empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id, empire_id));
+                }
+            }
         }
     }
+
+    /** Contains information about ground combats before and after they occur. */
+    struct GroundCombatInfo {
+
+    };
+
+    /** Clears and refills */
 }
 
 namespace {
@@ -1587,7 +1613,6 @@ void ServerApp::ProcessCombats()
     // auto-resolved
 
 
-
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
@@ -1648,6 +1673,8 @@ void ServerApp::ProcessCombats()
     CreateCombatSitReps(system_combat_info);
 
     CleanupSystemCombatInfo(system_combat_info);
+
+
 }
 
 void ServerApp::PostCombatProcessTurns()
