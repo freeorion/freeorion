@@ -67,6 +67,8 @@ namespace {
             break;
         case METER_TRADE:
         case METER_TARGET_TRADE:
+        case METER_TROOPS:
+        case METER_MAX_TROOPS:
             return GG::Clr(255, 148, 0, 255);   // orange
             break;
         case METER_CONSTRUCTION:
@@ -964,6 +966,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_fleet_supply_stat(0),
     m_shield_stat(0),
     m_defense_stat(0),
+    m_troops_stat(0),
     m_detection_stat(0),
     m_stealth_stat(0),
     m_multi_icon_value_indicator(0),
@@ -993,6 +996,10 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
                                        0, 3, false);
     AttachChild(m_defense_stat);
 
+    m_troops_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_TROOPS),
+                                       0, 3, false);
+    AttachChild(m_troops_stat);
+
     m_detection_stat = new StatisticIcon(GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y, ClientUI::MeterIcon(METER_DETECTION),
                                          0, 3, false);
     AttachChild(m_detection_stat);
@@ -1006,6 +1013,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     m_fleet_supply_stat->SetBrowseModeTime(tooltip_delay);
     m_shield_stat->SetBrowseModeTime(tooltip_delay);
     m_defense_stat->SetBrowseModeTime(tooltip_delay);
+    m_troops_stat->SetBrowseModeTime(tooltip_delay);
     m_detection_stat->SetBrowseModeTime(tooltip_delay);
     m_stealth_stat->SetBrowseModeTime(tooltip_delay);
 
@@ -1015,6 +1023,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     meters.push_back(std::make_pair(METER_SUPPLY, INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_SHIELD, METER_MAX_SHIELD));
     meters.push_back(std::make_pair(METER_DEFENSE, METER_MAX_DEFENSE));
+    meters.push_back(std::make_pair(METER_TROOPS, METER_MAX_TROOPS));
     meters.push_back(std::make_pair(METER_DETECTION, INVALID_METER_TYPE));
     meters.push_back(std::make_pair(METER_STEALTH, INVALID_METER_TYPE));
 
@@ -1036,6 +1045,7 @@ MilitaryPanel::~MilitaryPanel()
     delete m_fleet_supply_stat;
     delete m_shield_stat;
     delete m_defense_stat;
+    delete m_troops_stat;
     delete m_detection_stat;
     delete m_stealth_stat;
 
@@ -1128,6 +1138,7 @@ void MilitaryPanel::Update()
     m_fleet_supply_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SUPPLY));
     m_shield_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_SHIELD));
     m_defense_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DEFENSE));
+    m_troops_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_TROOPS));
     m_detection_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_DETECTION));
     m_stealth_stat->SetValue(obj->NextTurnCurrentMeterValue(METER_STEALTH));
 
@@ -1143,6 +1154,10 @@ void MilitaryPanel::Update()
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DEFENSE, METER_MAX_DEFENSE));
     m_defense_stat->SetBrowseInfoWnd(browse_wnd);
     m_multi_icon_value_indicator->SetToolTip(METER_DEFENSE, browse_wnd);
+
+    browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_TROOPS, METER_MAX_TROOPS));
+    m_troops_stat->SetBrowseInfoWnd(browse_wnd);
+    m_multi_icon_value_indicator->SetToolTip(METER_TROOPS, browse_wnd);
 
     browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, METER_DETECTION));
     m_detection_stat->SetBrowseInfoWnd(browse_wnd);
@@ -1181,6 +1196,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
         meter_icons.push_back(m_fleet_supply_stat);
         meter_icons.push_back(m_shield_stat);
         meter_icons.push_back(m_defense_stat);
+        meter_icons.push_back(m_troops_stat);
         meter_icons.push_back(m_detection_stat);
         meter_icons.push_back(m_stealth_stat);
 
@@ -1207,7 +1223,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
     } else {
         // detach statistic icons
         DetachChild(m_fleet_supply_stat);   DetachChild(m_shield_stat);     DetachChild(m_defense_stat);
-        DetachChild(m_detection_stat);      DetachChild(m_stealth_stat);
+        DetachChild(m_troops_stat);         DetachChild(m_detection_stat);  DetachChild(m_stealth_stat);
 
         // attach and show meter bars and large resource indicators
         GG::Y top = UpperLeft().y;
@@ -1242,8 +1258,7 @@ void MilitaryPanel::DoExpandCollapseLayout()
 }
 
 void MilitaryPanel::EnableOrderIssuing(bool enable/* = true*/)
-{
-}
+{}
 
 
 /////////////////////////////////////

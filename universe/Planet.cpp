@@ -184,6 +184,8 @@ void Planet::Init() {
     AddMeter(METER_MAX_SHIELD);
     AddMeter(METER_DEFENSE);
     AddMeter(METER_MAX_DEFENSE);
+    AddMeter(METER_TROOPS);
+    AddMeter(METER_MAX_TROOPS);
     AddMeter(METER_DETECTION);
 }
 

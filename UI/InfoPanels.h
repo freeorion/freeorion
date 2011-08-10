@@ -170,6 +170,7 @@ private:
     StatisticIcon*              m_fleet_supply_stat;        ///< icon and number of food production
     StatisticIcon*              m_shield_stat;              ///< icon and number of minerals production
     StatisticIcon*              m_defense_stat;             ///< icon and number of industry production
+    StatisticIcon*              m_troops_stat;              ///< icon and number of ground troops
     StatisticIcon*              m_detection_stat;           ///< icon and number of research production
     StatisticIcon*              m_stealth_stat;             ///< icon and number of trade production
 

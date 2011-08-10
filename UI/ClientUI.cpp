@@ -248,6 +248,10 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     case METER_MAX_DEFENSE:
         icon_filename = "defense.png";
         break;
+    case METER_TROOPS:
+    case METER_MAX_TROOPS:
+        icon_filename = "troops.png";
+        break;
     default:
         break;
     }
@@ -277,15 +281,15 @@ std::map<PlanetType, std::string>& ClientUI::PlanetTypeFilePrefixes()
 {
     static std::map<PlanetType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[PT_SWAMP] = "Swamp";
-        prefixes[PT_TOXIC] = "Toxic";
-        prefixes[PT_INFERNO] = "Inferno";
+        prefixes[PT_SWAMP] =    "Swamp";
+        prefixes[PT_TOXIC] =    "Toxic";
+        prefixes[PT_INFERNO] =  "Inferno";
         prefixes[PT_RADIATED] = "Radiated";
-        prefixes[PT_BARREN] = "Barren";
-        prefixes[PT_TUNDRA] = "Tundra";
-        prefixes[PT_DESERT] = "Desert";
-        prefixes[PT_TERRAN] = "Terran";
-        prefixes[PT_OCEAN] = "Ocean";
+        prefixes[PT_BARREN] =   "Barren";
+        prefixes[PT_TUNDRA] =   "Tundra";
+        prefixes[PT_DESERT] =   "Desert";
+        prefixes[PT_TERRAN] =   "Terran";
+        prefixes[PT_OCEAN] =    "Ocean";
         prefixes[PT_GASGIANT] = "GasGiant";
     }
     return prefixes;
@@ -295,15 +299,15 @@ std::map<StarType, std::string>& ClientUI::StarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[INVALID_STAR_TYPE] = "unknown";
-        prefixes[STAR_BLUE] = "blue";
-        prefixes[STAR_WHITE] = "white";
-        prefixes[STAR_YELLOW] = "yellow";
-        prefixes[STAR_ORANGE] = "orange";
-        prefixes[STAR_RED] = "red";
-        prefixes[STAR_NEUTRON] = "neutron";
-        prefixes[STAR_BLACK] = "blackhole";
-        prefixes[STAR_NONE] = "nostar";
+        prefixes[INVALID_STAR_TYPE] =   "unknown";
+        prefixes[STAR_BLUE] =           "blue";
+        prefixes[STAR_WHITE] =          "white";
+        prefixes[STAR_YELLOW] =         "yellow";
+        prefixes[STAR_ORANGE] =         "orange";
+        prefixes[STAR_RED] =            "red";
+        prefixes[STAR_NEUTRON] =        "neutron";
+        prefixes[STAR_BLACK] =          "blackhole";
+        prefixes[STAR_NONE] =           "nostar";
     }
     return prefixes;
 }
@@ -312,15 +316,15 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes()
 {
     static std::map<StarType, std::string> prefixes;
     if (prefixes.empty()) {
-        prefixes[INVALID_STAR_TYPE] = "halo_unknown";
-        prefixes[STAR_BLUE] = "halo_blue";
-        prefixes[STAR_WHITE] = "halo_white";
-        prefixes[STAR_YELLOW] = "halo_yellow";
-        prefixes[STAR_ORANGE] = "halo_orange";
-        prefixes[STAR_RED] = "halo_red";
-        prefixes[STAR_NEUTRON] = "halo_neutron";
-        prefixes[STAR_BLACK] = "halo_blackhole";
-        prefixes[STAR_NONE] = "halo_nostar";
+        prefixes[INVALID_STAR_TYPE] =   "halo_unknown";
+        prefixes[STAR_BLUE] =           "halo_blue";
+        prefixes[STAR_WHITE] =          "halo_white";
+        prefixes[STAR_YELLOW] =         "halo_yellow";
+        prefixes[STAR_ORANGE] =         "halo_orange";
+        prefixes[STAR_RED] =            "halo_red";
+        prefixes[STAR_NEUTRON] =        "halo_neutron";
+        prefixes[STAR_BLACK] =          "halo_blackhole";
+        prefixes[STAR_NONE] =           "halo_nostar";
     }
     return prefixes;
 }
