@@ -2079,7 +2079,7 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
     obj->MoveTo(obj->X(), obj->Y());
 
 
-    // remove from existing objects set and insert into destroyed objects set
+    // remove from existing objects set
     UniverseObjectDeleteSignal(obj);
     delete m_objects.Remove(object_id);
 }

@@ -66,7 +66,7 @@ SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_
     if (!obj)
         return GenericCombatDestroyedObjectSitrep(combat_system_id);
 
-    SitRepEntry* sitrep(0); 
+    SitRepEntry* sitrep(0);
 
     if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
         sitrep = new SitRepEntry("SITREP_SHIP_DESTROYED_AT_SYSTEM");
