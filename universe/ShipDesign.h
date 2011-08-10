@@ -293,6 +293,7 @@ public:
     double              Structure() const;      ///< returns structure of hull
     double              Shields() const;        ///< returns shields of hull
     double              ColonyCapacity() const; ///< returns colonist capacity of hull
+    double              TroopCapacity() const;  ///< returns the troop capacity of hull
     double              Detection() const;      ///< returns detection ability of hull
 
     double              ProductionCost() const; ///< returns total cost of hull
@@ -415,9 +416,11 @@ public:
     double                          Fuel() const;               ///< returns the max fuel capacity of this design
     double                          Detection() const;          ///< returns the detection ability of this design
     double                          ColonyCapacity() const;     ///< returns the colonization capacity of this design
+    double                          TroopCapacity() const;      ///< returns the troop capacity of this design
     double                          Stealth() const;            ///< returns the stealth of this design
 
     bool                            CanColonize() const;
+    bool                            HasTroops() const;
     bool                            IsArmed() const;
     bool                            IsMonster() const;
 
@@ -505,6 +508,7 @@ private:
     bool    m_is_armed;
     double  m_detection;
     double  m_colony_capacity;
+    double  m_troop_capacity;
     double  m_stealth;
     double  m_fuel;
     double  m_shields;

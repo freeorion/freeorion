@@ -483,9 +483,6 @@ PartType::PartType(
         m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, stats.m_capacity));
         break;
     }
-    case PC_TROOPS:
-        m_effects.push_back(IncreaseMeter(METER_CAPACITY,               m_name, boost::get<double>(m_stats)));
-        break;
     case PC_SHIELD:
         m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
         break;
@@ -731,6 +728,10 @@ double HullType::Shields() const {
 
 double HullType::ColonyCapacity() const {
     return 0.0; // as of this writing, hulls don't have colonist capacity
+}
+
+double HullType::TroopCapacity() const {
+    return 0.0; // as of this writing, hulls don't have troop capacity
 }
 
 double HullType::Detection() const {
@@ -1009,6 +1010,9 @@ double ShipDesign::Detection() const
 double ShipDesign::ColonyCapacity() const
 { return m_colony_capacity; }
 
+double ShipDesign::TroopCapacity() const
+{ return m_troop_capacity; }
+
 double ShipDesign::Stealth() const
 { return m_stealth; }
 
@@ -1091,6 +1095,10 @@ double ShipDesign::Attack() const {
 
 bool ShipDesign::CanColonize() const {
     return (m_colony_capacity > 0.0);
+}
+
+bool ShipDesign::HasTroops() const {
+    return (m_troop_capacity > 0.0);
 }
 
 bool ShipDesign::IsArmed() const {
@@ -1278,6 +1286,7 @@ void ShipDesign::BuildStatCaches()
     m_producible =      hull->Producible();
     m_detection =       hull->Detection();
     m_colony_capacity = hull->ColonyCapacity();
+    m_troop_capacity =  hull->TroopCapacity();
     m_stealth =         hull->Stealth();
     m_fuel =            hull->Fuel();
     m_shields =         hull->Shields();
@@ -1341,6 +1350,9 @@ void ShipDesign::BuildStatCaches()
         }
         case PC_COLONY:
             m_colony_capacity += boost::get<double>(part->Stats());
+            break;
+        case PC_TROOPS:
+            m_troop_capacity += boost::get<double>(part->Stats());
             break;
         case PC_STEALTH:
             m_stealth += boost::get<double>(part->Stats());
