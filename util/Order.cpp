@@ -67,7 +67,7 @@ bool Order::UndoImpl() const
 ////////////////////////////////////////////////
 // RenameOrder
 ////////////////////////////////////////////////
-RenameOrder::RenameOrder() : 
+RenameOrder::RenameOrder() :
     Order(),
     m_object(UniverseObject::INVALID_OBJECT_ID)
 {}
@@ -313,7 +313,7 @@ void FleetMoveOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // FleetTransferOrder
 ////////////////////////////////////////////////
-FleetTransferOrder::FleetTransferOrder() : 
+FleetTransferOrder::FleetTransferOrder() :
     Order(),
     m_fleet_from(UniverseObject::INVALID_OBJECT_ID),
     m_fleet_to(UniverseObject::INVALID_OBJECT_ID)
@@ -389,7 +389,7 @@ void FleetTransferOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // ColonizeOrder
 ////////////////////////////////////////////////
-ColonizeOrder::ColonizeOrder() : 
+ColonizeOrder::ColonizeOrder() :
     Order(),
     m_ship(UniverseObject::INVALID_OBJECT_ID),
     m_planet(UniverseObject::INVALID_OBJECT_ID)
@@ -487,9 +487,86 @@ bool ColonizeOrder::UndoImpl() const
 
 
 ////////////////////////////////////////////////
+// InvadeOrder
+////////////////////////////////////////////////
+InvadeOrder::InvadeOrder() :
+    Order(),
+    m_ship(UniverseObject::INVALID_OBJECT_ID),
+    m_planet(UniverseObject::INVALID_OBJECT_ID)
+{}
+
+InvadeOrder::InvadeOrder(int empire, int ship, int planet) :
+    Order(empire),
+    m_ship(ship),
+    m_planet(planet)
+{}
+
+void InvadeOrder::ExecuteImpl() const
+{
+    ValidateEmpireID();
+    int empire_id = EmpireID();
+
+    Ship* ship = GetObject<Ship>(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get ship with id " << m_ship;
+        return;
+    }
+    if (!ship->HasTroops()) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl got ship that can't invade";
+        return;
+    }
+    if (!ship->OwnedBy(empire_id)) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl got ship that isn't owned by the order-issuing empire";
+        return;
+    }
+
+    Planet* planet = GetObject<Planet>(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
+        return;
+    }
+    int ship_system_id = ship->SystemID();
+    if (ship_system_id == UniverseObject::INVALID_OBJECT_ID) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given id of ship not in a system";
+        return;
+    }
+    int planet_system_id = planet->SystemID();
+    if (ship_system_id != planet_system_id) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
+        return;
+    }
+
+    ship->SetInvadePlanet(m_planet);
+}
+
+bool InvadeOrder::UndoImpl() const
+{
+    Planet* planet = GetObject<Planet>(m_planet);
+    if (!planet) {
+        Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get planet with id " << m_planet;
+        return false;
+    }
+
+    Ship* ship = GetObject<Ship>(m_ship);
+    if (!ship) {
+        Logger().errorStream() << "InvadeOrder::UndoImpl couldn't get ship with id " << m_ship;
+        return false;
+    }
+    if (ship->OrderedInvadePlanet() != m_planet) {
+        Logger().errorStream() << "InvadeOrder::UndoImpl ship is not about to invade planet";
+        return false;
+    }
+
+    ship->ClearInvadePlanet();
+
+    return true;
+}
+
+
+////////////////////////////////////////////////
 // DeleteFleetOrder
 ////////////////////////////////////////////////
-DeleteFleetOrder::DeleteFleetOrder() : 
+DeleteFleetOrder::DeleteFleetOrder() :
     Order(),
     m_fleet(-1)
 {}
@@ -527,7 +604,7 @@ void DeleteFleetOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // ChangeFocusOrder
 ////////////////////////////////////////////////
-ChangeFocusOrder::ChangeFocusOrder() : 
+ChangeFocusOrder::ChangeFocusOrder() :
     Order(),
     m_planet(UniverseObject::INVALID_OBJECT_ID),
     m_focus()
@@ -565,7 +642,7 @@ void ChangeFocusOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // ResearchQueueOrder
 ////////////////////////////////////////////////
-ResearchQueueOrder::ResearchQueueOrder() : 
+ResearchQueueOrder::ResearchQueueOrder() :
     Order(),
     m_position(-1),
     m_remove(false)
@@ -599,7 +676,7 @@ void ResearchQueueOrder::ExecuteImpl() const
 ////////////////////////////////////////////////
 // ProductionQueueOrder
 ////////////////////////////////////////////////
-ProductionQueueOrder::ProductionQueueOrder() : 
+ProductionQueueOrder::ProductionQueueOrder() :
     Order(),
     m_build_type(INVALID_BUILD_TYPE),
     m_item_name(""),

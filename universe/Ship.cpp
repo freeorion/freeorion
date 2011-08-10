@@ -32,6 +32,7 @@ Ship::Ship() :
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
+    m_ordered_invade_planet_id(INVALID_OBJECT_ID),
     m_produced_by_empire_id(ALL_EMPIRES)
 {}
 
@@ -40,6 +41,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name, int pr
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
+    m_ordered_invade_planet_id(INVALID_OBJECT_ID),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id)
 {
@@ -161,6 +163,7 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
+                this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
                 this->m_part_meters =               copied_ship->m_part_meters;
                 this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             }
@@ -261,6 +264,15 @@ bool Ship::CanColonize() const {
     return true;
 }
 
+bool Ship::HasTroops() const {
+    const ShipDesign* design = Design();
+    if (!design)
+        return false;
+    if (!design->HasTroops())
+        return false;
+    return true;
+}
+
 const std::string& Ship::SpeciesName() const {
     return m_species_name;
 }
@@ -319,6 +331,9 @@ bool Ship::OrderedScrapped() const
 
 int Ship::OrderedColonizePlanet() const
 { return m_ordered_colonize_planet_id; }
+
+int Ship::OrderedInvadePlanet() const
+{ return m_ordered_invade_planet_id; }
 
 const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
 { return const_cast<Ship*>(this)->GetMeter(type, part_name); }
@@ -420,6 +435,22 @@ void Ship::SetColonizePlanet(int planet_id)
 void Ship::ClearColonizePlanet()
 {
     SetColonizePlanet(INVALID_OBJECT_ID);
+}
+
+void Ship::SetInvadePlanet(int planet_id)
+{
+    if (planet_id == m_ordered_invade_planet_id) return;
+    m_ordered_invade_planet_id = planet_id;
+    StateChangedSignal();
+    if (Fleet* fleet = GetObject<Fleet>(this->FleetID())) {
+        fleet->RecalculateFleetSpeed();
+        fleet->StateChangedSignal();
+    }
+}
+
+void Ship::ClearInvadePlanet()
+{
+    SetInvadePlanet(INVALID_OBJECT_ID);
 }
 
 Meter* Ship::GetMeter(MeterType type, const std::string& part_name)

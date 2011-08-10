@@ -278,6 +278,47 @@ private:
 
 
 /////////////////////////////////////////////////////
+// InvadeOrder
+/////////////////////////////////////////////////////
+/** the Order subclass that represents a planet invasion action*/
+class InvadeOrder : public Order
+{
+public:
+    /** \name Structors */ //@{
+    InvadeOrder();
+    InvadeOrder(int empire, int ship, int planet);
+    //@}
+
+    /** \name Accessors */ //@{
+    int             PlanetID() const  {return m_planet;}    ///< returns ID of the planet to be invaded
+    int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is invading the planet
+    //@}
+
+private:
+    /**
+     *  Preconditions:
+     *     - m_planet must be the ID of a populated planet not owned by the issuing empire
+     *     - m_ship must be the the ID of a ship owned by the issuing empire
+     *     - m_ship must be the ID of a ship that can invade and that is in
+     *       the same system as the planet.
+     *
+     *  Postconditions:
+     *      - The ship with ID m_ship will be marked to invade the planet with
+     *        id m_planet during the next turn processing.
+     */
+    virtual void ExecuteImpl() const;
+    virtual bool UndoImpl() const;
+
+    int                 m_ship;
+    int                 m_planet;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+
+/////////////////////////////////////////////////////
 // DeleteFleetOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents removing an existing fleet that contains

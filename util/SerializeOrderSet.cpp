@@ -78,6 +78,14 @@ void ColonizeOrder::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
+void InvadeOrder::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
+        & BOOST_SERIALIZATION_NVP(m_ship)
+        & BOOST_SERIALIZATION_NVP(m_planet);
+}
+
+template <class Archive>
 void DeleteFleetOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order)
