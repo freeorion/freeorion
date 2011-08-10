@@ -354,7 +354,7 @@ namespace {
 
     /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
-        db.Add("UI.sidepanel-width",                "OPTIONS_DB_UI_SIDEPANEL_WIDTH",                370,    RangedValidator<int>(64, 512));
+        db.Add("UI.sidepanel-width",                "OPTIONS_DB_UI_SIDEPANEL_WIDTH",                384,    RangedValidator<int>(64, 512));
         db.Add("UI.sidepanel-planet-max-diameter",  "OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER",  128,    RangedValidator<int>(16, 512));
         db.Add("UI.sidepanel-planet-min-diameter",  "OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER",  24,     RangedValidator<int>(8,  128));
         db.Add("UI.sidepanel-planet-shown",         "OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN",         true,   Validator<bool>());
