@@ -1054,25 +1054,25 @@ void Fleet::CalculateRoute() const
 
 void Fleet::RecalculateFleetSpeed()
 {
-    if (!(m_ships.empty())) {
-        bool isFleetScrapped = true;
-        m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
-        for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
-            if (const Ship* ship = GetObject<Ship>(*it)) {
-                if(!ship->OrderedScrapped()) {
-                    if (ship->Speed() < m_speed) { 
-                        m_speed = ship->Speed();
-                    }
-                    isFleetScrapped = false;
-                }
+    if ((m_ships.empty())) {
+        m_speed = 0.0;
+        return;
+    }
+
+    bool isFleetScrapped = true;
+    m_speed = MAX_SHIP_SPEED;  // max speed no ship can go faster than
+    for (ShipIDSet::iterator it = m_ships.begin(); it != m_ships.end(); ++it) {
+        if (const Ship* ship = GetObject<Ship>(*it)) {
+            if (!ship->OrderedScrapped()) {
+                if (ship->Speed() < m_speed)
+                    m_speed = ship->Speed();
+                isFleetScrapped = false;
             }
         }
-        if(isFleetScrapped) {
-            m_speed = 0.0;
-        }
-    } else {
-        m_speed = 0.0;
     }
+
+    if (isFleetScrapped)
+        m_speed = 0.0;
 }
 
 void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system)

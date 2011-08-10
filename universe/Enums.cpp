@@ -47,6 +47,7 @@ MeterType AssociatedMeterType(MeterType meter_type) {
     case METER_SHIELD:      return METER_MAX_SHIELD;            break;
     case METER_STRUCTURE:   return METER_MAX_STRUCTURE;         break;
     case METER_DEFENSE:     return METER_MAX_DEFENSE;           break;
+    case METER_TROOPS:      return METER_MAX_TROOPS;            break;
     default:                return INVALID_METER_TYPE;          break;
     }
 }
