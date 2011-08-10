@@ -488,6 +488,10 @@ namespace ValueRef {
             return object->InitialMeterValue(METER_MAX_DEFENSE);
         } else if (boost::iequals(property_name, "Defense")) {
             return object->InitialMeterValue(METER_DEFENSE);
+        } else if (boost::iequals(property_name, "MaxTroops")) {
+            return object->InitialMeterValue(METER_MAX_TROOPS);
+        } else if (boost::iequals(property_name, "Troops")) {
+            return object->InitialMeterValue(METER_TROOPS);
 
         } else if (boost::iequals(property_name, "FoodConsumption")) {
             return object->InitialMeterValue(METER_FOOD_CONSUMPTION);
