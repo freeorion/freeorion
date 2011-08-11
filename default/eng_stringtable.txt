@@ -1616,6 +1616,8 @@ PL_SIZE
 Size
 PL_COLONIZE
 Colonize (%1% / %2%)
+PL_INVADE
+Invade (+%1%)
 PL_SELECT_COLONY_SHIP_INSTRUCTION
 Select colony ship to colonize.
 PL_TYPE_SIZE

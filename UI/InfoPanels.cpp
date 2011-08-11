@@ -207,7 +207,6 @@ namespace {
         }
         return retval;
     }
-
 }
 
 /////////////////////////////////////
@@ -495,8 +494,7 @@ const PopCenter* PopulationPanel::GetPopCenter() const
 }
 
 void PopulationPanel::EnableOrderIssuing(bool enable/* = true*/)
-{
-}
+{}
 
 
 /////////////////////////////////////
@@ -2142,8 +2140,7 @@ void SpecialsPanel::Update()
 }
 
 void SpecialsPanel::EnableOrderIssuing(bool enable/* = true*/)
-{
-}
+{}
 
 
 /////////////////////////////////////
@@ -2214,6 +2211,7 @@ void IconTextBrowseWnd::Render() {
     GG::FlatRectangle(ul, lr, ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1);    // main background
     GG::FlatRectangle(GG::Pt(ul.x + ICON_BROWSE_ICON_WIDTH, ul.y), GG::Pt(lr.x, ul.y + ROW_HEIGHT), ClientUI::WndOuterBorderColor(), ClientUI::WndOuterBorderColor(), 0);    // top title filled background
 }
+
 
 //////////////////////////////////////
 //  SystemResourceSummaryBrowseWnd  //

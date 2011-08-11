@@ -376,6 +376,21 @@ namespace {
         return retval;
     }
 
+    /** Returns map from planet ID to issued invasion orders affecting it. */
+    std::map<int, int> PendingInvadeOrders() {
+        std::map<int, int> retval;
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return retval;
+        const OrderSet& orders = app->Orders();
+        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
+                retval[order->PlanetID()] = it->first;
+            }
+        }
+        return retval;
+    }
+
     /** Returns map from object ID to issued colonize orders affecting it. */
     std::map<int, int> PendingScrapOrders() {
         std::map<int, int> retval;
@@ -431,11 +446,13 @@ private:
 
     void                    SetFocus(const std::string& focus); ///< set the focus of the planet to \a focus
     void                    ClickColonize();                    ///< called if colonize button is pressed
+    void                    ClickInvade();                      ///< called if invade button is pressed
 
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
     CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
+    CUIButton*              m_button_invade;            ///< btn which can be pressed to invade this planet
     GG::TextControl*        m_colonize_instruction;     ///< text that tells the player to pick a colony ship to colonize
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -687,6 +704,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_planet_name(0),
     m_env_size(0),
     m_button_colonize(0),
+    m_button_invade(0),
     m_colonize_instruction(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
@@ -853,6 +871,12 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
                                       ClientUI::TextColor(), GG::INTERACTIVE);
     GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
+    m_button_invade =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+                                      UserString("PL_INVADE"), ClientUI::GetFont(),
+                                      ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
+                                      ClientUI::TextColor(), GG::INTERACTIVE);
+    GG::Connect(m_button_invade->ClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
+
     m_colonize_instruction = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0,
                                                  UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
                                                  ClientUI::GetFont(), ClientUI::TextColor());
@@ -965,6 +989,24 @@ namespace {
         }
 
         return ship;
+    }
+
+    std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
+        std::set<const Ship*> retval;
+
+        // if not looking in a valid system, no valid colony ship can be available
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            return retval;
+
+        // is there a valid single selected ship in the active FleetWnd?
+        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+        std::set<const Ship*> selected_invasion_ships;
+        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
+            if (const Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+                if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                    selected_invasion_ships.insert(ship);
+
+        return retval;
     }
 
     bool OwnedColonyShipsInSystem(int empire_id, int system_id) {
@@ -1400,6 +1442,47 @@ void SidePanel::PlanetPanel::ClickColonize()
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
+
+    } else {
+        // cancel colonization
+        HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+    }
+}
+
+void SidePanel::PlanetPanel::ClickInvade()
+{
+    // order or cancel invasion, depending on whether it has previosuly
+    // been ordered
+
+    const Planet* planet = GetObject<Planet>(m_planet_id);
+    if (!planet || !planet->Unowned() || !m_order_issuing_enabled)
+        return;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    if (empire_id == ALL_EMPIRES)
+        return;
+
+    std::map<int, int> pending_invade_orders = PendingInvadeOrders();
+    std::map<int, int>::const_iterator it = pending_invade_orders.find(m_planet_id);
+
+    // colonize
+    if (it == pending_invade_orders.end()) {
+        const Ship* ship = ValidSelectedColonyShip(planet->SystemID());
+        if (!ship) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade valid colony not found!";
+            return;
+        }
+        if (!ship->OwnedBy(empire_id)) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade selected colony ship not owned by this client's empire.";
+            return;
+        }
+        const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade fleet not found!";
+            return;
+        }
+
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
 
     } else {
         // cancel colonization

@@ -438,6 +438,11 @@ void ColonizeOrder::ExecuteImpl() const
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
+    if (planet->CurrentMeterValue(METER_POPULATION) > 0.0) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that already has population";
+        return;
+    }
+
     int ship_system_id = ship->SystemID();
     if (ship_system_id == UniverseObject::INVALID_OBJECT_ID) {
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given id of ship not in a system";
@@ -525,6 +530,15 @@ void InvadeOrder::ExecuteImpl() const
         Logger().errorStream() << "InvadeOrder::ExecuteImpl couldn't get planet with id " << m_planet;
         return;
     }
+    if (planet->CurrentMeterValue(METER_POPULATION) == 0.0) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given unpopulated planet";
+        return;
+    }
+    if (planet->OwnedBy(empire_id)) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        return;
+    }
+
     int ship_system_id = ship->SystemID();
     if (ship_system_id == UniverseObject::INVALID_OBJECT_ID) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given id of ship not in a system";
@@ -535,6 +549,8 @@ void InvadeOrder::ExecuteImpl() const
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given ids of ship and planet not in the same system";
         return;
     }
+
+    // note: multiple ships, from same or different empires, can invade the same planet on the same turn
 
     ship->SetInvadePlanet(m_planet);
 }
