@@ -41,6 +41,8 @@ namespace {
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
     const std::string   SPEED_STAT_STRING = "Speed Stat";
+    const std::string   COLONY_CAPACITY_STAT_STRING = "Colony Capacity";
+    const std::string   TROOP_CAPACITY_STAT_STRING = "Troop Capacity";
     const std::string   MeterStatString(MeterType meter_type) {
         std::string retval = GG::GetEnumMap<MeterType>().FromEnum(meter_type);
         //std::cout << "MeterStatString for meter type " << boost::lexical_cast<std::string>(meter_type) << " returning: " << retval << std::endl;
@@ -338,6 +340,13 @@ int FleetUIManager::SelectedShipID() const
         return UniverseObject::INVALID_OBJECT_ID;
 
     return *selected_ship_ids.begin();
+}
+
+std::set<int> FleetUIManager::SelectedShipIDs() const
+{
+    if (!m_active_fleet_wnd)
+        return std::set<int>();
+    return m_active_fleet_wnd->SelectedShipIDs();
 }
 
 FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids, bool read_only,

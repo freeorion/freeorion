@@ -39,7 +39,8 @@ public:
     FleetWnd*       ActiveFleetWnd() const;
     FleetWnd*       WndForFleet(const Fleet* fleet) const;
     std::size_t     OpenDetailWnds(FleetWnd* fleet_wnd) const;
-    int             SelectedShipID() const;
+    int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
+    std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
 
     //! \name Mutators //@{
