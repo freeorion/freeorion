@@ -973,22 +973,13 @@ namespace {
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
             return 0;
 
-        // is there a valid single selected ship in the active FleetWnd?
-        int ship_id = FleetUIManager::GetFleetUIManager().SelectedShipID();
-        const Ship* ship = GetUniverse().Objects().Object<Ship>(ship_id);
-        if (!ship)
-            return 0;
-
-        // is selected ship: a colony ship, owned by this client's player,
-        // in the right system, and does it have a valid species?
-        if (ship->SystemID() != system_id ||
-            !ship->CanColonize() ||
-            !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-        {
-            return 0;
-        }
-
-        return ship;
+        // is there a valid selected ship in the active FleetWnd?
+        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
+        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
+            if (const Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+                if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+                    return ship;
+        return 0;
     }
 
     std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
