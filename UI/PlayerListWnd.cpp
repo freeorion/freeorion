@@ -154,11 +154,11 @@ namespace {
 
     private:
         void            DoLayout() {
-            const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts() * 15/2);
-            const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts() * 17/2);
+            const GG::X PLAYER_NAME_WIDTH(ClientUI::Pts() * 17/2);
+            const GG::X EMPIRE_NAME_WIDTH(ClientUI::Pts() * 18/2);
             const GG::X STATUS_WIDTH(ClientUI::Pts() * 5);
-            const GG::X PLAYER_TYPE_WIDTH(ClientUI::Pts() * 4);
-            const GG::X HOST_WIDTH(ClientUI::Pts() * 3);
+            const GG::X PLAYER_TYPE_WIDTH(ClientUI::Pts() * 5);
+            const GG::X HOST_WIDTH(ClientUI::Pts() * 4);
 
             GG::X left(DATA_PANEL_BORDER);
             GG::Y top(DATA_PANEL_BORDER);

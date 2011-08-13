@@ -455,8 +455,8 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    const GG::X PANEL_WIDTH(320);
-    const GG::Y PANEL_HEIGHT(200);
+    const GG::X PANEL_WIDTH(355);
+    const GG::Y PANEL_HEIGHT(160);
 }
 
 
