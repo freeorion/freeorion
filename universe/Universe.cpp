@@ -4120,7 +4120,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
              species_it != species_manager.end(); ++species_it)
         {
             const Species* species = species_it->second;
-            if (!species->CanColonize() && !species->CanProduceShips() &&
+            if ((!species->CanColonize() || !species->CanProduceShips()) &&
                 species->GetPlanetEnvironment(planet_type) == PE_GOOD)
             {
                 suitable_species.push_back(species_it->first);
