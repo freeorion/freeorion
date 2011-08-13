@@ -4116,9 +4116,16 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
 
         // find species that like this planet type
         std::vector<std::string> suitable_species;
-        for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it)
-            if (species_it->second->GetPlanetEnvironment(planet_type) == PE_GOOD)
+        for (SpeciesManager::iterator species_it = species_manager.begin();
+             species_it != species_manager.end(); ++species_it)
+        {
+            const Species* species = species_it->second;
+            if (!species->CanColonize() && !species->CanProduceShips() &&
+                species->GetPlanetEnvironment(planet_type) == PE_GOOD)
+            {
                 suitable_species.push_back(species_it->first);
+            }
+        }
         if (suitable_species.empty())
             continue;
         Logger().debugStream() << " ... " << suitable_species.size() << " species are appropriate for this planet";
@@ -4142,6 +4149,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
     Logger().debugStream() << "GenerateSpaceMonsters";
 
     int inverse_monster_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
+    Logger().debugStream() << "Universe::GenerateSpaceMonsters(" << boost::lexical_cast<std::string>(freq) << ") inverse monster chance: " << inverse_monster_chance;
     double monster_chance(0.0);
     if (inverse_monster_chance > 0)
         monster_chance = 1.0 / static_cast<double>(inverse_monster_chance);
@@ -4579,9 +4587,9 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
                 Logger().errorStream() << "Universe::GenerateEmpires found an empty species manager!  Can't assign species to empires.";
             } else {
                 int species_name_idx = 0;
-                if (species_manager.NumSpecies() > 1)
+                if (species_manager.NumPlayableSpecies() > 1)
                     species_name_idx = RandSmallInt(0, species_manager.NumSpecies() - 1);
-                SpeciesManager::iterator it = species_manager.begin();
+                SpeciesManager::playable_iterator it = species_manager.playable_begin();
                 std::advance(it, species_name_idx);
                 empire_starting_species = it->first;
             }
