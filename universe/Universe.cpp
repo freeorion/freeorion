@@ -354,7 +354,9 @@ void ObjectMap::CompleteCopyVisible(const ObjectMap& copied_map, int empire_id/*
             continue;
 
         // if object is at all visible, copy all information, not just info
-        // appropriate for the actual visibility level.
+        // appropriate for the actual visibility level.  this ensures that any
+        // details previously learned about object will still be recorded in
+        // copied-to ObjectMap
         this->Copy(it->second, ALL_EMPIRES);
    }
 }
@@ -1757,11 +1759,15 @@ void Universe::UpdateEmpireObjectVisibilities()
             // is compared to the distance between them. If the distance is
             // less than 10*(detector_detection - target_stealth), then the
             // target is seen by the detector with partial visibility.
-            double detect_range = std::max(0.0, 10.0*(detection - stealth));
+            double detect_range = 10.0*(detection - stealth);
+
+            if (detect_range < 0.0)
+                continue;   // can't see object no matter where it is
+
+            //Logger().debugStream() << "dist2: " << dist2 << " detect range: " << detect_range;
 
             if (dist2 <= detect_range * detect_range)
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
-
 
             if (target_visibility_to_detector <= VIS_NO_VISIBILITY)
                 continue;
