@@ -196,6 +196,11 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     if (m_fleets.size() != 1) {
         first_fleet = *(fleets.begin());
 
+        // if there are multiple fleets, default to generic fleet icon by
+        // passing null pointer (0) to FleetHeadIcon.  TODO: instead, check if
+        // all fleets would use the same icon, and if so, use that icon, and
+        // only default to generic icon in cases where there are multiple
+        // different icons for the various fleets being represented
         m_head_icon = FleetHeadIcon(0, size_type);
         int num_ships = 0;
         for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it)

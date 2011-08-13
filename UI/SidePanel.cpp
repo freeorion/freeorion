@@ -361,7 +361,8 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    /** Returns map from planet ID to issued colonize orders affecting it. */
+    /** Returns map from planet ID to issued colonize orders affecting it. There
+      * should be only one ship colonzing each planet for this client. */
     std::map<int, int> PendingColonizationOrders() {
         std::map<int, int> retval;
         const ClientApp* app = ClientApp::GetApp();
@@ -376,16 +377,17 @@ namespace {
         return retval;
     }
 
-    /** Returns map from planet ID to issued invasion orders affecting it. */
-    std::map<int, int> PendingInvadeOrders() {
-        std::map<int, int> retval;
+    /** Returns map from planet ID to issued invasion orders affecting it. There
+      * may be multiple ships invading a single planet. */
+    std::map<int, std::set<int> > PendingInvadeOrders() {
+        std::map<int, std::set<int> > retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
         const OrderSet& orders = app->Orders();
         for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
             if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
-                retval[order->PlanetID()] = it->first;
+                retval[order->PlanetID()].insert(it->first);
             }
         }
         return retval;
@@ -451,8 +453,8 @@ private:
     int                     m_planet_id;                ///< id for the planet with is represented by this planet panel
     GG::TextControl*        m_planet_name;              ///< planet name
     GG::TextControl*        m_env_size;                 ///< indicates size and planet environment rating uncolonized planets
-    CUIButton*              m_button_colonize;          ///< btn which can be pressed to colonize this planet
-    CUIButton*              m_button_invade;            ///< btn which can be pressed to invade this planet
+    CUIButton*              m_colonize_button;          ///< btn which can be pressed to colonize this planet
+    CUIButton*              m_invade_button;            ///< btn which can be pressed to invade this planet
     GG::TextControl*        m_colonize_instruction;     ///< text that tells the player to pick a colony ship to colonize
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
@@ -703,8 +705,8 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_planet_id(planet_id),
     m_planet_name(0),
     m_env_size(0),
-    m_button_colonize(0),
-    m_button_invade(0),
+    m_colonize_button(0),
+    m_invade_button(0),
     m_colonize_instruction(0),
     m_planet_graphic(0),
     m_rotating_planet_graphic(0),
@@ -865,17 +867,17 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     AttachChild(m_env_size);
 
 
-    m_button_colonize = new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+    m_colonize_button = new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
                                       UserString("PL_COLONIZE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
-    GG::Connect(m_button_colonize->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
+    GG::Connect(m_colonize_button->ClickedSignal, &SidePanel::PlanetPanel::ClickColonize, this);
 
-    m_button_invade =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
+    m_invade_button =  new CUIButton(GG::X(MaxPlanetDiameter()), GG::Y0, GG::X(ClientUI::Pts()*15),
                                       UserString("PL_INVADE"), ClientUI::GetFont(),
                                       ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), 1,
                                       ClientUI::TextColor(), GG::INTERACTIVE);
-    GG::Connect(m_button_invade->ClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
+    GG::Connect(m_invade_button->ClickedSignal, &SidePanel::PlanetPanel::ClickInvade, this);
 
     m_colonize_instruction = new GG::TextControl(GG::X(MaxPlanetDiameter()), GG::Y0,
                                                  UserString("PL_SELECT_COLONY_SHIP_INSTRUCTION"),
@@ -899,7 +901,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
-    delete m_button_colonize;
+    delete m_colonize_button;
     delete m_colonize_instruction;
     delete m_env_size;
     delete m_population_panel;
@@ -933,9 +935,9 @@ void SidePanel::PlanetPanel::DoLayout()
     if (m_colonize_instruction && m_colonize_instruction->Parent() == this) {
         m_colonize_instruction->MoveTo(GG::Pt(left, y));
         y += m_colonize_instruction->Height() + EDGE_PAD;
-    } else if (m_button_colonize && m_button_colonize->Parent() == this) {
-        m_button_colonize->MoveTo(GG::Pt(left, y));
-        y += m_button_colonize->Height() + EDGE_PAD;
+    } else if (m_colonize_button && m_colonize_button->Parent() == this) {
+        m_colonize_button->MoveTo(GG::Pt(left, y));
+        y += m_colonize_button->Height() + EDGE_PAD;
     }
 
     if (m_population_panel && m_population_panel->Parent() == this) {
@@ -1052,11 +1054,11 @@ namespace {
 
 void SidePanel::PlanetPanel::Refresh()
 {
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     const Planet* planet = GetObject<Planet>(m_planet_id);
     if (!planet)
-        planet = GetEmpireKnownObject<Planet>(m_planet_id, empire_id);
+        planet = GetEmpireKnownObject<Planet>(m_planet_id, client_empire_id);
     if (!planet) {
         Logger().debugStream() << "PlanetPanel::Refresh couldn't get planet!";
         // clear / hide everything...
@@ -1078,8 +1080,8 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_buildings_panel);
         delete m_buildings_panel;       m_buildings_panel = 0;
 
-        DetachChild(m_button_colonize);
-        delete m_button_colonize;       m_button_colonize = 0;
+        DetachChild(m_colonize_button);
+        delete m_colonize_button;       m_colonize_button = 0;
 
         DetachChild(m_colonize_instruction);
         delete m_colonize_instruction;  m_colonize_instruction = 0;
@@ -1097,10 +1099,12 @@ void SidePanel::PlanetPanel::Refresh()
     if (planet->Unowned() || planet->IsAboutToBeColonized()) {
         owner = OS_NONE;
     } else {
-        if (!planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+        if (!planet->OwnedBy(client_empire_id)) {
+            Logger().debugStream() << "foreign owned planet in planet panel: " << planet->Name();
             owner = OS_FOREIGN;
-        else
+        } else {
             owner = OS_SELF;
+        }
     }
 
 
@@ -1146,12 +1150,13 @@ void SidePanel::PlanetPanel::Refresh()
         !planet->IsAboutToBeColonized() &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
     {
-        AttachChild(m_button_colonize);
+        DetachChild(m_invade_button);
+        AttachChild(m_colonize_button);
         std::string initial_pop = DoubleToString(ColonyShipCapacity(ship), 2, false);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
         std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
-        if (m_button_colonize)
-            m_button_colonize->SetText(colonize_text);
+        if (m_colonize_button)
+            m_colonize_button->SetText(colonize_text);
         DetachChild(m_colonize_instruction);
 
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
@@ -1161,13 +1166,23 @@ void SidePanel::PlanetPanel::Refresh()
         m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() &&
+               owner == OS_FOREIGN &&
+               planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
+               ship)
+    {
+        AttachChild(m_invade_button);
+        DetachChild(m_colonize_button);
+        DetachChild(m_colonize_instruction);
+
+    } else if (!Disabled() &&
                owner == OS_NONE &&
                !planet->IsAboutToBeColonized() &&
                !ValidSelectedColonyShip(SidePanel::SystemID()) &&
-               OwnedColonyShipsInSystem(empire_id, SidePanel::SystemID()))
+               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()))
     {
+        DetachChild(m_invade_button);
         AttachChild(m_colonize_instruction);
-        DetachChild(m_button_colonize);
+        DetachChild(m_colonize_button);
 
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
                                                    % GetPlanetSizeName(*planet)
@@ -1175,9 +1190,10 @@ void SidePanel::PlanetPanel::Refresh()
         m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
-        AttachChild(m_button_colonize);
-        if (m_button_colonize)
-            m_button_colonize->SetText(UserString("CANCEL"));
+        DetachChild(m_invade_button);
+        AttachChild(m_colonize_button);
+        if (m_colonize_button)
+            m_colonize_button->SetText(UserString("CANCEL"));
         DetachChild(m_colonize_instruction);
 
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
@@ -1186,7 +1202,8 @@ void SidePanel::PlanetPanel::Refresh()
         m_env_size->SetText(env_size_text);
 
     } else {
-        DetachChild(m_button_colonize);
+        DetachChild(m_invade_button);
+        DetachChild(m_colonize_button);
         DetachChild(m_colonize_instruction);
 
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
@@ -1415,8 +1432,12 @@ void SidePanel::PlanetPanel::ClickColonize()
     std::map<int, int> pending_colonization_orders = PendingColonizationOrders();
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
 
-    // colonize
-    if (it == pending_colonization_orders.end()) {
+    if (it != pending_colonization_orders.end()) {
+        // cancel previous colonization order
+        HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+
+    } else {
+        // find colony ship and order it to colonize
         const Ship* ship = ValidSelectedColonyShip(planet->SystemID());
         if (!ship) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
@@ -1433,10 +1454,6 @@ void SidePanel::PlanetPanel::ClickColonize()
         }
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
-
-    } else {
-        // cancel colonization
-        HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
     }
 }
 
@@ -1453,31 +1470,30 @@ void SidePanel::PlanetPanel::ClickInvade()
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, int> pending_invade_orders = PendingInvadeOrders();
-    std::map<int, int>::const_iterator it = pending_invade_orders.find(m_planet_id);
+    std::map<int, std::set<int> > pending_invade_orders = PendingInvadeOrders();
+    std::map<int, std::set<int> >::const_iterator it = pending_invade_orders.find(m_planet_id);
 
-    // colonize
-    if (it == pending_invade_orders.end()) {
-        const Ship* ship = ValidSelectedColonyShip(planet->SystemID());
-        if (!ship) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade valid colony not found!";
-            return;
+    if (it != pending_invade_orders.end()) {
+        const std::set<int>& planet_invade_orders = it->second;
+        // cancel previous invasion orders for this planet
+        for (std::set<int>::const_iterator o_it = planet_invade_orders.begin();
+             o_it != planet_invade_orders.end(); ++o_it)
+        {
+            HumanClientApp::GetApp()->Orders().RecindOrder(*o_it);
         }
-        if (!ship->OwnedBy(empire_id)) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade selected colony ship not owned by this client's empire.";
-            return;
-        }
-        const Fleet* fleet = GetObject<Fleet>(ship->FleetID());
-        if (!fleet) {
-            Logger().errorStream() << "SidePanel::PlanetPanel::ClickInvade fleet not found!";
-            return;
-        }
-
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
 
     } else {
-        // cancel colonization
-        HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
+        // order selected invasion ships to invade planet
+        std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+
+        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+             ship_it != invasion_ships.end(); ++ship_it)
+        {
+            const Ship* ship = *ship_it;
+            if (!ship)
+                continue;
+            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
+        }
     }
 }
 
@@ -1485,7 +1501,8 @@ void SidePanel::PlanetPanel::EnableOrderIssuing(bool enable/* = true*/)
 {
     m_order_issuing_enabled = enable;
 
-    m_button_colonize->Disable(!enable);
+    m_colonize_button->Disable(!enable);
+    m_invade_button->Disable(!enable);
 
     m_population_panel->EnableOrderIssuing(enable);
     m_resource_panel->EnableOrderIssuing(enable);
