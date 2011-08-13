@@ -14,7 +14,8 @@ void GalaxySetupData::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_age)
         & BOOST_SERIALIZATION_NVP(m_starlane_freq)
         & BOOST_SERIALIZATION_NVP(m_planet_density)
-        & BOOST_SERIALIZATION_NVP(m_specials_freq);
+        & BOOST_SERIALIZATION_NVP(m_specials_freq)
+        & BOOST_SERIALIZATION_NVP(m_life_freq);
 }
 
 template void GalaxySetupData::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);
