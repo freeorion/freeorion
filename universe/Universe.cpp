@@ -1694,6 +1694,19 @@ void Universe::UpdateEmpireObjectVisibilities()
         SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector->Owner(), detector_id, VIS_FULL_VISIBILITY);
 
 
+        // don't allow moving fleets or ships to provide detection
+        const Fleet* fleet = universe_object_cast<const Fleet*>(detector);
+        if (!fleet)
+            if (const Ship* ship = universe_object_cast<const Ship*>(detector))
+                fleet = m_objects.Object<Fleet>(ship->FleetID());
+        if (fleet) {
+            int next_id = fleet->NextSystemID();
+            int cur_id = fleet->SystemID();
+            if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+                continue;
+        }
+
+
         // get detection ability
         const Meter* detection_meter = detector->GetMeter(METER_DETECTION);
         if (!detection_meter) continue;

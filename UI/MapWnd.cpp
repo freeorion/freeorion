@@ -1439,6 +1439,18 @@ void MapWnd::RenderVisibilityRadii() {
         if (obj->Unowned())
             continue;
 
+        // don't show radii for moving fleets or ships
+        const Fleet* fleet = universe_object_cast<const Fleet*>(obj);
+        if (!fleet)
+            if (const Ship* ship = universe_object_cast<const Ship*>(obj))
+                fleet = known_objects.Object<Fleet>(ship->FleetID());
+        if (fleet) {
+            int next_id = fleet->NextSystemID();
+            int cur_id = fleet->SystemID();
+            if (next_id != UniverseObject::INVALID_OBJECT_ID && next_id != cur_id)
+                continue;
+        }
+
         const Meter* detection_meter = obj->GetMeter(METER_DETECTION);
         if (!detection_meter)
             continue;
