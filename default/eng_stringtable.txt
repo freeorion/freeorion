@@ -217,6 +217,9 @@ Unarmed vessel capable of creating an outpost in the system where it is produced
 SD_DRAGON_TOOTH
 Dragon Tooth
 
+SD_TROOP_SHIP
+Troop Ship
+
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems.
 
@@ -268,6 +271,9 @@ Scout Fleet
 
 FN_COLONY_FLEET
 Colony Fleet
+
+FN_INVASION_FLEET
+Invasion Fleet
 
 MONSTERS
 Monsters
@@ -5904,6 +5910,12 @@ CO_OUTPOST_MOD_DESC
 '''Low capacity colony pod which allows ships to create an outpost-like colony with low starting population.
 
 All Colony class ship parts require the planet at which they are built to have a population of at least three.'''
+
+GT_TROOP_POD
+Ground Troop Pod
+
+GT_TROOP_POD_DESC
+Carries a brigade of ground troops and equipment that can be deployed onto a planet.
 
 SP_DISTORTION_MODULATOR
 Distortion Modulator

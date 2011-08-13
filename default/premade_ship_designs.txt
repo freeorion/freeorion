@@ -1,4 +1,13 @@
 ShipDesign
+    name = "SD_TROOP_SHIP"
+    description = "SD_TROOP_SHIP_DESC"
+    lookup_strings = true
+    hull = "SH_STANDARD"
+    parts = "GT_TROOP_POD"
+    graphic = "misc/generic.png"
+    model = "fighter"
+
+ShipDesign
     name = "SD_SCOUT"
     description = "SD_SCOUT_DESC"
     lookup_strings = true

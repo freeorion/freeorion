@@ -9,3 +9,12 @@ Fleet
     ships = [
         "SD_SCOUT"
     ]
+
+Fleet
+    name = "FN_INVASION_FLEET"
+    ships = [
+        "SD_TROOP_SHIP"
+        "SD_TROOP_SHIP"
+        "SD_TROOP_SHIP"
+        "SD_MARK1"
+        ]

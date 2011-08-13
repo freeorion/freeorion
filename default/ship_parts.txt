@@ -1,4 +1,15 @@
 Part
+    name = "GT_TROOP_POD"
+    description = "GT_TROOP_POD_DESC"
+    class = Troops
+    capacity = 5
+    buildcost = 1
+    buildtime = 1
+    mountableSlotTypes = [External Internal]
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/deuterium_tank.png"
+
+Part
     name = "SR_LASER"
     description = "SR_LASER_DESC"
     class = ShortRange
