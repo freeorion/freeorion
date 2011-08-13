@@ -994,10 +994,7 @@ namespace {
                 Logger().errorStream() << "GetEmpireIDsWithPlanetsAtSystem couldn't get Planet with id " << *planet_it;
                 continue;
             }
-
-            if (planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) == 0.0)
-                ids_of_empires_with_planets_here.insert(ALL_EMPIRES);
-            else
+            if (planet->CurrentMeterValue(METER_POPULATION) > 0.0)
                 ids_of_empires_with_planets_here.insert(planet->Owner());
         }
     }
@@ -1213,12 +1210,14 @@ namespace {
         }
     }
 
-    /** Contains information about ground combats before and after they occur. */
-    struct GroundCombatInfo {
 
-    };
+    /** Clears and refills \a ground_combat_info with CombatInfo structs for
+      * every system where ground combat should occur this turn. */
+    void AssembleSystemGroundCombatInfo(std::map<int, CombatInfo>& ground_combat_info) {
+        CleanupSystemCombatInfo(ground_combat_info);
 
-    /** Clears and refills */
+        // for each system, find if 
+    }
 }
 
 namespace {
@@ -1595,23 +1594,20 @@ void ServerApp::PreCombatProcessTurns()
 void ServerApp::ProcessCombats()
 {
     Logger().debugStream() << "ServerApp::ProcessCombats";
-    // check for combats, and resolve them.
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COMBAT));
     }
 
-
-    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
-    AssembleSystemCombatInfo(system_combat_info);
-
-
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
+    std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
 
+
+    // collect data about locations where combat is to occur
+    AssembleSystemCombatInfo(system_combat_info);
 
     // TODO: inform players of locations of controllable combats, and get
     // players to specify which should be controlled and which should be
     // auto-resolved
-
 
     // loop through assembled combat infos, handling each combat to update the
     // various systems' CombatInfo structs
@@ -1675,6 +1671,11 @@ void ServerApp::ProcessCombats()
     CleanupSystemCombatInfo(system_combat_info);
 
 
+    // collect data bout locations where ground combat is to occur
+    AssembleSystemGroundCombatInfo(system_combat_info);
+
+    // loop through assembled combat infos, handling each ground combat to
+    // update the various systems CombatInfo structs
 }
 
 void ServerApp::PostCombatProcessTurns()
