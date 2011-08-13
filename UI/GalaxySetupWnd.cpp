@@ -367,7 +367,26 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
     m_starting_secies_selector = new SpeciesSelector(LABELS_WIDTH, AUTO_CONTROL_HEIGHT);
     m_starting_secies_selector->MoveTo(GG::Pt(LABELS_WIDTH + 2 * CONTROL_MARGIN, ypos + (PANEL_CONTROL_SPACING - m_starting_secies_selector->Height()) / 2));
-    m_starting_secies_selector->SelectSpecies(GetOptionsDB().Get<std::string>("GameSetup.starting-species"));
+    std::string default_starting_species = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+    if (default_starting_species.empty()) {
+        // if no previously-stored species selection, need to pick a default
+        std::vector<std::string> selector_avail_species = m_starting_secies_selector->AvailableSpeciesNames();
+        if (!selector_avail_species.empty()) {
+            for (std::vector<std::string>::const_iterator it = selector_avail_species.begin();
+                 it != selector_avail_species.end(); ++it)
+            {
+                // special case: see if humans are available.
+                if ("SP_HUMAN" == *it) {
+                    default_starting_species = "SP_HUMAN";
+                    break;
+                }
+            }
+            // if no humans, default to first listed species
+            if (default_starting_species.empty())
+                default_starting_species = *selector_avail_species.begin();
+        }
+    }
+    m_starting_secies_selector->SelectSpecies(default_starting_species);
     ypos += PANEL_CONTROL_SPACING;
 
     // number of AIs

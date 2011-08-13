@@ -1143,6 +1143,15 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const
     return row->Name();
 }
 
+std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const
+{
+    std::vector<std::string> retval;
+    for (CUIDropDownList::const_iterator row_it = this->begin(); row_it != this->end(); ++row_it)
+        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(*row_it))
+            retval.push_back(species_row->Name());
+    return retval;
+}
+
 void SpeciesSelector::SelectSpecies(const std::string& species_name)
 {
     for (CUIDropDownList::iterator row_it = this->begin(); row_it != this->end(); ++row_it) {

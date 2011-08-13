@@ -442,7 +442,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  CurrentSpeciesName() const; ///< returns the name of the species that is currently selected
+    const std::string&          CurrentSpeciesName() const;     ///< returns the name of the species that is currently selected
+    std::vector<std::string>    AvailableSpeciesNames() const;  ///< returns the names of species in the selector
     //@}
 
     /** \name Mutators */ //@{

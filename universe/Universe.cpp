@@ -4592,6 +4592,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
                 SpeciesManager::playable_iterator it = species_manager.playable_begin();
                 std::advance(it, species_name_idx);
                 empire_starting_species = it->first;
+                Logger().debugStream() << "Universe::GenerateEmpires randomly assigning species " << empire_starting_species << " to an empire";
             }
         }
 

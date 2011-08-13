@@ -2363,7 +2363,7 @@ SP_GYISACHE_DESC
 Cowardly, freakish sheep-like herbivores. Prefer Swamp planets.
 
 SP_CHATO
-Chato'matou'Gormoshk
+Chato
 SP_CHATO_DESC
 Sessile crystalline entities which ride the animal Gormoshk. Prefer Toxic planets.
 
