@@ -4607,7 +4607,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
             } else {
                 int species_name_idx = 0;
                 if (species_manager.NumPlayableSpecies() > 1)
-                    species_name_idx = RandSmallInt(0, species_manager.NumSpecies() - 1);
+                    species_name_idx = RandSmallInt(0, species_manager.NumPlayableSpecies() - 1);
                 SpeciesManager::playable_iterator it = species_manager.playable_begin();
                 std::advance(it, species_name_idx);
                 empire_starting_species = it->first;
