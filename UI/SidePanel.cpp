@@ -902,6 +902,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
 SidePanel::PlanetPanel::~PlanetPanel()
 {
     delete m_colonize_button;
+    delete m_invade_button;
     delete m_colonize_instruction;
     delete m_env_size;
     delete m_population_panel;
@@ -993,11 +994,10 @@ namespace {
 
         // is there a valid single selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-        std::set<const Ship*> selected_invasion_ships;
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
             if (const Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-                    selected_invasion_ships.insert(ship);
+                    retval.insert(ship);
 
         return retval;
     }
@@ -1138,7 +1138,9 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_military_panel);
     }
 
-    const Ship* ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    const Ship* colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
+    std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+
 
     // create colonize or cancel button, if appropriate (a ship is in the system
     // that can colonize, or the planet has been ordered to be colonized already
@@ -1146,13 +1148,13 @@ void SidePanel::PlanetPanel::Refresh()
     if (!Disabled() &&
         (owner == OS_NONE || owner == OS_SELF) &&
         planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
-        ship &&
+        colony_ship &&
         !planet->IsAboutToBeColonized() &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
     {
         DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
-        std::string initial_pop = DoubleToString(ColonyShipCapacity(ship), 2, false);
+        std::string initial_pop = DoubleToString(ColonyShipCapacity(colony_ship), 2, false);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
         std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
         if (m_colonize_button)
@@ -1162,13 +1164,13 @@ void SidePanel::PlanetPanel::Refresh()
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
                                                    % GetPlanetSizeName(*planet)
                                                    % GetPlanetTypeName(*planet)
-                                                   % GetPlanetEnvironmentName(*planet, ship->SpeciesName()));
+                                                   % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
         m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() &&
                owner == OS_FOREIGN &&
                planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
-               ship)
+               !invasion_ships.empty())
     {
         AttachChild(m_invade_button);
         DetachChild(m_colonize_button);
