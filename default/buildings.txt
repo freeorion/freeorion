@@ -18,7 +18,7 @@ BuildingType
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
             ]
-    graphic = ""
+    graphic = "icons/building/palace.png"
 
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
@@ -64,7 +64,7 @@ BuildingType
                 SetDefense Value + 5
             ]
         ]
-    graphic = ""
+    graphic = "icons/building/palace.png"
 
 BuildingType
     name = "BLD_OBSERVATORY"
@@ -76,7 +76,7 @@ BuildingType
         EffectsGroup
             scope = NumberOf 1 System
             effects = SetStealth Value - 1
-    graphic = ""
+    graphic = "icons/building/lighthouse.png"
 
 BuildingType
     name = "BLD_SHIPYARD_BASE"
@@ -90,7 +90,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORBITAL_DRYDOCK"
@@ -104,7 +104,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ROBO"
@@ -122,7 +122,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ENGINE"
@@ -140,7 +140,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
@@ -158,7 +158,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_NANOROBO"
@@ -176,7 +176,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_GEOINT"
@@ -194,7 +194,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_ADV_ENGINE"
@@ -212,7 +212,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_CON_MIL_LOG_ASSMBL"
@@ -242,7 +242,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST"
@@ -257,7 +257,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST_REF"
@@ -276,7 +276,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_AST_CRYSTAL"
@@ -295,7 +295,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         Planet type = Asteroids
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_ORB_INC"
@@ -309,7 +309,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
@@ -323,7 +323,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
@@ -341,7 +341,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_XENO_FAC"
@@ -359,7 +359,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
@@ -377,7 +377,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
@@ -395,7 +395,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_COMP"
@@ -409,7 +409,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_FOCUS"
@@ -427,7 +427,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_SHIPYARD_ENRG_SOLAR"
@@ -445,7 +445,7 @@ BuildingType
         ]
         OwnedBy TheEmpire Source.Owner
     ]
-    graphic = ""
+    graphic = "icons/building/shipyard.png"
 
 BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
@@ -473,7 +473,7 @@ BuildingType
             scope = WithinDistance 0 Source
             activation = Source
             effects = SetStealth Value - 45
-    graphic = ""
+    graphic = "icons/building/lighthouse.png"
 
 BuildingType
     name = "BLD_HEAVY_MINE_PROCESSOR"
