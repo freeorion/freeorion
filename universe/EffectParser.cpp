@@ -424,6 +424,9 @@ namespace {
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_id,
                                                              create_ship.empire,
                                                              create_ship.species)])
+            | ((str_p("createship")
+                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name)])
             );
 
         move_to =

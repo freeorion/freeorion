@@ -1147,7 +1147,7 @@ CreateShip::CreateShip(const std::string& predefined_ship_design_name,
                        const ValueRef::ValueRefBase<int>* empire_id,
                        const ValueRef::ValueRefBase<std::string>* species_name) :
     m_design_name(predefined_ship_design_name),
-    m_design_id(0),
+    m_design_id(0), // this specifies a null pointer to a ValueRef, not the constant 0
     m_empire_id(empire_id),
     m_species_name(species_name)
 {}
@@ -1159,6 +1159,13 @@ CreateShip::CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
     m_design_id(ship_design_id),
     m_empire_id(empire_id),
     m_species_name(species_name)
+{}
+
+CreateShip::CreateShip(const std::string& predefined_ship_design_name) :
+    m_design_name(predefined_ship_design_name),
+    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
+    m_empire_id(0),     // ...
+    m_species_name(0)   // ...
 {}
 
 CreateShip::~CreateShip()
@@ -1182,7 +1189,6 @@ void CreateShip::Execute(const ScriptingContext& context) const
     }
 
     int design_id = ShipDesign::INVALID_DESIGN_ID;
-
     if (m_design_id) {
         design_id = m_design_id->Eval(context);
         if (!GetShipDesign(design_id)) {
@@ -1202,17 +1208,24 @@ void CreateShip::Execute(const ScriptingContext& context) const
         return;
     }
 
-    int empire_id = m_empire_id->Eval(context);
-    Empire* empire = Empires().Lookup(empire_id);
-    if (!empire) {
-        Logger().errorStream() << "RemoveOwner::Execute couldn't get empire with id " << empire_id;
-        return;
+    int empire_id = ALL_EMPIRES;
+    Empire* empire(0);  // not const Empire* so that empire::NewShipName can be called
+    if (m_empire_id) {
+        empire_id = m_empire_id->Eval(context);
+        empire = Empires().Lookup(empire_id);
+        if (!empire) {
+            Logger().errorStream() << "CreateShip::Execute couldn't get empire with id " << empire_id;
+            return;
+        }
     }
 
-    std::string species_name = m_species_name->Eval(context);
-    if (!GetSpecies(species_name)) {
-        Logger().errorStream() << "CreateShip::Execute couldn't get species with which to create a ship";
-        return;
+    std::string species_name;
+    if (m_species_name) {
+        species_name = m_species_name->Eval(context);
+        if (!species_name.empty() && !GetSpecies(species_name)) {
+            Logger().errorStream() << "CreateShip::Execute couldn't get species with which to create a ship";
+            return;
+        }
     }
 
     //// possible future modification: try to put new ship into existing fleet if
@@ -1229,7 +1242,7 @@ void CreateShip::Execute(const ScriptingContext& context) const
         Logger().errorStream() << "CreateShip::Execute couldn't create ship!";
         return;
     }
-    ship->Rename(empire->NewShipName());
+    ship->Rename(empire ? empire->NewShipName() : ship->Design()->Name());
     ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
     ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
     ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
@@ -1263,9 +1276,11 @@ std::string CreateShip::Description() const
         design_str = UserString(m_design_name);
     }
 
-    std::string species_str = ValueRef::ConstantExpr(m_species_name) ?
-                                UserString(m_species_name->Eval()) :
-                                m_species_name->Description();
+    std::string species_str = "";
+    if (m_species_name)
+        species_str = ValueRef::ConstantExpr(m_species_name) ?
+                      UserString(m_species_name->Eval()) :
+                      m_species_name->Description();
 
     return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
                % design_str
@@ -1275,14 +1290,17 @@ std::string CreateShip::Description() const
 
 std::string CreateShip::Dump() const
 {
+    std::string retval;
     if (m_design_id)
-        return DumpIndent() + "CreateShip design_id = " + m_design_id->Dump()
-            + " empire = " + m_empire_id->Dump()
-            + " species_name = " + m_species_name->Dump() + "\n";
+        retval = DumpIndent() + "CreateShip design_id = " + m_design_id->Dump();
     else
-        return DumpIndent() + "CreateShip predefined_ship_design_name = \"" + m_design_name + "\""
-            + " empire = " + m_empire_id->Dump()
-            + " species_name = " + m_species_name->Dump() + "\n";
+        retval = DumpIndent() + "CreateShip predefined_ship_design_name = \"" + m_design_name + "\"";
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump();
+    if (m_species_name)
+        retval += " species_name = " + m_species_name->Dump();
+    retval += "\n";
+    return retval;
 }
 
 
