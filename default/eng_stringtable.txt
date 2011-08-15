@@ -3326,6 +3326,8 @@ Creates a new %1% building
 DESC_CREATE_SHIP
 Creates a new ship of design %1% owned by the %2% empire crewed by %3%
 
+DESC_CREATE_SHIP_SIMPLE
+Creates a new ship of design %1% with no owner and no species
 
 # Effect Sitreps
 

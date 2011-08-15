@@ -1256,12 +1256,14 @@ void CreateShip::Execute(const ScriptingContext& context) const
 
 std::string CreateShip::Description() const
 {
-    std::string empire_str = UserString("ERROR");
-    if (ValueRef::ConstantExpr(m_empire_id)) {
-        if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
-            empire_str = empire->Name();
-    } else {
-        empire_str = m_empire_id->Description();
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
     }
 
     std::string design_str = UserString("ERROR");
@@ -1276,16 +1278,20 @@ std::string CreateShip::Description() const
         design_str = UserString(m_design_name);
     }
 
-    std::string species_str = "";
+    std::string species_str;
     if (m_species_name)
         species_str = ValueRef::ConstantExpr(m_species_name) ?
                       UserString(m_species_name->Eval()) :
                       m_species_name->Description();
 
-    return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
-               % design_str
-               % empire_str
-               % species_str);
+    if (!empire_str.empty() && !species_str.empty())
+        return str(FlexibleFormat(UserString("DESC_CREATE_SHIP"))
+                   % design_str
+                   % empire_str
+                   % species_str);
+    else
+        return str(FlexibleFormat(UserString("DESC_CREATE_SHIP_SIMPLE"))
+                   % design_str);
 }
 
 std::string CreateShip::Dump() const
