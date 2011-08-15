@@ -481,6 +481,10 @@ namespace AIInterface {
         return 1;
     }
 
+    int IssueInvadeOrder(int ship_id, int planet_id) {
+        return 1;
+    }
+
     int IssueDeleteFleetOrder() {
         return 0;
     }
