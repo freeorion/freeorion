@@ -18,7 +18,7 @@ BuildingType
                 SetTargetMining Value + Target.Population * 0.5
                 SetTargetIndustry Value + Target.Population * 1.0
             ]
-    graphic = "icons/building/palace.png"
+    graphic = "icons/building/archive.png"
 
 BuildingType
     name = "BLD_IMPERIAL_PALACE"
@@ -718,7 +718,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = ""
+    graphic = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_HYPER_DAM"
@@ -749,7 +749,7 @@ BuildingType
             activation = Source
             effects = SetTargetHealth Value - 5
     ]
-    graphic = ""
+    graphic = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_SOL_ACCEL"
@@ -772,7 +772,7 @@ BuildingType
             activation = Source
             effects = Destroy
     ]
-    graphic = ""
+    graphic = "icons/building/miniature_sun.png"
 
 BuildingType
     name = "BLD_SOL_ORB_GEN"
@@ -811,7 +811,7 @@ BuildingType
             stackinggroup = "BLD_SOL_ORB_GEN_EFFECT"
             effects = SetTargetIndustry Value + Target.Population * 0.25
     ]
-    graphic = ""
+    graphic = "icons/building/miniature_sun.png"
 
 BuildingType
     name = "BLD_CLONING_CENTER"
@@ -974,7 +974,7 @@ BuildingType
     buildcost = 250
     buildtime = 8
     location = Star type = Neutron
-    graphic = ""
+    graphic = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_NEUTRONIUM_FORGE"
@@ -985,7 +985,7 @@ BuildingType
         OwnedBy TheEmpire Source.Owner
         TargetPopulation low = 1 high = 999
     ]
-    graphic = ""
+    graphic = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_NEUTRONIUM_SYNTH"
@@ -993,7 +993,7 @@ BuildingType
     buildcost = 12000
     buildtime = 10
     location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
+    graphic = "icons/building/neutronium-forge.png"
 
 BuildingType
     name = "BLD_CONC_CAMP"
@@ -1021,7 +1021,7 @@ BuildingType
             activation = Not OwnedBy TheEmpire Source.Owner
             effects = Destroy
     ]
-    graphic = ""
+    graphic = "icons/building/concentration-camp.png"
 
 BuildingType
     name = "BLD_INDUSTRY_FARM"
@@ -1061,7 +1061,7 @@ BuildingType
             activation = Star type = BlackHole
             stackinggroup = "BLD_BLACK_HOLE_POW_GEN_PRIMARY_EFFECT"
             effects = SetTargetIndustry Value + Target.Population * 2
-    graphic = "icons/building/black_hole_generator.png"
+    graphic = "icons/building/blackhole.png"
 
 BuildingType
     name = "BLD_REPLICATORS"
@@ -1093,7 +1093,7 @@ BuildingType
             scope = Source
             activation = WithinStarlaneJumps 1 Building name = "BLD_PLANET_DRIVE"
             effects = Destroy
-    graphic = ""
+    graphic = "icons/building/beacon.png"
 
 BuildingType
     name = "BLD_ART_PLANET"
@@ -1261,7 +1261,7 @@ BuildingType
             scope = Source
             activation = Source
             effects = Destroy
-    graphic = ""
+    graphic = "icons/building/beacon.png"
 
 BuildingType
     name = "BLD_GAS_GIANT_GEN"
