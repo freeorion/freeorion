@@ -482,6 +482,61 @@ namespace AIInterface {
     }
 
     int IssueInvadeOrder(int ship_id, int planet_id) {
+        const Universe& universe = AIClientApp::GetApp()->GetUniverse();
+        const ObjectMap& objects = universe.Objects();
+        int empire_id = AIClientApp::GetApp()->EmpireID();
+
+        // make sure ship_id is a ship...
+        const Ship* ship = objects.Object<Ship>(ship_id);
+        if (!ship) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : passed an invalid ship_id";
+            return 0;
+        }
+
+        // get fleet of ship
+        const Fleet* fleet = objects.Object<Fleet>(ship->FleetID());
+        if (!fleet) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : ship with passed ship_id has invalid fleet_id";
+            return 0;
+        }
+
+        // make sure player owns ship and its fleet
+        if (!fleet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : empire does not own fleet of passed ship";
+            return 0;
+        }
+        if (!ship->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : empire does not own passed ship";
+            return 0;
+        }
+
+        // verify that planet exists and is occupied by another empire
+        const Planet* planet = objects.Object<Planet>(planet_id);
+        if (!planet) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : no planet with passed planet_id";
+            return 0;
+        }
+        if (planet->Unowned()) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is not colonized";
+            return 0;
+        }
+        if (planet->OwnedBy(empire_id)) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is owned by this empire so cannot be invaded";
+            return 0;
+        }
+
+        // verify that planet is in same system as the fleet
+        if (planet->SystemID() != fleet->SystemID()) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : fleet and planet are not in the same system";
+            return 0;
+        }
+        if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : ship is not in a system";
+            return 0;
+        }
+
+        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship_id, planet_id)));
+
         return 1;
     }
 
