@@ -121,6 +121,7 @@ public:
     virtual const std::string&          FocusIcon(const std::string& focus_name) const;
 
     bool                        IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
+    bool                        IsAboutToBeInvaded() const {return m_is_about_to_be_invaded;}
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -156,6 +157,8 @@ public:
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
     void            SetIsAboutToBeColonized(bool b);    ///< Called during colonization when a planet is about to be colonized
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
+    void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
+    void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
     //@}
 
 private:
@@ -185,6 +188,7 @@ private:
     bool            m_just_conquered;
 
     bool            m_is_about_to_be_colonized;
+    bool            m_is_about_to_be_invaded;
 
     friend class boost::serialization::access;
     template <class Archive>

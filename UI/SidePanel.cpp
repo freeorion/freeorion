@@ -621,9 +621,6 @@ private:
 boost::shared_ptr<ShaderProgram> RotatingPlanetControl::s_scanline_shader = boost::shared_ptr<ShaderProgram>();
 int RotatingPlanetControl::s_instances_counter = 0;
 
-////////////////////////////////////////////////
-// SidePanel::PlanetPanel
-////////////////////////////////////////////////
 namespace {
     int SystemNameFontSize() {
         return ClientUI::Pts();
@@ -1114,11 +1111,6 @@ void SidePanel::PlanetPanel::Refresh()
     }
 
 
-    // determine if planet has been ordered invaded
-    std::map<int, std::set<int> > pending_invade_orders = PendingInvadeOrders();
-    bool planet_being_invaded = pending_invade_orders.find(m_planet_id) != pending_invade_orders.end();
-
-
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
     if (!planet->Unowned() && m_planet_name) {
@@ -1191,7 +1183,7 @@ void SidePanel::PlanetPanel::Refresh()
 
     } else if (!Disabled() &&
                owner == OS_FOREIGN &&
-               !planet_being_invaded &&
+               !planet->IsAboutToBeInvaded() &&
                planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
                !invasion_ships.empty())
     {
@@ -1218,7 +1210,7 @@ void SidePanel::PlanetPanel::Refresh()
                                                    % GetPlanetTypeName(*planet));
         m_env_size->SetText(env_size_text);
 
-    } else if (!Disabled() && planet_being_invaded) {
+    } else if (!Disabled() && planet->IsAboutToBeInvaded()) {
         // show invade cancel button
         AttachChild(m_invade_button);
         if (m_invade_button)

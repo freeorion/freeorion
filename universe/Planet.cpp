@@ -63,7 +63,8 @@ Planet::Planet() :
     m_axial_tilt(23.0),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false)
+    m_is_about_to_be_colonized(false),
+    m_is_about_to_be_invaded(false)
 {
     //Logger().debugStream() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
@@ -143,6 +144,7 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
             if (vis >= VIS_FULL_VISIBILITY) {
                 this->m_available_trade =           copied_planet->m_available_trade;
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
+                this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
@@ -469,6 +471,7 @@ void Planet::Reset()
     m_available_trade = 0.0;
     m_just_conquered = false;
     m_is_about_to_be_colonized = false;
+    m_is_about_to_be_invaded = false;
 }
 
 void Planet::Conquer(int conquerer)
@@ -529,6 +532,19 @@ void Planet::SetIsAboutToBeColonized(bool b)
 void Planet::ResetIsAboutToBeColonized()
 {
     SetIsAboutToBeColonized(false);
+}
+
+void Planet::SetIsAboutToBeInvaded(bool b)
+{
+    bool initial_status = m_is_about_to_be_invaded;
+    if (b == initial_status) return;
+    m_is_about_to_be_invaded = b;
+    StateChangedSignal();
+}
+
+void Planet::ResetIsAboutToBeInvaded()
+{
+    SetIsAboutToBeInvaded(false);
 }
 
 void Planet::SetSystem(int sys)
