@@ -585,6 +585,7 @@ namespace {
             m_ship_icon(0),
             m_scrap_indicator(0),
             m_colonize_indicator(0),
+            m_invade_indicator(0),
             m_ship_name_text(0),
             m_design_name_text(0),
             m_stat_icons(),
@@ -723,6 +724,9 @@ namespace {
             delete m_colonize_indicator;
             m_colonize_indicator = 0;
 
+            delete m_invade_indicator;
+            m_invade_indicator = 0;
+
             const Ship* ship = GetObject<Ship>(m_ship_id);
             if (!ship)
                 return;
@@ -746,6 +750,11 @@ namespace {
                 boost::shared_ptr<GG::Texture> colonize_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "colonizing.png", true);
                 m_colonize_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), colonize_texture, DataPanelIconStyle());
                 AttachChild(m_colonize_indicator);
+            }
+            if (ship->OrderedInvadePlanet() != UniverseObject::INVALID_OBJECT_ID) {
+                boost::shared_ptr<GG::Texture> invade_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "invading.png", true);
+                m_invade_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), invade_texture, DataPanelIconStyle());
+                AttachChild(m_invade_indicator);
             }
         }
 
@@ -836,6 +845,8 @@ namespace {
                 m_scrap_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
             if (m_colonize_indicator)
                 m_colonize_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
+            if (m_invade_indicator)
+                m_invade_indicator->Resize(GG::Pt(DATA_PANEL_ICON_SPACE.x, ClientHeight()));
 
             // position ship name text at the top to the right of icons
             const GG::Pt name_ul = GG::Pt(DATA_PANEL_ICON_SPACE.x + DATA_PANEL_TEXT_PAD, GG::Y0);
@@ -857,6 +868,7 @@ namespace {
         GG::StaticGraphic*          m_ship_icon;
         GG::StaticGraphic*          m_scrap_indicator;
         GG::StaticGraphic*          m_colonize_indicator;
+        GG::StaticGraphic*          m_invade_indicator;
         GG::TextControl*            m_ship_name_text;
         GG::TextControl*            m_design_name_text;
 
