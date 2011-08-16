@@ -553,6 +553,7 @@ void InvadeOrder::ExecuteImpl() const
     // note: multiple ships, from same or different empires, can invade the same planet on the same turn
 
     ship->SetInvadePlanet(m_planet);
+    planet->StateChangedSignal();   // notify UI of change in planet as well
 }
 
 bool InvadeOrder::UndoImpl() const
@@ -574,6 +575,7 @@ bool InvadeOrder::UndoImpl() const
     }
 
     ship->ClearInvadePlanet();
+    planet->StateChangedSignal();   // notify UI of change in planet as well
 
     return true;
 }

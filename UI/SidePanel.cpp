@@ -1181,7 +1181,7 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
         if (m_colonize_button)
-            m_colonize_button->SetText(UserString("CANCEL"));
+            m_colonize_button->SetText(UserString("PL_CANCEL_COLONIZE"));
         DetachChild(m_colonize_instruction);
 
         std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
@@ -1222,7 +1222,7 @@ void SidePanel::PlanetPanel::Refresh()
         // show invade cancel button
         AttachChild(m_invade_button);
         if (m_invade_button)
-            m_invade_button->SetText(UserString("CANCEL"));
+            m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
         DetachChild(m_colonize_button);
         DetachChild(m_colonize_instruction);
 
@@ -1510,7 +1510,7 @@ void SidePanel::PlanetPanel::ClickInvade()
     // been ordered
 
     const Planet* planet = GetObject<Planet>(m_planet_id);
-    if (!planet || !planet->Unowned() || !m_order_issuing_enabled)
+    if (!planet || planet->Unowned() || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
