@@ -255,7 +255,7 @@ struct ProductionQueue
 private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
-    std::map<std::set<int>, double> m_system_group_allocated_pp;
+    std::map<std::set<int>, double> m_object_group_allocated_pp;
 
     friend class boost::serialization::access;
     template <class Archive>

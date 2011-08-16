@@ -68,7 +68,7 @@ void ProductionQueue::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_queue)
         & BOOST_SERIALIZATION_NVP(m_projects_in_progress)
-        & BOOST_SERIALIZATION_NVP(m_system_group_allocated_pp);
+        & BOOST_SERIALIZATION_NVP(m_object_group_allocated_pp);
 }
 
 template void ProductionQueue::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);

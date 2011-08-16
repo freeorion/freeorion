@@ -3988,9 +3988,9 @@ void MapWnd::RefreshFoodResourceIndicator()
 
     const PopulationPool& pop_pool = empire->GetPopulationPool();
 
-    int stockpile_system_id = pool->StockpileSystemID();
+    int stockpile_object_id = pool->StockpileObjectID();
 
-    if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.  Instead of showing stockpile, show production
         m_food->SetValue(pool->TotalAvailable());   // no stockpile means available is equal to production
         m_food->SetValue(0.0, 1);                   // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
@@ -4006,17 +4006,17 @@ void MapWnd::RefreshFoodResourceIndicator()
 
     // find total food allocated to group that has access to stockpile
     std::map<std::set<int>, double> food_sharing_groups = pool->Available();
-    std::set<int> stockpile_group_systems;
-    Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
+    std::set<int> stockpile_group_objects;
+    Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
     for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin(); it != food_sharing_groups.end(); ++it) {
         const std::set<int>& group = it->first;                     // get group
         Logger().debugStream() << "potential group:";
         for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
             Logger().debugStream() << "...." << *qit;
 
-        if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
-            stockpile_group_systems = group;
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of systems for stockpile system.  size: " << stockpile_group_systems.size();
+        if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
+            stockpile_group_objects = group;
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of objects for stockpile object.  size: " << stockpile_group_objects.size();
             break;
         }
 
@@ -4046,17 +4046,17 @@ void MapWnd::RefreshFoodResourceIndicator()
 
         int center_system_id = obj->SystemID();
 
-        if (stockpile_group_systems.find(center_system_id) != stockpile_group_systems.end()) {
+        if (stockpile_group_objects.find(center_system_id) != stockpile_group_objects.end()) {
             stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-            Logger().debugStream() << "object " << obj->Name() << " is in stockpile system group has " << pop->AllocatedFood() << " food allocated to it";
+            Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group has " << pop->AllocatedFood() << " food allocated to it";
         }
     }
 
-    double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
-    Logger().debugStream() << "food available in stockpile group is:  " << stockpile_system_group_available;
+    double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
+    Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
     Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
 
-    double new_stockpile = stockpile_system_group_available - stockpile_group_food_allocation;
+    double new_stockpile = stockpile_object_group_available - stockpile_group_food_allocation;
     Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
 
     Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
@@ -4085,9 +4085,9 @@ void MapWnd::RefreshMineralsResourceIndicator()
         return;
     }
 
-    int stockpile_system_id = pool->StockpileSystemID();
+    int stockpile_object_id = pool->StockpileObjectID();
 
-    if (stockpile_system_id == UniverseObject::INVALID_OBJECT_ID) {
+    if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         m_mineral->SetValue(0.0);
         m_mineral->SetValue(0.0, 1);        // TODO: Make StatisticIcon able to change number of numbers shown, and remove second number here
@@ -4107,30 +4107,30 @@ void MapWnd::RefreshMineralsResourceIndicator()
     const ProductionQueue& queue = empire->GetProductionQueue();
     std::map<std::set<int>, double> allocated_pp = queue.AllocatedPP();
 
-    Logger().debugStream() << "trying to find stockpile system group...  stockpile system has id: " << stockpile_system_id;
+    Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
     for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
         const std::set<int>& group = it->first;                     // get group
         Logger().debugStream() << "potential group:";
         for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
             Logger().debugStream() << "...." << *qit;
 
-        if (group.find(stockpile_system_id) != group.end()) {       // check for stockpile system
+        if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
             stockpile_group_pp_allocation = it->second;        // record allocation for this group
-            Logger().debugStream() << "MapWnd::RefreshMineralsResourceIndicator found group of systems for stockpile system.  size: " << it->first.size();
+            Logger().debugStream() << "MapWnd::RefreshMineralsResourceIndicator found group of systems for stockpile object.  size: " << it->first.size();
             break;
         }
 
         Logger().debugStream() << "didn't find in group... trying next.";
     }
-    // if the stockpile system is not found in any group of systems with allocated pp, assuming this is fine and that the
-    // stockpile system's group of systems didn't have any allocated pp...
+    // if the stockpile object is not found in any group of systems with allocated pp, assuming this is fine and that the
+    // stockpile object's group of systems didn't have any allocated pp...
 
 
-    double stockpile_system_group_available = pool->GroupAvailable(stockpile_system_id);
-    Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_system_group_available;
+    double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
+    Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_object_group_available;
     Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
 
-    double new_stockpile = stockpile_system_group_available - stockpile_group_pp_allocation;
+    double new_stockpile = stockpile_object_group_available - stockpile_group_pp_allocation;
     Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
 
     Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
