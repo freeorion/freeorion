@@ -3,7 +3,7 @@
 #define _Serialize_h_
 
 // Set this to true to do all serialization using binary archives.  Otherwise, XML archives will be used.
-#define FREEORION_BINARY_SERIALIZATION 0
+#define FREEORION_BINARY_SERIALIZATION 1
 
 #if FREEORION_BINARY_SERIALIZATION
 #  include <boost/archive/binary_iarchive.hpp>
