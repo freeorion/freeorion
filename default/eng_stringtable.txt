@@ -214,11 +214,14 @@ Outpost Base
 SD_OUTPOST_BASE_DESC
 Unarmed vessel capable of creating an outpost in the system where it is produced.
 
-SD_DRAGON_TOOTH
-Dragon Tooth
-
 SD_TROOP_SHIP
 Troop Ship
+
+SD_TROOP_SHIP_DESC
+Carries a brigade of ground troops and equipment that can be deployed onto a planet.
+
+SD_DRAGON_TOOTH
+Dragon Tooth
 
 SD_DRAGON_TOOTH_DESC
 Ancient ship design with advanced weaponry and defensive systems.

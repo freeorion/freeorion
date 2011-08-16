@@ -939,6 +939,9 @@ void SidePanel::PlanetPanel::DoLayout()
     } else if (m_colonize_button && m_colonize_button->Parent() == this) {
         m_colonize_button->MoveTo(GG::Pt(left, y));
         y += m_colonize_button->Height() + EDGE_PAD;
+    } else if (m_invade_button && m_invade_button->Parent() == this) {
+        m_invade_button->MoveTo(GG::Pt(left, y));
+        y += m_invade_button->Height() + EDGE_PAD;
     }
 
     if (m_population_panel && m_population_panel->Parent() == this) {
@@ -1083,6 +1086,9 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_colonize_button);
         delete m_colonize_button;       m_colonize_button = 0;
 
+        DetachChild(m_invade_button);
+        delete m_invade_button;         m_invade_button = 0;
+
         DetachChild(m_colonize_instruction);
         delete m_colonize_instruction;  m_colonize_instruction = 0;
 
@@ -1106,6 +1112,11 @@ void SidePanel::PlanetPanel::Refresh()
             owner = OS_SELF;
         }
     }
+
+
+    // determine if planet has been ordered invaded
+    std::map<int, std::set<int> > pending_invade_orders = PendingInvadeOrders();
+    bool planet_being_invaded = pending_invade_orders.find(m_planet_id) != pending_invade_orders.end();
 
 
     // colour planet name with owner's empire colour
@@ -1142,9 +1153,6 @@ void SidePanel::PlanetPanel::Refresh()
     std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
 
 
-    // create colonize or cancel button, if appropriate (a ship is in the system
-    // that can colonize, or the planet has been ordered to be colonized already
-    // this turn)
     if (!Disabled() &&
         (owner == OS_NONE || owner == OS_SELF) &&
         planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
@@ -1152,6 +1160,7 @@ void SidePanel::PlanetPanel::Refresh()
         !planet->IsAboutToBeColonized() &&
         planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
     {
+        // show colonize button
         DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
         std::string initial_pop = DoubleToString(ColonyShipCapacity(colony_ship), 2, false);
@@ -1167,31 +1176,8 @@ void SidePanel::PlanetPanel::Refresh()
                                                    % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
         m_env_size->SetText(env_size_text);
 
-    } else if (!Disabled() &&
-               owner == OS_FOREIGN &&
-               planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
-               !invasion_ships.empty())
-    {
-        AttachChild(m_invade_button);
-        DetachChild(m_colonize_button);
-        DetachChild(m_colonize_instruction);
-
-    } else if (!Disabled() &&
-               owner == OS_NONE &&
-               !planet->IsAboutToBeColonized() &&
-               !ValidSelectedColonyShip(SidePanel::SystemID()) &&
-               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()))
-    {
-        DetachChild(m_invade_button);
-        AttachChild(m_colonize_instruction);
-        DetachChild(m_colonize_button);
-
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
-
     } else if (!Disabled() && planet->IsAboutToBeColonized()) {
+        // shown colonize cancel button
         DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
         if (m_colonize_button)
@@ -1203,7 +1189,66 @@ void SidePanel::PlanetPanel::Refresh()
                                                    % GetPlanetTypeName(*planet));
         m_env_size->SetText(env_size_text);
 
+    } else if (!Disabled() &&
+               owner == OS_FOREIGN &&
+               !planet_being_invaded &&
+               planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
+               !invasion_ships.empty())
+    {
+        // show invade button
+        AttachChild(m_invade_button);
+        double invasion_troops = 0.0;
+        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+             ship_it != invasion_ships.end(); ++ship_it)
+        {
+            const Ship* invasion_ship = *ship_it;
+            if (const ShipDesign* design = invasion_ship->Design())
+                invasion_troops += design->TroopCapacity();
+        }
+        std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
+        std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE")) % invasion_troops_text);
+        if (m_invade_button)
+            m_invade_button->SetText(invasion_text);
+
+        DetachChild(m_colonize_button);
+        DetachChild(m_colonize_instruction);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet));
+        m_env_size->SetText(env_size_text);
+
+    } else if (!Disabled() && planet_being_invaded) {
+        // show invade cancel button
+        AttachChild(m_invade_button);
+        if (m_invade_button)
+            m_invade_button->SetText(UserString("CANCEL"));
+        DetachChild(m_colonize_button);
+        DetachChild(m_colonize_instruction);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet));
+        m_env_size->SetText(env_size_text);
+
+    } else if (!Disabled() &&
+               owner == OS_NONE &&
+               !planet->IsAboutToBeColonized() &&
+               !ValidSelectedColonyShip(SidePanel::SystemID()) &&
+               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()))
+    {
+        // show colonization instruction text
+        DetachChild(m_invade_button);
+        AttachChild(m_colonize_instruction);
+        DetachChild(m_colonize_button);
+
+        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                                   % GetPlanetSizeName(*planet)
+                                                   % GetPlanetTypeName(*planet));
+        m_env_size->SetText(env_size_text);
+
     } else {
+        // hide everything
         DetachChild(m_invade_button);
         DetachChild(m_colonize_button);
         DetachChild(m_colonize_instruction);
