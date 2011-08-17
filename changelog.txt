@@ -11,6 +11,7 @@ GUI:
 
 Life-forms:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
+ ~ Experimental addition of drone and drone factory (which doesn't work)
  
  Multiplayer:
 

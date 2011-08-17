@@ -1596,3 +1596,63 @@ Hull
                 WithinStarlaneJumps 1 Source
             ]
     graphic = ""
+
+Hull
+    name = "SH_DRONE_BODY"
+    description = "SH_DRONE_BODY_DESC"
+    speed = 12
+    starlaneSpeed = 30
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.05
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps 1 Source
+                Not Contains Source
+            ]
+    graphic = ""
+
+
+Hull
+    name = "SH_IMMOBILE_FACTORY"
+    description = "SH_IMMOBILE_FACTORY_DESC"
+    speed = 0
+    starlaneSpeed = 0
+    fuel = 0
+    stealth = 1
+    structure = 50
+    buildCost = 1
+    buildTime = 1
+    producible = false
+        slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+    effectsgroups =
+    	EffectsGroup
+    	scope = Source
+    	activation = Random probability = 0.75
+    	effects = [
+        CreateShip SM_DRONE Source.Owner Source.Species
+    ]
+    graphic = ""

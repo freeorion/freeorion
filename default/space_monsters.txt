@@ -62,3 +62,29 @@ ShipDesign
     ]
     graphic = "icons/monsters/dragon.png"
     model = "seed"
+
+ShipDesign
+    name = "SM_DRONE"
+    description = "SM_DRONE_DESC"
+    lookup_strings = true
+    hull = "SH_DRONE_BODY"
+    parts = [
+        "AR_ROCK_PLATE"
+        "PD_PHASOR"
+        ""
+    ]
+    graphic = "icons/ship_parts/colony_pod.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_DRONE_FACTORY"
+    description = "SM_DRONE_FACTORY_DESC"
+    lookup_strings = true
+    hull = "SH_IMMOBILE_FACTORY"
+    parts = [
+        "AR_ZORTRIUM_PLATE"
+        "PD_PULSE_LASER"
+        ""
+    ]
+    graphic = "icons/ship_parts/antimatter_tank.png"
+    model = "seed"

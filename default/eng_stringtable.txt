@@ -259,6 +259,16 @@ Vacuum Dragon
 SM_DRAGON_DESC
 Terrifying giant monster that prowls space for prey.
 
+SM_DRONE
+Drone
+SM_DRONE_DESC
+Tool of a forgotten war, the Drone Fighter still fulfills it's original purpose, mindlessly attacking any ships in range.
+
+SM_DRONE_FACTORY
+Drone Factory
+SM_DRONE_FACTORY_DESC
+   Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
