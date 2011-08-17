@@ -1492,6 +1492,8 @@ namespace {
                 continue;
             if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
                 continue;               // can't invade shielded planets
+            if (planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
+                continue;               // can't invade unpopulated planets
 
             if (ship->SystemID() != planet->SystemID())
                 continue;

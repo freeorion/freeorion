@@ -1096,20 +1096,6 @@ void SidePanel::PlanetPanel::Refresh()
         return;
     }
 
-    // determine the ownership status of planet with respect to this client's player's empire
-    enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
-
-    if (planet->Unowned() || planet->IsAboutToBeColonized()) {
-        owner = OS_NONE;
-    } else {
-        if (!planet->OwnedBy(client_empire_id)) {
-            Logger().debugStream() << "foreign owned planet in planet panel: " << planet->Name();
-            owner = OS_FOREIGN;
-        } else {
-            owner = OS_SELF;
-        }
-    }
-
 
     // colour planet name with owner's empire colour
     m_empire_colour = GG::CLR_ZERO;
@@ -1146,7 +1132,6 @@ void SidePanel::PlanetPanel::Refresh()
 
 
     if (!Disabled() &&
-        (owner == OS_NONE || owner == OS_SELF) &&
         planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
         colony_ship &&
         !planet->IsAboutToBeColonized() &&
@@ -1182,7 +1167,7 @@ void SidePanel::PlanetPanel::Refresh()
         m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() &&
-               owner == OS_FOREIGN &&
+               !planet->OwnedBy(client_empire_id) &&
                !planet->IsAboutToBeInvaded() &&
                planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
                !invasion_ships.empty())
@@ -1224,7 +1209,7 @@ void SidePanel::PlanetPanel::Refresh()
         m_env_size->SetText(env_size_text);
 
     } else if (!Disabled() &&
-               owner == OS_NONE &&
+               planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
                !planet->IsAboutToBeColonized() &&
                !ValidSelectedColonyShip(SidePanel::SystemID()) &&
                OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()))
@@ -1502,7 +1487,7 @@ void SidePanel::PlanetPanel::ClickInvade()
     // been ordered
 
     const Planet* planet = GetObject<Planet>(m_planet_id);
-    if (!planet || planet->Unowned() || !m_order_issuing_enabled)
+    if (!planet || planet->CurrentMeterValue(METER_POPULATION) <= 0.0 || !m_order_issuing_enabled)
         return;
 
     int empire_id = HumanClientApp::GetApp()->EmpireID();
