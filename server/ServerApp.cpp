@@ -1317,9 +1317,10 @@ namespace {
             int colonize_planet_id = ship->OrderedColonizePlanet();
             if (colonize_planet_id == UniverseObject::INVALID_OBJECT_ID)
                 continue;
-            const Planet* planet = objects.Object<Planet>(colonize_planet_id);
+            Planet* planet = objects.Object<Planet>(colonize_planet_id);
             if (!planet)
                 continue;
+            planet->ResetIsAboutToBeColonized();
             if (!planet->Unowned())
                 continue;
 
@@ -1419,7 +1420,6 @@ namespace {
 
                 break;  // only one colonization per planet.
             }
-            planet->ResetIsAboutToBeColonized();
 
             // if planet was colonized, remove colonize status from any other
             // ships that wanted to colonize this planet
@@ -1487,9 +1487,10 @@ namespace {
             int invade_planet_id = ship->OrderedInvadePlanet();
             if (invade_planet_id == UniverseObject::INVALID_OBJECT_ID)
                 continue;
-            const Planet* planet = objects.Object<Planet>(invade_planet_id);
+            Planet* planet = objects.Object<Planet>(invade_planet_id);
             if (!planet)
                 continue;
+            planet->ResetIsAboutToBeInvaded();
             if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
                 continue;               // can't invade shielded planets
             if (planet->CurrentMeterValue(METER_POPULATION) <= 0.0)

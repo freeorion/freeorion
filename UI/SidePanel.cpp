@@ -971,7 +971,7 @@ void SidePanel::PlanetPanel::DoLayout()
 }
 
 namespace {
-    const Ship* ValidSelectedColonyShip(int system_id) {
+    Ship* ValidSelectedColonyShip(int system_id) {
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
             return 0;
@@ -979,14 +979,14 @@ namespace {
         // is there a valid selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (const Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+            if (Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
                 if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     return ship;
         return 0;
     }
 
-    std::set<const Ship*> ValidSelectedInvasionShips(int system_id) {
-        std::set<const Ship*> retval;
+    std::set<Ship*> ValidSelectedInvasionShips(int system_id) {
+        std::set<Ship*> retval;
 
         // if not looking in a valid system, no valid colony ship can be available
         if (system_id == UniverseObject::INVALID_OBJECT_ID)
@@ -995,7 +995,7 @@ namespace {
         // is there a valid single selected ship in the active FleetWnd?
         std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
         for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (const Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+            if (Ship* ship = GetUniverse().Objects().Object<Ship>(*ss_it))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     retval.insert(ship);
 
@@ -1128,7 +1128,7 @@ void SidePanel::PlanetPanel::Refresh()
     }
 
     const Ship* colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
-    std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
 
 
     if (!Disabled() &&
@@ -1175,7 +1175,7 @@ void SidePanel::PlanetPanel::Refresh()
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
-        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+        for (std::set<Ship*>::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
             const Ship* invasion_ship = *ship_it;
@@ -1440,6 +1440,51 @@ void SidePanel::PlanetPanel::Select(bool selected)
     }
 }
 
+namespace {
+    void CancelColonizeInvadeScrapShipOrders(Ship* ship) {
+        const ClientApp* app = ClientApp::GetApp();
+        if (!app)
+            return;
+        const OrderSet& orders = app->Orders();
+
+        // is selected ship already ordered to colonize?  If so, recind that order.
+        if (ship->OrderedColonizePlanet() != UniverseObject::INVALID_OBJECT_ID) {
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
+                    if (order->ShipID() == ship->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
+
+        // is selected ship ordered to invade?  If so, recind that order
+        if (ship->OrderedInvadePlanet() != UniverseObject::INVALID_OBJECT_ID) {
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+               if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
+                    if (order->ShipID() == ship->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
+
+        // is selected ship ordered scrapped?  If so, recind that order
+        if (ship->OrderedScrapped()) {
+            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+                if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+                    if (order->ObjectID() == ship->ID()) {
+                        HumanClientApp::GetApp()->Orders().RecindOrder(it->first);
+                        // could break here, but won't to ensure there are no problems with doubled orders
+                    }
+                }
+            }
+        }
+    }
+}
+
 void SidePanel::PlanetPanel::ClickColonize()
 {
     // order or cancel colonization, depending on whether it has previosuly
@@ -1457,12 +1502,12 @@ void SidePanel::PlanetPanel::ClickColonize()
     std::map<int, int>::const_iterator it = pending_colonization_orders.find(m_planet_id);
 
     if (it != pending_colonization_orders.end()) {
-        // cancel previous colonization order
+        // cancel previous colonization order for planet
         HumanClientApp::GetApp()->Orders().RecindOrder(it->second);
 
     } else {
         // find colony ship and order it to colonize
-        const Ship* ship = ValidSelectedColonyShip(planet->SystemID());
+        Ship* ship = ValidSelectedColonyShip(planet->SystemID());
         if (!ship) {
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize valid colony not found!";
             return;
@@ -1476,6 +1521,8 @@ void SidePanel::PlanetPanel::ClickColonize()
             Logger().errorStream() << "SidePanel::PlanetPanel::ClickColonize fleet not found!";
             return;
         }
+
+        CancelColonizeInvadeScrapShipOrders(ship);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
     }
@@ -1508,14 +1555,17 @@ void SidePanel::PlanetPanel::ClickInvade()
 
     } else {
         // order selected invasion ships to invade planet
-        std::set<const Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
+        std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(planet->SystemID());
 
-        for (std::set<const Ship*>::const_iterator ship_it = invasion_ships.begin();
+        for (std::set<Ship*>::const_iterator ship_it = invasion_ships.begin();
              ship_it != invasion_ships.end(); ++ship_it)
         {
-            const Ship* ship = *ship_it;
+            Ship* ship = *ship_it;
             if (!ship)
                 continue;
+
+            CancelColonizeInvadeScrapShipOrders(ship);
+
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
         }
     }
