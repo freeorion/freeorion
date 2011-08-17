@@ -1209,15 +1209,6 @@ namespace {
             }
         }
     }
-
-
-    /** Clears and refills \a ground_combat_info with CombatInfo structs for
-      * every system where ground combat should occur this turn. */
-    void AssembleSystemGroundCombatInfo(std::map<int, CombatInfo>& ground_combat_info) {
-        CleanupSystemCombatInfo(ground_combat_info);
-
-        // for each system, find if 
-    }
 }
 
 namespace {
@@ -1246,39 +1237,24 @@ namespace {
             return false;
         }
 
+        const ShipDesign* design = ship->Design();
+        if (!design) {
+            Logger().errorStream() << "ColonizePlanet couldn't find ship's design!";
+            return false;
+        }
+        double colonist_capacity = design->ColonyCapacity();
+
+        if (colonist_capacity <= 0.0) {
+            Logger().debugStream() << "ColonizePlanet colonize order executed by ship with zero colonist capacity!";
+            return false;
+        }
+
         // get empire to give ownership of planet to
         if (ship->Unowned()) {
             Logger().errorStream() << "ColonizePlanet couldn't get an empire to colonize with";
             return false;
         }
         int empire_id = ship->Owner();
-
-        // get colonist capacity of ship: sum of capacities of parts
-        double colonist_capacity = 0.0;
-        const ShipDesign* design = ship->Design();
-        if (!design) {
-            Logger().errorStream() << "ColonizePlanet couldn't find ship's design!";
-            return false;
-        }
-        const std::vector<std::string>& parts = design->Parts();
-        for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-            const std::string& part_name = *it;
-            if (part_name.empty())
-                continue;
-            const PartType* part_type = GetPartType(part_name);
-            if (!part_type) {
-                Logger().errorStream() << "ColonizePlanet couldn't find ship part type: " << part_name;
-                continue;
-            }
-            if (part_type->Class() == PC_COLONY) {
-                colonist_capacity += boost::get<double>(part_type->Stats());
-            }
-        }
-        if (colonist_capacity <= 0.0) {
-            Logger().debugStream() << "ColonizePlanet colonize order executed by ship with zero colonist capacity!";
-            return false;
-        }
-
 
         // all checks passed.  proceed with colonization.
 
@@ -1324,24 +1300,32 @@ namespace {
         // collect, for each planet, what ships have been ordered to colonize it
         std::map<int, std::map<int, std::set<int> > > planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
         std::vector<Ship*> ships = objects.FindObjects<Ship>();
+
         for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
             const Ship* ship = *it;
             if (!ship) {
                 Logger().errorStream() << "HandleColonization couldn't get ship";
                 continue;
             }
-            int colonize_planet_id = ship->OrderedColonizePlanet();
-            const Planet* planet = objects.Object<Planet>(colonize_planet_id);
-            if (!planet)
-                continue;
             if (ship->Unowned())
                 continue;
             int owner_empire_id = ship->Owner();
             int ship_id = ship->ID();
             if (ship_id == UniverseObject::INVALID_OBJECT_ID)
                 continue;
+
+            int colonize_planet_id = ship->OrderedColonizePlanet();
+            if (colonize_planet_id == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            const Planet* planet = objects.Object<Planet>(colonize_planet_id);
+            if (!planet)
+                continue;
+            if (!planet->Unowned())
+                continue;
+
             if (ship->SystemID() != planet->SystemID() || ship->SystemID() == UniverseObject::INVALID_OBJECT_ID)
                 continue;
+
             planet_empire_colonization_ship_ids[colonize_planet_id][owner_empire_id].insert(ship_id);
         }
 
@@ -1458,6 +1442,104 @@ namespace {
         //      has been destroyed or become invisible, or if the ship leaves
         //      the system?
     }
+
+    /** Given initial set of ground forces on planet, determine ground forces on
+      * planet after a turn of ground combat. */
+    void ResolveGroundCombat(std::map<int, double>& empires_troops) {
+        if (empires_troops.empty())
+            return;
+        int victor_id = empires_troops.begin()->first;
+        double victor_troops = empires_troops.begin()->second;
+        for (std::map<int, double>::iterator it = empires_troops.begin(); it != empires_troops.end(); ++it) {
+            if (it->second > victor_troops) {
+                victor_troops = it->second;
+                victor_id = it->first;
+            }
+        }
+        empires_troops.clear();
+        empires_troops[victor_id] = victor_troops;  // wipe everyone else out, with no casualties!
+    }
+
+    /** Determines which ships ordered to invade planets, does invasion and
+      * ground combat resolution */
+    void HandleInvasion(ObjectMap& objects, EmpireManager& empires) {
+        // collect, for each planet, what ships have been ordered to invade it
+        std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
+        std::vector<Ship*> ships = objects.FindObjects<Ship>();
+
+        for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
+            const Ship* ship = *it;
+            if (!ship) {
+                Logger().errorStream() << "HandleInvasion couldn't get ship";
+                continue;
+            }
+            if (!ship->HasTroops())     // can't invade without troops
+                continue;
+            if (ship->SystemID() == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            int ship_id = ship->ID();
+            if (ship_id == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            const ShipDesign* design = ship->Design();
+            if (!design)
+                continue;
+
+            int invade_planet_id = ship->OrderedInvadePlanet();
+            if (invade_planet_id == UniverseObject::INVALID_OBJECT_ID)
+                continue;
+            const Planet* planet = objects.Object<Planet>(invade_planet_id);
+            if (!planet)
+                continue;
+            if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
+                continue;               // can't invade shielded planets
+
+            if (ship->SystemID() != planet->SystemID())
+                continue;
+
+            // how many troops are invading?
+            planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
+            // destroy invading ships
+            GetUniverse().Destroy(ship_id);
+            // current owner may also have troops from meter
+            planet_empire_troops[invade_planet_id][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+        }
+
+        // process each planet's invasions
+        for (std::map<int, std::map<int, double> >::iterator planet_it = planet_empire_troops.begin();
+             planet_it != planet_empire_troops.end(); ++planet_it)
+        {
+            int planet_id = planet_it->first;
+            Planet* planet = objects.Object<Planet>(planet_id);
+            // mark planet as no longer being invaded
+            planet->ResetIsAboutToBeInvaded();
+
+            std::map<int, double>& empires_troops = planet_it->second;
+            ResolveGroundCombat(empires_troops);
+
+            // who won?
+            if (empires_troops.size() == 1) {
+                int victor_id = empires_troops.begin()->first;
+                // single empire was victorious.  conquer planet if appropriate...
+                // if planet is unowned and victor is an empire, or if planet is
+                // owned by an empire that is not the victor, conquer it
+                if ((planet->Unowned() && victor_id != ALL_EMPIRES) ||
+                    (!planet->Unowned() && !planet->OwnedBy(victor_id)))
+                {
+                    planet->Conquer(victor_id);
+                }
+
+                // regardless of whether battle resulted in conquering, it did
+                // likely affect the troop numbers on the planet
+                if (Meter* meter = planet->GetMeter(METER_TROOPS))
+                    meter->SetCurrent(empires_troops.begin()->second);  // new troops on planet is remainder after battle
+
+            } else {
+                // no troops left?
+                if (Meter* meter = planet->GetMeter(METER_TROOPS))
+                    meter->SetCurrent(0.0);
+            }
+        }
+    }
 }
 
 void ServerApp::PreCombatProcessTurns()
@@ -1500,6 +1582,7 @@ void ServerApp::PreCombatProcessTurns()
 
 
     HandleColonization(objects, empires);
+    HandleInvasion(objects, empires);
 
 
     // scrap orders
@@ -1669,13 +1752,6 @@ void ServerApp::ProcessCombats()
     CreateCombatSitReps(system_combat_info);
 
     CleanupSystemCombatInfo(system_combat_info);
-
-
-    // collect data bout locations where ground combat is to occur
-    AssembleSystemGroundCombatInfo(system_combat_info);
-
-    // loop through assembled combat infos, handling each ground combat to
-    // update the various systems CombatInfo structs
 }
 
 void ServerApp::PostCombatProcessTurns()
