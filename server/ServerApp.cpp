@@ -1446,18 +1446,23 @@ namespace {
     /** Given initial set of ground forces on planet, determine ground forces on
       * planet after a turn of ground combat. */
     void ResolveGroundCombat(std::map<int, double>& empires_troops) {
-        if (empires_troops.empty())
+        if (empires_troops.empty() || empires_troops.size() == 1)
             return;
-        int victor_id = empires_troops.begin()->first;
-        double victor_troops = empires_troops.begin()->second;
-        for (std::map<int, double>::iterator it = empires_troops.begin(); it != empires_troops.end(); ++it) {
-            if (it->second > victor_troops) {
-                victor_troops = it->second;
-                victor_id = it->first;
-            }
-        }
+
+        std::multimap<double, int> inverted_empires_troops;
+        for (std::map<int, double>::const_iterator it = empires_troops.begin(); it != empires_troops.end(); ++it)
+            inverted_empires_troops.insert(std::make_pair(it->second, it->first));
+
+        // everyone but victor loses all troops.  victor's troops remaining are
+        // what the victor started with minus what the second-largest troop
+        // amount was
+        std::multimap<double, int>::reverse_iterator victor_it = inverted_empires_troops.rbegin();
+        std::multimap<double, int>::reverse_iterator next_it = victor_it;   next_it++;
+        int victor_id = victor_it->second;
+        double victor_troops = victor_it->first - next_it->first;
+
         empires_troops.clear();
-        empires_troops[victor_id] = victor_troops;  // wipe everyone else out, with no casualties!
+        empires_troops[victor_id] = victor_troops;
     }
 
     /** Determines which ships ordered to invade planets, does invasion and
