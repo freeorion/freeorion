@@ -499,26 +499,6 @@ void AutoResolveCombat(CombatInfo& combat_info) {
                         combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                 }
             }
-        // and capture of planets
-        } else if (Planet* planet = universe_object_cast<Planet*>(target)) {
-            // can only conquer populated planets, or planets with an owner
-            if (target->CurrentMeterValue(METER_POPULATION) == 0.0 && target->Unowned())
-                continue;
-
-            // conquering requires knocking construction to 0
-            if (target->CurrentMeterValue(METER_CONSTRUCTION) > 0.0)
-                continue;
-
-            // can only be conquered by a single attacker who is an empire
-            if (attacker->Unowned())
-                continue;
-
-            // can't conquer self!
-            if (planet->OwnedBy(attacker->Owner()))
-                continue;
-
-            // conquer for new owner
-            planet->Conquer(attacker->Owner());
         }
     }
 
