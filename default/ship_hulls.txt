@@ -1653,6 +1653,6 @@ Hull
     	scope = Source
     	activation = Random probability = 0.75
     	effects = [
-        CreateShip SM_DRONE Source.Owner Source.Species
+        CreateShip SM_DRONE
     ]
     graphic = ""
