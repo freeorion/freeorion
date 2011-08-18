@@ -115,12 +115,12 @@ namespace {
                                                                                design_has_part_class.part_class)];
 
         predefined_design =
-            (str_p("qwerqwer")
+            (str_p("design")
              >> name_label >> name_p[predefined_design.name = arg1])
              [predefined_design.this_ = new_<Condition::PredefinedShipDesign>(predefined_design.name)];
 
         design_number =
-            (str_p("shipdqhwrehesignq")
+            (str_p("design")
              >> design_label >> int_expr_p[design_number.int_ref = arg1])
             [design_number.this_ = new_<Condition::NumberedShipDesign>(design_number.int_ref)];
 
