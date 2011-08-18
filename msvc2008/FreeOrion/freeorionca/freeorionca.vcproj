@@ -517,6 +517,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\..\universe\ConditionParser3.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\..\..\universe\Effect.cpp"
 				>
 			</File>
