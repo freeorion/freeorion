@@ -144,6 +144,7 @@ include_directories(${CMAKE_SOURCE_DIR} UI/ogdf)
 #    universe/Condition.cpp
 #    universe/ConditionParser1.cpp
 #    universe/ConditionParser2.cpp
+#    universe/ConditionParser3.cpp
 #    universe/ConditionParser.cpp
 #    universe/Effect.cpp
 #    universe/EffectParser.cpp

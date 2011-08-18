@@ -53,6 +53,8 @@ namespace Condition {
     struct DesignHasHull;
     struct DesignHasPart;
     struct DesignHasPartClass;
+    struct PredefinedShipDesign;
+    struct NumberedShipDesign;
     struct ProducedByEmpire;
     struct Chance;
     struct MeterValue;
@@ -679,7 +681,51 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches ships or buildings produced by the empire with id \a id.*/
+/** Matches ships who ShipDesign is a predefined shipdesign with the name
+  * \a name */
+struct Condition::PredefinedShipDesign : public Condition::ConditionBase
+{
+    PredefinedShipDesign(const std::string& name);
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    std::string     m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches ships whose design id \a id. */
+struct Condition::NumberedShipDesign : public Condition::ConditionBase
+{
+    NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id);
+    virtual ~NumberedShipDesign();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>* m_design_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct Condition::ProducedByEmpire : public Condition::ConditionBase
 {
     ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
@@ -1266,6 +1312,20 @@ void Condition::DesignHasPartClass::serialize(Archive& ar, const unsigned int ve
         & BOOST_SERIALIZATION_NVP(m_low)
         & BOOST_SERIALIZATION_NVP(m_high)
         & BOOST_SERIALIZATION_NVP(m_class);
+}
+
+template <class Archive>
+void Condition::PredefinedShipDesign::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
+}
+
+template <class Archive>
+void Condition::NumberedShipDesign::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_design_id);
 }
 
 template <class Archive>

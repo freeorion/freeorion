@@ -747,7 +747,7 @@ OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING
 The vertical spacing to be placed between techs in the tech screen, in multiples of the height of a single theory tech.
 
 OPTIONS_DB_SAVE_DIR
-The directory in which saved games are saved and from which they are loaded.  Directory names are taken to be relative to the location of the executable.
+The directory in which saved games are saved and from which they are loaded.
 
 OPTIONS_DB_RESOURCE_DIR
 Sets the root directory for the game resource files (game content and data files).
@@ -3484,7 +3484,25 @@ DESC_DESIGN_HAS_PART
 
 DESC_DESIGN_HAS_PART_NOT
  that does not contain between %1% and %2% of the %3% part
- 
+
+DESC_DESIGN_HAS_PART_CLASS
+ that has a part of class %1%
+
+DESC_DESIGN_HAS_PART_CLASS_NOT
+ that does not have a part of class %1%
+
+DESC_PREDEFINED_SHIP_DESIGN
+ that is of the design %1%
+
+DESC_PREDEFINED_SHIP_DESIGN
+ that is not of the design %1%
+
+DESC_NUMBERED_SHIP_DESIGN
+ that is of the design %1%
+
+DESC_NUMBERED_SHIP_DESIGN
+ that is not of the design %1%
+
 DESC_CHANCE_PERCENTAGE
  on a %1%%% chance
 

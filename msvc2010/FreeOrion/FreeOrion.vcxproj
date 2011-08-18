@@ -375,6 +375,7 @@
     <ClCompile Include="..\..\universe\ConditionParser.cpp" />
     <ClCompile Include="..\..\universe\ConditionParser1.cpp" />
     <ClCompile Include="..\..\universe\ConditionParser2.cpp" />
+    <ClCompile Include="..\..\universe\ConditionParser3.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />
     <ClCompile Include="..\..\universe\EffectParser.cpp" />
     <ClCompile Include="..\..\universe\Enums.cpp" />

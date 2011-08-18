@@ -702,5 +702,8 @@
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser3.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

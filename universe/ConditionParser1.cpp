@@ -23,6 +23,7 @@ ParamLabel probability_label("probability");
 ParamLabel distance_label("distance");
 ParamLabel jumps_label("jumps");
 ParamLabel sort_key_label("sortby");
+ParamLabel design_label("design");
 
 rule<Scanner, ConditionClosure::context_t> condition1_p;
 
@@ -115,18 +116,19 @@ namespace {
         typedef rule<Scanner, StringRefVectorClosure::context_t>    StringRefVectorRule;
 
         Rule                    all;
-        OwnedByRule             owned_by;
         Rule                    source;
         Rule                    target;
-        StringRefVecRule        homeworld;
+        Rule                    stationary;
         Rule                    capital;
+        OwnedByRule             owned_by;
+        StringRefVecRule        homeworld;
         StringRefVecRule        building;
         StringRefVecRule        species;
+        StringRefVecRule        focus_type;
         PlanetTypeRule          planet_type;
         PlanetSizeRule          planet_size;
         PlanetEnvironmentRule   planet_environment;
         ObjectTypeRule          object_type;
-        StringRefVecRule        focus_type;
         MeterValueRule          meter_value;
         AndOrRule               and_;
         AndOrRule               or_;
@@ -161,6 +163,10 @@ namespace {
         target =
             str_p("target")
             [target.this_ = new_<Condition::Target>()];
+
+        stationary =
+            str_p("stationary")
+            [stationary.this_ = new_<Condition::Stationary>()];
 
         homeworld =
             str_p("homeworld")
@@ -280,6 +286,7 @@ namespace {
             | meter_value[condition1_p.this_ = arg1]
             | owned_by[condition1_p.this_ = arg1]
             | target[condition1_p.this_ = arg1]
+            | stationary[condition1_p.this_ = arg1]
             | and_[condition1_p.this_ = arg1]
             | or_[condition1_p.this_ = arg1]
             | not_[condition1_p.this_ = arg1];

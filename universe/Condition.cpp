@@ -2869,6 +2869,142 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 }
 
 ///////////////////////////////////////////////////////////
+// PredefinedShipDesign                                         //
+///////////////////////////////////////////////////////////
+Condition::PredefinedShipDesign::PredefinedShipDesign(const std::string& name) :
+    m_name(name)
+{}
+
+std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
+}
+
+std::string Condition::PredefinedShipDesign::Dump() const
+{
+    return DumpIndent() + "PredefinedShipDesign name = \"" + m_name + "\"\n";
+}
+
+bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "PredefinedShipDesign::Match passed no candidate object";
+        return false;
+    }
+
+    const Ship* ship = universe_object_cast<const Ship*>(candidate);
+    if (!ship)
+        return false;
+    const ShipDesign* candidate_design = ship->Design();
+    if (!candidate_design)
+        return false;
+
+    // ship has a valid design.  see if it is / could be a predefined ship design...
+
+    // all predefined named designs are hard-coded in parsing to have a designed on turn 0 (before first turn)
+    if (candidate_design->DesignedOnTurn() != 0)
+        return false;
+
+    // all predefined designs have a name, and that name should match the condition m_name
+    return (m_name == candidate_design->Name(false));   // don't look up in stringtable; predefined designs are stored by stringtable entry key
+}
+
+///////////////////////////////////////////////////////////
+// NumberedShipDesign                                      //
+///////////////////////////////////////////////////////////
+Condition::NumberedShipDesign::NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
+    m_design_id(design_id)
+{}
+
+Condition::NumberedShipDesign::~NumberedShipDesign()
+{
+    delete m_design_id;
+}
+
+namespace {
+    bool NumberedShipDesignSimpleMatch(const UniverseObject* candidate, int design_id)
+    {
+        if (!candidate)
+            return false;
+        if (design_id == ShipDesign::INVALID_DESIGN_ID)
+            return false;
+        if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+            if (ship->DesignID() == design_id)
+                return true;
+        return false;
+    }
+}
+
+void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_design_id) ||
+                            (m_design_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate empire id once, and use to check all candidate objects
+        const UniverseObject* no_object(0);
+        int design_id = m_design_id->Eval(ScriptingContext(parent_context, no_object));
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = NumberedShipDesignSimpleMatch(*temp, design_id);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+
+    } else {
+        // re-evaluate design id for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::NumberedShipDesign::RootCandidateInvariant() const
+{ return m_design_id->RootCandidateInvariant(); }
+
+bool Condition::NumberedShipDesign::TargetInvariant() const
+{ return m_design_id->TargetInvariant(); }
+
+std::string Condition::NumberedShipDesign::Description(bool negated/* = false*/) const
+{
+    std::string id_str = ValueRef::ConstantExpr(m_design_id) ?
+                            boost::lexical_cast<std::string>(m_design_id->Eval()) :
+                            m_design_id->Description();
+
+    std::string description_str = "DESC_NUMBERED_SHIP_DESIGN";
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % id_str);
+}
+
+std::string Condition::NumberedShipDesign::Dump() const
+{
+    return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump();
+}
+
+bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "NumberedShipDesign::Match passed no candidate object";
+        return false;
+    }
+
+    return NumberedShipDesignSimpleMatch(candidate, m_design_id->Eval(local_context));
+}
+
+///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
 Condition::ProducedByEmpire::ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :

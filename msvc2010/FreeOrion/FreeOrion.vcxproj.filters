@@ -1057,6 +1057,9 @@
     <ClCompile Include="..\..\UI\GLClientAndServerBuffer.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\universe\ConditionParser3.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FreeOrion.rc">
