@@ -2751,6 +2751,16 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const
     return UniverseObject::INVALID_OBJECT_ID;
 }
 
+namespace {
+    const std::string& SysName(const System* system) {
+        if (!system)
+            return EMPTY_STRING;
+        if (system->GetStarType() == STAR_NONE)
+            return UserString("EMPTY_SPACE");
+        return system->PublicName(HumanClientApp::GetApp()->EmpireID());
+    }
+}
+
 std::string FleetWnd::TitleText() const
 {
     // if no fleets available, default to indicating no fleets
@@ -2765,7 +2775,7 @@ std::string FleetWnd::TitleText() const
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = system->PublicName(client_empire_id);
+            std::string sys_name = SysName(system);
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                   empire->Name() % sys_name);
         } else {
@@ -2774,7 +2784,7 @@ std::string FleetWnd::TitleText() const
         }
     } else {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = system->PublicName(client_empire_id);
+            std::string sys_name = SysName(system);
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
                                   sys_name);
         } else {
