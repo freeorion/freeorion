@@ -3864,24 +3864,24 @@ namespace {
       * values.  Useful when creating new object after applying effects. */
     void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
         std::map<MeterType, MeterType> meters;
-        meters[METER_POPULATION] = METER_TARGET_POPULATION;
-        meters[METER_HEALTH] = METER_TARGET_HEALTH;
-        meters[METER_FARMING] = METER_TARGET_FARMING;
-        meters[METER_INDUSTRY] = METER_TARGET_INDUSTRY;
-        meters[METER_RESEARCH] = METER_TARGET_RESEARCH;
-        meters[METER_TRADE] = METER_TARGET_TRADE;
-        meters[METER_MINING] = METER_TARGET_MINING;
-        meters[METER_CONSTRUCTION] = METER_TARGET_CONSTRUCTION;
-        meters[METER_FUEL] = METER_MAX_FUEL;
-        meters[METER_SHIELD] = METER_MAX_SHIELD;
-        meters[METER_STRUCTURE] = METER_MAX_STRUCTURE;
-        meters[METER_DEFENSE] = METER_MAX_DEFENSE;
+        meters[METER_POPULATION] =  METER_TARGET_POPULATION;
+        meters[METER_HEALTH] =      METER_TARGET_HEALTH;
+        meters[METER_FARMING] =     METER_TARGET_FARMING;
+        meters[METER_INDUSTRY] =    METER_TARGET_INDUSTRY;
+        meters[METER_RESEARCH] =    METER_TARGET_RESEARCH;
+        meters[METER_TRADE] =       METER_TARGET_TRADE;
+        meters[METER_MINING] =      METER_TARGET_MINING;
+        meters[METER_CONSTRUCTION] =METER_TARGET_CONSTRUCTION;
+        meters[METER_FUEL] =        METER_MAX_FUEL;
+        meters[METER_SHIELD] =      METER_MAX_SHIELD;
+        meters[METER_STRUCTURE] =   METER_MAX_STRUCTURE;
+        meters[METER_DEFENSE] =     METER_MAX_DEFENSE;
+        meters[METER_TROOPS] =      METER_MAX_TROOPS;
 
         // check for each pair of meter types.  if both exist, set active
         // meter current value equal to target meter current value.
         for (ObjectMap::iterator it = object_map.begin(); it != object_map.end(); ++it) {
             UniverseObject* obj = it->second;
-
             for (std::map<MeterType, MeterType>::const_iterator meter_it = meters.begin(); meter_it != meters.end(); ++meter_it)
                 if (Meter* meter = obj->GetMeter(meter_it->first))
                     if (Meter* targetmax_meter = obj->GetMeter(meter_it->second))
