@@ -315,9 +315,8 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::NextTurnCurrentMeterValue(MeterType type) const {
-
     if (type == INVALID_METER_TYPE || type == METER_FUEL) {
-        // todo: consider fleet movement or being stationary, which may parly replenish fuel
+        // todo: consider fleet movement or being stationary, which may parfly replenish fuel
         // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
     } else if (type == INVALID_METER_TYPE || type == METER_SUPPLY) {
         // todo: consider fleet passing through or being in a supplied system, which replenishes supplies

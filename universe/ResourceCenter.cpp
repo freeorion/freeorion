@@ -123,7 +123,7 @@ double ResourceCenter::ResourceCenterNextTurnMeterValue(MeterType type) const
     if (target_meter_value > current_meter_value)
         return std::min(current_meter_value + 1.0, target_meter_value);
     else if (target_meter_value < current_meter_value)
-         return std::max(target_meter_value, current_meter_value - 1.0);
+        return std::max(target_meter_value, current_meter_value - 1.0);
     else
         return current_meter_value;
 }
