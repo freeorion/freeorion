@@ -3,17 +3,18 @@ v0.3.16 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 Balancing:
  ~ Decreased cost of colony pods by 25%
  
+Content:
+ ~ Added a lot of minor "native" species, a few of which have extended descriptions.
+ ~ Experimental addition of drone and drone factory
+ ~ Added Computronium Moon & Damaged Computronium Moon specials.
+
 Graphics:
  ~ Added binary star variant star graphics
  ~ Added new building graphics
 
 GUI:
-
-Life-forms:
- ~ Added a lot of minor "native" species, a few of which have extended descriptions.
- ~ Experimental addition of drone and drone factory (which doesn't work)
  
- Multiplayer:
+Multiplayer:
 
 
 v0.3.16 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -2637,6 +2637,17 @@ Resonant Moon
 RESONANT_MOON_SPECIAL_DESC
 This planet has a natural satellite, the orbital period of which is in 1:1 resonance with its rotational period, causing there to be a "dark side" which is constantly facing away from the planet.  This "dark side" is a perfect site for clandestine facilities.
 
+COMPUTRONIUM_SPECIAL
+Computronium Moon
+COMPUTRONIUM_SPECIAL_DESC
+'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.  Doubles research.'''
+
+COMPUTRONIUM_BROKEN_SPECIAL
+Damaged Computronium Moon
+COMPUTRONIUM_BROKEN_SPECIAL_DESC
+'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless.  Still it can complete complicated simulations and equations in impressive time. Increases research  by 50%.'''
+
+
 #######################
 # Enumeration  values #
 #######################
