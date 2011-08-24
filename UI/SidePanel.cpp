@@ -1170,6 +1170,7 @@ void SidePanel::PlanetPanel::Refresh()
                !planet->OwnedBy(client_empire_id) &&
                !planet->IsAboutToBeInvaded() &&
                planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
+               planet->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
                !invasion_ships.empty())
     {
         // show invade button
