@@ -353,7 +353,10 @@ Species
         EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            effects = SetMaxTroops Value + 5
+            effects = [
+                SetMaxTroops Value + 5
+                SetMaxShield Value + 5
+            ]
     ]
     environments = [
         type = Swamp        environment = Good
@@ -725,7 +728,10 @@ Species
         EffectsGroup
             scope = Source
             activation = Not OwnedBy AnyEmpire
-            effects = SetMaxTroops Value + 5
+            effects = [
+                SetMaxTroops Value + 5
+                SetMaxShield Value + 5
+            ]
     ]
     environments = [
         type = Swamp        environment = Good
