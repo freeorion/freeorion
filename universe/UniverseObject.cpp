@@ -76,8 +76,20 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
         return;
     }
 
-    std::map<MeterType, Meter> meters = copied_object->CensoredMeters(vis);
-    this->m_meters = meters;
+    std::map<MeterType, Meter> censored_meters = copied_object->CensoredMeters(vis);
+    for (std::map<MeterType, Meter>::const_iterator it = copied_object->m_meters.begin();
+         it != copied_object->m_meters.end(); ++it)
+    {
+        MeterType type = it->first;
+
+        // get existing meter in this object, or create a default one
+        Meter& this_meter = this->m_meters[type];
+
+        // if there is an update to meter from censored meters, update this object's copy
+        std::map<MeterType, Meter>::const_iterator censored_it = censored_meters.find(type);
+        if (censored_it != censored_meters.end())
+            this_meter = censored_it->second;
+    }
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_id =                    copied_object->m_id;
@@ -354,12 +366,8 @@ void UniverseObject::RemoveSpecial(const std::string& name)
 std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
 {
     std::map<MeterType, Meter> retval;
-    if (vis >= VIS_PARTIAL_VISIBILITY) {
+    if (vis >= VIS_PARTIAL_VISIBILITY)
         retval = m_meters;
-    } else {
-        for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
-            retval[it->first] = Meter();
-    }
     return retval;
 }
 
