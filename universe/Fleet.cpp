@@ -181,7 +181,7 @@ std::list<MovePathNode> Fleet::MovePath() const
 
 std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 {
-    std::list<MovePathNode> retval = std::list<MovePathNode>();
+    std::list<MovePathNode> retval;
 
     if (route.empty())
         return retval;                                      // nowhere to go => empty path
@@ -201,13 +201,19 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     int owner = this->Owner();
-    std::set<int> fleet_supplied_systems;
     const Empire* empire = Empires().Lookup(owner);
-    if (empire)
+    std::set<int> fleet_supplied_systems;
+    std::set<int> unobstructed_systems;
+    if (empire) {
         fleet_supplied_systems = empire->FleetSupplyableSystemIDs();
+        unobstructed_systems = empire->SupplyUnobstructedSystems();
+    }
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
-    if (fuel < 1.0 && this->SystemID() != UniverseObject::INVALID_OBJECT_ID && fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end()) {
+    if (fuel < 1.0 &&
+        this->SystemID() != UniverseObject::INVALID_OBJECT_ID &&
+        fleet_supplied_systems.find(this->SystemID()) == fleet_supplied_systems.end())
+    {
         MovePathNode node(this->X(), this->Y(), true, ETA_OUT_OF_RANGE,
                           this->SystemID(),
                           UniverseObject::INVALID_OBJECT_ID,
@@ -335,22 +341,17 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
             }
         }
 
-
-        // determine whether the fleet ends its turn at its new position.  if fleet can't move, it
-        // must wait until next turn for another chance to move
         bool end_turn_at_cur_position = false;
+
+        // check if fleet can move any further this turn
         if (turn_dist_remaining < FLEET_MOVEMENT_EPSILON) {
             //Logger().debugStream() << " ... fleet can't move further this turn.";
             turn_dist_remaining = 0.0;      // to prevent any possible precision-related errors
             end_turn_at_cur_position = true;
-        } else {
-            //Logger().debugStream() << " ... fleet CAN move further this turn on next iteration.";
         }
-
 
         // check if current position is close enough to next system on route to qualify as at that system.
         if (dist_to_next_system < FLEET_MOVEMENT_EPSILON) {
-
             // close enough to be consider to be at next system.
             // set current position to be exactly at next system to avoid rounding issues
             cur_system = next_system;
@@ -376,7 +377,13 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
             next_y = next_system->Y();
         }
 
+        // if new position is an obstructed system, must end turn here
+        if (cur_system && unobstructed_systems.find(cur_system->ID()) == unobstructed_systems.end()) {
+            turn_dist_remaining = 0.0;
+            end_turn_at_cur_position = true;
+        }
 
+        // if turn done and turns taken is enough, abort simulation
         if (end_turn_at_cur_position && (turns_taken + 1 >= TOO_LONG)) {
             // exit loop before placing current node to simplify post-loop processing: now all cases require a post-loop node to be added
             ++turns_taken;
@@ -391,8 +398,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
         retval.push_back(cur_pos);
 
 
-        // if the turn ended at this position, increment the turns taken and reset the distance remaining
-        // to be travelled during the current (now next) turn for the next loop iteration
+        // if the turn ended at this position, increment the turns taken and
+        // reset the distance remaining to be travelled during the current (now
+        // next) turn for the next loop iteration
         if (end_turn_at_cur_position) {
             //Logger().debugStream() << " ... end of simulated turn " << turns_taken;
             ++turns_taken;
