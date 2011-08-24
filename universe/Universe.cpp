@@ -1682,16 +1682,16 @@ void Universe::UpdateEmpireObjectVisibilities()
         // get detector object
         const UniverseObject* detector = detector_it->second;
         if (!detector) continue;
+        // unowned detectors can't contribute to empires' visibility
+        if (detector->Unowned())
+            continue;
 
         int detector_id = detector->ID();
 
 
-        // get owners of detector
-        if (detector->Unowned())
-            continue;
-
-        // owners of an object get full visibility of it
-        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector->Owner(), detector_id, VIS_FULL_VISIBILITY);
+        // owner of an object gets full visibility of it
+        SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                  detector->Owner(), detector_id, VIS_FULL_VISIBILITY);
 
 
         // don't allow moving fleets or ships to provide detection
@@ -1752,9 +1752,11 @@ void Universe::UpdateEmpireObjectVisibilities()
             Visibility target_visibility_to_detector = VIS_NO_VISIBILITY;
 
             // zero-stealth objects are always at least basic-level visible
-            if (stealth <= 0)
+            if (stealth <= 0 &&
+                target_visibility_to_detector < VIS_BASIC_VISIBILITY)
+            {
                 target_visibility_to_detector = VIS_BASIC_VISIBILITY;
-
+            }
 
             // compare stealth, detection ability and distance between
             // detector and target to find visibility level
@@ -1766,6 +1768,12 @@ void Universe::UpdateEmpireObjectVisibilities()
             // distance squared
             double dist2 = (xt-xd)*(xt-xd) + (yt-yd)*(yt-yd);
 
+            // planets can always be seen if they are at the same location
+            if (dist2 == 0.0 &&
+                target_visibility_to_detector < VIS_BASIC_VISIBILITY)
+            {
+                target_visibility_to_detector = VIS_BASIC_VISIBILITY;
+            }
 
             // To determine if a detector can detect a target, the target's
             // stealth is subtracted from the detector's range, and the result
@@ -1773,26 +1781,20 @@ void Universe::UpdateEmpireObjectVisibilities()
             // less than 10*(detector_detection - target_stealth), then the
             // target is seen by the detector with partial visibility.
             double detect_range = 10.0*(detection - stealth);
-
-            if (detect_range < 0.0)
-                continue;   // can't see object no matter where it is
-
             //Logger().debugStream() << "dist2: " << dist2 << " detect range: " << detect_range;
-
-            if (dist2 <= detect_range * detect_range)
+            if (detect_range >= 0.0 &&
+                dist2 <= detect_range*detect_range &&
+                target_visibility_to_detector < VIS_PARTIAL_VISIBILITY)
+            {
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
+            }
 
             if (target_visibility_to_detector <= VIS_NO_VISIBILITY)
                 continue;
 
-
-            // Note that owning an object grants FULL visibility in the containing loop
-
-
-            int target_id = target->ID();
-
-            // if target visible to detector, update visibility of target for all empires that own detector
-            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids, detector->Owner(), target_id, target_visibility_to_detector);
+            // if target visible to detector, update visibility of target for detector's owner empire
+            SetEmpireObjectVisibility(m_empire_object_visibility, m_empire_known_ship_design_ids,
+                                      detector->Owner(), target->ID(), target_visibility_to_detector);
         }
     }
 
