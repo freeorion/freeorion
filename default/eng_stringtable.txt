@@ -2304,6 +2304,9 @@ The planet %planet% was destroyed at %system%.
 SITREP_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM
 The buidling %building% on planet %planet% was destroyed at %system%.
 
+SITREP_GROUND_BATTLE
+A ground battle occurred on %planet%.
+
 SITREP_PLANET_CAPTURED
 %planet% was captured by %empire%.
 
