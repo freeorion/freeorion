@@ -64,7 +64,8 @@ Planet::Planet() :
     m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
-    m_is_about_to_be_invaded(false)
+    m_is_about_to_be_invaded(false),
+    m_last_turn_attacked_by_ship(-1)
 {
     //Logger().debugStream() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
@@ -83,7 +84,8 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERSHOLD),
     m_available_trade(0.0),
     m_just_conquered(false),
-    m_is_about_to_be_colonized(false)
+    m_is_about_to_be_colonized(false),
+    m_last_turn_attacked_by_ship(-1)
 {
     //Logger().debugStream() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();
@@ -131,7 +133,6 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
 
     if (vis >= VIS_BASIC_VISIBILITY) {
         this->m_buildings =                 copied_planet->VisibleContainedObjects(empire_id);
-
         this->m_type =                      copied_planet->m_type;
         this->m_size =                      copied_planet->m_size;
         this->m_orbital_period =            copied_planet->m_orbital_period;
@@ -145,6 +146,7 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
                 this->m_available_trade =           copied_planet->m_available_trade;
                 this->m_is_about_to_be_colonized =  copied_planet->m_is_about_to_be_colonized;
                 this->m_is_about_to_be_invaded   =  copied_planet->m_is_about_to_be_invaded;
+                this->m_last_turn_attacked_by_ship= copied_planet->m_last_turn_attacked_by_ship;
             } else {
                 // copy system name if at partial visibility, as it won't be copied
                 // by UniverseObject::Copy unless at full visibility, but players
@@ -341,6 +343,11 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
         throw std::runtime_error("Planet::NextTurnCurrentMeterValue dealing with invalid meter type");
     }
     double max_meter_value = max_meter->Current();
+
+    // being attacked prevents meter growth
+    if (LastTurnAttackedByShip() >= CurrentTurn()) {
+        return std::min(current_meter_value, max_meter_value);
+    }
 
     // currently meter growth is one per turn.
     return std::min(current_meter_value + 1.0, max_meter_value);
@@ -566,6 +573,9 @@ void Planet::ResetIsAboutToBeInvaded()
     SetIsAboutToBeInvaded(false);
 }
 
+void Planet::SetLastTurnAttackedByShip(int turn)
+{m_last_turn_attacked_by_ship = turn;}
+
 void Planet::SetSystem(int sys)
 {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
@@ -613,7 +623,7 @@ void Planet::PopGrowthProductionResearchPhase()
     // check for planets with zero population.  If they have any owners
     // then the planet has likely just starved.  Regardless, resetting the
     // planet keeps things consistent.
-    if (GetMeter(METER_POPULATION)->Current() == 0.0) {
+    if (GetMeter(METER_POPULATION)->Current() == 0.0 && !Unowned()) {
         // generate starvation sitrep for empire that owns this depopulated planet
         if (Empire* empire = Empires().Lookup(this->Owner()))
             empire->AddSitRepEntry(CreatePlanetStarvedToDeathSitRep(this->ID()));
@@ -621,8 +631,7 @@ void Planet::PopGrowthProductionResearchPhase()
         // reset planet to empty and unowned
         Reset();
 
-    } else {
-        // not starving.  grow meters
+    } else if (LastTurnAttackedByShip() < CurrentTurn()) {
         GetMeter(METER_SHIELD)->AddToCurrent(1.0);
         GetMeter(METER_DEFENSE)->AddToCurrent(1.0);
         GetMeter(METER_TROOPS)->AddToCurrent(1.0);

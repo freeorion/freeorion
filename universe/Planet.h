@@ -122,6 +122,7 @@ public:
 
     bool                        IsAboutToBeColonized() const {return m_is_about_to_be_colonized;}
     bool                        IsAboutToBeInvaded() const {return m_is_about_to_be_invaded;}
+    int                         LastTurnAttackedByShip() const {return m_last_turn_attacked_by_ship;}
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -159,6 +160,7 @@ public:
     void            ResetIsAboutToBeColonized();        ///< Called after colonization, to reset the number of prospective colonizers to 0
     void            SetIsAboutToBeInvaded(bool b);      ///< Marks planet as being invaded or not, depending on whether \a b is true or false
     void            ResetIsAboutToBeInvaded();          ///< Marks planet as not being invaded
+    void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
     //@}
 
 private:
@@ -189,6 +191,7 @@ private:
 
     bool            m_is_about_to_be_colonized;
     bool            m_is_about_to_be_invaded;
+    int             m_last_turn_attacked_by_ship;
 
     friend class boost::serialization::access;
     template <class Archive>

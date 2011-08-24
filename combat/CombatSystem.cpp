@@ -301,7 +301,9 @@ namespace {
             target_construction->AddToCurrent(-construction_damage);
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
- 
+
+        target->SetLastTurnAttackedByShip(CurrentTurn());
+
         Logger().debugStream() << "after AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
     }
 

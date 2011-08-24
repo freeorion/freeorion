@@ -119,7 +119,8 @@ void Planet::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_available_trade)
         & BOOST_SERIALIZATION_NVP(m_just_conquered)
         & BOOST_SERIALIZATION_NVP(m_is_about_to_be_colonized)
-        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_invaded);
+        & BOOST_SERIALIZATION_NVP(m_is_about_to_be_invaded)
+        & BOOST_SERIALIZATION_NVP(m_last_turn_attacked_by_ship);
 }
 
 template <class Archive>
