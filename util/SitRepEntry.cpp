@@ -23,34 +23,40 @@ SitRepEntry::SitRepEntry(const std::string& template_string) :
 SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_TECH_RESEARCHED");
     sitrep->AddVariable(VarText::TECH_TAG,          tech_name);
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_SHIP_BUILT");
     sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep->AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_BUILDING_BUILT");
     sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     sitrep->AddVariable(VarText::BUILDING_ID_TAG,   boost::lexical_cast<std::string>(building_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateCombatSitRep(int system_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_COMBAT_SYSTEM");
     sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
-    return(sitrep);
+    return sitrep;
+}
+
+SitRepEntry* CreateGroundCombatSitRep(int planet_id) {
+    SitRepEntry* sitrep = new SitRepEntry("SITREP_GROUND_BATTLE");
+    sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
+    return sitrep;
 }
 
 SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_PLANET_CAPTURED");
     sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
     sitrep->AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
-    return(sitrep);
+    return sitrep;
 }
 
 namespace {
@@ -96,33 +102,33 @@ SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_PLANET_LOST_STARVED_TO_DEATH");
     sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreatePlanetColonizedSitRep(int planet_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_PLANET_COLONIZED");
     sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(planet_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_FLEET_ARRIVED_AT_DESTINATION");
     sitrep->AddVariable(VarText::SYSTEM_ID_TAG,     boost::lexical_cast<std::string>(system_id));
     sitrep->AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateEmpireEliminatedSitRep(int empire_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_EMPIRE_ELIMINATED");
     sitrep->AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateVictorySitRep(const std::string& reason_string, int empire_id) {
     SitRepEntry* sitrep = new SitRepEntry("SITREP_VICTORY");
     sitrep->AddVariable(VarText::TEXT_TAG,          reason_string);
     sitrep->AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(empire_id));
-    return(sitrep);
+    return sitrep;
 }
 
 SitRepEntry* CreateSitRep(const std::string& template_string, const std::vector<std::pair<std::string, std::string> >& parameters) {

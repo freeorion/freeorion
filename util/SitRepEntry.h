@@ -30,6 +30,7 @@ SitRepEntry* CreateTechResearchedSitRep(const std::string& tech_name);
 SitRepEntry* CreateShipBuiltSitRep(int ship_id, int system_id);
 SitRepEntry* CreateBuildingBuiltSitRep(int building_id, int planet_id);
 SitRepEntry* CreateCombatSitRep(int system_id);
+SitRepEntry* CreateGroundCombatSitRep(int planet_id);
 SitRepEntry* CreatePlanetCapturedSitRep(int planet_id, int empire_id);
 SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id);
 SitRepEntry* CreatePlanetStarvedToDeathSitRep(int planet_id);
