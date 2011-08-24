@@ -1,7 +1,23 @@
 v0.3.16 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+New Features / Improvements:
+ ~ Added space monsters
+ ~ Added neutral natives on planets
+ ~ Added frequecy of monsters and natives can be adjusted during galaxy setup.
+ ~ Ground troop ship parts that allow a ship to invade neutral or enemy planets.  Planets can be invaded only if their shield meters are zero.  The original and new owners get sitreps after invasions succeed.
+ ~ Very basic ground combat system for capturing planets - ship combat can no longer capture planets.
+ ~ Reduced turn processing time, particularly for large galaxies.
+ ~ New versions will ignore old config.xml files, preventing some crashes after updating.
+ ~ Added more lists of content, and more details about content, in the encyclopedia.
+ ~ Reduced file save size by using binary format (instead of semi-readable text).
+
 Balancing:
- ~ Decreased cost of colony pods by 25%
+ ~ Decreased cost of colony pods by 25%.
+ ~ Unexplored systems block resource sharing between planets, preventing players from knowing about a hostile presense in a system before exploring it.
+ ~ Ships no longer have functional detection when moving on starlanes.  Ships must be in a system to detect objects.
+ ~ Planets can be seen, although without details, by any object in their system, regardless of detection and stealth.  Detection strength above planet stealth gives details about the planet.
+ ~ Planets do not increase their shield, troops, or defense meters on a turn they are attacked.
+ ~ Fleets must end a turn's movement if they arrive at a system that contains hostile fleets and no friendly fleets.
  
 Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
@@ -9,13 +25,29 @@ Content:
  ~ Added Computronium Moon & Damaged Computronium Moon specials.
 
 Graphics:
- ~ Added binary star variant star graphics
- ~ Added new building graphics
+ ~ Added binary star variant star graphics.
+ ~ Added new building graphics.
 
 GUI:
+ ~ Systems with no stars but with populated planets now show their system name on the map.
+ ~ Systems with only non-player populated planets have a lighter name on map than non-populated systems.
+ ~ New sitrep messages
+ ~ Slightly improved resolution settings apply button functionality on OSX
+ ~ Made default sidepanel with slightly larger so that the 6th meter icon in planet panels will not be partly hidden.
+ ~ Made default message window and players list wider and less tall.
+ ~ Invade button on planet panels works similarly to the Colonize button; a troop ship must be selected in the same system.
  
 Multiplayer:
 
+Bugs:
+ ~ Fixed issue where empty fleets would remain when moving ships around
+ ~ Fixed crash when using conditions to check the distance between two systems
+ ~ Made sidepanel disable focus droplists when the planet is not owned by the client's player
+ ~ Modified the Imperial Palace to only work on planets owned by the empire that produced it, preventing captured palaces from moving a player's capital.
+ ~ Fixed bug with detection system where ships in a system could detect arbitrarily stealthy objects in the same system regardless of their detection strength.
+ ~ Fixed issue where planets would not feed themselves, even if they produced adequate food, while being blockaded.
+ ~ Fixed issue where ordering a single ships to colonize multiple planets in the same system could leave nonfunctional cancel buttons on planet panels.
+ ~ Fixed bug where actual system name was being shown instead of "Deep Space" in the FleetWnd.
 
 v0.3.16 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
