@@ -1471,6 +1471,7 @@ namespace {
         // collect, for each planet, what ships have been ordered to invade it
         std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
         std::vector<Ship*> ships = objects.FindObjects<Ship>();
+        std::set<Planet*> planets;
 
         for (std::vector<Ship*>::iterator it = ships.begin(); it != ships.end(); ++it) {
             const Ship* ship = *it;
@@ -1495,21 +1496,27 @@ namespace {
             Planet* planet = objects.Object<Planet>(invade_planet_id);
             if (!planet)
                 continue;
-            planet->ResetIsAboutToBeInvaded();
-            if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
-                continue;               // can't invade shielded planets
-            if (planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
-                continue;               // can't invade unpopulated planets
 
             if (ship->SystemID() != planet->SystemID())
                 continue;
+
+            planets.insert(planet);
 
             // how many troops are invading?
             planet_empire_troops[invade_planet_id][ship->Owner()] += design->TroopCapacity();
             // destroy invading ships
             GetUniverse().Destroy(ship_id);
+        }
+
+        for (std::set<Planet*>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
+            Planet* planet = *planet_it;
+            planet->ResetIsAboutToBeInvaded();
+            if (planet->CurrentMeterValue(METER_SHIELD) > 0.0)
+                continue;               // can't invade shielded planets
+            if (planet->CurrentMeterValue(METER_POPULATION) <= 0.0)
+                continue;               // can't invade unpopulated planets
             // current owner may also have troops from meter
-            planet_empire_troops[invade_planet_id][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
+            planet_empire_troops[planet->ID()][planet->Owner()] += planet->CurrentMeterValue(METER_TROOPS) + 0.0001;    // small bonus to ensure ties are won by initial owner
         }
 
         // process each planet's invasions
@@ -1522,6 +1529,16 @@ namespace {
             planet->ResetIsAboutToBeInvaded();
 
             std::map<int, double>& empires_troops = planet_it->second;
+            // create sitreps for all empires involved in battle
+            std::set<int> all_involved_empires;
+            for (std::map<int, double>::const_iterator empire_it = empires_troops.begin();
+                 empire_it != empires_troops.end(); ++empire_it)
+            {
+                all_involved_empires.insert(empire_it->first);
+                if (Empire* empire = empires.Lookup(empire_it->first))
+                    empire->AddSitRepEntry(CreateGroundCombatSitRep(planet_id));
+            }
+
             ResolveGroundCombat(empires_troops);
 
             // who won?
@@ -1533,7 +1550,16 @@ namespace {
                 if ((planet->Unowned() && victor_id != ALL_EMPIRES) ||
                     (!planet->Unowned() && !planet->OwnedBy(victor_id)))
                 {
+                    int original_owner_id = planet->Owner();
                     planet->Conquer(victor_id);
+
+                    // create planet conquered sitrep for all involved empires
+                    for (std::set<int>::const_iterator empire_it = all_involved_empires.begin();
+                         empire_it != all_involved_empires.end(); ++empire_it)
+                    {
+                        if (Empire* empire = empires.Lookup(*empire_it))
+                            empire->AddSitRepEntry(CreatePlanetCapturedSitRep(planet_id, victor_id));
+                    }
                 }
 
                 // regardless of whether battle resulted in conquering, it did
@@ -1621,7 +1647,9 @@ void ServerApp::PreCombatProcessTurns()
     // process movement phase
 
     // player notifications
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
+    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
+         player_it != m_networking.established_end(); ++player_it)
+    {
         (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::FLEET_MOVEMENT));
     }
 
