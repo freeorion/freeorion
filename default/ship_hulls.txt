@@ -1656,3 +1656,23 @@ Hull
         CreateShip "SM_DRONE"
     ]
     graphic = ""
+
+Hull
+    name = "SH_GUARD_MONSTER_BODY"
+    description = "SH_GUARD_MONSTER_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 0
+    fuel = 0
+    stealth = 1
+    structure = 40
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    graphic = ""

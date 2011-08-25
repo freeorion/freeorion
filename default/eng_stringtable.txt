@@ -269,6 +269,21 @@ Drone Factory
 SM_DRONE_FACTORY_DESC
    Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
 
+SM_SENTRY
+Sentry
+SM_SENTRY_DESC
+Sentries guard cool minor stuff.
+
+SM_SENTINEL
+Sentinel
+SM_SENTINEL_DESC
+Sentinels guard cool stuff.
+
+SM_WARDEN
+Warden
+SM_SENTINEL_DESC
+Wardens guard cool major stuff.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
