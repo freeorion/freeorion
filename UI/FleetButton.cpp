@@ -166,6 +166,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // determine owner(s) of fleet(s).  Only care whether or not there is more than one owner, as owner
     // is used to determine colouration
     int owner_id = ALL_EMPIRES;
+    int multiple_owners = false;
     if (fleets.empty()) {
         // leave as ALL_EMPIRES
     } else if (fleets.size() == 1) {
@@ -177,6 +178,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
             const Fleet* fleet = *it;
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
+                multiple_owners = true;
                 break;
             }
         }
@@ -184,11 +186,38 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
 
     // get fleet colour
-    const Empire* empire = Empires().Lookup(owner_id);
-    if (!empire)
+    if (multiple_owners) {
         SetColor(GG::CLR_WHITE);
-    else
-        SetColor(empire->Color());
+    } else if (owner_id == ALL_EMPIRES) {
+        // all ships owned by now empire
+        bool monsters = true;
+        // find if any ship in fleets in button is not a monster
+        for (std::vector<const Fleet*>::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
+            const Fleet* fleet = *it;
+            for (std::set<int>::const_iterator ship_it = fleet->ShipIDs().begin();
+                 ship_it != fleet->ShipIDs().end(); ++ship_it)
+            {
+                if (const Ship* ship = GetObject<Ship>(*ship_it)) {
+                    if (!ship->IsMonster()) {
+                        monsters = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (monsters)
+            SetColor(GG::CLR_RED);
+        else
+            SetColor(GG::CLR_WHITE);
+
+    } else {
+        // single empire owner
+        if (const Empire* empire = Empires().Lookup(owner_id))
+            SetColor(empire->Color());
+        else
+            SetColor(GG::CLR_GRAY); // should never be necessary... but just in case
+    }
 
 
     // select icon(s) for fleet(s), and get a fleet for use later
