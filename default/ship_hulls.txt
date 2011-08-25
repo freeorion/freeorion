@@ -1651,7 +1651,7 @@ Hull
     effectsgroups =
     	EffectsGroup
     	scope = Source
-    	activation = Random probability = 0.75
+    	activation = Random probability = 0.1
     	effects = [
         CreateShip "SM_DRONE"
     ]
