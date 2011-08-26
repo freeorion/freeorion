@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 42;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -25,7 +25,6 @@
 		3402E2550F5A30D600DF6FE7 /* TreeLoader3D.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2470F5A30D600DF6FE7 /* TreeLoader3D.cpp */; };
 		3402E2560F5A30D600DF6FE7 /* WindBatchedGeometry.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2490F5A30D600DF6FE7 /* WindBatchedGeometry.cpp */; };
 		3402E2570F5A30D600DF6FE7 /* WindBatchPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E24B0F5A30D600DF6FE7 /* WindBatchPage.cpp */; };
-		3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
 		3402E2690F5A31B700DF6FE7 /* default in Resources */ = {isa = PBXBuildFile; fileRef = 479036420B04CA23001FEF7B /* default */; };
 		3402E26A0F5A31BB00DF6FE7 /* FreeOrion.icns in Resources */ = {isa = PBXBuildFile; fileRef = 471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */; };
 		3402E5360F5A339900DF6FE7 /* vorbis.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = 4710323F0CEF6A8B00A7DF2B /* vorbis.framework */; };
@@ -79,7 +78,6 @@
 		34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 349724D70F49C9220015C864 /* Ogre.framework */; };
 		34972D1A0F4B3D520015C864 /* OgreGUI.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */; };
 		34A70291118360910013F8C6 /* CombatCamera.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34A7028E118360090013F8C6 /* CombatCamera.cpp */; };
-		34ACA00E0FFED9A100500F40 /* OISInput.cfg in Copy Server, AI, Config */ = {isa = PBXBuildFile; fileRef = 471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */; };
 		34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA37F0FFFAB4900500F40 /* AppKit.framework */; };
 		34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3800FFFAB4900500F40 /* CoreData.framework */; };
 		34ACA3840FFFAB4900500F40 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34ACA3810FFFAB4900500F40 /* Foundation.framework */; };
@@ -98,27 +96,6 @@
 		34B9F9310F634A8D005BF6A4 /* SimpleVehicle.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBE40F5E1EEB005BF6A4 /* SimpleVehicle.cpp */; };
 		34B9F9320F634A8D005BF6A4 /* Vec3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34B9EBEA0F5E1EEB005BF6A4 /* Vec3.cpp */; };
 		34B9F9340F634B1D005BF6A4 /* CombatOrder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3402E2320F5A300600DF6FE7 /* CombatOrder.cpp */; };
-		34B9F9BD0F645684005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B70F645621005BF6A4 /* libboost_filesystem-xgcc40-mt.a */; };
-		34B9F9BE0F645684005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B80F645621005BF6A4 /* libboost_python-xgcc40-mt.a */; };
-		34B9F9BF0F645684005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B90F645621005BF6A4 /* libboost_serialization-xgcc40-mt.a */; };
-		34B9F9C00F645684005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BA0F645621005BF6A4 /* libboost_signals-xgcc40-mt.a */; };
-		34B9F9C10F645684005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BB0F645621005BF6A4 /* libboost_system-xgcc40-mt.a */; };
-		34B9F9C20F645684005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BC0F645621005BF6A4 /* libboost_thread-xgcc40-mt.a */; };
-		34B9F9C30F64568B005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B70F645621005BF6A4 /* libboost_filesystem-xgcc40-mt.a */; };
-		34B9F9C40F64568B005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B80F645621005BF6A4 /* libboost_python-xgcc40-mt.a */; };
-		34B9F9C50F64568B005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B90F645621005BF6A4 /* libboost_serialization-xgcc40-mt.a */; };
-		34B9F9C60F64568B005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BA0F645621005BF6A4 /* libboost_signals-xgcc40-mt.a */; };
-		34B9F9C70F64568B005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BB0F645621005BF6A4 /* libboost_system-xgcc40-mt.a */; };
-		34B9F9C80F64568B005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BC0F645621005BF6A4 /* libboost_thread-xgcc40-mt.a */; };
-		34B9F9C90F645693005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B70F645621005BF6A4 /* libboost_filesystem-xgcc40-mt.a */; };
-		34B9F9CA0F645693005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B80F645621005BF6A4 /* libboost_python-xgcc40-mt.a */; };
-		34B9F9CB0F645693005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9B90F645621005BF6A4 /* libboost_serialization-xgcc40-mt.a */; };
-		34B9F9CC0F645693005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BA0F645621005BF6A4 /* libboost_signals-xgcc40-mt.a */; };
-		34B9F9CD0F645693005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BB0F645621005BF6A4 /* libboost_system-xgcc40-mt.a */; };
-		34B9F9CE0F645693005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9F9BC0F645621005BF6A4 /* libboost_thread-xgcc40-mt.a */; };
-		34B9FA5D0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */; };
-		34B9FA5E0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */; };
-		34B9FA5F0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */; };
 		34BA5BA10F8AA97400B74FE5 /* libexpat.1.dylib in Copy Shared Libraries */ = {isa = PBXBuildFile; fileRef = 34BA5BA00F8AA95C00B74FE5 /* libexpat.1.dylib */; };
 		34BAB0BF0FC5CD7300EF792E /* AdamGlue.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */; };
 		34C4495E1182716E0071E09A /* Math.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34C44954118271590071E09A /* Math.cpp */; };
@@ -298,6 +275,31 @@
 		47FAB6770A98D89F00F0AF3F /* dmain.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C9F0A98A3F900DA9C21 /* dmain.cpp */; };
 		47FAB6780A98D8A600F0AF3F /* ServerApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5CA20A98A3F900DA9C21 /* ServerApp.cpp */; };
 		47FAB7490A98DE2F00F0AF3F /* liblog4cpp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 471D65510A98B7F800DA9C21 /* liblog4cpp.a */; };
+		9E584199140691E000527C72 /* ConditionParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E584198140691E000527C72 /* ConditionParser3.cpp */; };
+		9E632AE413AD24C8003D1874 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
+		9E632AE513AD24C8003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
+		9E632AE613AD24C8003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		9E632AE713AD24C8003D1874 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
+		9E632AE813AD24C8003D1874 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		9E632AE913AD24C8003D1874 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
+		9E632AEA13AD24C8003D1874 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
+		9E632AEB13AD24D1003D1874 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
+		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
+		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		9E632AEE13AD24D1003D1874 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
+		9E632AEF13AD24D1003D1874 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		9E632AF013AD24D1003D1874 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
+		9E632AF113AD24D1003D1874 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
+		9EB770D71407D90B00BFDEEE /* ConditionParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E584198140691E000527C72 /* ConditionParser3.cpp */; };
+		9EB770D81407DBDA00BFDEEE /* ConditionParser3.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9E584198140691E000527C72 /* ConditionParser3.cpp */; };
+		9EEEEA7013ACB3430085B1A0 /* ogre_plugins.cfg in Copy Config */ = {isa = PBXBuildFile; fileRef = 3484E98E0F59A04D0083041E /* ogre_plugins.cfg */; };
+		9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Config */ = {isa = PBXBuildFile; fileRef = 9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */; };
+		9EEEEA7A13ACB91A0085B1A0 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
+		9EEEEA7B13ACB91A0085B1A0 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
+		9EEEEA7D13ACB91A0085B1A0 /* libboost_serialization.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */; };
+		9EEEEA7E13ACB91A0085B1A0 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
+		9EEEEA7F13ACB91A0085B1A0 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
+		9EEEEA8013ACB91A0085B1A0 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -445,8 +447,6 @@
 			dstPath = "${BUILT_PRODUCTS_DIR}/${FULL_PRODUCT_NAME}/Contents/Executables";
 			dstSubfolderSpec = 0;
 			files = (
-				34ACA00E0FFED9A100500F40 /* OISInput.cfg in Copy Server, AI, Config */,
-				3402E2680F5A31AD00DF6FE7 /* ogre_plugins.cfg in Copy Server, AI, Config */,
 				3402F0FB0F5A355D00DF6FE7 /* freeoriond in Copy Server, AI, Config */,
 				3402F0FC0F5A355D00DF6FE7 /* freeorionca in Copy Server, AI, Config */,
 			);
@@ -465,6 +465,18 @@
 				34DD944A11360CDD00265AF9 /* RenderSystem_GL.dylib in Copy Ogre Plugins */,
 			);
 			name = "Copy Ogre Plugins";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9EEEEA6D13ACB2CB0085B1A0 /* Copy Config */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 7;
+			files = (
+				9EEEEA7213ACB3800085B1A0 /* OISInput.cfg in Copy Config */,
+				9EEEEA7013ACB3430085B1A0 /* ogre_plugins.cfg in Copy Config */,
+			);
+			name = "Copy Config";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -706,13 +718,6 @@
 		34B9EBEC0F5E1EEB005BF6A4 /* Vec3Utilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Vec3Utilities.cpp; path = OpenSteer/Vec3Utilities.cpp; sourceTree = "<group>"; };
 		34B9EBED0F5E1EEB005BF6A4 /* Vec3Utilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Vec3Utilities.h; path = OpenSteer/Vec3Utilities.h; sourceTree = "<group>"; };
 		34B9EBEE0F5E1F7F005BF6A4 /* Config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Config.h; path = dep/local/include/GG/Config.h; sourceTree = "<group>"; };
-		34B9F9B70F645621005BF6A4 /* libboost_filesystem-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_filesystem-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9F9B80F645621005BF6A4 /* libboost_python-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_python-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9F9B90F645621005BF6A4 /* libboost_serialization-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_serialization-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9F9BA0F645621005BF6A4 /* libboost_signals-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_signals-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9F9BB0F645621005BF6A4 /* libboost_system-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_system-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9F9BC0F645621005BF6A4 /* libboost_thread-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_thread-xgcc40-mt.a"; sourceTree = "<group>"; };
-		34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libboost_regex-xgcc40-mt.a"; sourceTree = "<group>"; };
 		34BA5BA00F8AA95C00B74FE5 /* libexpat.1.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libexpat.1.dylib; path = dep/lib/libexpat.1.dylib; sourceTree = "<group>"; };
 		34BAB0BD0FC5CD7300EF792E /* AdamGlue.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AdamGlue.cpp; sourceTree = "<group>"; };
 		34BAB0BE0FC5CD7300EF792E /* DefaultFont.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultFont.h; sourceTree = "<group>"; };
@@ -1051,7 +1056,6 @@
 		34BAB23B0FC5D08C00EF792E /* group_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = group_factory.cpp; sourceTree = "<group>"; };
 		34BAB23C0FC5D08C00EF792E /* image_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = image_factory.cpp; sourceTree = "<group>"; };
 		34BAB23D0FC5D08C00EF792E /* label_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = label_factory.cpp; sourceTree = "<group>"; };
-		34BAB23E0FC5D08C00EF792E /* link_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = link_factory.cpp; sourceTree = "<group>"; };
 		34BAB23F0FC5D08C00EF792E /* number_unit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = number_unit.cpp; sourceTree = "<group>"; };
 		34BAB2400FC5D08C00EF792E /* optional_panel_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = optional_panel_factory.cpp; sourceTree = "<group>"; };
 		34BAB2410FC5D08C00EF792E /* panel_factory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = panel_factory.cpp; sourceTree = "<group>"; };
@@ -1064,7 +1068,6 @@
 		34BAB2480FC5D08C00EF792E /* platform_group.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_group.cpp; sourceTree = "<group>"; };
 		34BAB2490FC5D08C00EF792E /* platform_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_image.cpp; sourceTree = "<group>"; };
 		34BAB24A0FC5D08C00EF792E /* platform_label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_label.cpp; sourceTree = "<group>"; };
-		34BAB24B0FC5D08C00EF792E /* platform_link.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_link.cpp; sourceTree = "<group>"; };
 		34BAB24C0FC5D08C00EF792E /* platform_metrics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_metrics.cpp; sourceTree = "<group>"; };
 		34BAB24D0FC5D08C00EF792E /* platform_optional_panel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_optional_panel.cpp; sourceTree = "<group>"; };
 		34BAB24E0FC5D08C00EF792E /* platform_panel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = platform_panel.cpp; sourceTree = "<group>"; };
@@ -1125,8 +1128,6 @@
 		34DD944511360CBE00265AF9 /* Plugin_PCZSceneManager.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = Plugin_PCZSceneManager.dylib; sourceTree = "<group>"; };
 		34DD944611360CBF00265AF9 /* RenderSystem_GL.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = RenderSystem_GL.dylib; sourceTree = "<group>"; };
 		34F0E427113F491C00A10EED /* Python.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Python.framework; path = dep/Frameworks/Python.framework; sourceTree = "<group>"; };
-		471023390CEF3AAB00A7DF2B /* build_config.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_config.py; sourceTree = "<group>"; };
-		4710233A0CEF3AAB00A7DF2B /* build_support.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = build_support.py; sourceTree = "<group>"; };
 		4710233C0CEF3AAB00A7DF2B /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
@@ -1203,8 +1204,6 @@
 		4710238B0CEF3AAC00A7DF2B /* missing */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = missing; sourceTree = "<group>"; };
 		4710238C0CEF3AAC00A7DF2B /* mkinstalldirs */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = mkinstalldirs; sourceTree = "<group>"; };
 		4710238D0CEF3AAC00A7DF2B /* README */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
-		4710238E0CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
-		4710238F0CEF3AAC00A7DF2B /* SConstruct */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConstruct; sourceTree = "<group>"; };
 		471023920CEF3AAC00A7DF2B /* AlignmentFlags.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AlignmentFlags.cpp; sourceTree = "<group>"; };
 		471023930CEF3AAC00A7DF2B /* Base.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Base.cpp; sourceTree = "<group>"; };
 		471023940CEF3AAC00A7DF2B /* BrowseInfoWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BrowseInfoWnd.cpp; sourceTree = "<group>"; };
@@ -1213,7 +1212,6 @@
 		471023980CEF3AAC00A7DF2B /* Cursor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cursor.cpp; sourceTree = "<group>"; };
 		4710239A0CEF3AAC00A7DF2B /* ColorDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ColorDlg.cpp; sourceTree = "<group>"; };
 		4710239B0CEF3AAC00A7DF2B /* FileDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileDlg.cpp; sourceTree = "<group>"; };
-		4710239C0CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		4710239D0CEF3AAC00A7DF2B /* ThreeButtonDlg.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreeButtonDlg.cpp; sourceTree = "<group>"; };
 		4710239E0CEF3AAC00A7DF2B /* DrawUtil.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DrawUtil.cpp; sourceTree = "<group>"; };
 		4710239F0CEF3AAC00A7DF2B /* DropDownList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DropDownList.cpp; sourceTree = "<group>"; };
@@ -1230,14 +1228,10 @@
 		471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OgreGUIInputPlugin.cpp; sourceTree = "<group>"; };
 		471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OISInput.cfg; sourceTree = "<group>"; };
 		471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OISInput.cpp; sourceTree = "<group>"; };
-		471023B10CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
-		471023B20CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		471023B30CEF3AAC00A7DF2B /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
 		471023B40CEF3AAC00A7DF2B /* PluginInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginInterface.cpp; sourceTree = "<group>"; };
 		471023B50CEF3AAC00A7DF2B /* PtRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtRect.cpp; sourceTree = "<group>"; };
-		471023B60CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		471023B70CEF3AAC00A7DF2B /* Scroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scroll.cpp; sourceTree = "<group>"; };
-		471023B90CEF3AAC00A7DF2B /* SConscript */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SConscript; sourceTree = "<group>"; };
 		471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLGUI.cpp; sourceTree = "<group>"; };
 		471023BB0CEF3AAC00A7DF2B /* Slider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Slider.cpp; sourceTree = "<group>"; };
 		471023BC0CEF3AAC00A7DF2B /* StaticGraphic.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StaticGraphic.cpp; sourceTree = "<group>"; };
@@ -1294,7 +1288,6 @@
 		471D5C5E0A98A3F900DA9C21 /* ClientApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ClientApp.h; sourceTree = "<group>"; };
 		471D5C600A98A3F900DA9C21 /* Doxyfile */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Doxyfile; sourceTree = "<group>"; };
 		471D5C620A98A3F900DA9C21 /* chmain.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = chmain.cpp; sourceTree = "<group>"; };
-		471D5C630A98A3F900DA9C21 /* HumanClient.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; path = HumanClient.ico; sourceTree = "<group>"; };
 		471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = HumanClientApp.cpp; sourceTree = "<group>"; };
 		471D5C650A98A3F900DA9C21 /* HumanClientApp.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = HumanClientApp.h; sourceTree = "<group>"; };
 		471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = CombatSystem.cpp; sourceTree = "<group>"; };
@@ -1488,6 +1481,15 @@
 		47B6160B0CF09ADC00318761 /* config.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
 		47F266880CF1B87C003860F4 /* RELEASE-NOTES-V03.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "RELEASE-NOTES-V03.txt"; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E584198140691E000527C72 /* ConditionParser3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser3.cpp; sourceTree = "<group>"; };
+		9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */ = {isa = PBXFileReference; lastKnownFileType = text; name = OISInput.cfg; path = ../GG/src/Ogre/Plugins/OISInput.cfg; sourceTree = "<group>"; };
+		9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_filesystem.a; sourceTree = "<group>"; };
+		9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_python.a; sourceTree = "<group>"; };
+		9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_regex.a; sourceTree = "<group>"; };
+		9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_serialization.a; sourceTree = "<group>"; };
+		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
+		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
+		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1496,16 +1498,16 @@
 			buildActionMask = 2147483647;
 			files = (
 				34ACA4150FFFAF0600500F40 /* CoreFoundation.framework in Frameworks */,
-				34B9F9C30F64568B005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
-				34B9F9C40F64568B005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
-				34B9F9C50F64568B005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
-				34B9F9C60F64568B005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */,
-				34B9F9C70F64568B005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */,
-				34B9F9C80F64568B005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */,
+				9E632AE413AD24C8003D1874 /* libboost_filesystem.a in Frameworks */,
+				9E632AE513AD24C8003D1874 /* libboost_python.a in Frameworks */,
+				9E632AE713AD24C8003D1874 /* libboost_serialization.a in Frameworks */,
+				9E632AE813AD24C8003D1874 /* libboost_signals.a in Frameworks */,
+				9E632AE913AD24C8003D1874 /* libboost_system.a in Frameworks */,
+				9E632AEA13AD24C8003D1874 /* libboost_thread.a in Frameworks */,
 				478417730CF0589200BE4710 /* libCommon.a in Frameworks */,
 				471032D00CEF6DEC00A7DF2B /* libGG.a in Frameworks */,
+				9E632AE613AD24C8003D1874 /* libboost_regex.a in Frameworks */,
 				47FAB7490A98DE2F00F0AF3F /* liblog4cpp.a in Frameworks */,
-				34B9FA5E0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1515,17 +1517,17 @@
 			files = (
 				34F0E429113F497500A10EED /* Python.framework in Frameworks */,
 				34ACA4160FFFAF0C00500F40 /* CoreFoundation.framework in Frameworks */,
-				34B9F9C90F645693005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
-				34B9F9CA0F645693005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
-				34B9F9CB0F645693005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
-				34B9F9CC0F645693005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */,
-				34B9F9CD0F645693005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */,
-				34B9F9CE0F645693005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */,
+				9E632AEB13AD24D1003D1874 /* libboost_filesystem.a in Frameworks */,
+				9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */,
+				9E632AEE13AD24D1003D1874 /* libboost_serialization.a in Frameworks */,
+				9E632AEF13AD24D1003D1874 /* libboost_signals.a in Frameworks */,
+				9E632AF013AD24D1003D1874 /* libboost_system.a in Frameworks */,
+				9E632AF113AD24D1003D1874 /* libboost_thread.a in Frameworks */,
 				478418EF0CF05A5600BE4710 /* libClientCommon.a in Frameworks */,
 				4784177A0CF058F000BE4710 /* libCommon.a in Frameworks */,
 				471FEFD00A9A629800C36AA3 /* libGG.a in Frameworks */,
+				9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */,
 				471FEFD20A9A629800C36AA3 /* liblog4cpp.a in Frameworks */,
-				34B9FA5D0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1536,12 +1538,12 @@
 				345716B311361D2100597A54 /* libgvc_builtins.dylib in Frameworks */,
 				34ACA4230FFFAF9000500F40 /* IOKit.framework in Frameworks */,
 				34ACA4170FFFAF3D00500F40 /* Carbon.framework in Frameworks */,
-				34B9F9BD0F645684005BF6A4 /* libboost_filesystem-xgcc40-mt.a in Frameworks */,
-				34B9F9BE0F645684005BF6A4 /* libboost_python-xgcc40-mt.a in Frameworks */,
-				34B9F9BF0F645684005BF6A4 /* libboost_serialization-xgcc40-mt.a in Frameworks */,
-				34B9F9C00F645684005BF6A4 /* libboost_signals-xgcc40-mt.a in Frameworks */,
-				34B9F9C10F645684005BF6A4 /* libboost_system-xgcc40-mt.a in Frameworks */,
-				34B9F9C20F645684005BF6A4 /* libboost_thread-xgcc40-mt.a in Frameworks */,
+				9EEEEA7A13ACB91A0085B1A0 /* libboost_filesystem.a in Frameworks */,
+				9EEEEA7B13ACB91A0085B1A0 /* libboost_python.a in Frameworks */,
+				9EEEEA7D13ACB91A0085B1A0 /* libboost_serialization.a in Frameworks */,
+				9EEEEA7E13ACB91A0085B1A0 /* libboost_signals.a in Frameworks */,
+				9EEEEA7F13ACB91A0085B1A0 /* libboost_system.a in Frameworks */,
+				9EEEEA8013ACB91A0085B1A0 /* libboost_thread.a in Frameworks */,
 				34CA5EC50F4F4DA50002B5DB /* libOIS.a in Frameworks */,
 				34972C9C0F4A15200015C864 /* Ogre.framework in Frameworks */,
 				34972C440F4A00650015C864 /* libBulletCollision.dylib in Frameworks */,
@@ -1566,7 +1568,6 @@
 				471032460CEF6A8B00A7DF2B /* vorbis.framework in Frameworks */,
 				47B60E670CF0819300318761 /* libjpeg.dylib in Frameworks */,
 				34CA5AF80F4DDF690002B5DB /* libpng.dylib in Frameworks */,
-				34B9FA5F0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a in Frameworks */,
 				34ACA3870FFFAB5D00500F40 /* Cocoa.framework in Frameworks */,
 				34ACA3820FFFAB4900500F40 /* AppKit.framework in Frameworks */,
 				34ACA3830FFFAB4900500F40 /* CoreData.framework in Frameworks */,
@@ -1872,6 +1873,7 @@
 		34B9EBEF0F5E208F005BF6A4 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				9EEEEA7113ACB3800085B1A0 /* OISInput.cfg */,
 				34DD943911360BFA00265AF9 /* main.nib */,
 				3484E98E0F59A04D0083041E /* ogre_plugins.cfg */,
 				471033FE0CEF7BCB00A7DF2B /* FreeOrion.icns */,
@@ -2375,7 +2377,6 @@
 				34BAB23B0FC5D08C00EF792E /* group_factory.cpp */,
 				34BAB23C0FC5D08C00EF792E /* image_factory.cpp */,
 				34BAB23D0FC5D08C00EF792E /* label_factory.cpp */,
-				34BAB23E0FC5D08C00EF792E /* link_factory.cpp */,
 				34BAB23F0FC5D08C00EF792E /* number_unit.cpp */,
 				34BAB2400FC5D08C00EF792E /* optional_panel_factory.cpp */,
 				34BAB2410FC5D08C00EF792E /* panel_factory.cpp */,
@@ -2388,7 +2389,6 @@
 				34BAB2480FC5D08C00EF792E /* platform_group.cpp */,
 				34BAB2490FC5D08C00EF792E /* platform_image.cpp */,
 				34BAB24A0FC5D08C00EF792E /* platform_label.cpp */,
-				34BAB24B0FC5D08C00EF792E /* platform_link.cpp */,
 				34BAB24C0FC5D08C00EF792E /* platform_metrics.cpp */,
 				34BAB24D0FC5D08C00EF792E /* platform_optional_panel.cpp */,
 				34BAB24E0FC5D08C00EF792E /* platform_panel.cpp */,
@@ -2445,15 +2445,12 @@
 		471023380CEF3AAB00A7DF2B /* GG */ = {
 			isa = PBXGroup;
 			children = (
-				471023390CEF3AAB00A7DF2B /* build_config.py */,
-				4710233A0CEF3AAB00A7DF2B /* build_support.py */,
 				4710233B0CEF3AAB00A7DF2B /* doc */,
 				4710233E0CEF3AAB00A7DF2B /* GG */,
 				471023780CEF3AAC00A7DF2B /* GiGi.pc.in */,
 				471023790CEF3AAC00A7DF2B /* GiGiOgre.pc.in */,
 				4710237A0CEF3AAC00A7DF2B /* GiGiSDL.pc.in */,
 				4710237C0CEF3AAC00A7DF2B /* libltdl */,
-				4710238F0CEF3AAC00A7DF2B /* SConstruct */,
 				471023900CEF3AAC00A7DF2B /* src */,
 				471023C60CEF3AAC00A7DF2B /* tutorial */,
 			);
@@ -2584,7 +2581,6 @@
 				4710238B0CEF3AAC00A7DF2B /* missing */,
 				4710238C0CEF3AAC00A7DF2B /* mkinstalldirs */,
 				4710238D0CEF3AAC00A7DF2B /* README */,
-				4710238E0CEF3AAC00A7DF2B /* SConscript */,
 			);
 			path = libltdl;
 			sourceTree = "<group>";
@@ -2620,7 +2616,6 @@
 				471023B30CEF3AAC00A7DF2B /* Plugin.cpp */,
 				471023B40CEF3AAC00A7DF2B /* PluginInterface.cpp */,
 				471023B50CEF3AAC00A7DF2B /* PtRect.cpp */,
-				471023B60CEF3AAC00A7DF2B /* SConscript */,
 				471023B70CEF3AAC00A7DF2B /* Scroll.cpp */,
 				471023B80CEF3AAC00A7DF2B /* SDL */,
 				471023BB0CEF3AAC00A7DF2B /* Slider.cpp */,
@@ -2644,7 +2639,6 @@
 			children = (
 				4710239A0CEF3AAC00A7DF2B /* ColorDlg.cpp */,
 				4710239B0CEF3AAC00A7DF2B /* FileDlg.cpp */,
-				4710239C0CEF3AAC00A7DF2B /* SConscript */,
 				4710239D0CEF3AAC00A7DF2B /* ThreeButtonDlg.cpp */,
 			);
 			path = dialogs;
@@ -2655,7 +2649,6 @@
 			children = (
 				471023AA0CEF3AAC00A7DF2B /* OgreGUI.cpp */,
 				471023AB0CEF3AAC00A7DF2B /* Plugins */,
-				471023B20CEF3AAC00A7DF2B /* SConscript */,
 			);
 			path = Ogre;
 			sourceTree = "<group>";
@@ -2666,7 +2659,6 @@
 				471023AC0CEF3AAC00A7DF2B /* OgreGUIInputPlugin.cpp */,
 				471023AE0CEF3AAC00A7DF2B /* OISInput.cfg */,
 				471023AF0CEF3AAC00A7DF2B /* OISInput.cpp */,
-				471023B10CEF3AAC00A7DF2B /* SConscript */,
 			);
 			path = Plugins;
 			sourceTree = "<group>";
@@ -2674,7 +2666,6 @@
 		471023B80CEF3AAC00A7DF2B /* SDL */ = {
 			isa = PBXGroup;
 			children = (
-				471023B90CEF3AAC00A7DF2B /* SConscript */,
 				471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */,
 			);
 			path = SDL;
@@ -2768,7 +2759,6 @@
 				47102F870CEF55E700A7DF2B /* HumanClientFSM.cpp */,
 				47102F880CEF55E700A7DF2B /* HumanClientFSM.h */,
 				471D5C620A98A3F900DA9C21 /* chmain.cpp */,
-				471D5C630A98A3F900DA9C21 /* HumanClient.ico */,
 				471D5C640A98A3F900DA9C21 /* HumanClientApp.cpp */,
 				471D5C650A98A3F900DA9C21 /* HumanClientApp.h */,
 				34ACA4C50FFFD50100500F40 /* chmain.h */,
@@ -3000,6 +2990,7 @@
 				471D5CE90A98A3F900DA9C21 /* ConditionParser.cpp */,
 				471D5CEA0A98A3F900DA9C21 /* ConditionParser1.cpp */,
 				471D5CEB0A98A3F900DA9C21 /* ConditionParser2.cpp */,
+				9E584198140691E000527C72 /* ConditionParser3.cpp */,
 				471D5CEC0A98A3F900DA9C21 /* doc */,
 				471D5CEF0A98A3F900DA9C21 /* Effect.cpp */,
 				471D5CF00A98A3F900DA9C21 /* Effect.h */,
@@ -3176,13 +3167,13 @@
 		47B60DED0CF0761E00318761 /* boost */ = {
 			isa = PBXGroup;
 			children = (
-				34B9FA5C0F64707E005BF6A4 /* libboost_regex-xgcc40-mt.a */,
-				34B9F9B70F645621005BF6A4 /* libboost_filesystem-xgcc40-mt.a */,
-				34B9F9B80F645621005BF6A4 /* libboost_python-xgcc40-mt.a */,
-				34B9F9B90F645621005BF6A4 /* libboost_serialization-xgcc40-mt.a */,
-				34B9F9BA0F645621005BF6A4 /* libboost_signals-xgcc40-mt.a */,
-				34B9F9BB0F645621005BF6A4 /* libboost_system-xgcc40-mt.a */,
-				34B9F9BC0F645621005BF6A4 /* libboost_thread-xgcc40-mt.a */,
+				9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */,
+				9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */,
+				9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */,
+				9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */,
+				9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */,
+				9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */,
+				9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */,
 			);
 			name = boost;
 			sourceTree = "<group>";
@@ -3219,6 +3210,7 @@
 				3402E53C0F5A33E300DF6FE7 /* Copy Client */,
 				3402EB620F5A345D00DF6FE7 /* Copy Shared Libraries */,
 				3402EB750F5A34FC00DF6FE7 /* Copy Server, AI, Config */,
+				9EEEEA6D13ACB2CB0085B1A0 /* Copy Config */,
 				34DD943D11360C5700265AF9 /* Copy Ogre Plugins */,
 			);
 			buildRules = (
@@ -3356,8 +3348,11 @@
 /* Begin PBXProject section */
 		08FB7793FE84155DC02AAC07 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0410;
+			};
 			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "FreeOrion" */;
-			compatibilityVersion = "Xcode 2.4";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -3527,6 +3522,7 @@
 				2F60967E12EEB1AE00F58913 /* MessageQueue.cpp in Sources */,
 				2F6096CE12EF046500F58913 /* ClientApp.cpp in Sources */,
 				2F6096CF12EF046B00F58913 /* ClientNetworking.cpp in Sources */,
+				9E584199140691E000527C72 /* ConditionParser3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3544,6 +3540,7 @@
 				343EC67B0F3F61D000782AD3 /* PythonEnumWrapper.cpp in Sources */,
 				343EC67C0F3F61D000782AD3 /* PythonLoggingWrapper.cpp in Sources */,
 				343EC67D0F3F61D000782AD3 /* PythonUniverseWrapper.cpp in Sources */,
+				9EB770D71407D90B00BFDEEE /* ConditionParser3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3639,6 +3636,7 @@
 				2F60966B12EEAF0200F58913 /* GroupBox.cpp in Sources */,
 				2F22EC0612F7F4CF00456CDE /* TechTreeLayout.cpp in Sources */,
 				2F276A3B130401E000153050 /* GLClientAndServerBuffer.cpp in Sources */,
+				9EB770D81407DBDA00BFDEEE /* ConditionParser3.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3716,7 +3714,6 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/Frameworks\\\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3726,6 +3723,7 @@
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/../UI/ogdf/",
@@ -3735,13 +3733,17 @@
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/local/lib/bullet\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\\\"$(SRCROOT)/dep/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/local/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = FreeOrion;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -3776,14 +3778,14 @@
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=default",
 				);
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = macosx10.6;
 				STRIP_INSTALLED_PRODUCT = NO;
 				ZERO_LINK = NO;
 			};
@@ -3794,20 +3796,23 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				DEPLOYMENT_LOCATION = NO;
+				DEPLOYMENT_POSTPROCESSING = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FreeOrion;
+				SDKROOT = macosx10.6;
 			};
 			name = Debug;
 		};
@@ -3815,18 +3820,21 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				DEPLOYMENT_LOCATION = NO;
+				DEPLOYMENT_POSTPROCESSING = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "$(SYSTEM_LIBRARY_DIR)/Frameworks/Carbon.framework/Headers/Carbon.h";
+				GCC_VERSION = "";
 				INFOPLIST_FILE = Info.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = (
 					"-framework",
 					Carbon,
 				);
-				PREBINDING = NO;
 				PRODUCT_NAME = FreeOrion;
+				SDKROOT = macosx10.6;
 			};
 			name = ReleaseUniversal;
 		};
@@ -3834,8 +3842,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
-				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				FRAMEWORK_SEARCH_PATHS = "$(SRCROOT)/dep/Frameworks";
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_PREFIX_HEADER = "";
@@ -3845,6 +3852,7 @@
 					__MACOSX__,
 				);
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = "";
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
@@ -3861,13 +3869,13 @@
 					"$(SRCROOT)/dep/lib",
 					"$(SRCROOT)/dep/local/lib",
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"-fvisibility=default",
 				);
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
@@ -3877,7 +3885,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3885,9 +3892,11 @@
 					"$(inherit)",
 					HAVE_CONFIG_H,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = FREEALUT;
+				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/OpenAL/alut";
 				ZERO_LINK = YES;
 			};
@@ -3898,11 +3907,11 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -3910,8 +3919,9 @@
 					../GG/libltdl,
 				);
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = GG;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = YES;
 			};
 			name = ReleaseUniversal;
@@ -3922,14 +3932,15 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Common;
+				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
@@ -3941,14 +3952,15 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = ClientCommon;
+				SDKROOT = macosx10.6;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
 			};
@@ -3965,7 +3977,6 @@
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/Frameworks\\\"";
 				GCC_DEBUGGING_SYMBOLS = full;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -3975,6 +3986,7 @@
 					"$(inherited)",
 					FREEORION_BUILD_HUMAN,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(SRCROOT)/dep/local/include/graphviz",
@@ -3988,13 +4000,17 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/local/lib/bullet\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\\\"$(SRCROOT)/dep/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/local/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = FreeOrion;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
@@ -4005,7 +4021,6 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
@@ -4014,15 +4029,21 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
-				PREBINDING = NO;
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = freeoriond;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
@@ -4037,7 +4058,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/dep/Frameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
@@ -4046,6 +4066,7 @@
 					"$(inherited)",
 					FREEORION_BUILD_AI,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
@@ -4054,14 +4075,19 @@
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = freeorionca;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = ReleaseUniversal;
@@ -4072,14 +4098,15 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = Common;
+				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
@@ -4091,11 +4118,11 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = "$(inherited)";
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
 					/Library/Frameworks/SDL.framework/Headers,
@@ -4103,8 +4130,9 @@
 					../GG/libltdl,
 				);
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = GG;
+				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				ZERO_LINK = YES;
 			};
@@ -4116,7 +4144,6 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
@@ -4125,12 +4152,20 @@
 					"$(inherited)",
 					FREEORION_BUILD_SERVER,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
-				LIBRARY_SEARCH_PATHS = "$(inherited)";
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
+				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
-				PREBINDING = NO;
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = freeoriond;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -4145,7 +4180,6 @@
 				);
 				FRAMEWORK_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\"$(SRCROOT)/dep/Frameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_MODEL_TUNING = G5;
@@ -4154,20 +4188,26 @@
 					"$(inherited)",
 					FREEORION_BUILD_AI,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = "$(HOME)/bin";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3)",
 					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5)",
+					"$(LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6)",
 				);
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_1 = "\\\"$(SRCROOT)/dep/local/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_2 = "\\\"$(SRCROOT)/dep/lib\\\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_3 = "\"$(SRCROOT)/dep/lib\"";
 				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_4 = "\"$(SRCROOT)/dep/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_5 = "\"$(SRCROOT)/dep/local/lib\"";
+				LIBRARY_SEARCH_PATHS_QUOTED_FOR_TARGET_6 = "\"$(SRCROOT)/dep/local/lib\"";
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
 				PRODUCT_NAME = freeorionca;
+				SDKROOT = macosx10.6;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -4178,14 +4218,15 @@
 				COPY_PHASE_STRIP = NO;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
 				INSTALL_PATH = /usr/local/lib;
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = ClientCommon;
+				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(inherited)";
 				ZERO_LINK = NO;
@@ -4197,7 +4238,6 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -4205,9 +4245,11 @@
 					"$(inherit)",
 					HAVE_CONFIG_H,
 				);
+				GCC_VERSION = "";
 				HEADER_SEARCH_PATHS = "$(inherited)";
-				PREBINDING = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.5;
 				PRODUCT_NAME = FREEALUT;
+				SDKROOT = macosx10.6;
 				SEPARATE_STRIP = NO;
 				USER_HEADER_SEARCH_PATHS = "$(SOURCE_ROOT)/OpenAL/alut";
 				ZERO_LINK = YES;
