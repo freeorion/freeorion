@@ -389,7 +389,8 @@ namespace {
              >> ((producible_label >>       true_false_p[hull_p.producible = arg1]) |
                                             eps_p[hull_p.producible = val(true)])
              >> !(slots_label >>            slot_vec_p[hull_p.slots = arg1])
-             >> location_label >>           condition_p[hull_p.location = arg1]
+             >> ((location_label >>         condition_p[hull_p.location = arg1]) |
+                                            eps_p[hull_p.location = new_<Condition::All>()])
              >> !(effectsgroups_label >>    effects_group_vec_p[hull_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[hull_p.graphic = arg1])
             [hull_p.this_ = new_<HullType>(hull_p.name, hull_p.description,
