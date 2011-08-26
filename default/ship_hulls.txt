@@ -1642,17 +1642,17 @@ Hull
     buildCost = 1
     buildTime = 1
     producible = false
-        slots = [
+    slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
     effectsgroups =
-    	EffectsGroup
-    	scope = Source
-    	activation = Random probability = 0.1
-    	effects = [
+        EffectsGroup
+        scope = Source
+        activation = Random probability = 0.1
+        effects = [
         CreateShip "SM_DRONE"
     ]
     graphic = ""
@@ -1675,4 +1675,5 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    location = All
     graphic = ""
