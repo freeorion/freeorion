@@ -279,7 +279,7 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
         if (GetPlanetEnvironment(type) == best_environment)
             break;
     }
-    if (forward_steps_to_best >= backward_steps_to_best)
+    if (forward_steps_to_best <= backward_steps_to_best)
         return RingNextPlanetType(initial_planet_type);
     else
         return RingPreviousPlanetType(initial_planet_type);
