@@ -1135,7 +1135,8 @@ void SidePanel::PlanetPanel::Refresh()
         planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
         colony_ship &&
         !planet->IsAboutToBeColonized() &&
-        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0)
+        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
+        GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
     {
         // show colonize button
         DetachChild(m_invade_button);
@@ -1171,7 +1172,8 @@ void SidePanel::PlanetPanel::Refresh()
                !planet->IsAboutToBeInvaded() &&
                planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
                planet->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
-               !invasion_ships.empty())
+               !invasion_ships.empty() &&
+               GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
     {
         // show invade button
         AttachChild(m_invade_button);
@@ -1213,7 +1215,8 @@ void SidePanel::PlanetPanel::Refresh()
                planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
                !planet->IsAboutToBeColonized() &&
                !ValidSelectedColonyShip(SidePanel::SystemID()) &&
-               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()))
+               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
+               GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
     {
         // show colonization instruction text
         DetachChild(m_invade_button);

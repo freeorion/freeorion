@@ -442,6 +442,10 @@ void ColonizeOrder::ExecuteImpl() const
         Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that already has population";
         return;
     }
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
+        Logger().errorStream() << "ColonizeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
+        return;
+    }
 
     int ship_system_id = ship->SystemID();
     if (ship_system_id == UniverseObject::INVALID_OBJECT_ID) {
@@ -540,6 +544,10 @@ void InvadeOrder::ExecuteImpl() const
     }
     if (planet->OwnedBy(empire_id)) {
         Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that is already owned by the order-issuing empire";
+        return;
+    }
+    if (GetUniverse().GetObjectVisibilityByEmpire(m_planet, empire_id) < VIS_PARTIAL_VISIBILITY) {
+        Logger().errorStream() << "InvadeOrder::ExecuteImpl given planet that empire has insufficient visibility of";
         return;
     }
 
