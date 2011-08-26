@@ -1526,6 +1526,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    location = All
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1554,6 +1555,7 @@ Hull
     buildTime = 1
     producible = false
     slots = Slot type = External position = (0.30, 0.15)
+    location = All
     graphic = ""
     
 Hull
@@ -1574,6 +1576,7 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    location = All
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1610,6 +1613,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    location = All
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1643,6 +1647,7 @@ Hull
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
+    location = All
     effectsgroups =
         EffectsGroup
         scope = Source
@@ -1670,4 +1675,5 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.50, 0.65)
     ]
+    location = All
     graphic = ""
