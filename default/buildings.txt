@@ -840,7 +840,7 @@ BuildingType
 BuildingType
     name = "BLD_TERRAFORM"
     description = "BLD_TERRAFORM_DESC"
-    buildcost = 940
+    buildcost = 720
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -849,56 +849,14 @@ BuildingType
         ]
     effectsgroups = [
         EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Desert Tundra Barren Radiated]
-                Species "SP_GYISACHE"
+            scope = And [
+                Contains Source
+                Planet
             ]
-            effects = SetPlanetType Target.PlanetType + 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Swamp]
-                Species "SP_GYISACHE"
-            ]
-            effects = SetPlanetType Ocean
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Ocean Toxic Inferno]
-                Species "SP_GYISACHE"
-            ]
-            effects = SetPlanetType Target.PlanetType - 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Inferno Toxic Swamp]
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Target.PlanetType + 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Barren Tundra Desert Terran]
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Target.PlanetType - 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = Ocean
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Swamp
+            effects = SetPlanetType Target.NextBetterPlanetType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     graphic = ""
@@ -906,7 +864,7 @@ BuildingType
 BuildingType
     name = "BLD_REMOTE_TERRAFORM"
     description = "BLD_REMOTE_TERRAFORM_DESC"
-    buildcost = 80
+    buildcost = 60
     buildtime = 16
     location = And [
         OwnedBy TheEmpire Source.Owner
@@ -914,56 +872,14 @@ BuildingType
     ]
     effectsgroups = [
         EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Desert Tundra Barren Radiated]
-                Species "SP_GYISACHE"
+            scope = And [
+                Contains Source
+                Planet
             ]
-            effects = SetPlanetType Target.PlanetType + 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Swamp]
-                Species "SP_GYISACHE"
-            ]
-            effects = SetPlanetType Ocean
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Ocean Toxic Inferno]
-                Species "SP_GYISACHE"
-            ]
-            effects = SetPlanetType Target.PlanetType - 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Inferno Toxic Swamp]
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Target.PlanetType + 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = [Barren Tundra Desert Terran]
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Target.PlanetType - 1
-
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Planet type = Ocean
-                Species "SP_TRITH"
-            ]
-            effects = SetPlanetType Swamp
+            effects = SetPlanetType Target.NextBetterPlanetType
 
         EffectsGroup
             scope = Source
-            activation = Source
             effects = Destroy
     ]
     graphic = ""
