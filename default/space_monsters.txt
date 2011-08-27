@@ -1,15 +1,55 @@
 ShipDesign
-    name = "SM_KRILL"
-    description = "SM_KRILL_DESC"
+    name = "SM_KRILL_1"
+    description = "SM_KRILL_1_DESC"
     lookup_strings = true
-    hull = "SH_WEAK_MONSTER_BODY"
+    hull = "SH_KRILL_1_BODY"
     parts = [
         "AR_ROCK_PLATE"
-        "PD_PULSE_LASER"
+        ""
         ""
     ]
-    graphic = "icons/monsters/krill.png"
+    graphic = "icons/monsters/krill-1.png"
     model = "seed"
+
+ShipDesign
+    name = "SM_KRILL_2"
+    description = "SM_KRILL_2_DESC"
+    lookup_strings = true
+    hull = "SH_KRILL_2_BODY"
+    parts = [
+        "AR_ROCK_PLATE"
+        ""
+        ""
+    ]
+    graphic = "icons/monsters/krill-2.png"
+    model = "seed"
+/*
+ShipDesign
+    name = "SM_KRILL_3"
+    description = "SM_KRILL_3_DESC"
+    lookup_strings = true
+    hull = "SH_KRILL_3_BODY"
+    parts = [
+        "AR_ROCK_PLATE"
+        ""
+        ""
+    ]
+    graphic = "icons/monsters/krill-3.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_KRILL_4"
+    description = "SM_KRILL_4_DESC"
+    lookup_strings = true
+    hull = "SH_KRILL_4_BODY"
+    parts = [
+        "AR_ROCK_PLATE"
+        ""
+        ""
+    ]
+    graphic = "icons/monsters/krill-4.png"
+    model = "seed"
+*/
 
 ShipDesign
     name = "SM_TREE"
@@ -32,7 +72,8 @@ ShipDesign
     ]
     graphic = "icons/monsters/floater.png"
     model = "seed"
-
+    
+/*
 ShipDesign
     name = "SM_SQUID"
     description = "SM_SQUID_DESC"
@@ -62,6 +103,51 @@ ShipDesign
     ]
     graphic = "icons/monsters/dragon.png"
     model = "seed"
+*/
+
+ShipDesign
+    name = "SM_GUARD_1"
+    description = "SM_GUARD_1"
+    lookup_strings = true
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_ION_CANNON"
+        "LR_NUCLEAR_MISSILE"
+        "DT_OPTICAL_SCANNER"
+        "AR_ROCK_PLATE"
+    ]
+    graphic = "icons/monsters/sentry.png"
+    model = "seed"
+    
+/*
+ShipDesign
+    name = "SM_GUARD_2"
+    description = "SM_GUARD_2"
+    lookup_strings = true
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        "LR_SPECTRAL_MISSILE"
+        "DT_OPTICAL_SCANNER"
+        "AR_ZORTRIUM_PLATE"
+    ]
+    graphic = "icons/monsters/sentinel.png"
+    model = "seed"
+*/
+
+ShipDesign
+    name = "SM_GUARD_3"
+    description = "SM_GUARD_3"
+    lookup_strings = true
+    hull = "SH_GUARD_MONSTER_BODY"
+    parts = [
+        "SR_DEATH_RAY"
+        "LR_SPECTRAL_MISSILE"
+        "DT_OPTICAL_SCANNER"
+        "AR_CRYSTAL_PLATE"
+    ]
+    graphic = "icons/monsters/warden.png"
+    model = "seed"
 
 ShipDesign
     name = "SM_DRONE"
@@ -71,7 +157,6 @@ ShipDesign
     parts = [
         "AR_ROCK_PLATE"
         "PD_PHASOR"
-        ""
     ]
     graphic = "icons/ship_parts/colony_pod.png"
     model = "seed"

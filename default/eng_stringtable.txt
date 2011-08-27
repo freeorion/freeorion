@@ -229,17 +229,31 @@ Ancient ship design with advanced weaponry and defensive systems.
 SM_MONSTER
 Monster
 
-SM_KRILL
-Krill
+SM_KRILL_1
+Small Krill Swarm
+SM_KRILL_1_DESC
+Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
 
-SM_KRILL_DESC
-Small swarm of space-born life forms that feed on gas and dust.
+SM_KRILL_2
+Medium Krill Swarm
+SM_KRILL_2_DESC
+Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+
+SM_KRILL_3
+Large Krill Swarm
+SM_KRILL_3_DESC
+Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+
+SM_KRILL_4
+Plauge of Krill
+SM_KRILL_4_DESC
+Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
 
 SM_TREE
 Solar Tree
 
 SM_TREE_DESC
-Large branching space-born tree with filamentous branches.
+Large branching space-born tree with filamentous branches. The solar tree passively stores energy from high energy stars, until it is ready to move on the the next stage of it life cycle.  Though immobile, it can release it's stored energy in a focused beam to defend itself.
 
 SM_FLOATER
 Floater
@@ -269,19 +283,19 @@ Drone Factory
 SM_DRONE_FACTORY_DESC
    Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
 
-SM_SENTRY
+SM_GUARD_1
 Sentry
-SM_SENTRY_DESC
+SM_GUARD_1_DESC
 Sentries guard cool minor stuff.
 
-SM_SENTINEL
+SM_GUARD_2
 Sentinel
-SM_SENTINEL_DESC
+SM_GUARD_2_DESC
 Sentinels guard cool stuff.
 
-SM_WARDEN
+SM_GUARD_3
 Warden
-SM_SENTINEL_DESC
+SM_GUARD_3_DESC
 Wardens guard cool major stuff.
 
 ##############################

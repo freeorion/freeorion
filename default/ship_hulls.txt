@@ -1556,7 +1556,26 @@ Hull
     producible = false
     slots = Slot type = External position = (0.30, 0.15)
     location = All
-    graphic = ""
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Source
+                ContainedBy Star type = [Blue White]
+            ]
+            activation = Random probability = 0.1
+            stackinggroup = "TREE_GROWTH"
+            effects = CreateShip "SM_FLOATER"
+
+        EffectsGroup
+            scope = And [
+                Source
+                ContainedBy Star type = [Blue White]
+            ]
+            activation = Random probability = 0.05
+            stackinggroup = "TREE_GROWTH"
+            effects = CreateShip "SM_TREE"
+    ]
+    graphic = ""    
     
 Hull
     name = "SH_STRONG_MONSTER_BODY"
@@ -1598,10 +1617,31 @@ Hull
     graphic = ""
 
 Hull
-    name = "SH_DRONE_BODY"
-    description = "SH_DRONE_BODY_DESC"
-    speed = 12
-    starlaneSpeed = 30
+    name = "SH_GUARD_MONSTER_BODY"
+    description = "SH_GUARD_MONSTER_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 0
+    fuel = 0
+    stealth = 1
+    structure = 40
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.80, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    graphic = ""
+
+Hull
+    name = "SH_KRILL_1_BODY"
+    description = "SH_KRILL_1_BODY_DESC"
+    speed = 5
+    starlaneSpeed = 20
     fuel = 3
     stealth = 1
     structure = 10
@@ -1612,6 +1652,121 @@ Hull
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+    effectsgroups = [
+    	EffectsGroup
+            scope = And [
+		        System
+		        Contains Number low = 2 high = 3 DesignHasHull name = "SH_KRILL_1"
+            ]
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = [
+		        CreateShip "SM_KRILL_2"
+		        Destroy
+		    ]
+	    EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = Asteroids
+            ]
+            activation = Random probability = 0.5
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = [
+		        CreateShip "SM_KRILL_2"
+		        Destroy
+		    ]
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.75
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps 1 Source
+                Not Contains Source
+            ]
+    ]       
+    graphic = ""
+
+Hull
+    name = "SH_KRILL_2_BODY"
+    description = "SH_KRILL_2_BODY_DESC"
+    speed = 5
+    starlaneSpeed = 20
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+
+    graphic = ""
+
+Hull
+    name = "SH_KRILL_3_BODY"
+    description = "SH_KRILL_3_BODY_DESC"
+    speed = 5
+    starlaneSpeed = 20
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+
+    graphic = ""
+
+Hull
+    name = "SH_KRILL_4_BODY"
+    description = "SH_KRILL_4_BODY_DESC"
+    speed = 5
+    starlaneSpeed = 20
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+
+    graphic = ""
+    
+Hull
+    name = "SH_DRONE_BODY"
+    description = "SH_DRONE_BODY_DESC"
+    speed = 12
+    starlaneSpeed = 30
+    fuel = 3
+    stealth = 1
+    structure = 5
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
     ]
     location = All
     effectsgroups =
@@ -1642,38 +1797,24 @@ Hull
     buildCost = 1
     buildTime = 1
     producible = false
-    slots = [
+        slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
-    effectsgroups =
-        EffectsGroup
-        scope = Source
-        activation = Random probability = 0.1
-        effects = [
-        CreateShip "SM_DRONE"
+    effectsgroups = [
+        EffectsGroup     
+        	scope = Source     
+        	activation = Not Turn low = 1 high = 99999  
+    		effects = [   
+                CreateShip "SM_DRONE"
+                CreateShip "SM_DRONE"
+                CreateShip "SM_DRONE"
+                ]
+    	EffectsGroup
+    		scope = Source
+    		activation = Random probability = 0.1
+    		effects = CreateShip "SM_DRONE"
     ]
-    graphic = ""
-
-Hull
-    name = "SH_GUARD_MONSTER_BODY"
-    description = "SH_GUARD_MONSTER_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 0
-    fuel = 0
-    stealth = 1
-    structure = 40
-    buildCost = 1
-    buildTime = 1
-    producible = false
-    slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
-        Slot type = External position = (0.80, 0.15)
-        Slot type = Internal position = (0.50, 0.65)
-    ]
-    location = All
     graphic = ""

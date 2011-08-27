@@ -543,12 +543,16 @@ Special
 Special
     name = "COMPUTRONIUM_SPECIAL"
     description = "COMPUTRONIUM_SPECIAL_DESC"
-    effectsgroups =        
-	EffectsGroup
+    effectsgroups = [       
+	    EffectsGroup
             scope = Source
             activation = Focus "FOCUS_RESEARCH"
             effects = SetTargetResearch Value * 2
-    
+        EffectsGroup     
+        	scope = Source     
+        	activation = Not Turn low = 1 high = 99999  
+    	    effects = CreateShip "SM_SENTRY"
+    ]
     graphic = "icons/specials_huge/computronium.png"
 
 Special
@@ -560,3 +564,34 @@ Special
             effects = SetTargetResearch Value * 1.5
     
     graphic = "icons/specials_huge/computronium-broken.png"
+
+Special
+    name = "ABANDONED_COLONY_SPECIAL"
+    description = "ABANDONED_COLONY_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+            scope = Source
+            effects = [
+		SetTargetConstruction Value + 15
+                RemoveSpecial "ABANDONED_COLONY_SPECIAL"
+	]
+    
+    graphic = "icons/specials_huge/computronium-broken.png"
+    
+Special
+    name = "GAIA_SPECIAL"
+    description = "GAIA_SPECIAL_DESC"
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation Value * 2
+                SetTargetHealth Value * 2
+                SetTargetFarming Value * 2
+            ]
+        EffectsGroup     
+        	scope = Source     
+        	activation = Not Turn low = 1 high = 99999  
+    	    effects = CreateShip "SM_GUARD_3"
+    ]
+    graphic = "icons/specials_huge/gaia.png"

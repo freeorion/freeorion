@@ -21,7 +21,7 @@ Balancing:
  
 Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
- ~ Experimental addition of drone and drone factory
+ ~ Experimental addition of various space monsters
  ~ Added Computronium Moon & Damaged Computronium Moon specials.
 
 Graphics:
@@ -48,7 +48,6 @@ Bugs:
  ~ Fixed issue where planets would not feed themselves, even if they produced adequate food, while being blockaded.
  ~ Fixed issue where ordering a single ships to colonize multiple planets in the same system could leave nonfunctional cancel buttons on planet panels.
  ~ Fixed bug where actual system name was being shown instead of "Deep Space" in the FleetWnd.
- ~ Fixed terraforming buildings, which were not working for most species.
 
 v0.3.16 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

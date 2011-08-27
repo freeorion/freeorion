@@ -1,18 +1,4 @@
 Special
-    name = "GAIA_SPECIAL"
-    description = "GAIA_SPECIAL_DESC"
-    effectsgroups =
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = [
-                SetTargetPopulation Value * 2
-                SetTargetHealth Value * 2
-                SetTargetFarming Value * 2
-            ]
-    graphic = "icons/specials_huge/gaia.png"
-
-Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
     effectsgroups =
