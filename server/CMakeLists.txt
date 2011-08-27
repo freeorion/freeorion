@@ -28,6 +28,7 @@ set(THIS_EXE_SOURCES
     ../universe/Condition.cpp
     ../universe/ConditionParser1.cpp
     ../universe/ConditionParser2.cpp
+    ../universe/ConditionParser3.cpp
     ../universe/ConditionParser.cpp
     ../universe/Effect.cpp
     ../universe/EffectParser.cpp
