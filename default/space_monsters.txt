@@ -23,7 +23,7 @@ ShipDesign
     ]
     graphic = "icons/monsters/krill-2.png"
     model = "seed"
-/*
+
 ShipDesign
     name = "SM_KRILL_3"
     description = "SM_KRILL_3_DESC"
@@ -49,7 +49,6 @@ ShipDesign
     ]
     graphic = "icons/monsters/krill-4.png"
     model = "seed"
-*/
 
 ShipDesign
     name = "SM_TREE"

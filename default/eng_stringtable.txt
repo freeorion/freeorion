@@ -2354,6 +2354,7 @@ SITREP_EMPIRE_ELIMINATED
 SITREP_VICTORY
 %empire% %text%
 
+
 ####################
 # Victory / Defeat #
 ####################
@@ -3405,6 +3406,11 @@ Ancient Ruins in %planet% have revealed a %buildingtype% building.
 
 EFFECT_ANCIENT_TECH
 Ancient Ruins in %planet% have revealed the %tech% technology.
+
+
+EFFECT_MONSTER_SPAWNING
+A %monster% was spawned!
+
 
 # Conditions
 

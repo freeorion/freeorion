@@ -1647,8 +1647,8 @@ Hull
     graphic = ""
 
 Hull
-    name = "SH_KRILL_1_BODY"
-    description = "SH_KRILL_1_BODY_DESC"
+    name = "SH_KRILL_2_BODY"
+    description = "SH_KRILL_2_BODY_DESC"
     speed = 5
     starlaneSpeed = 20
     fuel = 3
@@ -1663,48 +1663,34 @@ Hull
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
-    effectsgroups = [
-    	EffectsGroup
-            scope = And [
-		        System
-		        Contains Number low = 2 high = 3 DesignHasHull name = "SH_KRILL_1_BODY"
+        effectsgroups = [
+            EffectsGroup     
+        	    scope = Source     
+        	    activation = Not Turn low = 1 high = 99999  
+    	        effects = Destroy
+    	    EffectsGroup
+                scope = And [
+                    Source
+		            ContainedBy Contains Planet type = Asteroids
+                ]
+                activation = Random probability = 0.5
+                stackinggroup = "KRILL_1_ACTION_STACK"
+                effects = [
+		            CreateShip "SM_KRILL_1"
+		            GenerateSitRepMessage
+                        message = "EFFECT_MONSTER_SPAWNING"
+                        parameters = [
+                         tag = "monster" data = "SM_KRILL_2"
+                         tag = "system" data = System
+                    ]
+                    empire = Source.Owner
+                ]
             ]
-            stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = [
-		        CreateShip "SM_KRILL_2"
-		        Destroy
-		    ]
-	    EffectsGroup
-            scope = And [
-                Source
-		        ContainedBy Contains Planet type = Asteroids
-            ]
-            activation = Random probability = 0.5
-            stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = [
-		        CreateShip "SM_KRILL_2"
-		        Destroy
-		    ]
-
-        EffectsGroup
-            scope = And [
-                Fleet
-                Stationary
-                Contains Source
-            ]
-            activation = Random probability = 0.75
-            stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = SetDestination destination = And [
-                System
-                WithinStarlaneJumps 1 Source
-                Not Contains Source
-            ]
-    ]       
     graphic = ""
 
 Hull
-    name = "SH_KRILL_2_BODY"
-    description = "SH_KRILL_2_BODY_DESC"
+    name = "SH_KRILL_3_BODY"
+    description = "SH_KRILL_3_BODY_DESC"
     speed = 5
     starlaneSpeed = 20
     fuel = 3
@@ -1727,26 +1713,6 @@ Hull
     graphic = ""
 
 Hull
-    name = "SH_KRILL_3_BODY"
-    description = "SH_KRILL_3_BODY_DESC"
-    speed = 5
-    starlaneSpeed = 20
-    fuel = 3
-    stealth = 1
-    structure = 10
-    buildCost = 1
-    buildTime = 1
-    producible = false
-    slots = [
-        Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.50, 0.15)
-        Slot type = External position = (0.80, 0.15)
-    ]
-    location = All
-
-    graphic = ""
-
-Hull
     name = "SH_KRILL_4_BODY"
     description = "SH_KRILL_4_BODY_DESC"
     speed = 5
@@ -1763,7 +1729,10 @@ Hull
         Slot type = External position = (0.80, 0.15)
     ]
     location = All
-
+        effectsgroups = EffectsGroup     
+        	scope = Source     
+        	activation = Not Turn low = 1 high = 99999  
+    	    effects = Destroy
     graphic = ""
     
 Hull
@@ -1827,6 +1796,94 @@ Hull
     	EffectsGroup
     		scope = Source
     		activation = Random probability = 0.1
-    		effects = CreateShip "SM_DRONE"
+    		effects = [
+    		    CreateShip "SM_DRONE"
+    		    GenerateSitRepMessage
+                    message = "EFFECT_MONSTER_SPAWNING"
+                    parameters = [
+                        tag = "monster" data = "SM_DRONE"
+                       // tag = "system" data = Source.ID
+                    ]
+                    empire = Source.Owner
+                ]
     ]
     graphic = ""
+
+Hull
+    name = "SH_KRILL_1_BODY"
+    description = "SH_KRILL_1_BODY_DESC"
+    speed = 5
+    starlaneSpeed = 20
+    fuel = 3
+    stealth = 1
+    structure = 10
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.50, 0.15)
+        Slot type = External position = (0.80, 0.15)
+    ]
+    location = All
+    effectsgroups = [
+    	EffectsGroup
+            scope = And [
+                System
+                Contains Source 
+                Number low = 2 high = 4 And [
+                    Ship
+                    ContainedBy And [
+                        System
+                        Contains Source
+                    ]
+                    DesignHasHull name = "SH_KRILL_1_BODY"
+                ]
+            ]
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = [
+		        CreateShip "SM_KRILL_2"
+		        Destroy
+		        GenerateSitRepMessage
+                    message = "EFFECT_MONSTER_SPAWNING"
+                    parameters = [
+                        tag = "monster" data = "SM_KRILL_2"
+                        tag = "system" data = System
+                    ]
+                    empire = Source.Owner
+		    ]
+	    EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = Asteroids
+            ]
+            activation = Random probability = 0.5
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = [
+		        CreateShip "SM_KRILL_2"
+		        Destroy
+		        GenerateSitRepMessage
+                    message = "EFFECT_MONSTER_SPAWNING"
+                    parameters = [
+                        tag = "monster" data = "SM_KRILL_2"
+                        tag = "system" data = System
+                    ]
+                    empire = Source.Owner
+		    ]
+
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.75
+            stackinggroup = "KRILL_1_ACTION_STACK"
+            effects = SetDestination destination = And [
+                System
+                WithinStarlaneJumps 1 Source
+                Not Contains Source
+            ]
+    ]       
+    graphic = ""
+
