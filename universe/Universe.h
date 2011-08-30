@@ -33,6 +33,7 @@ class ShipDesign;
 class UniverseObject;
 class System;
 namespace Condition {
+    struct ConditionBase;
     typedef std::set<const UniverseObject*> ObjectSet;
 }
 namespace Effect {
@@ -708,6 +709,46 @@ T*                      GetEmpireKnownObject(int object_id, int empire_id)
 {
     return GetUniverse().EmpireKnownObjects(empire_id).template Object<T>(object_id);
 }
+
+
+/** A combination of names of ShipDesign that can be put together to make a
+  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
+  * ShipDesign names refer to designs listed in premade_ship_designs.txt.
+  * Useful for saving or specifying prearranged combinations of prearranged
+  * ShipDesigns to automatically put together, such as during universe creation.*/
+class FleetPlan
+{
+public:
+    FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+              bool lookup_name_userstring = false);
+    FleetPlan();
+    virtual ~FleetPlan();
+    const std::string&              Name() const;
+    const std::vector<std::string>& ShipDesigns() const;
+protected:
+    std::string                     m_name;
+    std::vector<std::string>        m_ship_designs;
+    bool                            m_name_in_stringtable;
+};
+
+/** The combination of a FleetPlan and spawning instructions for start of game
+  * monsters. */
+class MonsterFleetPlan : public FleetPlan
+{
+public:
+    MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+                     double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,
+                     bool lookup_name_userstring = false);
+    MonsterFleetPlan();
+    virtual ~MonsterFleetPlan();
+    double                          SpawnRate() const;
+    int                             SpawnLimit() const;
+    const Condition::ConditionBase* Location() const;
+protected:
+    double                          m_spawn_rate;
+    int                             m_spawn_limit;
+    const Condition::ConditionBase* m_location;
+};
 
 
 // template implementations

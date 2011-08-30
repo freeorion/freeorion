@@ -3143,13 +3143,90 @@ namespace Delauney {
     } // end function
 }
 
+
+////////////////////////////////////////
+// FleetPlan                          //
+////////////////////////////////////////
+FleetPlan::FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+                     bool lookup_name_userstring) :
+    m_name(fleet_name),
+    m_ship_designs(ship_design_names),
+    m_name_in_stringtable(lookup_name_userstring)
+{
+    Logger().debugStream() << "FleetPlan: " << fleet_name;
+}
+
+FleetPlan::FleetPlan() :
+    m_name(""),
+    m_ship_designs(),
+    m_name_in_stringtable(false)
+{
+    Logger().debugStream() << "FleetPlan: default";
+}
+
+FleetPlan::~FleetPlan()
+{}
+
+const std::string& FleetPlan::Name() const {
+    if (m_name_in_stringtable)
+        return UserString(m_name);
+    else
+        return m_name;
+}
+
+const std::vector<std::string>& FleetPlan::ShipDesigns() const {
+    return m_ship_designs;
+}
+
+
+////////////////////////////////////////
+// MonsterFleetPlan                   //
+////////////////////////////////////////
+MonsterFleetPlan::MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
+                                   double spawn_rate, int spawn_limit, const Condition::ConditionBase* location,
+                                   bool lookup_name_userstring) :
+    FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
+    m_spawn_rate(spawn_rate),
+    m_spawn_limit(spawn_limit),
+    m_location(location)
+{
+    Logger().debugStream() << "MonsterFleetPlan: " << fleet_name;
+}
+
+MonsterFleetPlan::MonsterFleetPlan() :
+    FleetPlan(),
+    m_spawn_rate(1.0),
+    m_spawn_limit(9999),
+    m_location(0)
+{
+    Logger().debugStream() << "MonsterFleetPlan: default";
+}
+
+MonsterFleetPlan::~MonsterFleetPlan()
+{
+    delete m_location;
+}
+
+double MonsterFleetPlan::SpawnRate() const
+{ return m_spawn_rate; }
+
+int MonsterFleetPlan::SpawnLimit() const
+{ return m_spawn_limit; }
+
+const Condition::ConditionBase* MonsterFleetPlan::Location() const
+{ return m_location; }
+
+
+//////////////////////
+// FleetPlanManager //
+//////////////////////
 namespace {
     struct store_fleet_plan_impl
     {
         template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
-        void operator()(std::vector<FleetPlan>& fleet_plans, const T& fleet_plan) const
+        void operator()(std::vector<FleetPlan*>& fleet_plans, const T& fleet_plan) const
         {
             fleet_plans.push_back(fleet_plan);
         }
@@ -3159,7 +3236,9 @@ namespace {
 
     class FleetPlanManager {
     public:
-        typedef std::vector<FleetPlan>::const_iterator iterator;
+        typedef std::vector<FleetPlan*>::const_iterator iterator;
+
+        ~FleetPlanManager();
 
         /** \name Accessors */ //@{
         /** returns iterator pointing to first plan. */
@@ -3176,7 +3255,7 @@ namespace {
     private:
         FleetPlanManager();
 
-        std::vector<FleetPlan>      m_plans;
+        std::vector<FleetPlan*>     m_plans;
 
         static FleetPlanManager*    s_instance;
     };
@@ -3220,16 +3299,122 @@ namespace {
 
 #ifdef OUTPUT_PLANS_LIST
         Logger().debugStream() << "Starting Fleet Plans:";
-        for (iterator it = begin(); it != end(); ++it) {
-            const FleetPlan& p = *it;
-            Logger().debugStream() << " ... " << p.Name();
-        }
+        for (iterator it = begin(); it != end(); ++it)
+            Logger().debugStream() << " ... " << (*it)->Name();
 #endif
+    }
+
+    FleetPlanManager::~FleetPlanManager() {
+        for (std::vector<FleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
+            delete *it;
+        m_plans.clear();
     }
 
     /** returns the singleton fleet plan manager */
     const FleetPlanManager& GetFleetPlanManager() {
         return FleetPlanManager::GetFleetPlanManager();
+    }
+};
+
+
+/////////////////////////////
+// MonsterFleetPlanManager //
+/////////////////////////////
+namespace {
+    struct store_monster_fleet_plan_impl
+    {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::vector<MonsterFleetPlan*>& fleet_plans, const T& fleet_plan) const
+        {
+            fleet_plans.push_back(fleet_plan);
+        }
+    };
+
+    const phoenix::function<store_monster_fleet_plan_impl> store_monster_fleet_plan_;
+
+    class MonsterFleetPlanManager {
+    public:
+        typedef std::vector<MonsterFleetPlan*>::const_iterator iterator;
+
+        ~MonsterFleetPlanManager();
+
+        /** \name Accessors */ //@{
+        /** returns iterator pointing to first plan. */
+        iterator    begin() const                           { return m_plans.begin(); }
+
+        /** returns iterator pointing one past last plan. */
+        iterator    end() const                             { return m_plans.end(); }
+
+        int         NumMonsters() const                     { return m_plans.size(); }
+        //@}
+
+        /** returns the instance of this singleton class; you should use the
+          * free function GetFleetPlanManager() instead */
+        static const MonsterFleetPlanManager& GetMonsterFleetPlanManager();
+
+    private:
+        MonsterFleetPlanManager();
+
+        std::vector<MonsterFleetPlan*>     m_plans;
+
+        static MonsterFleetPlanManager*    s_instance;
+    };
+    // static(s)
+    MonsterFleetPlanManager* MonsterFleetPlanManager::s_instance = 0;
+
+    const MonsterFleetPlanManager& MonsterFleetPlanManager::GetMonsterFleetPlanManager() {
+        static MonsterFleetPlanManager manager;
+        return manager;
+    }
+
+    MonsterFleetPlanManager::MonsterFleetPlanManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one MonsterFleetPlanManager.");
+
+        s_instance = this;
+
+        Logger().debugStream() << "Initializing MonsterFleetPlanManager";
+
+        std::string file_name = "space_monster_spawn_fleets.txt";
+        std::string input;
+
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+            return;
+        }
+
+        using namespace boost::spirit::classic;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  as_lower_d[*monster_fleet_plan_p[store_monster_fleet_plan_(var(m_plans), arg1)]]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+
+//#ifdef OUTPUT_PLANS_LIST
+        Logger().debugStream() << "Starting Monster Fleet Plans:";
+        for (iterator it = begin(); it != end(); ++it)
+            Logger().debugStream() << " ... " << (*it)->Name();
+//#endif
+    }
+
+    MonsterFleetPlanManager::~MonsterFleetPlanManager() {
+        for (std::vector<MonsterFleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
+            delete *it;
+        m_plans.clear();
+    }
+
+    /** returns the singleton fleet plan manager */
+    const MonsterFleetPlanManager& GetMonsterFleetPlanManager() {
+        return MonsterFleetPlanManager::GetMonsterFleetPlanManager();
     }
 };
 
@@ -4091,12 +4276,6 @@ namespace {
             new Condition::Homeworld()
         )
     );
-
-    static const Condition::Not unpopulated_filter(
-        new Condition::Contains(
-            new Condition::Species()
-        )
-    );
 }
 
 void Universe::GenerateNatives(GalaxySetupOption freq)
@@ -4169,6 +4348,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateSpaceMonsters";
 
+    // get overall universe chance for monster generation in a system
     int inverse_monster_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
     Logger().debugStream() << "Universe::GenerateSpaceMonsters(" << boost::lexical_cast<std::string>(freq) << ") inverse monster chance: " << inverse_monster_chance;
     double monster_chance(0.0);
@@ -4177,73 +4357,121 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
     else
         return;
 
-    const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
-    std::vector<std::pair<int, const ShipDesign*> > monster_ship_designs;
+    // sets of monsters to generate
+    const MonsterFleetPlanManager& monster_manager = GetMonsterFleetPlanManager();
+    if (monster_manager.NumMonsters() < 1)
+        return;
 
-    for (PredefinedShipDesignManager::iterator it = predefined_ship_designs.begin_monsters();
-         it != predefined_ship_designs.end_monsters(); ++it)
+    // ship designs (including monsters)
+    const PredefinedShipDesignManager& predefined_design_manager = GetPredefinedShipDesignManager();
+
+    // possible locations to generate monsters
+    std::vector<System*> system_vec = Objects().FindObjects<System>();
+    if (system_vec.empty())
+        return;
+
+    // initialize count of how many of each monster fleet plan has been created
+    std::map<MonsterFleetPlanManager::iterator, int> monster_fleets_created;
+    for (MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
+         monster_plan_it != monster_manager.end(); ++monster_plan_it)
     {
-        int monster_design_id = predefined_ship_designs.GenericDesignID(it->first);
-        const ShipDesign* design = GetShipDesign(monster_design_id);
-        if (design)
-            monster_ship_designs.push_back(std::make_pair(monster_design_id, design));
+        monster_fleets_created[monster_plan_it] = 0;
     }
 
-    if (monster_ship_designs.empty())
-        return;
+    // for each system, find a monster whose location condition allows the
+    // system, which hasn't already been added too many times, and then attempt
+    // to add that monster by testing the spawn rate chance
+    MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
+    for (std::vector<System*>::iterator sys_it = system_vec.begin(); sys_it != system_vec.end(); ++sys_it) {
+        System* system = *sys_it;
+        Logger().debugStream() << "Attempting to add monster at system " << system->Name();
 
-    std::vector<System*> system_vec = Objects().FindObjects<System>();
-    Condition::ObjectSet system_set;
-    std::copy(system_vec.begin(), system_vec.end(), std::inserter(system_set, system_set.end()));
+        // for this system, find a suitable monster fleet plan
+        const MonsterFleetPlanManager::iterator initial_monster_plan_it = monster_plan_it;
+        while (true) {
+            const MonsterFleetPlan* plan = *monster_plan_it;
+            Logger().debugStream() << "... considering monster plan " << plan->Name();
 
-    // select only unpopulated systems (that have no species-labelled objects in them)
-    Condition::ObjectSet unpopulated_systems_set;
-    unpopulated_filter.Eval(unpopulated_systems_set, system_set);
-    Logger().debugStream() << " ... unpopulated systems: " << unpopulated_systems_set.size();
+            bool monster_add_attempted = false;
 
-    std::vector<System*> unpopulated_systems;
-    for (Condition::ObjectSet::iterator it = unpopulated_systems_set.begin(); it != unpopulated_systems_set.end(); ++it)
-        if (const System* system = dynamic_cast<const System*>(*it))
-            unpopulated_systems.push_back(const_cast<System*>(system));
+            // test if too many of this fleet have already been created
+            if (monster_fleets_created[monster_plan_it] < plan->SpawnLimit()) {
 
-    if (unpopulated_systems.empty())
-        return;
+                // test if this monster fleet plan can be spawned at this location
+                const Condition::ConditionBase* location_test = plan->Location();
+                Condition::ObjectSet sys_set, matches;
+                if (location_test) {
+                    sys_set.insert(system);
+                    location_test->Eval(matches, sys_set);
+                }
+                if (!location_test || !matches.empty()) {
+                    Logger().debugStream() << "... ... can be placed here";
+                    // monster can be placed here.
 
-    // randomly add monsters to systems
-    for (std::vector<System*>::iterator it = unpopulated_systems.begin(); it != unpopulated_systems.end(); ++it) {
-        if (RandZeroToOne() > monster_chance)
-            continue;
+                    // test random chance to place this monster fleet
+                    double this_monster_fleet_chance = std::max(0.0, monster_chance * plan->SpawnRate());
+                    if (RandZeroToOne() > this_monster_fleet_chance) {
+                        Logger().debugStream() << "... ... passed random chance test";
 
-        System* system = *it;
-        Logger().debugStream() << "Attempting to add monsters to system " << system->Name();
+                        // spawn monster fleet
+                        monster_fleets_created[monster_plan_it]++;
 
-        // pick a monster and add it to the system
-        int monster_idx = RandSmallInt(0, monster_ship_designs.size() - 1);
-        std::pair<int, const ShipDesign*>& monster_design = monster_ship_designs.at(monster_idx);
+                        const std::vector<std::string>& monsters = plan->ShipDesigns();
+                        if (monsters.empty())
+                            break;
 
-        // create fleet for monster
-        const std::string& fleet_name = UserString("MONSTERS");
-        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
-        if (!fleet) {
-            Logger().errorStream() << "unable to create new fleet!";
-            break;
+                        // create fleet for monsters
+                        const std::string& fleet_name = UserString("MONSTERS");
+                        Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
+                        if (!fleet) {
+                            Logger().errorStream() << "unable to create new fleet!";
+                            return;
+                        }
+                        Insert(fleet);
+                        system->Insert(fleet);
+
+                        // create ships and add to fleet
+                        for (std::vector<std::string>::const_iterator monster_it = monsters.begin();
+                                monster_it != monsters.end(); ++monster_it)
+                        {
+                            int design_id = predefined_design_manager.GenericDesignID(*monster_it);
+                            if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+                                Logger().errorStream() << "Couldn't find space monster with name " << *monster_it;
+                                continue;
+                            }
+
+                            // create new monster ship
+                            Ship* ship = new Ship(ALL_EMPIRES, design_id, "", ALL_EMPIRES);
+                            if (!ship)
+                                continue;
+
+                            ship->Rename(UserString(*monster_it));
+                            int ship_id = Insert(ship);
+
+                            fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
+                        }
+                    } else {
+                        Logger().debugStream() << "... ... failed random chance test. skipping system.";
+                        // monster was acceptable for this location, but
+                        // failed chance test.  no monsters here.
+                    }
+                    monster_add_attempted = true;
+                } else {
+                    Logger().debugStream() << "... ... cannot be placed here";
+                }
+            } else {
+                Logger().debugStream() << "... ... has been placed " << monster_fleets_created[monster_plan_it] << " times, which is >= the limit of " << plan->SpawnLimit();
+            }
+
+            // increment monster plan iterator
+            monster_plan_it++;
+            if (monster_plan_it == monster_manager.end())
+                monster_plan_it = monster_manager.begin();
+
+            // stop attempting to add monsters here?
+            if (monster_plan_it == initial_monster_plan_it || monster_add_attempted)
+                break;
         }
-        Insert(fleet);
-        system->Insert(fleet);
-
-        // create new monster ship
-        Ship* ship = new Ship(ALL_EMPIRES, monster_design.first, "", ALL_EMPIRES);
-        if (!ship) {
-            Logger().errorStream() << "unable to create new ship!";
-            break;
-        }
-
-        ship->Rename(monster_design.second->Name());
-        int ship_id = Insert(ship);
-
-        fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
-
-        Logger().debugStream() << "Added monster " << monster_design.second->Name() << " to system " << system->Name();
     }
 }
 
@@ -4699,7 +4927,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         for (FleetPlanManager::iterator it = starting_fleet_plans.begin(); it != starting_fleet_plans.end(); ++it) {
 
             // create fleet itself
-            const std::string& fleet_name = it->Name();
+            const std::string& fleet_name = (*it)->Name();
             Fleet* fleet = new Fleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
             if (!fleet) {
                 Logger().errorStream() << "unable to create new fleet!";
@@ -4710,7 +4938,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 
 
             // create ships and add to fleet
-            const std::vector<std::string>& ship_design_names = it->ShipDesigns();
+            const std::vector<std::string>& ship_design_names = (*it)->ShipDesigns();
             for (std::vector<std::string>::const_iterator ship_it = ship_design_names.begin(); ship_it != ship_design_names.end(); ++ship_it) {
                 // get universe id of design by looking up name in this empire's map from name to design id
                 const std::string& design_name = *ship_it;

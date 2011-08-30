@@ -8,6 +8,7 @@
 #include "Enums.h"
 #include "ShipDesign.h"
 #include "Tech.h"
+#include "Universe.h"
 #include "../Empire/Empire.h"
 
 #include <boost/spirit/include/classic.hpp>
@@ -253,12 +254,24 @@ struct ShipDesignClosure : boost::spirit::classic::closure<ShipDesignClosure, Sh
     member8 name_desc_in_stringtable;
 };
 
-struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, FleetPlan, std::string,
+struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, FleetPlan*, std::string,
                                                           std::vector<std::string> >
 {
     member1 this_;
     member2 name;
     member3 ship_designs;
+};
+
+struct MonsterFleetPlanClosure : boost::spirit::classic::closure<MonsterFleetPlanClosure, MonsterFleetPlan*,
+                                                                 std::string, std::vector<std::string>,
+                                                                 double, int, Condition::ConditionBase*>
+{
+    member1 this_;
+    member2 name;
+    member3 ship_designs;
+    member4 spawn_rate;
+    member5 spawn_limit;
+    member6 location;
 };
 
 struct AlignmentClosure : boost::spirit::classic::closure<AlignmentClosure, Alignment,
@@ -286,6 +299,7 @@ extern boost::spirit::classic::rule<Scanner, PartClosure::context_t>            
 extern boost::spirit::classic::rule<Scanner, HullClosure::context_t>            hull_p;
 extern boost::spirit::classic::rule<Scanner, ShipDesignClosure::context_t>      ship_design_p;
 extern boost::spirit::classic::rule<Scanner, FleetPlanClosure::context_t>       fleet_plan_p;
+extern boost::spirit::classic::rule<Scanner, MonsterFleetPlanClosure::context_t>monster_fleet_plan_p;
 extern boost::spirit::classic::rule<Scanner, AlignmentClosure::context_t>       alignment_p;
 extern boost::spirit::classic::rule<Scanner, EffectsGroupVecClosure::context_t> effects_group_vec_p;
 

@@ -26,6 +26,7 @@ rule<Scanner, HullStatsClosure::context_t>          hull_stats_p;
 rule<Scanner, HullClosure::context_t>               hull_p;
 rule<Scanner, ShipDesignClosure::context_t>         ship_design_p;
 rule<Scanner, FleetPlanClosure::context_t>          fleet_plan_p;
+rule<Scanner, MonsterFleetPlanClosure::context_t>   monster_fleet_plan_p;
 rule<Scanner, AlignmentClosure::context_t>          alignment_p;
 rule<Scanner, EffectsGroupVecClosure::context_t>    effects_group_vec_p;
 
@@ -156,6 +157,8 @@ namespace {
     ParamLabel string_lookup_label("lookup_strings");
     ParamLabel researchable_label("researchable");
     ParamLabel producible_label("producible");
+    ParamLabel spawn_rate_label("spawnrate");
+    ParamLabel spawn_limit_label("spawnlimit");
 
 
     Effect::EffectsGroup* const NULL_EFF = 0;
@@ -418,11 +421,29 @@ namespace {
 
         fleet_plan_p =
             (str_p("fleet")
-             >> name_label >> name_p[fleet_plan_p.name = arg1]
+             >> name_label >>           name_p[fleet_plan_p.name = arg1]
              >> ships_label
              >> (name_p[push_back_(fleet_plan_p.ship_designs, arg1)] |
                  ('[' >> *(name_p[push_back_(fleet_plan_p.ship_designs, arg1)]) >> ']'))
-            [fleet_plan_p.this_ = construct_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
+            [fleet_plan_p.this_ = new_<FleetPlan>(fleet_plan_p.name, fleet_plan_p.ship_designs, val(true))]);
+
+        monster_fleet_plan_p =
+            (str_p("monsterfleet")
+             >> name_label >>           name_p[monster_fleet_plan_p.name = arg1]
+             >> ships_label
+             >> (name_p[push_back_(monster_fleet_plan_p.ship_designs, arg1)] |
+                 ('[' >> *(name_p[push_back_(monster_fleet_plan_p.ship_designs, arg1)]) >> ']'))
+             >> ((spawn_rate_label >>   real_p[monster_fleet_plan_p.spawn_rate, arg1]) |
+                                        eps_p[monster_fleet_plan_p.spawn_rate = val(1.0)])
+             >> ((spawn_limit_label >>  int_p[monster_fleet_plan_p.spawn_limit, arg1]) |
+                                        eps_p[monster_fleet_plan_p.spawn_limit = val(9999)])
+             >> ((location_label >>     condition_p[monster_fleet_plan_p.location = arg1]) |
+                                        eps_p[monster_fleet_plan_p.location = val(NULL_COND)])
+            [monster_fleet_plan_p.this_ = new_<MonsterFleetPlan>(monster_fleet_plan_p.name,
+                                                                 monster_fleet_plan_p.ship_designs,
+                                                                 monster_fleet_plan_p.spawn_rate,
+                                                                 monster_fleet_plan_p.spawn_limit,
+                                                                 monster_fleet_plan_p.location)]);
 
         alignment_p =
             (str_p("alignment")

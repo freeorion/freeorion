@@ -18,25 +18,6 @@ class ShipDesign;
 class Empire;
 class Meter;
 
-/** A combination of names of ShipDesign that can be put together to make a
-  * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
-  * ShipDesign names refer to designs listed in premade_ship_designs.txt.
-  * Useful for saving or specifying prearranged combinations of prearranged
-  * ShipDesigns to automatically put together, such as during universe creation.*/
-class FleetPlan
-{
-public:
-    FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-              bool lookup_name_userstring = false);
-    FleetPlan();
-    const std::string&              Name() const;
-    const std::vector<std::string>& ShipDesigns() const;
-private:
-    std::string                 m_name;
-    std::vector<std::string>    m_ship_designs;
-    bool                        m_name_in_stringtable;
-};
-
 class Alignment
 {
 public:

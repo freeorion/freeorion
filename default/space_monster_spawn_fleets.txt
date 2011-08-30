@@ -1,0 +1,15 @@
+MonsterFleet
+    name = "FN_SINGLE_KRILL"
+    ships = [
+        "SM_KRILL_1"
+    ]
+    spawnrate = 1.5
+    spawnlimit = 9999
+    location = And [
+        System
+        Not Contains Design "SM_KRILL"
+        Not WithinDistance 1 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
