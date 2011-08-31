@@ -4,7 +4,7 @@ ShipDesign
     lookup_strings = true
     hull = "SH_KRILL_1_BODY"
     parts = [
-        "AR_ROCK_PLATE"
+        ""
         ""
         ""
     ]
@@ -17,7 +17,7 @@ ShipDesign
     lookup_strings = true
     hull = "SH_KRILL_2_BODY"
     parts = [
-        "AR_ROCK_PLATE"
+        ""
         ""
         ""
     ]
@@ -30,8 +30,8 @@ ShipDesign
     lookup_strings = true
     hull = "SH_KRILL_3_BODY"
     parts = [
-        "AR_ROCK_PLATE"
         ""
+        "SR_LASER"
         ""
     ]
     graphic = "icons/monsters/krill-3.png"
@@ -43,8 +43,8 @@ ShipDesign
     lookup_strings = true
     hull = "SH_KRILL_4_BODY"
     parts = [
-        "AR_ROCK_PLATE"
         ""
+        "SR_MASS_DRIVER"
         ""
     ]
     graphic = "icons/monsters/krill-4.png"

@@ -3407,9 +3407,9 @@ Ancient Ruins in %planet% have revealed a %buildingtype% building.
 EFFECT_ANCIENT_TECH
 Ancient Ruins in %planet% have revealed the %tech% technology.
 
-
+//The following is for monster spawning testing.
 EFFECT_MONSTER_SPAWNING
-A %monster% was spawned!
+A %shiphull% was spawned in %system%!
 
 
 # Conditions
@@ -6282,3 +6282,38 @@ Strong Body
 
 SH_STRONG_MONSTER_BODY_DESC
 Large strong body with fearsome natural weapons and strong natural armour.
+
+SH_GUARD_MONSTER_BODY
+Guard Hull
+SH_GUARD_MONSTER_BODY_DESC
+A Strong Hull for Guardian Class Monsters
+
+SH_KRILL_1_BODY
+Krill Body 1
+SH_KRILL_1_BODY_DESC
+Krill Body 1
+
+SH_KRILL_2_BODY
+Krill Body 2
+SH_KRILL_2_BODY_DESC
+Krill Body 2
+
+SH_KRILL_3_BODY
+Krill Body 3
+SH_KRILL_3_BODY_DESC
+Krill Body 3
+
+SH_KRILL_4_BODY
+Krill Body 4
+SH_KRILL_4_BODY_DESC
+Krill Body 4
+
+SH_DRONE_BODY
+Drone Hull
+SH_DRONE_BODY_DESC
+Drone Hull
+
+SH_IMMOBILE_FACTORY
+Drone Factory
+SH_IMMOBILE_FACTORY_DESC
+Drone Factory
