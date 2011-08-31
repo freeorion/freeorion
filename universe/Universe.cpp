@@ -991,41 +991,32 @@ bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id)
     return retval;
 }
 
-void Universe::ApplyAllEffectsAndUpdateMeters(const std::vector<int>& object_ids)
+void Universe::ApplyAllEffectsAndUpdateMeters()
 {
-    // cache all activation and scoping condition results before applying Effects, since the application of
-    // these Effects may affect the activation and scoping evaluations
+    std::vector<int> object_ids = m_objects.FindObjectIDs();
+
+    // cache all activation and scoping condition results before applying
+    // Effects, since the application of these Effects may affect the activation
+    // and scoping evaluations
     EffectsTargetsCausesMap targets_causes_map;
     GetEffectsAndTargets(targets_causes_map, object_ids);
-
-    std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so that max/target/unpaired meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
-        (*it)->ResetTargetMaxUnpairedMeters();
-        (*it)->ResetPairedActiveMeters();
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
+        it->second->ResetTargetMaxUnpairedMeters();
+        it->second->ResetPairedActiveMeters();
     }
 
     ExecuteEffects(targets_causes_map);
 
-
-    // re-get objects vector so that any destroyed objects won't still be in the list
-    objects = m_objects.FindObjects(object_ids);
-
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
-        (*it)->ClampMeters();
-    }
-}
-
-void Universe::ApplyAllEffectsAndUpdateMeters()
-{
-    ApplyAllEffectsAndUpdateMeters(m_objects.FindObjectIDs());
+    for (ObjectMap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
+        it->second->ClampMeters();
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_ids)
@@ -1486,7 +1477,7 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
-        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group");
+        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " + GetObject(targets_it->first.source_object_id)->Name() + ") ");
 
         // if other EffectsGroups with the same stacking group have affected some of the targets in
         // the scope of the current EffectsGroup, skip them

@@ -265,6 +265,7 @@ Hesperus
 Hewish
 Holly
 Homam
+Honeydew
 Horst
 Hoyle
 Huachuca
@@ -333,6 +334,7 @@ Lithia
 Lockyer
 Locris
 Loki
+Lomadia
 Lupi
 Lusitania
 Lyonesse
@@ -625,6 +627,7 @@ Wunjo
 Xanadu
 Xenon
 Xenos
+Xephos
 Xocotl
 Yed
 Yildun

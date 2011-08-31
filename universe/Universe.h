@@ -425,14 +425,10 @@ public:
       * ShipDesign map. */
     void            Clear();
 
-    /** Determines all effectsgroups' target sets, then eesets meters and
-      * executes only all effects on all objects whose ids are listed in
-      * \a object_ids.  Then clamps meter values so target and max meters are
-      * within a reasonable range and any current meters with associated max
-      * meters are limited by their max. */
-    void            ApplyAllEffectsAndUpdateMeters(const std::vector<int>& object_ids);
-
-    /** Calls above ApplyAllEffectsAndUpdateMeters() function on all objects.*/
+    /** Determines all effectsgroups' target sets, then resets meters and
+      * executes all effects on all objects.  Then clamps meter values so
+      * target and max meters are within a reasonable range and any current
+      * meters with associated max meters are limited by their max. */
     void            ApplyAllEffectsAndUpdateMeters();
 
     /** Determines all effectsgroups' target sets, then eesets meters and
