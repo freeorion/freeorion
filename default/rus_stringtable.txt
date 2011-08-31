@@ -306,9 +306,6 @@ OPTIONS_DB_UI_WND_COLOR
 OPTIONS_DB_UI_TEXT_COLOR
 Установить цвет текста интерфейса.
 
-OPTIONS_DB_UI_TEXT_COLOR
-Установить цвет текста интерфейса.
-
 OPTIONS_DB_UI_DEFAULT_LINK_COLOR
 Установить цвет текста ссылок.
 
