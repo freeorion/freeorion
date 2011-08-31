@@ -37,6 +37,7 @@ namespace {
 
         GG::Font::RegisterKnownTag(VarText::EMPIRE_ID_TAG);
         GG::Font::RegisterKnownTag(VarText::DESIGN_ID_TAG);
+        GG::Font::RegisterKnownTag(VarText::PREDEFINED_DESIGN_TAG);
 
         GG::Font::RegisterKnownTag(VarText::TECH_TAG);
         GG::Font::RegisterKnownTag(VarText::BUILDING_TYPE_TAG);
@@ -281,6 +282,7 @@ void TextLinker::FindLinks()
                     tag->tag_name == VarText::BUILDING_ID_TAG ||
                     tag->tag_name == VarText::EMPIRE_ID_TAG ||
                     tag->tag_name == VarText::DESIGN_ID_TAG ||
+                    tag->tag_name == VarText::PREDEFINED_DESIGN_TAG ||
                     tag->tag_name == VarText::TECH_TAG ||
                     tag->tag_name == VarText::BUILDING_TYPE_TAG ||
                     tag->tag_name == VarText::SPECIAL_TAG ||

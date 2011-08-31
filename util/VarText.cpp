@@ -179,6 +179,17 @@ namespace {
                 }
                 m_str += open_tag + design->Name() + close_tag;
 
+            // predefined ship design token
+            } else if (token == VarText::PREDEFINED_DESIGN_TAG) {
+                const std::string& design_name = token_elem.Attribute("value");
+                const ShipDesign* design = GetPredefinedShipDesign(design_name);
+                if (!design) {
+                    Logger().errorStream() << "SubstituteAndAppend couldn't get predefined ship design with name " << design_name;
+                    m_str += UserString("ERROR");
+                    return;
+                }
+                m_str += open_tag + design->Name() + close_tag;
+
             // empire token
             } else if (token == VarText::EMPIRE_ID_TAG) {
                 int empire_id = ALL_EMPIRES;
@@ -229,6 +240,7 @@ const std::string VarText::BUILDING_ID_TAG = "building";
 
 const std::string VarText::EMPIRE_ID_TAG = "empire";
 const std::string VarText::DESIGN_ID_TAG = "shipdesign";
+const std::string VarText::PREDEFINED_DESIGN_TAG = "predefinedshipdesign";
 
 const std::string VarText::TECH_TAG = "tech";
 const std::string VarText::BUILDING_TYPE_TAG = "buildingtype";

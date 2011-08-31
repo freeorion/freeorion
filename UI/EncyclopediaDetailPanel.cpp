@@ -399,6 +399,9 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             this->SetEmpire(lexical_cast<int>(data));
         } else if (link_type == VarText::DESIGN_ID_TAG) {
             this->SetDesign(lexical_cast<int>(data));
+        } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = GetPredefinedShipDesign(data))
+                this->SetDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
             this->SetTech(data);
@@ -438,6 +441,9 @@ void EncyclopediaDetailPanel::HandleLinkDoubleClick(const std::string& link_type
             ClientUI::GetClientUI()->ZoomToEmpire(lexical_cast<int>(data));
         } else if (link_type == VarText::DESIGN_ID_TAG) {
             ClientUI::GetClientUI()->ZoomToShipDesign(lexical_cast<int>(data));
+        } else if (link_type == VarText::PREDEFINED_DESIGN_TAG) {
+            if (const ShipDesign* design = GetPredefinedShipDesign(data))
+                ClientUI::GetClientUI()->ZoomToShipDesign(design->ID());
 
         } else if (link_type == VarText::TECH_TAG) {
             ClientUI::GetClientUI()->ZoomToTech(data);
@@ -854,6 +860,8 @@ void EncyclopediaDetailPanel::Refresh() {
                 Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find UniverseObject with id " << m_items_it->second;
                 return;
             }
+
+            detailed_description = obj->Dump();
 
             if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
                 name = ship->PublicName(client_empire_id);
