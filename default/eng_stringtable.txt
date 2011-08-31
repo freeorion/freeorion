@@ -3399,7 +3399,7 @@ TEST_EFFECT_MESSAGE2
 Effect SitRepEntry using int ValueRef! empire: %empire% design: %shipdesign% planet: %planet%
 
 EFFECT_ANCIENT_SHIP
-Ancient Ruins in %planet% have revealed the ship %text%.
+Ancient Ruins in %planet% have revealed a %predefinedshipdesign% ship.
 
 EFFECT_ANCIENT_BUILDING
 Ancient Ruins in %planet% have revealed a %buildingtype% building.
@@ -3407,7 +3407,7 @@ Ancient Ruins in %planet% have revealed a %buildingtype% building.
 EFFECT_ANCIENT_TECH
 Ancient Ruins in %planet% have revealed the %tech% technology.
 
-//The following is for monster spawning testing.
+#The following is for monster spawning testing.
 EFFECT_MONSTER_SPAWNING
 A %shiphull% was spawned in %system%!
 
@@ -3543,13 +3543,13 @@ DESC_DESIGN_HAS_PART_CLASS_NOT
 DESC_PREDEFINED_SHIP_DESIGN
  that is of the design %1%
 
-DESC_PREDEFINED_SHIP_DESIGN
+DESC_PREDEFINED_SHIP_DESIGN_NOT
  that is not of the design %1%
 
 DESC_NUMBERED_SHIP_DESIGN
  that is of the design %1%
 
-DESC_NUMBERED_SHIP_DESIGN
+DESC_NUMBERED_SHIP_DESIGN_NOT
  that is not of the design %1%
 
 DESC_CHANCE_PERCENTAGE
