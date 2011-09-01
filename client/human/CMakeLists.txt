@@ -221,13 +221,13 @@ set(THIS_EXE_LINK_LIBS
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
     ${BULLET_LIBRARIES}
+    ${ZLIB_LIBRARY}
 )
 
 if (WIN32)
     link_directories(${BOOST_LIBRARYDIR})
     set(THIS_EXE_LINK_LIBS
         ${THIS_EXE_LINK_LIBS}
-        ${ZLIB_LIBRARY}
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
         jpeg.lib libpng.lib glew32.lib
