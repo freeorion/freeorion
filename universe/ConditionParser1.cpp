@@ -120,6 +120,8 @@ namespace {
         Rule                    target;
         Rule                    stationary;
         Rule                    capital;
+        Rule                    monster;
+        Rule                    armed;
         OwnedByRule             owned_by;
         StringRefVecRule        homeworld;
         StringRefVecRule        building;
@@ -176,6 +178,14 @@ namespace {
         capital =
             str_p("capital")
             [capital.this_ = new_<Condition::Capital>()];
+
+        monster =
+            str_p("monster")
+            [monster.this_ = new_<Condition::Monster>()];
+
+        armed =
+            str_p("armed")
+            [armed.this_ = new_<Condition::Armed>()];
 
         building =
             str_p("building")
@@ -276,7 +286,11 @@ namespace {
             all[condition1_p.this_ = arg1]
             | source[condition1_p.this_ = arg1]
             | focus_type[condition1_p.this_ = arg1]
+            | stationary[condition1_p.this_ = arg1]
             | homeworld[condition1_p.this_ = arg1]
+            | capital[condition1_p.this_ = arg1]
+            | monster[condition1_p.this_ = arg1]
+            | armed[condition1_p.this_ = arg1]
             | building[condition1_p.this_ = arg1]
             | species[condition1_p.this_ = arg1]
             | planet_type[condition1_p.this_ = arg1]
@@ -286,7 +300,6 @@ namespace {
             | meter_value[condition1_p.this_ = arg1]
             | owned_by[condition1_p.this_ = arg1]
             | target[condition1_p.this_ = arg1]
-            | stationary[condition1_p.this_ = arg1]
             | and_[condition1_p.this_ = arg1]
             | or_[condition1_p.this_ = arg1]
             | not_[condition1_p.this_ = arg1];

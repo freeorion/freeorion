@@ -1074,6 +1074,74 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const
 }
 
 ///////////////////////////////////////////////////////////
+// Monster                                               //
+///////////////////////////////////////////////////////////
+Condition::Monster::Monster()
+{}
+
+std::string Condition::Monster::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_MONSTER";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Monster::Dump() const
+{
+    return DumpIndent() + "Monster\n";
+}
+
+bool Condition::Monster::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "Monster::Match passed no candidate object";
+        return false;
+    }
+
+    if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+        if (ship->IsMonster())
+            return true;
+
+    return false;
+}
+
+///////////////////////////////////////////////////////////
+// Armed                                                 //
+///////////////////////////////////////////////////////////
+Condition::Armed::Armed()
+{}
+
+std::string Condition::Armed::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_ARMED";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::Armed::Dump() const
+{
+    return DumpIndent() + "Armed\n";
+}
+
+bool Condition::Armed::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "Armed::Match passed no candidate object";
+        return false;
+    }
+
+    if (const Ship* ship = universe_object_cast<const Ship*>(candidate))
+        if (ship->IsArmed())
+            return true;
+
+    return false;
+}
+
+///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
 Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :

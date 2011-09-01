@@ -2102,7 +2102,7 @@ ENC_EMPIRE
 Empire
 
 EMPIRE_CAPITAL
-Capital:
+Capital: 
 
 NO_CAPITAL
 No Known Capital
@@ -3461,6 +3461,18 @@ DESC_CAPITAL
 
 DESC_CAPITAL_NOT
  that is not an empire's capital planet
+
+DESC_MONSTER
+ this is a space monster
+
+DESC_MONSTER_NOT
+ that is not a space monster
+
+DESC_ARMED
+ that is an armed ship
+
+DESC_ARMED_NOT
+ that is not an armed ship
 
 DESC_TYPE
  that is a %1%

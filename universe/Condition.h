@@ -40,6 +40,8 @@ namespace Condition {
     struct Target;
     struct Homeworld;
     struct Capital;
+    struct Monster;
+    struct Armed;
     struct Type;
     struct Building;
     struct HasSpecial;
@@ -320,6 +322,40 @@ private:
 struct Condition::Capital : public Condition::ConditionBase
 {
     Capital();
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches space monsters. */
+struct Condition::Monster : public Condition::ConditionBase
+{
+    Monster();
+    virtual bool        RootCandidateInvariant() const { return true; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches armed ships and monsters. */
+struct Condition::Armed : public Condition::ConditionBase
+{
+    Armed();
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -1208,6 +1244,18 @@ void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void Condition::Capital::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Monster::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::Armed::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }
