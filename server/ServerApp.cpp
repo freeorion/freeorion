@@ -1829,7 +1829,6 @@ void ServerApp::PostCombatProcessTurns()
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
-
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
     Logger().debugStream() << objects.Dump();
 
@@ -1880,16 +1879,6 @@ void ServerApp::PostCombatProcessTurns()
 
     Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
     Logger().debugStream() << objects.Dump();
-
-
-    // determine the IDs of new objects created before or during queue processing
-    std::vector<int> new_object_ids;
-    int current_turn = CurrentTurn();   // skip objects created on invalid turns or before this turn
-    if (current_turn >= 0 && current_turn != IMPOSSIBLY_LARGE_TURN) {
-        for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
-            if (it->second->CreationTurn() == current_turn)
-                new_object_ids.push_back(it->first);
-    }
 
     // Execute meter-related effects on objects created this turn, so that new
     // UniverseObjects will have effects applied to them this turn, allowing
