@@ -4158,6 +4158,8 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
 
     BackPropegateObjectMeters();
 
+    Logger().debugStream() << "Re-applying first turn meter effects and updating meters";
+
     // Re-apply meter effects, so that results depending on meter values can be
     // re-checked after initial setting of those meter values
     ApplyMeterEffectsAndUpdateMeters();

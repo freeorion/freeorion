@@ -251,7 +251,7 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase()
     double pop_growth = NextTurnPopGrowth();                        // may be negative
     double new_pop = cur_pop + pop_growth;
 
-    Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
+    //Logger().debugStream() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
 
     GetMeter(METER_HEALTH)->AddToCurrent(NextTurnHealthGrowth());   // change may be negative
 
