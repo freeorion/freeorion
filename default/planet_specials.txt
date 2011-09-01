@@ -582,6 +582,13 @@ Special
     description = "GAIA_SPECIAL_DESC"
     effectsgroups = [
         EffectsGroup
+            scope = And [
+                Contains Source
+                Planet
+            ]
+            effects = SetPlanetType Target.NextBetterPlanetType
+	
+	EffectsGroup
             scope = Source
             activation = Source
             effects = [

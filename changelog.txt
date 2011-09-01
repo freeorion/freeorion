@@ -23,6 +23,7 @@ Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
  ~ Experimental addition of various space monsters
  ~ Added Computronium Moon & Damaged Computronium Moon specials.
+ ~ Added automatic terraforming to Gaian planets
 
 Graphics:
  ~ Added binary star variant star graphics.
@@ -48,6 +49,7 @@ Bugs:
  ~ Fixed issue where planets would not feed themselves, even if they produced adequate food, while being blockaded.
  ~ Fixed issue where ordering a single ships to colonize multiple planets in the same system could leave nonfunctional cancel buttons on planet panels.
  ~ Fixed bug where actual system name was being shown instead of "Deep Space" in the FleetWnd.
+
 
 v0.3.16 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
