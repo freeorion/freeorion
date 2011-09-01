@@ -85,6 +85,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
     m_available_trade(0.0),
     m_just_conquered(false),
     m_is_about_to_be_colonized(false),
+    m_is_about_to_be_invaded(false),
     m_last_turn_attacked_by_ship(-1)
 {
     //Logger().debugStream() << "Planet::Planet(" << type << ", " << size <<")";
@@ -178,6 +179,13 @@ std::string Planet::Dump() const
         ++it;
         os << building_id << (it == m_buildings.end() ? "" : ", ");
     }
+    if (m_is_about_to_be_colonized)
+        os << " (About to be Colonize)";
+    if (m_is_about_to_be_invaded)
+        os << " (About to be Invaded)";
+    if (m_just_conquered)
+        os << " (Just Conquered)";
+    os << " last attacked on turn: " << m_last_turn_attacked_by_ship;
 
     return os.str();
 }
