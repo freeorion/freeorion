@@ -41,12 +41,12 @@ Slot10                          10          20          10      0       0       
 
 <8x11>
 PlanetSizeModToPlanetTypeDist   Swamp    Toxic  Inferno Radiated    Barren  Tundra  Desert  Terran  Ocean   AsteroidField   GasGiant
-NoWorld                         0        0      0       0           0       0       0       999     0       0               0
-Planetoid                       0        0      0       10          20      0       0       999     0       0               0
-Small                           0        0      0       10          10      0       0       999     0       0               0
-Medium                          5        0      0       0           0       5       5       999     10      0               0
-Large                           0        10     10      0           0       0       0       999     0       0               0
-Massive                         0        10     10      0           0       0       0       999     0       0               0
+NoWorld                         0        0      0       0           0       0       0       0       0       0               0
+Planetoid                       0        0      0       10          20      0       0       0       0       0               0
+Small                           0        0      0       10          10      0       0       0       0       0               0
+Medium                          5        0      0       0           0       5       5       10      10      0               0
+Large                           0        10     10      0           0       0       0       0       0       0               0
+Massive                         0        10     10      0           0       0       0       0       0       0               0
 Asteroid                        0        0      0       0           0       0       0       0       0       0               0
 GasGiant                        0        0      0       0           0       0       0       0       0       0               0
 
