@@ -1243,9 +1243,19 @@ void CreateShip::Execute(const ScriptingContext& context) const
         return;
     }
     ship->Rename(empire ? empire->NewShipName() : ship->Design()->Name());
-    ship->UniverseObject::GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
-    ship->UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
-    ship->UniverseObject::GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+
+    UniverseObject* obj = ship;
+    obj->ResetTargetMaxUnpairedMeters();
+    obj->ResetPairedActiveMeters();
+
+    obj->GetMeter(METER_MAX_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    obj->GetMeter(METER_MAX_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    obj->GetMeter(METER_MAX_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+    obj->GetMeter(METER_FUEL)->SetCurrent(Meter::LARGE_VALUE);
+    obj->GetMeter(METER_SHIELD)->SetCurrent(Meter::LARGE_VALUE);
+    obj->GetMeter(METER_STRUCTURE)->SetCurrent(Meter::LARGE_VALUE);
+
+    obj->BackPropegateMeters();
 
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);
