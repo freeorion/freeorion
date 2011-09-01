@@ -219,7 +219,7 @@ PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
 namespace {
     PlanetType RingNextPlanetType(PlanetType current_type) {
         PlanetType next(PlanetType(int(current_type)+1));
-        if (next >= NUM_PLANET_TYPES)
+        if (next >= PT_ASTEROIDS)
             next = PT_SWAMP;
         return next;
     }
