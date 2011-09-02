@@ -1481,13 +1481,18 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (!result.full)
         ReportError(input.c_str(), result);
 
-#ifdef OUTPUT_DESIGNS_LIST
+//#ifdef OUTPUT_DESIGNS_LIST
     Logger().debugStream() << "Predefined Ship Designs:";
     for (iterator it = begin(); it != end(); ++it) {
         const ShipDesign* d = it->second;
         Logger().debugStream() << " ... " << d->Name();
     }
-#endif
+    Logger().debugStream() << "Monster Ship Designs:";
+    for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
+        const ShipDesign* d = it->second;
+        Logger().debugStream() << " ... " << d->Name();
+    }
+//#endif
 }
 
 PredefinedShipDesignManager::~PredefinedShipDesignManager() {
