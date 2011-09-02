@@ -433,9 +433,9 @@ namespace {
              >> ships_label
              >> (name_p[push_back_(monster_fleet_plan_p.ship_designs, arg1)] |
                  ('[' >> *(name_p[push_back_(monster_fleet_plan_p.ship_designs, arg1)]) >> ']'))
-             >> ((spawn_rate_label >>   real_p[monster_fleet_plan_p.spawn_rate, arg1]) |
+             >> ((spawn_rate_label >>   real_p[monster_fleet_plan_p.spawn_rate = arg1]) |
                                         eps_p[monster_fleet_plan_p.spawn_rate = val(1.0)])
-             >> ((spawn_limit_label >>  int_p[monster_fleet_plan_p.spawn_limit, arg1]) |
+             >> ((spawn_limit_label >>  int_p[monster_fleet_plan_p.spawn_limit = arg1]) |
                                         eps_p[monster_fleet_plan_p.spawn_limit = val(9999)])
              >> ((location_label >>     condition_p[monster_fleet_plan_p.location = arg1]) |
                                         eps_p[monster_fleet_plan_p.location = val(NULL_COND)])
