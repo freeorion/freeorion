@@ -3,12 +3,74 @@ MonsterFleet
     ships = [
         "SM_KRILL_1"
     ]
-    spawnrate = 1.5
+    spawnrate = 1.0
     spawnlimit = 9999
     location = And [
-        System
-        Not Contains Design "SM_KRILL"
-        Not WithinDistance 1 Contains And [
+        Not Contains Monster
+        Not WithinDistance 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    
+MonsterFleet
+    name = "SM_TREE"
+    ships = [
+        "SM_TREE"
+    ]
+    spawnrate = 0.5
+    spawnlimit = 9999
+    location = And [
+        Not Contains Monster
+        Not WithinDistance 2 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    
+MonsterFleet
+    name = "SM_DRONE_FACTORY"
+    ships = [
+        "SM_DRONE_FACTORY"
+    ]
+    spawnrate = 0.2
+    spawnlimit = 3
+    location = And [
+        Not Contains Or [
+            Armed
+            Monster
+        ]
+        Not WithinDistance 3 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_FLOATER"
+    ships = [
+        "SM_FLOATER"
+    ]
+    spawnrate = 0.2
+    spawnlimit = 50
+    location = And [
+        Not Contains Monster
+        Not WithinDistance 3 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_DRAGON"
+    ships = [
+        "SM_DRAGON"
+    ]
+    spawnrate = 0.2
+    spawnlimit = 50
+    location = And [
+        Not Contains Monster
+        Not WithinDistance 5 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]

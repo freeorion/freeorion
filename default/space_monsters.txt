@@ -72,7 +72,6 @@ ShipDesign
     graphic = "icons/monsters/floater.png"
     model = "seed"
     
-/*
 ShipDesign
     name = "SM_SQUID"
     description = "SM_SQUID_DESC"
@@ -102,7 +101,6 @@ ShipDesign
     ]
     graphic = "icons/monsters/dragon.png"
     model = "seed"
-*/
 
 ShipDesign
     name = "SM_GUARD_1"
@@ -117,8 +115,7 @@ ShipDesign
     ]
     graphic = "icons/monsters/sentry.png"
     model = "seed"
-    
-/*
+
 ShipDesign
     name = "SM_GUARD_2"
     description = "SM_GUARD_2"
@@ -132,7 +129,6 @@ ShipDesign
     ]
     graphic = "icons/monsters/sentinel.png"
     model = "seed"
-*/
 
 ShipDesign
     name = "SM_GUARD_3"
