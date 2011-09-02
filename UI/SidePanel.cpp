@@ -1446,10 +1446,13 @@ void SidePanel::PlanetPanel::Select(bool selected)
 
 namespace {
     void CancelColonizeInvadeScrapShipOrders(Ship* ship) {
+        if (!ship)
+            return;
+
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return;
-        const OrderSet& orders = app->Orders();
+        const OrderSet orders = app->Orders();
 
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != UniverseObject::INVALID_OBJECT_ID) {
