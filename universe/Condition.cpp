@@ -4765,7 +4765,7 @@ std::string Condition::And::Dump() const
         retval += m_operands[i]->Dump();
     }
     --g_indent;
-    retval += "\n" + DumpIndent() + "]\n";
+    retval += "\n" + DumpIndent() + "]";
     return retval;
 }
 
@@ -4865,7 +4865,7 @@ std::string Condition::Or::Dump() const
         retval += m_operands[i]->Dump();
     }
     --g_indent;
-    retval += "\n" + DumpIndent() + "]\n";
+    retval += "\n" + DumpIndent() + "]";
     return retval;
 }
 
