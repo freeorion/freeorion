@@ -778,8 +778,35 @@ void EncyclopediaDetailPanel::Refresh() {
         cost = design->PerTurnCost();
         cost_units = UserString("ENC_PP");
         general_type = design->IsMonster() ? UserString("ENC_MONSTER") : UserString("ENC_SHIP_DESIGN");
+
+        std::string hull_link;
+        if (!design->Hull().empty())
+             hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, design->Hull());
+
+        std::string parts_list;
+        const std::vector<std::string>& parts = design->Parts();
+        std::vector<std::string> non_empty_parts;
+        for (std::vector<std::string>::const_iterator part_it = parts.begin();
+             part_it != parts.end(); ++part_it)
+        {
+            if (!part_it->empty())
+                non_empty_parts.push_back(*part_it);
+        }
+        if (!non_empty_parts.empty()) {
+            for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
+                 part_it != non_empty_parts.end(); ++part_it)
+            {
+                if (part_it != non_empty_parts.begin())
+                    parts_list += ", ";
+                parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
+            }
+        }
+
+
         detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
             % design->Description()
+            % hull_link
+            % parts_list
             % static_cast<int>(design->SRWeapons().size())
             % static_cast<int>(design->LRWeapons().size())
             % static_cast<int>(design->FWeapons().size())
@@ -787,11 +814,12 @@ void EncyclopediaDetailPanel::Refresh() {
             % design->Structure()
             % design->Shields()
             % design->Detection()
+            % design->Stealth()
             % design->BattleSpeed()
             % design->StarlaneSpeed()
             % design->Fuel()
             % design->ColonyCapacity()
-            % design->Stealth());
+            % design->TroopCapacity());
 
         // ships of this design
         std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
@@ -833,8 +861,34 @@ void EncyclopediaDetailPanel::Refresh() {
             cost = incomplete_design->ProductionCost();
             cost_units = UserString("ENC_PP");
 
+            std::string hull_link;
+            if (!incomplete_design->Hull().empty())
+                 hull_link = LinkTaggedText(VarText::SHIP_HULL_TAG, incomplete_design->Hull());
+
+            std::string parts_list;
+            const std::vector<std::string>& parts = incomplete_design->Parts();
+            std::vector<std::string> non_empty_parts;
+            for (std::vector<std::string>::const_iterator part_it = parts.begin();
+                 part_it != parts.end(); ++part_it)
+            {
+                if (!part_it->empty())
+                    non_empty_parts.push_back(*part_it);
+            }
+            if (!non_empty_parts.empty()) {
+                for (std::vector<std::string>::const_iterator part_it = non_empty_parts.begin();
+                     part_it != non_empty_parts.end(); ++part_it)
+                {
+                    if (part_it != non_empty_parts.begin())
+                        parts_list += ", ";
+                    parts_list += LinkTaggedText(VarText::SHIP_PART_TAG, *part_it);
+                }
+            }
+
+
             detailed_description = str(FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STR"))
                 % incomplete_design->Description()
+                % hull_link
+                % parts_list
                 % static_cast<int>(incomplete_design->SRWeapons().size())
                 % static_cast<int>(incomplete_design->LRWeapons().size())
                 % static_cast<int>(incomplete_design->FWeapons().size())
@@ -842,11 +896,12 @@ void EncyclopediaDetailPanel::Refresh() {
                 % incomplete_design->Structure()
                 % incomplete_design->Shields()
                 % incomplete_design->Detection()
+                % incomplete_design->Stealth()
                 % incomplete_design->BattleSpeed()
                 % incomplete_design->StarlaneSpeed()
                 % incomplete_design->Fuel()
                 % incomplete_design->ColonyCapacity()
-                % incomplete_design->Stealth());
+                % incomplete_design->TroopCapacity());
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
