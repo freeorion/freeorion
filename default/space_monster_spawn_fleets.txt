@@ -7,7 +7,7 @@ MonsterFleet
     spawnlimit = 9999
     location = And [
         Not Contains Monster
-        Not WithinDistance 2 Contains And [
+        Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
@@ -22,7 +22,7 @@ MonsterFleet
     spawnlimit = 9999
     location = And [
         Not Contains Monster
-        Not WithinDistance 2 Contains And [
+        Not WithinStarlaneJumps 2 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
@@ -40,7 +40,7 @@ MonsterFleet
             Armed
             Monster
         ]
-        Not WithinDistance 3 Contains And [
+        Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
@@ -55,7 +55,7 @@ MonsterFleet
     spawnlimit = 50
     location = And [
         Not Contains Monster
-        Not WithinDistance 3 Contains And [
+        Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]
@@ -70,7 +70,7 @@ MonsterFleet
     spawnlimit = 50
     location = And [
         Not Contains Monster
-        Not WithinDistance 5 Contains And [
+        Not WithinStarlaneJumps 5 Contains And [
             Planet
             OwnedBy AnyEmpire
         ]

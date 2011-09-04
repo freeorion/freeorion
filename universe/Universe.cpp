@@ -3143,17 +3143,13 @@ FleetPlan::FleetPlan(const std::string& fleet_name, const std::vector<std::strin
     m_name(fleet_name),
     m_ship_designs(ship_design_names),
     m_name_in_stringtable(lookup_name_userstring)
-{
-    Logger().debugStream() << "FleetPlan: " << fleet_name;
-}
+{}
 
 FleetPlan::FleetPlan() :
     m_name(""),
     m_ship_designs(),
     m_name_in_stringtable(false)
-{
-    Logger().debugStream() << "FleetPlan: default";
-}
+{}
 
 FleetPlan::~FleetPlan()
 {}
@@ -3180,18 +3176,14 @@ MonsterFleetPlan::MonsterFleetPlan(const std::string& fleet_name, const std::vec
     m_spawn_rate(spawn_rate),
     m_spawn_limit(spawn_limit),
     m_location(location)
-{
-    Logger().debugStream() << "MonsterFleetPlan: " << fleet_name;
-}
+{}
 
 MonsterFleetPlan::MonsterFleetPlan() :
     FleetPlan(),
     m_spawn_rate(1.0),
     m_spawn_limit(9999),
     m_location(0)
-{
-    Logger().debugStream() << "MonsterFleetPlan: default";
-}
+{}
 
 MonsterFleetPlan::~MonsterFleetPlan()
 {
@@ -3393,7 +3385,7 @@ namespace {
 //#ifdef OUTPUT_PLANS_LIST
         Logger().debugStream() << "Starting Monster Fleet Plans:";
         for (iterator it = begin(); it != end(); ++it)
-            Logger().debugStream() << " ... " << (*it)->Name();
+            Logger().debugStream() << " ... " << (*it)->Name() << " spawn rate: " << (*it)->SpawnRate() << " spawn limit: " << (*it)->SpawnLimit();
 //#endif
     }
 
@@ -4349,6 +4341,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
         monster_chance = 1.0 / static_cast<double>(inverse_monster_chance);
     else
         return;
+    Logger().debugStream() << "Default monster spawn chance: " << monster_chance;
 
     // sets of monsters to generate
     const MonsterFleetPlanManager& monster_manager = GetMonsterFleetPlanManager();
@@ -4403,7 +4396,8 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
 
                     // test random chance to place this monster fleet
                     double this_monster_fleet_chance = std::max(0.0, monster_chance * plan->SpawnRate());
-                    if (RandZeroToOne() > this_monster_fleet_chance) {
+                    Logger().debugStream() << "... ... chance: " << this_monster_fleet_chance;
+                    if (RandZeroToOne() < this_monster_fleet_chance) {
                         Logger().debugStream() << "... ... passed random chance test";
 
                         // spawn monster fleet

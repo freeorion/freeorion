@@ -677,6 +677,7 @@ namespace {
             break;
         case AFFIL_ANY:
             return !candidate->Unowned();
+            break;
         default:
             return false;
             break;
