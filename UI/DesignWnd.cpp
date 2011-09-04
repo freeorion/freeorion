@@ -1782,7 +1782,6 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     DoLayout();
 }
 
-
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(0);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
@@ -2041,7 +2040,14 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const
     const std::string& graphic = m_hull ? m_hull->Graphic() : EMPTY_STRING;
 
     // update stored design
-    m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, graphic, "some model"));
+    try {
+        m_incomplete_design.reset(new ShipDesign(name, description, empire_id, CurrentTurn(), hull, parts, graphic, "some model"));
+    } catch (...) {
+        // had a weird crash in the above call a few times, but I can't seem to
+        // replicate it now.  hopefully catching any exception here will
+        // prevent crashes and instead just cause the incomplete design details
+        // to not update when expected.
+    }
 }
 
 //////////////////////////////////////////////////
