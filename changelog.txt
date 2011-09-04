@@ -18,6 +18,7 @@ Balancing:
  ~ Planets can be seen, although without details, by any object in their system, regardless of detection and stealth.  Detection strength above planet stealth gives details about the planet.
  ~ Planets do not increase their shield, troops, or defense meters on a turn they are attacked.
  ~ Fleets must end a turn's movement if they arrive at a system that contains hostile fleets and no friendly fleets.
+ ~ Increased base detection of all hulls to at least 5.
  
 Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
