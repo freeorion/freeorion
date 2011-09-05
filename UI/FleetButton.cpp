@@ -412,8 +412,12 @@ boost::shared_ptr<GG::Texture> FleetHeadIcon(const Fleet* fleet, FleetButton::Si
     std::string main_filename = "head-scout.png";
     if (fleet && fleet->HasColonyShips())
         main_filename = "head-colony.png";
-    else if (fleet && fleet->HasMonsters())
+    else if (fleet && fleet->HasTroopShips())
+        main_filename = "head-lander.png";
+    else if (fleet && fleet->HasMonsters() && fleet->HasArmedShips())
         main_filename = "head-monster.png";
+    else if (fleet && fleet->HasMonsters() && !fleet->HasArmedShips())
+        main_filename = "head-monster-harmless.png";
     else if (fleet && fleet->HasArmedShips())
         main_filename = "head-warship.png";
 

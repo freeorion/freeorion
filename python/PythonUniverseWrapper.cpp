@@ -210,8 +210,10 @@ namespace FreeOrionPython {
             .add_property("nextSystemID",               &Fleet::NextSystemID)
             .add_property("speed",                      &Fleet::Speed)
             .add_property("canChangeDirectionEnRoute",  &Fleet::CanChangeDirectionEnRoute)
+            .add_property("hasMonsters",                &Fleet::HasMonsters)
             .add_property("hasArmedShips",              &Fleet::HasArmedShips)
             .add_property("hasColonyShips",             &Fleet::HasColonyShips)
+            .add_property("hasTroopShips",              &Fleet::HasTroopShips)
             .add_property("numShips",                   &Fleet::NumShips)
             .add_property("empty",                      &Fleet::Empty)
             .add_property("shipIDs",                    make_function(&Fleet::ShipIDs,      return_internal_reference<>()))
@@ -224,8 +226,10 @@ namespace FreeOrionPython {
             .add_property("design",             make_function(&Ship::Design,                return_value_policy<reference_existing_object>()))
             .add_property("designID",           &Ship::DesignID)
             .add_property("fleetID",            &Ship::FleetID)
+            .add_property("isMonster",          &Ship::IsMonster)
             .add_property("isArmed",            &Ship::IsArmed)
             .add_property("canColonize",        &Ship::CanColonize)
+            .add_property("canInvade",          &Ship::HasTroops)
             .add_property("speed",              &Ship::Speed)
         ;
 

@@ -567,6 +567,16 @@ bool Fleet::HasColonyShips() const
     return false;
 }
 
+bool Fleet::HasTroopShips() const
+{
+    const ObjectMap& objects = GetMainObjectMap();
+    for (Fleet::const_iterator it = begin(); it != end(); it++)
+        if (const Ship* ship = objects.Object<Ship>(*it))
+            if (ship->HasTroops())
+                return true;
+    return false;
+}
+
 int Fleet::NumShips() const
 {
     return m_ships.size();

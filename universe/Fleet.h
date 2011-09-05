@@ -68,15 +68,17 @@ public:
     bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
     bool                                HasColonyShips() const;             ///< Returns true if there is at least one colony ship in the fleet.
+    bool                                HasTroopShips() const;              ///< Returns true if there is at least one troop ship in the fleet.
     int                                 NumShips() const;                   ///< Returns number of ships in fleet.
     bool                                Empty() const;                      ///< Returns true if fleet contains no ships, false otherwise.
     virtual bool                        Contains(int object_id) const;      ///< Returns true iff this Fleet contains a ship with ID \a id.
     virtual std::vector<UniverseObject*>FindObjects() const;                ///< returns objects contained within this fleet
     virtual std::vector<int>            FindObjectIDs() const;              ///< returns ids of objects contained within this fleet
 
-    /** Returns true iff this fleet is moving, but the route is unknown.  This is usually the case when a foreign
-      * player A's fleet is represented on another player B's client, and player B has never seen one or more of the
-      * systems in the fleet's route. */
+    /** Returns true iff this fleet is moving, but the route is unknown.  This
+      * is usually the case when a foreign player A's fleet is represented on
+      * another player B's client, and player B has never seen one or more of
+      * the systems in the fleet's route. */
     bool                                UnknownRoute() const;
 
     /** Returns true iff this fleet arrived at its current System this turn. */

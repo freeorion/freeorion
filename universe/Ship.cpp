@@ -266,11 +266,7 @@ bool Ship::CanColonize() const {
 
 bool Ship::HasTroops() const {
     const ShipDesign* design = Design();
-    if (!design)
-        return false;
-    if (!design->HasTroops())
-        return false;
-    return true;
+    return design && design->HasTroops();
 }
 
 const std::string& Ship::SpeciesName() const {
