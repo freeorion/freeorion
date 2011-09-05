@@ -484,25 +484,32 @@ PartType::PartType(
         break;
     }
     case PC_SHIELD:
-        m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_SHIELD,     boost::get<double>(m_stats)));
         break;
     case PC_DETECTION:
-        m_effects.push_back(IncreaseMeter(METER_DETECTION,      boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_DETECTION,      boost::get<double>(m_stats)));
         break;
     case PC_STEALTH:
-        m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_STEALTH,        boost::get<double>(m_stats)));
         break;
     case PC_FUEL:
-        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       boost::get<double>(m_stats)));
         break;
     case PC_ARMOUR:
-        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  boost::get<double>(m_stats)));
         break;
     case PC_BATTLE_SPEED:
-        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   boost::get<double>(m_stats)));
         break;
     case PC_STARLANE_SPEED:
-        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<double>(m_stats)));
+        if (boost::get<double>(m_stats) != 0)
+            m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, boost::get<double>(m_stats)));
     default:
         break;
     }
@@ -642,11 +649,17 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
-    m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
-    m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
-    m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+    if (m_fuel != 0)
+        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
+    if (m_stealth != 0)
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
+    if (m_structure != 0)
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
+    if (m_battle_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
+    if (m_starlane_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);
 }
@@ -672,11 +685,17 @@ HullType::HullType(const std::string& name, const std::string& description,
     m_effects(),
     m_graphic(graphic)
 {
-    m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
-    m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
-    m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
-    m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
-    m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+    if (m_fuel != 0)
+        m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
+    if (m_stealth != 0)
+        m_effects.push_back(IncreaseMeter(METER_STEALTH,        m_stealth));
+    if (m_structure != 0)
+        m_effects.push_back(IncreaseMeter(METER_MAX_STRUCTURE,  m_structure));
+    if (m_battle_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_BATTLE_SPEED,   m_battle_speed));
+    if (m_starlane_speed != 0)
+        m_effects.push_back(IncreaseMeter(METER_STARLANE_SPEED, m_starlane_speed));
+
     for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = effects.begin(); it != effects.end(); ++it)
         m_effects.push_back(*it);
 }
