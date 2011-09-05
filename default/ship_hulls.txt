@@ -1510,8 +1510,6 @@ Hull
     ]
     graphic = ""
     
-//   > - - M O N S T E R S - - <
-    
 Hull
     name = "SH_WEAK_MONSTER_BODY"
     description = "SH_WEAK_MONSTER_BODY_DESC"
@@ -1536,7 +1534,7 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = Random probability = 0.5
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -1545,8 +1543,16 @@ Hull
             ]
         EffectsGroup
             scope = And [
-                Source
-                ContainedBy Star type = [Blue White]
+                System
+                Star type = [Blue White]
+                Contains Source
+                Not Number low = 3 high = 9999 condition = And [
+                    Monster
+                    ContainedBy And [
+                        System
+                        Contains Source
+                    ]
+                ]
             ]
             activation = Random probability = 0.1
             stackinggroup = "TREE_GROWTH"
@@ -1567,24 +1573,16 @@ Hull
     producible = false
     slots = Slot type = External position = (0.30, 0.15)
     location = All
-        effectsgroups = [
+    effectsgroups = [
         EffectsGroup
             scope = And [
-                Source
-                ContainedBy Star type = [Blue White]
+                System
+                Star type = [Blue White]
+                Contains Source
             ]
             activation = Random probability = 0.1
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
-
-        EffectsGroup
-            scope = And [
-                Source
-                ContainedBy Star type = [Blue White]
-            ]
-            activation = Random probability = 0.05
-            stackinggroup = "TREE_GROWTH"
-            effects = CreateShip "SM_TREE"
     ]
         graphic = ""    
     
@@ -1607,7 +1605,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-        effectsgroups =
+    effectsgroups =
         EffectsGroup
             scope = And [
                 Fleet

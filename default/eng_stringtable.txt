@@ -3467,7 +3467,7 @@ DESC_CAPITAL_NOT
  that is not an empire's capital planet
 
 DESC_MONSTER
- this is a space monster
+ that is a space monster
 
 DESC_MONSTER_NOT
  that is not a space monster
