@@ -1349,7 +1349,7 @@ public:
                         it->second = ValidShipTransfer(ship, target_fleet);
             } else {
                 // no valid drop type string
-                std::cerr << "row drop " << std::endl;
+                Logger().errorStream() << "FleetsListBox unrecognized drop type: " << it->first->DragDropDataType();
             }
         }
     }
