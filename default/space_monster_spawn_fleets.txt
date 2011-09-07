@@ -3,7 +3,7 @@ MonsterFleet
     ships = [
         "SM_KRILL_1"
     ]
-    spawnrate = 1.0
+    spawnrate = 2.0
     spawnlimit = 9999
     location = And [
         Not Contains Monster
@@ -18,7 +18,7 @@ MonsterFleet
     ships = [
         "SM_TREE"
     ]
-    spawnrate = 0.5
+    spawnrate = 1.0
     spawnlimit = 9999
     location = And [
         Not Contains Monster
@@ -33,8 +33,26 @@ MonsterFleet
     ships = [
         "SM_DRONE_FACTORY"
     ]
-    spawnrate = 0.2
-    spawnlimit = 3
+    spawnrate = 0.4
+    spawnlimit = 5
+    location = And [
+        Not Contains Or [
+            Armed
+            Monster
+        ]
+        Not WithinStarlaneJumps 3 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+
+MonsterFleet
+    name = "SM_DRONE"
+    ships = [
+        "SM_DRONE"
+    ]
+    spawnrate = 0.1
+    spawnlimit = 9999
     location = And [
         Not Contains Or [
             Armed
@@ -51,7 +69,7 @@ MonsterFleet
     ships = [
         "SM_FLOATER"
     ]
-    spawnrate = 0.2
+    spawnrate = 0.4
     spawnlimit = 50
     location = And [
         Not Contains Monster
@@ -66,7 +84,7 @@ MonsterFleet
     ships = [
         "SM_DRAGON"
     ]
-    spawnrate = 0.2
+    spawnrate = 0.3
     spawnlimit = 50
     location = And [
         Not Contains Monster
