@@ -168,3 +168,120 @@ ShipDesign
     ]
     graphic = "icons/ship_parts/antimatter_tank.png"
     model = "seed"
+
+ShipDesign
+    name = "SM_KRAKEN_1"
+    description = "SM_KRAKEN_1_DESC"
+    lookup_strings = true
+    hull = "SH_KRAKEN_1_BODY"
+    parts = [
+        ""
+        ""
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/kraken-1.png"
+    model = "seed"
+        
+ShipDesign
+    name = "SM_KRAKEN_2"
+    description = "SM_KRAKEN_2_DESC"
+    lookup_strings = true
+    hull = "SH_KRAKEN_2_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        ""
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/kraken-1.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_KRAKEN_3"
+    description = "SM_KRAKEN_3_DESC"
+    lookup_strings = true
+    hull = "SH_KRAKEN_3_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        "LR_NUCLEAR_MISSILE"
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/kraken-1.png"
+    model = "seed"
+        
+ShipDesign
+    name = "SM_SNOWFLAKE_1"
+    description = "SM_SNOWFLAKE_1_DESC"
+    lookup_strings = true
+    hull = "SH_SNOWFLAKE_1_BODY"
+    parts = [
+        ""
+        ""
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/snowflake-1.png"
+    model = "seed"
+        
+ShipDesign
+    name = "SM_SNOWFLAKE_2"
+    description = "SM_SNOWFLAKE_2_DESC"
+    lookup_strings = true
+    hull = "SH_SNOWFLAKE_2_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        ""
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/snowflake-1.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_SNOWFLAKE_3"
+    description = "SM_SNOWFLAKE_3_DESC"
+    lookup_strings = true
+    hull = "SH_SNOWFLAKE_3_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        "LR_NUCLEAR_MISSILE"
+        "FU_ZERO_FUEL"
+        ]
+    graphic = "icons/monsters/snowflake-1.png"
+    model = "seed"
+        
+ShipDesign
+    name = "SM_JUGGERNAUT_1"
+    description = "SM_JUGGERNAUT_1_DESC"
+    lookup_strings = true
+    hull = "SH_JUGGERNAUT_1_BODY"
+    parts = [
+        ""
+        ""
+        ""
+        ]
+    graphic = "icons/monsters/juggernaut-1.png"
+    model = "seed"
+        
+ShipDesign
+    name = "SM_JUGGERNAUT_2"
+    description = "SM_JUGGERNAUT_2_DESC"
+    lookup_strings = true
+    hull = "SH_JUGGERNAUT_2_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        ""
+        ""
+        ]
+    graphic = "icons/monsters/juggernaut-1.png"
+    model = "seed"
+
+ShipDesign
+    name = "SM_JUGGERNAUT_3"
+    description = "SM_JUGGERNAUT_3_DESC"
+    lookup_strings = true
+    hull = "SH_JUGGERNAUT_3_BODY"
+    parts = [
+        "SR_MASS_DRIVER"
+        "LR_NUCLEAR_MISSILE"
+        ""
+        ]
+    graphic = "icons/monsters/juggernaut-1.png"
+    model = "seed"

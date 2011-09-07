@@ -545,7 +545,11 @@ Special
     description = "COMPUTRONIUM_SPECIAL_DESC"
     effectsgroups = [       
 	    EffectsGroup
-            scope = Source
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+                OwnedBy TheEmpire Source.Owner
+            ]
             activation = Focus "FOCUS_RESEARCH"
             effects = SetTargetResearch Value * 2
         EffectsGroup     
@@ -559,9 +563,13 @@ Special
     name = "COMPUTRONIUM_BROKEN_SPECIAL"
     description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
     effectsgroups = EffectsGroup
-            scope = Source
-            activation = Focus "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value * 1.5
+        scope = And [
+            Planet
+            ContainedBy Contains Source
+            OwnedBy TheEmpire Source.Owner
+        ]
+        activation = Focus "FOCUS_RESEARCH"
+        effects = SetTargetResearch Value * 1.5
     
     graphic = "icons/specials_huge/computronium-broken.png"
 
@@ -571,11 +579,10 @@ Special
     effectsgroups = EffectsGroup
             scope = Source
             effects = [
-		SetTargetConstruction Value + 15
+		        SetTargetConstruction Value + 15
                 RemoveSpecial "ABANDONED_COLONY_SPECIAL"
-	]
-    
-    graphic = "icons/specials_huge/computronium-broken.png"
+	        ]
+    graphic = "icons/specials_huge/abandoned-colony.png"
     
 Special
     name = "GAIA_SPECIAL"
@@ -588,7 +595,7 @@ Special
             ]
             effects = SetPlanetType Target.NextBetterPlanetType
 	
-	EffectsGroup
+		EffectsGroup
             scope = Source
             activation = Source
             effects = [
@@ -600,7 +607,7 @@ Special
         	scope = Source     
         	activation = AND [
         	    Not Turn low = 1 high = 99999
-        	    Not WithinDistance 4 Contains And [
+        	    Not WithinStarlaneJumps 4 Contains And [
                     Planet
                     OwnedBy AnyEmpire
                 ]
@@ -615,3 +622,42 @@ Special
         	effects = Destroy
     ]
     graphic = "icons/specials_huge/gaia.png"
+    
+Special
+    name = "KRAKEN_NEST_SPECIAL"
+    description = "KRAKEN_NEST_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+            scope = Source
+            activation = Random probability = 0.16
+            effects = [
+		        CreateShip "SM_KRAKEN_1"
+		        CreateShip "SM_KRAKEN_2"
+		        RemoveSpecial "KRAKEN_NEST_SPECIAL"
+	        ]
+    graphic = "icons/specials_huge/kraken-nest.png"
+    
+Special
+    name = "SNOWFLAKE_NEST_SPECIAL"
+    description = "SNOWFLAKE_NEST_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+            scope = Source
+            activation = Random probability = 0.16
+            effects = [
+		        CreateShip "SM_SNOWFLAKE_1"
+		        CreateShip "SM_SNOWFLAKE_2"
+		        RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
+	        ]
+    graphic = "icons/specials_huge/snowflake-nest.png"
+    
+Special
+    name = "JUGGERNAUT_NEST_SPECIAL"
+    description = "JUGGERNAUT_NEST_SPECIAL_DESC"
+    effectsgroups = EffectsGroup
+            scope = Source
+            activation = Random probability = 0.16
+            effects = [
+		        CreateShip "SM_JUGGERNAUT_1"
+		        CreateShip "SM_JUGGERNAUT_2"
+		        RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
+	        ]
+    graphic = "icons/specials_huge/juggernaut-nest.png"

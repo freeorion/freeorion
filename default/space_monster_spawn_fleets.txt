@@ -93,3 +93,48 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
+    
+MonsterFleet
+    name = "SM_KRAKEN_1"
+    ships = [
+        "SM_KRAKEN_1"
+    ]
+    spawnrate = 0.5
+    spawnlimit = 100
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    
+MonsterFleet
+    name = "SM_SNOWFLAKE_1"
+    ships = [
+        "SM_SNOWFLAKE_1"
+    ]
+    spawnrate = 0.5
+    spawnlimit = 100
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]
+    
+MonsterFleet
+    name = "SM_JUGGERNAUT_1"
+    ships = [
+        "SM_JUGGERNAUT_1"
+    ]
+    spawnrate = 0.5
+    spawnlimit = 100
+    location = And [
+        Not Contains Monster
+        Not WithinStarlaneJumps 4 Contains And [
+            Planet
+            OwnedBy AnyEmpire
+        ]
+    ]

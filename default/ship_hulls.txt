@@ -2084,3 +2084,342 @@ Hull
             ]
     ]
     graphic = ""
+    
+//   KRAKEN
+
+Hull
+    name = "SH_KRAKEN_1_BODY"
+    description = "SH_KRAKEN_1_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 30
+    fuel = 5
+    stealth = 5
+    structure = 30
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_KRAKEN_2_BODY"
+    description = "SH_KRAKEN_2_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 30
+    fuel = 5
+    stealth = 5
+    structure = 30
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_KRAKEN_3_BODY"
+    description = "SH_KRAKEN_3_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 30
+    fuel = 5
+    stealth = 5
+    structure = 30
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+//   SNOWFLAKE
+
+Hull
+    name = "SH_SNOWFLAKE_1_BODY"
+    description = "SH_SNOWFLAKE_1_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 40
+    fuel = 5
+    stealth = 5
+    structure = 20
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_SNOWFLAKE_2_BODY"
+    description = "SH_SNOWFLAKE_2_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 40
+    fuel = 5
+    stealth = 5
+    structure = 20
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_SNOWFLAKE_3_BODY"
+    description = "SH_SNOWFLAKE_3_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 40
+    fuel = 5
+    stealth = 5
+    structure = 20
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+//   JUGGERNAUT
+
+Hull
+    name = "SH_JUGGERNAUT_1_BODY"
+    description = "SH_JUGGERNAUT_1_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 20
+    fuel = 5
+    stealth = 5
+    structure = 40
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_JUGGERNAUT_2_BODY"
+    description = "SH_JUGGERNAUT_2_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 20
+    fuel = 5
+    stealth = 5
+    structure = 40
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""
+    
+Hull
+    name = "SH_JUGGERNAUT_3_BODY"
+    description = "SH_JUGGERNAUT_3_BODY_DESC"
+    speed = 20
+    starlaneSpeed = 20
+    fuel = 5
+    stealth = 5
+    structure = 40
+    buildCost = 1
+    buildTime = 1
+    producible = false
+    slots = [
+        Slot type = External position = (0.20, 0.15)
+        Slot type = External position = (0.40, 0.15)
+        Slot type = Internal position = (0.50, 0.65)
+    ]
+    location = All
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Fleet
+                Stationary
+                Contains Source
+            ]
+            activation = Random probability = 0.3
+            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            effects = SetDestination destination = And [
+                System
+                Not Contains Source
+                Not Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+                WithinStarlaneJumps 1 Source
+            ]
+    graphic = ""

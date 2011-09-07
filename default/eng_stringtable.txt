@@ -298,6 +298,51 @@ Warden
 SM_GUARD_3_DESC
 Wardens guard cool major stuff.
 
+SM_KRAKEN_1
+Larval Kraken
+SM_KRAKEN_1_DESC
+In the larval form, a kraken is a cautious and harmless type of space-boure fauna.  Its natual prey is the krill swarms, which it help to keep in check.  But a well-fed larval kraken may grow into a larger and more dangerous adult form.
+
+SM_KRAKEN_2
+Kraken
+SM_KRAKEN_2_DESC
+A formidible medium-weight space monster.
+
+SM_KRAKEN_3
+Great Kraken
+SM_KRAKEN_3_DESC
+A formidible medium-weight space monster.
+
+SM_SNOWFLAKE_1
+Small Snowflake
+SM_SNOWFLAKE_1_DESC
+A formidible light-weight space monster.
+
+SM_SNOWFLAKE_2
+Snowflake
+SM_SNOWFLAKE_2_DESC
+A formidible light-weight space monster.
+
+SM_SNOWFLAKE_3
+Large Snowflake
+SM_SNOWFLAKE_3_DESC
+A formidible light-weight space monster.
+
+SM_JUGGERNAUT_1
+Small Juggernaut
+SM_JUGGERNAUT_1_DESC
+A formidible heavy-weight space monster.
+
+SM_JUGGERNAUT_2
+Juggernaut
+SM_JUGGERNAUT_2_DESC
+A formidible heavy-weight space monster.
+
+SM_JUGGERNAUT_3
+Large Juggernaut
+SM_JUGGERNAUT_3_DESC
+A formidible heavy-weight space monster.
+
 ##############################
 # Predefined Starting Fleets #
 ##############################
@@ -2677,13 +2722,32 @@ This planet has a natural satellite, the orbital period of which is in 1:1 reson
 COMPUTRONIUM_SPECIAL
 Computronium Moon
 COMPUTRONIUM_SPECIAL_DESC
-'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.  Doubles research.'''
+'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. It can complete the most complicated simulations and equations faster than they can be entered.  All research-focused planets in the system recieve a large population-based bonus.'''
 
 COMPUTRONIUM_BROKEN_SPECIAL
 Damaged Computronium Moon
 COMPUTRONIUM_BROKEN_SPECIAL_DESC
-'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless.  Still it can complete complicated simulations and equations in impressive time. Increases research  by 50%.'''
+'''Left by some vanished civilization, the entire moon --from surface to core-- is a computing device of awesome power. This one however has been blasted by some unknown weapon of war leaving most of the computronium fused and useless.  Still it can complete complicated simulations and equations in impressive time. All research-focused planets in the system recieve a population-based bonus.'''
 
+ABANDONED_COLONY_SPECIAL
+Abandoned Colony
+ABANDONED_COLONY_SPECIAL
+An old abandoned colony.  Some of the infrastructure should still be useful.
+
+KRAKEN_NEST_SPECIAL
+Kraken Nest
+KRAKEN_NEST_SPECIAL_DESC
+At some point young kraken will rise from this place.
+
+SNOWFLAKE_NEST_SPECIAL
+Snowflake Nest
+SNOWFLAKE_NEST_SPECIAL_DESC
+At some point young snowflakes will rise from this place.
+
+JUGGERNAUT_NEST_SPECIAL
+Juggernaut Nest
+JUGGERNAUT_NEST_SPECIAL_DESC
+At some point young juggernauts will rise from this place.
 
 #######################
 # Enumeration  values #
@@ -6333,3 +6397,48 @@ SH_IMMOBILE_FACTORY
 Drone Factory
 SH_IMMOBILE_FACTORY_DESC
 Drone Factory
+
+SH_KRAKEN_1_BODY
+Larval Kraken Body
+SH_KRAKEN_1_BODY_DESC
+A formidible medium-weight space monster.
+
+SH_KRAKEN_2_BODY
+Kraken Body
+SH_KRAKEN_2_BODY_DESC
+A formidible medium-weight space monster.
+
+SH_KRAKEN_3_BODY
+Great Kraken Body
+SH_KRAKEN_3_BODY_DESC
+A formidible medium-weight space monster.
+
+SH_SNOWFLAKE_1_BODY
+Small Snowflake Body
+SH_SNOWFLAKE_1_BODY_DESC
+A formidible light-weight space monster.
+
+SH_SNOWFLAKE_2_BODY
+Snowflake Body
+SH_SNOWFLAKE_2_BODY_DESC
+A formidible light-weight space monster.
+
+SH_SNOWFLAKE_3_BODY
+Large Snowflake Body
+SH_SNOWFLAKE_3_BODY_DESC
+A formidible light-weight space monster.
+
+SH_JUGGERNAUT_1_BODY
+Small Juggernaut Body
+SH_JUGGERNAUT_1_BODY_DESC
+A formidible heavy-weight space monster.
+
+SH_JUGGERNAUT_2_BODY
+Juggernaut Body
+SH_JUGGERNAUT_2_BODY_DESC
+A formidible heavy-weight space monster.
+
+SH_JUGGERNAUT_3
+Large Juggernaut Body
+SH_JUGGERNAUT_3_BODY_DESC
+A formidible heavy-weight space monster.
