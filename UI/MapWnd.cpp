@@ -2653,6 +2653,8 @@ void MapWnd::SetFleetMovementLine(int fleet_id)
     GG::Clr line_colour = GG::CLR_WHITE;
     if (const Empire* empire = Empires().Lookup(fleet->Owner()))
         line_colour = empire->Color();
+    else if (fleet->Unowned() && fleet->HasMonsters())
+        line_colour = GG::CLR_RED;
 
     // create and store line
     m_fleet_lines[fleet_id] = MovementLineData(fleet->MovePath(), m_starlane_endpoints, line_colour);
