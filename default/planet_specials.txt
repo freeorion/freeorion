@@ -79,7 +79,7 @@ Special
                     message = "EFFECT_ANCIENT_SHIP"
                     parameters = [
                         tag = "planet" data = Source.ID
-                        tag = "text" data = "SD_DRAGON_TOOTH"
+                        tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
                     ]
                     empire = Source.Owner
             ]
