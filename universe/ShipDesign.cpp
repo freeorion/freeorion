@@ -256,6 +256,12 @@ PartTypeManager::PartTypeManager() {
               skip_p);
     if (!result.full)
         ReportError(input.c_str(), result);
+
+    Logger().debugStream() << "Part Types:";
+    for (iterator it = begin(); it != end(); ++it) {
+        const PartType* p = it->second;
+        Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class() << " stats: " << p->StatDescription();
+    }
 }
 
 PartTypeManager::~PartTypeManager()
@@ -830,6 +836,12 @@ HullTypeManager::HullTypeManager() {
               skip_p);
     if (!result.full)
         ReportError(input.c_str(), result);
+
+    Logger().debugStream() << "Hull Types:";
+    for (iterator it = begin(); it != end(); ++it) {
+        const HullType* h = it->second;
+        Logger().debugStream() << " ... " << h->Name() << " stats: " << h->StatDescription();
+    }
 }
 
 HullTypeManager::~HullTypeManager() {
