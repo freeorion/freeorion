@@ -2091,15 +2091,15 @@ void SpecialsPanel::Update()
         Logger().errorStream() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
     }
-    const std::set<std::string>& specials = obj->Specials();
+    const std::map<std::string, int>& specials = obj->Specials();
 
 
     int tooltip_time = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
 
     // get specials and use them to create specials icons
-    for (std::set<std::string>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
-        const Special* special = GetSpecial(*it);
+    for (std::map<std::string, int>::const_iterator it = specials.begin(); it != specials.end(); ++it) {
+        const Special* special = GetSpecial(it->first);
         GG::StaticGraphic* graphic = new GG::StaticGraphic(GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT, ClientUI::SpecialTexture(special->Name()),
                                                            GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE);
         graphic->SetBrowseModeTime(tooltip_time);

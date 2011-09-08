@@ -159,9 +159,18 @@ int UniverseObject::SystemID() const
     return m_system_id;
 }
 
-const std::set<std::string>& UniverseObject::Specials() const
+const std::map<std::string, int>& UniverseObject::Specials() const
+{ return m_specials; }
+
+bool UniverseObject::HasSpecial(const std::string& name) const
+{ return m_specials.find(name) != m_specials.end(); }
+
+int UniverseObject::SpecialAddedOnTurn(const std::string& name) const
 {
-    return m_specials;
+    std::map<std::string, int>::const_iterator it = m_specials.find(name);
+    if (it == m_specials.end())
+        return INVALID_GAME_TURN;
+    return it->second;
 }
 
 const std::string& UniverseObject::TypeName() const
@@ -182,8 +191,8 @@ std::string UniverseObject::Dump() const
        << " owner: " << m_owner_empire_id
        << " created on turn: " << m_created_on_turn
        << " specials: ";
-    for (std::set<std::string>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
-        os << *it;
+    for (std::map<std::string, int>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
+        os << "(" << it->first << ", " << it->second << ") ";
     os << "  Meters: ";
     for (std::map<MeterType, Meter>::const_iterator it = m_meters.begin(); it != m_meters.end(); ++it)
         os << UserString(GG::GetEnumMap<MeterType>().FromEnum(it->first))
@@ -355,7 +364,7 @@ void UniverseObject::SetSystem(int sys)
 
 void UniverseObject::AddSpecial(const std::string& name)
 {
-    m_specials.insert(name);
+    m_specials[name] = CurrentTurn();
 }
 
 void UniverseObject::RemoveSpecial(const std::string& name)

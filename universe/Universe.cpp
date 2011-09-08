@@ -51,7 +51,7 @@ namespace {
             m_name(timed_name)
         {}
         ~ScopedTimer() {
-            if (m_timer.elapsed() * 1000.0 > 2) {
+            if (m_timer.elapsed() * 1000.0 > 1) {
                 Logger().debugStream() << m_name << " time: " << (m_timer.elapsed() * 1000.0);
             }
         }
@@ -1337,11 +1337,11 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIALS";
     for (ObjectMap::const_iterator it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
         int source_object_id = it->first;
-        const std::set<std::string>& specials = it->second->Specials();
-        for (std::set<std::string>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
-            const Special* special = GetSpecial(*special_it);
+        const std::map<std::string, int>& specials = it->second->Specials();
+        for (std::map<std::string, int>::const_iterator special_it = specials.begin(); special_it != specials.end(); ++special_it) {
+            const Special* special = GetSpecial(special_it->first);
             if (!special) {
-                Logger().errorStream() << "GetEffectsAndTargets couldn't get Special " << *special_it;
+                Logger().errorStream() << "GetEffectsAndTargets couldn't get Special " << special_it->first;
                 continue;
             }
 
@@ -1477,7 +1477,9 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
-        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " + GetObject(targets_it->first.source_object_id)->Name() + ") ");
+        ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " +
+                                 GetObject(targets_it->first.source_object_id)->Name() +
+                                 ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
 
         // if other EffectsGroups with the same stacking group have affected some of the targets in
         // the scope of the current EffectsGroup, skip them

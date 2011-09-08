@@ -72,7 +72,10 @@ public:
     double                      Y() const;                          ///< the Y-coordinate of this object
     int                         Owner() const;                      ///< returns the ID of the empire that owns this object, or ALL_EMPIRES if there is no owner
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
-    const std::set<std::string>&Specials() const;                   ///< returns the set of names of the Specials attached to this object
+    const std::map<std::string, int>&
+                                Specials() const;                   ///< returns the names of Specials and the turn on which each was attached to this object
+    bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
+    int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
 
     virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;                       ///< outputs textual description of object to logger
@@ -184,7 +187,7 @@ private:
     double                      m_y;
     int                         m_owner_empire_id;
     int                         m_system_id;
-    std::set<std::string>       m_specials;
+    std::map<std::string, int>  m_specials;
     std::map<MeterType, Meter>  m_meters;
     int                         m_created_on_turn;
 
