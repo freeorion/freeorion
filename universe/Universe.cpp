@@ -1477,8 +1477,9 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
     for (EffectsTargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+        const UniverseObject* source = GetObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " +
-                                 GetObject(targets_it->first.source_object_id)->Name() +
+                                 (source ? source->Name() : "No Source!") +
                                  ") on " + boost::lexical_cast<std::string>(targets_it->second.target_set.size()) + " objects");
 
         // if other EffectsGroups with the same stacking group have affected some of the targets in
