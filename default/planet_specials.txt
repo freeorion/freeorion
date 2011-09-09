@@ -544,7 +544,7 @@ Special
     name = "COMPUTRONIUM_SPECIAL"
     description = "COMPUTRONIUM_SPECIAL_DESC"
     effectsgroups = [       
-	    EffectsGroup
+        EffectsGroup
             scope = And [
                 Planet
                 ContainedBy Contains Source
@@ -553,9 +553,9 @@ Special
             activation = Focus "FOCUS_RESEARCH"
             effects = SetTargetResearch Value * 2
         EffectsGroup     
-        	scope = Source     
-        	activation = Not Turn low = 1 high = 99999  
-    	    effects = CreateShip "SM_GUARD_1"
+            scope = Source     
+            activation = Not Turn low = 1 high = 99999  
+            effects = CreateShip "SM_GUARD_1"
     ]
     graphic = "icons/specials_huge/computronium.png"
 
@@ -576,14 +576,27 @@ Special
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
-    effectsgroups = EffectsGroup
+    effectsgroups = [
+        EffectsGroup
             scope = Source
-            effects = [
-		        SetTargetConstruction Value + 15
-                RemoveSpecial "ABANDONED_COLONY_SPECIAL"
-	        ]
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+            ]
+            stackinggroup = "ABANDONED_STACK"
+            effects = SetConstruction value + 10
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+            ] 
+            stackinggroup = "ABANDONED_STACK"
+            effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
+        ]
     graphic = "icons/specials_huge/abandoned-colony.png"
-    
+
 Special
     name = "GAIA_SPECIAL"
     description = "GAIA_SPECIAL_DESC"
@@ -604,8 +617,8 @@ Special
                     ]
                     empire = Source.Owner
             ]
-	
-		EffectsGroup
+    
+        EffectsGroup
             scope = Source
             activation = Source
             effects = [
@@ -614,60 +627,104 @@ Special
                 SetTargetFarming Value * 2
             ]
         EffectsGroup     
-        	scope = Source     
-        	activation = AND [
-        	    Not Turn low = 1 high = 99999
-        	    Not WithinStarlaneJumps 4 Contains And [
+            scope = Source     
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Not WithinStarlaneJumps 4 Contains And [
                     Planet
                     OwnedBy AnyEmpire
                 ]
             ]
             stackinggroup = "GAIAN_STACK"
-    	    effects = CreateShip "SM_GUARD_3"
+            effects = CreateShip "SM_GUARD_3"
 
-    	EffectsGroup     
-        	scope = Source
-        	activation = Not Turn low = 1 high = 99999
-        	stackinggroup = "GAIAN_STACK"
-        	effects = Destroy
+        EffectsGroup     
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            stackinggroup = "GAIAN_STACK"
+            effects = Destroy
     ]
     graphic = "icons/specials_huge/gaia.png"
     
 Special
     name = "KRAKEN_NEST_SPECIAL"
     description = "KRAKEN_NEST_SPECIAL_DESC"
-    effectsgroups = EffectsGroup
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.16
+            ]
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = [
+                CreateShip "SM_KRAKEN_1" Source.Owner Source.Species
+            ]
+        EffectsGroup
             scope = Source
             activation = Random probability = 0.16
+            stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
-		        CreateShip "SM_KRAKEN_1"
-		        CreateShip "SM_KRAKEN_2"
-		        RemoveSpecial "KRAKEN_NEST_SPECIAL"
-	        ]
+                CreateShip "SM_KRAKEN_1"
+                CreateShip "SM_KRAKEN_2"
+                RemoveSpecial "KRAKEN_NEST_SPECIAL"
+            ]
+        ]
     graphic = "icons/specials_huge/kraken-nest.png"
     
 Special
     name = "SNOWFLAKE_NEST_SPECIAL"
     description = "SNOWFLAKE_NEST_SPECIAL_DESC"
-    effectsgroups = EffectsGroup
+    effectsgroups = [
+        EffectsGroup
             scope = Source
-            activation = Random probability = 0.14
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.16
+            ]
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
-		        CreateShip "SM_SNOWFLAKE_1"
-		        CreateShip "SM_SNOWFLAKE_2"
-		        RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
-	        ]
+                CreateShip "SM_SNOWFLAKE_1" Source.Owner Source.Species
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.16
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = [
+                CreateShip "SM_SNOWFLAKE_1"
+                CreateShip "SM_SNOWFLAKE_2"
+                RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
+            ]
+        ]
     graphic = "icons/specials_huge/snowflake-nest.png"
     
 Special
     name = "JUGGERNAUT_NEST_SPECIAL"
     description = "JUGGERNAUT_NEST_SPECIAL_DESC"
-    effectsgroups = EffectsGroup
+    effectsgroups = [
+        EffectsGroup
             scope = Source
-            activation = Random probability = 0.10
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.16
+            ]
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
-		        CreateShip "SM_JUGGERNAUT_1"
-		        CreateShip "SM_JUGGERNAUT_2"
-		        RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
-	        ]
+                CreateShip "SM_JUGGERNAUT_1" Source.Owner Source.Species
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.16
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = [
+                CreateShip "SM_JUGGERNAUT_1"
+                CreateShip "SM_JUGGERNAUT_2"
+                RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
+            ]
+        ]
+        
     graphic = "icons/specials_huge/juggernaut-nest.png"
+    
