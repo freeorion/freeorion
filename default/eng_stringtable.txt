@@ -3479,6 +3479,9 @@ Ancient Ruins in %planet% have revealed the %tech% technology.
 EFFECT_MONSTER_SPAWNING
 A %shiphull% was spawned in %system%!
 
+EFFECT_GAIAN_TERRAFORM
+The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
+
 
 # Conditions
 

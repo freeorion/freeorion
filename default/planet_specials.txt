@@ -589,11 +589,21 @@ Special
     description = "GAIA_SPECIAL_DESC"
     effectsgroups = [
         EffectsGroup
-            scope = And [
-                Contains Source
+            scope = Source
+            activation = AND [
                 Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.5
             ]
-            effects = SetPlanetType Target.NextBetterPlanetType
+            effects = [
+                SetPlanetType Target.NextBetterPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_GAIAN_TERRAFORM"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
+            ]
 	
 		EffectsGroup
             scope = Source
@@ -641,7 +651,7 @@ Special
     description = "SNOWFLAKE_NEST_SPECIAL_DESC"
     effectsgroups = EffectsGroup
             scope = Source
-            activation = Random probability = 0.16
+            activation = Random probability = 0.14
             effects = [
 		        CreateShip "SM_SNOWFLAKE_1"
 		        CreateShip "SM_SNOWFLAKE_2"
@@ -654,7 +664,7 @@ Special
     description = "JUGGERNAUT_NEST_SPECIAL_DESC"
     effectsgroups = EffectsGroup
             scope = Source
-            activation = Random probability = 0.16
+            activation = Random probability = 0.10
             effects = [
 		        CreateShip "SM_JUGGERNAUT_1"
 		        CreateShip "SM_JUGGERNAUT_2"

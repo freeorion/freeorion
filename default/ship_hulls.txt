@@ -1706,7 +1706,7 @@ Hull
                 ]
     	EffectsGroup
     		scope = Source
-    		activation = Random probability = .06
+    		activation = Random probability = .05
     		effects = [
     		    CreateShip "SM_DRONE"
     		    GenerateSitRepMessage
