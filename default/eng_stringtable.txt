@@ -2731,7 +2731,7 @@ COMPUTRONIUM_BROKEN_SPECIAL_DESC
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
-ABANDONED_COLONY_SPECIAL
+ABANDONED_COLONY_SPECIAL_DESC
 An old abandoned colony.  Some of the infrastructure should still be useful.
 
 KRAKEN_NEST_SPECIAL
@@ -3481,7 +3481,6 @@ A %shiphull% was spawned in %system%!
 
 EFFECT_GAIAN_TERRAFORM
 The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
-
 
 # Conditions
 
