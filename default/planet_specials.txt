@@ -66,6 +66,18 @@ Special
     name = "ANCIENT_RUINS_SPECIAL"
     description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
     effectsgroups = [
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Random probability = 0.6
+                Not WithinStarlaneJumps 1 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            effects = CreateShip "SM_GUARD_2"
+    
         EffectsGroup
             scope = Source
             activation = And [
@@ -554,8 +566,22 @@ Special
             effects = SetTargetResearch Value * 2
         EffectsGroup     
             scope = Source     
-            activation = Not Turn low = 1 high = 99999  
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Random probability = 0.7
+                Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            stackinggroup = "COMPUTRONIUM_STACK"
             effects = CreateShip "SM_GUARD_1"
+
+        EffectsGroup     
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            stackinggroup = "COMPUTRONIUM_STACK"
+            effects = Destroy
     ]
     graphic = "icons/specials_huge/computronium.png"
 
@@ -572,7 +598,7 @@ Special
         effects = SetTargetResearch Value * 1.5
     
     graphic = "icons/specials_huge/computronium-broken.png"
-
+/*
 Special
     name = "ABANDONED_COLONY_SPECIAL"
     description = "ABANDONED_COLONY_SPECIAL_DESC"
@@ -582,20 +608,23 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
-            ]
+                Construction Value= 10
+            ] 
             stackinggroup = "ABANDONED_STACK"
-            effects = SetConstruction value + 10
+            effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
             
         EffectsGroup
             scope = Source
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
-            ] 
+            ]
             stackinggroup = "ABANDONED_STACK"
-            effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
+            effects = SetConstruction value + 10
+            
         ]
     graphic = "icons/specials_huge/abandoned-colony.png"
+*/
 
 Special
     name = "GAIA_SPECIAL"
@@ -655,7 +684,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
-                Random probability = 0.16
+                Random probability = 0.10
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
@@ -663,11 +692,17 @@ Special
             ]
         EffectsGroup
             scope = Source
-            activation = Random probability = 0.16
+            activation = Random probability = 0.05
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = CreateShip "SM_KRAKEN_1"
+
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.10
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
                 CreateShip "SM_KRAKEN_1"
-                CreateShip "SM_KRAKEN_2"
+                CreateShip "SM_KRAKEN_1"
                 RemoveSpecial "KRAKEN_NEST_SPECIAL"
             ]
         ]
@@ -690,11 +725,17 @@ Special
             ]
         EffectsGroup
             scope = Source
+            activation = Random probability = 0.08
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = CreateShip "SM_SNOWFLAKE_1"
+            
+        EffectsGroup
+            scope = Source
             activation = Random probability = 0.16
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
                 CreateShip "SM_SNOWFLAKE_1"
-                CreateShip "SM_SNOWFLAKE_2"
+                CreateShip "SM_SNOWFLAKE_1"
                 RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
             ]
         ]
@@ -709,7 +750,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
-                Random probability = 0.16
+                Random probability = 0.12
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
@@ -717,11 +758,17 @@ Special
             ]
         EffectsGroup
             scope = Source
-            activation = Random probability = 0.16
+            activation = Random probability = 0.06
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = CreateShip "SM_JUGGERNAUT_1"
+
+        EffectsGroup
+            scope = Source
+            activation = Random probability = 0.12
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
                 CreateShip "SM_JUGGERNAUT_1"
-                CreateShip "SM_JUGGERNAUT_2"
+                CreateShip "SM_JUGGERNAUT_1"
                 RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
             ]
         ]

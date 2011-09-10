@@ -25,8 +25,8 @@ Content:
  ~ Experimental addition of various space monsters
  ~ Added Computronium Moon & Damaged Computronium Moon specials.
  ~ Added automatic terraforming to Gaian planets
- ~ Added Abandoned Colony special
  ~ Added domesticateable space monster nests.
+ ~ Added guard ships sometimes to Gaian, Ancient Ruins, & Computronium specials.
 
 Graphics:
  ~ Added binary star variant star graphics.
