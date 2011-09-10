@@ -2491,6 +2491,11 @@ Eaxaw
 SP_EAXAW_DESC
 Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 
+SP_SUPER_TEST
+Super Testers
+SP_SUPER_TEST_DESC
+Super Testers are unbalanced and unfair. They trive on all planets.
+
 SP_CYNOS
 Cynos
 SP_CYNOS_DESC
@@ -2731,7 +2736,7 @@ COMPUTRONIUM_BROKEN_SPECIAL_DESC
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
-ABANDONED_COLONY_SPECIAL_DESC
+ABANDONED_COLONY_SPECIAL
 An old abandoned colony.  Some of the infrastructure should still be useful.
 
 KRAKEN_NEST_SPECIAL
@@ -3481,6 +3486,7 @@ A %shiphull% was spawned in %system%!
 
 EFFECT_GAIAN_TERRAFORM
 The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
+
 
 # Conditions
 

@@ -1514,7 +1514,7 @@ Hull
     name = "SH_WEAK_MONSTER_BODY"
     description = "SH_WEAK_MONSTER_BODY_DESC"
     speed = 5
-    starlaneSpeed = 10
+    starlaneSpeed = 15
     fuel = 3
     stealth = 5
     structure = 10
@@ -2185,7 +2185,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = AND [
+                Random probability = 0.4
+                Not OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2207,7 +2210,7 @@ Hull
     starlaneSpeed = 40
     fuel = 5
     stealth = 5
-    structure = 20
+    structure = 12
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2224,8 +2227,11 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
-            stackinggroup = "MONSTER_FLEET_MOVE_STACK"
+            activation = AND [
+                Random probability = 0.8
+                Not OwnedBy AnyEmpire
+            ]
+            stackinggroup = "SNOWFLAKE_STACK"
             effects = SetDestination destination = And [
                 System
                 Not Contains Source
@@ -2337,7 +2343,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = AND [
+                Random probability = 0.3
+                Not OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
