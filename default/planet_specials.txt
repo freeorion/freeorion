@@ -705,7 +705,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.10
+                Random probability = 0.05
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
@@ -746,7 +746,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.16
+                Random probability = 0.08
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
@@ -787,7 +787,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.12
+                Random probability = 0.06
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [

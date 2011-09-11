@@ -15,7 +15,10 @@ Hull
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = Contains And [
+        Building "BLD_SHIPYARD_BASE"
+        OwnedBy TheEmpire Source.Owner
+    ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -34,32 +37,88 @@ Hull
     buildCost = 1
     buildTime = 1
     slots = Slot type = Internal position = (0.50, 0.50)
-    location = OwnedBy TheEmpire Source.Owner
+    location = Contains And [
+        Building "BLD_SHIPYARD_BASE"
+        OwnedBy TheEmpire Source.Owner
+    ]
     effectsgroups =
         EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 5
     graphic = ""
-
+    
+Hull
+    name = "SH_BASIC_SMALL"
+    description = "SH_BASIC_SMALL_DESC"
+    speed = 50
+    starlaneSpeed = 100
+    fuel = 3
+    stealth = 5
+    structure = 8
+    buildCost = 20
+    buildTime = 2
+    slots = [
+        Slot type = External position = (0.60, 0.45)
+        Slot type = Internal position = (0.40, 0.55)
+    ]
+    location = Contains And [
+        Building "BLD_SHIPYARD_BASE"
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = "hulls_design/basic-small-hull.png"
+    
+Hull
+    name = "SH_BASIC_MEDIUM"
+    description = "SH_BASIC_MEDIUM_DESC"
+    speed = 50
+    starlaneSpeed = 85
+    fuel = 3
+    stealth = 5
+    structure = 15
+    buildCost = 50
+    buildTime = 2
+    slots = [
+        Slot type = External position = (0.35, 0.40)
+        Slot type = External position = (0.65, 0.40)
+        Slot type = Internal position = (0.40, 0.60)
+    ]
+    location = Contains And [
+        Building "BLD_SHIPYARD_BASE"
+        OwnedBy TheEmpire Source.Owner
+    ]
+    effectsgroups =
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    graphic = "hulls_design/basic-medium-hull.png"
+    
 Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 80
+    starlaneSpeed = 70
     fuel = 3
     stealth = 1
     structure = 20
     buildCost = 100
-    buildTime = 1
+    buildTime = 2
     slots = [
         Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)
-        Slot type = External position = (0.60, 0.15)
+        Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.80, 0.15)
         Slot type = Internal position = (0.40, 0.75)
     ]
-    location = OwnedBy TheEmpire Source.Owner
+    location = Contains And [
+        Building "BLD_SHIPYARD_BASE"
+        OwnedBy TheEmpire Source.Owner
+    ]
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -124,7 +183,7 @@ Hull
     stealth = 10
     structure = 5
     buildCost = 50
-    buildTime = 1
+    buildTime = 2
     slots = [
         Slot type = External position = (0.40, 0.50)
         Slot type = External position = (0.60, 0.50)
@@ -418,7 +477,7 @@ Hull
     stealth = 3
     structure = 15
     buildCost = 50
-    buildTime = 1
+    buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = External position = (0.20, 0.50)
@@ -461,7 +520,7 @@ Hull
     stealth = 5
     structure = 5
     buildCost = 20
-    buildTime = 1
+    buildTime = 2
     slots = [
         Slot type = External position = (0.50, 0.15)
         Slot type = Internal position = (0.50, 0.75)
@@ -500,7 +559,7 @@ Hull
     stealth = 0
     structure = 40
     buildCost = 100
-    buildTime = 1
+    buildTime = 2
     slots = [
         Slot type = External position = (0.12, 0.15)
         Slot type = External position = (0.24, 0.15)
@@ -1289,7 +1348,7 @@ Hull
     stealth = 75
     structure = 3
     buildCost = 25
-    buildTime = 1
+    buildTime = 2
     slots = Slot type = External position = (0.15, 0.40)
     location = And [
         Contains And [
@@ -1519,7 +1578,7 @@ Hull
     stealth = 5
     structure = 10
     buildCost = 1
-    buildTime = 1
+    buildTime = 2
     producible = false
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1546,7 +1605,7 @@ Hull
                 System
                 Star type = [Blue White]
                 Contains Source
-                Not Number low = 3 high = 9999 condition = And [
+                Not Number low = 2 high = 9999 condition = And [
                     Monster
                     ContainedBy And [
                         System
@@ -1569,7 +1628,7 @@ Hull
     stealth = 5
     structure = 10
     buildCost = 1
-    buildTime = 1
+    buildTime = 2
     producible = false
     slots = Slot type = External position = (0.30, 0.15)
     location = All
@@ -1580,7 +1639,7 @@ Hull
                 Star type = [Blue White]
                 Contains Source
             ]
-            activation = Random probability = 0.1
+            activation = Random probability = 0.06
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
     ]
@@ -1595,7 +1654,7 @@ Hull
     stealth = 5
     structure = 40
     buildCost = 1
-    buildTime = 1
+    buildTime = 2
     producible = false
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1634,7 +1693,7 @@ Hull
     stealth = 5
     structure = 40
     buildCost = 1
-    buildTime = 1
+    buildTime = 2
     producible = false
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1655,7 +1714,7 @@ Hull
     stealth = 5
     structure = 5
     buildCost = 1
-    buildTime = 1
+    buildTime = 2
     producible = false
     slots = [
         Slot type = External position = (0.20, 0.15)
@@ -1801,7 +1860,7 @@ Hull
                 Contains Source
                 ContainedBy Contains Planet type = Asteroids
             ]
-            activation = Random probability = 0.1
+            activation = Random probability = 0.12
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = SetDestination destination = And [
                 System
@@ -1989,7 +2048,7 @@ Hull
                 Source
 		        ContainedBy Contains Planet type = Asteroids
             ]
-            activation = Random probability = 0.16
+            activation = Random probability = 0.10
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
 		        CreateShip "SM_KRILL_1"
@@ -2056,7 +2115,7 @@ Hull
                 Source
 		        ContainedBy Contains Planet type = Asteroids
             ]
-            activation = Random probability = 0.18
+            activation = Random probability = 0.08
             stackinggroup = "KRILL_4_ACTION_STACK"
             effects = [
 		        CreateShip "SM_KRILL_1"
@@ -2104,7 +2163,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2122,6 +2181,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 Hull
@@ -2141,7 +2205,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2159,6 +2223,12 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+            
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 Hull
@@ -2178,7 +2248,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2199,6 +2269,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 //   SNOWFLAKE
@@ -2220,7 +2295,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2228,7 +2303,7 @@ Hull
                 Contains Source
             ]
             activation = AND [
-                Random probability = 0.8
+                Random probability = 0.6
                 Not OwnedBy AnyEmpire
             ]
             stackinggroup = "SNOWFLAKE_STACK"
@@ -2241,6 +2316,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+        ]
     graphic = ""
     
 Hull
@@ -2260,7 +2340,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2278,6 +2358,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 Hull
@@ -2297,7 +2382,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2315,6 +2400,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 //   JUGGERNAUT
@@ -2336,7 +2426,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2357,6 +2447,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 Hull
@@ -2376,7 +2471,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2394,6 +2489,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
     
 Hull
@@ -2413,7 +2513,7 @@ Hull
         Slot type = Internal position = (0.50, 0.65)
     ]
     location = All
-    effectsgroups =
+    effectsgroups = [
         EffectsGroup
             scope = And [
                 Fleet
@@ -2431,4 +2531,11 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = SetDetection Value + 5
+    ]
     graphic = ""
+    
+    

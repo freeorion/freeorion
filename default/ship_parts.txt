@@ -4,7 +4,7 @@ Part
     description = "GT_TROOP_POD_DESC"
     class = Troops
     capacity = 5
-    buildcost = 1
+    buildcost = 8
     buildtime = 1
     mountableSlotTypes = [External Internal]
     location = OwnedBy TheEmpire Source.Owner
@@ -502,15 +502,15 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 15
-    graphic = ""
+            effects = SetDetection Value + 35
+    graphic = "icons/ship_parts/active_radar.png"
 
 Part
     name = "DT_NEUTRON_SCANNER"
     description = "DT_NEUTRON_SCANNER_DESC"
     class = Detection
     capacity = 0
-    buildcost = 25
+    buildcost = 45
     buildtime = 5
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -520,14 +520,14 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 25
-    graphic = ""
+    graphic = "icons/ship_parts/active_radar.png"
 
 Part
     name = "DT_ACTIVE_RADAR"
     description = "DT_ACTIVE_RADAR_DESC"
     class = Detection
     capacity = 0
-    buildcost = 12
+    buildcost = 25
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
@@ -544,8 +544,8 @@ Part
     description = "DT_OPTICAL_SCANNER_DESC"
     class = Detection
     capacity = 0
-    buildcost = 4
-    buildtime = 1
+    buildcost = 15
+    buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     effectsgroups =
@@ -555,6 +555,17 @@ Part
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 3
     graphic = "icons/ship_parts/optical_sensors.png"
+
+Part
+    name = "FU_BASIC_TANK"
+    description = "FU_BASIC_TANK_DESC"
+    class = Fuel
+    capacity = 1
+    buildcost = 5
+    buildtime = 1
+    mountableSlotTypes = Internal
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/basic-tank.png"
 
 Part
     name = "FU_DEUTERIUM_TANK"
@@ -667,7 +678,7 @@ Part
     description = "CO_COLONY_POD_DESC"
     class = Colony
     capacity = 1
-    buildcost = 250
+    buildcost = 200
     buildtime = 10
     mountableSlotTypes = Internal
     location = And [

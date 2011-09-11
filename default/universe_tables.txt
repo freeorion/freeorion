@@ -83,7 +83,7 @@ Ancient                         -20      -10    0       10      20      20      
 
 <1x8>
 BaseStarTypeDist                Blue    White   Yellow  Orange  Red     Neutron Blackhole   NoStar
-Base                            30      40      50      40      30      0       0           60
+Base                            30      40      50      40      30      0       0           40
 
 # This one is a bit misleading.  With the exception of "None", larger values mean more starlanes, which is why High has the lowest value.
 <1x4>

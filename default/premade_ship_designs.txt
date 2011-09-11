@@ -2,8 +2,11 @@ ShipDesign
     name = "SD_TROOP_SHIP"
     description = "SD_TROOP_SHIP_DESC"
     lookup_strings = true
-    hull = "SH_STANDARD"
-    parts = "GT_TROOP_POD"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "GT_TROOP_POD"
+        "SH_DEFENSE_GRID"
+        ]
     graphic = "misc/generic.png"
     model = "fighter"
 
@@ -11,8 +14,11 @@ ShipDesign
     name = "SD_SCOUT"
     description = "SD_SCOUT_DESC"
     lookup_strings = true
-    hull = "SH_STANDARD"
-    parts = "DT_OPTICAL_SCANNER"
+    hull = "SH_BASIC_SMALL"
+    parts = [
+        "DT_OPTICAL_SCANNER"
+        "FU_BASIC_TANK"
+        ]
     graphic = "misc/generic.png"
     model = "fighter"
 
@@ -68,9 +74,9 @@ ShipDesign
     name = "SD_MARK1"
     description = "SD_MARK1_DESC"
     lookup_strings = true
-    hull = "SH_STANDARD"
+    hull = "SH_BASIC_MEDIUM"
     parts = [
-        "DT_OPTICAL_SCANNER"
+        "SR_LASER"
         "SR_LASER"
         "SH_DEFENSE_GRID"
     ]
@@ -81,9 +87,9 @@ ShipDesign
     name = "SD_MARK2"
     description = "SD_MARK2_DESC"
     lookup_strings = true
-    hull = "SH_STANDARD"
+    hull = "SH_BASIC_MEDIUM"
     parts = [
-        "DT_OPTICAL_SCANNER"
+        "SR_ION_CANNON"
         "SR_ION_CANNON"
         "SH_DEFENSE_GRID"
     ]

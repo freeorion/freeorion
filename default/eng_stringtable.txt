@@ -5971,6 +5971,11 @@ Sensors
 DT_SENSORS_DESC
 Ultimate detection
 
+FU_BASIC_TANK
+Extra Fuel Tank
+FU_BASIC_TANK_DESC
+Allows an additional jump.
+
 FU_DEUTERIUM_TANK
 Deuterium Tank
 
@@ -6096,6 +6101,7 @@ Distortion Modulator
 
 SP_DISTORTION_MODULATOR_DESC
 Distinguishes natural geometric irregularities from enemy ships by manipulating space-time distortions caused by all objects in the vicinity.  All objects within 0 uus have max stealth reduced by 20.  The effect is non-stacking.
+
 
 ##############
 # Ship Hulls #
@@ -6332,6 +6338,16 @@ SH_SOLAR_DESC
 '''This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility.  All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth.  This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull.  Structure is extremely high, but speed and stealth are very low.  However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.  This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
 
 Requires a Basic Shipyard, an Energy Compressor and a Solar Containment Unit at the planet where it is built.'''
+
+SH_BASIC_SMALL
+Basic Small Hull
+SH_BASIC_SMALL_DESC
+Basic Small Hull
+
+SH_BASIC_MEDIUM
+Basic Medium Hull
+SH_BASIC_MEDIUM_DESC
+Basic Medium Hull
 
 SH_STANDARD
 Standard Hull

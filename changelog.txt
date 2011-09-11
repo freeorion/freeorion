@@ -12,20 +12,23 @@ New Features / Improvements:
  ~ Reduced file save size by using binary format (instead of semi-readable text).
 
 Balancing:
- ~ Decreased cost of colony pods by 25%.
+ ~ Decreased cost of colony pods by 20%.
  ~ Unexplored systems block resource sharing between planets, preventing players from knowing about a hostile presense in a system before exploring it.
  ~ Ships no longer have functional detection when moving on starlanes.  Ships must be in a system to detect objects.
  ~ Planets can be seen, although without details, by any object in their system, regardless of detection and stealth.  Detection strength above planet stealth gives details about the planet.
  ~ Planets do not increase their shield, troops, or defense meters on a turn they are attacked.
  ~ Fleets must end a turn's movement if they arrive at a system that contains hostile fleets and no friendly fleets.
  ~ Increased base detection of all hulls to at least 5.
+ ~ 
  
 Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
  ~ Experimental addition of various space monsters
+ ~ ~ Added domesticateable space monster nests.
+ ~ Added Small & Medium basic hulls (smaller and cheaper than standard)
+ ~ ~ Improved, usually cheaper, pre-made ship designs
  ~ Added Computronium Moon & Damaged Computronium Moon specials.
  ~ Added automatic terraforming to Gaian planets
- ~ Added domesticateable space monster nests.
  ~ Added guard ships sometimes to Gaian, Ancient Ruins, & Computronium specials.
 
 Graphics:

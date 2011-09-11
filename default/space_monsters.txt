@@ -151,7 +151,7 @@ ShipDesign
     hull = "SH_DRONE_BODY"
     parts = [
         "AR_ROCK_PLATE"
-        "PD_PHASOR"
+        "SR_ION_CANNON"
     ]
     graphic = "icons/ship_parts/colony_pod.png"
     model = "seed"
@@ -162,8 +162,8 @@ ShipDesign
     lookup_strings = true
     hull = "SH_IMMOBILE_FACTORY"
     parts = [
-        "AR_ZORTRIUM_PLATE"
-        "PD_PULSE_LASER"
+        "SH_DEFLECTOR"
+        "SR_MASS_DRIVER"
         ""
     ]
     graphic = "icons/ship_parts/antimatter_tank.png"
@@ -192,7 +192,7 @@ ShipDesign
         ""
         "FU_ZERO_FUEL"
         ]
-    graphic = "icons/monsters/kraken-1.png"
+    graphic = "icons/monsters/kraken-2.png"
     model = "seed"
 
 ShipDesign
@@ -205,7 +205,7 @@ ShipDesign
         "LR_NUCLEAR_MISSILE"
         "FU_ZERO_FUEL"
         ]
-    graphic = "icons/monsters/kraken-1.png"
+    graphic = "icons/monsters/kraken-3.png"
     model = "seed"
         
 ShipDesign
@@ -216,7 +216,7 @@ ShipDesign
     parts = [
         ""
         ""
-        "FU_ZERO_FUEL"
+        ""
         ]
     graphic = "icons/monsters/snowflake-1.png"
     model = "seed"
@@ -229,9 +229,9 @@ ShipDesign
     parts = [
         "SR_MASS_DRIVER"
         ""
-        "FU_ZERO_FUEL"
+        ""
         ]
-    graphic = "icons/monsters/snowflake-1.png"
+    graphic = "icons/monsters/snowflake-2.png"
     model = "seed"
 
 ShipDesign
@@ -242,9 +242,9 @@ ShipDesign
     parts = [
         "SR_MASS_DRIVER"
         "LR_NUCLEAR_MISSILE"
-        "FU_ZERO_FUEL"
+        ""
         ]
-    graphic = "icons/monsters/snowflake-1.png"
+    graphic = "icons/monsters/snowflake-3.png"
     model = "seed"
         
 ShipDesign
@@ -255,7 +255,7 @@ ShipDesign
     parts = [
         ""
         ""
-        ""
+        "SH_DEFENSE_GRID"
         ]
     graphic = "icons/monsters/juggernaut-1.png"
     model = "seed"
@@ -268,9 +268,9 @@ ShipDesign
     parts = [
         "SR_MASS_DRIVER"
         ""
-        ""
+        "SH_DEFENSE_GRID"
         ]
-    graphic = "icons/monsters/juggernaut-1.png"
+    graphic = "icons/monsters/juggernaut-2.png"
     model = "seed"
 
 ShipDesign
@@ -281,7 +281,7 @@ ShipDesign
     parts = [
         "SR_MASS_DRIVER"
         "LR_NUCLEAR_MISSILE"
-        ""
+        "SH_DEFENSE_GRID"
         ]
-    graphic = "icons/monsters/juggernaut-1.png"
+    graphic = "icons/monsters/juggernaut-3.png"
     model = "seed"
