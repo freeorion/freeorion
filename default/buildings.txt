@@ -60,7 +60,7 @@ BuildingType
             ]
             stackinggroup = "IMPERIAL_PALACE_EFFECT"
             effects = [
-                SetTargetConstruction Value + 30
+                SetTargetConstruction Value + 20
                 SetDefense Value + 5
             ]
         ]

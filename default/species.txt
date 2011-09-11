@@ -186,7 +186,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -561,7 +561,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -896,7 +896,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -1170,7 +1170,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -1543,7 +1543,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -1915,7 +1915,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -2281,7 +2281,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -2639,7 +2639,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -3011,7 +3011,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -3343,7 +3343,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -3623,7 +3623,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -3896,7 +3896,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -4232,7 +4232,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -4504,7 +4504,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -4876,7 +4876,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -5248,7 +5248,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -5620,7 +5620,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -5992,7 +5992,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -6319,7 +6319,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -6576,7 +6576,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -7034,7 +7034,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -7596,7 +7596,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -8158,7 +8158,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -8720,7 +8720,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -9282,7 +9282,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -9844,7 +9844,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -10406,7 +10406,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -10968,7 +10968,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -11530,7 +11530,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source
@@ -12092,7 +12092,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetTargetConstruction Value + 10
+            effects = SetTargetConstruction Value + 20
 
         EffectsGroup
             scope = Source

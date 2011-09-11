@@ -19,7 +19,7 @@ Balancing:
  ~ Planets do not increase their shield, troops, or defense meters on a turn they are attacked.
  ~ Fleets must end a turn's movement if they arrive at a system that contains hostile fleets and no friendly fleets.
  ~ Increased base detection of all hulls to at least 5.
- ~ 
+ ~ Colonies target construction is increased to 20 so once the meter fills, they create 1 jump supply lines.
  
 Content:
  ~ Added a lot of minor "native" species, a few of which have extended descriptions.
