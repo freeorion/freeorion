@@ -1603,7 +1603,7 @@ Hull
         EffectsGroup
             scope = And [
                 System
-                Star type = [Blue White]
+                Star type = [Blue White Yellow Orange Red]
                 Contains Source
                 Not Number low = 2 high = 9999 condition = And [
                     Monster
@@ -1634,11 +1634,13 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup
-            scope = And [
-                System
-                Star type = [Blue White]
-                Contains Source
+            scope = Source
+            effects = [
+                SetMaxStructure Value + Source.Age*0.2
+                SetStructure Value + 0.3
             ]
+        EffectsGroup
+            scope = Source
             activation = Random probability = 0.06
             stackinggroup = "TREE_GROWTH"
             effects = CreateShip "SM_FLOATER"
@@ -2150,10 +2152,10 @@ Hull
     name = "SH_KRAKEN_1_BODY"
     description = "SH_KRAKEN_1_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
-    fuel = 5
+    starlaneSpeed = 50
+    fuel = 4
     stealth = 5
-    structure = 30
+    structure = 20
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2170,17 +2172,23 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = Random probability = 0.5
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
                 Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = GasGiant
+            ]
+            activation = Random probability = 0.025
+            effects = [
+		        CreateShip "SM_KRAKEN_2"
+		        Destroy
+		    ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2192,10 +2200,10 @@ Hull
     name = "SH_KRAKEN_2_BODY"
     description = "SH_KRAKEN_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
-    fuel = 5
+    starlaneSpeed = 55
+    fuel = 4
     stealth = 5
-    structure = 30
+    structure = 35
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2212,7 +2220,7 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = Random probability = 0.4
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2223,7 +2231,16 @@ Hull
                 ]
                 WithinStarlaneJumps 1 Source
             ]
-            
+        EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = GasGiant
+            ]
+            activation = Random probability = 0.025
+            effects = [
+		        CreateShip "SM_KRAKEN_3"
+		        Destroy
+		    ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2235,10 +2252,10 @@ Hull
     name = "SH_KRAKEN_3_BODY"
     description = "SH_KRAKEN_3_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
-    fuel = 5
+    starlaneSpeed = 60
+    fuel = 4
     stealth = 5
-    structure = 30
+    structure = 50
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2281,8 +2298,8 @@ Hull
 Hull
     name = "SH_SNOWFLAKE_1_BODY"
     description = "SH_SNOWFLAKE_1_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 40
+    speed = 50
+    starlaneSpeed = 65
     fuel = 5
     stealth = 5
     structure = 12
@@ -2302,35 +2319,38 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = AND [
-                Random probability = 0.6
-                Not OwnedBy AnyEmpire
-            ]
+            activation = Random probability = 0.6
             stackinggroup = "SNOWFLAKE_STACK"
             effects = SetDestination destination = And [
                 System
                 Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
                 WithinStarlaneJumps 1 Source
             ]
         EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet size = Tiny
+            ]
+            activation = Random probability = 0.03
+            effects = [
+		        CreateShip "SM_SNOWFLAKE_2"
+		        Destroy
+		    ]
+        EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 6
         ]
     graphic = ""
     
 Hull
     name = "SH_SNOWFLAKE_2_BODY"
     description = "SH_SNOWFLAKE_2_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 40
+    speed = 50
+    starlaneSpeed = 70
     fuel = 5
     stealth = 5
-    structure = 20
+    structure = 25
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2359,20 +2379,30 @@ Hull
                 WithinStarlaneJumps 1 Source
             ]
         EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet size = Tiny
+            ]
+            activation = Random probability = 0.03
+            effects = [
+		        CreateShip "SM_SNOWFLAKE_3"
+		        Destroy
+		    ]
+        EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 7
     ]
     graphic = ""
     
 Hull
     name = "SH_SNOWFLAKE_3_BODY"
     description = "SH_SNOWFLAKE_3_BODY_DESC"
-    speed = 20
-    starlaneSpeed = 40
+    speed = 50
+    starlaneSpeed = 75
     fuel = 5
     stealth = 5
-    structure = 20
+    structure = 40
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2403,7 +2433,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 8
     ]
     graphic = ""
     
@@ -2413,10 +2443,10 @@ Hull
     name = "SH_JUGGERNAUT_1_BODY"
     description = "SH_JUGGERNAUT_1_BODY_DESC"
     speed = 20
-    starlaneSpeed = 20
-    fuel = 5
+    starlaneSpeed = 30
+    fuel = 3
     stealth = 5
-    structure = 40
+    structure = 30
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2441,12 +2471,18 @@ Hull
             effects = SetDestination destination = And [
                 System
                 Not Contains Source
-                Not Contains And [
-                    Planet
-                    OwnedBy AnyEmpire
-                ]
                 WithinStarlaneJumps 1 Source
             ]
+        EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = Asteroids
+            ]
+            activation = Random probability = 0.03
+            effects = [
+		        CreateShip "SM_JUGGERNAUT_2"
+		        Destroy
+		    ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2458,8 +2494,8 @@ Hull
     name = "SH_JUGGERNAUT_2_BODY"
     description = "SH_JUGGERNAUT_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 20
-    fuel = 5
+    starlaneSpeed = 25
+    fuel = 2
     stealth = 5
     structure = 40
     buildCost = 1
@@ -2490,6 +2526,17 @@ Hull
                 WithinStarlaneJumps 1 Source
             ]
         EffectsGroup
+            scope = And [
+                Source
+		        ContainedBy Contains Planet type = Asteroids
+            ]
+            activation = Random probability = 0.02
+            effects = [
+		        CreateShip "SM_JUGGERNAUT_3"
+		        Destroy
+		    ]
+		    
+        EffectsGroup
             scope = Source
             activation = Source
             effects = SetDetection Value + 5
@@ -2503,7 +2550,7 @@ Hull
     starlaneSpeed = 20
     fuel = 5
     stealth = 5
-    structure = 40
+    structure = 60
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2520,7 +2567,7 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = Random probability = 0.25
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System

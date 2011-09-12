@@ -253,19 +253,13 @@ SM_TREE
 Solar Tree
 
 SM_TREE_DESC
-Large branching space-born tree with filamentous branches. The solar tree passively stores energy from high energy stars, until it is ready to move on the the next stage of it life cycle.  Though immobile, it can release it's stored energy in a focused beam to defend itself.
+Large branching space-born tree with filamentous branches. Solar Trees gradually grow larger and tougher.
 
 SM_FLOATER
 Floater
 
 SM_FLOATER_DESC
 Gas-filled bulbous sac drifting through space.
-
-SM_SQUID
-Space Squid
-
-SM_SQUID_DESC
-Tentacled agressive hunter.
 
 SM_DRAGON
 Vacuum Dragon
@@ -2494,12 +2488,14 @@ Evil amazonian xenophobic agressive worms. Prefer Desert planets.
 SP_SUPER_TEST
 Super Testers
 SP_SUPER_TEST_DESC
-Super Testers are unbalanced and unfair. They trive on all planets.
+Super Testers are unbalanced and unfair. They are nearly Omniscient. And they trive on all planets.
 
 SP_CYNOS
 Cynos
 SP_CYNOS_DESC
-Walking plants sustained by a giant non-sentient mother plant.
+'''Walking plants sustained by a giant non-sentient mother plant.
+
+Can only produce Food or Research.'''
 
 SP_DERTHREAN
 Derthrean
@@ -2514,7 +2510,9 @@ A single, childish Telelpathic entity that consists of tons of centipedeoids
 SP_PHINNERT
 Phinnert
 SP_PHINNERT_DESC
-Flying Monkeys.
+'''Flying Monkeys.
+
+Cannot produce Research'''
 
 SP_SSLITH
 Sslith
@@ -2536,10 +2534,7 @@ Fifty-seven
 SP_FIFTYSEVEN_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
 
-++ research
-+ no ethos
-- slow population growth
-- cannot produce minerals or PP
+Can only produce Food or Research.
 
 Biology:
 Adult Fifty-Seven are between 10 and 20 m long. The main deviation from the tapering serpentine body are the two resonating domes on the forward dorsal side.  Various fins provide fine control.  Entirely blind, they rely on smell, hearing, an exquisitely honed presure sensitivity, and when the need arises bursts of echolocation.  Fifty-Seven are omnivores: eating flocks of small flying creatures with the same relish as the floating phytoplankton.  Since they remain aloft their entire lives and have no manipulator limbs, the Fifty-Seven have no material technology.
@@ -2566,7 +2561,9 @@ Gleaming gardener robots, left on their own.
 SP_NYMNMN
 Nymnmn
 SP_NYMNMN_DESC
-Planet-wide sapient magnetic waveforms.
+'''Planet-wide sapient magnetic waveforms.
+
+Can only produce Food or Research.'''
 
 SP_TRENCHERS
 Trenchers
@@ -2576,7 +2573,9 @@ Enigmatic wheeled robots devoted to carving up their planet into the most elabor
 SP_BEIGEGOO
 Beige Goo
 SP_BEIGEGOO_DESC
-Insane, intensely private, planet-engulfing nanite swarm .
+'''Insane, intensely private, planet-engulfing nanite swarm.
+
+Can only produce Food and Industry.'''
 
 SP_KOBUNTURA
 Kobuntura
@@ -2603,8 +2602,7 @@ Hidden Gardener
 SP_HIDDENGARDENER_DESC
 '''A sapient fungal network that tends it's plant food from beneath.
 
-+++ Farming
--- produces no other resources
+Can only produce food.
 
 The Hidden Gardener is a massive distributed fungal intelligence lying just beneath the surface. Each individual covers many square kms. It's actions and thoughts are slow.  Various sensory nodes are scattered about by which it can monitor the weather and the growth of its garden.  A Hidden Gardener by means of enzymes, the encapsulation and releases of seeds, and the control of water tends it's garden to produce precisely the rotting plant matter it needs to survive.
 
@@ -2736,7 +2734,7 @@ COMPUTRONIUM_BROKEN_SPECIAL_DESC
 
 ABANDONED_COLONY_SPECIAL
 Abandoned Colony
-ABANDONED_COLONY_SPECIAL
+ABANDONED_COLONY_SPECIAL_DESC
 An old abandoned colony.  Some of the infrastructure should still be useful.
 
 KRAKEN_NEST_SPECIAL

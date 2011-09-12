@@ -695,7 +695,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.05
+                Random probability = 0.025
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = CreateShip "SM_KRAKEN_1"
@@ -705,7 +705,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.05
+                Random probability = 0.025
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
@@ -736,7 +736,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.08
+                Random probability = 0.04
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = CreateShip "SM_SNOWFLAKE_1"
@@ -746,7 +746,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.08
+                Random probability = 0.04
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
@@ -777,7 +777,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.06
+                Random probability = 0.03
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = CreateShip "SM_JUGGERNAUT_1"
@@ -787,7 +787,7 @@ Special
             activation = AND [
                 Planet
                 Not OwnedBy AnyEmpire
-                Random probability = 0.06
+                Random probability = 0.03
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
