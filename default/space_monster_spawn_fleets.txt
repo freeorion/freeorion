@@ -12,7 +12,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    /*
+    
 MonsterFleet
     name = "SM_TREE"
     ships = [
@@ -28,7 +28,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    */
+    
 MonsterFleet
     name = "SM_DRONE_FACTORY"
     ships = [
@@ -70,7 +70,7 @@ MonsterFleet
     ships = [
         "SM_FLOATER"
     ]
-    spawnrate = 1.4
+    spawnrate = 0.4
     spawnlimit = 50
     location = And [
         Not Contains Monster

@@ -1633,6 +1633,13 @@ Hull
     slots = Slot type = External position = (0.30, 0.15)
     location = All
     effectsgroups = [
+        EffectsGroup     
+            scope = Source     
+            activation = Turn low = 0 high = 2
+            effects = [
+                CreateShip "SM_TREE"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             effects = [
