@@ -404,6 +404,8 @@ public:
     CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
                const ValueRef::ValueRefBase<int>* empire_id,
                const ValueRef::ValueRefBase<std::string>* species_name);
+    CreateShip(const std::string& predefined_ship_design_name,
+               const ValueRef::ValueRefBase<int>* empire_id);
     CreateShip(const std::string& predefined_ship_design_name);
     virtual ~CreateShip();
 

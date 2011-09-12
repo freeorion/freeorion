@@ -1163,6 +1163,14 @@ CreateShip::CreateShip(const ValueRef::ValueRefBase<int>* ship_design_id,
     m_species_name(species_name)
 {}
 
+CreateShip::CreateShip(const std::string& predefined_ship_design_name,
+                       const ValueRef::ValueRefBase<int>* empire_id) :
+    m_design_name(predefined_ship_design_name),
+    m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0
+    m_empire_id(empire_id),
+    m_species_name(0)   // ...
+{}
+
 CreateShip::CreateShip(const std::string& predefined_ship_design_name) :
     m_design_name(predefined_ship_design_name),
     m_design_id(0),     // this specifies a null pointer to a ValueRef, not the constant 0

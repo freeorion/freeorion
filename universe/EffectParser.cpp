@@ -425,6 +425,11 @@ namespace {
                                                              create_ship.empire,
                                                              create_ship.species)])
             | ((str_p("createship")
+                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1]
+                >> empire_label >> int_expr_p[create_ship.empire = arg1])
+               [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name,
+                                                             create_ship.empire)])
+            | ((str_p("createship")
                 >> design_name_label >> name_p[create_ship.predefined_design_name = arg1])
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name)])
             );
