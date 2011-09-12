@@ -78,6 +78,8 @@ namespace Condition {
     struct ContainedBy;
     struct Number;
     struct SortedNumberOf;
+    struct InSystem;
+    struct ObjectID;
 }
 
 /** The base class for all Conditions. */
@@ -418,21 +420,28 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Matches all objects that have an attached Special of the sort specified by
-  * \a name.  Passing "All" for \a name will match all objects with attached
-  * Specials. */
+/** Matches all objects that have an attached Special named \a name. */
 struct Condition::HasSpecial : public Condition::ConditionBase
 {
     HasSpecial(const std::string& name);
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
+    HasSpecial(const std::string& name, const ValueRef::ValueRefBase<int>* since_turn_low,
+               const ValueRef::ValueRefBase<int>* since_turn_high);
+    virtual ~HasSpecial();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
 private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
-    std::string m_name;
+    std::string                         m_name;
+    const ValueRef::ValueRefBase<int>*  m_since_turn_low;
+    const ValueRef::ValueRefBase<int>*  m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -485,6 +494,54 @@ private:
     virtual bool        Match(const ScriptingContext& local_context) const;
 
     const ConditionBase* m_condition;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches all objects that are in the system with the indicated \a system_id */
+struct Condition::InSystem : public Condition::ConditionBase
+{
+    InSystem(const ValueRef::ValueRefBase<int>* system_id);
+    virtual ~InSystem();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>* m_system_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** Matches the object with the id \a object_id */
+struct Condition::ObjectID : public Condition::ConditionBase
+{
+    ObjectID(const ValueRef::ValueRefBase<int>* object_id);
+    virtual ~ObjectID();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>* m_object_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1278,7 +1335,9 @@ template <class Archive>
 void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
-        & BOOST_SERIALIZATION_NVP(m_name);
+        & BOOST_SERIALIZATION_NVP(m_name)
+        & BOOST_SERIALIZATION_NVP(m_since_turn_low)
+        & BOOST_SERIALIZATION_NVP(m_since_turn_high);
 }
 
 template <class Archive>
@@ -1293,6 +1352,20 @@ void Condition::ContainedBy::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_condition);
+}
+
+template <class Archive>
+void Condition::InSystem::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_system_id);
+}
+
+template <class Archive>
+void Condition::ObjectID::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_object_id);
 }
 
 template <class Archive>

@@ -1434,20 +1434,124 @@ bool Condition::Building::Match(const ScriptingContext& local_context) const
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
 Condition::HasSpecial::HasSpecial(const std::string& name) :
-    m_name(name)
+    m_name(name),
+    m_since_turn_low(0),
+    m_since_turn_high(0)
 {}
+
+Condition::HasSpecial::HasSpecial(const std::string& name,
+                                  const ValueRef::ValueRefBase<int>* since_turn_low,
+                                  const ValueRef::ValueRefBase<int>* since_turn_high) :
+    m_name(name),
+    m_since_turn_low(since_turn_low),
+    m_since_turn_high(since_turn_high)
+{}
+
+Condition::HasSpecial::~HasSpecial()
+{
+    delete m_since_turn_low;
+    delete m_since_turn_high;
+}
+
+namespace {
+    bool HasSpecialSimpleMatch(const UniverseObject* candidate, const std::string& name,
+                               int low_turn, int high_turn)
+    {
+        if (!candidate)
+            return false;
+
+        if (name.empty())
+            return !candidate->Specials().empty();
+
+        std::map<std::string, int>::const_iterator it = candidate->Specials().find(name);
+        if (it == candidate->Specials().end())
+            return false;
+
+        int special_since_turn = it->second;
+
+        return low_turn <= special_since_turn && special_since_turn < high_turn;
+    }
+}
+
+void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_since_turn_low || m_since_turn_low->LocalCandidateInvariant()) &&
+                             (!m_since_turn_high || m_since_turn_high->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate turn limits once, pass to simple match for all candidates
+        const UniverseObject* no_object(0);
+        ScriptingContext local_context(parent_context, no_object);
+        int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
+        int high = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = HasSpecialSimpleMatch(*temp, m_name, low, high);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::HasSpecial::RootCandidateInvariant() const
+{ return ((!m_since_turn_low || m_since_turn_low->RootCandidateInvariant()) &&
+          (!m_since_turn_high || m_since_turn_high->RootCandidateInvariant())); }
+
+bool Condition::HasSpecial::TargetInvariant() const
+{ return ((!m_since_turn_low || m_since_turn_low->TargetInvariant()) &&
+          (!m_since_turn_high || m_since_turn_high->TargetInvariant())); }
 
 std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
 {
-    std::string description_str = "DESC_SPECIAL";
+    if (!m_since_turn_low && !m_since_turn_high) {
+        std::string description_str = "DESC_SPECIAL";
+        if (negated)
+            description_str += "_NOT";
+        return UserString(description_str);
+    }
+
+    // turn ranges have been specified; must indicate in description
+    std::string low_str = boost::lexical_cast<std::string>(BEFORE_FIRST_TURN);
+    if (m_since_turn_low) {
+        low_str = ValueRef::ConstantExpr(m_since_turn_low) ?
+                  boost::lexical_cast<std::string>(m_since_turn_low->Eval()) :
+                  m_since_turn_low->Description();
+    }
+    std::string high_str = boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN);
+    if (m_since_turn_high) {
+        high_str = ValueRef::ConstantExpr(m_since_turn_high) ?
+                   boost::lexical_cast<std::string>(m_since_turn_high->Eval()) :
+                   m_since_turn_high->Description();
+    }
+
+    std::string description_str = "DESC_SPECIAL_TURN_RANGE";
     if (negated)
         description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str)) % UserString(m_name));
+    return str(FlexibleFormat(UserString(description_str))
+               % m_name
+               % low_str
+               % high_str);
 }
 
 std::string Condition::HasSpecial::Dump() const
 {
-    return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
+    if (!m_since_turn_low && !m_since_turn_high)
+        return DumpIndent() + "HasSpecial name = \"" + m_name + "\"\n";
+
+    std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
+    std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
+    return DumpIndent() + "HasSpecial name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
 }
 
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
@@ -1457,9 +1561,9 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
         Logger().errorStream() << "HasSpecial::Match passed no candidate object";
         return false;
     }
-
-    return ((m_name == "All" || m_name.empty()) && !candidate->Specials().empty()) ||
-           (candidate->Specials().find(m_name) != candidate->Specials().end());
+    int low = (m_since_turn_low ? m_since_turn_low->Eval(local_context) : BEFORE_FIRST_TURN);
+    int high = (m_since_turn_high ? m_since_turn_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+    return HasSpecialSimpleMatch(candidate, m_name, low, high);
 }
 
 ///////////////////////////////////////////////////////////
@@ -1672,6 +1776,100 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const
 
     return false;
 }
+
+///////////////////////////////////////////////////////////
+// InSystem                                              //
+///////////////////////////////////////////////////////////
+Condition::InSystem::InSystem(const ValueRef::ValueRefBase<int>* system_id) :
+    m_system_id(system_id)
+{}
+
+Condition::InSystem::~InSystem()
+{
+    delete m_system_id;
+}
+
+namespace {
+    bool InSystemSimpleMatch(const UniverseObject* candidate, int system_id)
+    {
+        if (!candidate)
+            return false;
+        // don't match objects not in systems
+        return candidate->SystemID() != UniverseObject::INVALID_OBJECT_ID &&
+               candidate->SystemID() == system_id;
+    }
+}
+
+void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_system_id) ||
+                            (m_system_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate empire id once, and use to check all candidate objects
+        const UniverseObject* no_object(0);
+        int system_id = m_system_id->Eval(ScriptingContext(parent_context, no_object));
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = InSystemSimpleMatch(*temp, system_id);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::InSystem::RootCandidateInvariant() const
+{ return m_system_id->RootCandidateInvariant(); }
+
+bool Condition::InSystem::TargetInvariant() const
+{ return m_system_id->TargetInvariant(); }
+
+std::string Condition::InSystem::Description(bool negated/* = false*/) const
+{
+    std::string system_str = ValueRef::ConstantExpr(m_system_id) ?
+                             Empires().Lookup(m_system_id->Eval())->Name() :
+                             m_system_id->Description();
+
+    std::string description_str = "DESC_IN_SYSTEM";
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % system_str);
+}
+
+std::string Condition::InSystem::Dump() const
+{
+    return DumpIndent() + "InSystem system_id = " + m_system_id->Dump();
+}
+
+bool Condition::InSystem::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "InSystem::Match passed no candidate object";
+        return false;
+    }
+
+    return InSystemSimpleMatch(candidate, m_system_id->Eval(local_context));
+}
+
+///////////////////////////////////////////////////////////
+// ObjectID                                              //
+///////////////////////////////////////////////////////////
+
 
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //

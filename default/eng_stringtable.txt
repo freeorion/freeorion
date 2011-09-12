@@ -3566,6 +3566,12 @@ DESC_SPECIAL
 DESC_SPECIAL_NOT
  that doesn't have a %1% special
 
+DESC_SPECIAL_TURN_RANGE
+ that has had a %1% special since between turns %2% and %3%
+
+DESC_SPECIAL_TURN_RANGE_NOT
+ that has not had a %1% special since between turns %2% and %3%
+
 DESC_CONTAINS
  that contains an object%1%
 
