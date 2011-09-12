@@ -86,7 +86,7 @@ Hull
     slots = [
         Slot type = External position = (0.35, 0.40)
         Slot type = External position = (0.65, 0.40)
-        Slot type = Internal position = (0.40, 0.60)
+        Slot type = Internal position = (0.50, 0.65)
     ]
     location = Contains And [
         Building "BLD_SHIPYARD_BASE"

@@ -3,7 +3,7 @@ MonsterFleet
     ships = [
         "SM_KRILL_1"
     ]
-    spawnrate = 1.0
+    spawnrate = 1.5
     spawnlimit = 9999
     location = And [
         Not Contains Monster
@@ -18,7 +18,7 @@ MonsterFleet
     ships = [
         "SM_TREE"
     ]
-    spawnrate = 1.0
+    spawnrate = 1.5
     spawnlimit = 9999
     location = And [
         Star type = [Blue White Yellow Orange Red]
@@ -70,7 +70,7 @@ MonsterFleet
     ships = [
         "SM_FLOATER"
     ]
-    spawnrate = 0.4
+    spawnrate = 0.7
     spawnlimit = 50
     location = And [
         Not Contains Monster
@@ -100,7 +100,7 @@ MonsterFleet
     ships = [
         "SM_KRAKEN_1"
     ]
-    spawnrate = 0.4
+    spawnrate = 0.5
     spawnlimit = 100
     location = And [
         Not Contains Monster
@@ -115,7 +115,7 @@ MonsterFleet
     ships = [
         "SM_SNOWFLAKE_1"
     ]
-    spawnrate = 0.5
+    spawnrate = 0.6
     spawnlimit = 100
     location = And [
         Not Contains Monster
@@ -130,7 +130,7 @@ MonsterFleet
     ships = [
         "SM_JUGGERNAUT_1"
     ]
-    spawnrate = 0.4
+    spawnrate = 0.5
     spawnlimit = 100
     location = And [
         Not Contains Monster

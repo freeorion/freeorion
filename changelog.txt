@@ -12,6 +12,7 @@ New Features / Improvements:
  ~ Reduced file save size by using binary format (instead of semi-readable text).
 
 Balancing:
+ ~ Generally a lot of little tweaks to make the beginning of the game more playable.
  ~ Decreased cost of colony pods by 20%.
  ~ Unexplored systems block resource sharing between planets, preventing players from knowing about a hostile presense in a system before exploring it.
  ~ Ships no longer have functional detection when moving on starlanes.  Ships must be in a system to detect objects.
