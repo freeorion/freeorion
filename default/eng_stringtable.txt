@@ -275,7 +275,7 @@ Tool of a forgotten war, the Drone Fighter still fulfills it's original purpose,
 SM_DRONE_FACTORY
 Drone Factory
 SM_DRONE_FACTORY_DESC
-   Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
+Built in some long-forgotten war to defend long-vanished builders, amazingly the Drone Factory is still functions, slowly producing new Drone Fighters.
 
 SM_GUARD_1
 Sentry
@@ -3590,18 +3590,6 @@ DESC_CONTAINS
 
 DESC_CONTAINS_NOT
  that doesn't contain an object%1%
-
-DESC_IN_SYSTEM
- that is the system with id %1%
-
-DESC_IN_SYSTEM_NOT
- that is not in the system with id %1%
-
-DESC_OBJECT_ID
- that has the id %1%
-
-DESC_OBJECT_ID_NOT
- that does not have the id %1%
 
 DESC_PLANET_TYPE
  that is a %1% planet

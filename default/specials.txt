@@ -7,3 +7,127 @@ Special
             activation = Source
             effects = SetTargetConstruction Value + 0
     graphic = "icons/specials_huge/ancient_ruins.png"
+    
+    Special
+    name = "KRAKEN_NEST_SPECIAL"
+    description = "KRAKEN_NEST_SPECIAL_DESC"
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.10
+            ]
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = [
+                CreateShip "SM_KRAKEN_1" Source.Owner Species = ""
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.025
+            ]
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = CreateShip "SM_KRAKEN_1"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.025
+            ]
+            stackinggroup = "KRAKEN_NEST_STACK"
+            effects = [
+                CreateShip "SM_KRAKEN_1"
+                CreateShip "SM_KRAKEN_1"
+                RemoveSpecial "KRAKEN_NEST_SPECIAL"
+            ]
+        ]
+    graphic = "icons/specials_huge/kraken-nest.png"
+    
+Special
+    name = "SNOWFLAKE_NEST_SPECIAL"
+    description = "SNOWFLAKE_NEST_SPECIAL_DESC"
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.16
+            ]
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = [
+                CreateShip "SM_SNOWFLAKE_1" Source.Owner Species = ""
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.04
+            ]
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = CreateShip "SM_SNOWFLAKE_1"
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.04
+            ]
+            stackinggroup = "SNOWFLAKE_NEST_STACK"
+            effects = [
+                CreateShip "SM_SNOWFLAKE_1"
+                CreateShip "SM_SNOWFLAKE_1"
+                RemoveSpecial "SNOWFLAKE_NEST_SPECIAL"
+            ]
+        ]
+    graphic = "icons/specials_huge/snowflake-nest.png"
+    
+Special
+    name = "JUGGERNAUT_NEST_SPECIAL"
+    description = "JUGGERNAUT_NEST_SPECIAL_DESC"
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Random probability = 0.12
+            ]
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = [
+                CreateShip "SM_JUGGERNAUT_1" Source.Owner Species = ""
+            ]
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.03
+            ]
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = CreateShip "SM_JUGGERNAUT_1"
+
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not OwnedBy AnyEmpire
+                Random probability = 0.03
+            ]
+            stackinggroup = "JUGGERNAUT_NEST_STACK"
+            effects = [
+                CreateShip "SM_JUGGERNAUT_1"
+                CreateShip "SM_JUGGERNAUT_1"
+                RemoveSpecial "JUGGERNAUT_NEST_SPECIAL"
+            ]
+        ]
+        
+    graphic = "icons/specials_huge/juggernaut-nest.png"

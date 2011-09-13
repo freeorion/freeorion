@@ -2162,7 +2162,7 @@ Hull
     starlaneSpeed = 50
     fuel = 4
     stealth = 5
-    structure = 20
+    structure = 18
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2173,6 +2173,11 @@ Hull
     ]
     location = All
     effectsgroups = [
+        EffectsGroup     
+            scope = NumberOf number = 2 condition = Planet type = GasGiant
+            activation = Not Turn low = 1 high = 99999
+            effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
+            
         EffectsGroup
             scope = And [
                 Fleet
@@ -2320,6 +2325,11 @@ Hull
     ]
     location = All
     effectsgroups = [
+        EffectsGroup     
+            scope = NumberOf number = 2 condition = Planet size = Tiny
+            activation = Not Turn low = 1 high = 99999
+            effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
+            
         EffectsGroup
             scope = And [
                 Fleet
@@ -2453,7 +2463,7 @@ Hull
     starlaneSpeed = 30
     fuel = 3
     stealth = 5
-    structure = 30
+    structure = 25
     buildCost = 1
     buildTime = 1
     producible = false
@@ -2464,6 +2474,11 @@ Hull
     ]
     location = All
     effectsgroups = [
+        EffectsGroup     
+            scope = NumberOf number = 2 condition = Planet type = Asteroids
+            activation = Not Turn low = 1 high = 99999
+            effects = AddSpecial name = "JUGGERNAUT_NEST_SPECIAL"
+            
         EffectsGroup
             scope = And [
                 Fleet
