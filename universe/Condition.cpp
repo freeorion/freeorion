@@ -1574,6 +1574,100 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
 }
 
 ///////////////////////////////////////////////////////////
+// CreatedOnTurn                                         //
+///////////////////////////////////////////////////////////
+Condition::CreatedOnTurn::CreatedOnTurn(const ValueRef::ValueRefBase<int>* low,
+                                        const ValueRef::ValueRefBase<int>* high) :
+    m_low(low),
+    m_high(high)
+{}
+
+Condition::CreatedOnTurn::~CreatedOnTurn()
+{
+    delete m_low;
+    delete m_high;
+}
+
+namespace {
+    bool CreatedOnTurnSimpleMatch(const UniverseObject* candidate, int low, int high)
+    {
+        return candidate &&
+               low <= candidate->CreationTurn() &&
+               candidate->CreationTurn() < high;
+    }
+}
+
+void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
+                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        const UniverseObject* no_object(0);
+        ScriptingContext local_context(parent_context, no_object);
+        int low = (m_low ? m_low->Eval(local_context) : BEFORE_FIRST_TURN);
+        int high = (m_high ? m_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = CreatedOnTurnSimpleMatch(*temp, low, high);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::CreatedOnTurn::RootCandidateInvariant() const
+{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+
+bool Condition::CreatedOnTurn::TargetInvariant() const
+{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+
+std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) const
+{
+    std::string low_str = ValueRef::ConstantExpr(m_low) ?
+                            boost::lexical_cast<std::string>(m_low->Eval()) :
+                            m_low->Description();
+    std::string high_str = ValueRef::ConstantExpr(m_high) ?
+                            boost::lexical_cast<std::string>(m_high->Eval()) :
+                            m_high->Description();
+    std::string description_str = "DESC_CREATED_ON_TURN";
+    if (negated)
+        description_str += "_NOT";
+    return str(FlexibleFormat(UserString(description_str))
+               % low_str
+               % high_str);
+}
+
+std::string Condition::CreatedOnTurn::Dump() const
+{
+    return DumpIndent() + "CreatedOnTurn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+}
+
+bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
+        return false;
+    }
+
+    double low = std::max(0, m_low->Eval(local_context));
+    double high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+
+    return CreatedOnTurnSimpleMatch(candidate, low, high);
+}
+
+///////////////////////////////////////////////////////////
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Condition::Contains::Contains(const ConditionBase* condition) :

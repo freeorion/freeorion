@@ -109,6 +109,7 @@ namespace {
         IntRefConditionRule         within_starlane_jumps;
         IntRefIntRefConditionRule   number;
         IntRefIntRefRule            turn;
+        IntRefIntRefRule            created_on_turn;
         SortedNumberOfRule          number_of;
         ConditionParamRule          contains;
         ConditionParamRule          contained_by;
@@ -143,7 +144,13 @@ namespace {
             (str_p("turn")
              >> low_label >> int_expr_p[turn.int_ref_2 = arg1]
              >> high_label >> int_expr_p[turn.int_ref_1 = arg1])
-            [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
+            [turn.this_ = new_<Condition::CreatedOnTurn>(turn.int_ref_2, turn.int_ref_1)];
+
+        created_on_turn =
+            (str_p("createdonturn")
+             >> low_label >> int_expr_p[created_on_turn.int_ref_2 = arg1]
+             >> high_label >> int_expr_p[created_on_turn.int_ref_1 = arg1])
+            [created_on_turn.this_ = new_<Condition::Turn>(created_on_turn.int_ref_2, created_on_turn.int_ref_1)];
 
         number_of =
             ((str_p("numberof")
@@ -203,6 +210,7 @@ namespace {
             | within_starlane_jumps[condition3_p.this_ = arg1]
             | number[condition3_p.this_ = arg1]
             | turn[condition3_p.this_ = arg1]
+            | created_on_turn[condition3_p.this_ = arg1]
             | number_of[condition3_p.this_ = arg1]
             | contains[condition3_p.this_ = arg1]
             | contained_by[condition3_p.this_ = arg1]

@@ -80,6 +80,7 @@ namespace Condition {
     struct SortedNumberOf;
     struct InSystem;
     struct ObjectID;
+    struct CreatedOnTurn;
 }
 
 /** The base class for all Conditions. */
@@ -447,6 +448,32 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** Matches all objects that were created on turns within the specified range. */
+struct Condition::CreatedOnTurn : public Condition::ConditionBase
+{
+    CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
+    virtual ~CreatedOnTurn();
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
+    virtual bool        RootCandidateInvariant() const;
+    virtual bool        TargetInvariant() const;
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    const ValueRef::ValueRefBase<int>*  m_low;
+    const ValueRef::ValueRefBase<int>*  m_high;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 /** Matches all objects that contain an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
@@ -1338,6 +1365,14 @@ void Condition::HasSpecial::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_since_turn_low)
         & BOOST_SERIALIZATION_NVP(m_since_turn_high);
+}
+
+template <class Archive>
+void Condition::CreatedOnTurn::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_low)
+        & BOOST_SERIALIZATION_NVP(m_high);
 }
 
 template <class Archive>
