@@ -3591,6 +3591,18 @@ DESC_CONTAINS
 DESC_CONTAINS_NOT
  that doesn't contain an object%1%
 
+DESC_IN_SYSTEM
+ that is the system with id %1%
+
+DESC_IN_SYSTEM_NOT
+ that is not in the system with id %1%
+
+DESC_OBJECT_ID
+ that has the id %1%
+
+DESC_OBJECT_ID_NOT
+ that does not have the id %1%
+
 DESC_PLANET_TYPE
  that is a %1% planet
 

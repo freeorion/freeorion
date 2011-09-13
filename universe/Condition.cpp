@@ -722,14 +722,20 @@ bool Condition::EmpireAffiliation::TargetInvariant() const
 
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
+
     if (m_affiliation == AFFIL_SELF) {
         std::string description_str = "DESC_EMPIRE_AFFILIATION_SELF";
         if (negated)
             description_str += "_NOT";
-        return str(FlexibleFormat(UserString(description_str)) % value_str);
+        return str(FlexibleFormat(UserString(description_str)) % empire_str);
     } else if (m_affiliation == AFFIL_ANY) {
         std::string description_str = "DESC_EMPIRE_AFFILIATION_ANY";
         if (negated)
@@ -741,7 +747,7 @@ std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) 
             description_str += "_NOT";
         return str(FlexibleFormat(UserString(description_str))
                    % UserString(boost::lexical_cast<std::string>(m_affiliation))
-                   % value_str);
+                   % empire_str);
     }
 }
 
@@ -1518,7 +1524,8 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
         std::string description_str = "DESC_SPECIAL";
         if (negated)
             description_str += "_NOT";
-        return UserString(description_str);
+        return str(FlexibleFormat(UserString(description_str))
+                   % UserString(m_name));
     }
 
     // turn ranges have been specified; must indicate in description
@@ -1539,7 +1546,7 @@ std::string Condition::HasSpecial::Description(bool negated/* = false*/) const
     if (negated)
         description_str += "_NOT";
     return str(FlexibleFormat(UserString(description_str))
-               % m_name
+               % UserString(m_name)
                % low_str
                % high_str);
 }
@@ -1785,17 +1792,14 @@ Condition::InSystem::InSystem(const ValueRef::ValueRefBase<int>* system_id) :
 {}
 
 Condition::InSystem::~InSystem()
-{
-    delete m_system_id;
-}
+{ delete m_system_id; }
 
 namespace {
     bool InSystemSimpleMatch(const UniverseObject* candidate, int system_id)
     {
-        if (!candidate)
-            return false;
         // don't match objects not in systems
-        return candidate->SystemID() != UniverseObject::INVALID_OBJECT_ID &&
+        return candidate &&
+               system_id != UniverseObject::INVALID_OBJECT_ID &&
                candidate->SystemID() == system_id;
     }
 }
@@ -1838,9 +1842,16 @@ bool Condition::InSystem::TargetInvariant() const
 
 std::string Condition::InSystem::Description(bool negated/* = false*/) const
 {
-    std::string system_str = ValueRef::ConstantExpr(m_system_id) ?
-                             Empires().Lookup(m_system_id->Eval())->Name() :
-                             m_system_id->Description();
+    const ObjectMap& objects = GetUniverse().Objects();
+
+    std::string system_str;
+    int system_id = UniverseObject::INVALID_OBJECT_ID;
+    if (ValueRef::ConstantExpr(m_system_id))
+        system_id = m_system_id->Eval();
+    if (const System* system = objects.Object<System>(system_id))
+        system_str = system->Name();
+    else
+        system_str = m_system_id->Description();
 
     std::string description_str = "DESC_IN_SYSTEM";
     if (negated)
@@ -1851,9 +1862,7 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::InSystem::Dump() const
-{
-    return DumpIndent() + "InSystem system_id = " + m_system_id->Dump();
-}
+{ return DumpIndent() + "InSystem system_id = " + m_system_id->Dump(); }
 
 bool Condition::InSystem::Match(const ScriptingContext& local_context) const
 {
@@ -1869,7 +1878,92 @@ bool Condition::InSystem::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
+Condition::ObjectID::ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
+    m_object_id(object_id)
+{}
 
+Condition::ObjectID::~ObjectID()
+{ delete m_object_id; }
+
+namespace {
+    bool ObjectIDSimpleMatch(const UniverseObject* candidate, int object_id)
+    {
+        return candidate &&
+               object_id != UniverseObject::INVALID_OBJECT_ID &&
+               candidate->ID() == object_id;
+    }
+}
+
+void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = ValueRef::ConstantExpr(m_object_id) ||
+                            (m_object_id->LocalCandidateInvariant() &&
+                            (parent_context.condition_root_candidate || RootCandidateInvariant()));
+    if (simple_eval_safe) {
+        // evaluate empire id once, and use to check all candidate objects
+        const UniverseObject* no_object(0);
+        int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
+
+        ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
+        ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
+        ObjectSet::iterator it = from_set.begin();
+        ObjectSet::iterator end_it = from_set.end();
+        for ( ; it != end_it; ) {
+            ObjectSet::iterator temp = it++;
+            bool match = ObjectIDSimpleMatch(*temp, object_id);
+            if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
+                to_set.insert(*temp);
+                from_set.erase(temp);
+            }
+        }
+
+    } else {
+        // re-evaluate empire id for each candidate object
+        Condition::ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool Condition::ObjectID::RootCandidateInvariant() const
+{ return m_object_id->RootCandidateInvariant(); }
+
+bool Condition::ObjectID::TargetInvariant() const
+{ return m_object_id->TargetInvariant(); }
+
+std::string Condition::ObjectID::Description(bool negated/* = false*/) const
+{
+    const ObjectMap& objects = GetUniverse().Objects();
+
+    std::string object_str;
+    int object_id = UniverseObject::INVALID_OBJECT_ID;
+    if (ValueRef::ConstantExpr(m_object_id))
+        object_id = m_object_id->Eval();
+    if (const System* system = objects.Object<System>(object_id))
+        object_str = system->Name();
+    else
+        object_str = m_object_id->Description();
+
+    std::string description_str = "DESC_OBJECT_ID";
+    if (negated)
+        description_str += "_NOT";
+
+    return str(FlexibleFormat(UserString(description_str))
+               % object_str);
+}
+
+std::string Condition::ObjectID::Dump() const
+{ return DumpIndent() + "Object id = " + m_object_id->Dump(); }
+
+bool Condition::ObjectID::Match(const ScriptingContext& local_context) const
+{
+    const UniverseObject* candidate = local_context.condition_local_candidate;
+    if (!candidate) {
+        Logger().errorStream() << "ObjectID::Match passed no candidate object";
+        return false;
+    }
+
+    return ObjectIDSimpleMatch(candidate, m_object_id->Eval(local_context));
+}
 
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
@@ -3334,9 +3428,14 @@ bool Condition::ProducedByEmpire::TargetInvariant() const
 
 std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                 Empires().Lookup(m_empire_id->Eval())->Name() :
-                                 m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
 
     std::string description_str = "DESC_PRODUCED_BY_EMPIRE";
     if (negated)
@@ -3785,9 +3884,14 @@ bool Condition::VisibleToEmpire::TargetInvariant() const
 
 std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                 Empires().Lookup(m_empire_id->Eval())->Name() :
-                                 m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
 
     std::string description_str = "DESC_VISIBLE_TO_EMPIRE";
     if (negated)
@@ -4556,9 +4660,14 @@ bool Condition::ExploredByEmpire::TargetInvariant() const
 
 std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                 Empires().Lookup(m_empire_id->Eval())->Name() :
-                                 m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
 
     std::string description_str = "DESC_EXPLORED_BY_EMPIRE";
     if (negated)
@@ -4698,9 +4807,14 @@ bool Condition::FleetSupplyableByEmpire::TargetInvariant() const
 
 std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
 
     std::string description_str = "DESC_SUPPLY_CONNECTED_FLEET";
     if (negated)
@@ -4846,9 +4960,14 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
 
 std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string empire_str;
+    int empire_id = ALL_EMPIRES;
+    if (ValueRef::ConstantExpr(m_empire_id))
+        empire_id = m_empire_id->Eval();
+    if (const Empire* empire = Empires().Lookup(empire_id))
+        empire_str = empire->Name();
+    else
+        empire_str = m_empire_id->Description();
 
     std::string description_str = "DESC_SUPPLY_CONNECTED_RESOURCE";
     if (negated)
