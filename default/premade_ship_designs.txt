@@ -31,7 +31,6 @@ ShipDesign
         ""
         ""
         ""
-        ""
         "CO_COLONY_POD"
     ]
     graphic = "misc/generic.png"
@@ -52,7 +51,6 @@ ShipDesign
     lookup_strings = true
     hull = "SH_STANDARD"
     parts = [
-        ""
         ""
         ""
         ""
