@@ -2617,16 +2617,29 @@ Abaddonnians
 SP_ABADDONNIANS_DESC
 A race of cave dwelling genrally decent folk living in permanent slavery to an overprotective computer they created. 
 
+SP_ACIREMA
+Acirema
+SP_ACIREMA_DESC
+'''A race with nearly limitless power, that can't survive in this universe.
+
+Description
+An Acirem is a 10-30 m elipsoidal energy beings with large (30-100m) ''wings''. As they age they tend to accumulate material from around them developing a dusty and eventually rocky appearance (still maintaining the visible energy flows through their body and the gaps). Most Acirema live in a universe where the physical constants are slightly different, and there is only one place where they can get through to our universe, on their "Homeworld" of Portal. However, upon doing that they immediately begin to 'age' differently than in their own universe. Acirema cannot survive more than a few fractions of a galactic cycle in this universe. So an Acirem rarely spends much time before crossing back into their own universe.
+
+As the Acirema found the anomaly that allowed them to enter into this universe, they also found that harnesing the differences in structure allowed them to generate energy in massive amounts in both universes. They also found that their bodies could release and manipulate massive amounts of energy. They rapidly began gathering material on Portal to study, and use to build structures on Portal itself. However that massive amount of energy meant they rapidly mined Portal out, and soon had very limited minerals that were safe for them to extract.
+
+The massive amount of energy they can release as individuals and across the connection from Portal to their home universe, gives them the ability to produce large amounts of Industry, and also allows them to act as weapons. This makes Portal a very dangerous world to approach, as the Acirema are very wary of outsiders, and are sensitive to the vulnerability of their position. Trade with another universe is definitely beneficial, especially since they cannot obtain minerals from other planets. The Acirema on Portal seem to have a government that is similar to a military and/or research outpost (tightly controlled core with a majority loosely controlled) They are very secretive of the nature of their society back home.
+
+"Homeworld"
+Portal is a Radiated world close to an unusually bright Blue Giant Star, with a connection to another universe. It is thought that Precursor testing may have opened the connection, and caused the star to change. There is suspicion that there may have been intelligent life on Portal, and they were destroyed by the Acirema when the connection opened (either due to research or advanced weapons use).
+
+Reason for staying
+They can't stay here long enough to actually move to another planet and still survive.'''
 
 SP_TEST
 Testing Guinea Pig
 SP_TEST_DESC
 '''Try all your exparamental scripting on this guy, he'll appear a lot.'''
 
-SP_TEST2
-Test2 Creature
-SP_TEST_DESC2
-'''Try all your exparamental scripting on this guy, he'll appear a lot.'''
 
 ####################
 # Specials         #
