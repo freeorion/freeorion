@@ -4875,6 +4875,10 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
                 PlanetType preferred_planet_type = sept.rbegin()->second;
 
                 home_planet->SetType(preferred_planet_type);
+                if (preferred_planet_type == PT_ASTEROIDS)
+                    home_planet->SetSize(SZ_ASTEROIDS);
+                else if (preferred_planet_type == PT_GASGIANT)
+                    home_planet->SetSize(SZ_GASGIANT);
             }
 
         } else {
