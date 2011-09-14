@@ -16,7 +16,8 @@
 System::System() :
     UniverseObject(),
     m_star(INVALID_STAR_TYPE),
-    m_orbits(0)
+    m_orbits(0),
+    m_last_turn_battle_here(INVALID_GAME_TURN)
 {
     //Logger().debugStream() << "System::System()";
 }
@@ -140,14 +141,15 @@ std::string System::Dump() const
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " star type: " << UserString(GG::GetEnumMap<StarType>().FromEnum(m_star))
-       << " starlanes: ";
+       << "  last combat on turn: " << m_last_turn_battle_here
+       << "  starlanes: ";
     //typedef std::map<int, bool> StarlaneMap;
     for (StarlaneMap::const_iterator it = m_starlanes_wormholes.begin(); it != m_starlanes_wormholes.end();) {
         int lane_end_id = it->first;
         ++it;
         os << lane_end_id << (it == m_starlanes_wormholes.end() ? "" : ", ");
     }
-    os << " objects: ";
+    os << "  objects: ";
     //typedef std::multimap<int, int>             ObjectMultimap;         ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end();) {
         int obj_id = it->second;

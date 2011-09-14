@@ -1733,6 +1733,9 @@ void ServerApp::ProcessCombats()
     for (std::map<int, CombatInfo>::iterator it = system_combat_info.begin(); it != system_combat_info.end(); ++it) {
         CombatInfo& combat_info = it->second;
 
+        if (System* system = combat_info.GetSystem())
+            system->SetLastTurnBattleHere(CurrentTurn());
+
         //// DEBUG
         //const System* combat_system = combat_info.GetSystem();
         //Logger().debugStream() << "Processing combat at " << (combat_system ? combat_system->Name() : "(No System)");
