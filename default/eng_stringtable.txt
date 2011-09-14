@@ -4431,17 +4431,17 @@ CON_ORBITAL_CON
 Orbital Construction
 
 CON_ORBITAL_CON_DESC
-'''On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.
+'''Increases the resource supply range of all colonies by 1.
 
-Increases the resource supply range of all colonies by 1.'''
+On a planet, there is always a fixed reference direction: "up".  Microgravity is effectively isotropic.  This single difference has a multitude of consequences for the types of structures that can be built, and which of those forms is the optimal use of space, materials and energy in each environment.  As well, the interior configuration of spaces in orbit must be rethought.  However, while it is appealing to attempt to completely revolutionize interior design in a paradigm completely independent of the styles used on planet surfaces, the practical use of these spaces will be initial primarily by those who are used to, and adapted for, those planet surfaces.  Rather than a complete break from older styles, a gradual transition may be more effective.'''
 
 CON_SUBTER_CONST
 Subterranean Construction
 
 CON_SUBTER_CONST_DESC
-'''When space is at a premium, the ability to build downwards as well as up is an invaluable asset.  Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.
+'''Increases the population that can be sustained by Good planets by 1, 2, 3, 4 and 5 on Tiny, Small, Medium, Large and Huge planets, respectively.
 
-Increases the population that can be sustained by Good planets by 1, 2, 3, 4 and 5 on Tiny, Small, Medium, Large and Huge planets, respectively.'''
+When space is at a premium, the ability to build downwards as well as up is an invaluable asset.  Entire underground cities and facilities can be constructed and maintained, and trans-planetary subterranean transportation routes can be established.'''
 
 CON_SPACE_ELEVATOR
 Space Elevator
@@ -4459,25 +4459,25 @@ CON_FRC_ENRG_INFRA
 Force-Energy Infrastructure
 
 CON_FRC_ENRG_INFRA_DESC
-'''The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
+'''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
 
-Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.'''
+The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.'''
 
 CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
 
 CON_FRC_ENRG_CAMO_DESC
-'''Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials.  A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one colour to another at will.  While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.
+'''Increases the stealth of all buildings by 20.
 
-Increases the stealth of all buildings by 20.'''
+Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials.  A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one colour to another at will.  While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
 CON_TRANSDIM_HOUSE
 Transdimensional Housing
 
 CON_TRANSDIM_HOUSE_DESC
-'''The primary limiting factors on a planets population capacity are environmental desirability and space.  By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
+'''Increases the population that can be sustained by Good worlds by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.
 
-Increases the population that can be sustained by Good worlds by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
+The primary limiting factors on a planets population capacity are environmental desirability and space.  By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.'''
 
 CON_PLANET_DRIVE
 Planetary Starlane Drive
@@ -4489,9 +4489,9 @@ CON_GAL_RESOURCE_MAN
 Galactic Resource Management
 
 CON_GAL_RESOURCE_MAN_DESC
-'''The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena.  By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
+'''Increases the resource supply range of all colonies by 1.
 
-Increases the resource supply range of all colonies by 1.'''
+The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena.  By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.'''
 
 CON_STARGATE
 Stargate
@@ -4509,9 +4509,9 @@ CON_GRAVITY_WELLS
 Controlled gravity wells
 
 CON_GRAVITY_WELLS_DESC
-'''By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
+'''Increases the resource supply range of all colonies by 1.
 
-Increases the resource supply range of all colonies by 1.'''
+By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.'''
 
 CON_ART_PLANET
 Artificial Planet
@@ -4541,9 +4541,9 @@ GRO_SUBSPEC_TREAT
 Subspecialized Treatment
 
 GRO_SUBSPEC_TREAT_DESC
-'''Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments.  By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
+'''Increases health on all planets by 5.
 
-Increases health on all planets by 5.'''
+Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments.  By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.'''
 
 GRO_INDUSTRY_FARM
 Industrial Farming
@@ -4555,25 +4555,25 @@ GRO_SELF_ROTATING_CROPS
 Self-Rotating Crops
 
 GRO_SELF_ROTATING_CROPS_DESC
-'''High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.
+'''Increases target farming on Good planets with the Farming focus by the planet's population, and on Adequate planets with the Farming focus by one half of the planet's population.
 
-Increases target farming on Good planets with the Farming focus by the planet's population, and on Adequate planets with the Farming focus by one half of the planet's population.'''
+High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.'''
 
 GRO_HABITATION_DOMES
 Habitation Domes
 
 GRO_HABITATION_DOMES_DESC
-'''While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habitation Domes provide a fast, cheap alternative for claiming inhospitable territory, but allow only minimal levels of infrastructure and resource capacity to be developed.
+'''Allows one tenth of a population unit to settle on any previously uninhabitable planet type, including Asteroids and Gas Giants.  Many building types cannot be constructed on these outposts.
 
-Allows one tenth of a population unit to settle on any previously uninhabitable planet type, including Asteroids and Gas Giants.  Many building types cannot be constructed on these outposts.'''
+While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habitation Domes provide a fast, cheap alternative for claiming inhospitable territory, but allow only minimal levels of infrastructure and resource capacity to be developed.'''
 
 GRO_SYMBIO_COHAB
 Symbiotic Cohabitation
 
 GRO_SYMBIO_COHAB_DESC
-'''Members of different species are often in competition with one another for food and habitat.  Predator prey relationships are common, and it can be difficult for sentient beings to remove themselves entirely from competition with other organisms.  By impacting a planet in such a way as to benefit the native flora and fauna and in turn take advantage of their effects, it is possible to eliminate the antagonism between sentient and non-sentient life.
+'''Increases the population that can be sustained by Adequate planets to 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively.
 
-Increases the population that can be sustained by Adequate planets to 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
+Members of different species are often in competition with one another for food and habitat.  Predator prey relationships are common, and it can be difficult for sentient beings to remove themselves entirely from competition with other organisms.  By impacting a planet in such a way as to benefit the native flora and fauna and in turn take advantage of their effects, it is possible to eliminate the antagonism between sentient and non-sentient life.'''
 
 GRO_GENOME_BANK
 Genome Bank
@@ -4597,9 +4597,9 @@ GRO_ORBIT_FARMING
 Orbital Farming
 
 GRO_ORBIT_FARMING_DESC
-'''The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface and other land uses competing with surface farming.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.
+'''Increases target farming on all planets by 2, regardless of focus and environment.
 
-Increases target farming on all planets by 2, regardless of focus and environment.'''
+The primary energy source for food production in most societies is solar radiation.  Bound to a planet, farms have very limited access to this energy, due to the comparatively small solid angle subtended by the planet's surface and other land uses competing with surface farming.  By moving food production to orbital installations, continuous access to solar energy is gained, and any undesired spectral filtration by planetary atmospheres is eliminated.'''
 
 GRO_TERRAFORM
 Terraforming
@@ -4614,17 +4614,17 @@ GRO_XENOGEN_ADAPT
 Xenogenetic Adaptation
 
 GRO_XENOGEN_ADAPT_DESC
-'''The study of other life forms often exemplifies the weaknesses inherent in  one's own species.  By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
+'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Poor and Adequate planets is increased by 5.
 
-Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Poor and Adequate planets is increased by 5.'''
+The study of other life forms often exemplifies the weaknesses inherent in  one's own species.  By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.'''
 
 GRO_ENDOPHIL_NANOMED
 Endophiliac Nanomedication
 
 GRO_ENDOPHIL_NANOMED_DESC
-'''Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections.  By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
+'''Increases health on all planets by 10.
 
-Increases health on all planets by 10.'''
+Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections.  By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.'''
 
 GRO_REMOTE_TERRAFORM
 Remote Terraforming
@@ -4636,9 +4636,9 @@ GRO_XENO_SYMBIOGEN
 Xenological Symbiogenesis
 
 GRO_XENO_SYMBIOGEN_DESC
-'''Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it.  These adverse effects can include anything from weather patterns to the planet's size.  Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
+'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile, Poor and Adequate planets is increased by 5.
 
-Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile, Poor and Adequate planets is increased by 5.'''
+Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it.  These adverse effects can include anything from weather patterns to the planet's size.  Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.'''
 
 GRO_BIOTERROR
 Bioterror Facilites
@@ -4653,9 +4653,9 @@ GRO_CYBORG
 Cyborgs
 
 GRO_CYBORG_DESC
-'''A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances.  Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.
+'''Increases the population that can be sustained by Hostile, Poor and Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile and Poor planets is increased by 10, and health on Adequate planets is increased by 5.
 
-Increases the population that can be sustained by Hostile, Poor and Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile and Poor planets is increased by 10, and health on Adequate planets is increased by 5.'''
+A highly versatile fusion of organism and machine, capable of adapting to a tremendous variety of circumstances.  Spontaneous generation of specialized organs and mechanically enhanced strength permit cyborgs to exist with ease in nearly any environment.'''
 
 GRO_GAIA_TRANS
 Gaia Transformation
@@ -4670,9 +4670,9 @@ GRO_NONCORP_MAN
 Non-Corporeal Manifestation
 
 GRO_NONCORP_MAN_DESC
-'''While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally.  Ship's crews for example, would no longer have to waste space with crew quarters or rations storage.  Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
+'''Increases max fuel on all ships by 2, max defense on all planets by 5, max shield on all planets by 5, target farming on all planets with the Farming focus by one quarter of the planet's population, target mining on all planets with the Mining focus by 10, target industry on all planets with the Industry focus by one quarter of the planet's population, and target research on all planets with the Research focus by one fifth.
 
-Increases max fuel on all ships by 2, max defense on all planets by 5, max shield on all planets by 5, target farming on all planets with the Farming focus by one quarter of the planet's population, target mining on all planets with the Mining focus by 10, target industry on all planets with the Industry focus by one quarter of the planet's population, and target research on all planets with the Research focus by one fifth.'''
+While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally.  Ship's crews for example, would no longer have to waste space with crew quarters or rations storage.  Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.'''
 
 LRN_OBSERVATORY_I
 Observatory
@@ -4699,25 +4699,25 @@ LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
 
 LRN_DISTRIB_THOUGHT_DESC
-'''The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.
+'''Multiplies target research on all planets with the Research focus by 1.25.
 
-Multiplies target research on all planets with the Research focus by 1.25.'''
+The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
 LRN_AUTOLAB_I
 Basic Autolabs
 
 LRN_AUTOLAB_I_DESC
-'''By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility.  Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.
+'''Increases target research on all planets by 5.
 
-Increases target research on all planets by 5.'''
+By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility.  Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
 
 LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
 LRN_STELLAR_TOMOGRAPHY_DESC
-'''A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.
+'''Multiplies target research on planets with the research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.
 
-Multiplies target research on planets with the research focus by 2, 1.75, 1.5, or 1.25 in systems with Black Hole stars, Neutron stars, Blue or white stars, and Yellow, Orange or Red stars, respectively.'''
+A network of specialized satellites can use tomographic methods to reconstruct the activities occurring deep within a star.  These otherwise costly-to-produce conditions are ideal for a variety of research endeavours, with larger benefits for more exotic star types.'''
 
 LRN_SPATIAL_DISTORT_GEN
 Spatial Distortion Generator
@@ -4743,9 +4743,9 @@ LRN_GAL_DATA_NET
 Galactic Data Network
 
 LRN_GAL_DATA_NET_DESC
-'''A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes.  This advancement greatly facilitates research throughout the empire.
+'''Multiplies target research on all planets with the Research focus by 2.
 
-Multiplies target research on all planets with the Research focus by 2.'''
+A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes.  This advancement greatly facilitates research throughout the empire.'''
 
 LRN_COLLECTIVE_NET
 Collective Thought Network
@@ -4763,9 +4763,9 @@ LRN_PSY_DOM
 Psychogenic Domination
 
 LRN_PSY_DOM_DESC
-'''It is difficult to force a conscious individual to submit to the total mental control of another entity against its will.  By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.
+'''Has a 10% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech.
 
-Has a 10% chance of taking control of any enemy ship within one starlane jump of a colony owned by the empire, provided that the ship is not owned by an empire who also has this tech.'''
+It is difficult to force a conscious individual to submit to the total mental control of another entity against its will.  By manipulating the timeframes involved however, the mental force exerted by a population over a period of hours may be brought to bear on a single individual in the span of a few seconds, creating an almost irresistible compulsion to join the unified mind.'''
 
 LRN_RUINS_MOD
 Ancient Ruins Modifier
@@ -4780,9 +4780,9 @@ PRO_AUTOFACTORY_I
 Basic Autofactories
 
 PRO_AUTOFACTORY_I_DESC
-'''By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility.  These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
+'''Increases target industry on all planets by 5.
 
-Increases target industry on all planets by 5.'''
+By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility.  These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.'''
 
 PRO_HEAVY_MINING_I
 Heavy Mining Processors
@@ -4794,17 +4794,17 @@ PRO_ASTEROID_MINE
 Asteroid Mining
 
 PRO_ASTEROID_MINE_DESC
-'''Mineral resource extraction from subplanetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.
+'''Permits use of the Mining focus on Asteroids.
 
-Permits use of the Mining focus on Asteroids.'''
+Mineral resource extraction from subplanetoid-sized bodies involves challenges and provides opportunities quite distinct from those of full-fledged planets.  Lacking sufficient mass to self-liquify and differentiate, asteroids can provide much easier access to some heavier elements, and lack of a gravity can make extraction for use in space much more efficient.  Conversely, the limited size of each source asteroid requires fully portable self-sufficient extraction facilities.  As well, the challenges of any microgravity environment must be overcome, requiring redesign of many traditional methods.'''
 
 PRO_ORBITAL_MINE
 Orbital Mining
 
 PRO_ORBITAL_MINE_DESC
-'''On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.
+'''Permits use of the Mining focus on planetary outposts.
 
-Permits use of the Mining focus on planetary outposts.'''
+On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.'''
 
 PRO_GAS_GIANT_GEN
 Gas Giant Generation
@@ -4816,17 +4816,17 @@ PRO_CORE_MINE
 Deep Core Mining
 
 PRO_CORE_MINE_DESC
-'''The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+'''Increases target mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.
 
-Increases target mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.'''
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.'''
 
 PRO_EXOBOTS
 Exobots
 
 PRO_EXOBOTS_DESC
-'''Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry.  Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
+'''Increases target industry on all planets with the Industry focus by one fifth of the planet's population, and target mining on all planets with the Mining focus by 10.
 
-Increases target industry on all planets with the Industry focus by one fifth of the planet's population, and target mining on all planets with the Mining focus by 10.'''
+Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry.  Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.'''
 
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
@@ -4838,9 +4838,9 @@ PRO_FUSION_PLANTS
 Fusion Plants
 
 PRO_FUSION_PLANTS_DESC
-'''Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+'''Increases target industry on planets with the Industry focus by one half of the planet's population.
 
-Increases target industry on planets with the Industry focus by one half of the planet's population.'''
+Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.'''
 
 PRO_HYPER_DAM
 Hyperspatial Dam
@@ -4887,9 +4887,9 @@ SHP_DEFENSE_NET
 Planetary Defense Network
 
 SHP_DEFENSE_NET_DESC
-'''With galactic exploration comes the possibility of meeting new races - and new enemies.  By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.
+'''Increases max defense on all planets by 5.
 
-Increases max defense on all planets by 5.'''
+With galactic exploration comes the possibility of meeting new races - and new enemies.  By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
 
 SHP_HI_ENRG_FOCUS
 High Energy Focus
@@ -4921,9 +4921,9 @@ SHP_REINFORCED_HULL
 Reinforced Hull
 
 SHP_REINFORCED_HULL_DESC
-'''Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials.  However, the limitations of physical matter impose a severe limitation on the strength of hulls.  By enhancing the hull with structural integrity fields, a sizeable increase in strength can be obtained.
+'''Increases max structure of all ships by 5.
 
-Increases max structure of all ships by 5.'''
+Standard ship hulls are designed and constructed with advanced microgravity architectural techniques and highly resistant materials.  However, the limitations of physical matter impose a severe limitation on the strength of hulls.  By enhancing the hull with structural integrity fields, a sizeable increase in strength can be obtained.'''
 
 SHP_BASIC_DAM_CONT
 Basic Damage Control
@@ -5047,17 +5047,17 @@ SHP_RADAR
 Active Radar
 
 SHP_RADAR_DESC
-'''Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened.  By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.
+'''Increases the detection of all planets to 40.
 
-Increases the detection of all planets to 40.'''
+Passively relying on incoming electromagnetic radiation for information about objects in the vicinity is crude and impractical, as this radiation can be masked or dampened.  By emitting electromagnetic radiation and detecting returning radiation, it is possible to determine the location and velocity of many objects.'''
 
 SHP_NEUTRON_SCANNER
 Neutron Scanner
 
 SHP_NEUTRON_SCANNER_DESC
-'''Electromagnetic radiation has no rest mass and is easily manipulable.  Simply by bending waves of light around an object, it is possible to render radar devices virtually useless.  By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.
+'''Increases the detection of all planets to 60.
 
-Increases the detection of all planets to 60.'''
+Electromagnetic radiation has no rest mass and is easily manipulable.  Simply by bending waves of light around an object, it is possible to render radar devices virtually useless.  By firing waves of neutrons instead of electromagnetic radiation, more effective active scanning can be utilized.'''
 
 SHP_SENSORS
 Sensors
@@ -5075,9 +5075,9 @@ SHP_ABSORPTION_FIELD
 Absorption Field
 
 SHP_ABSORPTION_FIELD_DESC
-'''Simply dampening electromagnetic emissions can make an object completely invisible to passive scans.  Active scanning however, can make such methods of hiding an object nearly useless.  By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.
+'''Increases the stealth of all planets, systems and buildings by 30.  This bonus is not cumulative with that of other stealth techs.
 
-Increases the stealth of all planets, systems and buildings by 30.  This bonus is not cumulative with that of other stealth techs.'''
+Simply dampening electromagnetic emissions can make an object completely invisible to passive scans.  Active scanning however, can make such methods of hiding an object nearly useless.  By absorbing, rather than reflecting the radiation emitted by active scanning devices, the stealth of a ship can be greatly increased.'''
 
 SHP_DIM_CLOAK
 Dimensional Cloak
@@ -5089,9 +5089,9 @@ SHP_PHASING_CLOAK
 Phasing Cloak
 
 SHP_PHASING_CLOAK_DESC
-'''Even the most carefully concealed ship emits radiation in the form of force carrier particles.  By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.
+'''Increases the stealth of all planets, systems and buildings by 80.  This bonus is not cumulative with that of other stealth techs.
 
-Increases the stealth of all planets, systems and buildings by 80.  This bonus is not cumulative with that of other stealth techs.'''
+Even the most carefully concealed ship emits radiation in the form of force carrier particles.  By modulating the wave forms of these particles, it is possible to synchronize them with the background radiation, hampering even very advanced attempts to detect the ship.'''
 
 SHP_DEUTERIUM_TANK
 Deuterium Tank
