@@ -283,6 +283,9 @@ System::const_lane_iterator System::begin_lanes() const
 System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
+int System::LastTurnBattleHere() const
+{return m_last_turn_battle_here;}
+
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<System* const>(this)); }
 
@@ -491,6 +494,9 @@ void System::UpdateOwnership()
             if (!planet->Unowned())
                 m_empires_with_planets_here.insert(planet->Owner());
 }
+
+void System::SetLastTurnBattleHere(int turn)
+{ m_last_turn_battle_here = turn; }
 
 void System::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {

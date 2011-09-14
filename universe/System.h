@@ -65,7 +65,7 @@ public:
     StarType                GetStarType() const;                        ///< returns the type of star for this system
     int                     Orbits() const;                             ///< returns the number of orbits in this system
 
-    const std::set<int> &   ControllingEmpireIDs() const;               ///< returns empires which control planets in this system (may be empty)
+    const std::set<int>&    ControllingEmpireIDs() const;               ///< returns empires which control planets in this system (may be empty)
 
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
@@ -110,6 +110,8 @@ public:
       * wormhole (true)*/
     StarlaneMap             VisibleStarlanesWormholes(int empire_id) const;
 
+    int                     LastTurnBattleHere() const;
+
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
     mutable boost::signal<void (Fleet& fleet)> FleetInsertedSignal;     ///< fleet is inserted into system
@@ -152,6 +154,8 @@ public:
 
     virtual void            SetOwner(int id) {};            ///< adding owner to system objects is a no-op
     void                    UpdateOwnership();              ///< refresh set of empire ids which control planets in this system
+
+    void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this sytem
 
     orbit_iterator          begin();                        ///< begin iterator for all system objects
     orbit_iterator          end();                          ///< end iterator for all system objects
