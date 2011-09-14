@@ -72,7 +72,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -127,7 +127,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -301,7 +301,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -407,7 +407,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -462,7 +462,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -680,7 +680,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -735,7 +735,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -909,7 +909,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -1053,7 +1053,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -1108,7 +1108,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -1282,7 +1282,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -1425,7 +1425,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -1480,7 +1480,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -1654,7 +1654,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -1791,7 +1791,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -1846,7 +1846,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -2010,7 +2010,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -2149,7 +2149,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -2204,7 +2204,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -2378,7 +2378,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -2521,7 +2521,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -2576,7 +2576,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -2750,7 +2750,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -2853,7 +2853,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -2908,7 +2908,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -3133,7 +3133,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -3188,7 +3188,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -3406,7 +3406,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -3461,7 +3461,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -3635,7 +3635,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -3742,7 +3742,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -3797,7 +3797,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -4014,7 +4014,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -4069,7 +4069,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -4243,7 +4243,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -4386,7 +4386,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -4441,7 +4441,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -4615,7 +4615,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -4758,7 +4758,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -4813,7 +4813,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -4987,7 +4987,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -5130,7 +5130,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -5185,7 +5185,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -5359,7 +5359,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -5502,7 +5502,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -5557,7 +5557,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -5731,7 +5731,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -5829,7 +5829,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -5884,7 +5884,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -6086,7 +6086,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -6141,7 +6141,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -6315,7 +6315,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -6457,7 +6457,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -6512,7 +6512,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -6686,7 +6686,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -6914,7 +6914,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -6969,7 +6969,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -7143,7 +7143,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -7476,7 +7476,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -7531,7 +7531,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -7705,7 +7705,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -8038,7 +8038,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -8093,7 +8093,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -8267,7 +8267,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -8600,7 +8600,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -8655,7 +8655,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -8829,7 +8829,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -9162,7 +9162,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -9217,7 +9217,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -9391,7 +9391,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -9724,7 +9724,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -9779,7 +9779,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -9953,7 +9953,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -10286,7 +10286,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -10341,7 +10341,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -10515,7 +10515,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -10848,7 +10848,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -10903,7 +10903,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -11077,7 +11077,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -11410,7 +11410,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -11465,7 +11465,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -11639,7 +11639,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
@@ -11977,7 +11977,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Good
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 25
@@ -12032,7 +12032,7 @@ Species
             scope = Source
             activation = And [
                 Planet environment = Adequate
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = [
                 SetTargetPopulation Value + 5
@@ -12206,7 +12206,7 @@ Species
             scope = Source
             activation = And [
                 Focus type = "FOCUS_MINING"
-                Planet size = Huge
+                Planet size = [Huge GasGiant Asteroids]
             ]
             effects = SetTargetMining Value + Target.Population * 0.2
 
