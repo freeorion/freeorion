@@ -25,7 +25,8 @@ System::System(StarType star, int orbits, const std::string& name, double x, dou
                const std::set<int>& owners/* = std::set<int>()*/) :
     UniverseObject(name, x, y, owners),
     m_star(star),
-    m_orbits(orbits)
+    m_orbits(orbits),
+    m_last_turn_battle_here(INVALID_GAME_TURN)
 {
     //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
@@ -41,7 +42,8 @@ System::System(StarType star, int orbits, const StarlaneMap& lanes_and_holes,
     UniverseObject(name, x, y, owners),
     m_star(star),
     m_orbits(orbits),
-    m_starlanes_wormholes(lanes_and_holes)
+    m_starlanes_wormholes(lanes_and_holes),
+    m_last_turn_battle_here(INVALID_GAME_TURN)
 {
     //Logger().debugStream() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
@@ -57,7 +59,8 @@ System::System(const System& rhs) :
     m_star(rhs.m_star),
     m_orbits(rhs.m_orbits),
     m_objects(rhs.m_objects),
-    m_starlanes_wormholes(rhs.m_starlanes_wormholes)
+    m_starlanes_wormholes(rhs.m_starlanes_wormholes),
+    m_last_turn_battle_here(rhs.m_last_turn_battle_here)
 {}
 
 System* System::Clone(int empire_id) const
@@ -88,17 +91,18 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
     UniverseObject::Copy(copied_object, vis);
 
     if (vis >= VIS_BASIC_VISIBILITY) {
-        this->m_objects =               copied_system->VisibleContainedObjects(empire_id);
+        this->m_objects =                   copied_system->VisibleContainedObjects(empire_id);
 
         // add any visible lanes, without removing existing entries
         StarlaneMap visible_lanes_holes = copied_system->VisibleStarlanesWormholes(empire_id);
         for (StarlaneMap::const_iterator it = visible_lanes_holes.begin(); it != visible_lanes_holes.end(); ++it)
             this->m_starlanes_wormholes[it->first] = it->second;
 
-        this->m_orbits =                copied_system->m_orbits;
+        this->m_orbits =                    copied_system->m_orbits;
 
         if (vis >= VIS_PARTIAL_VISIBILITY) {
-            this->m_star =              copied_system->m_star;
+            this->m_star =                  copied_system->m_star;
+            this->m_last_turn_battle_here = copied_system->m_last_turn_battle_here;
 
             // remove any not-visible lanes that were previously known: with
             // partial vis, they should be seen, but aren't, so are known not
@@ -129,9 +133,7 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
 }
 
 const std::string& System::TypeName() const
-{
-    return UserString("SYSTEM");
-}
+{ return UserString("SYSTEM"); }
 
 std::string System::Dump() const
 {
@@ -158,19 +160,13 @@ std::string System::Dump() const
 }
 
 StarType System::GetStarType() const
-{
-    return m_star;
-}
+{ return m_star; }
 
 int System::Orbits() const
-{
-    return m_orbits;
-}
+{ return m_orbits; }
 
 const std::set<int>& System::ControllingEmpireIDs() const
-{
-    return m_empires_with_planets_here;
-}
+{ return m_empires_with_planets_here; }
 
 int System::NumStarlanes() const
 {
@@ -259,14 +255,10 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
 }
 
 System::const_orbit_iterator System::begin() const
-{
-    return m_objects.begin();
-}
+{ return m_objects.begin(); }
 
 System::const_orbit_iterator System::end() const
-{
-    return m_objects.end();
-}
+{ return m_objects.end(); }
 
 bool System::Contains(int object_id) const
 {
@@ -280,34 +272,22 @@ bool System::Contains(int object_id) const
 }
 
 std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::orbit_range(int o) const
-{
-    return m_objects.equal_range(o);
-}
+{ return m_objects.equal_range(o); }
 
 std::pair<System::const_orbit_iterator, System::const_orbit_iterator> System::non_orbit_range() const
-{
-    return m_objects.equal_range(-1);
-}
+{ return m_objects.equal_range(-1); }
 
 System::const_lane_iterator System::begin_lanes() const
-{
-    return m_starlanes_wormholes.begin();
-}
+{ return m_starlanes_wormholes.begin(); }
 
 System::const_lane_iterator System::end_lanes() const
-{
-    return m_starlanes_wormholes.end();
-}
+{ return m_starlanes_wormholes.end(); }
 
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<System* const>(this));
-}
+{ return visitor.Visit(const_cast<System* const>(this)); }
 
 int System::Insert(UniverseObject* obj)
-{
-    return Insert(obj, -1);
-}
+{ return Insert(obj, -1); }
 
 int System::Insert(UniverseObject* obj, int orbit)
 {
@@ -456,9 +436,7 @@ void System::Remove(UniverseObject* obj)
 }
 
 void System::Remove(int id)
-{
-    Remove(GetMainObjectMap().Object(id));
-}
+{ Remove(GetMainObjectMap().Object(id)); }
 
 void System::SetStarType(StarType type)
 {
@@ -524,29 +502,19 @@ void System::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER
 }
 
 System::orbit_iterator System::begin()
-{
-    return m_objects.begin();
-}
+{ return m_objects.begin(); }
 
 System::orbit_iterator System::end()
-{
-    return m_objects.end();
-}
+{ return m_objects.end(); }
 
 std::pair<System::orbit_iterator, System::orbit_iterator> System::orbit_range(int o)
-{
-    return m_objects.equal_range(o);
-}
+{ return m_objects.equal_range(o); }
 
 std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_range()
-{
-    return m_objects.equal_range(-1);
-}
+{ return m_objects.equal_range(-1); }
 
 bool System::OrbitOccupied(int orbit) const 
-{
-    return (m_objects.find(orbit) != m_objects.end());
-}
+{ return (m_objects.find(orbit) != m_objects.end()); }
 
 std::set<int> System::FreeOrbits() const
 {
@@ -561,19 +529,13 @@ std::set<int> System::FreeOrbits() const
 }
 
 System::lane_iterator System::begin_lanes()
-{
-    return m_starlanes_wormholes.begin();
-}
+{ return m_starlanes_wormholes.begin(); }
 
 System::lane_iterator System::end_lanes()
-{
-    return m_starlanes_wormholes.end();
-}
+{ return m_starlanes_wormholes.end(); }
 
 System::StarlaneMap System::StarlanesWormholes() const
-{
-    return m_starlanes_wormholes;
-}
+{ return m_starlanes_wormholes; }
 
 System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
 {

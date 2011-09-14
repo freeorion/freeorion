@@ -178,6 +178,7 @@ private:
     int             m_orbits;
     ObjectMultimap  m_objects;                      ///< each key value represents an orbit (-1 represents general system contents not in any orbit); there may be many or no objects at each orbit (including -1)
     StarlaneMap     m_starlanes_wormholes;          ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
+    int             m_last_turn_battle_here;        ///< the turn on which there was last a battle in this sytem
 
     friend class boost::serialization::access;
     template <class Archive>

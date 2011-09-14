@@ -100,7 +100,8 @@ void System::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_star)
         & BOOST_SERIALIZATION_NVP(m_orbits)
         & BOOST_SERIALIZATION_NVP(m_objects)
-        & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes);
+        & BOOST_SERIALIZATION_NVP(m_starlanes_wormholes)
+        & BOOST_SERIALIZATION_NVP(m_last_turn_battle_here);
 }
 
 template <class Archive>
