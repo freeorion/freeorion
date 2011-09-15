@@ -115,22 +115,20 @@ namespace {
 /////////////////////////////////////////////////
 Special::Special(const std::string& name, const std::string& description,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+                 const Condition::ConditionBase* location,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_effects(effects),
+    m_location(location),
     m_graphic(graphic)
 {}
 
 const std::string& Special::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 const std::string& Special::Description() const
-{
-    return m_description;
-}
+{ return m_description; }
 
 std::string Special::Dump() const
 {
@@ -158,26 +156,19 @@ std::string Special::Dump() const
 }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const
-{
-    return m_effects;
-}
+{ return m_effects; }
+
+const Condition::ConditionBase* Special::Location() const
+{ return m_location; }
 
 const std::string& Special::Graphic() const
-{
-    return m_graphic;
-}
+{ return m_graphic; }
 
 const Special* GetSpecial(const std::string& name)
-{
-    return GetSpecialManager().GetSpecial(name);
-}
+{ return GetSpecialManager().GetSpecial(name); }
 
 std::vector<std::string> SpecialNames()
-{
-    return SpecialManager().SpecialNames();
-}
+{ return SpecialManager().SpecialNames(); }
 
 const std::set<std::string>& PlanetSpecialNames()
-{
-    return GetSpecialManager().PlanetSpecialNames();
-}
+{ return GetSpecialManager().PlanetSpecialNames(); }

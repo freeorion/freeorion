@@ -206,7 +206,7 @@ namespace {
              >> !(effectsgroups_label >>    effects_group_vec_p[special_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[special_p.graphic = arg1])
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
-                                             special_p.graphic)];
+                                             val(NULL_COND), special_p.graphic)];
 
         focus_type_p =
             (str_p("focus")

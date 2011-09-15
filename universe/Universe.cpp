@@ -3164,9 +3164,8 @@ const std::string& FleetPlan::Name() const {
         return m_name;
 }
 
-const std::vector<std::string>& FleetPlan::ShipDesigns() const {
-    return m_ship_designs;
-}
+const std::vector<std::string>& FleetPlan::ShipDesigns() const
+{ return m_ship_designs; }
 
 
 ////////////////////////////////////////
@@ -3189,9 +3188,7 @@ MonsterFleetPlan::MonsterFleetPlan() :
 {}
 
 MonsterFleetPlan::~MonsterFleetPlan()
-{
-    delete m_location;
-}
+{ delete m_location; }
 
 double MonsterFleetPlan::SpawnRate() const
 { return m_spawn_rate; }
