@@ -723,13 +723,15 @@ bool Condition::EmpireAffiliation::TargetInvariant() const
 std::string Condition::EmpireAffiliation::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     if (m_affiliation == AFFIL_SELF) {
         std::string description_str = "DESC_EMPIRE_AFFILIATION_SELF";
@@ -3523,13 +3525,15 @@ bool Condition::ProducedByEmpire::TargetInvariant() const
 std::string Condition::ProducedByEmpire::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     std::string description_str = "DESC_PRODUCED_BY_EMPIRE";
     if (negated)
@@ -3979,13 +3983,15 @@ bool Condition::VisibleToEmpire::TargetInvariant() const
 std::string Condition::VisibleToEmpire::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     std::string description_str = "DESC_VISIBLE_TO_EMPIRE";
     if (negated)
@@ -4755,13 +4761,15 @@ bool Condition::ExploredByEmpire::TargetInvariant() const
 std::string Condition::ExploredByEmpire::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     std::string description_str = "DESC_EXPLORED_BY_EMPIRE";
     if (negated)
@@ -4902,13 +4910,15 @@ bool Condition::FleetSupplyableByEmpire::TargetInvariant() const
 std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     std::string description_str = "DESC_SUPPLY_CONNECTED_FLEET";
     if (negated)
@@ -5055,13 +5065,15 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
 std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated/* = false*/) const
 {
     std::string empire_str;
-    int empire_id = ALL_EMPIRES;
-    if (ValueRef::ConstantExpr(m_empire_id))
-        empire_id = m_empire_id->Eval();
-    if (const Empire* empire = Empires().Lookup(empire_id))
-        empire_str = empire->Name();
-    else
-        empire_str = m_empire_id->Description();
+    if (m_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_empire_id))
+            empire_id = m_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_empire_id->Description();
+    }
 
     std::string description_str = "DESC_SUPPLY_CONNECTED_RESOURCE";
     if (negated)
