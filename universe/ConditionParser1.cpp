@@ -117,6 +117,7 @@ namespace {
 
         Rule                    all;
         Rule                    source;
+        Rule                    root_candidate;
         Rule                    target;
         Rule                    stationary;
         Rule                    capital;
@@ -161,6 +162,10 @@ namespace {
         source =
             str_p("source")
             [source.this_ = new_<Condition::Source>()];
+
+        root_candidate =
+            str_p("rootcandidate")
+            [root_candidate.this_ = new_<Condition::RootCandidate>()];
 
         target =
             str_p("target")
@@ -302,6 +307,7 @@ namespace {
             | meter_value[condition1_p.this_ = arg1]
             | owned_by[condition1_p.this_ = arg1]
             | target[condition1_p.this_ = arg1]
+            | root_candidate[condition1_p.this_ = arg1]
             | and_[condition1_p.this_ = arg1]
             | or_[condition1_p.this_ = arg1]
             | not_[condition1_p.this_ = arg1];

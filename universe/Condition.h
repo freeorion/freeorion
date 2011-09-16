@@ -37,6 +37,7 @@ namespace Condition {
     struct All;
     struct EmpireAffiliation;
     struct Source;
+    struct RootCandidate;
     struct Target;
     struct Homeworld;
     struct Capital;
@@ -276,6 +277,29 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+/** Matches the root candidate object in a condition tree.  This is useful
+  * within a subcondition to match the object actually being matched by the
+  * whole compound condition, rather than an object just being matched in a
+  * subcondition in order to evaluate the outer condition. */
+struct Condition::RootCandidate : public Condition::ConditionBase
+{
+    RootCandidate();
+    virtual bool        RootCandidateInvariant() const { return false; }
+    virtual bool        TargetInvariant() const { return true; }
+    virtual std::string Description(bool negated = false) const;
+    virtual std::string Dump() const;
+
+private:
+    virtual bool        Match(const ScriptingContext& local_context) const;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** There is no LocalCandidate condition.  To match any local candidate object,
+  * use the All condition. */
 
 /** Matches the target of an effect being executed. */
 struct Condition::Target : public Condition::ConditionBase
@@ -1308,6 +1332,12 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 
 template <class Archive>
 void Condition::Source::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
+}
+
+template <class Archive>
+void Condition::RootCandidate::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
 }

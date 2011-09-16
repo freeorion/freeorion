@@ -790,7 +790,7 @@ Condition::Source::Source()
 
 std::string Condition::Source::Description(bool negated/* = false*/) const
 {
-    std::string description_str = "DESC_SELF";
+    std::string description_str = "DESC_SOURCE";
     if (negated)
         description_str += "_NOT";
     return UserString(description_str);
@@ -809,6 +809,30 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const
 }
 
 ///////////////////////////////////////////////////////////
+// RootCandidate                                         //
+///////////////////////////////////////////////////////////
+Condition::RootCandidate::RootCandidate()
+{}
+
+std::string Condition::RootCandidate::Description(bool negated/* = false*/) const
+{
+    std::string description_str = "DESC_ROOT_CANDIDATE";
+    if (negated)
+        description_str += "_NOT";
+    return UserString(description_str);
+}
+
+std::string Condition::RootCandidate::Dump() const
+{ return DumpIndent() + "RootCandidate\n"; }
+
+bool Condition::RootCandidate::Match(const ScriptingContext& local_context) const
+{
+    if (!local_context.condition_root_candidate)
+        return false;
+    return local_context.condition_root_candidate == local_context.condition_local_candidate;
+}
+
+///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
 Condition::Target::Target()
@@ -823,9 +847,7 @@ std::string Condition::Target::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Target::Dump() const
-{
-    return DumpIndent() + "Target\n";
-}
+{ return DumpIndent() + "Target\n"; }
 
 bool Condition::Target::Match(const ScriptingContext& local_context) const
 {
@@ -1060,9 +1082,7 @@ std::string Condition::Capital::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Capital::Dump() const
-{
-    return DumpIndent() + "Capital\n";
-}
+{ return DumpIndent() + "Capital\n"; }
 
 bool Condition::Capital::Match(const ScriptingContext& local_context) const
 {
@@ -1097,9 +1117,7 @@ std::string Condition::Monster::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Monster::Dump() const
-{
-    return DumpIndent() + "Monster\n";
-}
+{ return DumpIndent() + "Monster\n"; }
 
 bool Condition::Monster::Match(const ScriptingContext& local_context) const
 {
@@ -1131,9 +1149,7 @@ std::string Condition::Armed::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::Armed::Dump() const
-{
-    return DumpIndent() + "Armed\n";
-}
+{ return DumpIndent() + "Armed\n"; }
 
 bool Condition::Armed::Match(const ScriptingContext& local_context) const
 {
@@ -1651,9 +1667,7 @@ std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) cons
 }
 
 std::string Condition::CreatedOnTurn::Dump() const
-{
-    return DumpIndent() + "CreatedOnTurn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
-}
+{ return DumpIndent() + "CreatedOnTurn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n"; }
 
 bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const
 {

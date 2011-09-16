@@ -3153,6 +3153,9 @@ planet size
 DESC_VAR_PLANETTYPE
 planet type
 
+DESC_VAR_NEXTBETTERPLANETTYPE
+next better planet type for planet's species
+
 DESC_VAR_PLANETENVIRONMENT
 planet environment
 
@@ -3525,11 +3528,17 @@ DESC_EMPIRE_AFFILIATION_ANY
 DESC_EMPIRE_AFFILIATION_ANY_NOT
  that does not belong to an empire
 
-DESC_SELF
+DESC_SOURCE
  that is the source object
 
-DESC_SELF_NOT
+DESC_SOURCE_NOT
  that is not the source object
+
+DESC_ROOT_CANDIDATE
+ that is the root candidate object
+
+DESC_ROOT_CANDIDATE_NOT
+ that is not the root candidate object
 
 DESC_TARGET
  that is the target object
