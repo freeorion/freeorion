@@ -2,6 +2,7 @@
 
 #include "ParserUtil.h"
 #include "Effect.h"
+#include "Condition.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
@@ -123,6 +124,9 @@ Special::Special(const std::string& name, const std::string& description,
     m_location(location),
     m_graphic(graphic)
 {}
+
+Special::~Special()
+{ delete m_location; }
 
 const std::string& Special::Name() const
 { return m_name; }

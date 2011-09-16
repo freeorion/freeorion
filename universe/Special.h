@@ -30,6 +30,8 @@ public:
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
             const Condition::ConditionBase* location,
             const std::string& graphic);
+
+    ~Special();
     //@}
 
     /** \name Accessors */ //@{
