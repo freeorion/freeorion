@@ -174,9 +174,7 @@ int UniverseObject::SpecialAddedOnTurn(const std::string& name) const
 }
 
 const std::string& UniverseObject::TypeName() const
-{
-    return UserString("UNIVERSEOBJECT");
-}
+{ return UserString("UNIVERSEOBJECT"); }
 
 std::string UniverseObject::Dump() const
 {
@@ -201,14 +199,10 @@ std::string UniverseObject::Dump() const
 }
 
 std::vector<int> UniverseObject::FindObjectIDs() const
-{
-    return std::vector<int>();
-}
+{ return std::vector<int>(); }
 
 bool UniverseObject::Contains(int object_id) const
-{
-    return false;
-}
+{ return false; }
 
 bool UniverseObject::ContainedBy(int object_id) const
 {
@@ -246,9 +240,7 @@ double UniverseObject::InitialMeterValue(MeterType type) const
 }
 
 double UniverseObject::NextTurnCurrentMeterValue(MeterType type) const
-{
-    return UniverseObject::CurrentMeterValue(type);
-}
+{ return UniverseObject::CurrentMeterValue(type); }
 
 void UniverseObject::AddMeter(MeterType meter_type)
 {
@@ -259,29 +251,19 @@ void UniverseObject::AddMeter(MeterType meter_type)
 }
 
 bool UniverseObject::Unowned() const
-{
-    return m_owner_empire_id == ALL_EMPIRES;
-}
+{ return m_owner_empire_id == ALL_EMPIRES; }
 
 bool UniverseObject::OwnedBy(int empire) const 
-{
-    return empire != ALL_EMPIRES && empire == m_owner_empire_id;
-}
+{ return empire != ALL_EMPIRES && empire == m_owner_empire_id; }
 
 Visibility UniverseObject::GetVisibility(int empire_id) const
-{
-    return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
-}
+{ return GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id); }
 
 const std::string& UniverseObject::PublicName(int empire_id) const
-{
-    return m_name;
-}
+{ return m_name; }
 
 UniverseObject* UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<UniverseObject* const>(this));
-}
+{ return visitor.Visit(const_cast<UniverseObject* const>(this)); }
 
 void UniverseObject::SetID(int id)
 {
