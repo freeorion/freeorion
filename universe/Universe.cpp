@@ -4233,17 +4233,38 @@ void Universe::PopulateSystems(GalaxySetupOption density, GalaxySetupOption spec
             //Logger().debugStream() << "Created new planet with current population: " << planet->CurrentMeterValue(METER_POPULATION) << " and initial  population: " << planet->InitialMeterValue(METER_POPULATION);
 
             bool tidal_lock = false;
-            if (planet_type != PT_ASTEROIDS && planet_type != PT_GASGIANT && !special_names.empty() && RandZeroToOne() < planetary_special_chance) {
+            if (planet_type != PT_ASTEROIDS &&
+                planet_type != PT_GASGIANT &&
+                !special_names.empty()
+                && RandZeroToOne() < planetary_special_chance)
+            {
+                // select a special
                 std::set<std::string>::const_iterator name_it = special_names.begin();
                 std::advance(name_it, specials_dist());
-                planet->AddSpecial(*name_it);
+                const std::string& special_name = *name_it;
 
-                if (*name_it == "TIDAL_LOCK_SPECIAL")
-                    tidal_lock = true;
-                else if (*name_it == "SLOW_ROTATION_SPECIAL")
-                    planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
-                else if (*name_it == "HIGH_AXIAL_TILT_SPECIAL")
-                    planet->SetHighAxialTilt();
+                if (const Special* special = GetSpecial(special_name)) {
+                    bool location_ok = true;
+                    if (const Condition::ConditionBase* location = special->Location()) {
+                        // test special location restriction
+                        Condition::ObjectSet unmatched, matched;
+                        unmatched.insert(planet);
+                        location->Eval(matched, unmatched);
+                        if (matched.empty())
+                            location_ok = false;
+                    }
+
+                    if (location_ok) {
+                        planet->AddSpecial(*name_it);
+
+                        if (*name_it == "TIDAL_LOCK_SPECIAL")
+                            tidal_lock = true;
+                        else if (*name_it == "SLOW_ROTATION_SPECIAL")
+                            planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
+                        else if (*name_it == "HIGH_AXIAL_TILT_SPECIAL")
+                            planet->SetHighAxialTilt();
+                    }
+                }
             }
 
             Insert(planet); // add planet to universe map

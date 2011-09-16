@@ -12,7 +12,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_TREE"
     ships = [
@@ -28,7 +28,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_DRONE_FACTORY"
     ships = [
@@ -46,7 +46,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_DRONE"
     ships = [
@@ -94,7 +94,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_KRAKEN_1"
     ships = [
@@ -109,7 +109,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_SNOWFLAKE_1"
     ships = [
@@ -124,7 +124,7 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
+
 MonsterFleet
     name = "SM_JUGGERNAUT_1"
     ships = [
@@ -139,4 +139,3 @@ MonsterFleet
             OwnedBy AnyEmpire
         ]
     ]
-    
