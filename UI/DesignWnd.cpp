@@ -140,7 +140,7 @@ PartControl::PartControl(const PartType* part) :
         SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 
 
-        Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
+        //Logger().debugStream() << "PartControl::PartControl part name: " << m_part->Name();
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(ClientUI::PartTexture(m_part->Name()),

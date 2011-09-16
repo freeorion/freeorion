@@ -37,6 +37,11 @@
 
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
+
+    void    AddOptions(OptionsDB& db) {
+        db.Add("verbose-logging", "OPTIONS_DB_VERBOSE_LOGGING_DESC",  false,  Validator<bool>());
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 namespace {
@@ -1224,8 +1229,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         }
     }
 
-    Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters";
-    Logger().debugStream() << m_objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after resetting meters";
+        Logger().debugStream() << m_objects.Dump();
+    }
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -1235,8 +1242,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
     // Apply and record effect meter adjustments
     ExecuteMeterEffects(targets_causes_map);      // TODO: make act only on contents of objects vector
 
-    Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
-    Logger().debugStream() << m_objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
+        Logger().debugStream() << m_objects.Dump();
+    }
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -1285,8 +1294,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, Met
         m_objects.Object(*obj_it)->ClampMeters();
     }
 
-    Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping";
-    Logger().debugStream() << m_objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "UpdateMeterEstimatesImpl after discrepancies and clamping";
+        Logger().debugStream() << m_objects.Dump();
+    }
 }
 
 void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
@@ -1426,7 +1437,9 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
                                                     const std::string& specific_cause_name,
                                                     const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
-    Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
+    }
 
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
@@ -1434,9 +1447,10 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         all_potential_targets.insert(m_objects.Object(*it));
 
     // process all effects groups in set provided
+    int eg_count = 1;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator effects_it;
     for (effects_it = effects_groups.begin(); effects_it != effects_groups.end(); ++effects_it) {
-        ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups process one effects group");
+        ScopedTimer update_timer("... Universe::StoreTargetsAndCausesOfEffectsGroups done processing source " + boost::lexical_cast<std::string>(source_object_id) + " cause: " + specific_cause_name + " effects group " + boost::lexical_cast<std::string>(eg_count++));
 
         // create non_targets and targets sets for current effects group
         Effect::TargetSet target_set;                                    // initially empty
@@ -4160,8 +4174,10 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
 
     BackPropegateObjectMeters();
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
-    Logger().debugStream() << m_objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+        Logger().debugStream() << m_objects.Dump();
+    }
 
     UpdateEmpireObjectVisibilities();
 }

@@ -257,10 +257,12 @@ PartTypeManager::PartTypeManager() {
     if (!result.full)
         ReportError(input.c_str(), result);
 
-    Logger().debugStream() << "Part Types:";
-    for (iterator it = begin(); it != end(); ++it) {
-        const PartType* p = it->second;
-        Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class() << " stats: " << p->StatDescription();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Part Types:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const PartType* p = it->second;
+            Logger().debugStream() << " ... " << p->Name() << " class: " << p->Class() << " stats: " << p->StatDescription();
+        }
     }
 }
 
@@ -837,10 +839,12 @@ HullTypeManager::HullTypeManager() {
     if (!result.full)
         ReportError(input.c_str(), result);
 
-    Logger().debugStream() << "Hull Types:";
-    for (iterator it = begin(); it != end(); ++it) {
-        const HullType* h = it->second;
-        Logger().debugStream() << " ... " << h->Name() << " stats: " << h->StatDescription();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Hull Types:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const HullType* h = it->second;
+            Logger().debugStream() << " ... " << h->Name() << " stats: " << h->StatDescription();
+        }
     }
 }
 
@@ -1512,18 +1516,18 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (!result.full)
         ReportError(input.c_str(), result);
 
-//#ifdef OUTPUT_DESIGNS_LIST
-    Logger().debugStream() << "Predefined Ship Designs:";
-    for (iterator it = begin(); it != end(); ++it) {
-        const ShipDesign* d = it->second;
-        Logger().debugStream() << " ... " << d->Name();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "Predefined Ship Designs:";
+        for (iterator it = begin(); it != end(); ++it) {
+            const ShipDesign* d = it->second;
+            Logger().debugStream() << " ... " << d->Name();
+        }
+        Logger().debugStream() << "Monster Ship Designs:";
+        for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
+            const ShipDesign* d = it->second;
+            Logger().debugStream() << " ... " << d->Name();
+        }
     }
-    Logger().debugStream() << "Monster Ship Designs:";
-    for (iterator it = begin_monsters(); it != end_monsters(); ++it) {
-        const ShipDesign* d = it->second;
-        Logger().debugStream() << " ... " << d->Name();
-    }
-//#endif
 }
 
 PredefinedShipDesignManager::~PredefinedShipDesignManager() {

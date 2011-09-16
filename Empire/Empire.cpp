@@ -2656,7 +2656,7 @@ void Empire::CheckProductionProgress()
     if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
         pool->SetStockpile(0.0);
-        Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
+        //Logger().debugStream() << "no mineral stockpile location.  stockpile is set to 0.0";
 
     } else {
         // find minerals (PP) allocated to production elements located in systems in the group of
@@ -2666,34 +2666,34 @@ void Empire::CheckProductionProgress()
         // find the set of objects that contains the stopile object, from the map of PP allocated within each group
         std::map<std::set<int>, double> allocated_pp = m_production_queue.AllocatedPP();
 
-        Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
+        //Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
         for (std::map<std::set<int>, double>::const_iterator it = allocated_pp.begin(); it != allocated_pp.end(); ++it) {
             const std::set<int>& group = it->first;                     // get group
-            Logger().debugStream() << "potential group:";
+            //Logger().debugStream() << "potential group:";
             for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
                 Logger().debugStream() << "...." << *qit;
 
             if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
                 stockpile_group_pp_allocation = it->second;        // record allocation for this group
-                Logger().debugStream() << "Empire::CheckProductionProgress found group of objects for stockpile object.  size: " << it->first.size();
+                //Logger().debugStream() << "Empire::CheckProductionProgress found group of objects for stockpile object.  size: " << it->first.size();
                 break;
             }
 
-            Logger().debugStream() << "didn't find in group... trying next.";
+            //Logger().debugStream() << "didn't find in group... trying next.";
         }
         // if the stockpile object is not found in any group of systems with allocated pp, assuming this is fine and that the
         // stockpile object's group of systems didn't have any allocated pp...
 
 
         double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-        Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_object_group_available;
-        Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
+        //Logger().debugStream() << "minerals available in stockpile group is:  " << stockpile_object_group_available;
+        //Logger().debugStream() << "minerals allocation in stockpile group is: " << stockpile_group_pp_allocation;       // as of this writing, PP consume one mineral and one industry point, so PP allocation is equal to minerals allocation
 
-        Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
+        //Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
 
         double new_stockpile = stockpile_object_group_available - stockpile_group_pp_allocation;
         pool->SetStockpile(new_stockpile);
-        Logger().debugStream() << "New stockpile is: " << new_stockpile;
+        //Logger().debugStream() << "New stockpile is: " << new_stockpile;
     }
 }
 
@@ -2711,7 +2711,7 @@ void Empire::CheckGrowthFoodProgress()
 
     int stockpile_object_id = pool->StockpileObjectID();
 
-    Logger().debugStream() << "food stockpile object id: " << stockpile_object_id;
+    //Logger().debugStream() << "food stockpile object id: " << stockpile_object_id;
 
     if (stockpile_object_id == UniverseObject::INVALID_OBJECT_ID) {
         // empire has nowhere to stockpile food, so has no stockpile.
@@ -2723,22 +2723,22 @@ void Empire::CheckGrowthFoodProgress()
         // first find the set of objects that contains the stockpile object
         std::map<std::set<int>, double> food_sharing_groups = pool->Available();    // don't actually need the available PP; just using the map as a set of sets of systems
         std::set<int> stockpile_group_object_ids;
-        Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
+        //Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
         for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin();
              it != food_sharing_groups.end(); ++it)
         {
             const std::set<int>& group = it->first;                     // get group
-            Logger().debugStream() << "potential group:";
-            for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
-                Logger().debugStream() << "...." << *qit;
+            //Logger().debugStream() << "potential group:";
+            //for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
+                //Logger().debugStream() << "...." << *qit;
 
             if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
                 stockpile_group_object_ids = group;
-                Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
+                //Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
                 break;
             }
 
-            Logger().debugStream() << "didn't find in group... trying next.";
+            //Logger().debugStream() << "didn't find in group... trying next.";
         }
 
         const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
@@ -2764,18 +2764,18 @@ void Empire::CheckGrowthFoodProgress()
             }
 
             stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-            Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
+            //Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
         }
 
         double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
-        Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
-        Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
+        //Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
+        //Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
 
-        Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
+        //Logger().debugStream() << "Old stockpile was " << pool->Stockpile();
 
         double new_stockpile = stockpile_object_group_available - stockpile_group_food_allocation;
         pool->SetStockpile(new_stockpile);
-        Logger().debugStream() << "New stockpile is: " << new_stockpile;
+        //Logger().debugStream() << "New stockpile is: " << new_stockpile;
     }
 }
 

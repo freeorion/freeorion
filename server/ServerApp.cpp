@@ -1826,14 +1826,18 @@ void ServerApp::PostCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns effects and meter updates";
 
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!BEFORE TURN PROCESSING EFFECTS APPLICATION";
-    Logger().debugStream() << objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!BEFORE TURN PROCESSING EFFECTS APPLICATION";
+        Logger().debugStream() << objects.Dump();
+    }
 
     // execute all effects and update meters prior to production, research, etc.
     m_universe.ApplyAllEffectsAndUpdateMeters();
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
-    Logger().debugStream() << objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING EFFECTS APPLICATION";
+        Logger().debugStream() << objects.Dump();
+    }
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns empire resources updates";
@@ -1860,8 +1864,10 @@ void ServerApp::PostCombatProcessTurns()
             (*it)->SetAllocatedFood(std::min((*it)->CurrentMeterValue(METER_FARMING), (*it)->CurrentMeterValue(METER_POPULATION)));
 
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-    Logger().debugStream() << objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+        Logger().debugStream() << objects.Dump();
+    }
 
 
     Logger().debugStream() << "ServerApp::ProcessTurns queue progress checking";
@@ -1880,8 +1886,10 @@ void ServerApp::PostCombatProcessTurns()
     }
 
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
-    Logger().debugStream() << objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+        Logger().debugStream() << objects.Dump();
+    }
 
     // Execute meter-related effects on objects created this turn, so that new
     // UniverseObjects will have effects applied to them this turn, allowing
@@ -1890,8 +1898,10 @@ void ServerApp::PostCombatProcessTurns()
     m_universe.ApplyMeterEffectsAndUpdateMeters();
 
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING METERS OF ALL OBJECTS";
-    Logger().debugStream() << objects.Dump();
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER UPDATING METERS OF ALL OBJECTS";
+        Logger().debugStream() << objects.Dump();
+    }
 
 
     // Population growth or loss, health meter growth, resource current meter
@@ -1901,8 +1911,11 @@ void ServerApp::PostCombatProcessTurns()
         it->second->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
-    Logger().debugStream() << objects.Dump();
+
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+        Logger().debugStream() << objects.Dump();
+    }
 
 
     // check for loss of empire capitals
@@ -1948,9 +1961,10 @@ void ServerApp::PostCombatProcessTurns()
             fleet->CalculateRoute();
     }
 
-    Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-    Logger().debugStream() << objects.Dump();
-
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
+        Logger().debugStream() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
+        Logger().debugStream() << objects.Dump();
+    }
 
 
     // update current turn number so that following visibility updates and info

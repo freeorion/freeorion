@@ -2,13 +2,14 @@
 
 #include "Fleet.h"
 #include "Planet.h"
+#include "Predicates.h"
 
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
 #include "../util/Math.h"
 #include "../util/MultiplayerCommon.h"
-#include "Predicates.h"
+#include "../util/OptionsDB.h"
 
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
@@ -456,7 +457,8 @@ void System::AddStarlane(int id)
     if (!HasStarlaneTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
-        Logger().debugStream() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
+        if (GetOptionsDB().Get<bool>("verbose-logging"))
+            Logger().debugStream() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
     }
 }
 
