@@ -4008,36 +4008,39 @@ void MapWnd::RefreshFoodResourceIndicator()
 
     // find total food allocated to group that has access to stockpile
     std::map<std::set<int>, double> food_sharing_groups = pool->Available();
-    std::set<int> stockpile_group_objects;
+    std::set<int> stockpile_group_object_ids;
     Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-    for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin(); it != food_sharing_groups.end(); ++it) {
+    for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin();
+         it != food_sharing_groups.end(); ++it)
+    {
         const std::set<int>& group = it->first;                     // get group
         Logger().debugStream() << "potential group:";
         for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
             Logger().debugStream() << "...." << *qit;
 
         if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-            stockpile_group_objects = group;
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of objects for stockpile object.  size: " << stockpile_group_objects.size();
+            stockpile_group_object_ids = group;
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
             break;
         }
 
         Logger().debugStream() << "didn't find in group... trying next.";
     }
 
-
     const std::vector<int>& pop_centers = pop_pool.PopCenterIDs();
-
 
     double stockpile_group_food_allocation = 0.0;
 
-
-    // go through population pools, adding up food allocation of those that are in one of the systems
-    // in the group of systems that can access the stockpile
+    // go through population pool, adding up food allocation of popcenters
+    // that are in the group of objects that can access the stockpile
     for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
+        int object_id = *it;
+        if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
+            continue;
+
         const UniverseObject* obj = GetObject(*it);
         if (!obj) {
-            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an object with id " << *it;
+            Logger().debugStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get an object with id " << object_id;
             continue;
         }
         const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
@@ -4046,22 +4049,18 @@ void MapWnd::RefreshFoodResourceIndicator()
             continue;
         }
 
-        int center_system_id = obj->SystemID();
-
-        if (stockpile_group_objects.find(center_system_id) != stockpile_group_objects.end()) {
-            stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-            Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group has " << pop->AllocatedFood() << " food allocated to it";
-        }
+        stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
+        Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
     }
 
     double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
     Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
     Logger().debugStream() << "food allocation in stockpile group is: " << stockpile_group_food_allocation;
 
+    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
+
     double new_stockpile = stockpile_object_group_available - stockpile_group_food_allocation;
     Logger().debugStream() << "Predicted stockpile is: " << new_stockpile;
-
-    Logger().debugStream() << "Old stockpile is " << pool->Stockpile();
 
     double stockpile_change = new_stockpile - pool->Stockpile();
     Logger().debugStream() << "Stockpile change is: " << stockpile_change;

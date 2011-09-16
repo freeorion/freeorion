@@ -1935,9 +1935,7 @@ const std::map<int, int>& Empire::ResourceSupplyRanges() const
 }
 
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
-{
-    return m_supply_unobstructed_systems;
-}
+{ return m_supply_unobstructed_systems; }
 
 bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const
 {
@@ -1958,27 +1956,19 @@ bool Empire::FleetOrResourceSupplyableAtSystem(int system_id) const
 }
 
 Empire::TechItr Empire::TechBegin() const
-{
-    return m_techs.begin();
-}
+{ return m_techs.begin(); }
+
 Empire::TechItr Empire::TechEnd() const
-{
-    return m_techs.end();
-}
+{ return m_techs.end(); }
 
 Empire::TechItr Empire::AvailableBuildingTypeBegin() const
-{
-    return m_available_building_types.begin();
-}
+{ return m_available_building_types.begin(); }
+
 Empire::TechItr Empire::AvailableBuildingTypeEnd() const
-{
-    return m_available_building_types.end();
-}
+{ return m_available_building_types.end(); }
 
 const std::set<int>& Empire::ExploredSystems() const
-{
-    return m_explored_systems;
-}
+{ return m_explored_systems; }
 
 const std::map<int, std::set<int> > Empire::KnownStarlanes() const
 {
@@ -2047,28 +2037,19 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const
 }
 
 Empire::ShipDesignItr Empire::ShipDesignBegin() const
-{
-    return m_ship_designs.begin();
-}
+{ return m_ship_designs.begin(); }
+
 Empire::ShipDesignItr Empire::ShipDesignEnd() const
-{
-    return m_ship_designs.end();
-}
+{ return m_ship_designs.end(); }
 
 Empire::SitRepItr Empire::SitRepBegin() const
-{
-    return m_sitrep_entries.begin();
-}
+{ return m_sitrep_entries.begin(); }
 
 Empire::SitRepItr Empire::SitRepEnd() const
-{
-    return m_sitrep_entries.end();
-}
+{ return m_sitrep_entries.end(); }
 
 double Empire::ProductionPoints() const
-{
-    return std::min(GetResourcePool(RE_INDUSTRY)->TotalAvailable(), GetResourcePool(RE_MINERALS)->TotalAvailable());
-}
+{ return std::min(GetResourcePool(RE_INDUSTRY)->TotalAvailable(), GetResourcePool(RE_MINERALS)->TotalAvailable()); }
 
 const ResourcePool* Empire::GetResourcePool(ResourceType resource_type) const
 {
@@ -2087,9 +2068,7 @@ double Empire::ResourceStockpile(ResourceType type) const
 }
 
 double Empire::ResourceMaxStockpile(ResourceType type) const
-{
-    return 0.0; // not yet implemented
-}
+{ return 0.0; }
 
 double Empire::ResourceProduction(ResourceType type) const
 {
@@ -2108,14 +2087,10 @@ double Empire::ResourceAvailable(ResourceType type) const
 }
 
 const PopulationPool& Empire::GetPopulationPool() const
-{
-    return m_population_pool;
-}
+{ return m_population_pool; }
 
 double Empire::Population() const
-{
-    return m_population_pool.Population();
-}
+{ return m_population_pool.Population(); }
 
 void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 {
@@ -2126,9 +2101,7 @@ void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 }
 
 void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
-{
-    return; // not yet implemented
-}
+{}
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
 {
@@ -2520,9 +2493,8 @@ void Empire::CheckResearchProgress()
         if (tech->ResearchCost() - EPSILON <= progress) {
             m_techs.insert(tech->Name());
             const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
-            for (unsigned int i = 0; i < unlocked_items.size(); ++i) {
+            for (unsigned int i = 0; i < unlocked_items.size(); ++i)
                 UnlockItem(unlocked_items[i]);
-            }
             AddSitRepEntry(CreateTechResearchedSitRep(tech->Name()));
             // TODO: create unlocked item sitreps?
             m_research_progress.erase(tech->Name());
@@ -2748,19 +2720,21 @@ void Empire::CheckGrowthFoodProgress()
     } else {
         // find total food allocated to group that has access to stockpile...
 
-        // first find the set of systems that contains the stockpile object
+        // first find the set of objects that contains the stockpile object
         std::map<std::set<int>, double> food_sharing_groups = pool->Available();    // don't actually need the available PP; just using the map as a set of sets of systems
-        std::set<int> stockpile_group_systems;
+        std::set<int> stockpile_group_object_ids;
         Logger().debugStream() << "trying to find stockpile object group...  stockpile object has id: " << stockpile_object_id;
-        for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin(); it != food_sharing_groups.end(); ++it) {
+        for (std::map<std::set<int>, double>::const_iterator it = food_sharing_groups.begin();
+             it != food_sharing_groups.end(); ++it)
+        {
             const std::set<int>& group = it->first;                     // get group
             Logger().debugStream() << "potential group:";
             for (std::set<int>::const_iterator qit = group.begin(); qit != group.end(); ++qit)
                 Logger().debugStream() << "...." << *qit;
 
             if (group.find(stockpile_object_id) != group.end()) {       // check for stockpile object
-                stockpile_group_systems = group;
-                Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of systems for stockpile object.  size: " << stockpile_group_systems.size();
+                stockpile_group_object_ids = group;
+                Logger().debugStream() << "Empire::CheckGrowthFoodProgress found group of objects for stockpile object.  size: " << stockpile_group_object_ids.size();
                 break;
             }
 
@@ -2771,27 +2745,27 @@ void Empire::CheckGrowthFoodProgress()
 
         double stockpile_group_food_allocation = 0.0;
 
-        // go through population pools, adding up food allocation of those that are in one of the systems
-        // in the group of systems that can access the stockpile
+        // go through population pool, adding up food allocation of popcenters
+        // that are in the group of objects that can access the stockpile
         for (std::vector<int>::const_iterator it = pop_centers.begin(); it != pop_centers.end(); ++it) {
+            int object_id = *it;
+            if (stockpile_group_object_ids.find(object_id) == stockpile_group_object_ids.end())
+                continue;
+
             const UniverseObject* obj = GetObject(*it);
             if (!obj) {
-                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't get object with id " << *it;
+                Logger().debugStream() << "Empire::CheckGrowthFoodProgress couldn't get an object with id " << object_id;
                 continue;
             }
             const PopCenter* pop = dynamic_cast<const PopCenter*>(obj);
             if (!pop) {
-                Logger().errorStream() << "MapWnd::RefreshFoodResourceIndicator couldn't cast an UniverseObject* to PopCenter*";
+                Logger().debugStream() << "Empire::CheckGrowthFoodProgress couldn't cast a UniverseObject* to an PopCenter*";
                 continue;
             }
-            int center_system_id = obj->SystemID();
 
-            if (stockpile_group_systems.find(center_system_id) != stockpile_group_systems.end()) {
-                stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
-                Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
-            }
+            stockpile_group_food_allocation += pop->AllocatedFood();    // finally add allocation for this PopCenter
+            Logger().debugStream() << "object " << obj->Name() << " is in stockpile object group that has " << pop->AllocatedFood() << " food allocated to it";
         }
-
 
         double stockpile_object_group_available = pool->GroupAvailable(stockpile_object_id);
         Logger().debugStream() << "food available in stockpile group is:  " << stockpile_object_group_available;
