@@ -191,7 +191,7 @@ namespace {
                                             eps_p[building_type_p.producible = val(true)])
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> (captureresult_label >>     capture_result_p[building_type_p.capture_result = arg1]
-                 | eps_p[building_type_p.capture_result = val(CR_CAPTURE)])
+                 |                          eps_p[building_type_p.capture_result = val(CR_CAPTURE)])
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[building_type_p.graphic = arg1])
             [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description,
@@ -203,10 +203,12 @@ namespace {
             (str_p("special")
              >> name_label >>               name_p[special_p.name = arg1]
              >> description_label >>        name_p[special_p.description = arg1]
+             >> (location_label >>          condition_p[special_p.location = arg1]
+                 |                          eps_p[special_p.location = val(NULL_COND)])
              >> !(effectsgroups_label >>    effects_group_vec_p[special_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[special_p.graphic = arg1])
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
-                                             val(NULL_COND), special_p.graphic)];
+                                             special_p.location, special_p.graphic)];
 
         focus_type_p =
             (str_p("focus")

@@ -119,14 +119,16 @@ struct BuildingTypeClosure : boost::spirit::classic::closure<BuildingTypeClosure
 };
 
 struct SpecialClosure : boost::spirit::classic::closure<SpecialClosure, Special*, std::string, std::string,
+                                                        Condition::ConditionBase*,
                                                         std::vector<boost::shared_ptr<const Effect::EffectsGroup> >,
                                                         std::string>
 {
     member1 this_;
     member2 name;
     member3 description;
-    member4 effects_groups;
-    member5 graphic;
+    member4 location;
+    member5 effects_groups;
+    member6 graphic;
 };
 
 struct SpeciesClosure : boost::spirit::classic::closure<SpeciesClosure, Species*, std::string, std::string,
