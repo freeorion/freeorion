@@ -474,7 +474,6 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-
 /** Matches all objects that contain an object that matches Condition
   * \a condition.  Container objects are Systems, Planets (which contain
   * Buildings), and Fleets (which contain Ships). */

@@ -144,13 +144,13 @@ namespace {
             (str_p("turn")
              >> low_label >> int_expr_p[turn.int_ref_2 = arg1]
              >> high_label >> int_expr_p[turn.int_ref_1 = arg1])
-            [turn.this_ = new_<Condition::CreatedOnTurn>(turn.int_ref_2, turn.int_ref_1)];
+            [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
 
         created_on_turn =
             (str_p("createdonturn")
              >> low_label >> int_expr_p[created_on_turn.int_ref_2 = arg1]
              >> high_label >> int_expr_p[created_on_turn.int_ref_1 = arg1])
-            [created_on_turn.this_ = new_<Condition::Turn>(created_on_turn.int_ref_2, created_on_turn.int_ref_1)];
+            [created_on_turn.this_ = new_<Condition::CreatedOnTurn>(created_on_turn.int_ref_2, created_on_turn.int_ref_1)];
 
         number_of =
             ((str_p("numberof")
