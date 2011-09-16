@@ -28,8 +28,9 @@ public:
     /** basic ctor */
     Special(const std::string& name, const std::string& description,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
-            const Condition::ConditionBase* location,
-            const std::string& graphic);
+            double spawn_rate = 1.0, int spawn_limit = 99999,
+            const Condition::ConditionBase* location = 0,
+            const std::string& graphic = "");
 
     ~Special();
     //@}
@@ -40,6 +41,8 @@ public:
     std::string                     Dump() const;       ///< returns a data file format representation of this object
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
                                     Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
+    double                          SpawnRate() const;
+    int                             SpawnLimit() const;
     const Condition::ConditionBase* Location() const;   ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
     const std::string&              Graphic() const;    ///< returns the name of the grapic file for this special
     //@}
@@ -49,6 +52,8 @@ private:
     std::string                     m_description;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                     m_effects;
+    double                          m_spawn_rate;
+    int                             m_spawn_limit;
     const Condition::ConditionBase* m_location;
     std::string                     m_graphic;
 
@@ -78,6 +83,8 @@ void Special::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name)
         & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_effects)
+        & BOOST_SERIALIZATION_NVP(m_spawn_rate)
+        & BOOST_SERIALIZATION_NVP(m_spawn_limit)
         & BOOST_SERIALIZATION_NVP(m_location)
         & BOOST_SERIALIZATION_NVP(m_graphic);
 }

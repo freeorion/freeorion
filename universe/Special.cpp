@@ -116,11 +116,14 @@ namespace {
 /////////////////////////////////////////////////
 Special::Special(const std::string& name, const std::string& description,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
+                 double spawn_rate, int spawn_limit,
                  const Condition::ConditionBase* location,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_effects(effects),
+    m_spawn_rate(spawn_rate),
+    m_spawn_limit(spawn_limit),
     m_location(location),
     m_graphic(graphic)
 {}

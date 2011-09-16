@@ -203,11 +203,16 @@ namespace {
             (str_p("special")
              >> name_label >>               name_p[special_p.name = arg1]
              >> description_label >>        name_p[special_p.description = arg1]
+             >> ((spawn_rate_label >>       real_p[special_p.spawn_rate = arg1]) |
+                                            eps_p[special_p.spawn_rate = val(1.0)])
+             >> ((spawn_limit_label >>      int_p[special_p.spawn_limit = arg1]) |
+                                            eps_p[special_p.spawn_limit = val(9999)])
              >> (location_label >>          condition_p[special_p.location = arg1]
                  |                          eps_p[special_p.location = val(NULL_COND)])
              >> !(effectsgroups_label >>    effects_group_vec_p[special_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[special_p.graphic = arg1])
             [special_p.this_ = new_<Special>(special_p.name, special_p.description, special_p.effects_groups,
+                                             special_p.spawn_rate, special_p.spawn_limit,
                                              special_p.location, special_p.graphic)];
 
         focus_type_p =
