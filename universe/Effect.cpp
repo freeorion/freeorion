@@ -1133,7 +1133,7 @@ std::string CreateBuilding::Description() const
                                 UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
                                 m_building_type_name->Description();
     return str(FlexibleFormat(UserString("DESC_CREATE_BUILDING"))
-               % UserString(type_str));
+               % type_str);
 }
 
 std::string CreateBuilding::Dump() const

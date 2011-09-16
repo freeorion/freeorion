@@ -3795,6 +3795,18 @@ DESC_CONTAINED_BY
 DESC_CONTAINED_BY_NOT
  that is not contained by an object%1%
 
+DESC_IN_SYSTEM
+ that is in the system with id %1%
+
+DESC_IN_SYSTEM_NOT
+ that is not in the system with id %1%
+
+DESC_OBJECT_ID
+ that is the object with id %1%
+
+DESC_OBJECT_ID_NOT
+ that is not the object with id %1%
+
 DESC_OWNER_HAS_TECH
  that belongs to an empire that has the tech %1%
 
