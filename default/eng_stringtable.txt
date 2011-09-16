@@ -3585,6 +3585,12 @@ DESC_SPECIAL_TURN_RANGE
 DESC_SPECIAL_TURN_RANGE_NOT
  that has not had a %1% special since between turns %2% and %3%
 
+DESC_CREATED_ON_TURN
+ that was created between turns %1% and %2%
+
+DESC_CREATED_ON_TURN_NOT
+ that was not created between turns %1% and %2%
+
 DESC_CONTAINS
  that contains an object%1%
 
