@@ -976,7 +976,6 @@ Species
         type = Ocean        environment = Poor
         type = Asteroids    environment = Uninhabitable
         type = Gasgiant     environment = Uninhabitable
-        type = Gasgiant     environment = Uninhabitable
     ]
     graphic = "icons/species/derthrean.png"
 

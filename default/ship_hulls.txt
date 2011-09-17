@@ -1773,17 +1773,21 @@ Hull
                 CreateShip "SM_DRONE"
                 ]
     	EffectsGroup
-    		scope = Source
-    		activation = Random probability = .05
+    		scope = And [
+                System
+                Contains Source 
+                Number low = 0 high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
+                    Ship
+                    ContainedBy And [
+                        System
+                        Contains Source
+                    ]
+                    DesignHasHull name = "SH_DRONE_BODY"
+                ]
+            ]
+    		activation = Random probability = .1
     		effects = [
     		    CreateShip "SM_DRONE"
-    		    GenerateSitRepMessage
-                    message = "EFFECT_MONSTER_SPAWNING"
-                    parameters = [
-                        tag = "shiphull" data = "SM_DRONE"
-                        tag = "system" data = Source.SystemID
-                    ]
-                empire = 0
                 ]
     ]
     graphic = ""
@@ -1820,16 +1824,8 @@ Hull
                 ]
             ]
             stackinggroup = "KRILL_1_ACTION_STACK"
-            effects = [
-		        CreateShip "SM_KRILL_2"
-		        GenerateSitRepMessage
-                    message = "EFFECT_MONSTER_SPAWNING"
-                    parameters = [
-                        tag = "shiphull" data = "SM_KRILL_2"
-                        tag = "system" data = Source.SystemID
-                    ]
-                empire = 0
-		    ]
+            effects = CreateShip "SM_KRILL_2"
+
 		EffectsGroup
             scope = And [
                 Number low = 2 high = 999 And [
@@ -2057,7 +2053,7 @@ Hull
                 Source
 		        ContainedBy Contains Planet type = Asteroids
             ]
-            activation = Random probability = 0.10
+            activation = Random probability = 0.08
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
 		        CreateShip "SM_KRILL_1"
@@ -2124,7 +2120,7 @@ Hull
                 Source
 		        ContainedBy Contains Planet type = Asteroids
             ]
-            activation = Random probability = 0.08
+            activation = Random probability = 0.06
             stackinggroup = "KRILL_4_ACTION_STACK"
             effects = [
 		        CreateShip "SM_KRILL_1"
