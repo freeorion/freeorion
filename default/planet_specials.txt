@@ -634,6 +634,7 @@ Special
             scope = Source
             activation = AND [
                 Planet
+                Not Planet environment = Good
                 OwnedBy AnyEmpire
                 Random probability = 0.5
             ]

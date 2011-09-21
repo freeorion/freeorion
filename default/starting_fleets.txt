@@ -8,6 +8,7 @@ Fleet
     name = "FN_SCOUT_FLEET"
     ships = [
         "SD_SCOUT"
+        "SD_SCOUT"
     ]
 
 Fleet
@@ -18,3 +19,15 @@ Fleet
         "SD_TROOP_SHIP"
         "SD_MARK1"
         ]
+
+/* Uncomment this to have an overpowered fleet at the start-- for testing.
+
+Fleet
+    name = "FN_BATTLE_FLEET"
+    ships = [
+        "SD_DRAGON_TOOTH"
+        "SD_DRAGON_TOOTH"
+        "SD_DRAGON_TOOTH"
+        "SD_DRAGON_TOOTH"
+    ]
+*/

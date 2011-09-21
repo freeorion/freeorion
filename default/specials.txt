@@ -8,7 +8,7 @@ Special
             effects = SetTargetConstruction Value + 0
     graphic = "icons/specials_huge/ancient_ruins.png"
     
-    Special
+Special
     name = "KRAKEN_NEST_SPECIAL"
     description = "KRAKEN_NEST_SPECIAL_DESC"
     effectsgroups = [
