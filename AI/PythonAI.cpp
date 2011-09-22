@@ -186,6 +186,7 @@ PythonAI::PythonAI() {
         Py_SetPythonHome(python_home);
 #endif
         Py_Initialize();                // initializes Python interpreter, allowing Python functions to be called from C++
+        Logger().debugStream() << "Python initialized";
 
         Logger().debugStream() << "Python version: " << Py_GetVersion();
         Logger().debugStream() << "Python prefix: " << Py_GetPrefix();

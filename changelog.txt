@@ -1,4 +1,4 @@
-v0.3.16 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
  ~ Added space monsters
@@ -45,8 +45,6 @@ GUI:
  ~ Made default message window and players list wider and less tall.
  ~ Invade button on planet panels works similarly to the Colonize button; a troop ship must be selected in the same system.
  
-Multiplayer:
-
 Bugs:
  ~ Fixed issue where empty fleets would remain when moving ships around
  ~ Fixed crash when using conditions to check the distance between two systems
