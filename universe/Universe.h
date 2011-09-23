@@ -343,7 +343,7 @@ public:
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
       * will throw if either system ID is out of range. */
     std::pair<std::list<int>, int>
-                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
+                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
 
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using

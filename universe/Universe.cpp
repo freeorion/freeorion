@@ -116,6 +116,76 @@ namespace SystemPathing {
         }
         const int destination_system;
     };
+    
+    /** Complete BFS visitor implementing:
+      *  - predecessor recording
+      *  - short-circuit exit on found match
+      *  - maximum search depth 
+      */
+    template <class Graph, class Edge, class Vertex> class BFSVisitorImpl
+    {
+    public:
+        class FoundDestination {}; 
+        class ReachedDepthLimit {};
+        
+    private:
+        Vertex m_marker;
+        Vertex m_stop;
+        Vertex m_source;
+        Vertex * m_predecessors;
+        int m_levels_remaining;
+        bool m_level_complete;
+        
+    public:
+        BFSVisitorImpl(const Graph& g, const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
+            : m_marker(start),
+              m_stop(stop),
+              m_source(start),
+              m_predecessors(predecessors),
+              m_levels_remaining(max_depth),
+              m_level_complete(false)
+        {
+        }
+        
+        void initialize_vertex(const Vertex& v, const Graph& g) {}
+        
+        void discover_vertex(const Vertex& v, const Graph& g) 
+        {
+            m_predecessors[static_cast<int>(v)] = m_source;
+            
+            if (v == m_stop)
+                throw FoundDestination();
+            
+            if (m_level_complete) {
+                m_marker = v;
+                m_level_complete = false;
+            }
+        }
+        
+        void examine_vertex(const Vertex& v, const Graph& g)
+        {
+            if (v == m_marker) {
+                if (!m_levels_remaining)
+                    throw ReachedDepthLimit();
+                m_levels_remaining--;
+                m_level_complete = true;
+            }
+            
+            m_source = v; // avoid re-calculating source from edge
+        }
+        
+        void examine_edge(const Edge& e, const Graph& g) {}
+        
+        void tree_edge(const Edge& e, const Graph& g)
+        {
+            // wait till target is calculated
+        }
+        
+        void non_tree_edge(const Edge& e, const Graph& g) {}
+        void gray_target(const Edge& e, const Graph& g) {}
+        void black_target(const Edge& e, const Graph& g) {}
+        void finish_vertex(const Vertex& e, const Graph& g) {}
+    };
 
     ////////////////////////////////////////////////////////////////
     // templated implementations of Universe graph search methods //
@@ -221,7 +291,7 @@ namespace SystemPathing {
       * is 0.  If there is no path between the two vertices, then the list is
       * empty and the path length is -1 */
     template <class Graph>
-    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id)
+    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id, int max_jumps = INT_MAX)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
 
@@ -249,15 +319,17 @@ namespace SystemPathing {
 
 
         // do the actual path finding using verbose boost magic...
+        typedef BFSVisitorImpl<Graph, typename boost::graph_traits<Graph>::edge_descriptor, int> BFSVisitor;
         try {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
-            boost::breadth_first_search(graph, system1_index, buf,
-                                        boost::make_bfs_visitor(std::make_pair(PathFindingShortCircuitingVisitor(system2_index),
-                                                                               boost::record_predecessors(&predecessors[0],
-                                                                                                          boost::on_tree_edge()))),
-                                        &colors[0]);
-        } catch (const PathFindingShortCircuitingVisitor::FoundDestination&) {
+            
+            BFSVisitor bfsVisitor(graph, system1_index, system2_index, &predecessors[0], max_jumps);
+            boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, &colors[0]);
+        } catch (const typename BFSVisitor::ReachedDepthLimit&) {
+            // catching this means the algorithm explored the neighborhood until max_jumps and didn't find anything
+            return std::make_pair(std::list<int>(), -1);
+        } catch (const typename BFSVisitor::FoundDestination&) {
             // catching this just means that the destination was found, and so the algorithm was exited early, via exception
         }
 
@@ -887,14 +959,14 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
     return std::pair<std::list<int>, double>();
 }
 
-std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
+std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id);
+        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id, max_jumps);
     } else {
         GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id);
+            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id, max_jumps);
     }
     return std::pair<std::list<int>, int>();
 }

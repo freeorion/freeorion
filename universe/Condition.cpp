@@ -4172,9 +4172,9 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 }
 
 namespace {
-    int MANY_JUMPS(999999);
+    const int MANY_JUMPS(999999);
 
-    int JumpsBetweenObjects(const UniverseObject* one, const UniverseObject* two) {
+    int JumpsBetweenObjects(const UniverseObject* one, const UniverseObject* two, int jump_limit = MANY_JUMPS) {
         ObjectMap& objects = GetUniverse().Objects();
 
         if (!one || !two)
@@ -4189,7 +4189,7 @@ namespace {
         if (system_one && system_two) {
             // both condition-matching object and candidate are / in systems.
             // can just find the shortest path between the two systems
-            std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(system_one->ID(), system_two->ID());
+            std::pair<std::list<int>, double> path = GetUniverse().LeastJumpsPath(system_one->ID(), system_two->ID(), ALL_EMPIRES, jump_limit);
             if (!path.first.empty())    // if path.first is empty, no path exists between the systems
                 return static_cast<int>(path.first.size() - 1);
 
@@ -4198,8 +4198,8 @@ namespace {
             if (const Fleet* fleet = FleetFromObject(two)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
-                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(system_one->ID(), fleet->PreviousSystemID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(system_one->ID(), fleet->NextSystemID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(system_one->ID(), fleet->PreviousSystemID(), ALL_EMPIRES, jump_limit);
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(system_one->ID(), fleet->NextSystemID(),     ALL_EMPIRES, jump_limit);
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1;
             }
@@ -4209,8 +4209,8 @@ namespace {
             if (const Fleet* fleet = FleetFromObject(two)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
-                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(system_two->ID(), fleet->PreviousSystemID());
-                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(system_two->ID(), fleet->NextSystemID());
+                std::pair<std::list<int>, double> path1 = GetUniverse().LeastJumpsPath(system_two->ID(), fleet->PreviousSystemID(), ALL_EMPIRES, jump_limit);
+                std::pair<std::list<int>, double> path2 = GetUniverse().LeastJumpsPath(system_two->ID(), fleet->NextSystemID(),     ALL_EMPIRES, jump_limit);
                 if (int jumps = static_cast<int>(std::max(path1.first.size(), path2.first.size())))
                     return jumps - 1;
             }
@@ -4231,10 +4231,10 @@ namespace {
                 int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
                 int fleet_two_next_system_id = fleet_two->NextSystemID();
 
-                std::pair<std::list<int>, int> path1 = GetUniverse().LeastJumpsPath(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                std::pair<std::list<int>, int> path2 = GetUniverse().LeastJumpsPath(fleet_one_prev_system_id, fleet_two_next_system_id);
-                std::pair<std::list<int>, int> path3 = GetUniverse().LeastJumpsPath(fleet_one_next_system_id, fleet_two_prev_system_id);
-                std::pair<std::list<int>, int> path4 = GetUniverse().LeastJumpsPath(fleet_one_next_system_id, fleet_two_next_system_id);
+                std::pair<std::list<int>, int> path1 = GetUniverse().LeastJumpsPath(fleet_one_prev_system_id, fleet_two_prev_system_id, ALL_EMPIRES, jump_limit);
+                std::pair<std::list<int>, int> path2 = GetUniverse().LeastJumpsPath(fleet_one_prev_system_id, fleet_two_next_system_id, ALL_EMPIRES, jump_limit);
+                std::pair<std::list<int>, int> path3 = GetUniverse().LeastJumpsPath(fleet_one_next_system_id, fleet_two_prev_system_id, ALL_EMPIRES, jump_limit);
+                std::pair<std::list<int>, int> path4 = GetUniverse().LeastJumpsPath(fleet_one_next_system_id, fleet_two_next_system_id, ALL_EMPIRES, jump_limit);
                 if (int jumps = static_cast<int>(std::max(std::max(path1.second, path2.second),
                                                           std::max(path3.second, path4.second))))
                     return jumps - 1;
@@ -4262,7 +4262,7 @@ namespace {
                 if (delta_x*delta_x + delta_y*delta_y == 0)
                     return true;
             } else {
-                int jumps = JumpsBetweenObjects(*it, candidate);
+                int jumps = JumpsBetweenObjects(*it, candidate, jump_limit);
                 if (jumps <= jump_limit)
                     return true;
             }
