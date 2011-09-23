@@ -304,13 +304,15 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
         }
     }
 
-    GalaxySetupWnd galaxy_wnd;
+    bool ended_with_ok = false;
     if (!quickstart) {
+        GalaxySetupWnd galaxy_wnd;
         galaxy_wnd.Run();
+        ended_with_ok = galaxy_wnd.EndedWithOk();
     }
 
     bool failed = false;
-    if (quickstart || galaxy_wnd.EndedWithOk()) {
+    if (quickstart || ended_with_ok) {
         unsigned int start_time = Ticks();
         while (!m_networking.ConnectToLocalHostServer()) {
             if (SERVER_CONNECT_TIMEOUT < Ticks() - start_time) {
@@ -360,12 +362,15 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
                 human_player_setup_data.m_empire_color = GG::CLR_GREEN;
 
             human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+            if (human_player_setup_data.m_starting_species_name == "1")
+                human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
+
             if (!GetSpecies(human_player_setup_data.m_starting_species_name)) {
                 const SpeciesManager& sm = GetSpeciesManager();
                 if (sm.empty())
                     human_player_setup_data.m_starting_species_name.clear();
                 else
-                    human_player_setup_data.m_starting_species_name = sm.begin()->first;
+                    human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
              }
 
             human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
