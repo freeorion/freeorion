@@ -40,7 +40,8 @@ namespace {
         ConditionParser1Definition();
 
     private:
-        struct OwnedByClosure : boost::spirit::classic::closure<OwnedByClosure, Condition::ConditionBase*, ValueRef::ValueRefBase<int>*, EmpireAffiliationType>
+        struct OwnedByClosure : boost::spirit::classic::closure<OwnedByClosure, Condition::ConditionBase*,
+                                                                ValueRef::ValueRefBase<int>*, EmpireAffiliationType>
         {
             member1 this_;
             member2 empire;
@@ -54,31 +55,38 @@ namespace {
             member2 names;
         };
 
-        struct PlanetTypeClosure : boost::spirit::classic::closure<PlanetTypeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> >
+        struct PlanetTypeClosure : boost::spirit::classic::closure<PlanetTypeClosure, Condition::ConditionBase*,
+                                                                   std::vector<const ValueRef::ValueRefBase< ::PlanetType>*> >
         {
             member1 this_;
             member2 types;
         };
 
-        struct PlanetSizeClosure : boost::spirit::classic::closure<PlanetSizeClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> >
+        struct PlanetSizeClosure : boost::spirit::classic::closure<PlanetSizeClosure, Condition::ConditionBase*,
+                                                                   std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*> >
         {
             member1 this_;
             member2 sizes;
         };
 
-        struct PlanetEnvironmentClosure : boost::spirit::classic::closure<PlanetEnvironmentClosure, Condition::ConditionBase*, std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> >
+        struct PlanetEnvironmentClosure : boost::spirit::classic::closure<PlanetEnvironmentClosure,
+                                                                          Condition::ConditionBase*,
+                                                                          std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*> >
         {
             member1 this_;
             member2 environments;
         };
 
-        struct ObjectTypeClosure : boost::spirit::classic::closure<ObjectTypeClosure, Condition::ConditionBase*, ValueRef::ValueRefBase< ::UniverseObjectType>*>
+        struct ObjectTypeClosure : boost::spirit::classic::closure<ObjectTypeClosure, Condition::ConditionBase*,
+                                                                   ValueRef::ValueRefBase< ::UniverseObjectType>*>
         {
             member1 this_;
             member2 type;
         };
 
-        struct MeterValueClosure : boost::spirit::classic::closure<MeterValueClosure, Condition::ConditionBase*, MeterType, ValueRef::ValueRefBase<double>*, ValueRef::ValueRefBase<double>*>
+        struct MeterValueClosure : boost::spirit::classic::closure<MeterValueClosure, Condition::ConditionBase*,
+                                                                   MeterType, ValueRef::ValueRefBase<double>*,
+                                                                   ValueRef::ValueRefBase<double>*>
         {
             member1 this_;
             member2 meter;
@@ -86,13 +94,15 @@ namespace {
             member4 high;
         };
 
-        struct AndOrClosure : boost::spirit::classic::closure<AndOrClosure, Condition::ConditionBase*, std::vector<const Condition::ConditionBase*> >
+        struct AndOrClosure : boost::spirit::classic::closure<AndOrClosure, Condition::ConditionBase*,
+                                                              std::vector<const Condition::ConditionBase*> >
         {
             member1 this_;
             member2 conditions;
         };
 
-        struct NotClosure : boost::spirit::classic::closure<NotClosure, Condition::ConditionBase*, Condition::ConditionBase*>
+        struct NotClosure : boost::spirit::classic::closure<NotClosure, Condition::ConditionBase*,
+                                                            Condition::ConditionBase*>
         {
             member1 this_;
             member2 condition;
