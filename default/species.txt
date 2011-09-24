@@ -11408,7 +11408,6 @@ Species
     ]
     graphic = "icons/species/eaxaw.png"
 
-/* testing species commented out
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
@@ -11558,7 +11557,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 70
+            effects = SetDetection Value + 700
     
         EffectsGroup
             scope = Source
@@ -12349,4 +12348,4 @@ Species
         type = Gasgiant     environment = Uninhabitable
     ]
     graphic = "icons/species/amorphous-03.png"
-*/
+

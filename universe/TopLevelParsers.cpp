@@ -187,8 +187,8 @@ namespace {
              >> description_label >>        name_p[building_type_p.description = arg1]
              >> buildcost_label >>          real_p[building_type_p.production_cost = arg1]
              >> buildtime_label >>          int_p[building_type_p.production_time = arg1]
-             >> ((producible_label >>       true_false_p[building_type_p.producible = arg1]) |
-                                            eps_p[building_type_p.producible = val(true)])
+             >> (producible_label >>       true_false_p[building_type_p.producible = arg1]
+                 |                          eps_p[building_type_p.producible = val(true)])
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> (captureresult_label >>     capture_result_p[building_type_p.capture_result = arg1]
                  |                          eps_p[building_type_p.capture_result = val(CR_CAPTURE)])
