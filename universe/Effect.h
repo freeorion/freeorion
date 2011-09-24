@@ -644,7 +644,11 @@ class Effect::GenerateSitRepMessage : public Effect::EffectBase
 public:
     GenerateSitRepMessage(const std::string& message_string,
                           const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                          const ValueRef::ValueRefBase<int>* recipient_empire_id);
+                          const ValueRef::ValueRefBase<int>* recipient_empire_id,
+                          EmpireAffiliationType affiliation);
+    GenerateSitRepMessage(const std::string& message_string,
+                          const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          EmpireAffiliationType affiliation);
     virtual ~GenerateSitRepMessage();
 
     virtual void        Execute(const ScriptingContext& context) const;
@@ -652,10 +656,11 @@ public:
     virtual std::string Dump() const;
 
 private:
-    std::string                                         m_message_string;
+    std::string                                     m_message_string;
     std::vector<std::pair<std::string,
-        const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
-    const ValueRef::ValueRefBase<int>*                  m_recipient_empire_id;
+    const ValueRef::ValueRefBase<std::string>*> >   m_message_parameters;
+    const ValueRef::ValueRefBase<int>*              m_recipient_empire_id;
+    EmpireAffiliationType                           m_affiliation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -852,7 +857,8 @@ void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int ve
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_message_string)
         & BOOST_SERIALIZATION_NVP(m_message_parameters)
-        & BOOST_SERIALIZATION_NVP(m_recipient_empire_id);
+        & BOOST_SERIALIZATION_NVP(m_recipient_empire_id)
+        & BOOST_SERIALIZATION_NVP(m_affiliation);
 }
 
 #endif // _Effect_h_

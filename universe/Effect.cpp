@@ -1954,17 +1954,27 @@ std::string SetTechAvailability::Dump() const
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
-                                             const ValueRef::ValueRefBase<int>* recipient_empire_id) :
+                                             const ValueRef::ValueRefBase<int>* recipient_empire_id,
+                                             EmpireAffiliationType affiliation) :
     m_message_string(message_string),
     m_message_parameters(message_parameters),
-    m_recipient_empire_id(recipient_empire_id)
+    m_recipient_empire_id(recipient_empire_id),
+    m_affiliation(affiliation)
+{}
+
+GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
+                                             const std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             EmpireAffiliationType affiliation) :
+    m_message_string(message_string),
+    m_message_parameters(message_parameters),
+    m_recipient_empire_id(0),
+    m_affiliation(affiliation)
 {}
 
 GenerateSitRepMessage::~GenerateSitRepMessage()
 {
-    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::iterator it = m_message_parameters.begin();
-         it != m_message_parameters.end();
-         ++it)
+    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::iterator it =
+         m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         delete it->second;
     }
@@ -1973,18 +1983,30 @@ GenerateSitRepMessage::~GenerateSitRepMessage()
 
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const
 {
-    Empire* empire = Empires().Lookup(m_recipient_empire_id->Eval(context));
-    if (!empire) return;
+    Empire* empire = 0;
+    if (m_recipient_empire_id)
+        empire = Empires().Lookup(m_recipient_empire_id->Eval(context));
+    if (!empire && m_affiliation != AFFIL_ANY) return;
 
     std::vector<std::pair<std::string, std::string> > parameter_tag_values;
-    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::const_iterator it = m_message_parameters.begin();
-         it != m_message_parameters.end();
-         ++it)
+    for (std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >::const_iterator it =
+         m_message_parameters.begin(); it != m_message_parameters.end(); ++it)
     {
         parameter_tag_values.push_back(std::make_pair(it->first, it->second->Eval(context)));
     }
 
-    empire->AddSitRepEntry(CreateSitRep(m_message_string, parameter_tag_values));
+    if (!empire) {
+        // send to all empires
+        for (EmpireManager::const_iterator empire_it = Empires().begin(); empire_it != Empires().end(); ++empire_it)
+            empire_it->second->AddSitRepEntry(CreateSitRep(m_message_string, parameter_tag_values));
+    } else if (m_affiliation == AFFIL_SELF) {
+        // send to just single empire
+        empire->AddSitRepEntry(CreateSitRep(m_message_string, parameter_tag_values));
+    } else if (m_affiliation == AFFIL_ENEMY) {
+        // send to enemies of single empire
+    } else if (m_affiliation == AFFIL_ALLY) {
+        // send to allies
+    }
 }
 
 std::string GenerateSitRepMessage::Description() const

@@ -147,9 +147,7 @@ namespace {
         };
 
         struct SetTechAvailabilityClosure : boost::spirit::classic::closure<SetTechAvailabilityClosure, Effect::EffectBase*,
-                                                                            std::string,
-                                                                            bool,
-                                                                            bool>
+                                                                            std::string, bool, bool>
         {
             member1 this_;
             member2 name;
@@ -160,12 +158,14 @@ namespace {
         struct GenerateSitRepMessageClosure : boost::spirit::classic::closure<GenerateSitRepMessageClosure, Effect::EffectBase*,
                                                                               std::string,
                                                                               std::vector<std::pair<std::string, const ValueRef::ValueRefBase<std::string>*> >,
-                                                                              ValueRef::ValueRefBase<int>*>
+                                                                              ValueRef::ValueRefBase<int>*,
+                                                                              EmpireAffiliationType>
         {
             member1 this_;
             member2 template_string;
             member3 parameters;
             member4 recipient_empire;
+            member5 affiliation;
         };
 
         struct StringAndStringRefVectorClosure : boost::spirit::classic::closure<StringAndStringRefVectorClosure,
@@ -225,6 +225,7 @@ namespace {
         ParamLabel  type_label;
         ParamLabel  planetsize_label;
         ParamLabel  empire_label;
+        ParamLabel  affiliation_label;
         ParamLabel  name_label;
         ParamLabel  species_label;
         ParamLabel  design_name_label;
@@ -247,6 +248,7 @@ namespace {
         type_label("type"),
         planetsize_label("size"),
         empire_label("empire"),
+        affiliation_label("affiliation"),
         name_label("name"),
         species_label("species"),
         design_name_label("designname"),
@@ -346,27 +348,27 @@ namespace {
 
         set_empire_meter =
              ( ((str_p("setempiremeter")
-                 >> empire_label >>  int_expr_p[     set_empire_meter.empire = arg1]
-                 >> meter_label >>   name_p[         set_empire_meter.meter = arg1]
-                 >> value_label >>   double_expr_p[  set_empire_meter.value = arg1])
+                 >> empire_label >>             int_expr_p[set_empire_meter.empire = arg1]
+                 >> meter_label >>              name_p[set_empire_meter.meter = arg1]
+                 >> value_label >>              double_expr_p[set_empire_meter.value = arg1])
                 [set_empire_meter.this_ = new_<Effect::SetEmpireMeter>(set_empire_meter.empire, set_empire_meter.meter, set_empire_meter.value)])
              | ((str_p("setempiremeter")
-                 >> meter_label >>   name_p[         set_empire_meter.meter = arg1]
-                 >> value_label >>   double_expr_p[  set_empire_meter.value = arg1])
+                 >> meter_label >>              name_p[set_empire_meter.meter = arg1]
+                 >> value_label >>              double_expr_p[set_empire_meter.value = arg1])
                 [set_empire_meter.this_ = new_<Effect::SetEmpireMeter>(set_empire_meter.meter, set_empire_meter.value)])
              );
 
         set_empire_stockpile =
-            ( ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type = val(RE_FOOD)]
-               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type = val(RE_MINERALS)]
-               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type = val(RE_TRADE)]
-               >> value_label >> double_expr_p[set_empire_stockpile.value = arg1])
+            ( ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type =       val(RE_FOOD)]
+               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type =   val(RE_MINERALS)]
+               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type =     val(RE_TRADE)]
+               >> value_label >>                double_expr_p[set_empire_stockpile.value = arg1])
                [set_empire_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_empire_stockpile.stockpile_type, set_empire_stockpile.value)])
-            | ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type = val(RE_FOOD)]
-               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type = val(RE_MINERALS)]
-               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type = val(RE_TRADE)]
-               >> empire_label >> int_expr_p[set_empire_stockpile.empire = arg1]
-               >> value_label >> double_expr_p[set_empire_stockpile.value = arg1])
+            | ((str_p("setempirefoodstockpile")[set_empire_stockpile.stockpile_type =       val(RE_FOOD)]
+               | str_p("setempiremineralstockpile")[set_empire_stockpile.stockpile_type =   val(RE_MINERALS)]
+               | str_p("setempiretradestockpile")[set_empire_stockpile.stockpile_type =     val(RE_TRADE)]
+               >> empire_label >>               int_expr_p[set_empire_stockpile.empire = arg1]
+               >> value_label >>                double_expr_p[set_empire_stockpile.value = arg1])
                [set_empire_stockpile.this_ = new_<Effect::SetEmpireStockpile>(set_empire_stockpile.empire, set_empire_stockpile.stockpile_type, set_empire_stockpile.value)])
             );
 
@@ -374,7 +376,7 @@ namespace {
             ( (str_p("setempirecapital")
               [set_empire_capital.this_ = new_<Effect::SetEmpireCapital>()])
             | (str_p("setempirecapital")
-               >> empire_label >> int_expr_p[set_empire_capital.empire = arg1]
+               >> empire_label >>               int_expr_p[set_empire_capital.empire = arg1]
               [set_empire_capital.this_ = new_<Effect::SetEmpireCapital>(set_empire_capital.empire)])
             );
 
@@ -385,23 +387,23 @@ namespace {
 
         set_planet_size =
             (str_p("setplanetsize")
-             >> planetsize_label >> planetsize_expr_p[set_planet_size.size = arg1])
+             >> planetsize_label >>             planetsize_expr_p[set_planet_size.size = arg1])
             [set_planet_size.this_ = new_<Effect::SetPlanetSize>(set_planet_size.size)];
 
         set_species =
             (str_p("setspecies")
-             >> name_label >> string_expr_p[set_species.name = arg1])
+             >> name_label >>                   string_expr_p[set_species.name = arg1])
             [set_species.this_ = new_<Effect::SetSpecies>(set_species.name)];
 
         set_owner =
             (str_p("setowner")
-             >> empire_label >> int_expr_p[set_owner.empire = arg1])
+             >> empire_label >>                 int_expr_p[set_owner.empire = arg1])
             [set_owner.this_ = new_<Effect::SetOwner>(set_owner.empire)];
 
         create_planet =
             (str_p("createplanet")
-             >> type_label >> planettype_expr_p[create_planet.type = arg1]
-             >> endpoint_label >> planetsize_expr_p[create_planet.size = arg1])
+             >> type_label >>                   planettype_expr_p[create_planet.type = arg1]
+             >> endpoint_label >>               planetsize_expr_p[create_planet.size = arg1])
             [create_planet.this_ = new_<Effect::CreatePlanet>(create_planet.type, create_planet.size)];
 
         create_building =
@@ -411,37 +413,37 @@ namespace {
 
         create_ship =
             ( ((str_p("createship")
-                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1]
-                >> empire_label >> int_expr_p[create_ship.empire = arg1]
-                >> species_label >> string_expr_p[create_ship.species = arg1])
+                >> design_name_label >>         name_p[create_ship.predefined_design_name = arg1]
+                >> empire_label >>              int_expr_p[create_ship.empire = arg1]
+                >> species_label >>             string_expr_p[create_ship.species = arg1])
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name,
                                                              create_ship.empire,
                                                              create_ship.species)])
             | ((str_p("createship")
-                >> design_name_label >> int_expr_p[create_ship.design_id = arg1]
-                >> empire_label >> int_expr_p[create_ship.empire = arg1]
-                >> species_label >> string_expr_p[create_ship.species = arg1])
+                >> design_name_label >>         int_expr_p[create_ship.design_id = arg1]
+                >> empire_label >>              int_expr_p[create_ship.empire = arg1]
+                >> species_label >>             string_expr_p[create_ship.species = arg1])
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.design_id,
                                                              create_ship.empire,
                                                              create_ship.species)])
             | ((str_p("createship")
-                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1]
-                >> empire_label >> int_expr_p[create_ship.empire = arg1])
+                >> design_name_label >>         name_p[create_ship.predefined_design_name = arg1]
+                >> empire_label >>              int_expr_p[create_ship.empire = arg1])
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name,
                                                              create_ship.empire)])
             | ((str_p("createship")
-                >> design_name_label >> name_p[create_ship.predefined_design_name = arg1])
+                >> design_name_label >>         name_p[create_ship.predefined_design_name = arg1])
                [create_ship.this_ = new_<Effect::CreateShip>(create_ship.predefined_design_name)])
             );
 
         move_to =
             (str_p("moveto")
-             >> destination_label >> condition_p[move_to.condition = arg1])
+             >> destination_label >>            condition_p[move_to.condition = arg1])
             [move_to.this_ = new_<Effect::MoveTo>(move_to.condition)];
 
         set_destination =
             (str_p("setdestination")
-             >> destination_label >> condition_p[set_destination.condition = arg1])
+             >> destination_label >>            condition_p[set_destination.condition = arg1])
             [set_destination.this_ = new_<Effect::SetDestination>(set_destination.condition)];
 
         destroy =
@@ -450,40 +452,44 @@ namespace {
 
         victory =
             (str_p("victory")
-             >> reason_label >> name_p[victory.name = arg1])
+             >> reason_label >>                 name_p[victory.name = arg1])
             [victory.this_ = new_<Effect::Victory>(victory.name)];
 
         add_special =
             (str_p("addspecial")
-             >> name_label >> name_p[add_special.name = arg1])
+             >> name_label >>                   name_p[add_special.name = arg1])
             [add_special.this_ = new_<Effect::AddSpecial>(add_special.name)];
 
         remove_special =
             (str_p("removespecial")
-             >> name_label >> name_p[remove_special.name = arg1])
+             >> name_label >>                   name_p[remove_special.name = arg1])
             [remove_special.this_ = new_<Effect::RemoveSpecial>(remove_special.name)];
 
         add_starlanes =
             (str_p("addstarlanes")
-             >> endpoint_label >> condition_p[add_starlanes.condition = arg1])
+             >> endpoint_label >>               condition_p[add_starlanes.condition = arg1])
             [add_starlanes.this_ = new_<Effect::AddStarlanes>(add_starlanes.condition)];
 
         remove_starlanes
             (str_p("removestarlanes")
-             >> endpoint_label >> condition_p[remove_starlanes.condition = arg1])
+             >> endpoint_label >>               condition_p[remove_starlanes.condition = arg1])
             [remove_starlanes.this_ = new_<Effect::RemoveStarlanes>(remove_starlanes.condition)];
 
         set_star_type =
             (str_p("setstartype")
-             >> type_label >> startype_expr_p[set_star_type.type = arg1])
+             >> type_label >>                   startype_expr_p[set_star_type.type = arg1])
             [set_star_type.this_ = new_<Effect::SetStarType>(set_star_type.type)];
 
         set_tech_availability =
-            ((str_p("givetechtoowner")[set_tech_availability.available = val(true), set_tech_availability.include_tech = val(true)]
-              | str_p("revoketechfromowner")[set_tech_availability.available = val(false), set_tech_availability.include_tech = val(true)]
-              | str_p("unlocktechitemsforowner")[set_tech_availability.available = val(true), set_tech_availability.include_tech = val(false)]
-              | str_p("locktechitemsforowner")[set_tech_availability.available = val(false), set_tech_availability.include_tech = val(false)])
-             >> name_label >> name_p[set_tech_availability.name = arg1])
+            ((str_p("givetechtoowner")[set_tech_availability.available =                val(true),
+                                       set_tech_availability.include_tech =             val(true)]
+              | str_p("revoketechfromowner")[set_tech_availability.available =          val(false),
+                                             set_tech_availability.include_tech =       val(true)]
+              | str_p("unlocktechitemsforowner")[set_tech_availability.available =      val(true),
+                                                 set_tech_availability.include_tech =   val(false)]
+              | str_p("locktechitemsforowner")[set_tech_availability.available =        val(false),
+                                               set_tech_availability.include_tech =     val(false)])
+             >> name_label >>                   name_p[set_tech_availability.name = arg1])
             [set_tech_availability.this_ = new_<Effect::SetTechAvailability>(
                 set_tech_availability.name,
                 new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_REFERENCE, "Owner"),
@@ -493,13 +499,13 @@ namespace {
 
         // not an effect parser, but a utility function for parsing a list of string-ValueRef<string> pairs
         string_and_string_ref_vector =
-            (tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
-             >> data_label >> string_expr_p[string_and_string_ref_vector.data = arg1])
+            (tag_label >>                       name_p[string_and_string_ref_vector.tag = arg1]
+             >> data_label >>                   string_expr_p[string_and_string_ref_vector.data = arg1])
             [push_back_(string_and_string_ref_vector.this_,
                         make_pair_(string_and_string_ref_vector.tag,
                                    string_and_string_ref_vector.data))]
-            | ('[' >> +((tag_label >> name_p[string_and_string_ref_vector.tag = arg1]
-                         >> data_label >> string_expr_p[string_and_string_ref_vector.data = arg1])
+            | ('[' >> +((tag_label >>           name_p[string_and_string_ref_vector.tag = arg1]
+                         >> data_label >>       string_expr_p[string_and_string_ref_vector.data = arg1])
                         [push_back_(string_and_string_ref_vector.this_,
                                     make_pair_(string_and_string_ref_vector.tag,
                                                string_and_string_ref_vector.data))])
@@ -507,14 +513,23 @@ namespace {
 
         generate_sitrep_message =
             (str_p("generatesitrepmessage")
-             >> message_label >> name_p[generate_sitrep_message.template_string = arg1]
-             >> !(parameters_label >> string_and_string_ref_vector[generate_sitrep_message.parameters = arg1])
-             >> empire_label >> int_expr_p[generate_sitrep_message.recipient_empire = arg1])
-            [generate_sitrep_message.this_ = new_<Effect::GenerateSitRepMessage>(
-                generate_sitrep_message.template_string,
-                generate_sitrep_message.parameters,
-                generate_sitrep_message.recipient_empire)
-            ];
+             >> message_label >>                name_p[generate_sitrep_message.template_string = arg1]
+             >> !(parameters_label >>           string_and_string_ref_vector[generate_sitrep_message.parameters = arg1])
+             >> empire_label >>                 int_expr_p[generate_sitrep_message.recipient_empire = arg1]
+             >> (affiliation_label >>           affiliation_type_p[generate_sitrep_message.affiliation = arg1]
+                 |                              eps_p[generate_sitrep_message.affiliation = val(AFFIL_SELF)])
+             [generate_sitrep_message.this_ = new_<Effect::GenerateSitRepMessage>(generate_sitrep_message.template_string,
+                                                                                  generate_sitrep_message.parameters,
+                                                                                  generate_sitrep_message.recipient_empire,
+                                                                                  generate_sitrep_message.affiliation)])
+            | (str_p("generatesitrepmessage")
+               >> message_label >>              name_p[generate_sitrep_message.template_string = arg1]
+               >> !(parameters_label >>         string_and_string_ref_vector[generate_sitrep_message.parameters = arg1])
+               >> (affiliation_label >>         affiliation_type_p[generate_sitrep_message.affiliation = arg1]
+                   |                            eps_p[generate_sitrep_message.affiliation = val(AFFIL_ANY)])
+               [generate_sitrep_message.this_ = new_<Effect::GenerateSitRepMessage>(generate_sitrep_message.template_string,
+                                                                                    generate_sitrep_message.parameters,
+                                                                                    generate_sitrep_message.affiliation)]);
 
         effect_p =
             set_meter[effect_p.this_ = arg1]
