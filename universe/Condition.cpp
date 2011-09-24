@@ -1576,7 +1576,7 @@ std::string Condition::HasSpecial::Dump() const
 
     std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
     std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
-    return DumpIndent() + "HasSpecial name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
+    return DumpIndent() + "HasSpecialSinceTurn name = \"" + m_name + "\" low = " + low_dump + " high = " + high_dump;
 }
 
 bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
@@ -1972,7 +1972,7 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::InSystem::Dump() const
-{ return DumpIndent() + "InSystem system_id = " + m_system_id->Dump(); }
+{ return DumpIndent() + "InSystem id = " + m_system_id->Dump(); }
 
 bool Condition::InSystem::Match(const ScriptingContext& local_context) const
 {

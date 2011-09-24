@@ -13,10 +13,7 @@ extern ParamLabel high_label;
 extern ParamLabel class_label;
 extern ParamLabel empire_label;
 extern ParamLabel design_label;
-ParamLabel system_label("system");
 ParamLabel id_label("id");
-ParamLabel added_since_label("addedsince");
-ParamLabel added_before_label("addedbefore");
 
 rule<Scanner, ConditionClosure::context_t> condition2_p;
 
@@ -95,10 +92,10 @@ namespace {
             [owner_has_tech.this_ = new_<Condition::OwnerHasTech>(owner_has_tech.name)];
 
         has_special =
-            ((str_p("hasspecial")
+            ((str_p("hasspecialsinceturn")
               >> name_label >>          name_p[     has_special.name = arg1]
-              >> added_since_label >>   int_expr_p[ has_special.int_ref_1 = arg1]
-              >> added_before_label >>  int_expr_p[ has_special.int_ref_2 = arg1]
+              >> low_label >>           int_expr_p[ has_special.int_ref_1 = arg1]
+              >> high_label >>          int_expr_p[ has_special.int_ref_2 = arg1]
               [has_special.this_ = new_<Condition::HasSpecial>(has_special.name)])
             | (str_p("hasspecial")
                >> name_label >> name_p[has_special.name = arg1])
@@ -159,7 +156,7 @@ namespace {
 
         in_system =
             (str_p("insystem")
-             >> system_label >> int_expr_p[in_system.int_ref = arg1])
+             >> id_label >> int_expr_p[in_system.int_ref = arg1])
             [in_system.this_ = new_<Condition::InSystem>(in_system.int_ref)];
 
         object_id =
