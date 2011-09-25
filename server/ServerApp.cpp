@@ -139,8 +139,24 @@ namespace {
 
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data)
 {
+    // check if AI clients are needed for given setup data
+    bool need_AIs = false;
+    for (int i = 0; i < static_cast<int>(player_setup_data.size()); ++i) {
+        const PlayerSetupData& psd = player_setup_data.at(i);
+        if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+            need_AIs = true;
+            break;
+        }
+    }
+    if (need_AIs)
+        m_networking.SendMessage(TurnProgressMessage(Message::STARTING_AIS));
+
+
     // disconnect any old AI clients
     CleanupAIs();
+
+    if (!need_AIs)
+        return;
 
     // binary / executable to run for AI clients
     const std::string AI_CLIENT_EXE = AIClientExe();
@@ -432,6 +448,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {
         Logger().errorStream() << "ServerApp::NewGameInit passed empty player_id_setup_data.  Aborting";
+        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
         return;
     }
     // ensure number of players connected and for which data are provided are consistent
@@ -477,6 +494,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 
     if (active_players_id_setup_data.empty()) {
         Logger().errorStream() << "ServerApp::NewGameInit found no active players!";
+        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
         return;
     }
 
@@ -493,6 +511,8 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
 
     // create universe and empires for players
     Logger().debugStream() << "ServerApp::NewGameInit: Creating Universe";
+    m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
+
     // m_current_turn set above so that every UniverseObject created before game starts will have m_created_on_turn BEFORE_FIRST_TURN
     m_universe.CreateUniverse(galaxy_setup_data.m_size,             galaxy_setup_data.m_shape,
                               galaxy_setup_data.m_age,              galaxy_setup_data.m_starlane_freq,
@@ -677,6 +697,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // ensure some reasonable inputs
     if (player_save_game_data.empty()) {
         Logger().errorStream() << "ServerApp::LoadGameInit passed empty player save game data.  Aborting";
+        m_networking.SendMessage(ErrorMessage("SERVER_FOUND_NO_ACTIVE_PLAYERS", true));
         return;
     }
     // ensure number of players connected and for which data are provided are consistent
@@ -1588,8 +1609,7 @@ void ServerApp::PreCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns executing orders";
 
     // inform players of order execution
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it)
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::PROCESSING_ORDERS));
+    m_networking.SendMessage(TurnProgressMessage(Message::PROCESSING_ORDERS));
 
     // execute orders
     for (std::map<int, OrderSet*>::iterator it = m_turn_sequence.begin(); it != m_turn_sequence.end(); ++it) {
@@ -1606,9 +1626,7 @@ void ServerApp::PreCombatProcessTurns()
     Logger().debugStream() << "ServerApp::ProcessTurns colonization and scrapping";
 
     // player notifications
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COLONIZE_AND_SCRAP));
-    }
+    m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
 
 
     // clean up orders, which are no longer needed
@@ -1647,11 +1665,8 @@ void ServerApp::PreCombatProcessTurns()
     // process movement phase
 
     // player notifications
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end(); ++player_it)
-    {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::FLEET_MOVEMENT));
-    }
+    m_networking.SendMessage(TurnProgressMessage(Message::FLEET_MOVEMENT));
+
 
     // fleet movement
     fleets = objects.FindObjects<Fleet>();
@@ -1690,12 +1705,7 @@ void ServerApp::PreCombatProcessTurns()
     }
 
     // indicate that the clients are waiting for their new Universes
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it)
-    {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING));
-    }
+    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
 
     // send partial turn updates to all players after orders and movement
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
@@ -1713,9 +1723,7 @@ void ServerApp::PreCombatProcessTurns()
 void ServerApp::ProcessCombats()
 {
     Logger().debugStream() << "ServerApp::ProcessCombats";
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::COMBAT));
-    }
+    m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
 
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
     std::map<int, CombatInfo> system_combat_info;   // map from system ID to CombatInfo for that system
@@ -1818,11 +1826,7 @@ void ServerApp::PostCombatProcessTurns()
     // process production and growth phase
 
     // notify players that production and growth is being processed
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin(); player_it != m_networking.established_end(); ++player_it) {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::EMPIRE_PRODUCTION));
-    }
-
-
+    m_networking.SendMessage(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
     Logger().debugStream() << "ServerApp::ProcessTurns effects and meter updates";
 
 
@@ -1983,19 +1987,13 @@ void ServerApp::PostCombatProcessTurns()
 
 
     // indicate that the clients are waiting for their new gamestate
-    for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it)
-    {
-        (*player_it)->SendMessage(TurnProgressMessage((*player_it)->PlayerID(), Message::DOWNLOADING));
-    }
+    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
 
 
     // compile map of PlayerInfo, indexed by player ID
     std::map<int, PlayerInfo> players;
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it)
+         player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();
@@ -2007,8 +2005,7 @@ void ServerApp::PostCombatProcessTurns()
 
     // send new-turn updates to all players
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
-         player_it != m_networking.established_end();
-         ++player_it)
+         player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
         int player_id = player->PlayerID();

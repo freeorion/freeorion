@@ -94,7 +94,10 @@ public:
         WAITING_FOR_PLAYERS,    ///< waiting for other to end their turn
         PROCESSING_ORDERS,      ///< processing orders
         COLONIZE_AND_SCRAP,     ///< enacting colonization and scrapping orders
-        DOWNLOADING             ///< downloading new game state from server
+        DOWNLOADING,            ///< downloading new game state from server
+        LOADING_GAME,           ///< loading gamestate from save
+        GENERATING_UNIVERSE,    ///< creating new universe
+        STARTING_AIS            ///< creating AI clients
     };
 
     enum PlayerStatus {
@@ -229,7 +232,7 @@ Message JoinAckMessage(int player_id);
 Message TurnOrdersMessage(int sender, const OrderSet& orders);
 
 /** creates a TURN_PROGRESS message. */
-Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id);
+Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id = Networking::INVALID_PLAYER_ID);
 
 /** creates a PLAYER_STATUS message. */
 Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status);

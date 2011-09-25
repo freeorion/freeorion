@@ -1139,7 +1139,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg)
     // inform player who just submitted of their new status.  Note: not sure why
     // this only needs to be send to the submitting player and not all others as
     // well ...
-    server.m_networking.SendMessage(TurnProgressMessage(message.SendingPlayer(), Message::WAITING_FOR_PLAYERS));
+    server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS, message.SendingPlayer()));
 
     // check conditions for ending this turn
     post_event(CheckTurnEndConditions());

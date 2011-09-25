@@ -511,13 +511,7 @@ WaitingForTurnData::WaitingForTurnData(my_context ctx) :
     Client().Register(Client().m_ui->GetMessageWnd());
     Client().Register(Client().m_ui->GetPlayerListWnd());
 
-    if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_NEW_GAME)
-        Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("NEW_GAME") + "\n");
-
-    else if (context<HumanClientFSM>().m_next_waiting_for_data_mode == WAITING_FOR_LOADED_GAME)
-        Client().m_ui->GetMessageWnd()->HandleGameStatusUpdate(UserString("LOADING") + "\n");
-
-    else if (context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN)
+    if (context<HumanClientFSM>().m_next_waiting_for_data_mode = WAITING_FOR_NEW_TURN)
         Client().m_ui->GetMapWnd()->EnableOrderIssuing(false);
 }
 

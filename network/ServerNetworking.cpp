@@ -332,21 +332,27 @@ void ServerNetworking::SendMessage(const Message& message,
 
 void ServerNetworking::SendMessage(const Message& message)
 {
-    established_iterator it = GetPlayer(message.ReceivingPlayer());
-    if (it == established_end()) {
-        Logger().errorStream() << "ServerNetworking::SendMessage couldn't find player with id " << message.ReceivingPlayer() << " to disconnect.  aborting";
-        return;
+    if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) {
+        // if recipient is INVALID_PLAYER_ID send message to all players
+        for (ServerNetworking::const_established_iterator player_it = established_begin();
+            player_it != established_end(); ++player_it)
+        {
+            (*player_it)->SendMessage(message);
+        }
+    } else {
+        // send message to single player
+        established_iterator it = GetPlayer(message.ReceivingPlayer());
+        if (it == established_end()) {
+            Logger().errorStream() << "ServerNetworking::SendMessage couldn't find player with id " << message.ReceivingPlayer() << " to disconnect.  aborting";
+            return;
+        }
+        PlayerConnectionPtr player = *it;
+        if (player->PlayerID() != message.ReceivingPlayer()) {
+            Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
+            return;
+        }
+        player->SendMessage(message);
     }
-    PlayerConnectionPtr player = *it;
-    if (player->PlayerID() != message.ReceivingPlayer()) {
-        Logger().errorStream() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
-        return;
-    }
-
-    //if (TRACE_EXECUTION)
-    //    Logger().debugStream() << "ServerNetworking::SendMessage : sending message "
-    //                           << message;
-    player->SendMessage(message);
 }
 
 void ServerNetworking::Disconnect(int id)

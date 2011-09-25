@@ -62,6 +62,10 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
               std::vector<PlayerSaveGameData>& player_save_game_data,
               Universe& universe, EmpireManager& empire_manager, SpeciesManager& species_manager)
 {
+    // player notifications
+    if (ServerApp* server = ServerApp::GetApp())
+        server->Networking().SendMessage(TurnProgressMessage(Message::LOADING_GAME));
+
     Universe::s_encoding_empire = ALL_EMPIRES;
 
     std::map<int, SaveGameEmpireData> ignored_save_game_empire_data;

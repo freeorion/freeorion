@@ -258,6 +258,15 @@ void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id)
     case Message::DOWNLOADING:
         phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
         break;
+    case Message::LOADING_GAME:
+        phase_str = UserString("TURN_PROGRESS_PHASE_LOADING_GAME");
+        break;
+    case Message::GENERATING_UNIVERSE:
+        phase_str = UserString("TURN_PROGRESS_PHASE_GENERATING_UNIVERSE");
+        break;
+    case Message::STARTING_AIS:
+        phase_str = UserString("TURN_PROGRESS_STARTING_AIS");
+        break;
     default:
         Logger().errorStream() << "MessageWnd::HandleTurnPhaseUpdate got unknown turn phase id";
         return;

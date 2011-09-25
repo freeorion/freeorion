@@ -98,6 +98,9 @@ namespace GG {
     GG_ENUM_MAP_INSERT(Message::PROCESSING_ORDERS)
     GG_ENUM_MAP_INSERT(Message::COLONIZE_AND_SCRAP)
     GG_ENUM_MAP_INSERT(Message::DOWNLOADING)
+    GG_ENUM_MAP_INSERT(Message::LOADING_GAME)
+    GG_ENUM_MAP_INSERT(Message::GENERATING_UNIVERSE)
+    GG_ENUM_MAP_INSERT(Message::STARTING_AIS)
     GG_ENUM_MAP_END
 }
 
@@ -410,7 +413,7 @@ Message TurnOrdersMessage(int sender, const OrderSet& orders)
     return Message(Message::TURN_ORDERS, sender, Networking::INVALID_PLAYER_ID, os.str());
 }
 
-Message TurnProgressMessage(int player_id, Message::TurnProgressPhase phase_id)
+Message TurnProgressMessage(Message::TurnProgressPhase phase_id, int player_id)
 {
     std::ostringstream os;
     {

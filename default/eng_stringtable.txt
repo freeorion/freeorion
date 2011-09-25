@@ -363,12 +363,6 @@ Monsters
 # Status Update Messages #
 ##########################
 
-NEW_GAME
-Generating Universe
-
-LOADING
-Loading
-
 RETURN_TO_INTRO
 Returning to Main Menu
 
@@ -428,6 +422,9 @@ This server is already hosting a game.
 
 SERVER_UNABLE_TO_SELECT_HOST
 The server was unable to select a new host.
+
+SERVER_FOUND_NO_ACTIVE_PLAYERS
+Cannot generate game with no active players.
 
 ######################################
 # Command Line and OptionsDB Options #
@@ -2304,10 +2301,19 @@ TURN_PROGRESS_PHASE_ORDERS
 Executing Orders
 
 TURN_PROGRESS_COLONIZE_AND_SCRAP
-Colonization and Scrapping
+Colonization, Invasion, and Scrapping
 
 TURN_PROGRESS_PHASE_DOWNLOADING
 Downloading and Unpacking New Gamestate
+
+TURN_PROGRESS_PHASE_LOADING_GAME
+Loading
+
+TURN_PROGRESS_PHASE_GENERATING_UNIVERSE
+Generating Universe
+
+TURN_PROGRESS_STARTING_AIS
+Creating AI Clients
 
 TURN_BEGIN
 Begin Turn %1%
