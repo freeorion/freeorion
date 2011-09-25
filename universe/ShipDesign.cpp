@@ -1535,25 +1535,25 @@ PredefinedShipDesignManager::~PredefinedShipDesignManager() {
         delete it->second;
 }
 
-std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire) const {
+std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire, const std::vector<std::string>& design_names) const {
     std::map<std::string, int> retval;
-
-    if (!empire)
+    if (!empire || design_names.empty())
         return retval;
-
     int empire_id = empire->EmpireID();
-
     Universe& universe = GetUniverse();
 
-    for (iterator it = begin(); it != end(); ++it) {
-        ShipDesign* d = it->second;
-        if (!d->Producible())
+    for (std::vector<std::string>::const_iterator it = design_names.begin(); it != design_names.end(); ++it) {
+        std::map<std::string, ShipDesign*>::const_iterator design_it = m_ship_designs.find(*it);
+        if (design_it == m_ship_designs.end())
             continue;
 
-        if (it->first != d->Name(false)) {
-            Logger().errorStream() << "Predefined ship design name in map (" << it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
-        }
+        ShipDesign* d = design_it->second;
+        if (!d->Producible())
+            continue;
+        if (design_it->first != d->Name(false))
+            Logger().errorStream() << "Predefined ship design name in map (" << design_it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
 
+        // make copy of design to add to universe, after modifying created by empire ID
         ShipDesign* copy = new ShipDesign(d->Name(false), d->Description(false), empire_id,
                                           d->DesignedOnTurn(), d->Hull(), d->Parts(),
                                           d->Graphic(), d->Model(), true);
@@ -1564,7 +1564,7 @@ std::map<std::string, int> PredefinedShipDesignManager::AddShipDesignsToEmpire(E
             delete copy;
             Logger().errorStream() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
         } else {
-            retval[it->first] = design_id;
+            retval[design_it->first] = design_id;
 
             universe.SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
         }

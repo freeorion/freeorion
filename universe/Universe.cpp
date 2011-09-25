@@ -3290,42 +3290,27 @@ const Condition::ConditionBase* MonsterFleetPlan::Location() const
 // FleetPlanManager //
 //////////////////////
 namespace {
-    struct store_fleet_plan_impl
-    {
+    struct store_fleet_plan_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
         void operator()(std::vector<FleetPlan*>& fleet_plans, const T& fleet_plan) const
-        {
-            fleet_plans.push_back(fleet_plan);
-        }
+        { fleet_plans.push_back(fleet_plan); }
     };
-
     const phoenix::function<store_fleet_plan_impl> store_fleet_plan_;
 
     class FleetPlanManager {
     public:
         typedef std::vector<FleetPlan*>::const_iterator iterator;
-
-        ~FleetPlanManager();
-
-        /** \name Accessors */ //@{
-        /** returns iterator pointing to first plan. */
-        iterator    begin() const                           { return m_plans.begin(); }
-
-        /** returns iterator pointing one past last plan. */
-        iterator    end() const                             { return m_plans.end(); }
-        //@}
-
+        virtual ~FleetPlanManager();
+        iterator    begin() const   { return m_plans.begin(); }
+        iterator    end() const     { return m_plans.end(); }
         /** returns the instance of this singleton class; you should use the
           * free function GetFleetPlanManager() instead */
         static const FleetPlanManager& GetFleetPlanManager();
-
     private:
         FleetPlanManager();
-
         std::vector<FleetPlan*>     m_plans;
-
         static FleetPlanManager*    s_instance;
     };
     // static(s)
@@ -3390,44 +3375,28 @@ namespace {
 // MonsterFleetPlanManager //
 /////////////////////////////
 namespace {
-    struct store_monster_fleet_plan_impl
-    {
+    struct store_monster_fleet_plan_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
         void operator()(std::vector<MonsterFleetPlan*>& fleet_plans, const T& fleet_plan) const
-        {
-            fleet_plans.push_back(fleet_plan);
-        }
+        { fleet_plans.push_back(fleet_plan); }
     };
-
     const phoenix::function<store_monster_fleet_plan_impl> store_monster_fleet_plan_;
 
     class MonsterFleetPlanManager {
     public:
         typedef std::vector<MonsterFleetPlan*>::const_iterator iterator;
-
-        ~MonsterFleetPlanManager();
-
-        /** \name Accessors */ //@{
-        /** returns iterator pointing to first plan. */
-        iterator    begin() const                           { return m_plans.begin(); }
-
-        /** returns iterator pointing one past last plan. */
-        iterator    end() const                             { return m_plans.end(); }
-
-        int         NumMonsters() const                     { return m_plans.size(); }
-        //@}
-
+        virtual ~MonsterFleetPlanManager();
+        iterator    begin() const       { return m_plans.begin(); }
+        iterator    end() const         { return m_plans.end(); }
+        int         NumMonsters() const { return m_plans.size(); }
         /** returns the instance of this singleton class; you should use the
-          * free function GetFleetPlanManager() instead */
+          * free function MonsterFleetPlanManager() instead */
         static const MonsterFleetPlanManager& GetMonsterFleetPlanManager();
-
     private:
         MonsterFleetPlanManager();
-
         std::vector<MonsterFleetPlan*>     m_plans;
-
         static MonsterFleetPlanManager*    s_instance;
     };
     // static(s)
@@ -3487,45 +3456,33 @@ namespace {
     }
 };
 
+/////////////////////////////
+// ItemSpecManager         //
+/////////////////////////////
 namespace {
-    struct store_item_spec_impl
-    {
+    struct store_item_spec_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
         void operator()(std::vector<ItemSpec>& item_specs, const T& item_spec) const
-        {
-            item_specs.push_back(item_spec);
-        }
+        { item_specs.push_back(item_spec); }
     };
-
     const phoenix::function<store_item_spec_impl> store_item_spec_;
 
     class ItemSpecManager {
     public:
         typedef std::vector<ItemSpec>::const_iterator iterator;
-
-        /** \name Accessors */ //@{
-        /** returns iterator pointing to first item spec. */
-        iterator    begin() const                           { return m_items.begin(); }
-
-        /** returns iterator pointing one past last plan. */
-        iterator    end() const                             { return m_items.end(); }
-        //@}
-
+        iterator    begin() const   { return m_items.begin(); }
+        iterator    end() const     { return m_items.end(); }
         /** Adds unlocked items in this manager to the specified \a empire
           * using that Empire's UnlockItem function. */
         void        AddItemsToEmpire(Empire* empire) const;
-
         /** returns the instance of this singleton class; you should use the
-          * free function GetFleetPlanManager() instead */
+          * free function GetItemSpecManager() instead */
         static const ItemSpecManager& GetItemSpecManager();
-
     private:
         ItemSpecManager();
-
         std::vector<ItemSpec>   m_items;
-
         static ItemSpecManager* s_instance;
     };
     // static(s)
@@ -4848,6 +4805,38 @@ void Universe::NamePlanets()
     }
 }
 
+namespace {
+    struct store_name_impl {
+        template <class T1, class T2>
+        struct result {typedef void type;};
+        template <class T>
+        void operator()(std::vector<std::string>& names, const T& name) const
+        { names.push_back(name); }
+    };
+    const phoenix::function<store_name_impl> store_name_;
+
+    /** Reads list of strings from file, surrounded by enclosing quotes. */
+    void LoadNames(std::vector<std::string>& names, const std::string& file_name) {
+        std::string input;
+        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+        if (ifs) {
+            std::getline(ifs, input, '\0');
+            ifs.close();
+        } else {
+            Logger().errorStream() << "Unable to open data file " << file_name;
+        }
+        using namespace boost::spirit::classic;
+        using namespace phoenix;
+        parse_info<const char*> result =
+            parse(input.c_str(),
+                  *name_p[store_name_(var(names), arg1)]
+                  >> end_p,
+                  skip_p);
+        if (!result.full)
+            ReportError(input.c_str(), result);
+    }
+};
+
 void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
                                const std::map<int, PlayerSetupData>& player_setup_data)
 {
@@ -4867,6 +4856,11 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
     const PredefinedShipDesignManager&  predefined_ship_designs =   GetPredefinedShipDesignManager();
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
     const ItemSpecManager&              starting_unlocked_items =   GetItemSpecManager();
+
+    std::vector<std::string> starting_building_names;
+    LoadNames(starting_building_names, "starting_buildings.txt");
+    std::vector<std::string> starting_ship_design_names;
+    LoadNames(starting_ship_design_names, "starting_ship_designs.txt");
 
     // create empire and starting conditions for each player
     int player_i = 0;
@@ -5000,32 +4994,23 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
             home_planet->SetFocus(*available_foci.begin());
 
 
-        // give homeworlds a shipyard and drydock so players can build scouts, colony ships and basic attack ships immediately
-        Building* building = new Building(empire_id, "BLD_SHIPYARD_BASE", empire_id);
-        int building_id = Insert(building);
-        home_planet->AddBuilding(building_id);
+        // give homeworlds starting buildings
+        for (std::vector<std::string>::const_iterator building_it = starting_building_names.begin();
+             building_it != starting_building_names.end(); ++building_it)
+        {
+            Building* building = new Building(empire_id, *building_it, empire_id);
+            int building_id = Insert(building);
+            home_planet->AddBuilding(building_id);
+        }
 
-        building = new Building(empire_id, "BLD_SHIPYARD_ORBITAL_DRYDOCK", empire_id);
-        building_id = Insert(building);
-        home_planet->AddBuilding(building_id);
-
-        building = new Building(empire_id, "BLD_CULTURE_ARCHIVES", empire_id);
-        building_id = Insert(building);
-        home_planet->AddBuilding(building_id);
-
-        building = new Building(empire_id, "BLD_IMPERIAL_PALACE", empire_id);
-        building_id = Insert(building);
-        home_planet->AddBuilding(building_id);
 
         // give new empire items and ship designs it should start with
         starting_unlocked_items.AddItemsToEmpire(empire);
-
-        std::map<std::string, int> design_ids = predefined_ship_designs.AddShipDesignsToEmpire(empire);
+        std::map<std::string, int> design_ids = predefined_ship_designs.AddShipDesignsToEmpire(empire, starting_ship_design_names);
 
 
         // create new empire's starting fleets
         for (FleetPlanManager::iterator it = starting_fleet_plans.begin(); it != starting_fleet_plans.end(); ++it) {
-
             // create fleet itself
             const std::string& fleet_name = (*it)->Name();
             Fleet* fleet = new Fleet(fleet_name, home_system->X(), home_system->Y(), empire_id);
@@ -5035,7 +5020,6 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
             }
             Insert(fleet);
             home_system->Insert(fleet);
-
 
             // create ships and add to fleet
             const std::vector<std::string>& ship_design_names = (*it)->ShipDesigns();

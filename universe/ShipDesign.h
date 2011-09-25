@@ -580,8 +580,9 @@ public:
       * the specified empire as the creator of the design, so each empire
       * for which designs are added actually creates a separate copy of the
       * design, with different designed-by empire for each  Returns a map from
-      * ship design name to design id in universe. */
-    std::map<std::string, int>          AddShipDesignsToEmpire(Empire* empire) const;
+      * ship design name to design id in universe.  Only designs specified in
+      * \a design_names are added; others in this manager are not. */
+    std::map<std::string, int>          AddShipDesignsToEmpire(Empire* empire, const std::vector<std::string>& design_names) const;
 
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire.  Returns a map from ship design name to design id in
