@@ -343,6 +343,7 @@ enum UnlockableItemType {
     UIT_BUILDING,               ///< a kind of Building
     UIT_SHIP_PART,              ///< a kind of ship part (which are placed into hulls to make designs)
     UIT_SHIP_HULL,              ///< a ship hull (into which parts are placed)
+    UIT_SHIP_DESIGN,            ///< a complete ship design
     UIT_TECH,                   ///< a technology
     NUM_UNLOCKABLE_ITEM_TYPES   ///< keep last, the number of types of unlockable item
 };
@@ -353,6 +354,7 @@ namespace GG {
     GG_ENUM_MAP_INSERT(UIT_BUILDING)
     GG_ENUM_MAP_INSERT(UIT_SHIP_PART)
     GG_ENUM_MAP_INSERT(UIT_SHIP_HULL)
+    GG_ENUM_MAP_INSERT(UIT_SHIP_DESIGN)
     GG_ENUM_MAP_INSERT(UIT_TECH)
     GG_ENUM_MAP_END
 }

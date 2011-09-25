@@ -2299,6 +2299,9 @@ void Empire::UnlockItem(const ItemSpec& item)
     case UIT_SHIP_HULL:
         AddHullType(item.name);
         break;
+    case UIT_SHIP_DESIGN:
+        AddShipDesign(GetPredefinedShipDesignManager().GenericDesignID(item.name)); // this adds the generic version of the design, not created by any empire, to this empire's remembered designs.
+        break;
     case UIT_TECH:
         AddTech(item.name);
         break;
@@ -2365,12 +2368,14 @@ void Empire::AddShipDesign(int ship_design_id)
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {
         // design is valid, so just add the id to empire's set of ids that it knows about
-        m_ship_designs.insert(ship_design_id);
+        if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
+            m_ship_designs.insert(ship_design_id);
+            ShipDesignsChangedSignal();
+        }
     } else {
         // design in not valid
         Logger().errorStream() << "Empire::AddShipDesign(int ship_design_id) was passed a design id that this empire doesn't know about, or that doesn't exist";
     }
-    ShipDesignsChangedSignal();
 }
 
 int Empire::AddShipDesign(ShipDesign* ship_design)
@@ -2441,6 +2446,9 @@ void Empire::LockItem(const ItemSpec& item)
         break;
     case UIT_SHIP_HULL:
         RemoveHullType(item.name);
+        break;
+    case UIT_SHIP_DESIGN:
+        RemoveShipDesign(GetPredefinedShipDesignManager().GenericDesignID(item.name));
         break;
     case UIT_TECH:
         RemoveTech(item.name);

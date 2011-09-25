@@ -115,6 +115,7 @@ namespace {
             ("building",    UIT_BUILDING)
             ("shippart",    UIT_SHIP_PART)
             ("shiphull",    UIT_SHIP_HULL)
+            ("shipdesign",  UIT_SHIP_DESIGN)
             ("tech",        UIT_TECH);
 
         tech_type_p.add

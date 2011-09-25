@@ -584,10 +584,11 @@ void EncyclopediaDetailPanel::Refresh() {
 
                 std::string TAG;
                 switch (item.type) {
-                case UIT_BUILDING:  TAG = VarText::BUILDING_TYPE_TAG;   break;
-                case UIT_SHIP_PART: TAG = VarText::SHIP_PART_TAG;       break;
-                case UIT_SHIP_HULL: TAG = VarText::SHIP_HULL_TAG;       break;
-                case UIT_TECH:      TAG = VarText::TECH_TAG;            break;
+                case UIT_BUILDING:      TAG = VarText::BUILDING_TYPE_TAG;       break;
+                case UIT_SHIP_PART:     TAG = VarText::SHIP_PART_TAG;           break;
+                case UIT_SHIP_HULL:     TAG = VarText::SHIP_HULL_TAG;           break;
+                case UIT_SHIP_DESIGN:   TAG = VarText::PREDEFINED_DESIGN_TAG;   break;
+                case UIT_TECH:          TAG = VarText::TECH_TAG;                break;
                 }
 
                 std::string link_text;
