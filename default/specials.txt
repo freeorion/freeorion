@@ -1,4 +1,779 @@
 Special
+    name = "ECCENTRIC_ORBIT_SPECIAL"
+    description = "ECCENTRIC_ORBIT_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetTargetResearch Value + 3
+            SetTargetConstruction Value - 20
+        ]
+    graphic = "icons/specials_huge/eccentric_orbit.png"
+
+Special
+    name = "TIDAL_LOCK_SPECIAL"
+    description = "TIDAL_LOCK_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetTargetConstruction Value - 20
+            SetTargetIndustry Value + Target.Population * 0.2
+        ]
+    graphic = "icons/specials_huge/tidal_lock.png"
+
+Special
+    name = "SLOW_ROTATION_SPECIAL"
+    description = "SLOW_ROTATION_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = [
+            SetTargetConstruction Value - 20
+            SetTargetFarming Value - 10
+        ]
+    graphic = "icons/specials_huge/slow_rotation.png"
+
+Special
+    name = "HIGH_AXIAL_TILT_SPECIAL"
+    description = "HIGH_AXIAL_TILT_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetTargetConstruction Value - 20
+    graphic = "icons/specials_huge/high_axial_tilt.png"
+
+Special
+    name = "SOLID_CORE_SPECIAL"
+    description = "SOLID_CORE_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetTargetHealth Value - 5
+    graphic = "icons/specials_huge/solid_core.png"
+
+Special
+    name = "TECHTONIC_INSTABILITY_SPECIAL"
+    description = "TECHTONIC_INSTABILITY_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = EffectsGroup
+        scope = Source
+        activation = Source
+        effects = SetTargetConstruction Value - 20
+    graphic = "icons/specials_huge/techtonic_instability.png"
+
+Special
+    name = "ANCIENT_RUINS_SPECIAL"
+    description = "ANCIENT_RUINS_SPECIAL_DESCRIPTION"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Random probability = 0.6
+                Not WithinStarlaneJumps 1 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            effects = CreateShip "SM_GUARD_2"
+    
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = .2
+                OwnerHasTech "LRN_XENOARCH_RESTORE"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                CreateShip "SD_DRAGON_TOOTH" Source.Owner Source.Species
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_SHIP"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SD_DRAGON_TOOTH"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = .25
+                OwnerHasTech "LRN_XENOARCH_RESTORE"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                CreateBuilding name = "BLD_NEUTRONIUM_SYNTH"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_BUILDING"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "buildingtype" data = "BLD_NEUTRONIUM_SYNTH"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = .33
+                NotOwnerHasTech "SHP_PLANET_CLOAK"
+                OwnerHasTech "LRN_XENOARCH_RESTORE"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveTechToOwner "SHP_PLANET_CLOAK"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_PLANET_CLOAK"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Random probability = .50
+                NotOwnerHasTech "SHP_DEATH_RAY"
+                OwnerHasTech "LRN_XENOARCH_RESTORE"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveTechToOwner "SHP_DEATH_RAY"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_DEATH_RAY"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Not OwnerHasTech "SHP_MULTISPEC_SHIELD"
+                OwnerHasTech "LRN_XENOARCH_RESTORE"
+            ]
+            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
+            effects = [
+                GiveTechToOwner "SHP_MULTISPEC_SHIELD"
+                GenerateSitRepMessage
+                    message = "EFFECT_ANCIENT_TECH"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "tech" data = "SHP_MULTISPEC_SHIELD"
+                    ]
+                    empire = Source.Owner
+            ]
+
+        EffectsGroup
+            scope = Source
+            activation = OwnerHasTech "LRN_XENOARCH_RESTORE"
+            effects = [
+                AddSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
+                RemoveSpecial "ANCIENT_RUINS_SPECIAL"
+            ]
+    ]
+    graphic = "icons/specials_huge/ancient_ruins.png"
+
+Special
+    name = "MINERALS_SPECIAL"
+    description = "MINERALS_SPECIAL_DESCRIPTION"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_MINING"
+            effects = SetTargetMining Value + 50
+
+        EffectsGroup
+            scope = Source
+            activation = Focus "FOCUS_HEAVY_MINING"
+            effects = SetTargetMining Value + Target.Population * 2
+    ]
+    graphic = "icons/specials_huge/minerals.png"
+
+Special
+    name = "TUNNELS_SPECIAL"
+    description = "TUNNELS_SPECIAL_DESCRIPTION"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Tiny
+                Planet environment = [Good Adequate]
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Tiny
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Tiny
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Small
+                Planet environment = [Good Adequate]
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Small
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Small
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Medium
+                Planet environment = [Good Adequate]
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Medium
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Medium
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + 6
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Large
+                Planet environment = [Good Adequate]
+            ]
+            effects = SetTargetPopulation Value + 8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Large
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + 8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Large
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + 8
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Huge
+                Planet environment = [Good Adequate]
+            ]
+            effects = SetTargetPopulation Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Huge
+                Planet environment = Poor
+            ]
+            effects = SetTargetPopulation Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Huge
+                Planet environment = Hostile
+            ]
+            effects = SetTargetPopulation Value + 10
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Tiny
+                Planet environment = [Good Adequate]
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Tiny
+                Planet environment = Poor
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Tiny
+                Planet environment = Hostile
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 1
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Small
+                Planet environment = [Good Adequate]
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Small
+                Planet environment = Poor
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Small
+                Planet environment = Hostile
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 2
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Medium
+                Planet environment = [Good Adequate]
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Medium
+                Planet environment = Poor
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Medium
+                Planet environment = Hostile
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 3
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Large
+                Planet environment = [Good Adequate]
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Large
+                Planet environment = Poor
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Large
+                Planet environment = Hostile
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 4
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet size = Huge
+                Planet environment = [Good Adequate]
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENOGEN_ADAPT"
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Huge
+                Planet environment = Poor
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Or [
+                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_CYBORG"
+                ]
+                Planet size = Huge
+                Planet environment = Hostile
+                OwnerHasTech "CON_SUBTER_CONST"
+            ]
+            effects = SetTargetPopulation Value + 5
+    ]
+    graphic = "icons/specials_huge/tunnels.png"
+
+Special
+    name = "RESONANT_MOON_SPECIAL"
+    description = "RESONANT_MOON_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    graphic = "icons/specials_huge/resonant_moon.png"
+
+Special
+    name = "COMPUTRONIUM_SPECIAL"
+    description = "COMPUTRONIUM_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = [       
+        EffectsGroup
+            scope = And [
+                Planet
+                ContainedBy Contains Source
+                OwnedBy TheEmpire Source.Owner
+            ]
+            activation = Focus "FOCUS_RESEARCH"
+            effects = SetTargetResearch Value * 2
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Random probability = 0.7
+                Not WithinStarlaneJumps 2 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            stackinggroup = "COMPUTRONIUM_STACK"
+            effects = CreateShip "SM_GUARD_1"
+
+        EffectsGroup     
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            stackinggroup = "COMPUTRONIUM_STACK"
+            effects = Destroy
+    ]
+    graphic = "icons/specials_huge/computronium.png"
+
+Special
+    name = "COMPUTRONIUM_BROKEN_SPECIAL"
+    description = "COMPUTRONIUM_BROKEN_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = Asteroids
+    ]
+    effectsgroups = EffectsGroup
+        scope = And [
+            Planet
+            ContainedBy Contains Source
+            OwnedBy TheEmpire Source.Owner
+        ]
+        activation = Focus "FOCUS_RESEARCH"
+        effects = SetTargetResearch Value * 1.5
+    
+    graphic = "icons/specials_huge/computronium-broken.png"
+/*
+Special
+    name = "ABANDONED_COLONY_SPECIAL"
+    description = "ABANDONED_COLONY_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+                Construction Value = 10
+            ] 
+            stackinggroup = "ABANDONED_STACK"
+            effects = RemoveSpecial "ABANDONED_COLONY_SPECIAL"
+            
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                OwnedBy AnyEmpire
+            ]
+            stackinggroup = "ABANDONED_STACK"
+            effects = SetConstruction value + 10
+            
+        ]
+    graphic = "icons/specials_huge/abandoned-colony.png"
+*/
+
+Special
+    name = "GAIA_SPECIAL"
+    description = "GAIA_SPECIAL_DESC"
+    spawnrate = 1.0
+    spawnlimit = 9999
+    location = And [
+        Planet
+        Not Homeworld
+        Not Planet type = [Asteroids GasGiant]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = Source
+            activation = AND [
+                Planet
+                Not Planet environment = Good
+                OwnedBy AnyEmpire
+                Random probability = 0.5
+            ]
+            effects = [
+                SetPlanetType Target.NextBetterPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_GAIAN_TERRAFORM"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                    ]
+                    empire = Source.Owner
+            ]
+    
+        EffectsGroup
+            scope = Source
+            activation = Source
+            effects = [
+                SetTargetPopulation Value * 2
+                SetTargetHealth Value * 2
+                SetTargetFarming Value * 2
+            ]
+        EffectsGroup     
+            scope = Source     
+            activation = AND [
+                Not Turn low = 1 high = 99999
+                Not WithinStarlaneJumps 4 Contains And [
+                    Planet
+                    OwnedBy AnyEmpire
+                ]
+            ]
+            stackinggroup = "GAIAN_STACK"
+            effects = CreateShip "SM_GUARD_3"
+
+        EffectsGroup     
+            scope = Source
+            activation = Not Turn low = 1 high = 99999
+            stackinggroup = "GAIAN_STACK"
+            effects = Destroy
+    ]
+    graphic = "icons/specials_huge/gaia.png"
+
+Special
     name = "ANCIENT_RUINS_DEPLETED_SPECIAL"
     description = "ANCIENT_RUINS_DEPLETED_SPECIAL_DESC"
     effectsgroups =

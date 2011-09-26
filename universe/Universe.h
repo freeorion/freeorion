@@ -604,7 +604,10 @@ private:
 
     /** Generates planets for all systems that have empty object maps (ie those
       * that aren't homeworld systems).*/
-    void    PopulateSystems(GalaxySetupOption density, GalaxySetupOption specials_freq);
+    void    PopulateSystems(GalaxySetupOption density);
+
+    /** Adds start-of-game specials to objects. */
+    void    AddStartingSpecials(GalaxySetupOption specials_freq);
 
     /** Adds non-empire-affiliated native populations to planets. */
     void    GenerateNatives(GalaxySetupOption freq);

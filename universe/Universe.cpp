@@ -3370,7 +3370,6 @@ namespace {
     }
 };
 
-
 /////////////////////////////
 // MonsterFleetPlanManager //
 /////////////////////////////
@@ -4173,16 +4172,16 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     }
     GenerateStarField(*this, age, positions, adjacency_grid, s_universe_width / ADJACENCY_BOXES);
 
-    PopulateSystems(planet_density, specials_freq);
+    PopulateSystems(planet_density);
     GenerateStarlanes(starlane_freq, adjacency_grid);
     InitializeSystemGraph();
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
     GenerateNatives(life_freq);
-
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
     GenerateSpaceMonsters(life_freq);
+    AddStartingSpecials(specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
 
@@ -4211,7 +4210,7 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     UpdateEmpireObjectVisibilities();
 }
 
-void Universe::PopulateSystems(GalaxySetupOption density, GalaxySetupOption specials_freq)
+void Universe::PopulateSystems(GalaxySetupOption density)
 {
     Logger().debugStream() << "PopulateSystems";
 
@@ -4226,10 +4225,6 @@ void Universe::PopulateSystems(GalaxySetupOption density, GalaxySetupOption spec
     const std::vector<std::vector<int> >& planet_size_mod_to_planet_type_dist = UniverseDataTables()["PlanetSizeModToPlanetTypeDist"];
     const std::vector<std::vector<int> >& slot_mod_to_planet_type_dist = UniverseDataTables()["SlotModToPlanetTypeDist"];
     const std::vector<std::vector<int> >& star_color_mod_to_planet_type_dist = UniverseDataTables()["StarColorModToPlanetTypeDist"];
-
-    double planetary_special_chance = UniverseDataTables()["SpecialsFrequency"][0][specials_freq] / 10000.0;
-    const std::set<std::string>& special_names = PlanetSpecialNames();
-    SmallIntDistType specials_dist = SmallIntDist(0, special_names.size() - 1);
 
     for (std::vector<System*>::iterator it = sys_vec.begin(); it != sys_vec.end(); ++it) {
         System* system = *it;
@@ -4274,48 +4269,96 @@ void Universe::PopulateSystems(GalaxySetupOption density, GalaxySetupOption spec
                 planet_size = SZ_GASGIANT;
 
             Planet* planet = new Planet(planet_type, planet_size);
+            Insert(planet);                 // add planet to universe map
+            system->Insert(planet, orbit);  // add planet to system map
+        }
+    }
+}
 
-            //Logger().debugStream() << "Created new planet with current population: " << planet->CurrentMeterValue(METER_POPULATION) << " and initial  population: " << planet->InitialMeterValue(METER_POPULATION);
+void Universe::AddStartingSpecials(GalaxySetupOption specials_freq)
+{
+    Logger().debugStream() << "AddStartingSpecials";
 
-            bool tidal_lock = false;
-            if (planet_type != PT_ASTEROIDS &&
-                planet_type != PT_GASGIANT &&
-                !special_names.empty()
-                && RandZeroToOne() < planetary_special_chance)
-            {
-                // select a special
-                std::set<std::string>::const_iterator name_it = special_names.begin();
-                std::advance(name_it, specials_dist());
-                const std::string& special_name = *name_it;
+    double special_chance = UniverseDataTables()["SpecialsFrequency"][0][specials_freq] / 10000.0;
+    if (special_chance == 0.0)
+        return;
 
-                if (const Special* special = GetSpecial(special_name)) {
-                    bool location_ok = true;
-                    if (const Condition::ConditionBase* location = special->Location()) {
-                        // test special location restriction
-                        Condition::ObjectSet unmatched, matched;
-                        unmatched.insert(planet);
-                        location->Eval(matched, unmatched);
-                        if (matched.empty())
-                            location_ok = false;
-                    }
+    const std::vector<std::string> special_names = SpecialNames();
+    if (special_names.empty())
+        return;
 
-                    if (location_ok) {
-                        planet->AddSpecial(*name_it);
+    // initialize count of how many of each special has been added
+    std::map<std::string, int> specials_added;
+    for (std::vector<std::string>::const_iterator special_it = special_names.begin();
+         special_it != special_names.end(); ++special_it)
+    {
+        specials_added[*special_it] = 0;
+    }
 
-                        if (*name_it == "TIDAL_LOCK_SPECIAL")
-                            tidal_lock = true;
-                        else if (*name_it == "SLOW_ROTATION_SPECIAL")
-                            planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
-                        else if (*name_it == "HIGH_AXIAL_TILT_SPECIAL")
-                            planet->SetHighAxialTilt();
-                    }
+    // attempt to apply a special to every object by finding a special that can
+    // be applied to it and hasn't been added too many times, and then attempt
+    // to add that special by testing its spawn rate
+    std::vector<std::string>::const_iterator special_name_it = special_names.begin();
+    for (ObjectMap::iterator obj_it = m_objects.begin(); obj_it != m_objects.end(); ++obj_it) {
+        UniverseObject* obj = obj_it->second;
+        // for this object, find a suitable special
+        std::vector<std::string>::const_iterator initial_special_name_it = special_name_it;
+        while (true) {
+            const std::string& special_name = *special_name_it;
+            const Special* special = GetSpecial(special_name);
+
+            bool special_add_attempted = false;
+
+            // test if too many of this special have already been added
+            if (special && specials_added[special_name] < special->SpawnLimit()) {
+                // test if this special can be spawned on this object.  If
+                // there is no location condition, assume this special can't
+                // be spawned automatically
+                const Condition::ConditionBase* location_test = special->Location();
+                Condition::ObjectSet obj_set, matches;
+                if (location_test) {
+                    obj_set.insert(obj);
+                    location_test->Eval(matches, obj_set);
+                    //Logger().debugStream() << "Special location condition: " << location_test->Dump();
                 }
+                if (location_test && !matches.empty()) {
+                    // special can be placed here
+
+                    // test random chance to place this special
+                    double this_special_chance = std::max(0.0, special_chance * special->SpawnRate());
+                    if (RandZeroToOne() < this_special_chance) {
+                        // spawn special
+                        specials_added[special_name]++;
+                        obj->AddSpecial(special_name);
+
+                        // kludges for planet appearance changes for particular specials
+                        if (special_name == "TIDAL_LOCK_SPECIAL") {
+                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                                planet->SetRotationalPeriod(Day(planet->OrbitalPeriod()));
+                        } else if (special_name == "SLOW_ROTATION_SPECIAL") {
+                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                                planet->SetRotationalPeriod(planet->RotationalPeriod() * 10.0);
+                        } else if (special_name == "HIGH_AXIAL_TILT_SPECIAL") {
+                            if (Planet* planet = universe_object_cast<Planet*>(obj))
+                                planet->SetHighAxialTilt();
+                        }
+                    }
+                    special_add_attempted = true;
+                } else {
+                    //Logger().debugStream() << "... ... cannot be added here";
+                }
+            } else {
+                //Logger().debugStream() << "... ... has been added " << specials_added[special_name] << " times, which is >= the limit of " << special->SpawnLimit();
             }
 
-            Insert(planet); // add planet to universe map
-            system->Insert(planet, orbit);  // add planet to system map
+            // increment special name iterator
+            special_name_it++;
+            if (special_name_it == special_names.end())
+                special_name_it = special_names.begin();
 
-            planet->SetOrbitalPeriod(orbit, tidal_lock);
+            // stop attempting to add specials here?
+            if (special_name_it == initial_special_name_it || special_add_attempted)
+                break;
         }
     }
 }
@@ -4436,20 +4479,20 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
     MonsterFleetPlanManager::iterator monster_plan_it = monster_manager.begin();
     for (std::vector<System*>::iterator sys_it = system_vec.begin(); sys_it != system_vec.end(); ++sys_it) {
         System* system = *sys_it;
-        Logger().debugStream() << "Attempting to add monster at system " << system->Name();
-
+        //Logger().debugStream() << "Attempting to add monster at system " << system->Name();
         // for this system, find a suitable monster fleet plan
         const MonsterFleetPlanManager::iterator initial_monster_plan_it = monster_plan_it;
         while (true) {
             const MonsterFleetPlan* plan = *monster_plan_it;
-            Logger().debugStream() << "... considering monster plan " << plan->Name();
+            //Logger().debugStream() << "... considering monster plan " << plan->Name();
 
             bool monster_add_attempted = false;
 
             // test if too many of this fleet have already been created
             if (monster_fleets_created[monster_plan_it] < plan->SpawnLimit()) {
-
-                // test if this monster fleet plan can be spawned at this location
+                // test if this monster fleet plan can be spawned at this
+                // location.  if there is no location condition, assume there
+                // is no restriction on this monster's spawn location.
                 const Condition::ConditionBase* location_test = plan->Location();
                 Condition::ObjectSet sys_set, matches;
                 if (location_test) {
@@ -4457,14 +4500,14 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
                     location_test->Eval(matches, sys_set);
                 }
                 if (!location_test || !matches.empty()) {
-                    Logger().debugStream() << "... ... can be placed here";
+                    //Logger().debugStream() << "... ... can be placed here";
                     // monster can be placed here.
 
                     // test random chance to place this monster fleet
                     double this_monster_fleet_chance = std::max(0.0, monster_chance * plan->SpawnRate());
-                    Logger().debugStream() << "... ... chance: " << this_monster_fleet_chance;
+                    //Logger().debugStream() << "... ... chance: " << this_monster_fleet_chance;
                     if (RandZeroToOne() < this_monster_fleet_chance) {
-                        Logger().debugStream() << "... ... passed random chance test";
+                        //Logger().debugStream() << "... ... passed random chance test";
 
                         // spawn monster fleet
                         monster_fleets_created[monster_plan_it]++;
@@ -4477,7 +4520,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
                         const std::string& fleet_name = UserString("MONSTERS");
                         Fleet* fleet = new Fleet(fleet_name, system->X(), system->Y(), ALL_EMPIRES);
                         if (!fleet) {
-                            Logger().errorStream() << "unable to create new fleet!";
+                            Logger().errorStream() << "unable to create new fleet for monsters!";
                             return;
                         }
                         Insert(fleet);
@@ -4504,16 +4547,16 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
                             fleet->AddShip(ship_id);    // also moves ship to fleet's location and inserts into system
                         }
                     } else {
-                        Logger().debugStream() << "... ... failed random chance test. skipping system.";
+                        //Logger().debugStream() << "... ... failed random chance test. skipping system.";
                         // monster was acceptable for this location, but
                         // failed chance test.  no monsters here.
                     }
                     monster_add_attempted = true;
                 } else {
-                    Logger().debugStream() << "... ... cannot be placed here";
+                    //Logger().debugStream() << "... ... cannot be placed here";
                 }
             } else {
-                Logger().debugStream() << "... ... has been placed " << monster_fleets_created[monster_plan_it] << " times, which is >= the limit of " << plan->SpawnLimit();
+                //Logger().debugStream() << "... ... has been placed " << monster_fleets_created[monster_plan_it] << " times, which is >= the limit of " << plan->SpawnLimit();
             }
 
             // increment monster plan iterator
@@ -4817,6 +4860,7 @@ namespace {
 
     /** Reads list of strings from file, surrounded by enclosing quotes. */
     void LoadNames(std::vector<std::string>& names, const std::string& file_name) {
+        names.clear();
         std::string input;
         boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
         if (ifs) {
@@ -4857,10 +4901,12 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
     const FleetPlanManager&             starting_fleet_plans =      GetFleetPlanManager();
     const ItemSpecManager&              starting_unlocked_items =   GetItemSpecManager();
 
-    std::vector<std::string> starting_building_names;
-    LoadNames(starting_building_names, "starting_buildings.txt");
-    std::vector<std::string> starting_ship_design_names;
-    LoadNames(starting_ship_design_names, "starting_ship_designs.txt");
+    static std::vector<std::string> starting_building_names;
+    if (starting_building_names.empty())
+        LoadNames(starting_building_names, "starting_buildings.txt");
+    static std::vector<std::string> starting_ship_design_names;
+    if (starting_ship_design_names.empty())
+        LoadNames(starting_ship_design_names, "starting_ship_designs.txt");
 
     // create empire and starting conditions for each player
     int player_i = 0;

@@ -14,72 +14,24 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
-    struct store_special_impl
-    {
-        template <class T1, class T2, class T3, class T4>
+    struct store_special_impl {
+        template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
-        void operator()(std::map<std::string, Special*>& specials, std::set<std::string>& planet_special_names, bool planet_specials, const T& special) const
-        {
+        void operator()(std::map<std::string, Special*>& specials, const T& special) const {
             if (specials.find(special->Name()) != specials.end()) {
-                std::string error_str = "ERROR: More than one special in specials.txt and planet_specials.txt has the name " + special->Name();
+                std::string error_str = "ERROR: More than one special in specials.txt has the name " + special->Name();
                 throw std::runtime_error(error_str.c_str());
             }
             specials[special->Name()] = special;
-            if (planet_specials)
-                planet_special_names.insert(special->Name());
         }
     };
-
     const phoenix::function<store_special_impl> store_special_;
 
-    class SpecialManager
-    {
+    class SpecialManager {
     public:
-        SpecialManager()
-        {
-            ProcessSpecialsFile("specials.txt",         false);
-            ProcessSpecialsFile("planet_specials.txt",  true);
-        }
-
-        ~SpecialManager()
-        {
-            for (std::map<std::string, Special*>::iterator it = m_specials.begin();
-                it != m_specials.end();
-                ++it)
-            {
-                delete it->second;
-            }
-        }
-
-        std::vector<std::string> SpecialNames() const
-        {
-            std::vector<std::string> retval;
-            for (std::map<std::string, Special*>::const_iterator it = m_specials.begin();
-                it != m_specials.end();
-                ++it)
-            {
-                retval.push_back(it->first);
-            }
-            return retval;
-        }
-
-        const std::set<std::string>& PlanetSpecialNames() const
-        {
-            return m_planet_special_names;
-        }
-
-        const Special* GetSpecial(const std::string& name) const
-        {
-            std::map<std::string, Special*>::const_iterator it = m_specials.find(name);
-            return it != m_specials.end() ? it->second : 0;
-        }
-
-    private:
-        void ProcessSpecialsFile(const std::string& file_name, bool planet_specials)
-        {
-            std::string input;
-
+        SpecialManager() {
+            std::string input, file_name("specials.txt");
             boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
             if (ifs) {
                 std::getline(ifs, input, '\0');
@@ -88,24 +40,43 @@ namespace {
                 Logger().errorStream() << "Unable to open data file " << file_name;
                 return;
             }
-
             using namespace boost::spirit::classic;
             using namespace phoenix;
-
             parse_info<const char*> result =
                 parse(input.c_str(),
-                      as_lower_d[*special_p[store_special_(var(m_specials), var(m_planet_special_names), val(planet_specials), arg1)]]
+                      as_lower_d[*special_p[store_special_(var(m_specials), arg1)]]
                       >> end_p,
                       skip_p);
             if (!result.full)
                 ReportError(input.c_str(), result);
-        }
-        std::map<std::string, Special*> m_specials;
-        std::set<std::string>           m_planet_special_names;
-    };
 
-    const SpecialManager& GetSpecialManager()
-    {
+            //Logger().debugStream() << "Specials:";
+            //for (std::map<std::string, Special*>::const_iterator it = m_specials.begin(); it != m_specials.end(); ++it)
+            //    Logger().debugStream() << " ... " << it->second->Name() <<
+            //                              " spawn rate: " << it->second->SpawnRate() <<
+            //                              " spawn limit: " << it->second->SpawnLimit() <<
+            //                              " location: " << (it->second->Location() ? it->second->Location()->Dump() : "none");
+        }
+        ~SpecialManager() {
+            for (std::map<std::string, Special*>::iterator it = m_specials.begin();
+                it != m_specials.end(); ++it)
+            { delete it->second; }
+        }
+        std::vector<std::string> SpecialNames() const {
+            std::vector<std::string> retval;
+            for (std::map<std::string, Special*>::const_iterator it = m_specials.begin();
+                it != m_specials.end(); ++it)
+            { retval.push_back(it->first); }
+            return retval;
+        }
+        const Special* GetSpecial(const std::string& name) const {
+            std::map<std::string, Special*>::const_iterator it = m_specials.find(name);
+            return it != m_specials.end() ? it->second : 0;
+        }
+    private:
+        std::map<std::string, Special*> m_specials;
+    };
+    const SpecialManager& GetSpecialManager() {
         static SpecialManager special_manager;
         return special_manager;
     }
@@ -143,6 +114,12 @@ std::string Special::Dump() const
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    retval += DumpIndent() + "spawnrate = " + boost::lexical_cast<std::string>(m_spawn_rate) + "\n"
+           +  DumpIndent() + "spawnlimit = " + boost::lexical_cast<std::string>(m_spawn_limit) + "\n";
+    retval += DumpIndent() + "location = \n";
+    ++g_indent;
+        retval += m_location->Dump();
+    --g_indent;
     if (m_effects.size() == 1) {
         retval += DumpIndent() + "effectsgroups =\n";
         ++g_indent;
@@ -165,6 +142,12 @@ std::string Special::Dump() const
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const
 { return m_effects; }
 
+double Special::SpawnRate() const
+{ return m_spawn_rate; }
+
+int Special::SpawnLimit() const
+{ return m_spawn_limit; }
+
 const Condition::ConditionBase* Special::Location() const
 { return m_location; }
 
@@ -175,7 +158,4 @@ const Special* GetSpecial(const std::string& name)
 { return GetSpecialManager().GetSpecial(name); }
 
 std::vector<std::string> SpecialNames()
-{ return SpecialManager().SpecialNames(); }
-
-const std::set<std::string>& PlanetSpecialNames()
-{ return GetSpecialManager().PlanetSpecialNames(); }
+{ return GetSpecialManager().SpecialNames(); }

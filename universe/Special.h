@@ -69,13 +69,6 @@ const Special* GetSpecial(const std::string& name);
 /** Returns names of all specials. */
 std::vector<std::string> SpecialNames();
 
-/** Returns the names of all "planet specials"; though there are other specials
-  * that may be applied to planets, these are ok to use when generating random
-  * specials during universe creation.  Note that "planet specials" can also be
-  * attached to non-planet UniverseObjects - like all Specials - and are not
-  * restricted to use only during universe creation. */
-const std::set<std::string>& PlanetSpecialNames();
-
 // template implementations
 template <class Archive>
 void Special::serialize(Archive& ar, const unsigned int version)
