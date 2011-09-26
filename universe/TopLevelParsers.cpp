@@ -245,10 +245,10 @@ namespace {
             (str_p("species")
              >> name_label >>               name_p[species_p.name = arg1]
              >> description_label >>        name_p[species_p.description = arg1]
-             >> (str_p("planetbound")[species_p.can_produce_ships = val(false)]
-               | eps_p               [species_p.can_produce_ships = val(true)])
-             >> (str_p("spacebound")[species_p.can_colonize = val(false)]
-               | eps_p              [species_p.can_colonize = val(true)])
+             >> (str_p("canproduceships")[species_p.can_produce_ships = val(true)]
+               | eps_p                   [species_p.can_produce_ships = val(false)])
+             >> (str_p("cancolonize")[species_p.can_colonize = val(true)]
+               | eps_p               [species_p.can_colonize = val(false)])
              >> !(foci_label >>             focus_type_vec_p[species_p.foci = arg1])
              >> !(effectsgroups_label >>    effects_group_vec_p[species_p.effects_groups = arg1])
              >> !(environments_label >>     planet_type_environment_map_p[species_p.environments = arg1])

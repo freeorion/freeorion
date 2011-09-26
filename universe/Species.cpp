@@ -146,6 +146,10 @@ std::string Species::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
+    if (m_can_produce_ships)
+        retval += DumpIndent() + "CanProduceShips\n";
+    if (m_can_colonize)
+        retval += DumpIndent() + "CanColonize\n";
     if (m_foci.size() == 1) {
         retval += DumpIndent() + "foci =\n";
         m_foci.begin()->Dump();

@@ -1,7 +1,7 @@
 Species
     name = "SP_CYNOS"
     description = "SP_CYNOS_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -234,7 +234,7 @@ Species
 Species
     name = "SP_DERTHREAN"
     description = "SP_DERTHREAN_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -605,7 +605,7 @@ Species
 Species
     name = "SP_GEORGE"
     description = "SP_GEORGE_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -976,7 +976,7 @@ Species
 Species
     name = "SP_LAENFA"
     description = "SP_LAENFA_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -1347,7 +1347,7 @@ Species
 Species
     name = "SP_PHINNERT"
     description = "SP_PHINNERT_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -1697,7 +1697,7 @@ Species
 Species
     name = "SP_SSLITH"
     description = "SP_SSLITH_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -2067,7 +2067,7 @@ Species
 Species
     name = "SP_TAEGHIRUS"
     description = "SP_TAEGHIRUS_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -2437,7 +2437,7 @@ Species
 Species
     name = "SP_FIFTYSEVEN"
     description = "SP_FIFTYSEVEN_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -2668,7 +2668,7 @@ Species
 Species
     name = "SP_SETINON"
     description = "SP_SETINON_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -2715,7 +2715,7 @@ Species
 Species
     name = "SP_NYMNMN"
     description = "SP_NYMNMN_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -2948,7 +2948,7 @@ Species
 Species
     name = "SP_TRENCHERS"
     description = "SP_TRENCHERS_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -3318,7 +3318,7 @@ Species
 Species
     name = "SP_BEIGEGOO"
     description = "SP_BEIGEGOO_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -3553,7 +3553,7 @@ Species
 Species
     name = "SP_SILEXIAN"
     description = "SP_SILEXIAN_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -3923,7 +3923,7 @@ Species
 Species
     name = "SP_KOBUNTURA"
     description = "SP_KOBUNTURA_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -4293,7 +4293,7 @@ Species
 Species
     name = "SP_ETTY"
     description = "SP_ETTY_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -4663,7 +4663,7 @@ Species
 Species
     name = "SP_UGMORRS"
     description = "SP_UGMORRS_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -5033,7 +5033,7 @@ Species
 Species
     name = "SP_GISGUFGTHRIM"
     description = "SP_GISGUFGTHRIM_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -5403,7 +5403,7 @@ Species
 Species
     name = "SP_HIDDENGARDENER"
     description = "SP_HIDDENGARDENER_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -5613,7 +5613,7 @@ Species
 Species
     name = "SP_ABADDONNIANS"
     description = "SP_ABADDONNIANS_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -5983,7 +5983,7 @@ Species
 Species
     name = "SP_ACIREMA"
     description = "SP_ACIREMA_DESC"
-    Planetbound
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -6353,6 +6353,8 @@ Species
 Species
     name = "SP_HUMAN"
     description = "SP_HUMAN_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -6915,6 +6917,8 @@ Species
 Species
     name = "SP_SCYLIOR"
     description = "SP_SCYLIOR_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -7477,6 +7481,8 @@ Species
 Species
     name = "SP_GYISACHE"
     description = "SP_GYISACHE_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -8039,6 +8045,8 @@ Species
 Species
     name = "SP_CHATO"
     description = "SP_CHATO_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -8601,6 +8609,8 @@ Species
 Species
     name = "SP_EGASSEM"
     description = "SP_EGASSEM_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -9163,6 +9173,8 @@ Species
 Species
     name = "SP_TRITH"
     description = "SP_TRITH_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -9725,6 +9737,8 @@ Species
 Species
     name = "SP_CRAY"
     description = "SP_CRAY_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -10287,6 +10301,8 @@ Species
 Species
     name = "SP_HHHOH"
     description = "SP_HHHOH_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -10849,6 +10865,8 @@ Species
 Species
     name = "SP_EAXAW"
     description = "SP_EAXAW_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -11411,6 +11429,8 @@ Species
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
@@ -11978,8 +11998,8 @@ Species
 Species
     name = "SP_TEST"
     description = "SP_TEST_DESC"
-    Planetbound
-    SpaceBound
+    CanProduceShips
+    CanColonize
     foci = [
         Focus
             name = "FOCUS_FARMING"
