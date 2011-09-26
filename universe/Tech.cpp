@@ -313,11 +313,12 @@ std::string ItemSpec::Dump() const
 {
     std::string retval = "Item type = ";
     switch (type) {
-    case UIT_BUILDING:  retval += "Building"; break;
-    case UIT_SHIP_PART: retval += "ShipPart"; break;
-    case UIT_SHIP_HULL: retval += "ShipHull"; break;
-    case UIT_TECH:      retval += "Tech"    ; break;
-    default:            retval += "?"       ; break;
+    case UIT_BUILDING:      retval += "Building";   break;
+    case UIT_SHIP_PART:     retval += "ShipPart";   break;
+    case UIT_SHIP_HULL:     retval += "ShipHull";   break;
+    case UIT_SHIP_DESIGN:   retval += "ShipDesign"; break;
+    case UIT_TECH:          retval += "Tech"    ;   break;
+    default:                retval += "?"       ;   break;
     }
     retval += " name = \"" + name + "\"\n";
     return retval;
@@ -508,12 +509,12 @@ TechManager::TechManager()
     }
 
     std::string illegal_dependency_str = FindIllegalDependencies();
-    if (!illegal_dependency_str.empty()) {
-        throw std::runtime_error(illegal_dependency_str.c_str());
-    }
+    if (!illegal_dependency_str.empty())
+        Logger().errorStream() << illegal_dependency_str;
 
     std::string cycle_str = FindFirstDependencyCycle();
     if (!cycle_str.empty()) {
+        Logger().errorStream() << cycle_str;
         throw std::runtime_error(cycle_str.c_str());
     }
 
@@ -526,9 +527,8 @@ TechManager::TechManager()
     }
 
     std::string redundant_dependency = FindRedundantDependency();
-    if (!redundant_dependency.empty()) {
-        throw std::runtime_error(redundant_dependency.c_str());
-    }
+    if (!redundant_dependency.empty())
+        Logger().errorStream() << redundant_dependency;
 
 #ifdef OUTPUT_TECH_LIST
     for (iterator it = begin(); it != end(); ++it) {
@@ -543,12 +543,10 @@ TechManager::TechManager()
 
 TechManager::~TechManager()
 {
-    for (std::map<std::string, TechCategory*>::iterator it = m_categories.begin(); it != m_categories.end(); ++it) {
+    for (std::map<std::string, TechCategory*>::iterator it = m_categories.begin(); it != m_categories.end(); ++it)
         delete it->second;
-    }
-    for (TechContainer::iterator it = m_techs.begin(); it != m_techs.end(); ++it) {
+    for (TechContainer::iterator it = m_techs.begin(); it != m_techs.end(); ++it)
         delete *it;
-    }
 }
 
 std::string TechManager::FindIllegalDependencies()
@@ -566,11 +564,11 @@ std::string TechManager::FindIllegalDependencies()
                 retval += "ERROR: Tech \"" + tech->Name() + "\" requires a missing or malformed tech as its prerequisite.\"\n";
                 continue;
             }
-            TechType prereq_type = prereq_tech->Type();
-            if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
-                retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";
-            if (prereq_type == TT_REFINEMENT && tech_type != TT_REFINEMENT)
-                retval += "ERROR: Non-Refinement Tech \"" + tech->Name() + "\" requires Refinement tech \"" + prereq_tech->Name() + "\"; Refinement techs cannot be requirements for anything but other Refinement techs.\n";
+            //TechType prereq_type = prereq_tech->Type();
+            //if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
+            //    retval += "ERROR: Theory tech \"" + tech->Name() + "\" requires non-Theory tech \"" + prereq_tech->Name() + "\"; Theory techs can only require other Theory techs.\n";
+            //if (prereq_type == TT_REFINEMENT && tech_type != TT_REFINEMENT)
+            //    retval += "ERROR: Non-Refinement Tech \"" + tech->Name() + "\" requires Refinement tech \"" + prereq_tech->Name() + "\"; Refinement techs cannot be requirements for anything but other Refinement techs.\n";
         }
     }
     return retval;
