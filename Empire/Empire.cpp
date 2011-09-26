@@ -2368,7 +2368,7 @@ void Empire::AddShipDesign(int ship_design_id)
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
     if (ship_design) {
         // design is valid, so just add the id to empire's set of ids that it knows about
-        if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
+        if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
             m_ship_designs.insert(ship_design_id);
             ShipDesignsChangedSignal();
         }
