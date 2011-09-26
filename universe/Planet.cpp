@@ -414,7 +414,7 @@ void Planet::SetSize(PlanetSize size)
     StateChangedSignal();
 }
 
-void Planet::SetOrbitalPeriod(unsigned int orbit, bool tidal_lock)
+void Planet::SetOrbitalPeriod(unsigned int orbit)
 {
     assert(orbit < 10);
     const double THIRD_ORBIT_PERIOD = 4;
@@ -425,9 +425,6 @@ void Planet::SetOrbitalPeriod(unsigned int orbit, bool tidal_lock)
         std::sqrt(std::pow(THIRD_ORBIT_PERIOD, 2.0) /
                   std::pow(THIRD_ORBIT_RADIUS, 3.0) *
                   std::pow(ORBIT_RADIUS, 3.0));
-
-    if (tidal_lock)
-        SetRotationalPeriod(Day(m_orbital_period));
 }
 
 void Planet::SetRotationalPeriod(Day days)

@@ -143,7 +143,7 @@ public:
 
     /** Sets the orbital period based on the orbit this planet is in. If
         tidally locked, the rotational period is also adjusted. */
-    void            SetOrbitalPeriod(unsigned int orbit, bool tidal_lock);
+    void            SetOrbitalPeriod(unsigned int orbit);
 
     void            SetRotationalPeriod(Day days);      ///< sets the rotational period of this planet
     void            SetHighAxialTilt();                 ///< randomly generates a new, high axial tilt
