@@ -861,11 +861,11 @@ bool Condition::Target::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 Condition::Homeworld::Homeworld() :
     m_names()
-{}
+{/* Logger().debugStream() << "Homeworld::Homeworld()";*/}
 
 Condition::Homeworld::Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
     m_names(names)
-{}
+{/* Logger().debugStream() << "Homeworld::Homeworld(" << names.size() << ")"; */}
 
 Condition::Homeworld::~Homeworld()
 {
@@ -1005,15 +1005,15 @@ std::string Condition::Homeworld::Description(bool negated/* = false*/) const
 
 std::string Condition::Homeworld::Dump() const
 {
-    std::string retval = DumpIndent() + "HomeWorld name = ";
+    std::string retval = DumpIndent() + "HomeWorld";
     if (m_names.size() == 1) {
-        retval += m_names[0]->Dump() + "\n";
-    } else {
-        retval += "[ ";
+        retval += " name = " + m_names[0]->Dump();
+    } else if (!m_names.empty()) {
+        retval += " name = [ ";
         for (unsigned int i = 0; i < m_names.size(); ++i) {
             retval += m_names[i]->Dump() + " ";
         }
-        retval += "]\n";
+        retval += "]";
     }
     return retval;
 }
@@ -4943,9 +4943,7 @@ std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = fal
 }
 
 std::string Condition::FleetSupplyableByEmpire::Dump() const
-{
-    return DumpIndent() + "FleetSupplyableByEmpire empire_id = " + m_empire_id->Dump();
-}
+{ return DumpIndent() + "FleetSupplyableByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
 {
@@ -5113,9 +5111,7 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
 ///////////////////////////////////////////////////////////
 Condition::And::And(const std::vector<const ConditionBase*>& operands) :
     m_operands(operands)
-{
-    assert(!m_operands.empty());
-}
+{ assert(!m_operands.empty()); }
 
 Condition::And::~And()
 {
@@ -5212,9 +5208,7 @@ std::string Condition::And::Dump() const
 ///////////////////////////////////////////////////////////
 Condition::Or::Or(const std::vector<const ConditionBase*>& operands) :
     m_operands(operands)
-{
-    assert(!m_operands.empty());
-}
+{ assert(!m_operands.empty()); }
 
 Condition::Or::~Or()
 {
@@ -5312,14 +5306,10 @@ std::string Condition::Or::Dump() const
 ///////////////////////////////////////////////////////////
 Condition::Not::Not(const ConditionBase* operand) :
     m_operand(operand)
-{
-    assert(m_operand);
-}
+{ assert(m_operand); }
 
 Condition::Not::~Not()
-{
-    delete m_operand;
-}
+{ delete m_operand; }
 
 void Condition::Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
@@ -5344,9 +5334,7 @@ bool Condition::Not::TargetInvariant() const
 { return m_operand->TargetInvariant(); }
 
 std::string Condition::Not::Description(bool negated/* = false*/) const
-{
-    return m_operand->Description(true);
-}
+{ return m_operand->Description(true); }
 
 std::string Condition::Not::Dump() const
 {

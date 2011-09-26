@@ -186,9 +186,11 @@ namespace {
             [stationary.this_ = new_<Condition::Stationary>()];
 
         homeworld =
-            str_p("homeworld")
-            >> !(name_label >> string_ref_vector[homeworld.names = arg1])
-            [homeworld.this_ = new_<Condition::Homeworld>(homeworld.names)];
+            (str_p("homeworld")
+             >> name_label >> string_ref_vector[homeworld.names = arg1]
+             [homeworld.this_ = new_<Condition::Homeworld>(homeworld.names)])
+            | (str_p("homeworld")
+               [homeworld.this_ = new_<Condition::Homeworld>()]);
 
         capital =
             str_p("capital")
