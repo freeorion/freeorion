@@ -1,3 +1,9 @@
+v0.3.17 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+Balancing:
+ ~ Some simplifications of the tech tree.
+
+
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:

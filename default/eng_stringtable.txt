@@ -3961,7 +3961,10 @@ GRO_MEDICAL_PATH
 Medical Pathology
 
 GRO_MEDICAL_PATH_DESC
-Treatment of diseases and injuries requires a thorough understanding of their causes.  By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.
+'''Increases health on all planets by 5.
+
+Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments.  By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.
+Treatment of diseases and injuries requires a thorough understanding of their causes.  By studying the subtleties and intricacies of various ailments, it is possible to develop far more effective treatment methods.'''
 
 GRO_PLANET_ECOL
 Planetary Ecology
@@ -3979,19 +3982,21 @@ GRO_ENV_ENCAPSUL
 Environmental Encapsulation
 
 GRO_ENV_ENCAPSUL_DESC
-Covered, surrounded and sealed pockets of a particular environment are essential for space travel, colonization of hazardous planets and preservation of natural diversity on heavily industrialized worlds.  Maintaining the desired conditions is not as trivial as it may seem however, as in many cases there is no external source of pure and clean materials or organisms available.  Rather, it is necessary to create a self-sufficient and sustainable environment, often an entire ecology, capable of recycling and reusing its wastes to supply everything it needs and consumes.
+'''Allows one tenth of a population unit to settle on any previously uninhabitable planet type, including Asteroids and Gas Giants.  Many building types cannot be constructed on these outposts.'''
 
 GRO_SYMBIOTIC_BIO
 Symbiotic Biology
 
 GRO_SYMBIOTIC_BIO_DESC
-From the first domesticated animals or agricultural plants, societies discover the benefits of symbiotic relationships with other species.  Later, bacteria or natural parasites are often used for medical purposes.  In these early forms, however, the dominant species is (ideally) in complete control of the relationship, with the "farmed" organism existing only to server its owner.  True symbiosis only occurs when both organisms exist and prosper together, each aiding and depending on the other to mutual benefit, the combination greater than the sum of the parts alone.
+'''Increases the population that can be sustained by Adequate planets to 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively.'''
 
 GRO_GENETIC_MED
 Genetic Medicine
 
 GRO_GENETIC_MED_DESC
-Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.
+'''Increases health on all planets by 5.
+
+Traditional Genetic Engineering alters genetic codes, then grows the modified organism from an embryonic state.  Similar techniques may be applied to already matured individuals.  The goals of these treatments may be cosmetic, functional, corrective, preventative or life-saving medical treatments.  Reducing the delay between alteration and results from generations to months, days or hours has a corresponding increase in the range and power of possible alterations.'''
 
 GRO_LIFECYCLE_MAN
 Lifecycle Manipulation
@@ -4009,7 +4014,11 @@ GRO_XENO_GENETICS
 Xenological Genetics
 
 GRO_XENO_GENETICS_DESC
-Early genetics is limited by the available samples of naturally occurring organisms on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revelations may be reached, spurring new developments in more familiar genetic systems.
+'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Poor and Adequate planets is increased by 5.
+
+The study of other life forms often exemplifies the weaknesses inherent in  one's own species.  By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.
+
+Early genetics is limited by the available samples of naturally occurring organisms on which to base its modifications.  As well, these modifications are restricted within the limits of the physical mechanisms of genetic code storage, alteration and expression in developed individuals.  By investigating the equivalent systems in entirely different ecosystems and organisms, great insights or revelations may be reached, spurring new developments in more familiar genetic systems.'''
 
 GRO_NANOTECH_MED
 Nanotech Medicine
@@ -4027,7 +4036,11 @@ GRO_XENO_HYBRIDS
 Xenological Hybridization
 
 GRO_XENO_HYBRIDS_DESC
-Regardless of how well understood, or how adeptly improved, a biological system is limited by its inherent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies however, the disparate systems may be fused, forming an entirely new hybrid biology with potential abilities and traits greater than those of any of its parts.
+'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile, Poor and Adequate planets is increased by 5.
+
+Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it.  These adverse effects can include anything from weather patterns to the planet's size.  Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.
+
+Regardless of how well understood, or how adeptly improved, a biological system is limited by its inherent nature.  Structures and basic physiology can only be altered so far within the confines of a single planet's biology.  With understanding of other biologies however, the disparate systems may be fused, forming an entirely new hybrid biology with potential abilities and traits greater than those of any of its parts.'''
 
 GRO_NANO_CYBERNET
 Nanotech Cybernetics
@@ -4069,7 +4082,11 @@ PRO_FUSION_GEN
 Fusion Generation
 
 PRO_FUSION_GEN_DESC
-Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.
+'''Increases target industry on planets with the Industry focus by one half of the planet's population.
+
+Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.
+
+Explosive or uncontrolled thermonuclear reactions are comparatively simple to cause at scales ranging from small tactical warheads to supergiant stellar furnaces.  Controllable, stable and practical power generation from the reaction is somewhat more difficult.  The process remains attractive, however, due to the near-limitless supply of fuel and potential for emissions-free operation.'''
 
 PRO_NANOTECH_PROD
 Nanotech Production
@@ -4189,7 +4206,9 @@ CON_TRANS_ARCH
 Transcendent Architecture
 
 CON_TRANS_ARCH_DESC
-The epitome of design unifies optimal functionality with elegance of form.  A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.
+'''Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
+
+The epitome of design unifies optimal functionality with elegance of form.  A transcendent structure expands and inspires the minds of its occupants or observers with its shape, placement, substance and integration, whether through awe-inspiring scale, perfect emphasis of a single idea, perception or lack thereof, or utter simplicity and fitness for purpose.'''
 
 CON_NDIM_STRC
 N-Dimensional Structures
@@ -4538,12 +4557,6 @@ Stargate
 CON_STARGATE_DESC
 Particularly in more expansive empires, the need to move ships to a specific defensive location in great haste often exceeds the feasibility.  By creating a warp between two or more points in space-time, it can be made possible to move ships even across an entire empire at need, allowing new offensive and defensive strategies.
 
-CON_MEGALITH
-Megalith Construction
-
-CON_MEGALITH_DESC
-Mastering advanced orbital construction techniques, scientists create methods to enable construction of the awe inspiring Megalith.
-
 CON_GRAVITY_WELLS
 Controlled gravity wells
 
@@ -4576,14 +4589,6 @@ Palace Excluder
 CON_PALACE_EXCLUDE_DESC
 Ensures that only one imperial palace will be present in an empire at a time.  Make sure you scrap your old imperial palace before your new one is built.
 
-GRO_SUBSPEC_TREAT
-Subspecialized Treatment
-
-GRO_SUBSPEC_TREAT_DESC
-'''Increases health on all planets by 5.
-
-Many diseases and injuries, or manifestations of the same disease or injury, can have very similar causes and symptoms, but very different ideal treatments.  By treating each individual's illness according its specific manifestation rather than its general categorization, a general benefit to health can be obtained.'''
-
 GRO_INDUSTRY_FARM
 Industrial Farming
 
@@ -4597,22 +4602,6 @@ GRO_SELF_ROTATING_CROPS_DESC
 '''Increases target farming on Good planets with the Farming focus by the planet's population, and on Adequate planets with the Farming focus by one half of the planet's population.
 
 High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.'''
-
-GRO_HABITATION_DOMES
-Habitation Domes
-
-GRO_HABITATION_DOMES_DESC
-'''Allows one tenth of a population unit to settle on any previously uninhabitable planet type, including Asteroids and Gas Giants.  Many building types cannot be constructed on these outposts.
-
-While terraforming efforts can make planets much more useful, the process is expensive and time consuming.  Habitation Domes provide a fast, cheap alternative for claiming inhospitable territory, but allow only minimal levels of infrastructure and resource capacity to be developed.'''
-
-GRO_SYMBIO_COHAB
-Symbiotic Cohabitation
-
-GRO_SYMBIO_COHAB_DESC
-'''Increases the population that can be sustained by Adequate planets to 4, 8, 12, 16 and 20 for Tiny, Small, Medium, Large and Huge planets, respectively.
-
-Members of different species are often in competition with one another for food and habitat.  Predator prey relationships are common, and it can be difficult for sentient beings to remove themselves entirely from competition with other organisms.  By impacting a planet in such a way as to benefit the native flora and fauna and in turn take advantage of their effects, it is possible to eliminate the antagonism between sentient and non-sentient life.'''
 
 GRO_GENOME_BANK
 Genome Bank
@@ -4649,14 +4638,6 @@ Changing the environmental type of a planet is a massive undertaking, the challe
 GRO_TERRAFORM_SHORT_DESC
 Allows terraforming
 
-GRO_XENOGEN_ADAPT
-Xenogenetic Adaptation
-
-GRO_XENOGEN_ADAPT_DESC
-'''Increases the population that can be sustained by Poor planets to 1, 2, 3, 4 and 5, and the population that can be sustained by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Poor and Adequate planets is increased by 5.
-
-The study of other life forms often exemplifies the weaknesses inherent in  one's own species.  By studying other life forms and using that knowledge to improve upon one's own genetic code, it is possible to develop many useful adaptations that would be otherwise impossible.'''
-
 GRO_ENDOPHIL_NANOMED
 Endophiliac Nanomedication
 
@@ -4670,14 +4651,6 @@ Remote Terraforming
 
 GRO_REMOTE_TERRAFORM_DESC
 Traditional terraforming methods treat the planet as a structure and attempt to alter its environment through physical and chemical means.  This necessitates that the majority of the planet be accessible to the terraforming species, which generally limits its usefulness.  By treating the planet as an organism and altering it's physiology indirectly, it is possible to make use of less labour intensive, though more time consuming terraforming methods, allowing outposts on poor and hostile worlds to make use of terraforming.
-
-GRO_XENO_SYMBIOGEN
-Xenological Symbiogenesis
-
-GRO_XENO_SYMBIOGEN_DESC
-'''Increases the population that can be sustained by Hostile planets to 1, 2, 3, 4 and 5, by Poor planets to 4, 8, 12, 16 and 20, and by Adequate planets to 5, 10, 15, 20 and 25 for Tiny, Small, Medium, Large and Huge planets, respectively.  Health on Hostile, Poor and Adequate planets is increased by 5.
-
-Often, the native fauna of a planet are far better suited to a planet's environment than any colonists who would try to inhabit it.  These adverse effects can include anything from weather patterns to the planet's size.  Through xenological hybridization, a genetically adapted form of the colonizing species can be developed with the advantageous traits of the native fauna, thus allowing more of the planet to be inhabited.'''
 
 GRO_BIOTERROR
 Bioterror Facilites
@@ -4872,14 +4845,6 @@ Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
 Traditional solar generation methods rely solely on radiating solar energy.  By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizeable and far-reaching benefit to industry can be obtained.
-
-PRO_FUSION_PLANTS
-Fusion Plants
-
-PRO_FUSION_PLANTS_DESC
-'''Increases target industry on planets with the Industry focus by one half of the planet's population.
-
-Fusion plants, while expensive to produce and maintain, easily pay for themselves on industrialized worlds with ever increasing power demands. Reliance on old fission based nuclear plants will gradually become a thing of the past.'''
 
 PRO_HYPER_DAM
 Hyperspatial Dam

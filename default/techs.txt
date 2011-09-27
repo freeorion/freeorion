@@ -511,15 +511,22 @@ Tech
 Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "HEALTH_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 25
+    researchcost = 40
     researchturns = 4
     prerequisites = []
     unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+            ]
+            effects = SetTargetHealth Value + 5
     graphic = "icons/tech/medical_pathology.png"
-
+    
 Tech
     name = "GRO_PLANET_ECOL"
     description = "GRO_PLANET_ECOL_DESC"
@@ -553,242 +560,6 @@ Tech
     researchcost = 10
     researchturns = 10
     prerequisites = []
-    unlock = []
-    graphic = "icons/tech/environmental_encapsulation.png"
-
-Tech
-    name = "GRO_SYMBIOTIC_BIO"
-    description = "GRO_SYMBIOTIC_BIO_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 10
-    researchturns = 10
-    prerequisites = []
-    unlock = []
-    graphic = "icons/tech/symbiosis_biology.png"
-
-Tech
-    name = "GRO_GENETIC_MED"
-    description = "GRO_GENETIC_MED_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 120
-    researchturns = 6
-    prerequisites = [
-        "GRO_GENETIC_ENG"
-        "GRO_MEDICAL_PATH"
-    ]
-    unlock = []
-    graphic = "icons/tech/genetic_medicine.png"
-
-Tech
-    name = "GRO_LIFECYCLE_MAN"
-    description = "GRO_LIFECYCLE_MAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 120
-    researchturns = 6
-    prerequisites = [
-        "GRO_MEDICAL_PATH"
-        "GRO_PLANET_ECOL"
-    ]
-    unlock = []
-    graphic = "icons/tech/lifecycle_manipulation.png"
-
-Tech
-    name = "GRO_EDV_ECOMAN"
-    description = "GRO_EDV_ECOMAN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 60
-    researchturns = 12
-    prerequisites = [
-        "GRO_ENV_ENCAPSUL"
-        "GRO_PLANET_ECOL"
-    ]
-    unlock = []
-    graphic = ""
-
-Tech
-    name = "GRO_XENO_GENETICS"
-    description = "GRO_XENO_GENETICS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 60
-    researchturns = 12
-    prerequisites = [
-        "GRO_SYMBIOTIC_BIO"
-        "GRO_GENETIC_ENG"
-    ]
-    unlock = []
-    graphic = "icons/tech/xenological_genetics.png"
-
-Tech
-    name = "GRO_NANOTECH_MED"
-    description = "GRO_NANOTECH_MED_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 400
-    researchturns = 9
-    prerequisites = [
-        "GRO_GENETIC_MED"
-        "GRO_LIFECYCLE_MAN"
-        "PRO_NANOTECH_PROD"
-    ]
-    unlock = []
-    graphic = "icons/tech/nanotech_medicine.png"
-
-Tech
-    name = "GRO_ECO_METAMORPH"
-    description = "GRO_ECO_METAMORPH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 240
-    researchturns = 15
-    prerequisites = [
-        "GRO_EDV_ECOMAN"
-        "GRO_LIFECYCLE_MAN"
-    ]
-    unlock = []
-    graphic = ""
-
-Tech
-    name = "GRO_XENO_HYBRIDS"
-    description = "GRO_XENO_HYBRIDS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 240
-    researchturns = 15
-    prerequisites = [
-        "GRO_XENO_GENETICS"
-        "GRO_GENETIC_MED"
-    ]
-    unlock = []
-    graphic = "icons/tech/xenological_hybridization.png"
-
-Tech
-    name = "GRO_NANO_CYBERNET"
-    description = "GRO_NANO_CYBERNET_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 500
-    researchturns = 16
-    prerequisites = [
-        "GRO_NANOTECH_MED"
-        "GRO_XENO_HYBRIDS"
-    ]
-    unlock = []
-    graphic = "icons/tech/nanotech_cybernetics.png"
-
-Tech
-    name = "GRO_TRANSORG_SENT"
-    description = "GRO_TRANSORG_SENT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 500
-    researchturns = 16
-    prerequisites = [
-        "GRO_ECO_METAMORPH"
-        "GRO_NANOTECH_MED"
-    ]
-    unlock = []
-    graphic = ""
-
-Tech
-    name = "GRO_ENERGY_META"
-    description = "GRO_ENERGY_META_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
-    category = "GROWTH_CATEGORY"
-    researchcost = 750
-    researchturns = 20
-    prerequisites = [
-        "GRO_NANO_CYBERNET"
-        "LRN_EVERYTHING"
-        "GRO_TRANSORG_SENT"
-    ]
-    unlock = []
-    graphic = "icons/tech/pure-energy_metabolism.png"
-
-Tech
-    name = "GRO_SUBSPEC_TREAT"
-    description = "GRO_SUBSPEC_TREAT_DESC"
-    short_description = "HEALTH_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_MEDICAL_PATH"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            effects = SetTargetHealth Value + 5
-    graphic = ""
-
-Tech
-    name = "GRO_INDUSTRY_FARM"
-    description = "GRO_INDUSTRY_FARM_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_PLANET_ECOL"
-    unlock = Item type = Building name = "BLD_INDUSTRY_FARM"
-    graphic = "icons/tech/industrial_farming.png"
-
-Tech
-    name = "GRO_SELF_ROTATING_CROPS"
-    description = "GRO_SELF_ROTATING_CROPS_DESC"
-    short_description = "FARMING_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_GENETIC_ENG"
-    unlock = []
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                    OwnedBy TheEmpire Source.Owner
-                    Focus "FOCUS_FARMING"
-                    Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.5
-    ]
-    graphic = "icons/tech/self-rotating_crops.png"
-
-Tech
-    name = "GRO_HABITATION_DOMES"
-    description = "GRO_HABITATION_DOMES_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_ENV_ENCAPSUL"
     unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
     effectsgroups =
         EffectsGroup
@@ -801,14 +572,14 @@ Tech
     graphic = "icons/tech/habitation_domes.png"
 
 Tech
-    name = "GRO_SYMBIO_COHAB"
-    description = "GRO_SYMBIO_COHAB_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    techtype = Application
+    name = "GRO_SYMBIOTIC_BIO"
+    description = "GRO_SYMBIOTIC_BIO_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
     category = "GROWTH_CATEGORY"
     researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_SYMBIOTIC_BIO"
+    researchturns = 10
+    prerequisites = []
     unlock = []
     effectsgroups = [
         EffectsGroup
@@ -876,7 +647,460 @@ Tech
             ]
             effects = SetTargetPopulation Value + 15
     ]
+    graphic = "icons/tech/symbiosis_biology.png"
+
+Tech
+    name = "GRO_GENETIC_MED"
+    description = "GRO_GENETIC_MED_DESC"
+    short_description = "HEALTH_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 120
+    researchturns = 6
+    prerequisites = "GRO_GENETIC_ENG"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+            ]
+            effects = SetTargetHealth Value + 5
+    graphic = "icons/tech/genetic_medicine.png"
+
+Tech
+    name = "GRO_LIFECYCLE_MAN"
+    description = "GRO_LIFECYCLE_MAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 120
+    researchturns = 6
+    prerequisites = "GRO_MEDICAL_PATH"
+    unlock = []
+    graphic = "icons/tech/lifecycle_manipulation.png"
+
+Tech
+    name = "GRO_EDV_ECOMAN"
+    description = "GRO_EDV_ECOMAN_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 60
+    researchturns = 12
+    prerequisites = "GRO_PLANET_ECOL"
+    unlock = []
     graphic = ""
+
+Tech
+    name = "GRO_XENO_GENETICS"
+    description = "GRO_XENO_GENETICS_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 80
+    researchturns = 12
+    prerequisites = [
+        "GRO_SYMBIOTIC_BIO"
+        "GRO_GENETIC_ENG"
+    ]
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+                Planet environment = Poor
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Poor
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Poor
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Poor
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = Poor
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+                Planet environment = Adequate
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Adequate
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 8
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Adequate
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 12
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Adequate
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 16
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = Adequate
+            ]
+            activation = And [
+                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_CYBORG"
+            ]
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 5
+            ]
+    ]
+    graphic = "icons/tech/xenological_genetics.png"
+
+Tech
+    name = "GRO_NANOTECH_MED"
+    description = "GRO_NANOTECH_MED_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 400
+    researchturns = 9
+    prerequisites = [
+        "GRO_GENETIC_MED"
+        "PRO_NANOTECH_PROD"
+    ]
+    unlock = []
+    graphic = "icons/tech/nanotech_medicine.png"
+
+Tech
+    name = "GRO_ECO_METAMORPH"
+    description = "GRO_ECO_METAMORPH_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 240
+    researchturns = 15
+    prerequisites = "GRO_EDV_ECOMAN"
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "GRO_XENO_HYBRIDS"
+    description = "GRO_XENO_HYBRIDS_DESC"
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 240
+    researchturns = 15
+    prerequisites = "GRO_XENO_GENETICS"
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+                Planet environment = Hostile
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 1
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = Hostile
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 2
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = Hostile
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 3
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = Hostile
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = Hostile
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 5
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Tiny
+                Planet environment = [Poor Adequate]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 4
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Small
+                Planet environment = [Poor Adequate]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 8
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Medium
+                Planet environment = [Poor Adequate]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 12
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Large
+                Planet environment = [Poor Adequate]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 16
+                SetTargetHealth Value + 5
+            ]
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Planet size = Huge
+                Planet environment = [Poor Adequate]
+            ]
+            activation = Not OwnerHasTech "GRO_CYBORG"
+            effects = [
+                SetTargetPopulation Value + 20
+                SetTargetHealth Value + 5
+            ]
+    ]
+    graphic = "icons/tech/xenological_hybridization.png"
+
+Tech
+    name = "GRO_NANO_CYBERNET"
+    description = "GRO_NANO_CYBERNET_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 500
+    researchturns = 16
+    prerequisites = "GRO_NANOTECH_MED"
+    unlock = []
+    graphic = "icons/tech/nanotech_cybernetics.png"
+
+Tech
+    name = "GRO_TRANSORG_SENT"
+    description = "GRO_TRANSORG_SENT_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 500
+    researchturns = 16
+    prerequisites = [
+        "GRO_ECO_METAMORPH"
+        "GRO_NANOTECH_MED"
+    ]
+    unlock = []
+    graphic = ""
+
+Tech
+    name = "GRO_ENERGY_META"
+    description = "GRO_ENERGY_META_DESC"
+    short_description = "THEORY_SHORT_DESC"
+    techtype = Theory
+    category = "GROWTH_CATEGORY"
+    researchcost = 750
+    researchturns = 20
+    prerequisites = [
+        "GRO_NANO_CYBERNET"
+        "LRN_EVERYTHING"
+        "GRO_TRANSORG_SENT"
+    ]
+    unlock = []
+    graphic = "icons/tech/pure-energy_metabolism.png"
+
+Tech
+    name = "GRO_INDUSTRY_FARM"
+    description = "GRO_INDUSTRY_FARM_DESC"
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 40
+    researchturns = 1
+    prerequisites = "GRO_PLANET_ECOL"
+    unlock = Item type = Building name = "BLD_INDUSTRY_FARM"
+    graphic = "icons/tech/industrial_farming.png"
+
+Tech
+    name = "GRO_SELF_ROTATING_CROPS"
+    description = "GRO_SELF_ROTATING_CROPS_DESC"
+    short_description = "FARMING_SHORT_DESC"
+    techtype = Application
+    category = "GROWTH_CATEGORY"
+    researchcost = 40
+    researchturns = 1
+    prerequisites = "GRO_GENETIC_ENG"
+    unlock = []
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                    OwnedBy TheEmpire Source.Owner
+                    Focus "FOCUS_FARMING"
+                    Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+    ]
+    graphic = "icons/tech/self-rotating_crops.png"
 
 Tech
     name = "GRO_GENOME_BANK"
@@ -922,7 +1146,10 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 80
     researchturns = 3
-    prerequisites = "GRO_EDV_ECOMAN"
+    prerequisites = [
+        "GRO_EDV_ECOMAN"
+        "CON_ORBITAL_CON"
+    ]
     unlock = []
     effectsgroups =
         EffectsGroup
@@ -941,169 +1168,6 @@ Tech
     prerequisites = "GRO_EDV_ECOMAN"
     unlock = Item type = Building name = "BLD_TERRAFORM"
     graphic = "icons/tech/terraform.png"
-
-Tech
-    name = "GRO_XENOGEN_ADAPT"
-    description = "GRO_XENOGEN_ADAPT_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 80
-    researchturns = 3
-    prerequisites = "GRO_XENO_GENETICS"
-    unlock = []
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = Poor
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = Poor
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Poor
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = Poor
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = Poor
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = Adequate
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = Adequate
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 8
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Adequate
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 12
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = Adequate
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 16
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = Adequate
-            ]
-            activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
-                Not OwnerHasTech "GRO_CYBORG"
-            ]
-            effects = [
-                SetTargetPopulation Value + 20
-                SetTargetHealth Value + 5
-            ]
-    ]
-    graphic = ""
 
 Tech
     name = "GRO_ENDOPHIL_NANOMED"
@@ -1147,139 +1211,6 @@ Tech
     prerequisites = "GRO_ECO_METAMORPH"
     unlock = Item type = Building name = "BLD_REMOTE_TERRAFORM"
     graphic = "icons/tech/terraform_rapid.png"
-
-Tech
-    name = "GRO_XENO_SYMBIOGEN"
-    description = "GRO_XENO_SYMBIOGEN_DESC"
-    short_description = "POPULATION_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 160
-    researchturns = 5
-    prerequisites = "GRO_XENO_HYBRIDS"
-    unlock = []
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = Hostile
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 1
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = Hostile
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 2
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = Hostile
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 3
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = Hostile
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = Hostile
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 5
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Tiny
-                Planet environment = [Poor Adequate]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 4
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Small
-                Planet environment = [Poor Adequate]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 8
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Medium
-                Planet environment = [Poor Adequate]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 12
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Large
-                Planet environment = [Poor Adequate]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 16
-                SetTargetHealth Value + 5
-            ]
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Planet size = Huge
-                Planet environment = [Poor Adequate]
-            ]
-            activation = Not OwnerHasTech "GRO_CYBORG"
-            effects = [
-                SetTargetPopulation Value + 20
-                SetTargetHealth Value + 5
-            ]
-    ]
-    graphic = ""
 
 Tech
     name = "GRO_CYBORG"
@@ -1486,7 +1417,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 400
     researchturns = 1
-    prerequisites = []
+    prerequisites = "CON_ORBITAL_CON"
     unlock = []
     graphic = "icons/tech/microgravity_manufacturing.png"
 
@@ -1524,6 +1455,14 @@ Tech
     researchturns = 1
     prerequisites = []
     unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+                Focus "FOCUS_INDUSTRY"
+            ]
+            effects = SetTargetIndustry Value + Target.Population * 0.5
     graphic = "icons/tech/fusion_generation.png"
 
 Tech
@@ -1678,10 +1617,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 60
     researchturns = 1
-    prerequisites = [
-        "PRO_MICROGRAV_MAN"
-        "PRO_PLANET_GEOL"
-    ]
+    prerequisites = "PRO_MICROGRAV_MAN"
     unlock = []
     graphic = "icons/tech/orbital_mining.png"
 
@@ -1738,10 +1674,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 40
     researchturns = 1
-    prerequisites = [
-        "PRO_PLANET_GEOL"
-        "CON_SUBTER_CONST"
-    ]
+    prerequisites = "PRO_PLANET_GEOL"
     unlock = []
     effectsgroups = [
         EffectsGroup
@@ -1860,29 +1793,6 @@ Tech
     graphic = "icons/tech/exobots.png"
 
 Tech
-    name = "PRO_FUSION_PLANTS"
-    description = "PRO_FUSION_PLANTS_DESC"
-    short_description = "INDUSTRY_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 80
-    researchturns = 1
-    prerequisites = [
-        "PRO_FUSION_GEN"
-        "PRO_ROBOTIC_PROD"
-    ]
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-                Focus "FOCUS_INDUSTRY"
-            ]
-            effects = SetTargetIndustry Value + Target.Population * 0.5
-    graphic = "icons/tech/fusion_plants.png"
-
-Tech
     name = "PRO_MATENG_REPLIC"
     description = "PRO_MATENG_REPLIC_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -1980,10 +1890,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 7500
     researchturns = 1
-    prerequisites = [
-        "CON_ARCH_MONOFILS"
-        "CON_ARCH_PSYCH"
-    ]
+    prerequisites = "CON_ARCH_MONOFILS"
     unlock = []
     graphic = ""
 
@@ -2026,7 +1933,7 @@ Tech
         "CON_GAL_INFRA"
         "CON_NDIM_STRC"
     ]
-    unlock = []
+    unlock = Item type = Building name = "BLD_MEGALITH"
     graphic = "icons/tech/transcendent_architecture.png"
 
 Tech
@@ -2081,11 +1988,11 @@ Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
     short_description = "CONSTRUCTION_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
     researchturns = 1
-    prerequisites = "CON_METRO_INFRA"
+    prerequisites = []
     unlock = []
     effectsgroups =
         EffectsGroup
@@ -2437,18 +2344,6 @@ Tech
     graphic = ""
 
 Tech
-    name = "CON_MEGALITH"
-    description = "CON_MEGALITH_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 1500
-    researchturns = 1
-    prerequisites = "CON_TRANS_ARCH"
-    unlock = Item type = Building name = "BLD_MEGALITH"
-    graphic = "icons/tech/megalith_construction.png"
-
-Tech
     name = "CON_GRAVITY_WELLS"
     description = "CON_GRAVITY_WELLS_DESC"
     short_description = "CONSTRUCTION_SHORT_DESC"
@@ -2743,7 +2638,12 @@ Tech
     researchcost = 250
     researchturns = 3
     prerequisites = "PRO_MICROGRAV_MAN"
-    unlock = []
+    unlock = [
+        Item type = ShipHull name = "SH_SMALL_ASTEROID"
+        Item type = ShipHull name = "SH_ASTEROID"
+        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
+        Item type = Building name = "BLD_SHIPYARD_AST"
+    ]
     graphic = ""
 
 Tech
@@ -2754,10 +2654,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 4500
     researchturns = 3
-    prerequisites = [
-        "SHP_ASTEROID_HULLS"
-        "PRO_NANOTECH_PROD"
-    ]
+    prerequisites = "SHP_ASTEROID_HULLS"
     unlock = []
     graphic = ""
 
@@ -3073,51 +2970,6 @@ Tech
     graphic = ""
 
 Tech
-    name = "SHP_AST_HULL"
-    description = "SHP_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 180
-    researchturns = 2
-    prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = [
-        Item type = ShipHull name = "SH_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
-    ]
-    graphic = ""
-
-Tech
-    name = "SHP_SMALL_AST_HULL"
-    description = "SHP_SMALL_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 180
-    researchturns = 2
-    prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = [
-        Item type = ShipHull name = "SH_SMALL_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
-    ]
-    graphic = ""
-
-Tech
-    name = "SHP_HEAVY_AST_HULL"
-    description = "SHP_HEAVY_AST_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 180
-    researchturns = 2
-    prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = [
-        Item type = ShipHull name = "SH_HEAVY_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
-    ]
-    graphic = ""
-
-Tech
     name = "SHP_CAMO_AST_HULL"
     description = "SHP_CAMO_AST_HULL_DESC"
     short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
@@ -3127,22 +2979,8 @@ Tech
     researchturns = 2
     prerequisites = "SHP_ASTEROID_HULLS"
     unlock = [
-        Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
-        Item type = Building name = "BLD_SHIPYARD_AST"
-    ]
-    graphic = ""
-
-Tech
-    name = "SHP_CAMO_AST_PARTS"
-    description = "SHP_CAMO_AST_PARTS_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 720
-    researchturns = 2
-    prerequisites = "SHP_CAMO_AST_HULL"
-    unlock = [
         Item type = ShipHull name = "SH_SMALL_CAMOUFLAGE_ASTEROID"
+        Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
     graphic = ""
@@ -3955,7 +3793,7 @@ Tech
     name = "SHP_HI_ENRG_FOCUS"
     description = "SHP_HI_ENRG_FOCUS_DESC"
     short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "SHIPS_CATEGORY"
     researchcost = 520
     researchturns = 2
@@ -4005,7 +3843,7 @@ Tech
     name = "SHP_DIST_MOD"
     description = "SHP_DIST_MOD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Theory
     category = "SHIPS_CATEGORY"
     researchcost = 750
     researchturns = 3
@@ -4063,7 +3901,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
-    prerequisites = []
+    prerequisites = "SHP_DIM_CLOAK"
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
     graphic = ""
 
@@ -4075,7 +3913,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
-    prerequisites = []
+    prerequisites = "SHP_HI_ENRG_FOCUS"
     unlock = Item type = ShipPart name = "SR_DEATH_RAY"
     graphic = ""
 
@@ -4087,7 +3925,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
-    prerequisites = []
+    prerequisites = "SHP_DIST_MOD"
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
     graphic = ""
 
