@@ -154,9 +154,6 @@ namespace {
     ParamLabel parts_label("parts");
     ParamLabel ships_label("ships");
     ParamLabel model_label("model");
-    ParamLabel string_lookup_label("lookup_strings");
-    ParamLabel researchable_label("researchable");
-    ParamLabel producible_label("producible");
     ParamLabel spawn_rate_label("spawnrate");
     ParamLabel spawn_limit_label("spawnlimit");
 
@@ -187,15 +184,16 @@ namespace {
              >> description_label >>        name_p[building_type_p.description = arg1]
              >> buildcost_label >>          real_p[building_type_p.production_cost = arg1]
              >> buildtime_label >>          int_p[building_type_p.production_time = arg1]
-             >> (producible_label >>       true_false_p[building_type_p.producible = arg1]
-                 |                          eps_p[building_type_p.producible = val(true)])
+             >> (str_p("unproducible")[             building_type_p.producible = val(false)]
+                 | (str_p("producible") | eps_p)[   building_type_p.producible = val(true)])
              >> location_label >>           condition_p[building_type_p.location = arg1]
              >> (captureresult_label >>     capture_result_p[building_type_p.capture_result = arg1]
                  |                          eps_p[building_type_p.capture_result = val(CR_CAPTURE)])
              >> !(effectsgroups_label >>    effects_group_vec_p[building_type_p.effects_groups = arg1])
              >> graphic_label >>            file_name_p[building_type_p.graphic = arg1])
             [building_type_p.this_ = new_<BuildingType>(building_type_p.name, building_type_p.description,
-                                                        building_type_p.production_cost, building_type_p.production_time, val(true),
+                                                        building_type_p.production_cost, building_type_p.production_time,
+                                                        building_type_p.producible,
                                                         building_type_p.capture_result, building_type_p.location,
                                                         building_type_p.effects_groups, building_type_p.graphic)];
 
@@ -275,15 +273,15 @@ namespace {
                 name_label >>               name_p[tech_info_p.name = arg1]
              >> description_label >>        name_p[tech_info_p.description = arg1]
              >> shortdescription_label >>   name_p[tech_info_p.short_description = arg1]
-             >> ((techtype_label >>         tech_type_p[tech_info_p.tech_type = arg1]) |
-                                            eps_p[tech_info_p.tech_type = val(TT_THEORY)])
+             >> ((techtype_label >>         tech_type_p[tech_info_p.tech_type = arg1])
+                 |                          eps_p[tech_info_p.tech_type = val(TT_THEORY)])
              >> category_label >>           name_p[tech_info_p.category = arg1]
-             >> ((researchcost_label >>     real_p[tech_info_p.research_cost = arg1]) |
-                                            eps_p[tech_info_p.research_cost = val(1.0)])
-             >> ((researchturns_label >>    int_p[tech_info_p.research_turns = arg1]) |
-                                            eps_p[tech_info_p.research_turns = val(1)])
-             >> ((researchable_label >>     true_false_p[tech_info_p.researchable = arg1]) |
-                                            eps_p[tech_info_p.researchable = val(true)]))
+             >> ((researchcost_label >>     real_p[tech_info_p.research_cost = arg1])
+                 |                          eps_p[tech_info_p.research_cost = val(1.0)])
+             >> ((researchturns_label >>    int_p[tech_info_p.research_turns = arg1])
+                 |                          eps_p[tech_info_p.research_turns = val(1)])
+             >> (str_p("unresearchable")[           tech_info_p.researchable = val(false)]
+                 | (str_p("researchable") | eps_p)[ tech_info_p.researchable = val(true)]))
             [tech_info_p.this_ = construct_<Tech::TechInfo>(tech_info_p.name, tech_info_p.description, tech_info_p.short_description,
                                                             tech_info_p.category, tech_info_p.tech_type, tech_info_p.research_cost,
                                                             tech_info_p.research_turns, tech_info_p.researchable)];
@@ -357,8 +355,8 @@ namespace {
              >> part_stats_p[part_p.stats = arg1]
              >> buildcost_label >>          real_p[part_p.cost = arg1]
              >> buildtime_label >>          int_p[part_p.production_time = arg1]
-             >> ((producible_label >>       true_false_p[part_p.producible = arg1]) |
-                                            eps_p[part_p.producible = val(true)])
+             >> (str_p("unproducible")[             part_p.producible = val(false)]
+                 | (str_p("producible") | eps_p)[   part_p.producible = val(true)])
              >> mountableslottypes_label >> ship_slot_type_vec_p[part_p.mountable_slot_types = arg1]
              >> location_label >>           condition_p[part_p.location = arg1]
              >> !(effectsgroups_label >>    effects_group_vec_p[part_p.effects_groups = arg1])
@@ -396,8 +394,8 @@ namespace {
              >> hull_stats_p[hull_p.stats = arg1]
              >> buildcost_label >>          real_p[hull_p.cost = arg1]
              >> buildtime_label >>          int_p[hull_p.production_time = arg1]
-             >> ((producible_label >>       true_false_p[hull_p.producible = arg1]) |
-                                            eps_p[hull_p.producible = val(true)])
+             >> (str_p("unproducible")[             hull_p.producible = val(false)]
+                 | (str_p("producible") | eps_p)[   hull_p.producible = val(true)])
              >> !(slots_label >>            slot_vec_p[hull_p.slots = arg1])
              >> ((location_label >>         condition_p[hull_p.location = arg1]) |
                                             eps_p[hull_p.location = new_<Condition::All>()])
@@ -412,7 +410,6 @@ namespace {
             (str_p("shipdesign")
              >> name_label >>           name_p[ship_design_p.name = arg1]
              >> description_label >>    name_p[ship_design_p.description = arg1]
-             >> string_lookup_label >>  true_false_p[ship_design_p.name_desc_in_stringtable = arg1]
              >> hull_label >>           name_p[ship_design_p.hull = arg1]
              >> parts_label
              >> (name_p[push_back_(ship_design_p.parts, arg1)] |
@@ -424,7 +421,7 @@ namespace {
                                                     val(0),             // creation turn
                                                     ship_design_p.hull, ship_design_p.parts,
                                                     ship_design_p.graphic, ship_design_p.model,
-                                                    ship_design_p.name_desc_in_stringtable)];
+                                                    val(true))];
 
         fleet_plan_p =
             (str_p("fleet")

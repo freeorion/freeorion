@@ -246,7 +246,7 @@ struct HullClosure : boost::spirit::classic::closure<HullClosure, HullType*, std
 
 struct ShipDesignClosure : boost::spirit::classic::closure<ShipDesignClosure, ShipDesign*, std::string, std::string,
                                                            std::string, std::vector<std::string>,
-                                                           std::string, std::string, bool>
+                                                           std::string, std::string>
 {
     member1 this_;
     member2 name;
@@ -255,7 +255,6 @@ struct ShipDesignClosure : boost::spirit::classic::closure<ShipDesignClosure, Sh
     member5 parts;
     member6 graphic;
     member7 model;
-    member8 name_desc_in_stringtable;
 };
 
 struct FleetPlanClosure : boost::spirit::classic::closure<FleetPlanClosure, FleetPlan*, std::string,

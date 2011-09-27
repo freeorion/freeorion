@@ -1579,7 +1579,7 @@ Hull
     structure = 10
     buildCost = 1
     buildTime = 2
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -1629,7 +1629,7 @@ Hull
     structure = 10
     buildCost = 1
     buildTime = 2
-    producible = false
+    Unproducible
     slots = Slot type = External position = (0.30, 0.15)
     location = All
     effectsgroups = [
@@ -1664,7 +1664,7 @@ Hull
     structure = 40
     buildCost = 1
     buildTime = 2
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1703,7 +1703,7 @@ Hull
     structure = 40
     buildCost = 1
     buildTime = 2
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -1724,7 +1724,7 @@ Hull
     structure = 5
     buildCost = 1
     buildTime = 2
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -1757,7 +1757,7 @@ Hull
     structure = 50
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
         slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -1802,7 +1802,7 @@ Hull
     structure = 5
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -1899,7 +1899,7 @@ Hull
     structure = 10
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -2003,7 +2003,7 @@ Hull
     structure = 25
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -2107,7 +2107,7 @@ Hull
     structure = 50
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.50, 0.15)
@@ -2161,7 +2161,7 @@ Hull
     structure = 18
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2214,7 +2214,7 @@ Hull
     structure = 35
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2266,7 +2266,7 @@ Hull
     structure = 50
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2313,7 +2313,7 @@ Hull
     structure = 12
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2366,7 +2366,7 @@ Hull
     structure = 25
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2418,7 +2418,7 @@ Hull
     structure = 40
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2462,7 +2462,7 @@ Hull
     structure = 25
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2518,7 +2518,7 @@ Hull
     structure = 40
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)
@@ -2571,7 +2571,7 @@ Hull
     structure = 60
     buildCost = 1
     buildTime = 1
-    producible = false
+    Unproducible
     slots = [
         Slot type = External position = (0.20, 0.15)
         Slot type = External position = (0.40, 0.15)

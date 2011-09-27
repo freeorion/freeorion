@@ -1,7 +1,6 @@
 ShipDesign
     name = "SD_TROOP_SHIP"
     description = "SD_TROOP_SHIP_DESC"
-    lookup_strings = true
     hull = "SH_BASIC_SMALL"
     parts = [
         "GT_TROOP_POD"
@@ -13,7 +12,6 @@ ShipDesign
 ShipDesign
     name = "SD_SCOUT"
     description = "SD_SCOUT_DESC"
-    lookup_strings = true
     hull = "SH_BASIC_SMALL"
     parts = [
         "DT_OPTICAL_SCANNER"
@@ -25,7 +23,6 @@ ShipDesign
 ShipDesign
     name = "SD_COLONY_SHIP"
     description = "SD_COLONY_SHIP_DESC"
-    lookup_strings = true
     hull = "SH_STANDARD"
     parts = [
         ""
@@ -39,7 +36,6 @@ ShipDesign
 ShipDesign
     name = "SD_COLONY_BASE"
     description = "SD_COLONY_BASE_DESC"
-    lookup_strings = true
     hull = "SH_COLONY_BASE"
     parts = "CO_COLONY_POD"
     graphic = "misc/generic.png"
@@ -48,7 +44,6 @@ ShipDesign
 ShipDesign
     name = "SD_OUTPOST_SHIP"
     description = "SD_OUTPOST_SHIP_DESC"
-    lookup_strings = true
     hull = "SH_STANDARD"
     parts = [
         ""
@@ -62,7 +57,6 @@ ShipDesign
 ShipDesign
     name = "SD_OUTPOST_BASE"
     description = "SD_OUTPOST_BASE_DESC"
-    lookup_strings = true
     hull = "SH_COLONY_BASE"
     parts = "CO_OUTPOST_MOD"
     graphic = "misc/generic.png"
@@ -71,7 +65,6 @@ ShipDesign
 ShipDesign
     name = "SD_MARK1"
     description = "SD_MARK1_DESC"
-    lookup_strings = true
     hull = "SH_BASIC_MEDIUM"
     parts = [
         "SR_LASER"
@@ -84,7 +77,6 @@ ShipDesign
 ShipDesign
     name = "SD_MARK2"
     description = "SD_MARK2_DESC"
-    lookup_strings = true
     hull = "SH_BASIC_MEDIUM"
     parts = [
         "SR_ION_CANNON"
@@ -97,7 +89,6 @@ ShipDesign
 ShipDesign
     name = "SD_MARK3"
     description = "SD_MARK3_DESC"
-    lookup_strings = true
     hull = "SH_ROBOTIC"
     parts = [
         "DT_OPTICAL_SCANNER"
@@ -111,7 +102,6 @@ ShipDesign
 ShipDesign
     name = "SD_MARK4"
     description = "SD_MARK4_DESC"
-    lookup_strings = true
     hull = "SH_SELF_GRAVITATING"
     parts = [
         "DT_OPTICAL_SCANNER"
@@ -127,7 +117,6 @@ ShipDesign
 ShipDesign
     name = "SD_DRAGON_TOOTH"
     description = "SD_DRAGON_TOOTH_DESC"
-    lookup_strings = true
     hull = "SH_XENTRONIUM"
     parts = [
         "DT_SENSORS"
