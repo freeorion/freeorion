@@ -1431,6 +1431,7 @@ void TechTreeWnd::LayoutPanel::CenterOnTech(const Tech* tech)
         Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << (tech ? tech->Name() : "Null tech pointer") << " due to lack of such a tech panel";
     }
 }
+
 void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt & p) const {
     glPushMatrix();
     //center to panel
@@ -1588,14 +1589,15 @@ bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
     if (!empire)
         return true;
 
-    // check that tech's type, category and status are all visible
+    // Unresearchable techs are never to be shown on tree
+    if (!tech->Researchable())
+        return false;
 
+    // check that tech's type, category and status are all visible
     if (m_tech_types_shown.find(tech->Type()) == m_tech_types_shown.end())
         return false;
-
     if (m_categories_shown.find(tech->Category()) == m_categories_shown.end())
         return false;
-
     if (m_tech_statuses_shown.find(empire->GetTechStatus(tech->Name())) == m_tech_statuses_shown.end())
         return false;
 
@@ -1633,7 +1635,6 @@ void TechTreeWnd::LayoutPanel::DrawArc(DependencyArcsMap::const_iterator it, GG:
     }
 }
 
-
 void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int)
 {
     m_scroll_position_x = m_hscroll->PosnRange().first;
@@ -1667,17 +1668,18 @@ void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move)
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
+
 void TechTreeWnd::LayoutPanel::TreeDragBegin(const GG::Pt& pt)
 {
     m_drag_scroll_position_x = m_scroll_position_x;
     m_drag_scroll_position_y = m_scroll_position_y;
 }
+
 void TechTreeWnd::LayoutPanel::TreeDragEnd(const GG::Pt& pt)
 {
     m_drag_scroll_position_x = m_scroll_position_x;
     m_drag_scroll_position_y = m_scroll_position_y;
 }
-
 
 void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move)
 {

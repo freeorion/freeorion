@@ -478,6 +478,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 1
     researchturns = 1
+    Unresearchable
     prerequisites = []
     unlock = []
     effectsgroups = [
@@ -3937,6 +3938,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 1
     researchturns = 1
+    Unresearchable
     prerequisites = []
     unlock = []
     effectsgroups =

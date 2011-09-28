@@ -636,6 +636,10 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (m_build_types_shown.find(build_type) == m_build_types_shown.end())
         return false;
 
+    const BuildingType* build_type = GetBuildingType(name);
+    if (!build_type || !build_type->Producible())
+        return false;
+
     const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
         return true;
@@ -658,12 +662,15 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (m_build_types_shown.find(build_type) == m_build_types_shown.end())
         return false;
 
-    bool available = false;
+    const ShipDesign* design = GetShipDesign(design_id);
+    if (!design || !design->Producible())
+        return false;
 
     const Empire* empire = Empires().Lookup(m_empire_id);
     if (!empire)
         return true;
 
+    bool available = false;
     if (build_type == BT_SHIP)
         available = empire->ShipDesignAvailable(design_id);
 
@@ -682,9 +689,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
     // keep track of initially selected row, so that new rows added may be compared to it to see if they should be selected after repopulating
     std::string selected_row;
-    if (m_buildable_items->Selections().size() == 1) {
+    if (m_buildable_items->Selections().size() == 1)
         selected_row = (**m_buildable_items->Selections().begin())->DragDropDataType();
-    }
 
 
     m_buildable_items->Clear(); // the list of items to be populated

@@ -534,9 +534,7 @@ ProductionQueue::ProductionQueue() :
 {}
 
 int ProductionQueue::ProjectsInProgress() const
-{
-    return m_projects_in_progress;
-}
+{ return m_projects_in_progress; }
 
 double ProductionQueue::TotalPPsSpent() const
 {
@@ -592,34 +590,22 @@ std::map<std::set<int>, double> ProductionQueue::AvailablePP(const std::map<Reso
 }
 
 std::map<std::set<int>, double> ProductionQueue::AllocatedPP() const
-{
-    return m_object_group_allocated_pp;
-}
+{ return m_object_group_allocated_pp; }
 
 bool ProductionQueue::empty() const
-{
-    return !m_queue.size();
-}
+{ return !m_queue.size(); }
 
 unsigned int ProductionQueue::size() const
-{
-    return m_queue.size();
-}
+{ return m_queue.size(); }
 
 ProductionQueue::const_iterator ProductionQueue::begin() const
-{
-    return m_queue.begin();
-}
+{ return m_queue.begin(); }
 
 ProductionQueue::const_iterator ProductionQueue::end() const
-{
-    return m_queue.end();
-}
+{ return m_queue.end(); }
 
 ProductionQueue::const_iterator ProductionQueue::find(int i) const
-{
-    return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end();
-}
+{ return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
 const ProductionQueue::Element& ProductionQueue::operator[](int i) const
 {
@@ -852,14 +838,10 @@ void ProductionQueue::Update(Empire* empire, const std::map<ResourceType,
 }
 
 void ProductionQueue::push_back(const Element& element)
-{
-    m_queue.push_back(element);
-}
+{ m_queue.push_back(element); }
 
 void ProductionQueue::insert(iterator it, const Element& element)
-{
-    m_queue.insert(it, element);
-}
+{ m_queue.insert(it, element); }
 
 void ProductionQueue::erase(int i)
 {
@@ -874,19 +856,13 @@ ProductionQueue::iterator ProductionQueue::erase(iterator it)
 }
 
 ProductionQueue::iterator ProductionQueue::begin()
-{
-    return m_queue.begin();
-}
+{ return m_queue.begin(); }
 
 ProductionQueue::iterator ProductionQueue::end()
-{
-    return m_queue.end();
-}
+{ return m_queue.end(); }
 
 ProductionQueue::iterator ProductionQueue::find(int i)
-{
-    return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end();
-}
+{ return (0 <= i && i < static_cast<int>(size())) ? (begin() + i) : end(); }
 
 ProductionQueue::Element& ProductionQueue::operator[](int i)
 {
@@ -930,19 +906,13 @@ Alignment::Alignment() :
 {}
 
 const std::string& Alignment::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 const std::string& Alignment::Description() const
-{
-    return m_description;
-}
+{ return m_description; }
 
 const std::string& Alignment::Graphic() const
-{
-    return m_graphic;
-}
+{ return m_graphic; }
 
 
 namespace {
@@ -1057,9 +1027,7 @@ Empire::Empire() :
     m_resource_pools(),
     m_population_pool(),
     m_maintenance_total_cost(0)
-{
-    Init();
-}
+{ Init(); }
 
 Empire::Empire(const std::string& name, const std::string& player_name, int empire_id, const GG::Clr& color) :
     m_id(empire_id),
@@ -1093,34 +1061,22 @@ void Empire::Init()
 }
 
 Empire::~Empire()
-{
-    ClearSitRep();
-}
+{ ClearSitRep(); }
 
 const std::string& Empire::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 const std::string& Empire::PlayerName() const
-{
-    return m_player_name;
-}
+{ return m_player_name; }
 
 int Empire::EmpireID() const
-{
-    return m_id;
-}
+{ return m_id; }
 
 const GG::Clr& Empire::Color() const
-{
-    return m_color;
-}
+{ return m_color; }
 
 int Empire::CapitalID() const
-{
-    return m_capital_id;
-}
+{ return m_capital_id; }
 
 int Empire::StockpileID(ResourceType res) const
 {
@@ -1139,9 +1095,7 @@ int Empire::StockpileID(ResourceType res) const
 }
 
 void Empire::SetCapitalID(int id)
-{
-    m_capital_id = id;
-}
+{ m_capital_id = id; }
 
 Meter* Empire::GetMeter(const std::string& name)
 {
@@ -1175,9 +1129,7 @@ bool Empire::ResearchableTech(const std::string& name) const
 }
 
 const ResearchQueue& Empire::GetResearchQueue() const
-{
-    return m_research_queue;
-}
+{ return m_research_queue; }
 
 double Empire::ResearchStatus(const std::string& name) const
 {
@@ -1186,9 +1138,7 @@ double Empire::ResearchStatus(const std::string& name) const
 }
 
 const std::set<std::string>& Empire::AvailableTechs() const
-{
-    return m_techs;
-}
+{ return m_techs; }
 
 bool Empire::TechResearched(const std::string& name) const
 {
@@ -1204,19 +1154,13 @@ TechStatus Empire::GetTechStatus(const std::string& name) const
 }
 
 const std::set<std::string>& Empire::AvailableBuildingTypes() const
-{
-    return m_available_building_types;
-}
+{ return m_available_building_types; }
 
 bool Empire::BuildingTypeAvailable(const std::string& name) const
-{
-    return m_available_building_types.find(name) != m_available_building_types.end();
-}
+{ return m_available_building_types.find(name) != m_available_building_types.end(); }
 
 const std::set<int>& Empire::ShipDesigns() const
-{
-    return m_ship_designs;
-}
+{ return m_ship_designs; }
 
 std::set<int> Empire::AvailableShipDesigns() const
 {
@@ -1255,35 +1199,26 @@ bool Empire::ShipDesignAvailable(int ship_design_id) const
     return true;
 }
 
-bool Empire::ShipDesignKept(int ship_design_id) const {
-    return (m_ship_designs.find(ship_design_id) != m_ship_designs.end());
-}
+bool Empire::ShipDesignKept(int ship_design_id) const
+{ return (m_ship_designs.find(ship_design_id) != m_ship_designs.end()); }
 
-const std::set<std::string>& Empire::AvailableShipParts() const {
-    return m_available_part_types;
-}
+const std::set<std::string>& Empire::AvailableShipParts() const
+{ return m_available_part_types; }
 
-bool Empire::ShipPartAvailable(const std::string& name) const {
-    return m_available_part_types.find(name) != m_available_part_types.end();
-}
+bool Empire::ShipPartAvailable(const std::string& name) const
+{ return m_available_part_types.find(name) != m_available_part_types.end(); }
 
-const std::set<std::string>& Empire::AvailableShipHulls() const {
-    return m_available_hull_types;
-}
+const std::set<std::string>& Empire::AvailableShipHulls() const
+{ return m_available_hull_types; }
 
-bool Empire::ShipHullAvailable(const std::string& name) const {
-    return m_available_hull_types.find(name) != m_available_hull_types.end();
-}
+bool Empire::ShipHullAvailable(const std::string& name) const
+{ return m_available_hull_types.find(name) != m_available_hull_types.end(); }
 
 const ProductionQueue& Empire::GetProductionQueue() const
-{
-    return m_production_queue;
-}
+{ return m_production_queue; }
 
 double Empire::ProductionStatus(int i) const
-{
-    return (0 <= i && i < static_cast<int>(m_production_progress.size())) ? m_production_progress[i] : -1.0;
-}
+{ return (0 <= i && i < static_cast<int>(m_production_progress.size())) ? m_production_progress[i] : -1.0; }
 
 std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const
 {
@@ -1401,9 +1336,7 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
 }
 
 int Empire::NumSitRepEntries() const
-{
-    return m_sitrep_entries.size();
-}
+{ return m_sitrep_entries.size(); }
 
 void Empire::EliminationCleanup()
 {
@@ -1586,9 +1519,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 }
 
 void Empire::UpdateFleetSupply()
-{
-    UpdateFleetSupply(this->KnownStarlanes());
-}
+{ UpdateFleetSupply(this->KnownStarlanes()); }
 
 void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
 {
@@ -1661,9 +1592,7 @@ void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
 }
 
 void Empire::UpdateResourceSupply()
-{
-    UpdateResourceSupply(this->KnownStarlanes());
-}
+{ UpdateResourceSupply(this->KnownStarlanes()); }
 
 void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes)
 {
@@ -1900,39 +1829,25 @@ void Empire::UpdateResourceSupply(const std::map<int, std::set<int> >& starlanes
 }
 
 const std::set<int>& Empire::FleetSupplyableSystemIDs() const
-{
-    return m_fleet_supplyable_system_ids;
-}
+{ return m_fleet_supplyable_system_ids; }
 
 const std::set<std::pair<int, int> >& Empire::FleetSupplyStarlaneTraversals() const
-{
-    return m_fleet_supply_starlane_traversals;
-}
+{ return m_fleet_supply_starlane_traversals; }
 
 const std::map<int, int>& Empire::FleetSupplyRanges() const
-{
-    return m_fleet_supply_system_ranges;
-}
+{ return m_fleet_supply_system_ranges; }
 
 const std::set<std::set<int> >& Empire::ResourceSupplyGroups() const
-{
-    return m_resource_supply_groups;
-}
+{ return m_resource_supply_groups; }
 
 const std::set<std::pair<int, int> >& Empire::ResourceSupplyStarlaneTraversals() const
-{
-    return m_resource_supply_starlane_traversals;
-}
+{ return m_resource_supply_starlane_traversals; }
 
 const std::set<std::pair<int, int> >& Empire::ResourceSupplyOstructedStarlaneTraversals() const
-{
-    return m_resource_supply_obstructed_starlane_traversals;
-}
+{ return m_resource_supply_obstructed_starlane_traversals; }
 
 const std::map<int, int>& Empire::ResourceSupplyRanges() const
-{
-    return m_resource_supply_system_ranges;
-}
+{ return m_resource_supply_system_ranges; }
 
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
@@ -2425,14 +2340,10 @@ void Empire::RemoveShipDesign(int ship_design_id)
 }
 
 void Empire::AddSitRepEntry(SitRepEntry* entry)
-{
-    m_sitrep_entries.push_back(entry);
-}
+{ m_sitrep_entries.push_back(entry); }
 
 void Empire::RemoveTech(const std::string& name)
-{
-    m_techs.erase(name);
-}
+{ m_techs.erase(name); }
 
 void Empire::LockItem(const ItemSpec& item)
 {
@@ -2706,9 +2617,7 @@ void Empire::CheckProductionProgress()
 }
 
 void Empire::CheckTradeSocialProgress()
-{
-    m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable() - m_maintenance_total_cost);
-}
+{ m_resource_pools[RE_TRADE]->SetStockpile(m_resource_pools[RE_TRADE]->TotalAvailable() - m_maintenance_total_cost); }
 
 void Empire::CheckGrowthFoodProgress()
 {
@@ -2788,19 +2697,13 @@ void Empire::CheckGrowthFoodProgress()
 }
 
 void Empire::SetColor(const GG::Clr& color)
-{
-    m_color = color;
-}
+{ m_color = color; }
 
 void Empire::SetName(const std::string& name)
-{
-    m_name = name;
-}
+{ m_name = name; }
 
 void Empire::SetPlayerName(const std::string& player_name)
-{
-    m_player_name = player_name;
-}
+{ m_player_name = player_name; }
 
 void Empire::InitResourcePools()
 {
@@ -3026,6 +2929,4 @@ void Empire::UpdateFoodDistribution()
 }
 
 void Empire::UpdatePopulationGrowth()
-{
-    m_population_pool.Update();
-}
+{ m_population_pool.Update(); }
