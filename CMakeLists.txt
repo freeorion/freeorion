@@ -86,7 +86,9 @@ endif ()
 find_package(Subversion)
 set(svn_revision_number ???)
 set(tmpLANG $ENV{LANG})
+set(tmpLC_ALL $ENV{LC_ALL})
 set(ENV{LANG} "C")
+set(ENV{LC_ALL} "C")
 if (Subversion_FOUND)
    execute_process(
        COMMAND ${Subversion_SVN_EXECUTABLE} info
@@ -104,6 +106,7 @@ configure_file(
     @ONLY
 )
 set($ENV{LANG} ${tmpLANG})
+set(LC_ALL $ENV{tmpLC_ALL})
 
 
 ########################################
