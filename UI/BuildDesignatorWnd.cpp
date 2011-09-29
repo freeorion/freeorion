@@ -636,8 +636,8 @@ bool BuildDesignatorWnd::BuildSelector::BuildableItemVisible(BuildType build_typ
     if (m_build_types_shown.find(build_type) == m_build_types_shown.end())
         return false;
 
-    const BuildingType* build_type = GetBuildingType(name);
-    if (!build_type || !build_type->Producible())
+    const BuildingType* building_type = GetBuildingType(name);
+    if (!building_type || !building_type->Producible())
         return false;
 
     const Empire* empire = Empires().Lookup(m_empire_id);
