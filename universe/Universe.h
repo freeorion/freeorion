@@ -7,7 +7,9 @@
 #include "../util/AppInterface.h"
 
 #include <boost/signal.hpp>
+#include <boost/unordered_map.hpp>
 #include <boost/iostreams/filtering_stream.hpp>
+#include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/serialization/shared_ptr.hpp>
@@ -323,6 +325,8 @@ public:
 
     double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
+    short                   JumpDistance(int system1_id, int system2_id) const;             ///< returns the number of starlane jumps between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to
       * \a system2, and the distance travelled to get there.  If no such path
@@ -344,7 +348,7 @@ public:
       * will throw if either system ID is out of range. */
     std::pair<std::list<int>, int>
                             LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
-
+    
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
       * the visibility for empire \a empire_id, or without regard to visibility
@@ -560,7 +564,52 @@ public:
     static int                      s_encoding_empire;
 
 private:
-    typedef std::vector< std::vector<double> > DistanceMatrix;
+    template <typename T>
+    class distance_matrix
+    {
+    public:
+        typedef boost::numeric::ublas::symmetric_matrix<
+            T,
+            boost::numeric::ublas::lower
+        > storage_type;
+ 
+        struct const_row_ref
+        {
+            const_row_ref(std::size_t i, const storage_type& m) : m_i(i), m_m(m) {}
+            T operator[](std::size_t j) const { return m_m(m_i, j); }
+        private:
+            std::size_t m_i;
+            const storage_type& m_m;
+        };
+
+        struct row_ref
+        {
+            row_ref(std::size_t i, storage_type& m) : m_i(i), m_m(m) {}
+            T& operator[](std::size_t j) { return m_m(m_i, j); }
+        private:
+            std::size_t m_i;
+            storage_type& m_m;
+        };
+
+        distance_matrix() :
+            m_m()
+            {}
+
+        const_row_ref operator[](std::size_t i) const
+            { return const_row_ref(i, m_m); }
+
+        row_ref operator[](std::size_t i)
+            { return row_ref(i, m_m); }
+
+        void resize(std::size_t rows, std::size_t columns)
+            { m_m.resize(rows, columns); }
+
+    private:
+        storage_type m_m;
+    };
+
+    typedef distance_matrix<double> DistanceMatrix;
+    typedef distance_matrix<short> JumpsMatrix;
 
     /** Discrepancy between meter's value at start of turn, and the value that
       * this client calculate that the meter should have with the knowledge
@@ -582,11 +631,13 @@ private:
 
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
       * Stores target set of specified \a effects_groups and \a source_object_id
-      * in \a targets_causes_map */
+      * in \a targets_causes_map 
+      * NOTE: this method will modify target_objects temporarily, but restore
+      * its contents before returning. */
     void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                  int source_object_id, EffectsCauseType effect_cause_type,
                                                  const std::string& specific_cause_name,
-                                                 const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map);
+                                                 Effect::TargetSet& target_objects, EffectsTargetsCausesMap& targets_causes_map);
 
     /** Executes all effects.  For use on server when processing turns. */
     void    ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map);
@@ -649,8 +700,10 @@ private:
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
-    DistanceMatrix                  m_system_distances;                 ///< the straight-line distances between all the systems; this is an lower-triangular matrix, so only access the elements in (highID, lowID) order
+    DistanceMatrix                  m_system_distances;                 ///< the straight-line distances between all the systems
+    JumpsMatrix                     m_system_jumps;                     ///< the least-jumps distances between all the systems
     GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
+    boost::unordered_map<int, int>  m_system_id_to_graph_index;
 
     EffectAccountingMap             m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     EffectDiscrepancyMap            m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter

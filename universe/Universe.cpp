@@ -30,6 +30,7 @@
 #include <boost/graph/breadth_first_search.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 #include <boost/graph/filtered_graph.hpp>
+#include <boost/graph/johnson_all_pairs_shortest.hpp>
 #include <boost/timer.hpp>
 
 #include <cmath>
@@ -42,9 +43,7 @@ namespace {
         db.Add("verbose-logging", "OPTIONS_DB_VERBOSE_LOGGING_DESC",  false,  Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-}
 
-namespace {
     /** Wrapper for boost::timer that outputs time during which this object
       * existed.  Created in the scope of a function, and passed the appropriate
       * name, it will output to Logger().debugStream() the time elapsed while
@@ -64,9 +63,7 @@ namespace {
         boost::timer    m_timer;
         std::string     m_name;
     };
-}
 
-namespace {
     const double  OFFROAD_SLOWDOWN_FACTOR = 1000000000.0;   // the factor by which non-starlane travel is slower than starlane travel
 
     DataTableMap& UniverseDataTables() {
@@ -95,6 +92,25 @@ namespace {
                 names.push_back(latest_name.substr(0, latest_name.find_last_not_of(" \t") + 1)); // strip off trailing whitespace
         }
     }
+
+    struct constant_property
+    {
+        short m_value;
+    };
+
+    short get(const constant_property& pmap, const boost::detail::edge_desc_impl<boost::undirected_tag, unsigned long>&) { return pmap.m_value; }
+
+}
+
+namespace boost {
+
+    template <>
+    struct property_traits<constant_property> {
+        typedef short value_type;
+        typedef boost::detail::edge_desc_impl<boost::undirected_tag, unsigned long> key_type;
+        typedef readable_property_map_tag category;
+    };
+
 }
 
 namespace SystemPathing {
@@ -137,7 +153,7 @@ namespace SystemPathing {
         bool m_level_complete;
         
     public:
-        BFSVisitorImpl(const Graph& g, const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
+        BFSVisitorImpl(const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
             : m_marker(start),
               m_stop(stop),
               m_source(start),
@@ -191,24 +207,7 @@ namespace SystemPathing {
     // templated implementations of Universe graph search methods //
     ////////////////////////////////////////////////////////////////
     struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
-
-    // returns the \a graph index for system with \a system_id
-    template <class Graph>
-    int SystemGraphIndex(const Graph& graph, int system_id)
-    {
-        typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
-        ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-
-        for (unsigned int i = 0; i < boost::num_vertices(graph); ++i) {
-            const int loop_sys_id = sys_id_property_map[i];    // get system ID of this vertex
-            if (loop_sys_id == system_id)
-                return i;
-        }
-
-        throw std::out_of_range("SystemGraphIndex cannot be found due to invalid system ID " + boost::lexical_cast<std::string>(system_id));
-        return -1;
-    }
-
+    
     /** Returns the path between vertices \a system1_id and \a system2_id of
       * \a graph that travels the shorest distance on starlanes, and the path
       * length.  If system1_id is the same vertex as system2_id, the path has
@@ -216,7 +215,7 @@ namespace SystemPathing {
       * between the two vertices, then the list is empty and the path length
       * is -1.0 */
     template <class Graph>
-    std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance)
+    std::pair<std::list<int>, double> ShortestPathImpl(const Graph& graph, int system1_id, int system2_id, double linear_distance, const boost::unordered_map<int, int>& id_to_graph_index)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type     ConstSystemIDPropertyMap;
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
@@ -227,8 +226,8 @@ namespace SystemPathing {
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
 
-        int system1_index = SystemGraphIndex(graph, system1_id);
-        int system2_index = SystemGraphIndex(graph, system2_id);
+        int system1_index = id_to_graph_index.at(system1_id);
+        int system2_index = id_to_graph_index.at(system2_id);
 
 
         // early exit if systems are the same
@@ -291,15 +290,15 @@ namespace SystemPathing {
       * is 0.  If there is no path between the two vertices, then the list is
       * empty and the path length is -1 */
     template <class Graph>
-    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id, int max_jumps = INT_MAX)
+    std::pair<std::list<int>, int> LeastJumpsPathImpl(const Graph& graph, int system1_id, int system2_id, const boost::unordered_map<int, int>& id_to_graph_index, int max_jumps = INT_MAX)
     {
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
 
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
         std::pair<std::list<int>, int> retval;
 
-        int system1_index = SystemGraphIndex(graph, system1_id);
-        int system2_index = SystemGraphIndex(graph, system2_id);
+        int system1_index = id_to_graph_index.at(system1_id);
+        int system2_index = id_to_graph_index.at(system2_id);
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
@@ -324,7 +323,7 @@ namespace SystemPathing {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
             
-            BFSVisitor bfsVisitor(graph, system1_index, system2_index, &predecessors[0], max_jumps);
+            BFSVisitor bfsVisitor(system1_index, system2_index, &predecessors[0], max_jumps);
             boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, &colors[0]);
         } catch (const typename BFSVisitor::ReachedDepthLimit&) {
             // catching this means the algorithm explored the neighborhood until max_jumps and didn't find anything
@@ -351,9 +350,9 @@ namespace SystemPathing {
 
         return retval;
     }
-
+    
     template <class Graph>
-    std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id)
+    std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id, const boost::unordered_map<int, int>& id_to_graph_index)
     {
         typedef typename Graph::out_edge_iterator OutEdgeIterator;
         typedef typename boost::property_map<Graph, vertex_system_id_t>::const_type ConstSystemIDPropertyMap;
@@ -362,7 +361,7 @@ namespace SystemPathing {
         std::map<double, int> retval;
         ConstEdgeWeightPropertyMap edge_weight_map = boost::get(boost::edge_weight, graph);
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
-        std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(SystemGraphIndex(graph, system_id), graph);
+        std::pair<OutEdgeIterator, OutEdgeIterator> edges = boost::out_edges(id_to_graph_index.at(system_id), graph);
         for (OutEdgeIterator it = edges.first; it != edges.second; ++it) {
             retval[edge_weight_map[*it]] = sys_id_property_map[boost::target(*it, graph)];
         }
@@ -939,22 +938,20 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
 }
 
 double Universe::LinearDistance(int system1_id, int system2_id) const
-{
-    //Logger().debugStream() << "LinearDistance(" << system1_id << ", " << system2_id << ")";
-    int system1_index = SystemGraphIndex(m_graph_impl->system_graph, system1_id);
-    int system2_index = SystemGraphIndex(m_graph_impl->system_graph, system2_id);
-    return m_system_distances.at(std::max(system1_index, system2_index)).at(std::min(system1_index, system2_index));
-}
+{ return m_system_distances[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
+
+short Universe::JumpDistance(int system1_id, int system2_id) const
+{ return m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)] - 1; }
 
 std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     double linear_distance = LinearDistance(system1_id, system2_id);
     if (empire_id == ALL_EMPIRES) {
-        return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id, linear_distance);
+        return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id, linear_distance, m_system_id_to_graph_index);
     } else {
         GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance);
+            return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance, m_system_id_to_graph_index);
     }
     return std::pair<std::list<int>, double>();
 }
@@ -962,11 +959,11 @@ std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int sys
 std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id, max_jumps);
+        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
     } else {
         GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id, max_jumps);
+            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
     }
     return std::pair<std::list<int>, int>();
 }
@@ -988,11 +985,11 @@ bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const
 std::map<double, int> Universe::ImmediateNeighbors(int system_id, int empire_id/* = ALL_EMPIRES*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id);
+        return ImmediateNeighborsImpl(m_graph_impl->system_graph, system_id, m_system_id_to_graph_index);
     } else {
         GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
         if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return ImmediateNeighborsImpl(*graph_it->second, system_id);
+            return ImmediateNeighborsImpl(*graph_it->second, system_id, m_system_id_to_graph_index);
     }
     return std::map<double, int>();
 }
@@ -1396,6 +1393,11 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
 {
+    // transfer target objects from input vector to a set
+    Effect::TargetSet all_potential_targets;
+    for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
+        all_potential_targets.insert(m_objects.Object(*it));
+
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 0) EffectsGroups from Species
     Logger().debugStream() << "Universe::GetEffectsAndTargets for SPECIES";
@@ -1413,7 +1415,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
             continue;
         }
         StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
-                                             target_objects, targets_causes_map);
+                                             all_potential_targets, targets_causes_map);
     }
 
     // 1) EffectsGroups from Specials
@@ -1429,7 +1431,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
             }
 
             StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
-                                                 target_objects, targets_causes_map);
+                                                 all_potential_targets, targets_causes_map);
         }
     }
 
@@ -1442,7 +1444,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
             if (!tech) continue;
 
             StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitalID(), ECT_TECH, tech->Name(),
-                                                 target_objects, targets_causes_map);
+                                                 all_potential_targets, targets_causes_map);
         }
     }
 
@@ -1462,7 +1464,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
         }
 
         StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
-                                             target_objects, targets_causes_map);
+                                             all_potential_targets, targets_causes_map);
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
@@ -1486,7 +1488,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
         }
 
         StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-                                             target_objects, targets_causes_map);
+                                             all_potential_targets, targets_causes_map);
 
         const std::vector<std::string>& parts = ship_design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
@@ -1499,7 +1501,7 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
                 continue;
             }
             StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-                                                 target_objects, targets_causes_map);
+                                                 all_potential_targets, targets_causes_map);
         }
     }
 }
@@ -1507,16 +1509,11 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                     int source_object_id, EffectsCauseType effect_cause_type,
                                                     const std::string& specific_cause_name,
-                                                    const std::vector<int>& target_objects, EffectsTargetsCausesMap& targets_causes_map)
+                                                    Effect::TargetSet& target_objects, EffectsTargetsCausesMap& targets_causes_map)
 {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
     }
-
-    // transfer target objects from input vector to a set
-    Effect::TargetSet all_potential_targets;
-    for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
-        all_potential_targets.insert(m_objects.Object(*it));
 
     // process all effects groups in set provided
     int eg_count = 1;
@@ -1526,7 +1523,6 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // create non_targets and targets sets for current effects group
         Effect::TargetSet target_set;                                    // initially empty
-        Effect::TargetSet potential_target_set = all_potential_targets;  // copy again each iteration, so previous iterations don't affect starting potential targets of next iteration
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
@@ -1534,7 +1530,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         {
             ScopedTimer update_timer2("... ... Universe::StoreTargetsAndCausesOfEffectsGroups get target set");
             // get set of target objects for this effects group from potential targets specified
-            effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
+            effects_group->GetTargetSet(source_object_id, target_set, target_objects);    // transfers objects from target_objects to target_set if they meet the condition
         }
         //effects_group->GetTargetSet(source_object_id, target_set, potential_target_set);    // transfers objects from potential_target_set to target_set if they meet the condition
 
@@ -1553,6 +1549,10 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // store effect cause and targets info in map, indexed by sourced effects group
         targets_causes_map.insert(std::make_pair(sourced_effects_group, target_and_cause));
+        
+        // restore target_objects by moving objects back from targets to target_objects
+        // this should be cheaper than doing a full copy because target_set is usually small
+        target_objects.insert(target_set.begin(), target_set.end());
     }
 }
 
@@ -2297,9 +2297,12 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         system_id_graph_index_reverse_lookup_map[system_id] = i;
     }
 
+    m_system_distances.resize(system_ids.size(), system_ids.size());
     for (int i = 0; i < static_cast<int>(system_ids.size()); ++i) {
         int system1_id = system_ids[i];
         const System* system1 = objects.Object<System>(system1_id);
+
+        m_system_id_to_graph_index[system1_id] = i;
 
         // add edges and edge weights
         for (System::const_lane_iterator it = system1->begin_lanes(); it != system1->end_lanes(); ++it) {
@@ -2333,18 +2336,19 @@ void Universe::InitializeSystemGraph(int for_empire_id)
         }
 
         // define the straight-line system distances for this system
-        m_system_distances.resize(system_ids.size());
-        m_system_distances[i].clear();
         for (int j = 0; j < i; ++j) {
             int system2_id = system_ids[j];
             const UniverseObject* system2 = objects.Object(system2_id);
             double x_dist = system2->X() - system1->X();
             double y_dist = system2->Y() - system1->Y();
-            m_system_distances[i].push_back(std::sqrt(x_dist*x_dist + y_dist*y_dist));
-            //std::cout << "m_system_distances: " << system1_id << " to " << system2_id << ": " << m_system_distances[i].back() << std::endl;
+            m_system_distances[i][j] = std::sqrt(x_dist*x_dist + y_dist*y_dist);
         }
-        m_system_distances[i].push_back(0.0);   // distance from system to itself
+        m_system_distances[i][i] = 0.0;
     }
+
+    m_system_jumps.resize(system_ids.size(), system_ids.size());
+    constant_property jump_weight = { 1 };
+    boost::johnson_all_pairs_shortest_paths(m_graph_impl->system_graph, m_system_jumps, boost::weight_map(jump_weight));
 
     RebuildEmpireViewSystemGraphs(for_empire_id);
 }
