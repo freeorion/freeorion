@@ -230,6 +230,13 @@ EffectsGroup::~EffectsGroup()
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
 {
+    TargetSet copy_of_potential_targets(potential_targets);
+    GetTargetSet(source_id, targets, copy_of_potential_targets);
+}
+
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const
+{
+    typedef Condition::ObjectSet ObjectSet;
     targets.clear();
 
     UniverseObject* source = GetObject(source_id);
@@ -258,14 +265,16 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetS
         matched_targets.clear();
     }
 
-    // convert potential targets TargetSet to a Condition::ObjectSet so that condition can be applied to it
-    non_targets = EffectTargetSetToConditionObjectSet(potential_targets);
+    BOOST_MPL_ASSERT((boost::is_same<TargetSet, std::set<UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<ObjectSet, std::set<const UniverseObject*> >));
 
-    // evaluate the scope condition
-    m_scope->Eval(ScriptingContext(source), matched_targets, non_targets);
-
-    // convert result back to TargetSet
-    targets = ConditionObjectSetToEffectTargetSet(matched_targets);
+    // HACK! We're doing some dirt here for efficiency's sake.  Since we can't
+    // const-cast std::set<UniverseObject*> to std::set<const
+    // UniverseObject*>, we're telling the compiler that one type is actually
+    // the other, rather than doing a copy.
+    m_scope->Eval(ScriptingContext(source), 
+                  *static_cast<ObjectSet *>(static_cast<void *>(&targets)), 
+                  *static_cast<ObjectSet *>(static_cast<void *>(&potential_targets)));
 }
 
 void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
