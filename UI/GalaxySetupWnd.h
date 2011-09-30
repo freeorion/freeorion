@@ -44,7 +44,8 @@ public:
     GalaxySetupOption               GetStarlaneFrequency() const;   //!< Returns the frequency of starlanes in the galaxy
     GalaxySetupOption               GetPlanetDensity() const;       //!< Returns the density of planets within systems
     GalaxySetupOption               GetSpecialsFrequency() const;   //!< Returns the rarity of planetary and system specials
-    GalaxySetupOption               GetLifeFrequency() const;       //!< Returns the frequency of natives and space monsters
+    GalaxySetupOption               GetMonsterFrequency() const;    //!< Returns the frequency of space monsters
+    GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
 
     boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
 
@@ -72,7 +73,8 @@ private:
     CUIDropDownList*    m_starlane_freq_list;   //!< The frequency of starlanes in the galaxy
     CUIDropDownList*    m_planet_density_list;  //!< The density of planets in each system
     CUIDropDownList*    m_specials_freq_list;   //!< The frequency of specials in systems and on planets
-    CUIDropDownList*    m_life_freq_list;       //!< The frequency of natives and monsters
+    CUIDropDownList*    m_monster_freq_list;    //!< The frequency of monsters
+    CUIDropDownList*    m_native_freq_list;     //!< The frequency of natives
 
     std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
 };

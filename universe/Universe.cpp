@@ -103,7 +103,6 @@ namespace {
 }
 
 namespace boost {
-
     template <>
     struct property_traits<constant_property> {
         typedef short value_type;
@@ -143,7 +142,7 @@ namespace SystemPathing {
     public:
         class FoundDestination {}; 
         class ReachedDepthLimit {};
-        
+
     private:
         Vertex m_marker;
         Vertex m_stop;
@@ -151,7 +150,7 @@ namespace SystemPathing {
         Vertex * m_predecessors;
         int m_levels_remaining;
         bool m_level_complete;
-        
+
     public:
         BFSVisitorImpl(const Vertex& start, const Vertex& stop, Vertex predecessors[], int max_depth)
             : m_marker(start),
@@ -160,24 +159,24 @@ namespace SystemPathing {
               m_predecessors(predecessors),
               m_levels_remaining(max_depth),
               m_level_complete(false)
-        {
-        }
-        
-        void initialize_vertex(const Vertex& v, const Graph& g) {}
-        
-        void discover_vertex(const Vertex& v, const Graph& g) 
+        {}
+
+        void initialize_vertex(const Vertex& v, const Graph& g)
+        {}
+
+        void discover_vertex(const Vertex& v, const Graph& g)
         {
             m_predecessors[static_cast<int>(v)] = m_source;
-            
+
             if (v == m_stop)
                 throw FoundDestination();
-            
+
             if (m_level_complete) {
                 m_marker = v;
                 m_level_complete = false;
             }
         }
-        
+
         void examine_vertex(const Vertex& v, const Graph& g)
         {
             if (v == m_marker) {
@@ -189,14 +188,14 @@ namespace SystemPathing {
             
             m_source = v; // avoid re-calculating source from edge
         }
-        
+
         void examine_edge(const Edge& e, const Graph& g) {}
-        
+
         void tree_edge(const Edge& e, const Graph& g)
         {
             // wait till target is calculated
         }
-        
+
         void non_tree_edge(const Edge& e, const Graph& g) {}
         void gray_target(const Edge& e, const Graph& g) {}
         void black_target(const Edge& e, const Graph& g) {}
@@ -207,7 +206,7 @@ namespace SystemPathing {
     // templated implementations of Universe graph search methods //
     ////////////////////////////////////////////////////////////////
     struct vertex_system_id_t {typedef boost::vertex_property_tag kind;}; ///< a system graph property map type
-    
+
     /** Returns the path between vertices \a system1_id and \a system2_id of
       * \a graph that travels the shorest distance on starlanes, and the path
       * length.  If system1_id is the same vertex as system2_id, the path has
@@ -350,7 +349,7 @@ namespace SystemPathing {
 
         return retval;
     }
-    
+
     template <class Graph>
     std::map<double, int> ImmediateNeighborsImpl(const Graph& graph, int system_id, const boost::unordered_map<int, int>& id_to_graph_index)
     {
@@ -445,14 +444,10 @@ ObjectMap* ObjectMap::Clone(int empire_id) const
 }
 
 int ObjectMap::NumObjects() const
-{
-    return static_cast<int>(m_objects.size());
-}
+{ return static_cast<int>(m_objects.size()); }
 
 bool ObjectMap::Empty() const
-{
-    return m_objects.empty();
-}
+{ return m_objects.empty(); }
 
 const UniverseObject* ObjectMap::Object(int id) const
 {
@@ -527,24 +522,16 @@ std::vector<int> ObjectMap::FindObjectIDs() const
 }
 
 ObjectMap::iterator ObjectMap::begin()
-{
-    return m_objects.begin();
-}
+{ return m_objects.begin(); }
 
 ObjectMap::iterator ObjectMap::end()
-{
-    return m_objects.end();
-}
+{ return m_objects.end(); }
 
 ObjectMap::const_iterator ObjectMap::const_begin() const
-{
-    return m_const_objects.begin();
-}
+{ return m_const_objects.begin(); }
 
 ObjectMap::const_iterator ObjectMap::const_end() const
-{
-    return m_const_objects.end();
-}
+{ return m_const_objects.end(); }
 
 UniverseObject* ObjectMap::Insert(int id, UniverseObject* obj)
 {
@@ -596,9 +583,7 @@ UniverseObject* ObjectMap::Remove(int id)
 }
 
 void ObjectMap::Delete(int id)
-{
-    delete Remove(id);
-}
+{ delete Remove(id); }
 
 void ObjectMap::Clear()
 {
@@ -714,6 +699,7 @@ Universe::SourcedEffectsGroup::SourcedEffectsGroup() :
     source_object_id(UniverseObject::INVALID_OBJECT_ID),
     effects_group()
 {}
+
 Universe::SourcedEffectsGroup::SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_) :
     source_object_id(source_object_id_),
     effects_group(effects_group_)
@@ -782,7 +768,6 @@ Universe::Universe() :
 Universe::~Universe()
 {
     Clear();
-
     delete m_graph_impl;
 }
 
@@ -1120,13 +1105,11 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 }
 
 void Universe::ApplyMeterEffectsAndUpdateMeters()
-{
-    ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs());
-}
+{ ApplyMeterEffectsAndUpdateMeters(m_objects.FindObjectIDs()); }
 
 void Universe::InitMeterEstimatesAndDiscrepancies()
 {
-    boost::timer timer;
+    ScopedTimer timer("Universe::InitMeterEstimatesAndDiscrepancies");
 
     // clear old discrepancies and accounting
     m_effect_discrepancy_map.clear();
@@ -1173,14 +1156,10 @@ void Universe::InitMeterEstimatesAndDiscrepancies()
             m_effect_accounting_map[object_id][type].push_back(info);
         }
     }
-
-    Logger().debugStream() << "Universe::InitMeterEstimatesAndDiscrepancies time: " << (timer.elapsed() * 1000.0);
 }
 
 void Universe::UpdateMeterEstimates()
-{
-    UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, INVALID_METER_TYPE, false);
-}
+{ UpdateMeterEstimates(UniverseObject::INVALID_OBJECT_ID, INVALID_METER_TYPE, false); }
 
 void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool update_contained_objects)
 {
@@ -1233,7 +1212,7 @@ void Universe::UpdateMeterEstimates(int object_id, MeterType meter_type, bool up
 
 void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterType meter_type)
 {
-    boost::timer timer;
+    ScopedTimer timer("Universe::UpdateMeterEstimates");
 
     std::set<int> objects_set;  // ensures no duplicates
 
@@ -1257,8 +1236,6 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec, MeterTy
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
     UpdateMeterEstimatesImpl(final_objects_vec, meter_type);
-
-    Logger().debugStream() << "Universe::UpdateMeterEstimates time: " << (timer.elapsed() * 1000.0);
 }
 
 void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type)
@@ -1379,9 +1356,7 @@ void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
 }
 
 void Universe::BackPropegateObjectMeters()
-{
-    BackPropegateObjectMeters(m_objects.FindObjectIDs());
-}
+{ BackPropegateObjectMeters(m_objects.FindObjectIDs()); }
 
 void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map)
 {
@@ -2242,14 +2217,10 @@ bool Universe::Delete(int object_id)
 }
 
 void Universe::EffectDestroy(int object_id)
-{
-    m_marked_destroyed.insert(object_id);
-}
+{ m_marked_destroyed.insert(object_id); }
 
 void Universe::EffectVictory(int object_id, const std::string& reason_string)
-{
-    m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string));
-}
+{ m_marked_for_victory.insert(std::pair<int, std::string>(object_id, reason_string)); }
 
 void Universe::HandleEmpireElimination(int empire_id)
 {
@@ -2388,19 +2359,13 @@ void Universe::RebuildEmpireViewSystemGraphs(int for_empire_id)
 }
 
 double Universe::UniverseWidth()
-{
-    return s_universe_width;
-}
+{ return s_universe_width; }
 
 const bool& Universe::UniverseObjectSignalsInhibited()
-{
-    return s_inhibit_universe_object_signals;
-}
+{ return s_inhibit_universe_object_signals; }
 
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
-{
-    s_inhibit_universe_object_signals = inhibit;
-}
+{ s_inhibit_universe_object_signals = inhibit; }
 
 void Universe::GetShipDesignsToSerialize(ShipDesignMap& designs_to_serialize, int encoding_empire) const
 {
@@ -3247,7 +3212,8 @@ FleetPlan::FleetPlan() :
 FleetPlan::~FleetPlan()
 {}
 
-const std::string& FleetPlan::Name() const {
+const std::string& FleetPlan::Name() const
+{
     if (m_name_in_stringtable)
         return UserString(m_name);
     else
@@ -3320,7 +3286,8 @@ namespace {
     // static(s)
     FleetPlanManager* FleetPlanManager::s_instance = 0;
 
-    const FleetPlanManager& FleetPlanManager::GetFleetPlanManager() {
+    const FleetPlanManager& FleetPlanManager::GetFleetPlanManager()
+    {
         static FleetPlanManager manager;
         return manager;
     }
@@ -3362,16 +3329,16 @@ namespace {
 #endif
     }
 
-    FleetPlanManager::~FleetPlanManager() {
+    FleetPlanManager::~FleetPlanManager()
+    {
         for (std::vector<FleetPlan*>::iterator it = m_plans.begin(); it != m_plans.end(); ++it)
             delete *it;
         m_plans.clear();
     }
 
     /** returns the singleton fleet plan manager */
-    const FleetPlanManager& GetFleetPlanManager() {
-        return FleetPlanManager::GetFleetPlanManager();
-    }
+    const FleetPlanManager& GetFleetPlanManager()
+    { return FleetPlanManager::GetFleetPlanManager(); }
 };
 
 /////////////////////////////
@@ -3405,12 +3372,14 @@ namespace {
     // static(s)
     MonsterFleetPlanManager* MonsterFleetPlanManager::s_instance = 0;
 
-    const MonsterFleetPlanManager& MonsterFleetPlanManager::GetMonsterFleetPlanManager() {
+    const MonsterFleetPlanManager& MonsterFleetPlanManager::GetMonsterFleetPlanManager()
+    {
         static MonsterFleetPlanManager manager;
         return manager;
     }
 
-    MonsterFleetPlanManager::MonsterFleetPlanManager() {
+    MonsterFleetPlanManager::MonsterFleetPlanManager()
+    {
         if (s_instance)
             throw std::runtime_error("Attempted to create more than one MonsterFleetPlanManager.");
 
@@ -3491,12 +3460,14 @@ namespace {
     // static(s)
     ItemSpecManager* ItemSpecManager::s_instance = 0;
 
-    const ItemSpecManager& ItemSpecManager::GetItemSpecManager() {
+    const ItemSpecManager& ItemSpecManager::GetItemSpecManager()
+    {
         static ItemSpecManager manager;
         return manager;
     }
 
-    ItemSpecManager::ItemSpecManager() {
+    ItemSpecManager::ItemSpecManager()
+    {
         if (s_instance)
             throw std::runtime_error("Attempted to create more than one ItemSpecManager.");
 
@@ -4108,7 +4079,7 @@ namespace {
 
 void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, GalaxySetupOption starlane_freq,
                               GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
-                              GalaxySetupOption life_freq,
+                              GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
                               const std::map<int, PlayerSetupData>& player_setup_data)
 {
 #ifdef FREEORION_RELEASE
@@ -4182,9 +4153,9 @@ void Universe::CreateUniverse(int size, Shape shape, GalaxySetupOption age, Gala
     GenerateHomeworlds(total_players, homeworld_planet_ids);
     NamePlanets();
     GenerateEmpires(homeworld_planet_ids, player_setup_data);
-    GenerateNatives(life_freq);
+    GenerateNatives(native_freq);
     GetPredefinedShipDesignManager().AddShipDesignsToUniverse();
-    GenerateSpaceMonsters(life_freq);
+    GenerateSpaceMonsters(monster_freq);
     AddStartingSpecials(specials_freq);
 
     Logger().debugStream() << "Applying first turn effects and updating meters";
@@ -4380,7 +4351,7 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
 {
     Logger().debugStream() << "GenerateNatives";
 
-    int inverse_native_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
+    int inverse_native_chance = UniverseDataTables()["NativeFrequency"][0][freq];
     double native_chance(0.0);
     if (inverse_native_chance > 0)
         native_chance = 1.0 / static_cast<double>(inverse_native_chance);
@@ -4447,7 +4418,7 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
     Logger().debugStream() << "GenerateSpaceMonsters";
 
     // get overall universe chance for monster generation in a system
-    int inverse_monster_chance = UniverseDataTables()["LifeFormFrequency"][0][freq];
+    int inverse_monster_chance = UniverseDataTables()["MonsterFrequency"][0][freq];
     Logger().debugStream() << "Universe::GenerateSpaceMonsters(" << boost::lexical_cast<std::string>(freq) << ") inverse monster chance: " << inverse_monster_chance;
     double monster_chance(0.0);
     if (inverse_monster_chance > 0)
@@ -5110,12 +5081,7 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
 UniverseObject* GetObject(int object_id)
-{
-    return GetUniverse().Objects().Object(object_id);
-}
+{ return GetUniverse().Objects().Object(object_id); }
 
 UniverseObject* GetEmpireKnownObject(int object_id, int empire_id)
-{
-    return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id);
-}
-
+{ return GetUniverse().EmpireKnownObjects(empire_id).Object(object_id); }

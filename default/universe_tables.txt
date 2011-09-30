@@ -98,7 +98,13 @@ MaxStarlaneLength               120
 SpecialsFrequency               None    Low     Medium  High
 Freq                            0       1000    3000    8000
 
-# per how many stars should natives or monsters appear?
+# per how many stars should monsters appear
 <1x4>
-LifeFormFrequency               None    Low     Medium  High
+MonsterFrequency                None    Low     Medium  High
+Freq                            0       9       5       3
+
+# per how many stars should natives appear
+<1x4>
+NativeFrequency                 None    Low     Medium  High
 Freq                            0       12      6       4
+

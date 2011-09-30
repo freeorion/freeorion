@@ -66,7 +66,8 @@ struct GalaxySetupData
     GalaxySetupOption   m_starlane_freq;
     GalaxySetupOption   m_planet_density;
     GalaxySetupOption   m_specials_freq;
-    GalaxySetupOption   m_life_freq;
+    GalaxySetupOption   m_monster_freq;
+    GalaxySetupOption   m_native_freq;
 
 private:
     friend class boost::serialization::access;

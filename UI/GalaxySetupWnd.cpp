@@ -19,7 +19,7 @@ namespace {
     const GG::X CONTROL_MARGIN(5);
     const GG::Y CONTROL_HEIGHT(30);
     const GG::Y PANEL_CONTROL_SPACING(33);
-    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 7);
+    const GG::Y GAL_SETUP_PANEL_HT(PANEL_CONTROL_SPACING * 8);
     const GG::X GAL_SETUP_WND_WD(645);
     const GG::Y GAL_SETUP_WND_HT(29 + (PANEL_CONTROL_SPACING * 6) + GAL_SETUP_PANEL_HT);
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
@@ -34,7 +34,8 @@ namespace {
         db.Add("GameSetup.planet-density",      "OPTIONS_DB_GAMESETUP_PLANET_DENSITY",          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.starlane-frequency",  "OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY",      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.specials-frequency",  "OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY",      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_HIGH));
-        db.Add("GameSetup.life-frequency",      "OPTIONS_DB_GAMESETUP_LIFE_FREQUENCY",          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_HIGH));
+        db.Add("GameSetup.monster-frequency",   "OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY",       GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_HIGH));
+        db.Add("GameSetup.native-frequency",    "OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY",        GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_HIGH));
         db.Add("GameSetup.empire-name",         "OPTIONS_DB_GAMESETUP_EMPIRE_NAME",             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.player-name",         "OPTIONS_DB_GAMESETUP_PLAYER_NAME",             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.empire-color",        "OPTIONS_DB_GAMESETUP_EMPIRE_COLOR",            0,                  RangedValidator<int>(0, 100));
@@ -57,7 +58,8 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_starlane_freq_list(0),
     m_planet_density_list(0),
     m_specials_freq_list(0),
-    m_life_freq_list(0)
+    m_monster_freq_list(0),
+    m_native_freq_list(0)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -129,58 +131,55 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X x, GG::Y y, GG::X w/* = DEFAULT_WIDTH*/
     m_specials_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_specials_freq_list->Height()) / 2));
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
-    // native / monster life frequency
-    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_LIFE_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    // monster frequency
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_MONSTER_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.life-frequency")));
+    label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
     AttachChild(label);
     drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
-    m_life_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
-    m_life_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_life_freq_list->Height()) / 2));
-    m_life_freq_list->SetStyle(GG::LIST_NOSORT);
+    m_monster_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_monster_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_monster_freq_list->Height()) / 2));
+    m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
+
+    // native frequency
+    label = new GG::TextControl(CONTROL_MARGIN, ++row * PANEL_CONTROL_SPACING, LABELS_WIDTH, CONTROL_HEIGHT, UserString("GSETUP_NATIVE_FREQ"), font, ClientUI::TextColor(), GG::FORMAT_RIGHT, GG::INTERACTIVE);
+    label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
+    AttachChild(label);
+    drop_height = std::min(TEXT_ROW_HEIGHT * NUM_GALAXY_SETUP_OPTIONS, MAX_DROPLIST_DROP_HEIGHT) + TOTAL_LISTBOX_MARGIN;
+    m_native_freq_list = new CUIDropDownList(LABELS_WIDTH + 2 * CONTROL_MARGIN, row * PANEL_CONTROL_SPACING, DROPLIST_WIDTH, DROPLIST_HEIGHT, drop_height);
+    m_native_freq_list->OffsetMove(GG::Pt(GG::X0, (PANEL_CONTROL_SPACING - m_native_freq_list->Height()) / 2));
+    m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     Init();
 }
 
 int GalaxySetupPanel::Systems() const
-{
-    return m_stars_spin->Value();
-}
+{ return m_stars_spin->Value(); }
 
 Shape GalaxySetupPanel::GetShape() const
-{
-    return Shape(m_galaxy_shapes_list->CurrentItemIndex());
-}
+{ return Shape(m_galaxy_shapes_list->CurrentItemIndex()); }
 
 GalaxySetupOption GalaxySetupPanel::GetAge() const
-{
-    return GalaxySetupOption(m_galaxy_ages_list->CurrentItemIndex() + 1);
-}
+{ return GalaxySetupOption(m_galaxy_ages_list->CurrentItemIndex() + 1); }
 
 GalaxySetupOption GalaxySetupPanel::GetStarlaneFrequency() const
-{
-    return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1));
-}
+{ return GalaxySetupOption(m_starlane_freq_list->CurrentItemIndex() + (ALLOW_NO_STARLANES ? 0 : 1)); }
 
 GalaxySetupOption GalaxySetupPanel::GetPlanetDensity() const
-{
-    return GalaxySetupOption(m_planet_density_list->CurrentItemIndex() + 1);
-}
+{ return GalaxySetupOption(m_planet_density_list->CurrentItemIndex() + 1); }
 
 GalaxySetupOption GalaxySetupPanel::GetSpecialsFrequency() const
-{
-    return GalaxySetupOption(m_specials_freq_list->CurrentItemIndex());
-}
+{ return GalaxySetupOption(m_specials_freq_list->CurrentItemIndex()); }
 
-GalaxySetupOption GalaxySetupPanel::GetLifeFrequency() const
-{
-    return GalaxySetupOption(m_life_freq_list->CurrentItemIndex());
-}
+GalaxySetupOption GalaxySetupPanel::GetMonsterFrequency() const
+{ return GalaxySetupOption(m_monster_freq_list->CurrentItemIndex()); }
+
+GalaxySetupOption GalaxySetupPanel::GetNativeFrequency() const
+{ return GalaxySetupOption(m_native_freq_list->CurrentItemIndex()); }
 
 boost::shared_ptr<GG::Texture> GalaxySetupPanel::PreviewImage() const
-{
-    return m_textures[GetShape()];
-}
+{ return m_textures[GetShape()]; }
 
 void GalaxySetupPanel::Disable(bool b/* = true*/)
 {
@@ -197,7 +196,8 @@ void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data)
     m_starlane_freq_list->Select(setup_data.m_starlane_freq - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(setup_data.m_planet_density - 1);
     m_specials_freq_list->Select(setup_data.m_specials_freq);
-    m_life_freq_list->Select(setup_data.m_life_freq);
+    m_monster_freq_list->Select(setup_data.m_monster_freq);
+    m_native_freq_list->Select(setup_data.m_native_freq);
 }
 
 void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const
@@ -208,7 +208,8 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const
     setup_data.m_starlane_freq =    GetStarlaneFrequency();
     setup_data.m_planet_density =   GetPlanetDensity();
     setup_data.m_specials_freq =    GetSpecialsFrequency();
-    setup_data.m_life_freq =        GetLifeFrequency();
+    setup_data.m_monster_freq =     GetMonsterFrequency();
+    setup_data.m_native_freq =      GetNativeFrequency();
 }
 
 void GalaxySetupPanel::Init()
@@ -219,7 +220,8 @@ void GalaxySetupPanel::Init()
     AttachChild(m_starlane_freq_list);
     AttachChild(m_planet_density_list);
     AttachChild(m_specials_freq_list);
-    AttachChild(m_life_freq_list);
+    AttachChild(m_monster_freq_list);
+    AttachChild(m_native_freq_list);
 
     GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
@@ -227,7 +229,8 @@ void GalaxySetupPanel::Init()
     GG::Connect(m_starlane_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_planet_density_list->SelChangedSignal,    &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_specials_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_life_freq_list->SelChangedSignal,         &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_monster_freq_list->SelChangedSignal,      &GalaxySetupPanel::SettingChanged,  this);
+    GG::Connect(m_native_freq_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
     GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::ShapeChanged,    this);
 
     // create and load textures
@@ -269,10 +272,15 @@ void GalaxySetupPanel::Init()
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
     m_specials_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
 
-    m_life_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
-    m_life_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
-    m_life_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
-    m_life_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
+    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
+    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
+    m_monster_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
+
+    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_NONE")));
+    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_LOW")));
+    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_MEDIUM")));
+    m_native_freq_list->Insert(new CUISimpleDropDownListRow(UserString("GSETUP_HIGH")));
 
     // initial settings from stored results or defaults
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
@@ -282,7 +290,8 @@ void GalaxySetupPanel::Init()
     m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density") - 1);
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency"));
-    m_life_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.life-frequency"));
+    m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
+    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
 
     SettingsChangedSignal();
 }
@@ -412,24 +421,16 @@ GalaxySetupWnd::GalaxySetupWnd() :
 }
 
 const std::string& GalaxySetupWnd::EmpireName() const
-{
-    return m_empire_name_edit->Text();
-}
+{ return m_empire_name_edit->Text(); }
 
 GG::Clr GalaxySetupWnd::EmpireColor() const
-{
-    return m_empire_color_selector->CurrentColor();
-}
+{ return m_empire_color_selector->CurrentColor(); }
 
 const std::string& GalaxySetupWnd::StartingSpeciesName() const
-{
-    return m_starting_secies_selector->CurrentSpeciesName();
-}
+{ return m_starting_secies_selector->CurrentSpeciesName(); }
 
 int GalaxySetupWnd::NumberAIs() const
-{
-    return m_number_ais_spin->Value();
-}
+{ return m_number_ais_spin->Value(); }
 
 void GalaxySetupWnd::Render()
 {
@@ -486,14 +487,10 @@ void GalaxySetupWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_imag
 }
 
 void GalaxySetupWnd::EmpireNameChanged(const std::string& name)
-{
-    m_ok->Disable(name.empty());
-}
+{ m_ok->Disable(name.empty()); }
 
 void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
-{
-    m_ok->Disable(name.empty());
-}
+{ m_ok->Disable(name.empty()); }
 
 void GalaxySetupWnd::OkClicked()
 {
@@ -504,7 +501,8 @@ void GalaxySetupWnd::OkClicked()
     GetOptionsDB().Set("GameSetup.starlane-frequency",  m_galaxy_setup_panel->GetStarlaneFrequency());
     GetOptionsDB().Set("GameSetup.planet-density",      m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
-    GetOptionsDB().Set("GameSetup.life-frequency",      m_galaxy_setup_panel->GetLifeFrequency());
+    GetOptionsDB().Set("GameSetup.monster-frequency",   m_galaxy_setup_panel->GetMonsterFrequency());
+    GetOptionsDB().Set("GameSetup.native-frequency",    m_galaxy_setup_panel->GetNativeFrequency());
     GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));

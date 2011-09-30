@@ -309,21 +309,15 @@ ValueRef::Constant<T>::Constant(T value) :
 
 template <class T>
 T ValueRef::Constant<T>::Value() const
-{
-    return m_value;
-}
+{ return m_value; }
 
 template <class T>
 T ValueRef::Constant<T>::Eval(const ScriptingContext& context) const
-{
-    return m_value;
-}
+{ return m_value; }
 
 template <class T>
 std::string ValueRef::Constant<T>::Description() const
-{
-    return UserString(boost::lexical_cast<std::string>(m_value));
-}
+{ return UserString(boost::lexical_cast<std::string>(m_value)); }
 
 namespace ValueRef {
     template <>
@@ -385,15 +379,11 @@ ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::s
 
 template <class T>
 ValueRef::ReferenceType ValueRef::Variable<T>::GetReferenceType() const
-{
-    return m_ref_type;
-}
+{ return m_ref_type; }
 
 template <class T>
 const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
-{
-    return m_property_name;
-}
+{ return m_property_name; }
 
 template <class T>
 bool ValueRef::Variable<T>::RootCandidateInvariant() const
@@ -411,7 +401,13 @@ template <class T>
 std::string ValueRef::Variable<T>::Description() const
 {
     boost::format formatter = FlexibleFormat(UserString("DESC_VALUE_REF_MULTIPART_VARIABLE" + boost::lexical_cast<std::string>(m_property_name.size())));
-    formatter % UserString(m_ref_type ? "DESC_VAR_SOURCE" : "DESC_VAR_TARGET");
+    switch (m_ref_type) {
+    case SOURCE_REFERENCE:                      formatter % UserString("DESC_VAR_SOURCE");          break;
+    case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
+    case CONDITION_LOCAL_CANDIDATE_REFERENCE:   formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
+    case CONDITION_ROOT_CANDIDATE_REFERENCE:    formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
+    //case NON_OBJECT_REFERENCE:
+    }
     for (unsigned int i = 0; i < m_property_name.size(); ++i) {
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
     }
@@ -421,12 +417,19 @@ std::string ValueRef::Variable<T>::Description() const
 template <class T>
 std::string ValueRef::Variable<T>::Dump() const
 {
-    std::string str(m_ref_type ? "Source" : "Target");
-    // now that we have some variables that apply globally, we need to special-case them:
-    if (m_property_name.back() == "CurrentTurn")
-        str = "";
-    for (unsigned int i = 0; i < m_property_name.size(); ++i) {
-        str += '.' + m_property_name[i];
+    std::string str;
+    switch (m_ref_type) {
+    case SOURCE_REFERENCE:                      str = "Source";         break;
+    case EFFECT_TARGET_REFERENCE:               str = "Target";         break;
+    case CONDITION_LOCAL_CANDIDATE_REFERENCE:   str = "LocalCandidate"; break;
+    case CONDITION_ROOT_CANDIDATE_REFERENCE:    str = "RootCandidate";  break;
+    //case NON_OBJECT_REFERENCE:
+    }
+    if (m_ref_type != NON_OBJECT_REFERENCE) {
+        for (unsigned int i = 0; i < m_property_name.size(); ++i)
+            str += '.' + m_property_name[i];
+    } else if (!m_property_name.empty()) {
+        str = m_property_name[0];
     }
     return str;
 }
@@ -490,15 +493,11 @@ ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
 
 template <class T>
 ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const
-{
-    return m_stat_type;
-}
+{ return m_stat_type; }
 
 template <class T>
 const Condition::ConditionBase* ValueRef::Statistic<T>::SamplingCondition() const
-{
-    return m_sampling_condition;
-}
+{ return m_sampling_condition; }
 
 template <class T>
 void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context,
@@ -557,15 +556,11 @@ bool ValueRef::Statistic<T>::TargetInvariant() const
 
 template <class T>
 std::string ValueRef::Statistic<T>::Description() const
-{
-    return "Statistic Desc";
-}
+{ return UserString("DESC_STATISTIC"); }
 
 template <class T>
 std::string ValueRef::Statistic<T>::Dump() const
-{
-    return "Statistic Dump";
-}
+{ return "Statistic"; }
 
 template <class T>
 T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
@@ -817,9 +812,7 @@ ValueRef::StaticCast<FromType, ToType>::~StaticCast()
 
 template <class FromType, class ToType>
 double ValueRef::StaticCast<FromType, ToType>::Eval(const ScriptingContext& context) const
-{
-    return static_cast<ToType>(m_value_ref->Eval(context));
-}
+{ return static_cast<ToType>(m_value_ref->Eval(context)); }
 
 template <class FromType, class ToType>
 bool ValueRef::StaticCast<FromType, ToType>::RootCandidateInvariant() const
@@ -835,15 +828,11 @@ bool ValueRef::StaticCast<FromType, ToType>::TargetInvariant() const
 
 template <class FromType, class ToType>
 std::string ValueRef::StaticCast<FromType, ToType>::Description() const
-{
-    return m_value_ref->Description();
-}
+{ return m_value_ref->Description(); }
 
 template <class FromType, class ToType>
 std::string ValueRef::StaticCast<FromType, ToType>::Dump() const
-{
-    return m_value_ref->Dump();
-}
+{ return m_value_ref->Dump(); }
 
 template <class FromType, class ToType>
 template <class Archive>
@@ -868,9 +857,7 @@ ValueRef::StringCast<FromType>::~StringCast()
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Eval(const ScriptingContext& context) const
-{
-    return boost::lexical_cast<std::string>(m_value_ref->Eval(context));
-}
+{ return boost::lexical_cast<std::string>(m_value_ref->Eval(context)); }
 
 template <class FromType>
 bool ValueRef::StringCast<FromType>::RootCandidateInvariant() const
@@ -886,15 +873,11 @@ bool ValueRef::StringCast<FromType>::TargetInvariant() const
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Description() const
-{
-    return m_value_ref->Description();
-}
+{ return m_value_ref->Description(); }
 
 template <class FromType>
 std::string ValueRef::StringCast<FromType>::Dump() const
-{
-    return m_value_ref->Dump();
-}
+{ return m_value_ref->Dump(); }
 
 template <class FromType>
 template <class Archive>
@@ -930,21 +913,15 @@ ValueRef::Operation<T>::~Operation()
 
 template <class T>
 ValueRef::OpType ValueRef::Operation<T>::GetOpType() const
-{
-    return m_op_type;
-}
+{ return m_op_type; }
 
 template <class T>
 const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::LHS() const
-{
-    return m_operand1;
-}
+{ return m_operand1; }
 
 template <class T>
 const ValueRef::ValueRefBase<T>* ValueRef::Operation<T>::RHS() const
-{
-    return m_operand2;
-}
+{ return m_operand2; }
 
 template <class T>
 T ValueRef::Operation<T>::Eval(const ScriptingContext& context) const

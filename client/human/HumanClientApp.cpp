@@ -339,7 +339,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
             setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency");
             setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density");
             setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
-            setup_data.m_life_freq =        GetOptionsDB().Get<GalaxySetupOption>("GameSetup.life-frequency");
+            setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
+            setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
 
 
             // SinglePlayerSetupData contains a map of PlayerSetupData, for

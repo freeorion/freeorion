@@ -434,7 +434,8 @@ GalaxySetupData::GalaxySetupData():
     m_starlane_freq(GALAXY_SETUP_MEDIUM),
     m_planet_density(GALAXY_SETUP_MEDIUM),
     m_specials_freq(GALAXY_SETUP_MEDIUM),
-    m_life_freq(GALAXY_SETUP_MEDIUM)
+    m_monster_freq(GALAXY_SETUP_MEDIUM),
+    m_native_freq(GALAXY_SETUP_MEDIUM)
 {}
 
 

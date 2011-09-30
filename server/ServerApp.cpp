@@ -517,7 +517,7 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data, const std:
     m_universe.CreateUniverse(galaxy_setup_data.m_size,             galaxy_setup_data.m_shape,
                               galaxy_setup_data.m_age,              galaxy_setup_data.m_starlane_freq,
                               galaxy_setup_data.m_planet_density,   galaxy_setup_data.m_specials_freq,
-                              galaxy_setup_data.m_life_freq,
+                              galaxy_setup_data.m_monster_freq,     galaxy_setup_data.m_native_freq,
                               active_players_id_setup_data);
     // after all game initialization stuff has been created, can set current turn to 1 for start of game
     m_current_turn = 1;

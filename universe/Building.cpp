@@ -23,17 +23,15 @@ std::string DumpIndent();
 extern int g_indent;
 
 namespace {
-    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = false;    // makes all buildings cost 1 PP and take 1 turn to build
+    const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = true;    // makes all buildings cost 1 PP and take 1 turn to build
 }
 
 namespace {
-    struct store_building_type_impl
-    {
+    struct store_building_type_impl {
         template <class T1, class T2>
         struct result {typedef void type;};
         template <class T>
-        void operator()(std::map<std::string, BuildingType*>& building_types, const T& building_type) const
-        {
+        void operator()(std::map<std::string, BuildingType*>& building_types, const T& building_type) const {
             if (building_types.find(building_type->Name()) != building_types.end()) {
                 std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
                 throw std::runtime_error(error_str.c_str());

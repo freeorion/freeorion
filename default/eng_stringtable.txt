@@ -787,8 +787,11 @@ The number of starlanes in the galaxy to be generated.
 OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY
 The frequency of specials appearing in the galaxy to be generated.
 
-OPTIONS_DB_GAMESETUP_LIFE_FREQUENCY
-The frequency of natives and monsters in the galaxy to be generated.
+OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY
+The frequency of monsters in the galaxy to be generated.
+
+OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY
+The frequency of natives in the galaxy to be generated.
 
 OPTIONS_DB_GAMESETUP_EMPIRE_NAME
 The name used in the game for your empire.
@@ -1102,8 +1105,10 @@ GSETUP_PLANET_DENSITY
 Planet Density
 GSETUP_SPECIALS_FREQ
 Specials Frequency
-GSETUP_LIFE_FREQ
-Life Frequency
+GSETUP_MONSTER_FREQ
+Monster Frequency
+GSETUP_NATIVE_FREQ
+Native Frequency
 
 GSETUP_2ARM
 Spiral, 2-arm
@@ -3158,6 +3163,15 @@ source
 
 DESC_VAR_TARGET
 target
+
+DESC_VAR_LOCAL_CANDIDATE
+target
+
+DESC_VAR_ROOT_CANDIDATE
+target
+
+DESC_STATISTIC
+statistic
 
 DESC_VAR_PLANETSIZE
 planet size

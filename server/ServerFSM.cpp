@@ -495,7 +495,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg)
     m_lobby_data->m_starlane_freq = incoming_lobby_data.m_starlane_freq;
     m_lobby_data->m_planet_density =incoming_lobby_data.m_planet_density;
     m_lobby_data->m_specials_freq = incoming_lobby_data.m_specials_freq;
-    m_lobby_data->m_life_freq =     incoming_lobby_data.m_life_freq;
+    m_lobby_data->m_monster_freq =  incoming_lobby_data.m_monster_freq;
+    m_lobby_data->m_native_freq =   incoming_lobby_data.m_native_freq;
 
     // directly configurable lobby data
     m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;

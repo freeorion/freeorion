@@ -422,7 +422,7 @@ public:
     void            CreateUniverse(int size, Shape shape,
                                    GalaxySetupOption age, GalaxySetupOption starlane_freq,
                                    GalaxySetupOption planet_density, GalaxySetupOption specials_freq,
-                                   GalaxySetupOption life_freq,
+                                   GalaxySetupOption monster_freq, GalaxySetupOption native_freq,
                                    const std::map<int, PlayerSetupData>& player_setup_data);
 
     /** Clears main ObjectMap, empires' latest known objects map, and
