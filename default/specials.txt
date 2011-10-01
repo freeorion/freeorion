@@ -117,7 +117,7 @@ Special
         EffectsGroup     
             scope = Source     
             activation = AND [
-                Not Turn low = 1
+                Turn high = 1
                 Random probability = 0.6
                 Not WithinStarlaneJumps 1 Contains And [
                     Planet
@@ -643,7 +643,7 @@ Special
         EffectsGroup     
             scope = Source     
             activation = AND [
-                Not Turn low = 1
+                Turn high = 1
                 Random probability = 0.7
                 Not WithinStarlaneJumps 2 Contains And [
                     Planet
@@ -655,7 +655,7 @@ Special
 
         EffectsGroup     
             scope = Source
-            activation = Not Turn low = 1
+            activation = Turn high = 1
             stackinggroup = "COMPUTRONIUM_STACK"
             effects = Destroy
     ]
@@ -756,7 +756,7 @@ Special
         EffectsGroup     
             scope = Source     
             activation = AND [
-                Not Turn low = 1
+                Turn high = 1
                 Not WithinStarlaneJumps 4 Contains And [
                     Planet
                     OwnedBy AnyEmpire
@@ -767,7 +767,7 @@ Special
 
         EffectsGroup     
             scope = Source
-            activation = Not Turn low = 1
+            activation = Turn high = 1
             stackinggroup = "GAIAN_STACK"
             effects = Destroy
     ]
