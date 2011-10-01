@@ -319,14 +319,10 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_i
 }
 
 const std::string& EffectsGroup::StackingGroup() const
-{
-    return m_stacking_group;
-}
+{ return m_stacking_group; }
 
 const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
-{
-    return m_effects;
-}
+{ return m_effects; }
 
 EffectsGroup::Description EffectsGroup::GetDescription() const
 {
@@ -434,9 +430,7 @@ SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value)
 {}
 
 SetMeter::~SetMeter()
-{
-    delete m_value;
-}
+{ delete m_value; }
 
 void SetMeter::Execute(const ScriptingContext& context) const
 {
@@ -729,9 +723,15 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const
 
 std::string SetEmpireMeter::Description() const
 {
-    std::string empire_str =    ValueRef::ConstantExpr(m_empire_id) ?
-                                    Empires().Lookup(m_empire_id->Eval())->Name() :
-                                    m_empire_id->Description();
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
     std::string value_str =     ValueRef::ConstantExpr(m_value) ?
                                     lexical_cast<std::string>(m_value->Eval()) :
                                     m_value->Description();
@@ -743,9 +743,7 @@ std::string SetEmpireMeter::Description() const
 }
 
 std::string SetEmpireMeter::Dump() const
-{
-    return DumpIndent() + "SetEmpireMeter meter = " + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump();
-}
+{ return DumpIndent() + "SetEmpireMeter meter = " + UserString(m_meter) + " empire = " + m_empire_id->Dump() + " value = " + m_value->Dump(); }
 
 
 ///////////////////////////////////////////////////////////
@@ -785,9 +783,15 @@ void SetEmpireStockpile::Execute(const ScriptingContext& context) const
 
 std::string SetEmpireStockpile::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
     std::string value_str = ValueRef::ConstantExpr(m_value) ?
                                 lexical_cast<std::string>(m_value->Eval()) :
                                 m_value->Description();
@@ -824,9 +828,7 @@ SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id)
 {}
 
 SetEmpireCapital::~SetEmpireCapital()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 void SetEmpireCapital::Execute(const ScriptingContext& context) const
 {
@@ -845,16 +847,20 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const
 
 std::string SetEmpireCapital::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
     return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_CAPITAL")) % empire_str);
 }
 
 std::string SetEmpireCapital::Dump() const
-{
-    return DumpIndent() + "SetEmpireCapital empire = " + m_empire_id->Dump() + "\n";
-}
+{ return DumpIndent() + "SetEmpireCapital empire = " + m_empire_id->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -865,9 +871,7 @@ SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
 {}
 
 SetPlanetType::~SetPlanetType()
-{
-    delete m_type;
-}
+{ delete m_type; }
 
 void SetPlanetType::Execute(const ScriptingContext& context) const
 {
@@ -894,9 +898,7 @@ std::string SetPlanetType::Description() const
 }
 
 std::string SetPlanetType::Dump() const
-{
-    return DumpIndent() + "SetPlanetType type = " + m_type->Dump() + "\n";
-}
+{ return DumpIndent() + "SetPlanetType type = " + m_type->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -907,9 +909,7 @@ SetPlanetSize::SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size) :
 {}
 
 SetPlanetSize::~SetPlanetSize()
-{
-    delete m_size;
-}
+{ delete m_size; }
 
 void SetPlanetSize::Execute(const ScriptingContext& context) const
 {
@@ -934,9 +934,7 @@ std::string SetPlanetSize::Description() const
 }
 
 std::string SetPlanetSize::Dump() const
-{
-    return DumpIndent() + "SetPlanetSize size = " + m_size->Dump() + "\n";
-}
+{ return DumpIndent() + "SetPlanetSize size = " + m_size->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -947,9 +945,7 @@ SetSpecies::SetSpecies(const ValueRef::ValueRefBase<std::string>* species) :
 {}
 
 SetSpecies::~SetSpecies()
-{
-    delete m_species_name;
-}
+{ delete m_species_name; }
 
 void SetSpecies::Execute(const ScriptingContext& context) const
 {
@@ -971,9 +967,7 @@ std::string SetSpecies::Description() const
 }
 
 std::string SetSpecies::Dump() const
-{
-    return DumpIndent() + "SetSpecies name = " + m_species_name->Dump() + "\n";
-}
+{ return DumpIndent() + "SetSpecies name = " + m_species_name->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -984,9 +978,7 @@ SetOwner::SetOwner(const ValueRef::ValueRefBase<int>* empire_id) :
 {}
 
 SetOwner::~SetOwner()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 void SetOwner::Execute(const ScriptingContext& context) const
 {
@@ -997,16 +989,20 @@ void SetOwner::Execute(const ScriptingContext& context) const
 
 std::string SetOwner::Description() const
 {
-    std::string value_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
-    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % value_str);
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
+    return str(FlexibleFormat(UserString("DESC_SET_OWNER")) % empire_str);
 }
 
 std::string SetOwner::Dump() const
-{
-    return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n";
-}
+{ return DumpIndent() + "SetOwner empire = " + m_empire_id->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1083,9 +1079,7 @@ std::string CreatePlanet::Description() const
 }
 
 std::string CreatePlanet::Dump() const
-{
-    return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n";
-}
+{ return DumpIndent() + "CreatePlanet size = " + m_size->Dump() + " type = " + m_type->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1096,9 +1090,7 @@ CreateBuilding::CreateBuilding(const ValueRef::ValueRefBase<std::string>* buildi
 {}
 
 CreateBuilding::~CreateBuilding()
-{
-    delete m_building_type_name;
-}
+{ delete m_building_type_name; }
 
 void CreateBuilding::Execute(const ScriptingContext& context) const
 {
@@ -1146,9 +1138,7 @@ std::string CreateBuilding::Description() const
 }
 
 std::string CreateBuilding::Dump() const
-{
-    return DumpIndent() + "CreateBuilding type = " + m_building_type_name->Dump() + "\n";
-}
+{ return DumpIndent() + "CreateBuilding type = " + m_building_type_name->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1355,14 +1345,10 @@ void Destroy::Execute(const ScriptingContext& context) const
 }
 
 std::string Destroy::Description() const
-{
-    return UserString("DESC_DESTROY");
-}
+{ return UserString("DESC_DESTROY"); }
 
 std::string Destroy::Dump() const
-{
-    return DumpIndent() + "Destroy\n";
-}
+{ return DumpIndent() + "Destroy\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1382,14 +1368,10 @@ void AddSpecial::Execute(const ScriptingContext& context) const
 }
 
 std::string AddSpecial::Description() const
-{
-    return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(m_name));
-}
+{ return str(FlexibleFormat(UserString("DESC_ADD_SPECIAL")) % UserString(m_name)); }
 
 std::string AddSpecial::Dump() const
-{
-    return DumpIndent() + "AddSpecial name = \"" + m_name + "\"\n";
-}
+{ return DumpIndent() + "AddSpecial name = \"" + m_name + "\"\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1409,14 +1391,10 @@ void RemoveSpecial::Execute(const ScriptingContext& context) const
 }
 
 std::string RemoveSpecial::Description() const
-{
-    return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name));
-}
+{ return str(FlexibleFormat(UserString("DESC_REMOVE_SPECIAL")) % UserString(m_name)); }
 
 std::string RemoveSpecial::Dump() const
-{
-    return DumpIndent() + "RemoveSpecial name = \"" + m_name + "\"\n";
-}
+{ return DumpIndent() + "RemoveSpecial name = \"" + m_name + "\"\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1427,9 +1405,7 @@ AddStarlanes::AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_c
 {}
 
 AddStarlanes::~AddStarlanes()
-{
-    delete m_other_lane_endpoint_condition;
-}
+{ delete m_other_lane_endpoint_condition; }
 
 void AddStarlanes::Execute(const ScriptingContext& context) const
 {
@@ -1492,9 +1468,7 @@ std::string AddStarlanes::Description() const
 }
 
 std::string AddStarlanes::Dump() const
-{
-    return DumpIndent() + "AddStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n";
-}
+{ return DumpIndent() + "AddStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1505,9 +1479,7 @@ RemoveStarlanes::RemoveStarlanes(const Condition::ConditionBase* other_lane_endp
 {}
 
 RemoveStarlanes::~RemoveStarlanes()
-{
-    delete m_other_lane_endpoint_condition;
-}
+{ delete m_other_lane_endpoint_condition; }
 
 void RemoveStarlanes::Execute(const ScriptingContext& context) const
 {
@@ -1570,9 +1542,7 @@ std::string RemoveStarlanes::Description() const
 }
 
 std::string RemoveStarlanes::Dump() const
-{
-    return DumpIndent() + "RemoveStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n";
-}
+{ return DumpIndent() + "RemoveStarlanes endpoints = " + m_other_lane_endpoint_condition->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1583,9 +1553,7 @@ SetStarType::SetStarType(const ValueRef::ValueRefBase<StarType>* type) :
 {}
 
 SetStarType::~SetStarType()
-{
-    delete m_type;
-}
+{ delete m_type; }
 
 void SetStarType::Execute(const ScriptingContext& context) const
 {
@@ -1608,9 +1576,7 @@ std::string SetStarType::Description() const
 }
 
 std::string SetStarType::Dump() const
-{
-    return DumpIndent() + "SetStarType type = " + m_type->Dump() + "\n";
-}
+{ return DumpIndent() + "SetStarType type = " + m_type->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1621,9 +1587,7 @@ MoveTo::MoveTo(const Condition::ConditionBase* location_condition) :
 {}
 
 MoveTo::~MoveTo()
-{
-    delete m_location_condition;
-}
+{ delete m_location_condition; }
 
 void MoveTo::Execute(const ScriptingContext& context) const
 {
@@ -1769,9 +1733,7 @@ std::string MoveTo::Description() const
 }
 
 std::string MoveTo::Dump() const
-{
-    return DumpIndent() + "MoveTo destination = " + m_location_condition->Dump() + "\n";
-}
+{ return DumpIndent() + "MoveTo destination = " + m_location_condition->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1782,9 +1744,7 @@ SetDestination::SetDestination(const Condition::ConditionBase* location_conditio
 {}
 
 SetDestination::~SetDestination()
-{
-    delete m_location_condition;
-}
+{ delete m_location_condition; }
 
 void SetDestination::Execute(const ScriptingContext& context) const
 {
@@ -1854,9 +1814,7 @@ std::string SetDestination::Description() const
 }
 
 std::string SetDestination::Dump() const
-{
-    return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n";
-}
+{ return DumpIndent() + "SetDestination destination = " + m_location_condition->Dump() + "\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1876,14 +1834,10 @@ void Victory::Execute(const ScriptingContext& context) const
 }
 
 std::string Victory::Description() const
-{
-    return UserString("DESC_VICTORY");
-}
+{ return UserString("DESC_VICTORY"); }
 
 std::string Victory::Dump() const
-{
-    return DumpIndent() + "Victory reason = \"" + m_reason_string + "\"\n";
-}
+{ return DumpIndent() + "Victory reason = \"" + m_reason_string + "\"\n"; }
 
 
 ///////////////////////////////////////////////////////////
@@ -1897,9 +1851,7 @@ SetTechAvailability::SetTechAvailability(const std::string& tech_name, const Val
 {}
 
 SetTechAvailability::~SetTechAvailability()
-{
-    delete m_empire_id;
-}
+{ delete m_empire_id; }
 
 void SetTechAvailability::Execute(const ScriptingContext& context) const
 {
@@ -1930,10 +1882,16 @@ void SetTechAvailability::Execute(const ScriptingContext& context) const
 
 std::string SetTechAvailability::Description() const
 {
-    std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % m_tech_name);
-    std::string empire_str = ValueRef::ConstantExpr(m_empire_id) ?
-                                Empires().Lookup(m_empire_id->Eval())->Name() :
-                                m_empire_id->Description();
+    std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % UserString(m_tech_name));
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
     return str(FlexibleFormat(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
                % affected
                % empire_str);
@@ -2020,26 +1978,43 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const
 
 std::string GenerateSitRepMessage::Description() const
 {
-    std::string empire_str = ValueRef::ConstantExpr(m_recipient_empire_id) ?
-                                Empires().Lookup(m_recipient_empire_id->Eval())->Name() :
-                                m_recipient_empire_id->Description();
+    std::string empire_str;
+    if (m_recipient_empire_id) {
+        int empire_id = ALL_EMPIRES;
+        if (ValueRef::ConstantExpr(m_recipient_empire_id))
+            empire_id = m_recipient_empire_id->Eval();
+        if (const Empire* empire = Empires().Lookup(empire_id))
+            empire_str = empire->Name();
+        else
+            empire_str = m_recipient_empire_id->Description();
+    }
     return str(FlexibleFormat(UserString("DESC_GENERATE_SITREP")) % empire_str);
 }
 
 std::string GenerateSitRepMessage::Dump() const
 {
     std::string retval = DumpIndent();
-    retval += "GenerateSitRepMessage message = \"" + m_message_string + "\""
-            + " parameters = ";
+    retval += "GenerateSitRepMessage message = \"" + m_message_string + "\"";
 
     if (m_message_parameters.size() == 1) {
-        retval += "tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
-    } else {
-        retval += "[ ";
+        retval += "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
+    } else if (!m_message_parameters.empty()) {
+        retval += "parameters = [ ";
         for (unsigned int i = 0; i < m_message_parameters.size(); ++i) {
-            retval += " tag = " + m_message_parameters[i].first + " data = " + m_message_parameters[i].second->Dump() + " ";
+            retval += " tag = " + m_message_parameters[i].first
+                   + " data = " + m_message_parameters[i].second->Dump()
+                   + " ";
         }
         retval += "]\n";
+    }
+
+    retval += " affiliation = ";
+    switch (m_affiliation) {
+    case AFFIL_SELF:    retval += "TheEmpire";  break;
+    case AFFIL_ENEMY:   retval += "EnemyOf";    break;
+    case AFFIL_ALLY:    retval += "AllyOf";     break;
+    case AFFIL_ANY:     retval += "AnyEmpire";  break;
+    default:            retval += "?";          break;
     }
 
     retval += " empire = " + m_recipient_empire_id->Dump() + "\n";
