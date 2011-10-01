@@ -154,13 +154,13 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -248,7 +248,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -264,11 +264,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -276,7 +276,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -426,22 +426,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -619,7 +619,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -635,11 +635,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -647,7 +647,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -797,22 +797,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -990,7 +990,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -1006,11 +1006,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -1018,7 +1018,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -1168,22 +1168,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -1361,7 +1361,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -1377,11 +1377,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -1389,7 +1389,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -1533,17 +1533,17 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
@@ -1711,7 +1711,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -1727,11 +1727,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -1739,7 +1739,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -1889,22 +1889,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -2081,7 +2081,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -2097,11 +2097,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -2109,7 +2109,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -2259,22 +2259,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -2590,12 +2590,12 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -2868,12 +2868,12 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -2962,7 +2962,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -2978,11 +2978,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -2990,7 +2990,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -3140,22 +3140,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -3330,7 +3330,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -3475,12 +3475,12 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
@@ -3567,7 +3567,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -3583,11 +3583,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -3595,7 +3595,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -3745,22 +3745,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -3937,7 +3937,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -3953,11 +3953,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -3965,7 +3965,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -4115,22 +4115,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -4307,7 +4307,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -4323,11 +4323,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -4335,7 +4335,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -4485,22 +4485,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -4677,7 +4677,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -4693,11 +4693,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -4705,7 +4705,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -4855,22 +4855,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -5047,7 +5047,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -5063,11 +5063,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -5075,7 +5075,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -5225,22 +5225,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -5550,7 +5550,7 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
@@ -5627,7 +5627,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -5643,11 +5643,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -5655,7 +5655,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -5805,22 +5805,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -5997,7 +5997,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -6013,11 +6013,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -6025,7 +6025,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -6175,22 +6175,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -6368,7 +6368,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -6384,11 +6384,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -6396,7 +6396,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -6635,22 +6635,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -6823,7 +6823,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -6932,7 +6932,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -6948,11 +6948,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -6960,7 +6960,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -7199,22 +7199,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -7387,7 +7387,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -7496,7 +7496,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -7512,11 +7512,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -7524,7 +7524,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -7763,22 +7763,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -7951,7 +7951,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -8060,7 +8060,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -8076,11 +8076,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -8088,7 +8088,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -8327,22 +8327,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -8515,7 +8515,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -8624,7 +8624,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -8640,11 +8640,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -8652,7 +8652,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -8891,22 +8891,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -9079,7 +9079,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -9188,7 +9188,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -9204,11 +9204,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -9216,7 +9216,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -9455,22 +9455,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -9643,7 +9643,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -9752,7 +9752,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -9768,11 +9768,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -9780,7 +9780,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -10019,22 +10019,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -10207,7 +10207,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -10316,7 +10316,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -10332,11 +10332,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -10344,7 +10344,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -10583,22 +10583,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -10771,7 +10771,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -10880,7 +10880,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -10896,11 +10896,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -10908,7 +10908,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -11147,22 +11147,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -11335,7 +11335,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -11444,7 +11444,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -11460,11 +11460,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -11472,7 +11472,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -11716,22 +11716,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
@@ -11904,7 +11904,7 @@ Species
                 PopulationCenter
                 OwnedBy EnemyOf Source.Owner
                 WithinStarlaneJumps 4 Source
-                Not Number low = 1 high = 999 And [
+                Not Number low = 1 And [
                     Building "BLD_GENOME_BANK"
                     OwnedBy TheEmpire RootCandidate.Owner
                 ]
@@ -12013,7 +12013,7 @@ Species
             location = Or [
                 And [
                     Or [
-                        TargetPopulation low = 1 high = 999
+                        TargetPopulation low = 1
                         OwnerHasTech "PRO_ORBITAL_MINE"
                     ]
                     Not Planet type = [Asteroids GasGiant]
@@ -12029,11 +12029,11 @@ Species
             name = "FOCUS_HEAVY_MINING"
             description = "FOCUS_HEAVY_MINING_DESC"
             location = And [
-                Number low = 1 high = 999 And [
+                Number low = 1 And [
                     Building "BLD_HEAVY_MINE_PROCESSOR"
                     OwnedBy TheEmpire Source.Owner
                 ]
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             graphic = "icons/building/heavy_mining_processor.png"
 
@@ -12041,7 +12041,7 @@ Species
             name = "FOCUS_INDUSTRY"
             description = "FOCUS_INDUSTRY_DESC"
             location = Or [
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
                 Contains Building "BLD_GAS_GIANT_GEN"
             ]
             graphic = "icons/focus/industry.png"
@@ -12191,22 +12191,22 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2 high = 999
+            activation = Farming low = RootCandidate.TargetFarming + 2
             effects = SetFarming Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2 high = 999
+            activation = Mining low = RootCandidate.TargetMining + 2
             effects = SetMining Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2 high = 999
+            activation = Industry low = RootCandidate.TargetIndustry + 2
             effects = SetIndustry Value - 1
 
         EffectsGroup
             scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2 high = 999
+            activation = Research low = RootCandidate.TargetResearch + 2
             effects = SetResearch Value - 1
 
         EffectsGroup
