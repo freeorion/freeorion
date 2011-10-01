@@ -25,6 +25,8 @@ ParamLabel jumps_label("jumps");
 ParamLabel sort_key_label("sortby");
 ParamLabel design_label("design");
 
+ValueRef::ValueRefBase<double>* const NULL_DOUBLE_REF = 0;
+
 rule<Scanner, ConditionClosure::context_t> condition1_p;
 
 namespace Condition {
@@ -287,8 +289,10 @@ namespace {
            | str_p("detection")[meter_value.meter =         val(METER_DETECTION)]
            | str_p("battlespeed")[meter_value.meter =       val(METER_BATTLE_SPEED)]
            | str_p("starlanespeed")[meter_value.meter =     val(METER_STARLANE_SPEED)])
-             >> low_label >> double_expr_p[meter_value.low = arg1]
-             >> high_label >> double_expr_p[meter_value.high = arg1])
+             >> (low_label >>       double_expr_p[  meter_value.low = arg1]
+                 |                  eps_p[          meter_value.low = val(NULL_DOUBLE_REF)])
+             >> (high_label >>      double_expr_p[  meter_value.high = arg1]
+                 |                  eps_p[          meter_value.high = val(NULL_DOUBLE_REF)]))
             [meter_value.this_ = new_<Condition::MeterValue>(meter_value.meter, meter_value.low, meter_value.high)];
 
         and_ =

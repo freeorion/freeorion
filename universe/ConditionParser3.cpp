@@ -137,26 +137,26 @@ namespace {
 
         number =
             (str_p("number")
-             >> ((low_label >>      int_expr_p[ number.int_ref_1 = arg1])
+             >> (low_label >>       int_expr_p[ number.int_ref_1 = arg1]
                  |                  eps_p[      number.int_ref_1 = val(NULL_INT_REF)])
-             >> ((high_label >>     int_expr_p[ number.int_ref_2 = arg1])
+             >> (high_label >>      int_expr_p[ number.int_ref_2 = arg1]
                  |                  eps_p[      number.int_ref_2 = val(NULL_INT_REF)])
              >> condition_label >>  condition_p[number.condition = arg1])
             [number.this_ = new_<Condition::Number>(number.int_ref_1, number.int_ref_2, number.condition)];
 
         turn =
             (str_p("turn")
-             >> ((low_label >>      int_expr_p[ turn.int_ref_1 = arg1])
+             >> (low_label >>       int_expr_p[ turn.int_ref_1 = arg1]
                  |                  eps_p[      turn.int_ref_1 = val(NULL_INT_REF)])
-             >> ((high_label >>     int_expr_p[ turn.int_ref_2 = arg1])
+             >> (high_label >>      int_expr_p[ turn.int_ref_2 = arg1]
                  |                  eps_p[      turn.int_ref_2 = val(NULL_INT_REF)]))
             [turn.this_ = new_<Condition::Turn>(turn.int_ref_1, turn.int_ref_2)];
 
         created_on_turn =
             (str_p("createdonturn")
-             >> ((low_label >>      int_expr_p[ created_on_turn.int_ref_1 = arg1])
+             >> (low_label >>       int_expr_p[ created_on_turn.int_ref_1 = arg1]
                  |                  eps_p[      created_on_turn.int_ref_1 = val(NULL_INT_REF)])
-             >> ((high_label >>     int_expr_p[ created_on_turn.int_ref_2 = arg1])
+             >> (high_label >>      int_expr_p[ created_on_turn.int_ref_2 = arg1]
                  |                  eps_p[      created_on_turn.int_ref_2 = val(NULL_INT_REF)]))
             [created_on_turn.this_ = new_<Condition::CreatedOnTurn>(created_on_turn.int_ref_1, created_on_turn.int_ref_2)];
 

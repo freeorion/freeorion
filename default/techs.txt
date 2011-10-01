@@ -448,7 +448,7 @@ Tech
                 WithinStarlaneJumps 1 And [
                     OwnedBy TheEmpire Source.Owner
                     Planet
-                    TargetPopulation low = 1 high = 999
+                    TargetPopulation low = 1
                     Random .1
                 ]
                 VisibleToEmpire Source.Owner
@@ -567,7 +567,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 Planet
-                Not TargetPopulation low = 1 high = 999
+                Not TargetPopulation low = 1
             ]
             effects = SetTargetPopulation Value + 0.1
     graphic = "icons/tech/habitation_domes.png"
@@ -1999,7 +1999,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/orbital_construction.png"
@@ -2160,7 +2160,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = RootCandidate.TargetFarming + 5 high = 999
+                Farming low = RootCandidate.TargetFarming + 5
             ]
             effects = SetFarming Value - 3
 
@@ -2168,7 +2168,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = RootCandidate.TargetMining + 5 high = 999
+                Mining low = RootCandidate.TargetMining + 5
             ]
             effects = SetMining Value - 3
 
@@ -2176,7 +2176,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = RootCandidate.TargetIndustry + 5 high = 999
+                Industry low = RootCandidate.TargetIndustry + 5
             ]
             effects = SetIndustry Value - 3
 
@@ -2184,7 +2184,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = RootCandidate.TargetResearch + 5 high = 999
+                Research low = RootCandidate.TargetResearch + 5
             ]
             effects = SetResearch Value - 3
 
@@ -2323,7 +2323,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             effects = SetTargetConstruction Value + 20
     graphic = ""
@@ -2358,7 +2358,7 @@ Tech
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/controlled_gravity_wells.png"

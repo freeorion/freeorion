@@ -3703,14 +3703,15 @@ namespace {
 
 void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
+    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
         const UniverseObject* no_object(0);
         ScriptingContext local_context(parent_context, no_object);
-        double low = m_low->Eval(local_context);
-        double high = m_high->Eval(local_context);
+        double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+        double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
@@ -3731,19 +3732,21 @@ void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectS
 }
 
 bool Condition::MeterValue::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
 
 bool Condition::MeterValue::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
 std::string Condition::MeterValue::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
-                            m_high->Description();
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
     std::string description_str = "DESC_METER_VALUE_CURRENT";
     if (negated)
         description_str += "_NOT";
@@ -3799,7 +3802,11 @@ std::string Condition::MeterValue::Dump() const
     case METER_FIGHTER_WEAPON_RANGE:retval += "FighterWeaponRange"; break;
     default: retval += "?Meter?"; break;
     }
-    retval += " low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
     return retval;
 }
 
@@ -3810,9 +3817,8 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const
         Logger().errorStream() << "MeterValue::Match passed no candidate object";
         return false;
     }
-
-    double low = m_low->Eval(local_context);
-    double high = m_high->Eval(local_context);
+    double low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
+    double high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
     return MeterValueSimpleMatch(candidate, low, high, m_meter);
 }
 

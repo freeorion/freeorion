@@ -3349,6 +3349,9 @@ building type name
 DESC_VAR_FOCUS
 focus
 
+DESC_VAR_LASTTURNBATTLEHERE
+last turn a battle occured here
+
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
 %1%

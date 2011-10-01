@@ -27,7 +27,7 @@ BuildingType
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     captureresult = destroy
     effectsgroups = [
@@ -54,7 +54,7 @@ BuildingType
                 OwnedBy TheEmpire Source.ProducedByEmpireID
                 Contains Source
             ]
-            activation = Not Number low = 1 high = 999 And [
+            activation = Not Number low = 1 And [
                 Building "BLD_MEGALITH"
                 OwnedBy TheEmpire Source.Owner
             ]
@@ -110,7 +110,7 @@ BuildingType
                 Ship
                 InSystem id = Source.SystemID
                 OwnedBy Source.Owner
-                Structure low = 0 high = LocalCandidate.MaxStructure
+                Structure high = LocalCandidate.MaxStructure
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 2    // there cannot have been a battle here on previous turn, so current turn must be >= last battle turn + 2
             effects = [
@@ -502,7 +502,7 @@ BuildingType
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     graphic = "icons/building/heavy_mining_processor.png"
 
@@ -513,7 +513,7 @@ BuildingType
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
@@ -558,7 +558,7 @@ BuildingType
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
@@ -579,7 +579,7 @@ BuildingType
         EffectsGroup
             scope = And [
                 OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1 high = 999
+                TargetPopulation low = 1
             ]
             activation = Source
             stackinggroup = "BLD_MEGALITH_EFFECT"
@@ -594,7 +594,7 @@ BuildingType
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
@@ -658,7 +658,7 @@ BuildingType
     buildtime = 30
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
@@ -687,7 +687,7 @@ BuildingType
     buildtime = 5
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups =
         EffectsGroup
@@ -747,7 +747,7 @@ BuildingType
     buildtime = 10
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups = [
         EffectsGroup
@@ -864,7 +864,7 @@ BuildingType
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
         Not Planet environment = [Uninhabitable Good]
         ]
     effectsgroups = [
@@ -919,7 +919,7 @@ BuildingType
     buildtime = 1
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     graphic = "icons/building/neutronium-forge.png"
 
@@ -966,7 +966,7 @@ BuildingType
     buildtime = 25
     location = And [
         OwnedBy TheEmpire Source.Owner
-        TargetPopulation low = 1 high = 999
+        TargetPopulation low = 1
     ]
     effectsgroups =
         EffectsGroup
@@ -1224,7 +1224,7 @@ BuildingType
     buildcost = 450
     buildtime = 1
     location = And [
-        Population low = 3 high = 999
+        Population low = 3
         OwnedBy TheEmpire Source.Owner
     ]
     effectsgroups = [
