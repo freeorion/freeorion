@@ -110,11 +110,11 @@ BuildingType
                 Ship
                 InSystem id = Source.SystemID
                 OwnedBy Source.Owner
-                Structure high = LocalCandidate.MaxStructure
+                Structure high = LocalCandidate.MaxStructure - 0.001
             ]
             activation = Turn low = Source.System.LastTurnBattleHere + 2    // there cannot have been a battle here on previous turn, so current turn must be >= last battle turn + 2
             effects = [
-                SetStructure Target.MaxStructure
+                SetStructure Value + 10
                 GenerateSitRepMessage
                     message = "EFFECT_DRYDOCK_SHIP_REPAIR"
                     parameters = [
