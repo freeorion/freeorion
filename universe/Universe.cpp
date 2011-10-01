@@ -98,8 +98,7 @@ namespace {
         short m_value;
     };
 
-    short get(const constant_property& pmap, const boost::detail::edge_desc_impl<boost::undirected_tag, unsigned long>&) { return pmap.m_value; }
-
+    short get(const constant_property& pmap, const boost::detail::edge_desc_impl<boost::undirected_tag, unsigned int>&) { return pmap.m_value; }
 }
 
 namespace boost {
@@ -109,7 +108,6 @@ namespace boost {
         typedef boost::detail::edge_desc_impl<boost::undirected_tag, unsigned long> key_type;
         typedef readable_property_map_tag category;
     };
-
 }
 
 namespace SystemPathing {
@@ -131,7 +129,7 @@ namespace SystemPathing {
         }
         const int destination_system;
     };
-    
+
     /** Complete BFS visitor implementing:
       *  - predecessor recording
       *  - short-circuit exit on found match
