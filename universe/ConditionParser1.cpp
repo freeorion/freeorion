@@ -162,11 +162,13 @@ namespace {
 
         owned_by =
             (str_p("ownedby")
-             >> affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
+             >> (affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
+                 |                    eps_p[owned_by.affiliation = val(AFFIL_SELF)])
              >> empire_label >> int_expr_p[owned_by.empire = arg1]
              [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.empire, owned_by.affiliation)])
             | (str_p("ownedby")
-              >> affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
+               >> (affiliation_label >> affiliation_type_p[owned_by.affiliation = arg1]
+                   |                    eps_p[owned_by.affiliation = val(AFFIL_SELF)])
               [owned_by.this_ = new_<Condition::EmpireAffiliation>(owned_by.affiliation)]);
 
         source =

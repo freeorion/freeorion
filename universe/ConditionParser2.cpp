@@ -117,11 +117,11 @@ namespace {
 
         design_has_part_class =
             (str_p("designhaspartclass")
-             >> low_label >>    int_expr_p[     design_has_part_class.int_ref_2 = arg1]
-             >> high_label >>   int_expr_p[     design_has_part_class.int_ref_1 = arg1]
+             >> low_label >>    int_expr_p[     design_has_part_class.int_ref_1 = arg1]
+             >> high_label >>   int_expr_p[     design_has_part_class.int_ref_2 = arg1]
              >> class_label >>  part_class_p[   design_has_part_class.part_class = arg1])
-            [design_has_part_class.this_ = new_<Condition::DesignHasPartClass>(design_has_part_class.int_ref_2,
-                                                                               design_has_part_class.int_ref_1,
+            [design_has_part_class.this_ = new_<Condition::DesignHasPartClass>(design_has_part_class.int_ref_1,
+                                                                               design_has_part_class.int_ref_2,
                                                                                design_has_part_class.part_class)];
 
         predefined_design =

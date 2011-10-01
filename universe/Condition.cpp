@@ -91,12 +91,14 @@ Condition::Number::~Number()
 
 std::string Condition::Number::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                                boost::lexical_cast<std::string>(m_high->Eval()) :
-                                m_high->Description();
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : "0");
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(INT_MAX));
     std::string description_str = "DESC_NUMBER";
     if (negated)
         description_str += "_NOT";
@@ -108,9 +110,14 @@ std::string Condition::Number::Description(bool negated/* = false*/) const
 
 std::string Condition::Number::Dump() const
 {
-    std::string retval = DumpIndent() + "Number low = " + m_low->Dump() + "Number high = " + m_high->Dump() + " condition =\n";
+    std::string retval = DumpIndent() + "Number";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += " condition =\n";
     ++g_indent;
-    retval += m_condition->Dump();
+        retval += m_condition->Dump();
     --g_indent;
     return retval;
 }
@@ -125,9 +132,9 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     ScriptingContext local_context(parent_context, no_object);
 
     bool in_range = false;
-    if (!(m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant())) {
+    if (!((!m_low || m_low->LocalCandidateInvariant()) && (!m_high  || m_high->LocalCandidateInvariant()))) {
         Logger().errorStream() << "Condition::Number::Eval has local candidate-dependent ValueRefs, but no valid local candidate!";
-    } else if (!local_context.condition_root_candidate && !(m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant())) {
+    } else if (!local_context.condition_root_candidate && !((!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()))) {
         Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
     } else {
         // get set of all UniverseObjects that satisfy m_condition
@@ -141,8 +148,8 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
 
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
         int matched = condition_targets.size();
-        int low = m_low->Eval(local_context);
-        int high = m_high->Eval(local_context);
+        int low = (m_low ? m_low->Eval(local_context) : 0);
+        int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
         in_range = (low <= matched && matched < high);
     }
 
@@ -159,10 +166,10 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
 }
 
 bool Condition::Number::RootCandidateInvariant() const
-{ return m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant() && m_condition->RootCandidateInvariant(); }
+{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()) && m_condition->RootCandidateInvariant(); }
 
 bool Condition::Number::TargetInvariant() const
-{ return m_low->TargetInvariant() && m_high->TargetInvariant() && m_condition->TargetInvariant(); }
+{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()) && m_condition->TargetInvariant(); }
 
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
@@ -188,7 +195,8 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
     // condition's candidates will be the root candidates, and this condition's
     // parameters must be root candidate invariant or else must be evaluated
     // per-candidate
-    bool simple_eval_safe = (m_low->LocalCandidateInvariant() && m_high->LocalCandidateInvariant() &&
+    bool simple_eval_safe = ((!m_low || m_low->LocalCandidateInvariant()) &&
+                             (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate turn limits once, check range, and use result to match or
@@ -196,8 +204,8 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
         // from object to object, and neither do the range limits.
         const UniverseObject* no_object(0);
         ScriptingContext local_context(parent_context, no_object);
-        int low =  std::max(0, m_low->Eval(local_context));
-        int high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+        int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+        int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
         int turn = CurrentTurn();
         bool match = (low <= turn && turn < high);
 
@@ -217,19 +225,21 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
 }
 
 bool Condition::Turn::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+{ return (!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant()); }
 
 bool Condition::Turn::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+{ return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
 std::string Condition::Turn::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
-                            m_high->Description();
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : "0");
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
     std::string description_str = "DESC_TURN";
     if (negated)
         description_str += "_NOT";
@@ -240,15 +250,20 @@ std::string Condition::Turn::Description(bool negated/* = false*/) const
 
 std::string Condition::Turn::Dump() const
 {
-    return DumpIndent() + "Turn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n";
+    std::string retval = DumpIndent() + "Turn";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
+    return retval;
 }
 
 bool Condition::Turn::Match(const ScriptingContext& local_context) const
 {
-    double low = std::max(0, m_low->Eval(local_context));
-    double high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
+    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+    double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
-
     return (low <= turn && turn < high);
 }
 
@@ -1645,19 +1660,21 @@ void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, Obje
 }
 
 bool Condition::CreatedOnTurn::RootCandidateInvariant() const
-{ return (m_low->RootCandidateInvariant() && m_high->RootCandidateInvariant()); }
+{ return ((!m_low || m_low->RootCandidateInvariant()) && (!m_high || m_high->RootCandidateInvariant())); }
 
 bool Condition::CreatedOnTurn::TargetInvariant() const
-{ return (m_low->TargetInvariant() && m_high->TargetInvariant()); }
+{ return ((!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant())); }
 
 std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) const
 {
-    std::string low_str = ValueRef::ConstantExpr(m_low) ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
-                            m_low->Description();
-    std::string high_str = ValueRef::ConstantExpr(m_high) ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
-                            m_high->Description();
+    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
+                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    m_low->Description())
+                                 : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
+    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
+                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      m_high->Description())
+                                   : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
     std::string description_str = "DESC_CREATED_ON_TURN";
     if (negated)
         description_str += "_NOT";
@@ -1667,7 +1684,15 @@ std::string Condition::CreatedOnTurn::Description(bool negated/* = false*/) cons
 }
 
 std::string Condition::CreatedOnTurn::Dump() const
-{ return DumpIndent() + "CreatedOnTurn low = " + m_low->Dump() + " high = " + m_high->Dump() + "\n"; }
+{
+    std::string retval = DumpIndent() + "CreatedOnTurn";
+    if (m_low)
+        retval += " low = " + m_low->Dump();
+    if (m_high)
+        retval += " high = " + m_high->Dump();
+    retval += "\n";
+    return retval;
+}
 
 bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) const
 {
@@ -1676,10 +1701,8 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
         Logger().errorStream() << "CreatedOnTurn::Match passed no candidate object";
         return false;
     }
-
-    double low = std::max(0, m_low->Eval(local_context));
-    double high = std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN);
-
+    double low = (m_low ? std::max(0, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
+    double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     return CreatedOnTurnSimpleMatch(candidate, low, high);
 }
 

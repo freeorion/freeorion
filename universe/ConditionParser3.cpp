@@ -18,6 +18,8 @@ extern ParamLabel type_label;
 extern ParamLabel probability_label;
 extern ParamLabel empire_label;
 
+ValueRef::ValueRefBase<int>* const NULL_INT_REF = 0;
+
 rule<Scanner, ConditionClosure::context_t> condition3_p;
 
 namespace {
@@ -129,43 +131,49 @@ namespace {
 
         within_starlane_jumps =
             (str_p("withinstarlanejumps")
-             >> jumps_label >> int_expr_p[within_starlane_jumps.int_ref = arg1]
-             >> condition_label >> condition_p[within_starlane_jumps.condition = arg1])
+             >> jumps_label >>      int_expr_p[ within_starlane_jumps.int_ref = arg1]
+             >> condition_label >>  condition_p[within_starlane_jumps.condition = arg1])
             [within_starlane_jumps.this_ = new_<Condition::WithinStarlaneJumps>(within_starlane_jumps.int_ref, within_starlane_jumps.condition)];
 
         number =
             (str_p("number")
-             >> low_label >> int_expr_p[number.int_ref_2 = arg1]
-             >> high_label >> int_expr_p[number.int_ref_1 = arg1]
-             >> condition_label >> condition_p[number.condition = arg1])
-            [number.this_ = new_<Condition::Number>(number.int_ref_2, number.int_ref_1, number.condition)];
+             >> ((low_label >>      int_expr_p[ number.int_ref_1 = arg1])
+                 |                  eps_p[      number.int_ref_1 = val(NULL_INT_REF)])
+             >> ((high_label >>     int_expr_p[ number.int_ref_2 = arg1])
+                 |                  eps_p[      number.int_ref_2 = val(NULL_INT_REF)])
+             >> condition_label >>  condition_p[number.condition = arg1])
+            [number.this_ = new_<Condition::Number>(number.int_ref_1, number.int_ref_2, number.condition)];
 
         turn =
             (str_p("turn")
-             >> low_label >> int_expr_p[turn.int_ref_2 = arg1]
-             >> high_label >> int_expr_p[turn.int_ref_1 = arg1])
-            [turn.this_ = new_<Condition::Turn>(turn.int_ref_2, turn.int_ref_1)];
+             >> ((low_label >>      int_expr_p[ turn.int_ref_1 = arg1])
+                 |                  eps_p[      turn.int_ref_1 = val(NULL_INT_REF)])
+             >> ((high_label >>     int_expr_p[ turn.int_ref_2 = arg1])
+                 |                  eps_p[      turn.int_ref_2 = val(NULL_INT_REF)]))
+            [turn.this_ = new_<Condition::Turn>(turn.int_ref_1, turn.int_ref_2)];
 
         created_on_turn =
             (str_p("createdonturn")
-             >> low_label >> int_expr_p[created_on_turn.int_ref_2 = arg1]
-             >> high_label >> int_expr_p[created_on_turn.int_ref_1 = arg1])
-            [created_on_turn.this_ = new_<Condition::CreatedOnTurn>(created_on_turn.int_ref_2, created_on_turn.int_ref_1)];
+             >> ((low_label >>      int_expr_p[ created_on_turn.int_ref_1 = arg1])
+                 |                  eps_p[      created_on_turn.int_ref_1 = val(NULL_INT_REF)])
+             >> ((high_label >>     int_expr_p[ created_on_turn.int_ref_2 = arg1])
+                 |                  eps_p[      created_on_turn.int_ref_2 = val(NULL_INT_REF)]))
+            [created_on_turn.this_ = new_<Condition::CreatedOnTurn>(created_on_turn.int_ref_1, created_on_turn.int_ref_2)];
 
         number_of =
             ((str_p("numberof")
-              >> number_label >> int_expr_p[number_of.number = arg1]
+              >> number_label >>    int_expr_p[ number_of.number = arg1]
               >> condition_label >> condition_p[number_of.condition = arg1])
              [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.condition)])
 
-            | ( ((str_p("maximumnumberof")[number_of.sorting_method =    val(Condition::SORT_MAX)]
+            | ( ((str_p("maximumnumberof")[number_of.sorting_method =   val(Condition::SORT_MAX)]
                  | str_p("minimumnumberof")[number_of.sorting_method =  val(Condition::SORT_MIN)]
                  | str_p("modenumberof")[number_of.sorting_method =     val(Condition::SORT_MODE)])
-                 >> number_label >> int_expr_p[number_of.number = arg1]
-                 >> sort_key_label >> double_expr_p[number_of.sort_key = arg1]
-                 >> condition_label >> condition_p[number_of.condition = arg1])
+                 >> number_label >>     int_expr_p[number_of.number = arg1]
+                 >> sort_key_label >>   double_expr_p[number_of.sort_key = arg1]
+                 >> condition_label >>  condition_p[number_of.condition = arg1])
                 [number_of.this_ = new_<Condition::SortedNumberOf>(number_of.number, number_of.sort_key,
-                                                                  number_of.sorting_method, number_of.condition)]);
+                                                                   number_of.sorting_method, number_of.condition)]);
 
         contains =
             (str_p("contains")
