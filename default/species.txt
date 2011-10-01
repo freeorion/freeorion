@@ -19,7 +19,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -291,7 +291,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -662,7 +662,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -1033,7 +1033,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -1398,7 +1398,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -1754,7 +1754,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -2124,7 +2124,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -2455,7 +2455,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -2733,7 +2733,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -3005,7 +3005,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -3340,7 +3340,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -3610,7 +3610,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -3980,7 +3980,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -4350,7 +4350,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -4720,7 +4720,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -5090,7 +5090,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -5415,7 +5415,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -5670,7 +5670,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -6040,7 +6040,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -6500,7 +6500,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -7064,7 +7064,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -7628,7 +7628,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -8192,7 +8192,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -8756,7 +8756,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -9320,7 +9320,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -9884,7 +9884,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -10448,7 +10448,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -11012,7 +11012,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -11581,7 +11581,7 @@ Species
     
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup
@@ -12056,7 +12056,7 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health low = 0 high = RootCandidate.TargetHealth - 3
+            activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
 
         EffectsGroup

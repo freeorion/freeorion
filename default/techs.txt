@@ -2096,7 +2096,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Farming low = 0 high = RootCandidate.TargetFarming - 3
+                Farming high = RootCandidate.TargetFarming - 3
             ]
             effects = SetFarming Value + 2
 
@@ -2104,7 +2104,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Mining low = 0 high = RootCandidate.TargetMining - 3
+                Mining high = RootCandidate.TargetMining - 3
             ]
             effects = SetMining Value + 2
 
@@ -2112,7 +2112,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Industry low = 0 high = RootCandidate.TargetIndustry - 3
+                Industry high = RootCandidate.TargetIndustry - 3
             ]
             effects = SetIndustry Value + 2
 
@@ -2120,7 +2120,7 @@ Tech
             scope = And [
                 OwnedBy TheEmpire Source.Owner
                 ProductionCenter
-                Research low = 0 high = RootCandidate.TargetResearch - 3
+                Research high = RootCandidate.TargetResearch - 3
             ]
             effects = SetResearch Value + 2
 

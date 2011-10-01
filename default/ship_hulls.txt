@@ -1605,7 +1605,7 @@ Hull
                 System
                 Star type = [Blue White Yellow Orange Red]
                 Contains Source
-                Not Number low = 2 high = 9999 condition = And [
+                Not Number low = 2 condition = And [
                     Monster
                     ContainedBy And [
                         System
@@ -1635,7 +1635,7 @@ Hull
     effectsgroups = [
         EffectsGroup     
             scope = Source     
-            activation = Turn low = 0 high = 2
+            activation = Turn high = 2
             effects = [
                 CreateShip "SM_TREE"
                 Destroy
@@ -1767,7 +1767,7 @@ Hull
     effectsgroups = [
         EffectsGroup     
         	scope = Source     
-        	activation = Not Turn low = 1 high = 99999  
+        	activation = Not Turn low = 1  
     		effects = [   
                 CreateShip "SM_DRONE"
                 CreateShip "SM_DRONE"
@@ -1776,7 +1776,7 @@ Hull
     		scope = And [
                 System
                 Contains Source 
-                Number low = 0 high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
+                Number high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
                     Ship
                     ContainedBy And [
                         System
@@ -1828,7 +1828,7 @@ Hull
 
 		EffectsGroup
             scope = And [
-                Number low = 2 high = 999 And [
+                Number low = 2 And [
                     ContainedBy Contains Source
                     DesignHasHull name = "SH_KRILL_1_BODY"
                 ]
@@ -1933,7 +1933,7 @@ Hull
 		    ]
 		EffectsGroup
             scope = And [
-                Number low = 2 high = 999 And [
+                Number low = 2 And [
                     ContainedBy Contains Source
                     DesignHasHull name = "SH_KRILL_2_BODY"
                 ]
@@ -2037,7 +2037,7 @@ Hull
 		    ]
 		EffectsGroup
             scope = And [
-                Number low = 2 high = 999 And [
+                Number low = 2 And [
                     ContainedBy Contains Source
                     DesignHasHull name = "SH_KRILL_3_BODY"
                 ]
@@ -2171,7 +2171,7 @@ Hull
     effectsgroups = [
         EffectsGroup     
             scope = NumberOf number = 2 condition = Planet type = GasGiant
-            activation = Not Turn low = 1 high = 99999
+            activation = Not Turn low = 1
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
             
         EffectsGroup
@@ -2323,7 +2323,7 @@ Hull
     effectsgroups = [
         EffectsGroup     
             scope = NumberOf number = 2 condition = Planet size = Tiny
-            activation = Not Turn low = 1 high = 99999
+            activation = Not Turn low = 1
             effects = AddSpecial name = "SNOWFLAKE_NEST_SPECIAL"
             
         EffectsGroup
@@ -2472,7 +2472,7 @@ Hull
     effectsgroups = [
         EffectsGroup     
             scope = NumberOf number = 2 condition = Planet type = Asteroids
-            activation = Not Turn low = 1 high = 99999
+            activation = Not Turn low = 1
             effects = AddSpecial name = "JUGGERNAUT_NEST_SPECIAL"
             
         EffectsGroup
