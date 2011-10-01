@@ -1573,7 +1573,7 @@ Hull
     name = "SH_WEAK_MONSTER_BODY"
     description = "SH_WEAK_MONSTER_BODY_DESC"
     speed = 5
-    starlaneSpeed = 15
+    starlaneSpeed = 10
     fuel = 3
     stealth = 5
     structure = 10
@@ -1607,10 +1607,7 @@ Hull
                 Contains Source
                 Not Number low = 2 condition = And [
                     Monster
-                    ContainedBy And [
-                        System
-                        Contains Source
-                    ]
+                    InSystem Source.SystemID
                 ]
             ]
             activation = Random probability = 0.1
@@ -1658,7 +1655,7 @@ Hull
     name = "SH_STRONG_MONSTER_BODY"
     description = "SH_STRONG_MONSTER_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
+    starlaneSpeed = 20
     fuel = 5
     stealth = 5
     structure = 40
@@ -1718,7 +1715,7 @@ Hull
     name = "SH_DRONE_BODY"
     description = "SH_DRONE_BODY_DESC"
     speed = 12
-    starlaneSpeed = 30
+    starlaneSpeed = 20
     fuel = 3
     stealth = 5
     structure = 5
@@ -1766,28 +1763,25 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup     
-        	scope = Source     
-        	activation = Not Turn low = 1  
-    		effects = [   
+            scope = Source     
+            activation = Not Turn low = 1  
+            effects = [   
                 CreateShip "SM_DRONE"
                 CreateShip "SM_DRONE"
                 ]
-    	EffectsGroup
-    		scope = And [
+        EffectsGroup
+            scope = And [
                 System
                 Contains Source 
                 Number high = 7 And [   // Limits the factory to producing only when there are less than 7 drones in system
                     Ship
-                    ContainedBy And [
-                        System
-                        Contains Source
-                    ]
+                    InSystem Source.SystemID
                     DesignHasHull name = "SH_DRONE_BODY"
                 ]
             ]
-    		activation = Random probability = .1
-    		effects = [
-    		    CreateShip "SM_DRONE"
+            activation = Random probability = .1
+            effects = [
+                CreateShip "SM_DRONE"
                 ]
     ]
     graphic = ""
@@ -1796,7 +1790,7 @@ Hull
     name = "SH_KRILL_1_BODY"
     description = "SH_KRILL_1_BODY_DESC"
     speed = 7
-    starlaneSpeed = 35
+    starlaneSpeed = 15
     fuel = 5
     stealth = 5
     structure = 5
@@ -1810,7 +1804,7 @@ Hull
     ]
     location = All
     effectsgroups = [
-    	EffectsGroup
+        EffectsGroup
             scope = And [
                 System
                 Contains Source 
@@ -1826,7 +1820,7 @@ Hull
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = CreateShip "SM_KRILL_2"
 
-		EffectsGroup
+        EffectsGroup
             scope = And [
                 Number low = 2 And [
                     ContainedBy Contains Source
@@ -1839,24 +1833,23 @@ Hull
             ]
             effects = Destroy
 
-	    EffectsGroup
+        EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.1
             stackinggroup = "KRILL_1_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_2"
-		        Destroy
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_2"
+                Destroy
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_2"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
+            ]
 
         EffectsGroup
             scope = And [
@@ -1893,7 +1886,7 @@ Hull
     name = "SH_KRILL_2_BODY"
     description = "SH_KRILL_2_BODY_DESC"
     speed = 5
-    starlaneSpeed = 30
+    starlaneSpeed = 15
     fuel = 6
     stealth = 5
     structure = 10
@@ -1907,7 +1900,7 @@ Hull
     ]
     location = All
     effectsgroups = [
-    	EffectsGroup
+        EffectsGroup
             scope = And [
                 System
                 Contains Source 
@@ -1922,16 +1915,15 @@ Hull
             ]
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_3"
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_3"
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_3"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
-		EffectsGroup
+            ]
+        EffectsGroup
             scope = And [
                 Number low = 2 And [
                     ContainedBy Contains Source
@@ -1944,24 +1936,23 @@ Hull
             ]
             effects = Destroy
 
-	    EffectsGroup
+        EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.12
             stackinggroup = "KRILL_2_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_1"
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_1"
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
-		    
+            ]
+            
         EffectsGroup
             scope = And [
                 Fleet
@@ -1997,7 +1988,7 @@ Hull
     name = "SH_KRILL_3_BODY"
     description = "SH_KRILL_3_BODY_DESC"
     speed = 5
-    starlaneSpeed = 25
+    starlaneSpeed = 15
     fuel = 5
     stealth = 5
     structure = 25
@@ -2011,7 +2002,7 @@ Hull
     ]
     location = All
     effectsgroups = [
-    	EffectsGroup
+        EffectsGroup
             scope = And [
                 System
                 Contains Source 
@@ -2026,16 +2017,15 @@ Hull
             ]
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_4"
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_4"
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_4"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
-		EffectsGroup
+            ]
+        EffectsGroup
             scope = And [
                 Number low = 2 And [
                     ContainedBy Contains Source
@@ -2048,24 +2038,23 @@ Hull
             ]
             effects = Destroy
 
-	    EffectsGroup
+        EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.08
             stackinggroup = "KRILL_3_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_1"
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_1"
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
-		    
+            ]
+            
         EffectsGroup
             scope = And [
                 Fleet
@@ -2101,7 +2090,7 @@ Hull
     name = "SH_KRILL_4_BODY"
     description = "SH_KRILL_4_BODY_DESC"
     speed = 5
-    starlaneSpeed = 20
+    starlaneSpeed = 10
     fuel = 4
     stealth = 5
     structure = 50
@@ -2115,23 +2104,22 @@ Hull
     ]
     location = All
     effectsgroups = [
-	    EffectsGroup
+        EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.06
             stackinggroup = "KRILL_4_ACTION_STACK"
             effects = [
-		        CreateShip "SM_KRILL_1"
-		        GenerateSitRepMessage
+                CreateShip "SM_KRILL_1"
+                GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
                         tag = "shiphull" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
-                empire = 0
-		    ]
+            ]
 
         EffectsGroup
             scope = And [
@@ -2190,13 +2178,13 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = GasGiant
+                ContainedBy Contains Planet type = GasGiant
             ]
             activation = Random probability = 0.025
             effects = [
-		        CreateShip "SM_KRAKEN_2"
-		        Destroy
-		    ]
+                CreateShip "SM_KRAKEN_2"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2208,7 +2196,7 @@ Hull
     name = "SH_KRAKEN_2_BODY"
     description = "SH_KRAKEN_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 55
+    starlaneSpeed = 30
     fuel = 4
     stealth = 5
     structure = 35
@@ -2242,13 +2230,13 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = GasGiant
+                ContainedBy Contains Planet type = GasGiant
             ]
             activation = Random probability = 0.025
             effects = [
-		        CreateShip "SM_KRAKEN_3"
-		        Destroy
-		    ]
+                CreateShip "SM_KRAKEN_3"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2260,7 +2248,7 @@ Hull
     name = "SH_KRAKEN_3_BODY"
     description = "SH_KRAKEN_3_BODY_DESC"
     speed = 20
-    starlaneSpeed = 60
+    starlaneSpeed = 30
     fuel = 4
     stealth = 5
     structure = 50
@@ -2307,7 +2295,7 @@ Hull
     name = "SH_SNOWFLAKE_1_BODY"
     description = "SH_SNOWFLAKE_1_BODY_DESC"
     speed = 50
-    starlaneSpeed = 65
+    starlaneSpeed = 30
     fuel = 5
     stealth = 5
     structure = 12
@@ -2342,13 +2330,13 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet size = Tiny
+                ContainedBy Contains Planet size = Tiny
             ]
             activation = Random probability = 0.03
             effects = [
-		        CreateShip "SM_SNOWFLAKE_2"
-		        Destroy
-		    ]
+                CreateShip "SM_SNOWFLAKE_2"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2360,7 +2348,7 @@ Hull
     name = "SH_SNOWFLAKE_2_BODY"
     description = "SH_SNOWFLAKE_2_BODY_DESC"
     speed = 50
-    starlaneSpeed = 70
+    starlaneSpeed = 35
     fuel = 5
     stealth = 5
     structure = 25
@@ -2394,13 +2382,13 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet size = Tiny
+                ContainedBy Contains Planet size = Tiny
             ]
             activation = Random probability = 0.03
             effects = [
-		        CreateShip "SM_SNOWFLAKE_3"
-		        Destroy
-		    ]
+                CreateShip "SM_SNOWFLAKE_3"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2412,7 +2400,7 @@ Hull
     name = "SH_SNOWFLAKE_3_BODY"
     description = "SH_SNOWFLAKE_3_BODY_DESC"
     speed = 50
-    starlaneSpeed = 75
+    starlaneSpeed = 40
     fuel = 5
     stealth = 5
     structure = 40
@@ -2456,7 +2444,7 @@ Hull
     name = "SH_JUGGERNAUT_1_BODY"
     description = "SH_JUGGERNAUT_1_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
+    starlaneSpeed = 10
     fuel = 3
     stealth = 5
     structure = 25
@@ -2494,13 +2482,13 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.03
             effects = [
-		        CreateShip "SM_JUGGERNAUT_2"
-		        Destroy
-		    ]
+                CreateShip "SM_JUGGERNAUT_2"
+                Destroy
+            ]
         EffectsGroup
             scope = Source
             activation = Source
@@ -2512,7 +2500,7 @@ Hull
     name = "SH_JUGGERNAUT_2_BODY"
     description = "SH_JUGGERNAUT_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 25
+    starlaneSpeed = 10
     fuel = 2
     stealth = 5
     structure = 40
@@ -2546,14 +2534,14 @@ Hull
         EffectsGroup
             scope = And [
                 Source
-		        ContainedBy Contains Planet type = Asteroids
+                ContainedBy Contains Planet type = Asteroids
             ]
             activation = Random probability = 0.02
             effects = [
-		        CreateShip "SM_JUGGERNAUT_3"
-		        Destroy
-		    ]
-		    
+                CreateShip "SM_JUGGERNAUT_3"
+                Destroy
+            ]
+            
         EffectsGroup
             scope = Source
             activation = Source
@@ -2565,7 +2553,7 @@ Hull
     name = "SH_JUGGERNAUT_3_BODY"
     description = "SH_JUGGERNAUT_3_BODY_DESC"
     speed = 20
-    starlaneSpeed = 20
+    starlaneSpeed = 10
     fuel = 5
     stealth = 5
     structure = 60
