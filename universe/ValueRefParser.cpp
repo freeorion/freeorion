@@ -13,7 +13,7 @@ using namespace phoenix;
 SimpleRule int_variable_final =
     str_p("owner") | "id" | "creationturn" | "age" | "producedbyempireid"
     | "designid" | "fleetid" | "planetid" | "systemid" | "finaldestinationid"
-    | "nextsystemid" | "previoussystemid" | "numships";
+    | "nextsystemid" | "previoussystemid" | "numships" | "lastturnbattlehere";
 
 SimpleRule double_variable_final =
     str_p("farming") | "targetfarming" | "industry" | "targetindustry"

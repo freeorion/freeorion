@@ -608,6 +608,11 @@ namespace ValueRef {
                 return fleet->NumShips();
             else
                 return 0;
+        } else if (boost::iequals(property_name, "LastTurnBattleHere")) {
+            if (const System* system = universe_object_cast<const System*>(object))
+                return system->LastTurnBattleHere();
+            else
+                return INVALID_GAME_TURN;
         } else if (boost::iequals(property_name, "CurrentTurn")) {
             return CurrentTurn();
         } else {
