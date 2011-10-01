@@ -150,7 +150,7 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         int matched = condition_targets.size();
         int low = (m_low ? m_low->Eval(local_context) : 0);
         int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
-        in_range = (low <= matched && matched < high);
+        in_range = (low <= matched && matched <= high);
     }
 
     // transfer objects to or from candidate set, according to whether number of matches was within
@@ -207,7 +207,7 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
         int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
         int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
         int turn = CurrentTurn();
-        bool match = (low <= turn && turn < high);
+        bool match = (low <= turn && turn <= high);
 
         if (match && search_domain == NON_MATCHES) {
             // move all objects from non_matches to matches
@@ -264,7 +264,7 @@ bool Condition::Turn::Match(const ScriptingContext& local_context) const
     double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
-    return (low <= turn && turn < high);
+    return (low <= turn && turn <= high);
 }
 
 ///////////////////////////////////////////////////////////
@@ -777,7 +777,7 @@ std::string Condition::EmpireAffiliation::Dump() const
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
     case AFFIL_ALLY:    retval += "AllyOf";     break;
     case AFFIL_ANY:     retval += "AnyEmpire";  break;
-    default: retval += "?"; break;
+    default:            retval += "?";          break;
     }
     if (m_empire_id)
         retval += " empire = " + m_empire_id->Dump() + "\n";
@@ -1508,7 +1508,7 @@ namespace {
 
         int special_since_turn = it->second;
 
-        return low_turn <= special_since_turn && special_since_turn < high_turn;
+        return low_turn <= special_since_turn && special_since_turn <= high_turn;
     }
 }
 
@@ -1624,9 +1624,10 @@ Condition::CreatedOnTurn::~CreatedOnTurn()
 namespace {
     bool CreatedOnTurnSimpleMatch(const UniverseObject* candidate, int low, int high)
     {
-        return candidate &&
-               low <= candidate->CreationTurn() &&
-               candidate->CreationTurn() < high;
+        if (!candidate)
+            return false;
+        int turn = candidate->CreationTurn();
+        return low <= turn && turn <= high;
     }
 }
 
@@ -3173,7 +3174,7 @@ namespace {
         for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it)
             if (*it == name || (name.empty() && !(*it).empty()))    // # of copies of specified part, or total number of parts if no part name specified
                 ++count;
-        return (low <= count && count < high);
+        return (low <= count && count <= high);
     }
 }
 
@@ -3288,7 +3289,7 @@ namespace {
                     ++count;
             }
         }
-        return (low <= count && count < high);
+        return (low <= count && count <= high);
     }
 }
 
@@ -3694,7 +3695,7 @@ namespace {
 
         if (const Meter* meter = candidate->GetMeter(meter_type)) {
             double value = meter->Initial();    // match Initial rather than Current to make results reproducible in a given turn, until back propegation happens
-            return low <= value && value < high;
+            return low <= value && value <= high;
         }
 
         return false;
