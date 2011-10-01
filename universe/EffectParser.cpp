@@ -515,9 +515,9 @@ namespace {
             (str_p("generatesitrepmessage")
              >> message_label >>                name_p[generate_sitrep_message.template_string = arg1]
              >> !(parameters_label >>           string_and_string_ref_vector[generate_sitrep_message.parameters = arg1])
-             >> empire_label >>                 int_expr_p[generate_sitrep_message.recipient_empire = arg1]
              >> (affiliation_label >>           affiliation_type_p[generate_sitrep_message.affiliation = arg1]
-                 |                              eps_p[generate_sitrep_message.affiliation = val(AFFIL_SELF)])
+                 |                              eps_p[generate_sitrep_message.affiliation = val(AFFIL_SELF)]
+             >> empire_label >>                 int_expr_p[generate_sitrep_message.recipient_empire = arg1])
              [generate_sitrep_message.this_ = new_<Effect::GenerateSitRepMessage>(generate_sitrep_message.template_string,
                                                                                   generate_sitrep_message.parameters,
                                                                                   generate_sitrep_message.recipient_empire,
