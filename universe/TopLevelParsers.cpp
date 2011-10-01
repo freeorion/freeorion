@@ -157,7 +157,6 @@ namespace {
     ParamLabel spawn_rate_label("spawnrate");
     ParamLabel spawn_limit_label("spawnlimit");
 
-
     Effect::EffectsGroup* const NULL_EFF = 0;
     Condition::ConditionBase* const NULL_COND = 0;
 

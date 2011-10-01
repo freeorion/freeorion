@@ -498,7 +498,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Focus "FOCUS_RESEARCH"
             ]
-            activation = Number low = 1 high = 999 And [
+            activation = Number low = 1 And [
                 Or [
                     HasSpecial "ANCIENT_RUINS_SPECIAL"
                     HasSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
