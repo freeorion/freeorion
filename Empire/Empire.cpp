@@ -1180,7 +1180,7 @@ bool Empire::ShipDesignAvailable(int ship_design_id) const
         return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
 
     const ShipDesign* design = GetShipDesign(ship_design_id);
-    if (!design) return false;
+    if (!design || !design->Producible()) return false;
 
     // design is kept, but still need to verify that it is buildable at this time.  Part or hull tech
     // requirements might prevent it from being built.
@@ -1274,6 +1274,9 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
 
     if (build_type == BT_BUILDING && !BuildingTypeAvailable(name)) return false;
 
+    const BuildingType* building_type = GetBuildingType(name);
+    if (!building_type || !building_type->Producible()) return false;
+
     if (ProductionCostAndTime(build_type, name) == std::make_pair(-1.0, -1)) {
         // item is unknown, unavailable, or invalid.
         return false;
@@ -1283,10 +1286,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
     if (!build_location) return false;
 
     if (build_type == BT_BUILDING) {
-        // building type must be valid...
-        const BuildingType* building_type = GetBuildingType(name);
-        if (!building_type) return false;
-        // ...and the specified location must be a valid production location for that building type
+        // specified location must be a valid production location for that building type
         return building_type->ProductionLocation(m_id, location);
 
     } else {
@@ -1303,6 +1303,11 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
 
     if (build_type == BT_SHIP && !ShipDesignAvailable(design_id)) return false;
 
+    // design must be known to this empire
+    const ShipDesign* ship_design = GetShipDesign(design_id);
+    if (!ship_design || !ship_design->Producible()) return false;
+
+
     if (ProductionCostAndTime(build_type, design_id) == std::make_pair(-1.0, ShipDesign::INVALID_DESIGN_ID)) {
         // item is unknown, unavailable, or invalid.
         return false;
@@ -1312,10 +1317,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
-        // design must be known to this empire
-        const ShipDesign* ship_design = GetShipDesign(design_id);
-        if (!ship_design) return false;
-        // ...and the specified location must be a valid production location for this design
+        // specified location must be a valid production location for this design
         return ship_design->ProductionLocation(m_id, location);
 
     } else {
@@ -2020,7 +2022,7 @@ void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
 
 void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
 {
-    if (TechResearched(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end())
+    if (TechResearched(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end() || !tech->Researchable())
         return;
     ResearchQueue::iterator it = m_research_queue.find(tech);
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
@@ -2230,7 +2232,8 @@ void Empire::AddBuildingType(const std::string& name)
     const BuildingType* building_type = GetBuildingType(name);
     if (!building_type)
         Logger().errorStream() << "Empire::AddBuildingType given an invalid building type name: " << name;
-    m_available_building_types.insert(name);
+    if (building_type->Producible())
+        m_available_building_types.insert(name);
 }
 
 void Empire::AddPartType(const std::string& name)
@@ -2238,7 +2241,8 @@ void Empire::AddPartType(const std::string& name)
     const PartType* part_type = GetPartType(name);
     if (!part_type)
         Logger().errorStream() << "Empire::AddPartType given an invalid part type name: " << name;
-    m_available_part_types.insert(name);
+    if (part_type->Producible())
+        m_available_part_types.insert(name);
 }
 
 void Empire::AddHullType(const std::string& name)
@@ -2246,7 +2250,8 @@ void Empire::AddHullType(const std::string& name)
     const HullType* hull_type = GetHullType(name);
     if (!hull_type)
         Logger().errorStream() << "Empire::AddHullType given an invalid hull type name: " << name;
-    m_available_hull_types.insert(name);
+    if (hull_type->Producible())
+        m_available_hull_types.insert(name);
 }
 
 void Empire::AddExploredSystem(int ID)
@@ -2281,7 +2286,7 @@ void Empire::AddShipDesign(int ship_design_id)
      * retain as one of it's ship designs, which are those displayed in the GUI
      * list of available designs for human players, and */
     const ShipDesign* ship_design = GetUniverse().GetShipDesign(ship_design_id);
-    if (ship_design) {
+    if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
             m_ship_designs.insert(ship_design_id);
