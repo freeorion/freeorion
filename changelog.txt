@@ -1,8 +1,13 @@
 v0.3.17 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+New Features / Improvements:
+ ~ Added ship repair.
+
 Balancing:
  ~ Some simplifications of the tech tree.
 
+Graphics:
+ ~ Made companion star always visibile in in sidepanel.
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
