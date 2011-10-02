@@ -3528,7 +3528,7 @@ EFFECT_DRYDOCK_SHIP_REPAIR
 
 #The following is for monster spawning testing.
 EFFECT_MONSTER_SPAWNING
-A %shiphull% was spawned in %system%!
+A %predefinedshipdesign% was spawned in %system%!
 
 EFFECT_GAIAN_TERRAFORM
 The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.

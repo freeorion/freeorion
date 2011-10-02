@@ -1846,7 +1846,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_2"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_2"
                         tag = "system" data = Source.SystemID
                     ]
             ]
@@ -1919,7 +1919,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_3"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_3"
                         tag = "system" data = Source.SystemID
                     ]
             ]
@@ -1948,7 +1948,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_1"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
             ]
@@ -2021,7 +2021,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_4"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_4"
                         tag = "system" data = Source.SystemID
                     ]
             ]
@@ -2050,7 +2050,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_1"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
             ]
@@ -2116,7 +2116,7 @@ Hull
                 GenerateSitRepMessage
                     message = "EFFECT_MONSTER_SPAWNING"
                     parameters = [
-                        tag = "shiphull" data = "SM_KRILL_1"
+                        tag = "predefinedshipdesign" data = "SM_KRILL_1"
                         tag = "system" data = Source.SystemID
                     ]
             ]
