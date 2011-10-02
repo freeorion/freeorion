@@ -3418,6 +3418,30 @@ Tech
     graphic = ""
 
 Tech
+    name = "SHP_FLEET_REPAIR"
+    description = "SHP_FLEET_REPAIR_DESC"
+    short_description = "SHIP_REPAIR_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 400
+    researchturns = 10
+    prerequisites = "SHP_FLEET_LOGISTICS"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                Ship
+                InSystem
+                Stationary
+                OwnedBy TheEmpire Source.Owner
+                Turn low = LocalCandidate.System.LastTurnBattleHere + 2
+                Structure high = LocalCandidate.MaxStructure - 0.001
+                ResupplyableBy empire = Source.Owner
+            ]
+            effects = SetStructure Value + 1
+    graphic = ""
+
+Tech
     name = "SHP_ION_CANNON"
     description = "SHP_ION_CANNON_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -3902,6 +3926,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
+    Unresearchable
     prerequisites = "SHP_DIM_CLOAK"
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
     graphic = ""
@@ -3914,6 +3939,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
+    Unresearchable
     prerequisites = "SHP_HI_ENRG_FOCUS"
     unlock = Item type = ShipPart name = "SR_DEATH_RAY"
     graphic = ""
@@ -3926,6 +3952,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 9999
     researchturns = 9999
+    Unresearchable
     prerequisites = "SHP_DIST_MOD"
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
     graphic = ""

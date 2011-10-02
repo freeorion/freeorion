@@ -3842,6 +3842,12 @@ DESC_IN_SYSTEM
 DESC_IN_SYSTEM_NOT
  that is not in the system with id %1%
 
+DESC_IN_SYSTEM_SIMPLE
+ that is in a system
+
+DESC_IN_SYSTEM_SIMPLE_NOT
+ that is not in a system
+
 DESC_OBJECT_ID
  that is the object with id %1%
 
@@ -4481,6 +4487,9 @@ Improves Structure
 FLEET_RANGE_DESC
 Improves Fleet Supply
 
+SHIP_REPAIR_DESC
+Repairs Ships
+
 DEFENSE_SHORT_DESC
 Improves Defense
 
@@ -4940,6 +4949,12 @@ Fleet Logistics
 
 SHP_FLEET_LOGISTICS_DESC
 Unlocks the Logistics focus setting, which increases the Supply meter of planets.
+
+SHP_FLEET_REPAIR
+Fleet Field Repair
+
+SHP_FLEET_REPAIR_DESC
+Allows ships within supply range to slowly repair damage.  Does not function immediately after battles.
 
 SHP_REINFORCED_HULL
 Reinforced Hull
