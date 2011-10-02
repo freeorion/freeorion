@@ -48,6 +48,7 @@ private:
     ProductionInfoPanel*        m_research_info_panel;
     QueueListBox*               m_queue_lb;
     TechTreeWnd*                m_tech_tree_wnd;
+    bool                        m_enabled;
 
     boost::signals::connection  m_empire_connection;
 };

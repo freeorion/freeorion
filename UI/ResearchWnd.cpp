@@ -189,7 +189,8 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_research_info_panel(0),
     m_queue_lb(0),
-    m_tech_tree_wnd(0)
+    m_tech_tree_wnd(0),
+    m_enabled(false)
 {
     m_research_info_panel = new ProductionInfoPanel(RESEARCH_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("RESEARCH_INFO_PANEL_TITLE"), UserString("RESEARCH_INFO_RP"),
                                                     OUTER_LINE_THICKNESS, ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
@@ -204,11 +205,11 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y);
     m_tech_tree_wnd->MoveTo(GG::Pt(m_research_info_panel->Width(), GG::Y0));
 
-    GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal,          &ResearchWnd::AddTechToQueueSlot, this);
-    GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot, this);
-    GG::Connect(m_queue_lb->ErasedSignal,                       &ResearchWnd::QueueItemDeletedSlot, this);
-    GG::Connect(m_queue_lb->LeftClickedSignal,                  &ResearchWnd::QueueItemClickedSlot, this);
-    GG::Connect(m_queue_lb->DoubleClickedSignal,                &ResearchWnd::QueueItemDoubleClickedSlot, this);
+    GG::Connect(m_tech_tree_wnd->AddTechToQueueSignal,          &ResearchWnd::AddTechToQueueSlot,           this);
+    GG::Connect(m_tech_tree_wnd->AddMultipleTechsToQueueSignal, &ResearchWnd::AddMultipleTechsToQueueSlot,  this);
+    GG::Connect(m_queue_lb->ErasedSignal,                       &ResearchWnd::QueueItemDeletedSlot,         this);
+    GG::Connect(m_queue_lb->LeftClickedSignal,                  &ResearchWnd::QueueItemClickedSlot,         this);
+    GG::Connect(m_queue_lb->DoubleClickedSignal,                &ResearchWnd::QueueItemDoubleClickedSlot,   this);
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_lb);
@@ -218,9 +219,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h) :
 }
 
 ResearchWnd::~ResearchWnd()
-{
-    m_empire_connection.disconnect();
-}
+{ m_empire_connection.disconnect(); }
 
 void ResearchWnd::Refresh()
 {
@@ -251,9 +250,7 @@ void ResearchWnd::Update()
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
-{
-    m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
-}
+{ m_tech_tree_wnd->CenterOnTech(GetTech(tech_name)); }
 
 void ResearchWnd::ShowTech(const std::string& tech_name)
 {
@@ -271,9 +268,7 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 }
 
 void ResearchWnd::Sanitize()
-{
-    m_tech_tree_wnd->Clear();
-}
+{ m_tech_tree_wnd->Clear(); }
 
 void ResearchWnd::Render()
 {}
@@ -326,6 +321,8 @@ void ResearchWnd::UpdateInfoPanel()
 
 void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 {
+    if (!m_enabled)
+        return;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -338,6 +335,8 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
 
 void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec)
 {
+    if (!m_enabled)
+        return;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return;
@@ -355,9 +354,10 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& te
 
 void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
-                                        boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
+    if (m_enabled)
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
+                                            boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
     m_tech_tree_wnd->Update();
     ResearchQueueChangedSlot();
 }
@@ -375,9 +375,12 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 {
-    m_queue_lb->ErasedSignal(it);
+    if (m_enabled)
+        m_queue_lb->ErasedSignal(it);
 }
 
 void ResearchWnd::EnableOrderIssuing(bool enable/* = true*/)
 {
+    m_enabled = enable;
+    m_queue_lb->EnableOrderIssuing(m_enabled);
 }

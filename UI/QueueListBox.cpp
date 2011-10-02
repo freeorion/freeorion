@@ -12,7 +12,8 @@
 QueueListBox::QueueListBox(GG::X x, GG::Y y, GG::X w, GG::Y h, const std::string& drop_type_str) :
     CUIListBox(x, y, w, h),
     m_drop_point(end()),
-    m_show_drop_point(false)
+    m_show_drop_point(false),
+    m_enabled(true)
 { AllowDropType(drop_type_str); }
 
 void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
@@ -75,3 +76,7 @@ void QueueListBox::DragDropLeave()
     m_drop_point = end();
     m_show_drop_point = false;
 }
+
+void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
+{}
+

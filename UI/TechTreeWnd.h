@@ -8,7 +8,8 @@
 class Tech;
 class EncyclopediaDetailPanel;
 
-/** Contains the tech graph layout, some controls to control what is visible in the tech layout, the tech navigator, and the tech detail window. */
+/** Contains the tech graph layout, some controls to control what is visible in
+  * the tech layout, the tech navigator, and the tech detail window. */
 class TechTreeWnd : public GG::Wnd
 {
 public:
