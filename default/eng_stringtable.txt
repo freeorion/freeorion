@@ -3165,10 +3165,10 @@ DESC_VAR_TARGET
 target
 
 DESC_VAR_LOCAL_CANDIDATE
-target
+local condition candidate
 
 DESC_VAR_ROOT_CANDIDATE
-target
+root condition candidate
 
 DESC_STATISTIC
 statistic
