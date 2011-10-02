@@ -2158,8 +2158,11 @@ Hull
     location = All
     effectsgroups = [
         EffectsGroup     
-            scope = NumberOf number = 2 condition = Planet type = GasGiant
-            activation = Not Turn low = 1
+            scope = NumberOf number = 2 condition = And [
+                Planet
+                Planet type = GasGiant
+            ]
+            activation = Turn high = 2
             effects = AddSpecial name = "KRAKEN_NEST_SPECIAL"
             
         EffectsGroup

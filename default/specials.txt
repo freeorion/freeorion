@@ -796,7 +796,7 @@ Special
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
-                CreateShip "SM_KRAKEN_1" Source.Owner Species = ""
+                CreateShip "SM_KRAKEN_1" Source.Owner
             ]
         EffectsGroup
             scope = Source
