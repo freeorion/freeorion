@@ -41,7 +41,6 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 60
     researchturns = 4
-    prerequisites = []
     graphic = "icons/tech/algorithmic_elegance.png"
 
 Tech
