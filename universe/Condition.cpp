@@ -1931,23 +1931,25 @@ Condition::InSystem::~InSystem()
 namespace {
     bool InSystemSimpleMatch(const UniverseObject* candidate, int system_id)
     {
-        // don't match objects not in systems
-        return candidate &&
-               system_id != UniverseObject::INVALID_OBJECT_ID &&
-               candidate->SystemID() == system_id;
+        if (!candidate)
+            return false;
+        if (system_id == UniverseObject::INVALID_OBJECT_ID)
+            return candidate->SystemID() != UniverseObject::INVALID_OBJECT_ID;  // match objects in any system
+        else
+            return candidate->SystemID() == system_id;                          // match objects in specified system
     }
 }
 
 void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                                ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_system_id) ||
+    bool simple_eval_safe = !m_system_id || ValueRef::ConstantExpr(m_system_id) ||
                             (m_system_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         const UniverseObject* no_object(0);
-        int system_id = m_system_id->Eval(ScriptingContext(parent_context, no_object));
+        int system_id = (m_system_id ? m_system_id->Eval(ScriptingContext(parent_context, no_object)) : UniverseObject::INVALID_OBJECT_ID);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
@@ -1969,10 +1971,10 @@ void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet
 }
 
 bool Condition::InSystem::RootCandidateInvariant() const
-{ return m_system_id->RootCandidateInvariant(); }
+{ return !m_system_id || m_system_id->RootCandidateInvariant(); }
 
 bool Condition::InSystem::TargetInvariant() const
-{ return m_system_id->TargetInvariant(); }
+{ return !m_system_id || m_system_id->TargetInvariant(); }
 
 std::string Condition::InSystem::Description(bool negated/* = false*/) const
 {
@@ -1980,14 +1982,14 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const
 
     std::string system_str;
     int system_id = UniverseObject::INVALID_OBJECT_ID;
-    if (ValueRef::ConstantExpr(m_system_id))
+    if (m_system_id && ValueRef::ConstantExpr(m_system_id))
         system_id = m_system_id->Eval();
     if (const System* system = objects.Object<System>(system_id))
         system_str = system->Name();
-    else
+    else if (m_system_id)
         system_str = m_system_id->Description();
 
-    std::string description_str = "DESC_IN_SYSTEM";
+    std::string description_str = (!system_str.empty() ? "DESC_IN_SYSTEM" : "DESC_IN_SYSTEM_SIMPLE");
     if (negated)
         description_str += "_NOT";
 
@@ -1996,7 +1998,13 @@ std::string Condition::InSystem::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::InSystem::Dump() const
-{ return DumpIndent() + "InSystem id = " + m_system_id->Dump(); }
+{
+    std::string retval = DumpIndent() + "InSystem";
+    if (m_system_id)
+        retval += " id = " + m_system_id->Dump();
+    retval += "\n";
+    return retval;
+}
 
 bool Condition::InSystem::Match(const ScriptingContext& local_context) const
 {
@@ -2005,8 +2013,8 @@ bool Condition::InSystem::Match(const ScriptingContext& local_context) const
         Logger().errorStream() << "InSystem::Match passed no candidate object";
         return false;
     }
-
-    return InSystemSimpleMatch(candidate, m_system_id->Eval(local_context));
+    int system_id = (m_system_id ? m_system_id->Eval(local_context) : UniverseObject::INVALID_OBJECT_ID);
+    return InSystemSimpleMatch(candidate, system_id);
 }
 
 ///////////////////////////////////////////////////////////
@@ -2031,13 +2039,13 @@ namespace {
 void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                                ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    bool simple_eval_safe = ValueRef::ConstantExpr(m_object_id) ||
+    bool simple_eval_safe = !m_object_id || ValueRef::ConstantExpr(m_object_id) ||
                             (m_object_id->LocalCandidateInvariant() &&
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
         const UniverseObject* no_object(0);
-        int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
+        int object_id = (m_object_id ? m_object_id->Eval(ScriptingContext(parent_context, no_object)) : UniverseObject::INVALID_OBJECT_ID);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
@@ -2059,10 +2067,10 @@ void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet
 }
 
 bool Condition::ObjectID::RootCandidateInvariant() const
-{ return m_object_id->RootCandidateInvariant(); }
+{ return !m_object_id || m_object_id->RootCandidateInvariant(); }
 
 bool Condition::ObjectID::TargetInvariant() const
-{ return m_object_id->TargetInvariant(); }
+{ return !m_object_id || m_object_id->TargetInvariant(); }
 
 std::string Condition::ObjectID::Description(bool negated/* = false*/) const
 {
@@ -2070,12 +2078,14 @@ std::string Condition::ObjectID::Description(bool negated/* = false*/) const
 
     std::string object_str;
     int object_id = UniverseObject::INVALID_OBJECT_ID;
-    if (ValueRef::ConstantExpr(m_object_id))
+    if (m_object_id && ValueRef::ConstantExpr(m_object_id))
         object_id = m_object_id->Eval();
     if (const System* system = objects.Object<System>(object_id))
         object_str = system->Name();
-    else
+    else if (m_object_id)
         object_str = m_object_id->Description();
+    else
+        object_str = UserString("ERROR");   // should always have a valid ID for this condition
 
     std::string description_str = "DESC_OBJECT_ID";
     if (negated)
@@ -4971,7 +4981,7 @@ std::string Condition::FleetSupplyableByEmpire::Description(bool negated/* = fal
 }
 
 std::string Condition::FleetSupplyableByEmpire::Dump() const
-{ return DumpIndent() + "FleetSupplyableByEmpire empire_id = " + m_empire_id->Dump(); }
+{ return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
 
 bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
 {
@@ -5126,7 +5136,7 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Description(bool negated
 
 std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
 {
-    std::string retval = DumpIndent() + "ResourceSupplyConnectedByEmpire empire_id = " + m_empire_id->Dump() +
+    std::string retval = DumpIndent() + "ResourceSupplyConnectedBy empire_id = " + m_empire_id->Dump() +
                                         " condition = \n";
     ++g_indent;
     retval += m_condition->Dump();

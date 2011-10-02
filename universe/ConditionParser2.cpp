@@ -132,7 +132,7 @@ namespace {
 
         predefined_design =
             str_p("design")
-            >> name_label >> name_p[predefined_design.name = arg1]
+            >> name_label >>    name_p[predefined_design.name = arg1]
             [predefined_design.this_ = new_<Condition::PredefinedShipDesign>(predefined_design.name)];
 
         design_number =
@@ -152,22 +152,23 @@ namespace {
 
         explored_by_empire =
             str_p("exploredbyempire")
-            >> empire_label >> int_expr_p[explored_by_empire.int_ref = arg1]
+            >> empire_label >>  int_expr_p[explored_by_empire.int_ref = arg1]
             [explored_by_empire.this_ = new_<Condition::ExploredByEmpire>(explored_by_empire.int_ref)];
 
         fleet_supplyable =
-            str_p("fleetsupplyablebyempire")
-            >> empire_label >> int_expr_p[fleet_supplyable.int_ref = arg1]
+            str_p("resupplyableby")
+            >> empire_label >>  int_expr_p[fleet_supplyable.int_ref = arg1]
             [fleet_supplyable.this_ = new_<Condition::FleetSupplyableByEmpire>(fleet_supplyable.int_ref)];
 
         in_system =
             str_p("insystem")
-            >> id_label >> int_expr_p[in_system.int_ref = arg1]
+            >> (id_label >>     int_expr_p[in_system.int_ref = arg1]
+                |               eps_p[in_system.int_ref = val(NULL_INT_REF)])
             [in_system.this_ = new_<Condition::InSystem>(in_system.int_ref)];
 
         object_id =
             str_p("object")
-            >> id_label >> int_expr_p[object_id.int_ref = arg1]
+            >> id_label >>      int_expr_p[object_id.int_ref = arg1]
             [object_id.this_ = new_<Condition::ObjectID>(object_id.int_ref)];
 
         condition2_p =

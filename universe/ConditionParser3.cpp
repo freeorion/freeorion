@@ -207,7 +207,7 @@ namespace {
             [owner_stockpile.this_ = new_<Condition::EmpireStockpileValue>(owner_stockpile.stockpile_type, owner_stockpile.int_ref_2, owner_stockpile.int_ref_1)];
 
         resource_supply_connected =
-            (str_p("resourcesupplyconnectedbyempire")
+            (str_p("resourcesupplyconnectedby")
              >> empire_label >> int_expr_p[resource_supply_connected.int_ref = arg1]
              >> condition_label >> condition_p[resource_supply_connected.condition = arg1])
             [resource_supply_connected.this_ = new_<Condition::ResourceSupplyConnectedByEmpire>(resource_supply_connected.int_ref,
