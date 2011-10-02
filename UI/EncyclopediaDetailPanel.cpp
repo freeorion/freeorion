@@ -81,8 +81,12 @@ namespace {
 
         } else if (dir_name == "ENC_TECH") {
             std::vector<std::string> tech_names = GetTechManager().TechNames();
+            std::map<std::string, std::string> userstring_tech_names;
+            // sort tech names by user-visible name, so names are shown alphabetically in UI
             for (std::vector<std::string>::const_iterator it = tech_names.begin(); it != tech_names.end(); ++it)
-                retval += LinkTaggedText(VarText::TECH_TAG, *it) + "\n";
+                userstring_tech_names[UserString(*it)] = *it;
+            for (std::map<std::string, std::string>::const_iterator it = userstring_tech_names.begin(); it != userstring_tech_names.end(); ++it)
+                retval += LinkTaggedText(VarText::TECH_TAG, it->second) + "\n";
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             const BuildingTypeManager& building_type_manager = GetBuildingTypeManager();
