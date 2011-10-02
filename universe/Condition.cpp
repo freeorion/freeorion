@@ -204,7 +204,7 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
         // from object to object, and neither do the range limits.
         const UniverseObject* no_object(0);
         ScriptingContext local_context(parent_context, no_object);
-        int low =  (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
+        int low =  (m_low ? std::max(BEFORE_FIRST_TURN, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
         int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
         int turn = CurrentTurn();
         bool match = (low <= turn && turn <= high);
@@ -232,20 +232,40 @@ bool Condition::Turn::TargetInvariant() const
 
 std::string Condition::Turn::Description(bool negated/* = false*/) const
 {
-    std::string low_str = (m_low ? (ValueRef::ConstantExpr(m_low) ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
-                                    m_low->Description())
-                                 : "0");
-    std::string high_str = (m_high ? (ValueRef::ConstantExpr(m_high) ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
-                                      m_high->Description())
-                                   : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
-    std::string description_str = "DESC_TURN";
+    std::string low_str;
+    if (m_low)
+        low_str = (ValueRef::ConstantExpr(m_low) ?
+                   boost::lexical_cast<std::string>(m_low->Eval()) :
+                   m_low->Description());
+    std::string high_str;
+    if (m_high)
+        high_str = (ValueRef::ConstantExpr(m_high) ?
+                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    m_high->Description());
+    std::string description_str;
+    if (m_low && m_high)
+        description_str = "DESC_TURN";
+    else if (m_low)
+        description_str = "DESC_TURN_MIN_ONLY";
+    else if (m_high)
+        description_str = "DESC_TURN_MAX_ONLY";
+    else
+        description_str = "DESC_TURN_ANY";
     if (negated)
         description_str += "_NOT";
-    return str(FlexibleFormat(UserString(description_str))
-               % low_str
-               % high_str);
+
+    if (m_low && m_high)
+        return str(FlexibleFormat(UserString(description_str))
+                   % low_str
+                   % high_str);
+    else if (m_low)
+        return str(FlexibleFormat(UserString(description_str))
+                   % low_str);
+    else if (m_high)
+        return str(FlexibleFormat(UserString(description_str))
+                   % high_str);
+    else
+        return UserString(description_str);
 }
 
 std::string Condition::Turn::Dump() const

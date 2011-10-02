@@ -3789,10 +3789,10 @@ DESC_SUPPLY_CONNECTED_FLEET_NOT
  that is not in a system where the %1% empire can provide fleet supply
 
 DESC_SUPPLY_CONNECTED_RESOURCE
- that is connected by resource supply of the %1% empire to an object%2%
+ that is resource connected for the %1% empire to an object%2%
 
 DESC_SUPPLY_CONNECTED_RESOURCE_NOT
- that is not connected by resource supply of the %1% empire to an object%2%
+ that is not resource connected for the %1% empire to an object%2%
 
 DESC_AND_BETWEEN_OPERANDS
  and
@@ -3801,10 +3801,28 @@ DESC_OR_BETWEEN_OPERANDS
  or
 
 DESC_TURN
- when the current turn is between %1% and %2%
+ on turns between %1% and %2%
 
 DESC_TURN_NOT
- when the current turn is not between %1% and %2%
+ except between turns %1% and %2%
+
+DESC_TURN_MIN_ONLY
+ starting on turn %1%
+
+DESC_TURN_MIN_ONLY_NOT
+ before turn %1%
+
+DESC_TURN_MAX_ONLY
+ until turn %1%
+
+DESC_TURN_MAX_ONLY_NOT
+ after turn %1%
+
+DESC_TURN_ANY
+ on any turn
+
+DESC_TURN_ANY_NOT
+ on no turn
 
 DESC_NUMBER_OF
  that is one of %1% randomly selected objects%2%
