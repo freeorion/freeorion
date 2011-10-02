@@ -32,7 +32,6 @@ Tech
     researchcost = 120
     researchturns = 2
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/the_physical_brain.png"
 
 Tech
@@ -44,7 +43,6 @@ Tech
     researchcost = 60
     researchturns = 4
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/algorithmic_elegance.png"
 
 Tech
@@ -59,7 +57,6 @@ Tech
         "LRN_PHYS_BRAIN"
         "LRN_ALGO_ELEGANCE"
     ]
-    unlock = []
     graphic = "icons/tech/translingustic_thought.png"
 
 Tech
@@ -71,7 +68,6 @@ Tech
     researchcost = 240
     researchturns = 3
     prerequisites = "LRN_PHYS_BRAIN"
-    unlock = []
     graphic = "icons/tech/psionics.png"
 
 Tech
@@ -83,7 +79,6 @@ Tech
     researchcost = 120
     researchturns = 6
     prerequisites = "LRN_ALGO_ELEGANCE"
-    unlock = []
     graphic = "icons/tech/artificial_minds.png"
 
 Tech
@@ -98,7 +93,6 @@ Tech
         "SHP_GAL_EXPLO"
         "LRN_TRANSLING_THT"
     ]
-    unlock = []
     graphic = "icons/tech/xenoarchaeology.png"
 
 Tech
@@ -110,7 +104,6 @@ Tech
     researchcost = 240
     researchturns = 8
     prerequisites = "LRN_ARTIF_MINDS"
-    unlock = []
     graphic = "icons/tech/gravitonics.png"
 
 Tech
@@ -122,7 +115,6 @@ Tech
     researchcost = 480
     researchturns = 4
     prerequisites = "LRN_PSIONICS"
-    unlock = []
     graphic = "icons/tech/force-field_harmonics.png"
 
 Tech
@@ -134,7 +126,6 @@ Tech
     researchcost = 400
     researchturns = 10
     prerequisites = "LRN_GRAVITONICS"
-    unlock = []
     graphic = "icons/tech/the_theory_of_everything.png"
 
 Tech
@@ -146,7 +137,6 @@ Tech
     researchcost = 500
     researchturns = 12
     prerequisites = "LRN_XENOARCH"
-    unlock = []
     graphic = "icons/tech/mind_of_the_void.png"
 
 Tech
@@ -158,7 +148,6 @@ Tech
     researchcost = 800
     researchturns = 5
     prerequisites = "LRN_FORCE_FIELD"
-    unlock = []
     graphic = "icons/tech/n-dimensional_subspace.png"
 
 Tech
@@ -170,7 +159,6 @@ Tech
     researchcost = 1500
     researchturns = 6
     prerequisites = "LRN_NDIM_SUBSPACE"
-    unlock = []
     graphic = ""
 
 Tech
@@ -182,7 +170,6 @@ Tech
     researchcost = 750
     researchturns = 12
     prerequisites = "LRN_EVERYTHING"
-    unlock = []
     graphic = "icons/tech/temporal_mechanics.png"
 
 Tech
@@ -194,7 +181,6 @@ Tech
     researchcost = 1000
     researchturns = 15
     prerequisites = "LRN_MIND_VOID"
-    unlock = []
     graphic = "icons/tech/unified_conscious.png"
 
 Tech
@@ -213,7 +199,6 @@ Tech
         "PRO_ZERO_GEN"
         "GRO_ENERGY_META"
     ]
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = Source
@@ -229,7 +214,6 @@ Tech
     researchcost = 250
     researchturns = 1
     prerequisites = "LRN_ARTIF_MINDS"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -251,7 +235,6 @@ Tech
         "LRN_TRANSLING_THT"
         "LRN_PSIONICS"
     ]
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -274,7 +257,6 @@ Tech
         "LRN_FORCE_FIELD"
         "LRN_XENOARCH"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -325,7 +307,6 @@ Tech
     researchcost = 1250
     researchturns = 1
     prerequisites = "LRN_EVERYTHING"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -404,7 +385,6 @@ Tech
     researchcost = 2500
     researchturns = 1
     prerequisites = "LRN_QUANT_NET"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -441,7 +421,6 @@ Tech
         "LRN_UNIF_CONC"
         "LRN_TIME_MECH"
     ]
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -480,7 +459,6 @@ Tech
     researchturns = 1
     Unresearchable
     prerequisites = []
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -518,7 +496,6 @@ Tech
     researchcost = 40
     researchturns = 4
     prerequisites = []
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -537,7 +514,6 @@ Tech
     researchcost = 20
     researchturns = 5
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/planetary_ecology.png"
 
 Tech
@@ -549,7 +525,6 @@ Tech
     researchcost = 20
     researchturns = 5
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/genetic_engineering.png"
 
 Tech
@@ -581,7 +556,6 @@ Tech
     researchcost = 40
     researchturns = 10
     prerequisites = []
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -659,7 +633,6 @@ Tech
     researchcost = 120
     researchturns = 6
     prerequisites = "GRO_GENETIC_ENG"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -678,7 +651,6 @@ Tech
     researchcost = 120
     researchturns = 6
     prerequisites = "GRO_MEDICAL_PATH"
-    unlock = []
     graphic = "icons/tech/lifecycle_manipulation.png"
 
 Tech
@@ -690,7 +662,6 @@ Tech
     researchcost = 60
     researchturns = 12
     prerequisites = "GRO_PLANET_ECOL"
-    unlock = []
     graphic = ""
 
 Tech
@@ -705,7 +676,6 @@ Tech
         "GRO_SYMBIOTIC_BIO"
         "GRO_GENETIC_ENG"
     ]
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -871,7 +841,6 @@ Tech
         "GRO_GENETIC_MED"
         "PRO_NANOTECH_PROD"
     ]
-    unlock = []
     graphic = "icons/tech/nanotech_medicine.png"
 
 Tech
@@ -883,7 +852,6 @@ Tech
     researchcost = 240
     researchturns = 15
     prerequisites = "GRO_EDV_ECOMAN"
-    unlock = []
     graphic = ""
 
 Tech
@@ -895,7 +863,6 @@ Tech
     researchcost = 240
     researchturns = 15
     prerequisites = "GRO_XENO_GENETICS"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1028,7 +995,6 @@ Tech
     researchcost = 500
     researchturns = 16
     prerequisites = "GRO_NANOTECH_MED"
-    unlock = []
     graphic = "icons/tech/nanotech_cybernetics.png"
 
 Tech
@@ -1043,7 +1009,6 @@ Tech
         "GRO_ECO_METAMORPH"
         "GRO_NANOTECH_MED"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -1059,7 +1024,6 @@ Tech
         "LRN_EVERYTHING"
         "GRO_TRANSORG_SENT"
     ]
-    unlock = []
     graphic = "icons/tech/pure-energy_metabolism.png"
 
 Tech
@@ -1083,7 +1047,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = "GRO_GENETIC_ENG"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1151,7 +1114,6 @@ Tech
         "GRO_EDV_ECOMAN"
         "CON_ORBITAL_CON"
     ]
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -1179,7 +1141,6 @@ Tech
     researchcost = 160
     researchturns = 5
     prerequisites = "GRO_NANOTECH_MED"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1222,7 +1183,6 @@ Tech
     researchcost = 320
     researchturns = 7
     prerequisites = "GRO_NANO_CYBERNET"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1357,7 +1317,6 @@ Tech
     researchcost = 640
     researchturns = 10
     prerequisites = "GRO_ENERGY_META"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1419,7 +1378,6 @@ Tech
     researchcost = 400
     researchturns = 1
     prerequisites = "CON_ORBITAL_CON"
-    unlock = []
     graphic = "icons/tech/microgravity_manufacturing.png"
 
 Tech
@@ -1431,7 +1389,6 @@ Tech
     researchcost = 400
     researchturns = 1
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/planetary_geology.png"
 
 Tech
@@ -1443,7 +1400,6 @@ Tech
     researchcost = 120
     researchturns = 1
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/robotic_production.png"
 
 Tech
@@ -1455,7 +1411,6 @@ Tech
     researchcost = 180
     researchturns = 1
     prerequisites = []
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1475,7 +1430,6 @@ Tech
     researchcost = 450
     researchturns = 2
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = []
     graphic = "icons/tech/nanotech_production.png"
 
 Tech
@@ -1487,7 +1441,6 @@ Tech
     researchcost = 600
     researchturns = 2
     prerequisites = "PRO_FUSION_GEN"
-    unlock = []
     graphic = "icons/tech/orbital_generation.png"
 
 Tech
@@ -1502,7 +1455,6 @@ Tech
         "LRN_ARTIF_MINDS"
         "PRO_NANOTECH_PROD"
     ]
-    unlock = []
     graphic = "icons/tech/sentient_autofactories.png"
 
 Tech
@@ -1514,7 +1466,6 @@ Tech
     researchcost = 2000
     researchturns = 3
     prerequisites = "LRN_EVERYTHING"
-    unlock = []
     graphic = "icons/tech/matter-energy_conversion.png"
 
 Tech
@@ -1526,7 +1477,6 @@ Tech
     researchcost = 2000
     researchturns = 3
     prerequisites = "LRN_NDIM_SUBSPACE"
-    unlock = []
     graphic = "icons/tech/n-dimensional_assembly.png"
 
 Tech
@@ -1542,7 +1492,6 @@ Tech
         "PRO_FUSION_GEN"
         "PRO_NANOTECH_PROD"
     ]
-    unlock = []
     graphic = "icons/tech/singularity_generation.png"
 
 Tech
@@ -1558,7 +1507,6 @@ Tech
         "PRO_SINGULAR_GEN"
         "PRO_ENERGY_CONV"
     ]
-    unlock = []
     graphic = "icons/tech/zero_point_energy.png"
 
 Tech
@@ -1570,7 +1518,6 @@ Tech
     researchcost = 450
     researchturns = 1
     prerequisites = "PRO_SENTIENT_AUTOMATION"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1607,7 +1554,6 @@ Tech
         "PRO_HEAVY_MINING_I"
         "GRO_PLANET_ECOL"
     ]
-    unlock = []
     graphic = "icons/tech/environmentally_conscious_mining.png"
 
 Tech
@@ -1619,7 +1565,6 @@ Tech
     researchcost = 60
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
-    unlock = []
     graphic = "icons/tech/orbital_mining.png"
 
 Tech
@@ -1643,7 +1588,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
-    unlock = []
     graphic = "icons/tech/asteroid_mining_i.png"
 
 Tech
@@ -1655,7 +1599,6 @@ Tech
     researchcost = 20
     researchturns = 1
     prerequisites = "PRO_ASTEROID_MINE"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1676,7 +1619,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = "PRO_PLANET_GEOL"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1737,7 +1679,6 @@ Tech
     researchcost = 400
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTER_I"
-    unlock = []
     graphic = "icons/tech/industrial_centre_ii.png"
 
 Tech
@@ -1749,7 +1690,6 @@ Tech
     researchcost = 2000
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTER_II"
-    unlock = []
     graphic = "icons/tech/industrial_centre_iii.png"
 
 Tech
@@ -1773,7 +1713,6 @@ Tech
     researchcost = 80
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -1856,7 +1795,6 @@ Tech
     researchcost = 300
     researchturns = 1
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/metroplex_infrastructure.png"
 
 Tech
@@ -1868,7 +1806,6 @@ Tech
     researchcost = 2500
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
-    unlock = []
     graphic = "icons/tech/architecture_psychology.png"
 
 Tech
@@ -1880,7 +1817,6 @@ Tech
     researchcost = 2500
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
-    unlock = []
     graphic = "icons/tech/architectural_monofilaments.png"
 
 Tech
@@ -1892,7 +1828,6 @@ Tech
     researchcost = 7500
     researchturns = 1
     prerequisites = "CON_ARCH_MONOFILS"
-    unlock = []
     graphic = ""
 
 Tech
@@ -1904,7 +1839,6 @@ Tech
     researchcost = 2000
     researchturns = 1
     prerequisites = "LRN_FORCE_FIELD"
-    unlock = []
     graphic = "icons/tech/force_energy_structures.png"
 
 Tech
@@ -1919,7 +1853,6 @@ Tech
         "CON_FRC_ENRG_STRC"
         "LRN_NDIM_SUBSPACE"
     ]
-    unlock = []
     graphic = "icons/tech/n-dimensional_structures.png"
 
 Tech
@@ -1946,7 +1879,6 @@ Tech
     researchcost = 500
     researchturns = 9
     prerequisites = "GRO_ECO_METAMORPH"
-    unlock = []
     graphic = "icons/tech/infrastructure_ecology.png"
 
 Tech
@@ -1958,7 +1890,6 @@ Tech
     researchcost = 750
     researchturns = 12
     prerequisites = "CON_INFRA_ECOL"
-    unlock = []
     graphic = "icons/tech/organic_structures.png"
 
 Tech
@@ -1970,7 +1901,6 @@ Tech
     researchcost = 500
     researchturns = 4
     prerequisites = "LRN_GRAVITONICS"
-    unlock = []
     graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
@@ -1982,7 +1912,6 @@ Tech
     researchcost = 750
     researchturns = 6
     prerequisites = "CON_CONTGRAV_ARCH"
-    unlock = []
     graphic = "icons/tech/artificial_heavenly_bodies.png"
 
 Tech
@@ -1994,7 +1923,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = []
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2013,7 +1941,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = "CON_METRO_INFRA"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2090,7 +2017,6 @@ Tech
     researchcost = 320
     researchturns = 1
     prerequisites = "CON_FRC_ENRG_STRC"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2231,7 +2157,6 @@ Tech
     researchcost = 320
     researchturns = 1
     prerequisites = "CON_FRC_ENRG_STRC"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2250,7 +2175,6 @@ Tech
     researchcost = 750
     researchturns = 1
     prerequisites = "CON_NDIM_STRC"
-    unlock = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -2318,7 +2242,6 @@ Tech
     researchcost = 800
     researchturns = 1
     prerequisites = "CON_GAL_INFRA"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2353,7 +2276,6 @@ Tech
     researchcost = 300
     researchturns = 2
     prerequisites = "CON_CONTGRAV_ARCH"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2411,7 +2333,6 @@ Tech
     researchcost = 40
     researchturns = 1
     prerequisites = []
-    unlock = []
     graphic = "icons/tech/galactic_exploration.png"
 
 Tech
@@ -2423,7 +2344,6 @@ Tech
     researchcost = 160
     researchturns = 2
     prerequisites = "SHP_GAL_EXPLO"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2435,7 +2355,6 @@ Tech
     researchcost = 320
     researchturns = 2
     prerequisites = "SHP_GAL_EXPLO"
-    unlock = []
     graphic = "icons/tech/stellar_navigation.png"
 
 Tech
@@ -2447,7 +2366,6 @@ Tech
     researchcost = 750
     researchturns = 3
     prerequisites = "SHP_NAVIGATION"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2459,7 +2377,6 @@ Tech
     researchcost = 620
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2471,7 +2388,6 @@ Tech
     researchcost = 1200
     researchturns = 5
     prerequisites = "SHP_INTSTEL_LOG"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2483,7 +2399,6 @@ Tech
     researchcost = 620
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2495,7 +2410,6 @@ Tech
     researchcost = 1250
     researchturns = 3
     prerequisites = "SHP_TACT_COUNTER"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2507,7 +2421,6 @@ Tech
     researchcost = 1250
     researchturns = 3
     prerequisites = "SHP_SPACE_WEAPON"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2522,7 +2435,6 @@ Tech
         "SHP_TACT_SUPER"
         "SHP_MAX_DISRUPT"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2534,7 +2446,6 @@ Tech
     researchcost = 2000
     researchturns = 5
     prerequisites = "SHP_SURGICAL_DESTRUCT"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2546,7 +2457,6 @@ Tech
     researchcost = 120
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2558,7 +2468,6 @@ Tech
     researchcost = 750
     researchturns = 1
     prerequisites = "SHP_MIL_ROBO_CONT"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2573,7 +2482,6 @@ Tech
         "SHP_SPACE_FLUX_DRIVE"
         "CON_ARCH_MONOFILS"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2588,7 +2496,6 @@ Tech
         "SHP_CONTGRAV_MAINT"
         "PRO_NANOTECH_PROD"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2600,7 +2507,6 @@ Tech
     researchcost = 8000
     researchturns = 1
     prerequisites = "SHP_NANOROBO_MAINT"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2612,7 +2518,6 @@ Tech
     researchcost = 6000
     researchturns = 2
     prerequisites = "SHP_MASSPROP_SPEC"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2627,7 +2532,6 @@ Tech
         "SHP_TRANSSPACE_DRIVE"
         "CON_GAL_INFRA"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2656,7 +2560,6 @@ Tech
     researchcost = 4500
     researchturns = 3
     prerequisites = "SHP_ASTEROID_HULLS"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2668,7 +2571,6 @@ Tech
     researchcost = 9000
     researchturns = 5
     prerequisites = "SHP_ASTEROID_REFORM"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2680,7 +2582,6 @@ Tech
     researchcost = 20
     researchturns = 5
     prerequisites = []
-    unlock = []
     graphic = ""
 
 Tech
@@ -2692,7 +2593,6 @@ Tech
     researchcost = 20
     researchturns = 5
     prerequisites = "GRO_SYMBIOTIC_BIO"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2707,7 +2607,6 @@ Tech
         "SHP_MULTICELL_CAST"
         "GRO_LIFECYCLE_MAN"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2722,7 +2621,6 @@ Tech
         "SHP_HAB_MEGAFAUN"
         "GRO_XENO_GENETICS"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2734,7 +2632,6 @@ Tech
     researchcost = 1250
     researchturns = 12
     prerequisites = "SHP_CONT_SYMB"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2749,7 +2646,6 @@ Tech
         "SHP_MONOCELL_EXP"
         "GRO_TRANSORG_SENT"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2764,7 +2660,6 @@ Tech
         "LRN_FORCE_FIELD"
         "LRN_GRAVITONICS"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2776,7 +2671,6 @@ Tech
     researchcost = 4200
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2788,7 +2682,6 @@ Tech
     researchcost = 4200
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    unlock = []
     graphic = ""
 
 Tech
@@ -2805,7 +2698,6 @@ Tech
         "LRN_EVERYTHING"
         "LRN_NDIM_SUBSPACE"
     ]
-    unlock = []
     graphic = ""
 
 Tech
@@ -2817,7 +2709,6 @@ Tech
     researchcost = 1
     researchturns = 1
     prerequisites = []
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3414,7 +3305,6 @@ Tech
     researchcost = 360
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
-    unlock = []
     graphic = ""
 
 Tech
@@ -3426,7 +3316,6 @@ Tech
     researchcost = 400
     researchturns = 10
     prerequisites = "SHP_FLEET_LOGISTICS"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3521,7 +3410,6 @@ Tech
     researchcost = 360
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3624,7 +3512,6 @@ Tech
     researchcost = 240
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3643,7 +3530,6 @@ Tech
     researchcost = 750
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3698,7 +3584,6 @@ Tech
     researchcost = 80
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3717,7 +3602,6 @@ Tech
     researchcost = 450
     researchturns = 1
     prerequisites = "SHP_TACT_COUNTER"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3749,7 +3633,6 @@ Tech
     researchcost = 450
     researchturns = 1
     prerequisites = "SHP_SPACE_WEAPON"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3823,7 +3706,6 @@ Tech
     researchcost = 520
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3854,7 +3736,6 @@ Tech
     researchcost = 1250
     researchturns = 4
     prerequisites = "SHP_STRAT_DEFENSE"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -3967,7 +3848,6 @@ Tech
     researchturns = 1
     Unresearchable
     prerequisites = []
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = Or [
