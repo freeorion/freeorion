@@ -103,7 +103,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::NON_OBJECT_REFERENCE, "Value"),
+                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_REFERENCE, "Value"),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -121,7 +121,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::NON_OBJECT_REFERENCE, "Value"),
+                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_REFERENCE, "Value"),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
