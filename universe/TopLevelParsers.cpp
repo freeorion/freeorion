@@ -288,14 +288,14 @@ namespace {
         tech_p =
             (str_p("tech")
              >> tech_info_p[tech_p.tech_info = arg1]
-             >> prerequisites_label
+             >> !(prerequisites_label
              >> (name_p[insert_(tech_p.prerequisites, arg1)] |
-                 ('[' >> *(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']'))
+                 ('[' >> *(name_p[insert_(tech_p.prerequisites, arg1)]) >> ']')))
              >> !(unlock_label
              >> (item_spec_p[push_back_(tech_p.unlocked_items, arg1)]
                  | ('[' >> *(item_spec_p[push_back_(tech_p.unlocked_items, arg1)]) >> ']')))
              >> !(effectsgroups_label >>    effects_group_vec_p[tech_p.effects_groups = arg1])
-             >> graphic_label >> file_name_p[tech_p.graphic = arg1])
+             >> !(graphic_label >> file_name_p[tech_p.graphic = arg1]))
             [tech_p.this_ = new_<Tech>(tech_p.tech_info,
                                        tech_p.effects_groups, tech_p.prerequisites, tech_p.unlocked_items,
                                        tech_p.graphic)];

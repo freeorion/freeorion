@@ -31,7 +31,6 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 120
     researchturns = 2
-    prerequisites = []
     graphic = "icons/tech/the_physical_brain.png"
 
 Tech
@@ -159,7 +158,6 @@ Tech
     researchcost = 1500
     researchturns = 6
     prerequisites = "LRN_NDIM_SUBSPACE"
-    graphic = ""
 
 Tech
     name = "LRN_TIME_MECH"
@@ -243,7 +241,6 @@ Tech
                 Focus "FOCUS_RESEARCH"
             ]
             effects = SetTargetResearch Value * 1.25
-    graphic = ""
 
 Tech
     name = "LRN_XENOARCH_RESTORE"
@@ -257,7 +254,6 @@ Tech
         "LRN_FORCE_FIELD"
         "LRN_XENOARCH"
     ]
-    graphic = ""
 
 Tech
     name = "LRN_OBSERVATORY_I"
@@ -269,7 +265,6 @@ Tech
     researchturns = 1
     prerequisites = "LRN_FORCE_FIELD"
     unlock = Item type = Building name = "BLD_OBSERVATORY"
-    graphic = ""
 
 Tech
     name = "LRN_SOLAR_MAN"
@@ -284,7 +279,6 @@ Tech
         Item type = Building name = "BLD_SOL_ACCEL"
         Item type = Building name = "BLD_SOL_REJUV"
     ]
-    graphic = ""
 
 Tech
     name = "LRN_SPATIAL_DISTORT_GEN"
@@ -296,7 +290,6 @@ Tech
     researchturns = 1
     prerequisites = "LRN_NDIM_SUBSPACE"
     unlock = Item type = Building name = "BLD_SPATIAL_DISTORT_GEN"
-    graphic = ""
 
 Tech
     name = "LRN_STELLAR_TOMOGRAPHY"
@@ -359,7 +352,6 @@ Tech
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = Building name = "BLD_GATEWAY_VOID"
-    graphic = ""
 
 Tech
     name = "LRN_ENCLAVE_VOID"
@@ -392,7 +384,6 @@ Tech
                 Focus "FOCUS_RESEARCH"
             ]
             effects = SetTargetResearch Value * 2
-    graphic = ""
 
 Tech
     name = "LRN_COLLECTIVE_NET"
@@ -435,7 +426,6 @@ Tech
                 Not OwnerHasTech "LRN_PSY_DOM"
             ]
             effects = SetOwner Source.Owner
-    graphic = ""
 
 Tech
     name = "LRN_ART_BLACK_HOLE"
@@ -447,7 +437,6 @@ Tech
     researchturns = 1
     prerequisites = "LRN_TIME_MECH"
     unlock = Item type = Building name = "BLD_ART_BLACK_HOLE"
-    graphic = ""
 
 Tech
     name = "LRN_RUINS_MOD"
@@ -458,7 +447,6 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
-    prerequisites = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -485,7 +473,6 @@ Tech
             ]
             effects = SetTargetResearch Value * 1.05
     ]
-    graphic = ""
 
 Tech
     name = "GRO_MEDICAL_PATH"
@@ -495,7 +482,6 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 40
     researchturns = 4
-    prerequisites = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -513,7 +499,6 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 20
     researchturns = 5
-    prerequisites = []
     graphic = "icons/tech/planetary_ecology.png"
 
 Tech
@@ -524,7 +509,6 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 20
     researchturns = 5
-    prerequisites = []
     graphic = "icons/tech/genetic_engineering.png"
 
 Tech
@@ -535,7 +519,6 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 10
     researchturns = 10
-    prerequisites = []
     unlock = Item type = ShipPart name = "CO_OUTPOST_MOD"
     effectsgroups =
         EffectsGroup
@@ -555,7 +538,6 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 40
     researchturns = 10
-    prerequisites = []
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -662,7 +644,6 @@ Tech
     researchcost = 60
     researchturns = 12
     prerequisites = "GRO_PLANET_ECOL"
-    graphic = ""
 
 Tech
     name = "GRO_XENO_GENETICS"
@@ -852,7 +833,6 @@ Tech
     researchcost = 240
     researchturns = 15
     prerequisites = "GRO_EDV_ECOMAN"
-    graphic = ""
 
 Tech
     name = "GRO_XENO_HYBRIDS"
@@ -1009,7 +989,6 @@ Tech
         "GRO_ECO_METAMORPH"
         "GRO_NANOTECH_MED"
     ]
-    graphic = ""
 
 Tech
     name = "GRO_ENERGY_META"
@@ -1100,7 +1079,6 @@ Tech
     researchturns = 3
     prerequisites = "GRO_LIFECYCLE_MAN"
     unlock = Item type = ShipPart name = "CO_SUSPEND_ANIM_POD"
-    graphic = ""
 
 Tech
     name = "GRO_ORBIT_FARMING"
@@ -1148,7 +1126,6 @@ Tech
                 PopulationCenter
             ]
             effects = SetTargetHealth Value + 10
-    graphic = ""
 
 Tech
     name = "GRO_BIOTERROR"
@@ -1294,7 +1271,6 @@ Tech
                 SetTargetHealth Value + 5
             ]
     ]
-    graphic = ""
 
 Tech
     name = "GRO_GAIA_TRANS"
@@ -1367,7 +1343,6 @@ Tech
             ]
             effects = SetTargetResearch Value * 1.2
     ]
-    graphic = ""
 
 Tech
     name = "PRO_MICROGRAV_MAN"
@@ -1388,7 +1363,6 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 400
     researchturns = 1
-    prerequisites = []
     graphic = "icons/tech/planetary_geology.png"
 
 Tech
@@ -1399,7 +1373,6 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 120
     researchturns = 1
-    prerequisites = []
     graphic = "icons/tech/robotic_production.png"
 
 Tech
@@ -1410,7 +1383,6 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 180
     researchturns = 1
-    prerequisites = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -1577,7 +1549,6 @@ Tech
     researchturns = 1
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_GAS_GIANT_GEN"
-    graphic = ""
 
 Tech
     name = "PRO_ASTEROID_MINE"
@@ -1766,7 +1737,6 @@ Tech
     researchturns = 1
     prerequisites = "PRO_ORBITAL_GEN"
     unlock = Item type = Building name = "BLD_SOL_ORB_GEN"
-    graphic = ""
 
 Tech
     name = "PRO_NEUTRONIUM_EXTRACTION"
@@ -1784,7 +1754,6 @@ Tech
         Item type = Building name = "BLD_NEUTRONIUM_EXTRACTOR"
         Item type = Building name = "BLD_NEUTRONIUM_FORGE"
     ]
-    graphic = ""
 
 Tech
     name = "CON_METRO_INFRA"
@@ -1794,7 +1763,6 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 300
     researchturns = 1
-    prerequisites = []
     graphic = "icons/tech/metroplex_infrastructure.png"
 
 Tech
@@ -1828,7 +1796,6 @@ Tech
     researchcost = 7500
     researchturns = 1
     prerequisites = "CON_ARCH_MONOFILS"
-    graphic = ""
 
 Tech
     name = "CON_FRC_ENRG_STRC"
@@ -1922,7 +1889,6 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
     researchturns = 1
-    prerequisites = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2006,7 +1972,6 @@ Tech
     researchturns = 1
     prerequisites = "CON_ARCH_PSYCH"
     unlock = Item type = Building name = "BLD_CONC_CAMP"
-    graphic = ""
 
 Tech
     name = "CON_FRC_ENRG_INFRA"
@@ -2146,7 +2111,6 @@ Tech
             ]
             effects = SetResearch Target.TargetResearch
     ]
-    graphic = ""
 
 Tech
     name = "CON_FRC_ENRG_CAMO"
@@ -2164,7 +2128,6 @@ Tech
                 Building
             ]
             effects = SetStealth Value + 5
-    graphic = ""
 
 Tech
     name = "CON_TRANSDIM_HOUSE"
@@ -2216,7 +2179,6 @@ Tech
             ]
             effects = SetTargetPopulation Value + 3
     ]
-    graphic = ""
 
 Tech
     name = "CON_PLANET_DRIVE"
@@ -2231,7 +2193,6 @@ Tech
         Item type = Building name = "BLD_PLANET_DRIVE"
         Item type = Building name = "BLD_PLANET_BEACON"
     ]
-    graphic = ""
 
 Tech
     name = "CON_GAL_RESOURCE_MAN"
@@ -2249,7 +2210,6 @@ Tech
                 TargetPopulation low = 1
             ]
             effects = SetTargetConstruction Value + 20
-    graphic = ""
 
 Tech
     name = "CON_STARGATE"
@@ -2265,7 +2225,6 @@ Tech
         Item type = Building name = "BLD_STARGATE_ACTIVATOR"
         Item type = Building name = "BLD_STARGATE_BEACON"
     ]
-    graphic = ""
 
 Tech
     name = "CON_GRAVITY_WELLS"
@@ -2298,7 +2257,6 @@ Tech
         "CON_INFRA_ECOL"
     ]
     unlock = Item type = Building name = "BLD_ART_PLANET"
-    graphic = ""
 
 Tech
     name = "CON_ART_MOON"
@@ -2310,7 +2268,6 @@ Tech
     researchturns = 2
     prerequisites = "CON_ART_HEAVENLY"
     unlock = Item type = Building name = "BLD_ART_MOON"
-    graphic = ""
 
 Tech
     name = "CON_TRANS_STRC"
@@ -2332,7 +2289,6 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 40
     researchturns = 1
-    prerequisites = []
     graphic = "icons/tech/galactic_exploration.png"
 
 Tech
@@ -2344,7 +2300,6 @@ Tech
     researchcost = 160
     researchturns = 2
     prerequisites = "SHP_GAL_EXPLO"
-    graphic = ""
 
 Tech
     name = "SHP_NAVIGATION"
@@ -2366,7 +2321,6 @@ Tech
     researchcost = 750
     researchturns = 3
     prerequisites = "SHP_NAVIGATION"
-    graphic = ""
 
 Tech
     name = "SHP_SPACE_WEAPON"
@@ -2377,7 +2331,6 @@ Tech
     researchcost = 620
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
-    graphic = ""
 
 Tech
     name = "SHP_ADV_NAVIGATION"
@@ -2388,7 +2341,6 @@ Tech
     researchcost = 1200
     researchturns = 5
     prerequisites = "SHP_INTSTEL_LOG"
-    graphic = ""
 
 Tech
     name = "SHP_TACT_COUNTER"
@@ -2399,7 +2351,6 @@ Tech
     researchcost = 620
     researchturns = 2
     prerequisites = "SHP_SPACE_TACTICS"
-    graphic = ""
 
 Tech
     name = "SHP_TACT_SUPER"
@@ -2410,7 +2361,6 @@ Tech
     researchcost = 1250
     researchturns = 3
     prerequisites = "SHP_TACT_COUNTER"
-    graphic = ""
 
 Tech
     name = "SHP_MAX_DISRUPT"
@@ -2421,7 +2371,6 @@ Tech
     researchcost = 1250
     researchturns = 3
     prerequisites = "SHP_SPACE_WEAPON"
-    graphic = ""
 
 Tech
     name = "SHP_SURGICAL_DESTRUCT"
@@ -2435,7 +2384,6 @@ Tech
         "SHP_TACT_SUPER"
         "SHP_MAX_DISRUPT"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_STRAT_DEFENSE"
@@ -2446,7 +2394,6 @@ Tech
     researchcost = 2000
     researchturns = 5
     prerequisites = "SHP_SURGICAL_DESTRUCT"
-    graphic = ""
 
 Tech
     name = "SHP_MIL_ROBO_CONT"
@@ -2457,7 +2404,6 @@ Tech
     researchcost = 120
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
-    graphic = ""
 
 Tech
     name = "SHP_SPACE_FLUX_DRIVE"
@@ -2468,7 +2414,6 @@ Tech
     researchcost = 750
     researchturns = 1
     prerequisites = "SHP_MIL_ROBO_CONT"
-    graphic = ""
 
 Tech
     name = "SHP_CONTGRAV_MAINT"
@@ -2482,7 +2427,6 @@ Tech
         "SHP_SPACE_FLUX_DRIVE"
         "CON_ARCH_MONOFILS"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_NANOROBO_MAINT"
@@ -2496,7 +2440,6 @@ Tech
         "SHP_CONTGRAV_MAINT"
         "PRO_NANOTECH_PROD"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_MASSPROP_SPEC"
@@ -2507,7 +2450,6 @@ Tech
     researchcost = 8000
     researchturns = 1
     prerequisites = "SHP_NANOROBO_MAINT"
-    graphic = ""
 
 Tech
     name = "SHP_TRANSSPACE_DRIVE"
@@ -2518,7 +2460,6 @@ Tech
     researchcost = 6000
     researchturns = 2
     prerequisites = "SHP_MASSPROP_SPEC"
-    graphic = ""
 
 Tech
     name = "SHP_MIDCOMB_LOG"
@@ -2532,7 +2473,6 @@ Tech
         "SHP_TRANSSPACE_DRIVE"
         "CON_GAL_INFRA"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ASTEROID_HULLS"
@@ -2549,7 +2489,6 @@ Tech
         Item type = ShipHull name = "SH_HEAVY_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ASTEROID_REFORM"
@@ -2560,7 +2499,6 @@ Tech
     researchcost = 4500
     researchturns = 3
     prerequisites = "SHP_ASTEROID_HULLS"
-    graphic = ""
 
 Tech
     name = "SHP_MONOMOLEC_LATTICE"
@@ -2571,7 +2509,6 @@ Tech
     researchcost = 9000
     researchturns = 5
     prerequisites = "SHP_ASTEROID_REFORM"
-    graphic = ""
 
 Tech
     name = "SHP_MULTICELL_CAST"
@@ -2581,8 +2518,6 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 20
     researchturns = 5
-    prerequisites = []
-    graphic = ""
 
 Tech
     name = "SHP_HAB_MEGAFAUN"
@@ -2593,7 +2528,6 @@ Tech
     researchcost = 20
     researchturns = 5
     prerequisites = "GRO_SYMBIOTIC_BIO"
-    graphic = ""
 
 Tech
     name = "SHP_MONOCELL_EXP"
@@ -2607,7 +2541,6 @@ Tech
         "SHP_MULTICELL_CAST"
         "GRO_LIFECYCLE_MAN"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_CONT_SYMB"
@@ -2621,7 +2554,6 @@ Tech
         "SHP_HAB_MEGAFAUN"
         "GRO_XENO_GENETICS"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_CONT_BIOADAPT"
@@ -2632,7 +2564,6 @@ Tech
     researchcost = 1250
     researchturns = 12
     prerequisites = "SHP_CONT_SYMB"
-    graphic = ""
 
 Tech
     name = "SHP_BIONEUR_SPEC"
@@ -2646,7 +2577,6 @@ Tech
         "SHP_MONOCELL_EXP"
         "GRO_TRANSORG_SENT"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_FRC_ENRG_COMP"
@@ -2660,7 +2590,6 @@ Tech
         "LRN_FORCE_FIELD"
         "LRN_GRAVITONICS"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_QUANT_ENRG_MAG"
@@ -2671,7 +2600,6 @@ Tech
     researchcost = 4200
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    graphic = ""
 
 Tech
     name = "SHP_ENRG_BOUND_MAN"
@@ -2682,7 +2610,6 @@ Tech
     researchcost = 4200
     researchturns = 5
     prerequisites = "SHP_FRC_ENRG_COMP"
-    graphic = ""
 
 Tech
     name = "SHP_SOLAR_CONT"
@@ -2698,7 +2625,6 @@ Tech
         "LRN_EVERYTHING"
         "LRN_NDIM_SUBSPACE"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_OPTICAL_SCANNER"
@@ -2708,7 +2634,6 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 1
     researchturns = 1
-    prerequisites = []
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2721,7 +2646,6 @@ Tech
                 Not OwnerHasTech "SHP_SENSORS"
             ]
             effects = SetDetection Value + 5
-    graphic = ""
 
 Tech
     name = "SHP_ROBO_HULL"
@@ -2736,7 +2660,6 @@ Tech
         Item type = ShipHull name = "SH_ROBOTIC"
         Item type = Building name = "BLD_SHIPYARD_CON_ROBO"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SPACE_FLUX_HULL"
@@ -2751,7 +2674,6 @@ Tech
         Item type = ShipHull name = "SH_SPATIAL_FLUX"
         Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SELFGRAV_HULL"
@@ -2766,7 +2688,6 @@ Tech
         Item type = ShipHull name = "SH_SELF_GRAVITATING"
         Item type = Building name = "BLD_SHIPYARD_CON_MILIT_MEGAPROC"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_NANOROBO_HULL"
@@ -2781,7 +2702,6 @@ Tech
         Item type = ShipHull name = "SH_NANOROBOTIC"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_TITAN_HULL"
@@ -2796,7 +2716,6 @@ Tech
         Item type = ShipHull name = "SH_TITANIC"
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_TRANSSPACE_HULL"
@@ -2811,7 +2730,6 @@ Tech
         Item type = ShipHull name = "SH_TRANSSPATIAL"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_LOGISTICS_FAC"
@@ -2829,7 +2747,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_CON_GEOINT"
         Item type = Building name = "BLD_SHIPYARD_CON_NANOROBO"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ANTIMAT_TORP"
@@ -2844,7 +2761,6 @@ Tech
         Item type = ShipPart name = "LR_ANTIMATTER_TORPEDO"
         Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_PLASMA_TORP"
@@ -2859,7 +2775,6 @@ Tech
         Item type = ShipPart name = "LR_PLASMA_TORPEDO"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_CAMO_AST_HULL"
@@ -2875,7 +2790,6 @@ Tech
         Item type = ShipHull name = "SH_CAMOUFLAGE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_AGREG_AST_HULL"
@@ -2890,7 +2804,6 @@ Tech
         Item type = ShipHull name = "SH_AGREGATE_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_MINIAST_SWARM"
@@ -2905,7 +2818,6 @@ Tech
         Item type = ShipHull name = "SH_MINIASTEROID_SWARM"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SCAT_AST_HULL"
@@ -2923,7 +2835,6 @@ Tech
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_CRYSTAL_AST_HULL"
@@ -2938,7 +2849,6 @@ Tech
         Item type = ShipHull name = "SH_CRYSTALLIZED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_CRYSTAL"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ROCK_PLATE"
@@ -2953,7 +2863,6 @@ Tech
         Item type = ShipPart name = "AR_ROCK_PLATE"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_CRYSTAL_PLATE"
@@ -2968,7 +2877,6 @@ Tech
         Item type = ShipPart name = "AR_CRYSTAL_PLATE"
         Item type = Building name = "BLD_SHIPYARD_AST_CRYSTAL"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ORG_HULL"
@@ -2983,7 +2891,6 @@ Tech
         Item type = ShipHull name = "SH_ORGANIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_STAT_MULTICELL_HULL"
@@ -2998,7 +2905,6 @@ Tech
         Item type = ShipHull name = "SH_STATIC_MULTICELLULAR"
         Item type = Building name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ENDOMORPH_HULL"
@@ -3017,7 +2923,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_ORB_INC"
         Item type = Building name = "BLD_SHIPYARD_ORG_IND_ORG_ASSMBL"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SYMB_HULL"
@@ -3032,7 +2937,6 @@ Tech
         Item type = ShipHull name = "SH_SYMBIOTIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_PROTOPLASM_HULL"
@@ -3047,7 +2951,6 @@ Tech
         Item type = ShipHull name = "SH_PROTOPLASMIC"
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_ENDOSYMB_HULL"
@@ -3066,7 +2969,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_RAVEN_HULL"
@@ -3081,7 +2983,6 @@ Tech
         Item type = ShipHull name = "SH_RAVENOUS"
         Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_BIOADAPT_HULL"
@@ -3096,7 +2997,6 @@ Tech
         Item type = ShipHull name = "SH_BIOADAPTIVE"
         Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SENT_HULL"
@@ -3115,7 +3015,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
         Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_BIOINTERCEPTOR"
@@ -3134,7 +3033,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
         Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_BIOBOMBER"
@@ -3153,7 +3051,6 @@ Tech
         Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
         Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_COMP_ENRG_HULL"
@@ -3168,7 +3065,6 @@ Tech
         Item type = ShipHull name = "SH_COMPRESSED_ENERGY"
         Item type = Building name = "BLD_SHIPYARD_ENRG_COMP"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_QUANT_ENRG_HULL"
@@ -3183,7 +3079,6 @@ Tech
         Item type = ShipHull name = "SH_QUANTUM_ENERGY"
         Item type = Building name = "BLD_SHIPYARD_ENRG_FOCUS"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_FRAC_ENRG_HULL"
@@ -3198,7 +3093,6 @@ Tech
         Item type = ShipHull name = "SH_FRACTAL_ENERGY"
         Item type = Building name = "BLD_SHIPYARD_ENRG_FOCUS"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_SOLAR_HULL"
@@ -3213,7 +3107,6 @@ Tech
         Item type = ShipHull name = "SH_SOLAR"
         Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
     ]
-    graphic = ""
 
 Tech
     name = "SHP_PULSE_LASER"
@@ -3225,7 +3118,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_TACT_COUNTER"
     unlock = Item type = ShipPart name = "PD_PULSE_LASER"
-    graphic = ""
 
 Tech
     name = "SHP_LEAD_PLATE"
@@ -3237,7 +3129,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "AR_LEAD_PLATE"
-    graphic = ""
 
 Tech
     name = "SHP_NEUTRONIUM_PLATE"
@@ -3252,7 +3143,6 @@ Tech
         "PRO_NEUTRONIUM_EXTRACTION"
     ]
     unlock = Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
-    graphic = ""
 
 Tech
     name = "SHP_NEUTRONIUM_PLATE_NUC_MIS"
@@ -3267,7 +3157,6 @@ Tech
         "SHP_NUCLEAR_MISSILE"
     ]
     unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
-    graphic = ""
 
 Tech
     name = "SHP_NEUTRONIUM_PLATE_SPEC_MIS"
@@ -3282,7 +3171,6 @@ Tech
         "SHP_SPECTRAL_MISSILE"
     ]
     unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
-    graphic = ""
 
 Tech
     name = "SHP_LIGHTHOUSE"
@@ -3305,7 +3193,6 @@ Tech
     researchcost = 360
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
-    graphic = ""
 
 Tech
     name = "SHP_FLEET_REPAIR"
@@ -3328,7 +3215,6 @@ Tech
                 ResupplyableBy empire = Source.Owner
             ]
             effects = SetStructure Value + 1
-    graphic = ""
 
 Tech
     name = "SHP_ION_CANNON"
@@ -3340,7 +3226,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_SPACE_WEAPON"
     unlock = Item type = ShipPart name = "SR_ION_CANNON"
-    graphic = ""
 
 Tech
     name = "SHP_NUCLEAR_MISSILE"
@@ -3352,7 +3237,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     unlock = Item type = ShipPart name = "LR_NUCLEAR_MISSILE"
-    graphic = ""
 
 Tech
     name = "SHP_DEFLECTOR"
@@ -3364,7 +3248,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
     unlock = Item type = ShipPart name = "SH_DEFLECTOR"
-    graphic = ""
 
 Tech
     name = "SHP_RADAR"
@@ -3387,7 +3270,6 @@ Tech
                 Not OwnerHasTech "SHP_SENSORS"
             ]
             effects = SetDetection Value + 10
-    graphic = ""
 
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -3399,7 +3281,6 @@ Tech
     researchturns = 1
     prerequisites = "SHP_NAVIGATION"
     unlock = Item type = ShipPart name = "FU_DEUTERIUM_TANK"
-    graphic = ""
 
 Tech
     name = "SHP_REINFORCED_HULL"
@@ -3417,7 +3298,6 @@ Tech
                 Ship
             ]
             effects = SetMaxStructure Value + 5
-    graphic = ""
 
 Tech
     name = "SHP_EM_DAMPER"
@@ -3445,7 +3325,6 @@ Tech
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
             effects = SetStealth Value + 5
-    graphic = ""
 
 Tech
     name = "SHP_INTERCEPTOR"
@@ -3457,7 +3336,6 @@ Tech
     researchturns = 2
     prerequisites = "SHP_TACT_SUPER"
     unlock = Item type = ShipPart name = "FI_INTERCEPTOR"
-    graphic = ""
 
 Tech
     name = "SHP_BOMBER"
@@ -3469,7 +3347,6 @@ Tech
     researchturns = 3
     prerequisites = "SHP_SURGICAL_DESTRUCT"
     unlock = Item type = ShipPart name = "FI_BOMBER"
-    graphic = ""
 
 Tech
     name = "SHP_SPECTRAL_MISSILE"
@@ -3481,7 +3358,6 @@ Tech
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
     unlock = Item type = ShipPart name = "LR_SPECTRAL_MISSILE"
-    graphic = ""
 
 Tech
     name = "SHP_NEUTRON_SCANNER"
@@ -3501,7 +3377,6 @@ Tech
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
             effects = SetDetection Value + 20
-    graphic = ""
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -3519,7 +3394,6 @@ Tech
                 Ship
             ]
             effects = SetStructure Value + 1
-    graphic = ""
 
 Tech
     name = "SHP_ADV_DAM_CONT"
@@ -3537,7 +3411,6 @@ Tech
                 Ship
             ]
             effects = SetStructure Target.MaxStructure
-    graphic = ""
 
 Tech
     name = "SHP_RECON_FIGHT"
@@ -3549,7 +3422,6 @@ Tech
     researchturns = 2
     prerequisites = "SHP_INTSTEL_LOG"
     unlock = Item type = ShipPart name = "FI_RECON"
-    graphic = ""
 
 Tech
     name = "SHP_ZORTRIUM_PLATE"
@@ -3561,7 +3433,6 @@ Tech
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
-    graphic = ""
 
 Tech
     name = "SHP_PHASOR"
@@ -3573,7 +3444,6 @@ Tech
     researchturns = 4
     prerequisites = "SHP_STRAT_DEFENSE"
     unlock = Item type = ShipPart name = "PD_PHASOR"
-    graphic = ""
 
 Tech
     name = "SHP_DEFENSE_NET"
@@ -3591,7 +3461,6 @@ Tech
                 Planet
             ]
             effects = SetDefense Value + 5
-    graphic = ""
 
 Tech
     name = "SHP_PLAN_DEFLECT_SHLD"
@@ -3610,7 +3479,6 @@ Tech
             ]
             activation = Not OwnerHasTech "SHP_PLAN_BARRIER_SHLD"
             effects = SetMaxShield Value + 10
-    graphic = ""
 
 Tech
     name = "SHP_MASS_DRIVER"
@@ -3622,7 +3490,6 @@ Tech
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
     unlock = Item type = ShipPart name = "SR_MASS_DRIVER"
-    graphic = ""
 
 Tech
     name = "SHP_SYST_DEF_MINE"
@@ -3644,7 +3511,6 @@ Tech
                 OwnedBy EnemyOf Source.Owner
             ]
             effects = SetStructure Value - 2
-    graphic = ""
 
 Tech
     name = "SHP_ABSORPTION_FIELD"
@@ -3671,7 +3537,6 @@ Tech
                 Not OwnerHasTech "SHP_PHASING_CLOAK"
             ]
             effects = SetStealth Value + 10
-    graphic = ""
 
 Tech
     name = "SHP_DIM_CLOAK"
@@ -3695,7 +3560,6 @@ Tech
             ]
             activation = Not OwnerHasTech "SHP_PHASING_CLOAK"
             effects = SetStealth Value + 15
-    graphic = ""
 
 Tech
     name = "SHP_HI_ENRG_FOCUS"
@@ -3713,7 +3577,6 @@ Tech
                 Planet
             ]
             effects = SetMaxDefense Value + 15
-    graphic = ""
 
 Tech
     name = "SHP_ANTIMATTER_TANK"
@@ -3725,7 +3588,6 @@ Tech
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
-    graphic = ""
 
 Tech
     name = "SHP_PLAN_BARRIER_SHLD"
@@ -3743,7 +3605,6 @@ Tech
                 Planet
             ]
             effects = SetMaxShield Value + 45
-    graphic = ""
 
 Tech
     name = "SHP_DIST_MOD"
@@ -3755,7 +3616,6 @@ Tech
     researchturns = 3
     prerequisites = "SHP_SURGICAL_DESTRUCT"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
-    graphic = ""
 
 Tech
     name = "SHP_PHASING_CLOAK"
@@ -3778,7 +3638,6 @@ Tech
                 ]
             ]
             effects = SetStealth Value + 5
-    graphic = ""
 
 Tech
     name = "SHP_SENSORS"
@@ -3797,7 +3656,6 @@ Tech
                 Planet
             ]
             effects = SetDetection Value + 25
-    graphic = ""
 
 Tech
     name = "SHP_PLANET_CLOAK"
@@ -3810,7 +3668,6 @@ Tech
     Unresearchable
     prerequisites = "SHP_DIM_CLOAK"
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
-    graphic = ""
 
 Tech
     name = "SHP_DEATH_RAY"
@@ -3823,7 +3680,6 @@ Tech
     Unresearchable
     prerequisites = "SHP_HI_ENRG_FOCUS"
     unlock = Item type = ShipPart name = "SR_DEATH_RAY"
-    graphic = ""
 
 Tech
     name = "SHP_MULTISPEC_SHIELD"
@@ -3836,7 +3692,6 @@ Tech
     Unresearchable
     prerequisites = "SHP_DIST_MOD"
     unlock = Item type = ShipPart name = "SH_MULTISPEC"
-    graphic = ""
 
 Tech
     name = "SHP_PLANET_STEALTH_MOD"
@@ -3847,7 +3702,6 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
-    prerequisites = []
     effectsgroups =
         EffectsGroup
             scope = Or [
@@ -3856,4 +3710,3 @@ Tech
             ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 4.99
-    graphic = ""
