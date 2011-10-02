@@ -97,34 +97,22 @@ XMLElement::XMLElement(const std::string& t, bool r) :
 {}
 
 const std::string& XMLElement::Tag() const
-{
-    return m_tag;
-}
+{ return m_tag; }
 
 const std::string& XMLElement::Text() const
-{
-    return m_text;
-}
+{ return m_text; }
 
 int XMLElement::NumChildren() const
-{
-    return m_children.size();
-}
+{ return m_children.size(); }
 
 int XMLElement::NumAttributes() const
-{
-    return m_attributes.size();
-}
+{ return m_attributes.size(); }
 
 bool XMLElement::ContainsChild(const std::string& child) const
-{
-    return ChildIndex(child) != -1;
-}
+{ return ChildIndex(child) != -1; }
 
 bool XMLElement::ContainsAttribute(const std::string& attrib) const
-{
-    return m_attributes.find(attrib) != m_attributes.end();
-}
+{ return m_attributes.find(attrib) != m_attributes.end(); }
 
 int XMLElement::ChildIndex(const std::string& child) const
 {
@@ -139,9 +127,7 @@ int XMLElement::ChildIndex(const std::string& child) const
 }
 
 const XMLElement& XMLElement::Child(unsigned int idx) const
-{
-    return m_children.at(idx);
-}
+{ return m_children.at(idx); }
 
 const XMLElement& XMLElement::Child(const std::string& child) const
 {
@@ -210,29 +196,19 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
 }
 
 XMLElement::const_child_iterator XMLElement::child_begin() const
-{
-    return m_children.begin();
-}
+{ return m_children.begin(); }
 
 XMLElement::const_child_iterator XMLElement::child_end() const
-{
-    return m_children.end();
-}
+{ return m_children.end(); }
 
 XMLElement::const_attr_iterator XMLElement::attr_begin() const
-{
-    return m_attributes.begin();
-}
+{ return m_attributes.begin(); }
 
 XMLElement::const_attr_iterator XMLElement::attr_end() const
-{
-    return m_attributes.end();
-}
+{ return m_attributes.end(); }
 
 XMLElement& XMLElement::Child(unsigned int idx)
-{
-    return m_children.at(idx);
-}
+{ return m_children.at(idx); }
 
 XMLElement& XMLElement::Child(const std::string& child)
 {
@@ -257,39 +233,25 @@ XMLElement& XMLElement::LastChild()
 }
 
 void XMLElement::SetAttribute(const std::string& attrib, const std::string& val)
-{
-    m_attributes[attrib] = val;
-}
+{ m_attributes[attrib] = val; }
 
 void XMLElement::SetTag(const std::string& tag)
-{
-    m_tag = tag;
-}
+{ m_tag = tag; }
 
 void XMLElement::SetText(const std::string& text)
-{
-    m_text = text;
-}
+{ m_text = text; }
 
 void XMLElement::RemoveAttribute(const std::string& attrib)
-{
-    m_attributes.erase(attrib);
-}
+{ m_attributes.erase(attrib); }
 
 void XMLElement::RemoveAttributes()
-{
-    m_attributes.clear();
-}
+{ m_attributes.clear(); }
 
 void XMLElement::AppendChild(const XMLElement& e)
-{
-    m_children.push_back(e);
-}
+{ m_children.push_back(e); }
 
 void XMLElement::AppendChild(const std::string& child)
-{
-    m_children.push_back(XMLElement(child));
-}
+{ m_children.push_back(XMLElement(child)); }
 
 void XMLElement::AddChildBefore(const XMLElement& e, unsigned int idx)
 {
@@ -318,29 +280,19 @@ void XMLElement::RemoveChild(const std::string& child)
 }
 
 void XMLElement::RemoveChildren()
-{
-    m_children.clear();
-}
+{ m_children.clear(); }
 
 XMLElement::child_iterator XMLElement::child_begin()
-{
-    return m_children.begin();
-}
+{ return m_children.begin(); }
 
 XMLElement::child_iterator XMLElement::child_end()
-{
-    return m_children.end();
-}
+{ return m_children.end(); }
 
 XMLElement::attr_iterator XMLElement::attr_begin()
-{
-    return m_attributes.begin();
-}
+{ return m_attributes.begin(); }
 
 XMLElement::attr_iterator XMLElement::attr_end()
-{
-    return m_attributes.end();
-}
+{ return m_attributes.end(); }
 
 
 ////////////////////////////////////////////////
@@ -385,19 +337,13 @@ std::istream& XMLDoc::ReadDoc(std::istream& is)
 }
 
 void XMLDoc::SetElemName(const char* first, const char* last)
-{
-    s_temp_elem = XMLElement(std::string(first, last));
-}
+{ s_temp_elem = XMLElement(std::string(first, last)); }
 
 void XMLDoc::SetAttributeName(const char* first, const char* last)
-{
-    s_temp_attr_name = std::string(first, last);
-}
+{ s_temp_attr_name = std::string(first, last); }
 
 void XMLDoc::AddAttribute(const char* first, const char* last)
-{
-    s_temp_elem.SetAttribute(s_temp_attr_name, std::string(first, last));
-}
+{ s_temp_elem.SetAttribute(s_temp_attr_name, std::string(first, last)); }
 
 void XMLDoc::PushElem1(const char* first, const char* last)
 {
