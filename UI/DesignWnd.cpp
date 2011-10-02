@@ -312,6 +312,8 @@ void PartsListBox::Populate() {
     // loop through all possible parts
     for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
         const PartType* part = part_it->second;
+        if (!part->Producible())
+            continue;
 
         // check whether this part should be shown in list
         ShipPartClass part_class = part->Class();
@@ -994,6 +996,10 @@ void BasesListBox::PopulateWithEmptyHulls() {
     for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const std::string& hull_name = it->first;
 
+        const HullType* hull_type = manager.GetHullType(hull_name);
+        if (!hull_type || !hull_type->Producible())
+            continue;
+
         // add or retain in list 1) all hulls if no empire is specified, or 
         //                       2) hulls of appropriate availablility for set empire
         if (!empire ||
@@ -1065,6 +1071,9 @@ void BasesListBox::PopulateWithCompletedDesigns() {
         for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
             int design_id = *it;
             bool available = empire->ShipDesignAvailable(design_id);
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design || !design->Producible())
+                continue;
             if ((available && showing_available) || (!available && showing_unavailable)) {
                 CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
                 Insert(row);
@@ -1075,6 +1084,9 @@ void BasesListBox::PopulateWithCompletedDesigns() {
         // add all known / existing designs
         for (Universe::ship_design_iterator it = universe.beginShipDesigns(); it != universe.endShipDesigns(); ++it) {
             int design_id = it->first;
+            const ShipDesign* design = it->second;
+            if (!design->Producible())
+                continue;
             CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
             Insert(row);
             row->Resize(row_size);
@@ -1354,7 +1366,6 @@ void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_li
             ShowAvailability(false, refresh_list);
     }
 }
-
 
 void DesignWnd::BaseSelector::DoLayout() {
     const GG::X LEFT_PAD(5);
