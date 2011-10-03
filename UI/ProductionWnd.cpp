@@ -226,7 +226,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
     m_production_info_panel(0),
     m_queue_lb(0),
-    m_build_designator_wnd(0)
+    m_build_designator_wnd(0),
+    m_enabled(false)
 {
     m_production_info_panel = new ProductionInfoPanel(PRODUCTION_INFO_AND_QUEUE_WIDTH, GG::Y(200), UserString("PRODUCTION_INFO_PANEL_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       static_cast<GLfloat>(OUTER_LINE_THICKNESS), ClientUI::KnownTechFillColor(), ClientUI::KnownTechTextAndBorderColor());
@@ -434,5 +435,7 @@ void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/)
 {
+    m_enabled = enable;
+    m_queue_lb->EnableOrderIssuing(m_enabled);
 }
 

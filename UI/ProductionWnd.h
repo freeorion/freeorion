@@ -76,9 +76,10 @@ private:
     void    QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt);
     void    QueueItemDoubleClickedSlot(GG::ListBox::iterator it);
 
-    ProductionInfoPanel* m_production_info_panel;
-    QueueListBox*        m_queue_lb;
-    BuildDesignatorWnd*  m_build_designator_wnd;
+    ProductionInfoPanel*        m_production_info_panel;
+    QueueListBox*               m_queue_lb;
+    BuildDesignatorWnd*         m_build_designator_wnd;
+    bool                        m_enabled;
 
     boost::signals::connection  m_empire_connection;
 };
