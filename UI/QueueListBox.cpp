@@ -88,5 +88,5 @@ void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
 void QueueListBox::Clear()
 {
     CUIListBox::Clear();
-    m_drop_point = end();
+    DragDropLeave();
 }
