@@ -2,12 +2,21 @@ v0.3.17 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 
 New Features / Improvements:
  ~ Added ship repair.
+ ~ Split LifeFrequency galaxy setup setting into separate Monster and Native Frequencies.
+ ~ Reduced turn processing times.
+ ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
 
 Balancing:
  ~ Some simplifications of the tech tree.
+ ~ Slowed some monster movement rates.
 
 Graphics:
- ~ Made companion star always visibile in in sidepanel.
+ ~ Made companion stars always visibile in in sidepanel.
+
+GUI:
+ ~ Sorted techs alphabetically in encyclopedia index.
+ ~ Added a separate message for starting up AIs so any problems with that won't appear to happen during universe generation.
+ ~ Hid unresearchable and unproducible items on the research, production, and design screens.
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

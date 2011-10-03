@@ -196,7 +196,7 @@
       <FunctionLevelLinking>false</FunctionLevelLinking>
       <IntrinsicFunctions>false</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;_DLL;GiGi_EXPORTS;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;BOOST_ALL_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../../include;../../../include/libpng/;../../../include/zlib/;../../GG/;../../../Boost/include/boost_1_46_1/;../include/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../../include;../../../include/libpng/;../../../include/zlib/;../../GG/;../../../Boost/include/boost_1_47/;../include/</AdditionalIncludeDirectories>
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>

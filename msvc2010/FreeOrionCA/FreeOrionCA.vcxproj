@@ -79,7 +79,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../FreeOrionCA.exe</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>python27.lib;boost_python-vc100-mt-1_46_1.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>python27.lib;boost_python-vc100-mt-1_47.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
     </Link>
