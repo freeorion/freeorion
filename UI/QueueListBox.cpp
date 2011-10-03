@@ -22,7 +22,7 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first,
 {
     assert(std::distance(first, last) == 1);
     for (DropsAcceptableIter it = first; it != last; ++it) {
-        it->second =
+        it->second = m_enabled &&
             AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
     }
 }
@@ -40,14 +40,19 @@ void QueueListBox::AcceptDrops(const std::vector<GG::Wnd*>& wnds, const GG::Pt& 
 void QueueListBox::Render()
 {
     ListBox::Render();
-    if (m_show_drop_point) {
-        GG::ListBox::Row& row = **(m_drop_point == end() ? --end() : m_drop_point);
-        GG::Control* panel = row[0];
-        GG::Pt ul = row.UpperLeft(), lr = row.LowerRight();
+    // render drop point line
+    if (m_show_drop_point && m_enabled) {
+        GG::ListBox::Row* row = *(m_drop_point == end() ? --end() : m_drop_point);
+        if (!row)
+            return;
+        GG::Pt ul = row->UpperLeft(), lr = row->LowerRight();
         if (m_drop_point == end())
             ul.y = lr.y;
-        ul.x = panel->UpperLeft().x;
-        lr.x = panel->LowerRight().x;
+        if (!row->empty()) {
+            GG::Control* panel = (*row)[0];
+            ul.x = panel->UpperLeft().x;
+            lr.x = panel->LowerRight().x;
+        }
         GG::FlatRectangle(GG::Pt(ul.x, ul.y - 1), GG::Pt(lr.x, ul.y), GG::CLR_ZERO, GG::CLR_WHITE, 1);
     }
 }
@@ -78,5 +83,10 @@ void QueueListBox::DragDropLeave()
 }
 
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/)
-{}
+{ m_enabled = enable; }
 
+void QueueListBox::Clear()
+{
+    CUIListBox::Clear();
+    m_drop_point = end();
+}
