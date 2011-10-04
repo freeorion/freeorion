@@ -12,6 +12,7 @@ Balancing:
 
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.
+ ~ Clearer fleet icons
 
 GUI:
  ~ Sorted techs alphabetically in encyclopedia index.
