@@ -329,11 +329,22 @@ void FleetButton::SetSelected(bool selected)
 }
 
 void FleetButton::RenderUnpressed() {
-    glColor(Color());
     GG::Pt ul = UpperLeft(), lr = LowerRight();
     const double midX = static_cast<double>(Value(ul.x + lr.x))/2.0;
     const double midY = static_cast<double>(Value(ul.y + lr.y))/2.0;
 
+    if (m_selected && m_selection_texture) {
+        double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
+        double sel_ind_half_size = Value(Width()) * sel_ind_scale / 2.0;
+
+        GG::Pt sel_ul = GG::Pt(GG::X(static_cast<int>(midX - sel_ind_half_size)), GG::Y(static_cast<int>(midY - sel_ind_half_size)));
+        GG::Pt sel_lr = GG::Pt(GG::X(static_cast<int>(midX + sel_ind_half_size)), GG::Y(static_cast<int>(midY + sel_ind_half_size)));
+
+        glColor(GG::CLR_WHITE);
+        m_selection_texture->OrthoBlit(sel_ul, sel_lr);
+    }
+
+    glColor(Color());
     if (m_vertex_components.empty()) {
         if (m_size_icon)
             m_size_icon->OrthoBlit(ul);
@@ -352,17 +363,6 @@ void FleetButton::RenderUnpressed() {
 
         RenderTexturedQuad(vertsXY, m_head_icon);
         RenderTexturedQuad(vertsXY, m_size_icon);
-    }
-
-    if (m_selected && m_selection_texture) {
-        double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
-        double sel_ind_half_size = Value(Width()) * sel_ind_scale / 2.0;
-
-        GG::Pt sel_ul = GG::Pt(GG::X(static_cast<int>(midX - sel_ind_half_size)), GG::Y(static_cast<int>(midY - sel_ind_half_size)));
-        GG::Pt sel_lr = GG::Pt(GG::X(static_cast<int>(midX + sel_ind_half_size)), GG::Y(static_cast<int>(midY + sel_ind_half_size)));
-
-        glColor(GG::CLR_WHITE);
-        m_selection_texture->OrthoBlit(sel_ul, sel_lr);
     }
 }
 
