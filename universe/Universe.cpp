@@ -924,7 +924,7 @@ double Universe::LinearDistance(int system1_id, int system2_id) const
 { return m_system_distances[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
 
 short Universe::JumpDistance(int system1_id, int system2_id) const
-{ return m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)] - 1; }
+{ return m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
 
 std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
@@ -1522,7 +1522,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // store effect cause and targets info in map, indexed by sourced effects group
         targets_causes_map.insert(std::make_pair(sourced_effects_group, target_and_cause));
-        
+
         // restore target_objects by moving objects back from targets to target_objects
         // this should be cheaper than doing a full copy because target_set is usually small
         target_objects.insert(target_set.begin(), target_set.end());
