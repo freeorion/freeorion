@@ -110,9 +110,7 @@ void Building::Copy(const UniverseObject* copied_object, int empire_id)
 }
 
 const std::string& Building::TypeName() const
-{
-    return UserString("BUILDING");
-}
+{ return UserString("BUILDING"); }
 
 std::string Building::Dump() const
 {
@@ -124,29 +122,19 @@ std::string Building::Dump() const
 }
 
 const BuildingType* Building::GetBuildingType() const
-{
-    return ::GetBuildingType(m_building_type);
-}
+{ return ::GetBuildingType(m_building_type); }
 
 const std::string& Building::BuildingTypeName() const
-{
-    return m_building_type;
-}
+{ return m_building_type; }
 
 int Building::PlanetID() const
-{
-    return m_planet_id;
-}
+{ return m_planet_id; }
 
 int Building::ProducedByEmpireID() const
-{
-    return m_produced_by_empire_id;
-}
+{ return m_produced_by_empire_id; }
 
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<Building* const>(this));
-}
+{ return visitor.Visit(const_cast<Building* const>(this)); }
 
 void Building::SetPlanetID(int planet_id)
 {
@@ -223,14 +211,10 @@ BuildingType::~BuildingType()
 { delete m_location; }
 
 const std::string& BuildingType::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 const std::string& BuildingType::Description() const
-{
-    return m_description;
-}
+{ return m_description; }
 
 std::string BuildingType::Dump() const
 {
@@ -274,9 +258,8 @@ double BuildingType::ProductionCost() const
         return 1.0;
 }
 
-double BuildingType::PerTurnCost() const {
-    return ProductionCost() / std::max(1, ProductionTime());
-}
+double BuildingType::PerTurnCost() const
+{ return ProductionCost() / std::max(1, ProductionTime()); }
 
 int BuildingType::ProductionTime() const
 {
@@ -287,28 +270,19 @@ int BuildingType::ProductionTime() const
 }
 
 bool BuildingType::Producible() const
-{
-    return m_producible;
-}
+{ return m_producible; }
 
 double BuildingType::MaintenanceCost() const
-{
-    return 0.0;
-}
+{ return 0.0; }
 
-const Condition::ConditionBase* BuildingType::Location() const {
-    return m_location;
-}
+const Condition::ConditionBase* BuildingType::Location() const
+{ return m_location; }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
-{
-    return m_effects;
-}
+{ return m_effects; }
 
 const std::string& BuildingType::Graphic() const
-{
-    return m_graphic;
-}
+{ return m_graphic; }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     const ObjectMap& objects = GetMainObjectMap();
@@ -353,9 +327,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 
 CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id,
                                              int location_id, bool as_production_item) const
-{
-    return m_capture_result;
-}
+{ return m_capture_result; }
 
 /////////////////////////////////////////////////
 // BuildingTypeManager                         //
@@ -413,25 +385,17 @@ BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager()
 }
 
 BuildingTypeManager::iterator BuildingTypeManager::begin() const
-{
-    return m_building_types.begin();
-}
+{ return m_building_types.begin(); }
 
 BuildingTypeManager::iterator BuildingTypeManager::end() const
-{
-    return m_building_types.end();
-}
+{ return m_building_types.end(); }
 
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
 BuildingTypeManager& GetBuildingTypeManager()
-{
-    return BuildingTypeManager::GetBuildingTypeManager();
-}
+{ return BuildingTypeManager::GetBuildingTypeManager(); }
 
 const BuildingType* GetBuildingType(const std::string& name)
-{
-    return GetBuildingTypeManager().GetBuildingType(name);
-}
+{ return GetBuildingTypeManager().GetBuildingType(name); }

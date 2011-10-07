@@ -60,9 +60,7 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, Obje
 }
 
 void Condition::ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
-{
-    Eval(ScriptingContext(), matches, non_matches, search_domain);
-}
+{ Eval(ScriptingContext(), matches, non_matches, search_domain); }
 
 std::string Condition::ConditionBase::Description(bool negated/* = false*/) const
 { return ""; }
@@ -4233,7 +4231,7 @@ Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 
 namespace {
     const int MANY_JUMPS(999999);
-    
+
     int JumpsBetweenObjects(const UniverseObject* one, const UniverseObject* two) {
         ObjectMap& objects = GetUniverse().Objects();
 
@@ -4249,7 +4247,7 @@ namespace {
             short jumps = GetUniverse().JumpDistance(system_one->ID(), system_two->ID());
             if (jumps != -1)    // if jumps is -1, no path exists between the systems
                 return static_cast<int>(jumps);
- 
+
         } else if (system_one) {
             // just object one is / in a system.
             if (const Fleet* fleet = FleetFromObject(two)) {
@@ -4261,7 +4259,7 @@ namespace {
                 if (jumps != -1)
                     return jumps - 1;
             }
- 
+
         } else if (system_two) {
             // just object two is a system.
             if (const Fleet* fleet = FleetFromObject(one)) {
@@ -4301,7 +4299,7 @@ namespace {
         }
         return MANY_JUMPS;
     }
-    
+
     bool WithinStarlaneJumpsSimpleMatch(const UniverseObject* candidate, const Condition::ObjectSet& from_objects, int jump_limit)
     {
         if (!candidate)

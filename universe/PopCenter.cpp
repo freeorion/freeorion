@@ -60,7 +60,7 @@ void PopCenter::Init()
 std::string PopCenter::Dump() const
 {
     std::stringstream os;
-    os << " species: " << m_species_name << " allocated food: " << m_allocated_food;
+    os << " species: " << m_species_name << " allocated food: " << m_allocated_food << "  ";
     return os.str();
 }
 
