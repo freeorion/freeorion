@@ -34,9 +34,13 @@ public:
     virtual GG::Scroll*            NewScroll(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Orientation orientation, GG::Clr color, GG::Clr interior,
                                              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN) const;
 
-    virtual GG::Slider*            NewSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation,
-                                             GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
-                                             GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+    virtual GG::Slider<int>*        NewIntSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation,
+                                                 GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
+                                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
+
+    virtual GG::Slider<double>*    NewDoubleSlider(GG::X x, GG::Y y, GG::X w, GG::Y h, double min, double max, GG::Orientation orientation,
+                                                   GG::SliderLineStyle style, GG::Clr color, int tab_width, int line_width = 5,
+                                                    GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE) const;
 
     virtual GG::Spin<int>*         NewIntSpin(GG::X x, GG::Y y, GG::X w, int value, int step, int min, int max, bool edits,
                                               const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK,

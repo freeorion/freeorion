@@ -492,6 +492,9 @@
     <ClInclude Include="..\..\UI\GLClientAndServerBuffer.h">
       <Filter>Header Files\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\UI\CUISlider.h">
+      <Filter>Header Files\UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">

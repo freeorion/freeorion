@@ -50,9 +50,7 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
 
     boost::shared_ptr<GG::Font> FontOrDefaultFont(const boost::shared_ptr<GG::Font>& font)
-    {
-        return font ? font : ClientUI::GetFont();
-    }
+    { return font ? font : ClientUI::GetFont(); }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
@@ -74,9 +72,7 @@ CUIButton::CUIButton(GG::X x, GG::Y y, GG::X w, const std::string& str, const bo
     Button(x, y, w, FontOrDefaultFont(font)->Lineskip() + 6, str, FontOrDefaultFont(font), color, text_color, flags),
     m_border_color(border),
     m_border_thick(thick)
-{
-    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
-}
+{ GG::Connect(ClickedSignal, &PlayButtonClickSound, -1); }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const
 {
@@ -95,14 +91,10 @@ void CUIButton::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 }
 
 void CUIButton::SetBorderColor(GG::Clr clr)
-{
-    m_border_color = clr;
-}
+{ m_border_color = clr; }
 
 void CUIButton::SetBorderThick(int thick)
-{
-    m_border_thick = std::max(thick, 0);    // don't allow negative thickness borders
-}
+{ m_border_thick = std::max(thick, 0); }  // don't allow negative thickness borders
 
 void CUIButton::RenderPressed()
 {
@@ -191,9 +183,7 @@ bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const
 }
 
 void SettableInWindowCUIButton::SetInWindow(boost::function<bool(const GG::Pt&)> in_window_function)
-{
-    m_in_window_func = in_window_function;
-}
+{ m_in_window_func = in_window_function; }
 
 
 ///////////////////////////////////////
@@ -204,9 +194,7 @@ CUITurnButton::CUITurnButton(GG::X x, GG::Y y, GG::X w, const std::string& str, 
                              GG::Clr border/* = ClientUI::CtrlBorderColor()*/, int thick/* = 2*/, 
                              GG::Clr text_color/* = ClientUI::TextColor()*/, GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) : 
     CUIButton(x, y, w, str, FontOrDefaultFont(font), color, border, thick, text_color, flags)
-{
-    GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1);
-}
+{ GG::Connect(ClickedSignal, &PlayTurnButtonClickSound, -1); }
 
 
 ///////////////////////////////////////
@@ -216,9 +204,7 @@ CUIArrowButton::CUIArrowButton(GG::X x, GG::Y y, GG::X w, GG::Y h, ShapeOrientat
     Button(x, y, w, h, "", boost::shared_ptr<GG::Font>(), color, GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color (false)
-{
-    GG::Connect(ClickedSignal, &PlayButtonClickSound, -1);
-}
+{ GG::Connect(ClickedSignal, &PlayButtonClickSound, -1); }
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const
 {
@@ -424,14 +410,10 @@ void CUIStateButton::Render()
 }
 
 void CUIStateButton::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_mouse_here = true;
-}
+{ m_mouse_here = true; }
 
 void CUIStateButton::MouseLeave()
-{
-    m_mouse_here = false;
-}
+{ m_mouse_here = false; }
 
 
 ///////////////////////////////////////
@@ -482,9 +464,7 @@ CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, G
 }
 
 void CUIScroll::ScrollTab::SetColor(GG::Clr c)
-{
-    // ignore
-}
+{}  // intentionally ignored
 
 void CUIScroll::ScrollTab::Render()
 {
@@ -547,9 +527,7 @@ void CUIScroll::ScrollTab::Render()
 }
 
 void CUIScroll::ScrollTab::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_being_dragged = true;
-}
+{ m_being_dragged = true; }
 
 void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -559,9 +537,7 @@ void CUIScroll::ScrollTab::LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod
 }
 
 void CUIScroll::ScrollTab::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    m_being_dragged = false;
-}
+{ m_being_dragged = false; }
 
 void CUIScroll::ScrollTab::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -698,19 +674,13 @@ void CUIDropDownList::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_key
 }
 
 void CUIDropDownList::MouseLeave()
-{
-    m_mouse_here = false;
-}
+{ m_mouse_here = false; }
 
 void CUIDropDownList::DisableDropArrow()
-{
-    m_render_drop_arrow = false;
-}
+{ m_render_drop_arrow = false; }
 
 void CUIDropDownList::EnableDropArrow()
-{
-    m_render_drop_arrow = true;
-}
+{ m_render_drop_arrow = true; }
 
 ///////////////////////////////////////
 // class CUIEdit
@@ -786,29 +756,19 @@ CUILinkTextMultiEdit::CUILinkTextMultiEdit(GG::X x, GG::Y y, GG::X w, GG::Y h, c
 }
 
 const std::vector<GG::Font::LineData>& CUILinkTextMultiEdit::GetLineData() const
-{
-    return CUIMultiEdit::GetLineData();
-}
+{ return CUIMultiEdit::GetLineData(); }
 
 const boost::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
-{
-    return CUIMultiEdit::GetFont();
-}
+{ return CUIMultiEdit::GetFont(); }
 
 GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
-{
-    return CUIMultiEdit::TextUpperLeft() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5));
-}
+{ return CUIMultiEdit::TextUpperLeft() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
 
 GG::Pt CUILinkTextMultiEdit::TextLowerRight() const
-{
-    return CUIMultiEdit::TextLowerRight() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5));
-}
+{ return CUIMultiEdit::TextLowerRight() - ScrollPosition() + GG::Pt(GG::X(5), GG::Y(5)); }
 
 const std::string& CUILinkTextMultiEdit::RawText() const
-{
-    return m_raw_text;
-}
+{ return m_raw_text; }
 
 void CUILinkTextMultiEdit::Render()
 {
@@ -884,49 +844,6 @@ void CUILinkTextMultiEdit::SetLinkedText(const std::string& str)
     CUIMultiEdit::SetText(str);
 }
 
-///////////////////////////////////////
-// class CUISlider
-///////////////////////////////////////
-CUISlider::CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags/* = INTERACTIVE*/) :
-    Slider(x, y, w, h, min, max, orientation, GG::FLAT, ClientUI::CtrlColor(), orientation == GG::VERTICAL ? Value(w) : Value(h), 5, flags)
-{}
-
-void CUISlider::Render()
-{
-    const GG::Pt UL = UpperLeft();
-    const GG::Pt LR = LowerRight();
-    GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-    int tab_width = GetOrientation() == GG::VERTICAL ? Value(Tab()->Height()) : Value(Tab()->Width());
-    GG::Pt ul, lr;
-    if (GetOrientation() == GG::VERTICAL) {
-        ul.x = ((LR.x + UL.x) - static_cast<int>(LineWidth())) / 2;
-        lr.x   = ul.x + static_cast<int>(LineWidth());
-        ul.y = UL.y + tab_width / 2;
-        lr.y   = LR.y - tab_width / 2;
-    } else {
-        ul.x = UL.x + tab_width / 2;
-        lr.x   = LR.x - tab_width / 2;
-        ul.y = ((LR.y + UL.y) - static_cast<int>(LineWidth())) / 2;
-        lr.y   = ul.y + static_cast<int>(LineWidth());
-    }
-    GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
-}
-
-void CUISlider::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
-    Wnd::SizeMove(ul, lr);
-    if (GetOrientation() == GG::VERTICAL) {
-        Tab()->Resize(GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
-        Tab()->MoveTo(GG::Pt((Width() - Tab()->Width()) / 2, Tab()->RelativeUpperLeft().y));
-        Tab()->SetMinSize(GG::Pt(Tab()->MinSize().x, GG::Y(10)));
-    } else {
-        Tab()->SizeMove(GG::Pt(GG::X(2), GG::Y0), GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
-        Tab()->MoveTo(GG::Pt(Tab()->RelativeUpperLeft().x, (Height() - Tab()->Height()) / 2));
-        Tab()->SetMinSize(GG::Pt(GG::X(10), Tab()->MinSize().y));
-    }
-    MoveTabToPosn();
-}
-
 
 ///////////////////////////////////////
 // class CUISimpleDropDownListRow
@@ -936,9 +853,7 @@ const GG::Y CUISimpleDropDownListRow::DEFAULT_ROW_HEIGHT(22);
 
 CUISimpleDropDownListRow::CUISimpleDropDownListRow(const std::string& row_text, GG::Y row_height/* = DEFAULT_ROW_HEIGHT*/) :
     GG::ListBox::Row(GG::X1, row_height, "")
-{
-    push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT));
-}
+{ push_back(new GG::TextControl(GG::X0, GG::Y0, row_text, ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_LEFT)); }
 
 
 ///////////////////////////////////////
@@ -1236,9 +1151,7 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
-{
-    return (**CurrentItem())[0]->Color();
-}
+{ return (**CurrentItem())[0]->Color(); }
 
 void EmpireColorSelector::SelectColor(const GG::Clr& clr)
 {
@@ -1267,9 +1180,7 @@ void EmpireColorSelector::SelectionChanged(GG::DropDownList::iterator it)
 ColorSelector::ColorSelector(GG::X x, GG::Y y, GG::X w, GG::Y h, GG::Clr color, GG::Clr default_color) :
     Control(x, y, w, h),
     m_default_color(default_color)
-{
-    SetColor(color);
-}
+{ SetColor(color); }
 
 void ColorSelector::Render()
 {
@@ -1593,9 +1504,7 @@ void FPSIndicator::Render()
 }
 
 void FPSIndicator::UpdateEnabled()
-{
-    m_enabled = GetOptionsDB().Get<bool>("show-fps");
-}
+{ m_enabled = GetOptionsDB().Get<bool>("show-fps"); }
 
 //////////////////////////////////////////////////
 // ShadowedTextControl

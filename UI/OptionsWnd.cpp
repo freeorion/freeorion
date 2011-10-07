@@ -6,6 +6,7 @@
 
 #include "ClientUI.h"
 #include "CUISpin.h"
+#include "CUISlider.h"
 #include "Sound.h"
 
 #include <OgreRoot.h>
@@ -401,7 +402,7 @@ void OptionsWnd::MusicVolumeOption()
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
     assert(validator);
-    CUISlider* slider = new CUISlider(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
+    CUISlider<int>* slider = new CUISlider<int>(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
@@ -426,7 +427,7 @@ void OptionsWnd::VolumeOption(const std::string& toggle_option_name, const std::
     button->SetCheck(toggle_value);
     boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
-    CUISlider* slider = new CUISlider(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
+    CUISlider<int>* slider = new CUISlider<int>(GG::X0, GG::Y0, GG::X1, GG::Y(14), validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);

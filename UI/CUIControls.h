@@ -87,7 +87,6 @@ private:
     boost::function<bool(const GG::Pt&)>    m_in_window_func;
 };
 
-
 /** a FreeOrion next-turn button control */
 class CUITurnButton : public CUIButton
 {
@@ -98,7 +97,6 @@ public:
                   GG::Clr text_color = ClientUI::TextColor(), GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
     //@}
 };
-
 
 /** a FreeOrion triangular arrow button */
 class CUIArrowButton : public GG::Button
@@ -132,7 +130,6 @@ private:
     bool             m_fill_background_with_wnd_color;
 };
 
-
 /** a FreeOrion StateButton control */
 class CUIStateButton : public GG::StateButton
 {
@@ -161,7 +158,6 @@ private:
     bool    m_mouse_here;
 };
 
-
 /** Tab bar with buttons for selecting tabbed windows. */
 class CUITabBar : public GG::TabBar
 {
@@ -175,7 +171,6 @@ public:
 private:
     virtual void DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_buttons);
 };
-
 
 /** a FreeOrion Scroll control */
 class CUIScroll : public GG::Scroll
@@ -214,7 +209,6 @@ public:
 protected:
     GG::Clr m_border_color;
 };
-
 
 /** a FreeOrion ListBox control */
 class CUIListBox : public GG::ListBox
@@ -276,7 +270,6 @@ private:
     bool m_mouse_here;
 };
 
-
 /** a FreeOrion Edit control */
 class CUIEdit : public GG::Edit
 {
@@ -291,7 +284,6 @@ public:
     virtual void Render();
     //@}
 };
-
 
 /** a FreeOrion MultiEdit control */
 class CUIMultiEdit : public GG::MultiEdit
@@ -348,20 +340,6 @@ private:
 
     bool            m_already_setting_text_so_dont_link;
     std::string     m_raw_text;
-};
-
-/** a FreeOrion slider, much feared in the forums */
-class CUISlider : public GG::Slider
-{
-public:
-    /** \name Structors */ //@{
-    CUISlider(GG::X x, GG::Y y, GG::X w, GG::Y h, int min, int max, GG::Orientation orientation, GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
-    //@}
-
-    /** \name Mutators */ //@{
-    virtual void Render();
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    //@}
 };
 
 /** A simple GG::ListBox::Row subclass designed for use in text-only drop-down lists, such as the ones used in the game setup dialogs. */

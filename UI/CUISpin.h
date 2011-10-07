@@ -20,14 +20,15 @@ namespace detail {
 
 
 /** a FreeOrion Spin control */
-template <class T> class CUISpin : public GG::Spin<T>
+template <class T>
+class CUISpin : public GG::Spin<T>
 {
 public:
     typedef typename GG::Spin<T>::ValueType ValueType;
 
     /** \name Structors */ //@{
     CUISpin(GG::X x, GG::Y y, GG::X w, T value, T step, T min, T max, bool edits) :
-        GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), 
+        GG::Spin<T>(x, y, w, value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
                     ClientUI::TextColor(), GG::CLR_ZERO)
     {
         GG::Connect(GG::Spin<T>::ValueChangedSignal, detail::PlayValueChangedSound(), -1);

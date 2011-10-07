@@ -135,6 +135,7 @@
     <ClInclude Include="..\..\UI\CombatWndFwd.h" />
     <ClInclude Include="..\..\UI\CUIControls.h" />
     <ClInclude Include="..\..\UI\CUIDrawUtil.h" />
+    <ClInclude Include="..\..\UI\CUISlider.h" />
     <ClInclude Include="..\..\UI\CUISpin.h" />
     <ClInclude Include="..\..\UI\CUIStyle.h" />
     <ClInclude Include="..\..\UI\CUIWnd.h" />
