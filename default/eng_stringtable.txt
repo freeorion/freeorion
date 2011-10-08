@@ -2154,6 +2154,21 @@ Capital:
 NO_CAPITAL
 No Known Capital
 
+OWNED_PLANETS
+Owned Planets: 
+
+NO_OWNED_PLANETS_KNOWN
+No Owned Planets Known
+
+OWNED_FLEETS
+Owned Fleets: 
+
+OWNED_FLEET_AT_SYSTEM
+%1% at %2%
+
+NO_OWNED_FLEETS_KNOWN
+No Owned Fleets Known
+
 ENC_SHIP
 Ship
 
@@ -3507,12 +3522,6 @@ DESC_CREATE_SHIP_SIMPLE
 Creates a new ship of design %1% with no owner and no species
 
 # Effect Sitreps
-
-TEST_EFFECT_MESSAGE
-Effect-generated SitRepEntry! species: %species% building: %buildingtype%
-
-TEST_EFFECT_MESSAGE2
-Effect SitRepEntry using int ValueRef! empire: %empire% design: %shipdesign% planet: %planet%
 
 EFFECT_ANCIENT_SHIP
 Ancient Ruins in %planet% have revealed a %predefinedshipdesign%.

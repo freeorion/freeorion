@@ -677,7 +677,12 @@ void EncyclopediaDetailPanel::Refresh() {
         }
 
     } else if (m_items_it->first == "ENC_EMPIRE") {
-        const Empire* empire = Empires().Lookup(boost::lexical_cast<int>(m_items_it->second));
+        int empire_id = ALL_EMPIRES;
+        try {
+            empire_id = boost::lexical_cast<int>(m_items_it->second);
+        } catch(...)
+        {}
+        const Empire* empire = Empires().Lookup(empire_id);
         if (!empire) {
             Logger().errorStream() << "EncyclopediaDetailPanel::Refresh couldn't find empire with id " << m_items_it->second;
             return;
@@ -687,9 +692,47 @@ void EncyclopediaDetailPanel::Refresh() {
         name = empire->Name();
         const Planet* capital = objects.Object<Planet>(empire->CapitalID());
         if (capital)
-            detailed_description += UserString("EMPIRE_CAPITAL") + LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name()) + "\n";
+            detailed_description += UserString("EMPIRE_CAPITAL") +
+                LinkTaggedIDText(VarText::PLANET_ID_TAG, capital->ID(), capital->Name());
         else
-            detailed_description += UserString("NO_CAPITAL") + "\n";
+            detailed_description += UserString("NO_CAPITAL");
+
+        // Planets
+        std::vector<const UniverseObject*> empire_planets = objects.FindObjects(OwnedVisitor<Planet>(empire_id));
+        if (!empire_planets.empty()) {
+            detailed_description += "\n\n" + UserString("OWNED_PLANETS");
+            for (std::vector<const UniverseObject*>::const_iterator planet_it = empire_planets.begin();
+                 planet_it != empire_planets.end(); ++planet_it)
+            {
+                const UniverseObject* obj = *planet_it;
+                detailed_description += LinkTaggedIDText(VarText::PLANET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id)) + "  ";
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_OWNED_PLANETS_KNOWN");
+        }
+
+        // Fleets
+        std::vector<const UniverseObject*> empire_fleets = objects.FindObjects(OwnedVisitor<Fleet>(empire_id));
+        if (!empire_fleets.empty()) {
+            detailed_description += "\n\n" + UserString("OWNED_FLEETS") + "\n";
+            for (std::vector<const UniverseObject*>::const_iterator fleet_it = empire_fleets.begin();
+                 fleet_it != empire_fleets.end(); ++fleet_it)
+            {
+                const UniverseObject* obj = *fleet_it;
+                std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
+                std::string system_link;
+                if (const System* system = objects.Object<System>(obj->SystemID()))
+                    system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id));
+                if (!system_link.empty())
+                    detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
+                                            % fleet_link % system_link);
+                else
+                    detailed_description += fleet_link;
+                detailed_description += "\n";
+            }
+        } else {
+            detailed_description += "\n\n" + UserString("NO_OWNED_FLEETS_KNOWN");
+        }
 
     } else if (m_items_it->first == "ENC_SPECIES") {
         const Species* species = GetSpecies(m_items_it->second);
