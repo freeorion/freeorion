@@ -325,7 +325,11 @@ public:
 
     double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
 
-    short                   JumpDistance(int system1_id, int system2_id) const;             ///< returns the number of starlane jumps between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+    /** Returns the number of starlane jumps between the systems with the given
+      * IDs. If there is no path between the systems, -1 is returned.
+      * \throw std::out_of_range This function will throw if either system
+      * ID is not a valid system id. */
+    short                   JumpDistance(int system1_id, int system2_id) const;
 
     /** Returns the sequence of systems, including \a system1_id and
       * \a system2_id, that defines the shortest path from \a system1 to

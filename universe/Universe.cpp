@@ -319,7 +319,7 @@ namespace SystemPathing {
         try {
             boost::queue<int> buf;
             std::vector<int> colors(boost::num_vertices(graph));
-            
+
             BFSVisitor bfsVisitor(system1_index, system2_index, &predecessors[0], max_jumps);
             boost::breadth_first_search(graph, system1_index, buf, bfsVisitor, &colors[0]);
         } catch (const typename BFSVisitor::ReachedDepthLimit&) {
@@ -924,7 +924,15 @@ double Universe::LinearDistance(int system1_id, int system2_id) const
 { return m_system_distances[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
 
 short Universe::JumpDistance(int system1_id, int system2_id) const
-{ return m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
+{
+    //Logger().debugStream() << "JumpDistance(" << system1_id << ": " << GetObject(system1_id)->Name() << ", "
+    //                                          << system2_id << ": " << GetObject(system2_id)->Name() << "): "
+    //                                          << m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
+    short jumps = m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
+    if (jumps == SHRT_MAX)  // value returned for no valid path
+        return -1;
+    return jumps;
+}
 
 std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
