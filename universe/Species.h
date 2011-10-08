@@ -66,7 +66,7 @@ public:
             const std::vector<FocusType>& foci,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-            bool can_colonize, bool can_produce_ships,
+            bool playable, bool can_colonize, bool can_produce_ships,
             const std::string& graphic);
     //@}
 
@@ -81,10 +81,11 @@ public:
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                    Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
-    bool                            CanColonize() const;///< returns whether this species can colonize planets
+                                    Effects() const;        ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    bool                            Playable() const;       ///< returns whether this species is a suitable starting species for players
+    bool                            CanColonize() const;    ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const;///< returns whether this species can produce ships
-    const std::string&              Graphic() const;    ///< returns the name of the grapic file for this species
+    const std::string&              Graphic() const;        ///< returns the name of the grapic file for this species
     //@}
 
     /** \name Mutators */ //@{
@@ -101,6 +102,7 @@ private:
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >
                                             m_effects;
+    bool                                    m_playable;
     bool                                    m_can_colonize;
     bool                                    m_can_produce_ships;
     std::string                             m_graphic;

@@ -6868,6 +6868,7 @@ Species
 Species
     name = "SP_HUMAN"
     description = "SP_HUMAN_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -7432,6 +7433,7 @@ Species
 Species
     name = "SP_SCYLIOR"
     description = "SP_SCYLIOR_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -7996,6 +7998,7 @@ Species
 Species
     name = "SP_GYISACHE"
     description = "SP_GYISACHE_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -8560,6 +8563,7 @@ Species
 Species
     name = "SP_CHATO"
     description = "SP_CHATO_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -9124,6 +9128,7 @@ Species
 Species
     name = "SP_EGASSEM"
     description = "SP_EGASSEM_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -9688,6 +9693,7 @@ Species
 Species
     name = "SP_TRITH"
     description = "SP_TRITH_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -10252,6 +10258,7 @@ Species
 Species
     name = "SP_CRAY"
     description = "SP_CRAY_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -10816,6 +10823,7 @@ Species
 Species
     name = "SP_HHHOH"
     description = "SP_HHHOH_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -11380,6 +11388,7 @@ Species
 Species
     name = "SP_EAXAW"
     description = "SP_EAXAW_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -11944,6 +11953,7 @@ Species
 Species
     name = "SP_SUPER_TEST"
     description = "SP_SUPER_TEST_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [
@@ -12513,6 +12523,7 @@ Species
 Species
     name = "SP_TEST"
     description = "SP_TEST_DESC"
+    Playable
     CanProduceShips
     CanColonize
     foci = [

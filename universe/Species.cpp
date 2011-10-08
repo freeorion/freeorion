@@ -88,13 +88,14 @@ Species::Species(const std::string& name, const std::string& description,
                  const std::vector<FocusType>& foci,
                  const std::map<PlanetType, PlanetEnvironment>& planet_environments,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                 bool can_colonize, bool can_produce_ships,
+                 bool playable, bool can_colonize, bool can_produce_ships,
                  const std::string& graphic) :
     m_name(name),
     m_description(description),
     m_foci(foci),
     m_planet_environments(planet_environments),
     m_effects(effects),
+    m_playable(playable),
     m_can_colonize(can_colonize),
     m_can_produce_ships(can_produce_ships),
     m_graphic(graphic)
@@ -289,6 +290,9 @@ PlanetType Species::NextBetterPlanetType(PlanetType initial_planet_type) const
         return RingPreviousPlanetType(initial_planet_type);
 }
 
+bool Species::Playable() const
+{ return m_playable; }
+
 bool Species::CanColonize() const
 { return m_can_colonize; }
 
@@ -333,7 +337,7 @@ SpeciesManager* SpeciesManager::s_instance = 0;
 
 bool SpeciesManager::PlayableSpecies::operator()(
     const std::map<std::string, Species*>::value_type& species_map_iterator) const
-{ return species_map_iterator.second->CanColonize() && species_map_iterator.second->CanProduceShips(); }
+{ return species_map_iterator.second->Playable(); }
 
 SpeciesManager::SpeciesManager() {
     if (s_instance)
