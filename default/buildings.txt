@@ -873,7 +873,13 @@ BuildingType
                 Contains Source
                 Planet
             ]
-            effects = SetPlanetType Target.NextBetterPlanetType
+            effects = [
+                SetPlanetType Target.NextBetterPlanetType
+                GenerateSitRepMessage
+                    message = "EFFECT_TERRAFORM"
+                    parameters = tag = "planet" data = Target.ID
+                    empire = Source.Owner
+            ]
 
         EffectsGroup
             scope = Source

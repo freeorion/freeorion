@@ -3533,6 +3533,8 @@ A %predefinedshipdesign% was spawned in %system%!
 EFFECT_GAIAN_TERRAFORM
 The Gaian planet %planet% has terraformed itself to better accommodate its inhabitants.
 
+EFFECT_TERRAFORM
+%planet% has been terraformed.
 
 # Conditions
 
