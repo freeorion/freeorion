@@ -135,15 +135,12 @@ T1 universe_object_cast(T2 ptr)
 
 template <class T>
 UniverseObject* UniverseObjectSubclassVisitor<T>::Visit(T* obj) const
-{
-    return obj;
-}
+{ return obj; }
 
 template <class T>
 OwnedVisitor<T>::OwnedVisitor(int empire) :
     empire_id(empire)
-{
-}
+{}
 
 template <class T>
 T* OwnedVisitor<T>::Visit(T* obj) const
