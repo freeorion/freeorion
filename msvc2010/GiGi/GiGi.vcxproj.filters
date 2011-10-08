@@ -53,9 +53,6 @@
     <ClInclude Include="..\..\GG\GG\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\Token.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\UnicodeCharsets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -230,6 +227,12 @@
     <ClInclude Include="..\..\GG\GG\GroupBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\GG\GG\LexerFwd.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\GG\GG\ReportParseError.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\GG\src\dialogs\FileDlg.cpp">
@@ -242,9 +245,6 @@
       <Filter>Source Files\dialogs</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\Scroll.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\Slider.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\StaticGraphic.cpp">
@@ -338,6 +338,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\GroupBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\ReportParseError.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

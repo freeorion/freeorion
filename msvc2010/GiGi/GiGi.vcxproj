@@ -45,12 +45,14 @@
     <ClInclude Include="..\..\GG\GG\GUI.h" />
     <ClInclude Include="..\..\GG\GG\Layout.h" />
     <ClInclude Include="..\..\GG\GG\Lexer.h" />
+    <ClInclude Include="..\..\GG\GG\LexerFwd.h" />
     <ClInclude Include="..\..\GG\GG\ListBox.h" />
     <ClInclude Include="..\..\GG\GG\Menu.h" />
     <ClInclude Include="..\..\GG\GG\MultiEdit.h" />
     <ClInclude Include="..\..\GG\GG\MultiEditFwd.h" />
     <ClInclude Include="..\..\GG\GG\PluginInterface.h" />
     <ClInclude Include="..\..\GG\GG\PtRect.h" />
+    <ClInclude Include="..\..\GG\GG\ReportParseError.h" />
     <ClInclude Include="..\..\GG\GG\Scroll.h" />
     <ClInclude Include="..\..\GG\GG\Signal0.h" />
     <ClInclude Include="..\..\GG\GG\Signal1.h" />
@@ -72,7 +74,6 @@
     <ClInclude Include="..\..\GG\GG\TextControl.h" />
     <ClInclude Include="..\..\GG\GG\Texture.h" />
     <ClInclude Include="..\..\GG\GG\Timer.h" />
-    <ClInclude Include="..\..\GG\GG\Token.h" />
     <ClInclude Include="..\..\GG\GG\UnicodeCharsets.h" />
     <ClInclude Include="..\..\GG\GG\utf8\checked.h" />
     <ClInclude Include="..\..\GG\GG\utf8\core.h" />
@@ -106,8 +107,8 @@
     <ClCompile Include="..\..\GG\src\Menu.cpp" />
     <ClCompile Include="..\..\GG\src\MultiEdit.cpp" />
     <ClCompile Include="..\..\GG\src\PtRect.cpp" />
+    <ClCompile Include="..\..\GG\src\ReportParseError.cpp" />
     <ClCompile Include="..\..\GG\src\Scroll.cpp" />
-    <ClCompile Include="..\..\GG\src\Slider.cpp" />
     <ClCompile Include="..\..\GG\src\StaticGraphic.cpp" />
     <ClCompile Include="..\..\GG\src\StyleFactory.cpp" />
     <ClCompile Include="..\..\GG\src\TabWnd.cpp" />

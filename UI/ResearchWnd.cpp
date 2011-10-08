@@ -178,7 +178,6 @@ namespace {
         glColor(clr);
         PartlyRoundedRect(UpperLeft(), LowerRight(), CORNER_RADIUS, true, false, true, false, fill);
     }
-
 }
 
 
