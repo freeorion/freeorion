@@ -470,7 +470,7 @@ namespace {
              >> endpoint_label >>               condition_p[add_starlanes.condition = arg1])
             [add_starlanes.this_ = new_<Effect::AddStarlanes>(add_starlanes.condition)];
 
-        remove_starlanes
+        remove_starlanes =
             (str_p("removestarlanes")
              >> endpoint_label >>               condition_p[remove_starlanes.condition = arg1])
             [remove_starlanes.this_ = new_<Effect::RemoveStarlanes>(remove_starlanes.condition)];
