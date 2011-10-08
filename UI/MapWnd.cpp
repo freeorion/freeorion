@@ -5,6 +5,7 @@
 #include "MapWnd.h"
 
 #include "ChatWnd.h"
+#include "PlayerListWnd.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "FleetButton.h"
@@ -3606,6 +3607,14 @@ void MapWnd::Sanitize()
     ClearSystemRenderingBuffers();
     ClearStarlaneRenderingBuffers();
 
+    if (ClientUI* cui = ClientUI::GetClientUI()) {
+        // clearing of message window commented out because scrollbar has quirks
+        // after doing so until enough messages are added to 
+        //if (MessageWnd* msg_wnd = cui->GetMessageWnd())
+        //    msg_wnd->Clear();
+        if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd())
+            plr_wnd->Clear();
+    }
 
     GG::Pt sp_ul = GG::Pt(AppWidth() - SidePanelWidth(), m_toolbar->LowerRight().y);
     GG::Pt sp_lr = sp_ul + GG::Pt(SidePanelWidth(), AppHeight() - m_toolbar->Height());
