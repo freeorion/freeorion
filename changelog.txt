@@ -5,10 +5,12 @@ New Features / Improvements:
  ~ Split LifeFrequency galaxy setup setting into separate Monster and Native Frequencies.
  ~ Reduced turn processing times.
  ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
+ ~ Added techs for increasing the size of troop garrisons.
 
 Balancing:
  ~ Some simplifications of the tech tree.
  ~ Slowed some monster movement rates.
+ ~ Imperial palace now adds +10 to the capital planet troop meter.
 
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.

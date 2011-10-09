@@ -63,6 +63,15 @@ BuildingType
                 SetTargetConstruction Value + 20
                 SetDefense Value + 5
             ]
+            
+        EffectsGroup
+            scope = And [
+                Planet
+                OwnedBy TheEmpire Source.ProducedByEmpireID
+                Contains Source
+                OwnerHasTech "DEF_ROOT_DEFENSE"
+            ]
+            effects = SetMaxTroops Value + 10
         ]
     graphic = "icons/building/palace.png"
 

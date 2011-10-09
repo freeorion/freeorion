@@ -4463,6 +4463,33 @@ Solar Containment
 SHP_SOLAR_CONT_DESC
 A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects.  If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
 
+DEF_ROOT_DEFENSE
+Self Defense
+DEF_ROOT_DEFENSE_DESC
+'''Allows planetary garrisons of +5.
+
+The concept of 'self defense' is at the root of many avenues of technological advance.'''
+
+DEF_GARRISON_1
+Planetary Garrison 1
+DEF_GARRISON_1_DESC
+'''Enables planetary garrison max of +10'''
+
+DEF_GARRISON_2
+Planetary Garrison 2
+DEF_GARRISON_2_DESC
+'''Enables planetary garrison max of +20'''
+
+DEF_GARRISON_3
+Planetary Garrison 3
+DEF_GARRISON_3_DESC
+'''Enables planetary garrison max of +40'''
+
+DEF_GARRISON_4
+Planetary Garrison 4
+DEF_GARRISON_4_DESC
+'''Enables planetary garrison max of +80'''
+
 
 #########################################
 # Tech Application Names & Descriptions #
