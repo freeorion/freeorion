@@ -10,23 +10,12 @@ class CUIListBox;
 class Fleet;
 class FleetDataPanel;
 class FleetDetailPanel;
-class FleetDetailWnd;
 class FleetsListBox;
 class Ship;
 class System;
 class UniverseObject;
 
-/** Manages the lifetimes of FleetWnds and FleetDetailWnds.  A 1-many
-    relationshp exists between FleetWnds and FleetDetailWnds, and this manager
-    ensures that:
-    - closing a FleetWnd closes all its associated FleetDetailWnds;
-    - opening a FleetDetailWnd does not result in two FleetDetailWnds showing the same fleet; and
-    - empty FleetWnds and FleetDetailWnds are closed.
-    These elements of functionality are very difficult to get right without an
-    external manager like this one -- most of the UI elements update themselves
-    when their underlying Fleet(s) change, and so any propagating changes to a
-    Fleet(s) tend to cause crashes (e.g. when an empty FleetDetailWnds is deleted
-    for being empty before its Fleet signals it to update). */
+/** Manages the lifetimes of FleetWnds. */
 class FleetUIManager
 {
 public:
@@ -38,22 +27,18 @@ public:
     iterator        end() const;
     FleetWnd*       ActiveFleetWnd() const;
     FleetWnd*       WndForFleet(const Fleet* fleet) const;
-    std::size_t     OpenDetailWnds(FleetWnd* fleet_wnd) const;
     int             SelectedShipID() const;     // if a single ship is selected in the active fleetwnd, returns that ship's ID.  Otherwise, returns INVALID_OBJECT_ID
     std::set<int>   SelectedShipIDs() const;    // returns the ids of all selected ships in the active fleetwnd
     //@}
 
     //! \name Mutators //@{
-    FleetWnd*       NewFleetWnd(const std::vector<int>& fleet_ids, bool read_only,
+    FleetWnd*       NewFleetWnd(const std::vector<int>& fleet_ids,
                                 int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
-    FleetWnd*       NewFleetWnd(int system_id, int empire_id, bool read_only,
+    FleetWnd*       NewFleetWnd(int system_id, int empire_id,
                                 int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
                                 GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
-
-    FleetDetailWnd* NewFleetDetailWnd(FleetWnd* fleet_wnd, int fleet_id, bool read_only,
-                                      GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | GG::ONTOP | CLOSABLE);
 
     void            CullEmptyWnds();
     void            SetActiveFleetWnd(FleetWnd* fleet_wnd);
@@ -74,14 +59,10 @@ private:
     FleetUIManager();
 
     void            FleetWndClosing(FleetWnd* fleet_wnd);
-    void            FleetDetailWndClosing(FleetWnd* fleet_wnd, FleetDetailWnd* fleet_detail_wnd);
     void            FleetWndClicked(FleetWnd* fleet_wnd);                          //!< sets active FleetWnd
 
-
-    typedef std::map<FleetWnd*, std::set<FleetDetailWnd*> > FleetWndMap;
-
+    bool                                    m_order_issuing_enabled;
     std::set<FleetWnd*>                     m_fleet_wnds;
-    FleetWndMap                             m_fleet_and_detail_wnds;
     FleetWnd*                               m_active_fleet_wnd;
     std::vector<boost::signals::connection> m_active_fleet_wnd_signals;
 };
@@ -132,11 +113,11 @@ protected:
 
 private:
     /** \name Structors */ //@{
-    FleetWnd(const std::vector<int>& fleet_ids, bool read_only,
+    FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled,
              int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
 
-    FleetWnd(int system_id, int empire_id, bool read_only,
+    FleetWnd(int system_id, int empire_id, bool order_issuing_enabled,
              int selected_fleet_id = UniverseObject::INVALID_OBJECT_ID,
              GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE);
     //@}
@@ -170,7 +151,7 @@ private:
     int                 m_empire_id;        ///< ID of empire whose fleets are shown in this wnd.  May be ALL_EMPIRES if this FleetWnd wasn't set to shown a particular empire's fleets.
     int                 m_system_id;        ///< ID of system whose fleets are shown in this wnd.  May be UniverseObject::INVALID_OBJECT_ID if this FleetWnd wasn't set to show a system's fleets.
 
-    bool                m_read_only;
+    bool                m_order_issuing_enabled;
 
     FleetsListBox*      m_fleets_lb;
     FleetDataPanel*     m_new_fleet_drop_target;

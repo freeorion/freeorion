@@ -923,7 +923,7 @@ void MapWnd::Render()
 {
     // HACK! This is placed here so we can be sure it is executed frequently
     // (every time we render), and before we render any of the
-    // FleetWnds/FleetDetailWnds.  It doesn't necessarily belong in MapWnd at
+    // FleetWnds.  It doesn't necessarily belong in MapWnd at
     // all.
     FleetUIManager::GetFleetUIManager().CullEmptyWnds();
 
@@ -2562,22 +2562,9 @@ void MapWnd::SelectFleet(Fleet* fleet)
         //std::cout << "SelectFleet couldn't find fleetwnd for fleet " << std::endl;
         System* system = GetObject<System>(fleet->SystemID());
 
-        // create fleetwnd to show fleet to be selected (actual selection occurs below.
+        // create fleetwnd to show fleet to be selected (actual selection occurs below).
         if (system) {
-            // determine whether this fleet's FleetWnd should be able to be manipulated by this
-            // this client's empire.  players can only manipulate fleetwnds that contain their
-            // empire's fleets.
-            // additionally, players can't give orders to fleets if they're away from a system
-            // so even if the fleet is onwed by this client's player, if it's moving, the fleetwnd
-            // is not manipulable.
-            bool read_only = !fleet->OwnedBy(HumanClientApp::GetApp()->EmpireID());
-
-            // get system in which fleet is located and (if possible) empire that owns it exclusively
-            int system_id = system->ID();
-
-            // create new fleetwnd in which to show selected fleet
-            fleet_wnd = manager.NewFleetWnd(system_id, fleet->Owner(), read_only);
-
+            fleet_wnd = manager.NewFleetWnd(system->ID(), fleet->Owner());
         } else {
             // get all (moving) fleets represented by fleet button for this fleet
             std::map<int, FleetButton*>::iterator it = m_fleet_buttons.find(fleet->ID());
@@ -2586,9 +2573,8 @@ void MapWnd::SelectFleet(Fleet* fleet)
                 return;
             }
             const std::vector<int>& wnd_fleet_ids = it->second->Fleets();
-
             // create new fleetwnd in which to show selected fleet
-            fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids, true);
+            fleet_wnd = manager.NewFleetWnd(wnd_fleet_ids);
         }
 
 
@@ -3471,7 +3457,7 @@ void MapWnd::FleetButtonClicked(FleetButton& fleet_btn)
 
 
     // select chosen fleet
-    if (fleet_to_select_id)
+    if (fleet_to_select_id != UniverseObject::INVALID_OBJECT_ID)
         SelectFleet(fleet_to_select_id);
 }
 
