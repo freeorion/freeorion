@@ -22,38 +22,38 @@ public:
     /** \name Mutators */ //@{
     virtual void    Render()
     {
-        const GG::Pt UL = UpperLeft();
-        const GG::Pt LR = LowerRight();
-        GG::Clr border_color_to_use = Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
-        int tab_width = GetOrientation() == GG::VERTICAL ? Value(Tab()->Height()) : Value(Tab()->Width());
+        const GG::Pt UL = this->UpperLeft();
+        const GG::Pt LR = this->LowerRight();
+        GG::Clr border_color_to_use = this->Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
+        int tab_width = this->GetOrientation() == GG::VERTICAL ? Value(this->Tab()->Height()) : Value(this->Tab()->Width());
         GG::Pt ul, lr;
-        if (GetOrientation() == GG::VERTICAL) {
-            ul.x = ((LR.x + UL.x) - static_cast<int>(LineWidth())) / 2;
-            lr.x   = ul.x + static_cast<int>(LineWidth());
+        if (this->GetOrientation() == GG::VERTICAL) {
+            ul.x = ((LR.x + UL.x) - static_cast<int>(this->LineWidth())) / 2;
+            lr.x   = ul.x + static_cast<int>(this->LineWidth());
             ul.y = UL.y + tab_width / 2;
             lr.y   = LR.y - tab_width / 2;
         } else {
             ul.x = UL.x + tab_width / 2;
             lr.x   = LR.x - tab_width / 2;
-            ul.y = ((LR.y + UL.y) - static_cast<int>(LineWidth())) / 2;
-            lr.y   = ul.y + static_cast<int>(LineWidth());
+            ul.y = ((LR.y + UL.y) - static_cast<int>(this->LineWidth())) / 2;
+            lr.y   = ul.y + static_cast<int>(this->LineWidth());
         }
         GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
     }
 
     virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     {
-        Wnd::SizeMove(ul, lr);
-        if (GetOrientation() == GG::VERTICAL) {
-            Tab()->Resize(GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
-            Tab()->MoveTo(GG::Pt((Width() - Tab()->Width()) / 2, Tab()->RelativeUpperLeft().y));
-            Tab()->SetMinSize(GG::Pt(Tab()->MinSize().x, GG::Y(10)));
+        GG::Wnd::SizeMove(ul, lr);
+        if (this->GetOrientation() == GG::VERTICAL) {
+            this->Tab()->Resize(GG::Pt(GG::X(this->TabWidth()), GG::Y(this->TabWidth())));
+            this->Tab()->MoveTo(GG::Pt((this->Width() - this->Tab()->Width()) / 2, this->Tab()->RelativeUpperLeft().y));
+            this->Tab()->SetMinSize(GG::Pt(this->Tab()->MinSize().x, GG::Y(10)));
         } else {
-            Tab()->SizeMove(GG::Pt(GG::X(2), GG::Y0), GG::Pt(GG::X(TabWidth()), GG::Y(TabWidth())));
-            Tab()->MoveTo(GG::Pt(Tab()->RelativeUpperLeft().x, (Height() - Tab()->Height()) / 2));
-            Tab()->SetMinSize(GG::Pt(GG::X(10), Tab()->MinSize().y));
+            this->Tab()->SizeMove(GG::Pt(GG::X(2), GG::Y0), GG::Pt(GG::X(this->TabWidth()), GG::Y(this->TabWidth())));
+            this->Tab()->MoveTo(GG::Pt(this->Tab()->RelativeUpperLeft().x, (this->Height() - this->Tab()->Height()) / 2));
+            this->Tab()->SetMinSize(GG::Pt(GG::X(10), this->Tab()->MinSize().y));
         }
-        MoveTabToPosn();
+        this->MoveTabToPosn();
     }
     //@}
 };
