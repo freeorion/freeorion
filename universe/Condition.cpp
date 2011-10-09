@@ -136,16 +136,16 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
         Logger().errorStream() << "Condition::Number::Eval has root candidate-dependent ValueRefs, but expects local candidate to be the root candidate, and has no valid local candidate!";
     } else {
         // get set of all UniverseObjects that satisfy m_condition
-        ObjectSet condition_targets;
-        ObjectSet condition_non_targets;
+        ObjectSet condition_matches;
+        ObjectSet condition_non_matches;
         ObjectMap& objects = GetUniverse().Objects();
         for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
-            condition_non_targets.insert(uit->second);
+            condition_non_matches.insert(uit->second);
         }
-        m_condition->Eval(local_context, condition_targets, condition_non_targets, NON_MATCHES);
+        m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
 
         // compare number of objects that satisfy m_condition to the acceptable range of such objects
-        int matched = condition_targets.size();
+        int matched = condition_matches.size();
         int low = (m_low ? m_low->Eval(local_context) : 0);
         int high = (m_high ? m_high->Eval(local_context) : INT_MAX);
         in_range = (low <= matched && matched <= high);
@@ -488,24 +488,24 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     ScriptingContext local_context(parent_context, no_object);
 
     // which input matches match the subcondition?
-    ObjectSet subcondition_matching_targets;
-    m_condition->Eval(local_context, subcondition_matching_targets, matches, NON_MATCHES);
+    ObjectSet subcondition_matching_matches;
+    m_condition->Eval(local_context, subcondition_matching_matches, matches, NON_MATCHES);
 
     // remaining input matches don't match the subcondition...
-    ObjectSet subcondition_non_matching_targets = matches;
+    ObjectSet subcondition_non_matching_matches = matches;
     matches.clear();    // to be refilled later
 
     // which input non_matches match the subcondition?
-    ObjectSet subcondition_matching_non_targets;
-    m_condition->Eval(local_context, subcondition_matching_non_targets, non_matches, NON_MATCHES);
+    ObjectSet subcondition_matching_non_matches;
+    m_condition->Eval(local_context, subcondition_matching_non_matches, non_matches, NON_MATCHES);
 
     // remaining input non_matches don't match the subcondition...
-    ObjectSet subcondition_non_matching_non_targets = non_matches;
+    ObjectSet subcondition_non_matching_non_matches = non_matches;
     non_matches.clear();    // to be refilled later
 
     // assemble single set of subcondition matching objects
-    ObjectSet all_subcondition_matches = subcondition_matching_targets;
-    all_subcondition_matches.insert(subcondition_matching_non_targets.begin(), subcondition_matching_non_targets.end());
+    ObjectSet all_subcondition_matches = subcondition_matching_matches;
+    all_subcondition_matches.insert(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end());
 
     // how many subcondition matches to select as matches to this condition
     int number = m_number->Eval(local_context);
@@ -519,50 +519,50 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     // put objects back into matches and non_target sets as output...
 
     if (search_domain == NON_MATCHES) {
-        // put matched objects that are in subcondition_matching_non_targets into matches
+        // put matched objects that are in subcondition_matching_non_matches into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
             const UniverseObject* matched_object = *match_it;
 
-            // is this matched object in subcondition_matching_non_targets?
-            ObjectSet::iterator smnt_it = subcondition_matching_non_targets.find(matched_object);
-            if (smnt_it != subcondition_matching_non_targets.end()) {
+            // is this matched object in subcondition_matching_non_matches?
+            ObjectSet::iterator smnt_it = subcondition_matching_non_matches.find(matched_object);
+            if (smnt_it != subcondition_matching_non_matches.end()) {
                 // yes; move object to matches
-                subcondition_matching_non_targets.erase(smnt_it);
+                subcondition_matching_non_matches.erase(smnt_it);
                 matches.insert(matched_object);
             }
         }
 
-        // put remaining (non-matched) objects in subcondition_matching_non_targets back into non_matches
-        non_matches.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
-        // put objects in subcondition_non_matching_non_targets back into non_matches
-        non_matches.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
-        // put objects in subcondition_matching_targets and subcondition_non_matching_targets back into matches
-        matches.insert(     subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
-        matches.insert(     subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
+        // put remaining (non-matched) objects in subcondition_matching_non_matches back into non_matches
+        non_matches.insert( subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
+        // put objects in subcondition_non_matching_non_matches back into non_matches
+        non_matches.insert( subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
+        // put objects in subcondition_matching_matches and subcondition_non_matching_matches back into matches
+        matches.insert(     subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
+        matches.insert(     subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
         // this leaves the original contents of matches unchanged, other than
         // possibly having transferred some objects into matches from non_matches
 
     } else { /*(search_domain == MATCHES)*/
-        // put matched objecs that are in subcondition_matching_targets back into matches
+        // put matched objecs that are in subcondition_matching_matches back into matches
         for (ObjectSet::const_iterator match_it = matched_objects.begin(); match_it != matched_objects.end(); ++match_it) {
             const UniverseObject* matched_object = *match_it;
 
-            // is this matched object in subcondition_matching_targets?
-            ObjectSet::iterator smt_it = subcondition_matching_targets.find(matched_object);
-            if (smt_it != subcondition_matching_targets.end()) {
+            // is this matched object in subcondition_matching_matches?
+            ObjectSet::iterator smt_it = subcondition_matching_matches.find(matched_object);
+            if (smt_it != subcondition_matching_matches.end()) {
                 // yes; move back into matches
-                subcondition_matching_targets.erase(smt_it);
+                subcondition_matching_matches.erase(smt_it);
                 matches.insert(matched_object);
             }
         }
 
-        // put remaining (non-matched) objects in subcondition_matching_targets) into non_matches
-        non_matches.insert( subcondition_matching_targets.begin(),          subcondition_matching_targets.end());
-        // put objects in subcondition_non_matching_targets into non_matches
-        non_matches.insert( subcondition_non_matching_targets.begin(),      subcondition_non_matching_targets.end());
-        // put objects in subcondition_matching_non_targets and subcondition_non_matching_non_targets back into non_matches
-        non_matches.insert( subcondition_matching_non_targets.begin(),      subcondition_matching_non_targets.end());
-        non_matches.insert( subcondition_non_matching_non_targets.begin(),  subcondition_non_matching_non_targets.end());
+        // put remaining (non-matched) objects in subcondition_matching_matches) into non_matches
+        non_matches.insert( subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
+        // put objects in subcondition_non_matching_matches into non_matches
+        non_matches.insert( subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
+        // put objects in subcondition_matching_non_matches and subcondition_non_matching_non_matches back into non_matches
+        non_matches.insert( subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
+        non_matches.insert( subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
         // this leaves the original contents of non_matches unchanged, other than
         // possibly having transferred some objects into non_matches from matches
     }
@@ -5185,7 +5185,7 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
         ObjectSet partly_checked_non_matches;
 
         // move items in non_matches set that pass first operand condition into
-        // partly_checked_non_targets set
+        // partly_checked_non_matches set
         m_operands[0]->Eval(local_context, partly_checked_non_matches, non_matches, NON_MATCHES);
 
         // move items that don't pass one of the other conditions back to non_matches
@@ -5294,7 +5294,7 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
         ObjectSet partly_checked_matches;
 
         // move items in matches set the fail the first operand condition into 
-        // partly_checked_targets set
+        // partly_checked_matches set
         m_operands[0]->Eval(local_context, matches, partly_checked_matches, MATCHES);
 
         // move items that pass any of the other conditions back into matches
