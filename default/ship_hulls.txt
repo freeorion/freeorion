@@ -52,7 +52,7 @@ Hull
     name = "SH_BASIC_SMALL"
     description = "SH_BASIC_SMALL_DESC"
     speed = 50
-    starlaneSpeed = 100
+    starlaneSpeed = 30
     fuel = 3
     stealth = 5
     structure = 8
@@ -77,7 +77,7 @@ Hull
     name = "SH_BASIC_MEDIUM"
     description = "SH_BASIC_MEDIUM_DESC"
     speed = 50
-    starlaneSpeed = 85
+    starlaneSpeed = 25
     fuel = 3
     stealth = 5
     structure = 15
@@ -103,7 +103,7 @@ Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 70
+    starlaneSpeed = 20
     fuel = 3
     stealth = 1
     structure = 20
@@ -130,7 +130,7 @@ Hull
     name = "SH_ROBOTIC"
     description = "SH_ROBOTIC_DESC"
     speed = 60
-    starlaneSpeed = 80
+    starlaneSpeed = 50
     fuel = 3
     stealth = 1
     structure = 15
