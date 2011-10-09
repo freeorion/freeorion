@@ -142,22 +142,29 @@ namespace {
         } else if (dir_name == "ENC_FLEET") {
             std::vector<const Fleet*> fleets = objects.FindObjects<Fleet>();
             for (std::vector<const Fleet*>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it)
-                retval += LinkTaggedIDText(VarText::FLEET_ID_TAG, (*fleet_it)->ID(), (*fleet_it)->Name()) + "  ";
+                retval += LinkTaggedIDText(VarText::FLEET_ID_TAG, (*fleet_it)->ID(), (*fleet_it)->PublicName(client_empire_id)) + "  ";
 
         } else if (dir_name == "ENC_PLANET") {
             std::vector<const Planet*> planets = objects.FindObjects<Planet>();
             for (std::vector<const Planet*>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it)
-                retval += LinkTaggedIDText(VarText::PLANET_ID_TAG, (*planet_it)->ID(), (*planet_it)->Name()) + "  ";
+                retval += LinkTaggedIDText(VarText::PLANET_ID_TAG, (*planet_it)->ID(), (*planet_it)->PublicName(client_empire_id)) + "  ";
 
         } else if (dir_name == "ENC_BUILDING") {
             std::vector<const Building*> buildings = objects.FindObjects<Building>();
             for (std::vector<const Building*>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it)
-                retval += LinkTaggedIDText(VarText::BUILDING_ID_TAG, (*building_it)->ID(), (*building_it)->Name()) + "  ";
+                retval += LinkTaggedIDText(VarText::BUILDING_ID_TAG, (*building_it)->ID(), (*building_it)->PublicName(client_empire_id)) + "  ";
 
         } else if (dir_name == "ENC_SYSTEM") {
             std::vector<const System*> systems = objects.FindObjects<System>();
-            for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it)
-                retval += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, (*system_it)->ID(), (*system_it)->Name()) + "  ";
+            for (std::vector<const System*>::const_iterator system_it = systems.begin(); system_it != systems.end(); ++system_it) {
+                const System* system = *system_it;
+                std::string sys_name = system->PublicName(client_empire_id);
+                if (system->GetStarType() == STAR_NONE)
+                    sys_name = UserString("EMPTY_SPACE");
+                else if (system->GetStarType() == INVALID_STAR_TYPE)
+                    sys_name = UserString("UNEXPLORED_REGION");
+                retval += LinkTaggedIDText(VarText::SYSTEM_ID_TAG, (*system_it)->ID(), sys_name) + "  ";
+            }
         }
         return retval;
     }
@@ -721,13 +728,18 @@ void EncyclopediaDetailPanel::Refresh() {
                 const UniverseObject* obj = *fleet_it;
                 std::string fleet_link = LinkTaggedIDText(VarText::FLEET_ID_TAG, obj->ID(), obj->PublicName(client_empire_id));
                 std::string system_link;
-                if (const System* system = objects.Object<System>(obj->SystemID()))
-                    system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), system->PublicName(client_empire_id));
-                if (!system_link.empty())
+                if (const System* system = objects.Object<System>(obj->SystemID())) {
+                    std::string sys_name = system->PublicName(client_empire_id);
+                    if (system->GetStarType() == STAR_NONE)
+                        sys_name = UserString("EMPTY_SPACE");
+                    else if (system->GetStarType() == INVALID_STAR_TYPE)
+                        sys_name = UserString("UNEXPLORED_REGION");
+                    system_link = LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name);
                     detailed_description += str(FlexibleFormat(UserString("OWNED_FLEET_AT_SYSTEM"))
                                             % fleet_link % system_link);
-                else
+                } else {
                     detailed_description += fleet_link;
+                }
                 detailed_description += "\n";
             }
         } else {
