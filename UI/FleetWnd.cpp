@@ -2069,18 +2069,6 @@ void FleetWnd::Init(int selected_fleet_id)
     Refresh();
 
     // create drop target
-    double X = UniverseObject::INVALID_POSITION;
-    double Y = UniverseObject::INVALID_POSITION;
-    if (const System* system = GetObject<System>(m_system_id)) {
-        X = system->X();
-        Y = system->Y();
-    } else if (!m_fleet_ids.empty()) {
-        if (const Fleet* fleet = GetObject<Fleet>(*(m_fleet_ids.begin()))) {
-            X = fleet->X();
-            Y = fleet->Y();
-        }
-    }
-
     m_new_fleet_drop_target = new FleetDataPanel(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
     GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal,   &FleetWnd::CreateNewFleetFromDrops, this);
