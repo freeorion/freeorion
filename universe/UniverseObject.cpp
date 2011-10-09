@@ -111,34 +111,22 @@ void UniverseObject::Copy(const UniverseObject* copied_object, Visibility vis)
 }
 
 void UniverseObject::Init()
-{
-    AddMeter(METER_STEALTH);
-}
+{ AddMeter(METER_STEALTH); }
 
 int UniverseObject::ID() const
-{
-    return m_id;
-}
+{ return m_id; }
 
 const std::string& UniverseObject::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 double UniverseObject::X() const
-{
-    return m_x;
-}
+{ return m_x; }
 
 double UniverseObject::Y() const
-{
-    return m_y;
-}
+{ return m_y; }
 
 int UniverseObject::CreationTurn() const
-{
-    return m_created_on_turn;
-}
+{ return m_created_on_turn; }
 
 int UniverseObject::AgeInTurns() const
 {
@@ -150,14 +138,10 @@ int UniverseObject::AgeInTurns() const
 }
 
 int UniverseObject::Owner() const
-{
-    return m_owner_empire_id;
-}
+{ return m_owner_empire_id; }
 
 int UniverseObject::SystemID() const
-{
-    return m_system_id;
-}
+{ return m_system_id; }
 
 const std::map<std::string, int>& UniverseObject::Specials() const
 { return m_specials; }
@@ -278,14 +262,10 @@ void UniverseObject::Rename(const std::string& name)
 }
 
 void UniverseObject::Move(double x, double y)
-{
-    MoveTo(m_x + x, m_y + y);
-}
+{ MoveTo(m_x + x, m_y + y); }
 
 void UniverseObject::MoveTo(int object_id)
-{
-    MoveTo(GetMainObjectMap().Object(object_id));
-}
+{ MoveTo(GetMainObjectMap().Object(object_id)); }
 
 void UniverseObject::MoveTo(UniverseObject* object)
 {
@@ -345,14 +325,10 @@ void UniverseObject::SetSystem(int sys)
 }
 
 void UniverseObject::AddSpecial(const std::string& name)
-{
-    m_specials[name] = CurrentTurn();
-}
+{ m_specials[name] = CurrentTurn(); }
 
 void UniverseObject::RemoveSpecial(const std::string& name)
-{
-    m_specials.erase(name);
-}
+{ m_specials.erase(name); }
 
 std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
 {
@@ -363,9 +339,7 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
 }
 
 void UniverseObject::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
-{
-    GetMeter(METER_STEALTH)->ResetCurrent();
-}
+{ GetMeter(METER_STEALTH)->ResetCurrent(); }
 
 void UniverseObject::ResetPairedActiveMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
@@ -390,7 +364,5 @@ void UniverseObject::ResetPairedActiveMeters(MeterType meter_type/* = INVALID_ME
 }
 
 void UniverseObject::ClampMeters()
-{
-    GetMeter(METER_STEALTH)->ClampCurrentToRange();
-}
+{ GetMeter(METER_STEALTH)->ClampCurrentToRange(); }
 
