@@ -1,25 +1,35 @@
 v0.3.17 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
+ ~ Further reduced turn processing times.
  ~ Added ship repair.
  ~ Split LifeFrequency galaxy setup setting into separate Monster and Native Frequencies.
- ~ Reduced turn processing times.
- ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
- ~ Added techs for increasing the size of troop garrisons.
+ ~ Added lists of planets and fleets to Empire encyclopedia entries.
+ ~ Disabled order issuing on various screens between turns, which should avoid potential crashes.
 
 Balancing:
- ~ Some simplifications of the tech tree.
- ~ Slowed some monster movement rates.
+ ~ Simplified the tech tree.
+ ~ Slowed some monster and early-game ship movement rates.
+ ~ ~ This helps avoid sudden appearances of ships in player systems, battles, and resulting loss of ship messages without warning.
  ~ Imperial palace now adds +10 to the capital planet troop meter.
+
+Content:
+ ~ Added techs for increasing the size of troop garrisons.
+ ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
+ ~ Added a sitrep message when a planet is terraformed by the Terraforming building.
 
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.
- ~ Clearer fleet icons
+ ~ Added clearer fleet icons.
+ ~ Made AI colours more distinct.
+ ~ Made structure meter icon distinct from health meter icon.
 
 GUI:
  ~ Sorted techs alphabetically in encyclopedia index.
  ~ Added a separate message for starting up AIs so any problems with that won't appear to happen during universe generation.
  ~ Hid unresearchable and unproducible items on the research, production, and design screens.
+ ~ Made map zoom with the slider smoother.
+ ~ Removed separate fleet windows that opened when double-clicking a fleet in the main fleets window.
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

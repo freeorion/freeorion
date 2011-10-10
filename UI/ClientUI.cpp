@@ -220,9 +220,11 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
         break;
     case METER_HEALTH:
     case METER_TARGET_HEALTH:
+        icon_filename = "health.png";
+        break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
-        icon_filename = "health.png";
+        icon_filename = "structure.png";
         break;
     case METER_FUEL:
     case METER_MAX_FUEL:
