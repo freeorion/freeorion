@@ -1,7 +1,7 @@
 Category 
     name = "LEARNING_CATEGORY"
     graphic = "learning.png"
-    colour = (93, 155, 246)
+    colour = (54, 202, 229)
 
 Category 
     name = "GROWTH_CATEGORY"
@@ -17,6 +17,11 @@ Category
     name = "CONSTRUCTION_CATEGORY"
     graphic = "construction.png"
     colour = (241, 233, 87, 255)
+    
+Category 
+    name = "DEFENSE_CATEGORY"
+    graphic = "defense.png"
+    colour = (70, 80, 215, 255)
 
 Category 
     name = "SHIPS_CATEGORY"
@@ -3715,7 +3720,7 @@ Tech
     description = "DEF_ROOT_DEFENSE_DESC"
     short_description = "THEORY_SHORT_DESC"
     techtype = Application
-    category = "PRODUCTION_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 10
     researchturns = 1
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
@@ -3728,9 +3733,9 @@ Tech
 Tech
     Name ="DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "PRODUCTION_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 20
     researchturns = 2
     prerequisites = "DEF_ROOT_DEFENSE"
@@ -3743,9 +3748,9 @@ Tech
 Tech
     Name ="DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "PRODUCTION_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 50
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
@@ -3758,9 +3763,9 @@ Tech
 Tech
     Name ="DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "PRODUCTION_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 150
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
@@ -3773,9 +3778,9 @@ Tech
 Tech
     Name ="DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "PRODUCTION_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 400
     researchturns = 15
     prerequisites = "DEF_GARRISON_3"

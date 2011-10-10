@@ -3916,6 +3916,8 @@ ECONOMICS_CATEGORY
 Economics
 SHIPS_CATEGORY
 Ships
+DEFENSE_CATEGORY
+Planetary Defense
 
 
 ####################################
@@ -4530,6 +4532,9 @@ Improves Trade
 
 CONSTRUCTION_SHORT_DESC
 Improves Resource Supply
+
+DEFENSE_SHORT_DESC
+Improves Planetary Defense
 
 METER_GROWTH_SHORT_DESC
 Improves Meter Growth
