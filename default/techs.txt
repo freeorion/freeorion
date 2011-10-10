@@ -3709,8 +3709,7 @@ Tech
             ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 4.99
-    graphic = ""
-    
+
 Tech
     Name ="DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
@@ -3719,15 +3718,13 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 10
     researchturns = 1
-    prerequisites = []
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_1"
             effects = SetMaxTroops Value + 5
-    graphic = ""
-    
+
 Tech
     Name ="DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
@@ -3737,14 +3734,12 @@ Tech
     researchcost = 20
     researchturns = 2
     prerequisites = "DEF_ROOT_DEFENSE"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_2"
             effects = SetMaxTroops Value + 10
-    graphic = ""
-    
+
 Tech
     Name ="DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
@@ -3754,14 +3749,12 @@ Tech
     researchcost = 50
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_3"
             effects = SetMaxTroops Value + 20
-    graphic = ""
-    
+
 Tech
     Name ="DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
@@ -3771,14 +3764,12 @@ Tech
     researchcost = 150
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_4"
             effects = SetMaxTroops Value + 40
-    graphic = ""
-    
+
 Tech
     Name ="DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
@@ -3788,9 +3779,7 @@ Tech
     researchcost = 400
     researchturns = 15
     prerequisites = "DEF_GARRISON_3"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             effects = SetMaxTroops Value + 80
-    graphic = ""

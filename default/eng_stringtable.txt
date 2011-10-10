@@ -2454,14 +2454,14 @@ No Known Homeworld
 UNKNOWN_PLANET
 Unknown Planet
 
-PLANETBOUND
-Planetbound - cannot build ships
+CANNOT_PRODUCE_SHIPS
+Cannot Produce Ships
 
-SPACEFARING
-Spacefaring - can build ships
+CAN_PRODUCE_SHIPS
+Can Produce Ships
 
-SPACEBOUND
-Spacebound - cannot colonize planets
+CANNNOT_COLONIZE
+Cannot Colonize - cannot build colony ships
 
 CAN_COLONIZE
 Can Colonize - can build colony ships
@@ -3544,6 +3544,9 @@ The Gaian planet %planet% has terraformed itself to better accommodate its inhab
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.
+
+EFFECT_STARVATION
+%planet% lost health due to starvation.
 
 # Conditions
 
