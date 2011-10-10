@@ -19,9 +19,7 @@ namespace {
 
 ResourceCenter::ResourceCenter() :
     m_focus("")
-{
-    //Logger().debugStream() << "ResourceCenter::ResourceCenter()";
-}
+{}
 
 ResourceCenter::~ResourceCenter()
 {}
@@ -63,19 +61,13 @@ void ResourceCenter::Init()
 }
 
 const std::string& ResourceCenter::Focus() const
-{
-    return m_focus;
-}
+{ return m_focus; }
 
 std::vector<std::string> ResourceCenter::AvailableFoci() const
-{
-    return std::vector<std::string>();
-}
+{ return std::vector<std::string>(); }
 
 const std::string& ResourceCenter::FocusIcon(const std::string& focus_name) const
-{
-    return EMPTY_STRING;
-}
+{ return EMPTY_STRING; }
 
 std::string ResourceCenter::Dump() const
 {
