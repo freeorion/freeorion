@@ -753,14 +753,14 @@ void EncyclopediaDetailPanel::Refresh() {
         // inherent species limitations
         detailed_description += "\n\n";
         if (species->CanProduceShips())
-            detailed_description += UserString("SPACEFARING");
+            detailed_description += UserString("CAN_PRODUCE_SHIPS");
         else
-            detailed_description += UserString("PLANETBOUND");
+            detailed_description += UserString("CANNOT_PRODUCE_SHIPS");
         detailed_description += "\n";
         if (species->CanColonize())
             detailed_description += UserString("CAN_COLONIZE");
         else
-            detailed_description += UserString("SPACEBOUND");
+            detailed_description += UserString("CANNNOT_COLONIZE");
         // homeworld
         detailed_description += "\n\n";
         if (species->Homeworlds().empty()) {
