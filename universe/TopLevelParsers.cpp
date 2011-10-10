@@ -254,7 +254,7 @@ namespace {
              >> graphic_label >>            file_name_p[species_p.graphic = arg1])
             [species_p.this_ = new_<Species>(species_p.name, species_p.description, species_p.foci,
                                              species_p.environments, species_p.effects_groups,
-                                             species_p.playable, species_p.can_produce_ships, species_p.can_colonize,
+                                             species_p.playable, species_p.can_colonize, species_p.can_produce_ships,
                                              species_p.graphic)];
 
         item_spec_p =
