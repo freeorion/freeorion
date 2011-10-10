@@ -26,6 +26,7 @@ SimpleRule double_variable_final =
     | "supply" | "stealth" | "detection" | "foodconsumption"
     | "battlespeed" | "starlanespeed"
     | "tradestockpile" | "mineralstockpile" | "foodstockpile"
+    | "allocatedfood" | "foodallocationformaxgrowth"
     | "distancetosource";
 
 SimpleRule string_variable_final =

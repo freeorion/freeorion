@@ -424,7 +424,8 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(double)
 
-        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(),
+                                                       m_ref_type, context);
         if (!object) {
             Logger().errorStream() << "Variable<double>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
             return 0.0;
@@ -518,14 +519,21 @@ namespace ValueRef {
             return object->InitialMeterValue(METER_FIGHTER_WEAPON_RANGE);
 
         } else if (boost::iequals(property_name, "TradeStockpile")) {
-            if (Empire* empire = Empires().Lookup(object->Owner()))
+            if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_TRADE);
         } else if (boost::iequals(property_name, "MineralStockpile")) {
-            if (Empire* empire = Empires().Lookup(object->Owner()))
+            if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_MINERALS);
         } else if (boost::iequals(property_name, "FoodStockpile")) {
-            if (Empire* empire = Empires().Lookup(object->Owner()))
+            if (const Empire* empire = Empires().Lookup(object->Owner()))
                 return empire->ResourceStockpile(RE_FOOD);
+
+        } else if (boost::iequals(property_name, "AllocatedFood")) {
+            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
+                return pop->AllocatedFood();
+        } else if (boost::iequals(property_name, "FoodAllocationForMaxGrowth")) {
+            if (const PopCenter* pop = dynamic_cast<const PopCenter*>(object))
+                return pop->FoodAllocationForMaxGrowth();
 
         } else if (boost::iequals(property_name, "DistanceToSource")) {
             if (!context.source) {
