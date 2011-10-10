@@ -98,13 +98,11 @@ namespace {
 #ifdef FREEORION_BUILD_SERVER
                 std::string name_text = obj->Name();
 #else
-                int empire_id = ClientApp::GetApp()->EmpireID();
-                std::string name_text = obj->PublicName(empire_id);
-#endif
+                int client_empire_id = ClientApp::GetApp()->EmpireID();
+                std::string name_text = obj->PublicName(client_empire_id);
                 if (const System* system = universe_object_cast<const System*>(obj))
-                    if (system->GetStarType() == STAR_NONE)
-                        name_text = UserString("EMPTY_SPACE");
-
+                    name_text = system->ApparentName(client_empire_id);
+#endif
                 m_str += open_tag + name_text + close_tag;
 
             // technology token
