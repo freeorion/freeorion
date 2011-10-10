@@ -93,21 +93,20 @@ namespace {
         }
     }
 
-    struct constant_property
+    template <class Key, class Value> struct constant_property
     {
-        short m_value;
+        Value m_value;
     };
 
-    short get(const constant_property& pmap, const boost::detail::edge_desc_impl<boost::undirected_tag, unsigned int>&) { return pmap.m_value; }
 }
 
 namespace boost {
-    template <>
-    struct property_traits<constant_property> {
-        typedef short value_type;
-        typedef boost::detail::edge_desc_impl<boost::undirected_tag, unsigned long> key_type;
+    template <class Key, class Value> struct property_traits<constant_property<Key, Value> > {
+        typedef Value value_type;
+        typedef Key key_type;
         typedef readable_property_map_tag category;
     };
+    template <class Key, class Value> const Value& get(const constant_property<Key, Value>& pmap, const Key&) { return pmap.m_value; }
 }
 
 namespace SystemPathing {
@@ -2245,6 +2244,7 @@ void Universe::HandleEmpireElimination(int empire_id)
 
 void Universe::InitializeSystemGraph(int for_empire_id)
 {
+    typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
     const ObjectMap& objects = EmpireKnownObjects(for_empire_id);
 
     for (int i = static_cast<int>(boost::num_vertices(m_graph_impl->system_graph)) - 1; i >= 0; --i) {
@@ -2295,7 +2295,6 @@ void Universe::InitializeSystemGraph(int for_empire_id)
                 continue;   // couldn't find destination system id in reverse lookup map; don't add to graph
             int lane_dest_graph_index = reverse_lookup_map_it->second;
 
-            typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
             std::pair<EdgeDescriptor, bool> add_edge_result =
                 boost::add_edge(i, lane_dest_graph_index, m_graph_impl->system_graph);
 
@@ -2324,7 +2323,7 @@ void Universe::InitializeSystemGraph(int for_empire_id)
     }
 
     m_system_jumps.resize(system_ids.size(), system_ids.size());
-    constant_property jump_weight = { 1 };
+    constant_property<EdgeDescriptor, short> jump_weight = { 1 };
     boost::johnson_all_pairs_shortest_paths(m_graph_impl->system_graph, m_system_jumps, boost::weight_map(jump_weight));
 
     RebuildEmpireViewSystemGraphs(for_empire_id);
