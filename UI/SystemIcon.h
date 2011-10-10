@@ -20,8 +20,7 @@ namespace GG {
 class OwnerColoredSystemName : public GG::Control
 {
 public:
-    OwnerColoredSystemName(int system_id, int font_size, bool hide_empty_or_missing_names = false,
-                           GG::Flags<GG::WndFlag> flags = GG::Flags<GG::WndFlag>());
+    OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
     virtual void Render();
 };
 

@@ -83,28 +83,6 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true);
     }
 
-    const std::string   EMPTY_STRING;
-
-    const std::string& ApparentSystemName(const System* system, int empire_id) {
-        if (!system)
-            return EMPTY_STRING;
-        if (empire_id == ALL_EMPIRES)
-            return system->Name();
-
-        const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
-        if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
-            if (system->GetStarType() == INVALID_STAR_TYPE)
-                return UserString("UNEXPLORED_REGION");
-            else
-                return UserString("UNEXPLORED_SYSTEM");
-        }
-
-        if (system->GetStarType() == STAR_NONE)
-            return UserString("EMPTY_SPACE");
-
-        return system->Name();
-    }
-
     std::string FleetDestinationText(int fleet_id) {
         std::string retval = "";
         const Fleet* fleet = GetObject<Fleet>(fleet_id);
@@ -120,7 +98,7 @@ namespace {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
-            const std::string& dest_name = ApparentSystemName(dest, empire_id);
+            const std::string& dest_name = dest->ApparentName(empire_id);
 
             // next system on path
             std::string next_eta_text;
@@ -149,7 +127,7 @@ namespace {
                                                 dest_name % final_eta_text % next_eta_text);
 
         } else if (cur_sys) {
-            const std::string& cur_system_name = ApparentSystemName(cur_sys, empire_id);
+            const std::string& cur_system_name = cur_sys->ApparentName(empire_id);
             retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_HOLDING_AT")) % cur_system_name);
         }
         return retval;
@@ -2502,18 +2480,6 @@ int FleetWnd::FleetInRow(GG::ListBox::iterator it) const
     return UniverseObject::INVALID_OBJECT_ID;
 }
 
-namespace {
-    const std::string& SysName(const System* system) {
-        if (!system)
-            return EMPTY_STRING;
-        if (system->GetStarType() == STAR_NONE)
-            return UserString("EMPTY_SPACE");
-        else if (system->GetStarType() == INVALID_STAR_TYPE)
-            return UserString("UNEXPLORED_REGION");
-        return system->PublicName(HumanClientApp::GetApp()->EmpireID());
-    }
-}
-
 std::string FleetWnd::TitleText() const
 {
     // if no fleets available, default to indicating no fleets
@@ -2528,7 +2494,7 @@ std::string FleetWnd::TitleText() const
     // FleetWnd's empire and system
     if (const Empire* empire = Empires().Lookup(m_empire_id)) {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = SysName(system);
+            const std::string& sys_name = system->ApparentName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEETS_AT_SYSTEM")) %
                                   empire->Name() % sys_name);
         } else {
@@ -2537,7 +2503,7 @@ std::string FleetWnd::TitleText() const
         }
     } else {
         if (const System* system = objects.Object<System>(m_system_id)) {
-            std::string sys_name = SysName(system);
+            const std::string& sys_name = system->ApparentName(client_empire_id);
             return boost::io::str(FlexibleFormat(UserString("FW_GENERIC_FLEETS_AT_SYSTEM")) %
                                   sys_name);
         } else {

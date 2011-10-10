@@ -623,7 +623,7 @@ int RotatingPlanetControl::s_instances_counter = 0;
 
 namespace {
     int SystemNameFontSize() {
-        return ClientUI::Pts();
+        return ClientUI::Pts()*1.5;
     }
 
     GG::Y SystemNameTextControlHeight() {
@@ -637,7 +637,7 @@ namespace {
             m_system_id(system_id)
         {
             SetDragDropDataType("SystemRow");
-            push_back(new OwnerColoredSystemName(m_system_id, SystemNameFontSize()));
+            push_back(new OwnerColoredSystemName(m_system_id, SystemNameFontSize(), false));
         }
 
         int SystemID() const { return m_system_id; }
@@ -2435,4 +2435,3 @@ void SidePanel::EnableOrderIssuing(bool enable/* = true*/)
 {
     m_planet_panel_container->EnableOrderIssuing(enable);
 }
-

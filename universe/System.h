@@ -59,8 +59,16 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;                           ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;                       ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;
+
+    /** returns the name to display for players for this system.  While all
+      * systems may have a proper name assigned, if they contain no planets or
+      * star, then "Deep Space" (or its translation)  Or, a system that is not
+      * yet explored might be "Unexplored Region", rather than an empty string
+      * for the name.  This is distinct from PublicName functions, which filter
+      * the name based on ownership. */
+    const std::string&      ApparentName(int empire_id, bool blank_unexplored_and_none = false) const;
 
     StarType                GetStarType() const;                        ///< returns the type of star for this system
     int                     Orbits() const;                             ///< returns the number of orbits in this system

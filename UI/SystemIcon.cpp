@@ -35,67 +35,21 @@ namespace {
         db.Add("UI.system-tiny-icon-size-threshold",    "OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD",    10, RangedValidator<int>(1, 16));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-
-    const std::string   EMPTY_STRING;
-
-    /** Returns a name to show for a system on the map, for the specified system
-      * viewed by the specified empire (usually this client's empire).  If
-      * blank_unexplored_and_none is true, then the names of unexplored systems
-      * and systems that have no star will be returned as an empty string. */
-    const std::string& ApparentSystemName(const System* system, int empire_id, bool blank_unexplored_and_none) {
-        //Logger().debugStream() << "ApparentSystemName name: " << system->Name() << " empire_id: " << empire_id << " buan: " << blank_unexplored_and_none;
-        if (!system)
-            return EMPTY_STRING;
-        if (empire_id == ALL_EMPIRES)
-            return system->Name();
-
-        const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system->ID(), empire_id);
-        if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
-            if (blank_unexplored_and_none)
-                return EMPTY_STRING;
-
-            if (system->GetStarType() == INVALID_STAR_TYPE)
-                return UserString("UNEXPLORED_REGION");
-            else
-                return UserString("UNEXPLORED_SYSTEM");
-        }
-
-        if (system->GetStarType() == STAR_NONE) {
-            // determine if there are any planets in the system
-            const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
-            std::vector<const Planet*> planets = objects.FindObjects<Planet>();
-            bool system_has_planets = false;
-            for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-                if ((*it)->SystemID() == system->SystemID()) {
-                    system_has_planets = true;
-                    break;
-                }
-            }
-
-            if (system_has_planets)
-                return system->Name();
-            else if (blank_unexplored_and_none)
-                return EMPTY_STRING;
-            else
-                return UserString("EMPTY_SPACE");
-        }
-
-        return system->Name();
-    }
 }
 
 ////////////////////////////////////////////////
 // OwnerColoredSystemName
 ////////////////////////////////////////////////
-OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, bool hide_empty_or_missing_names/* = false*/,
-                                               GG::Flags<GG::WndFlag> flags/* = GG::Flags<GG::WndFlag>()*/) :
-    Control(GG::X0, GG::Y0, GG::X1, GG::Y1, flags)
+OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none) :
+    Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::Flags<GG::WndFlag>())
 {
     // TODO: Have this make a single call per color.
     // Set up texture coord and vertex buffers (quads) for the glyphs.
     // Consider extending GG::Font to do similar.
 
-    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(HumanClientApp::GetApp()->EmpireID());
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    const ObjectMap& objects = GetUniverse().EmpireKnownObjects(client_empire_id);
     const SpeciesManager& species_manager = GetSpeciesManager();
     const EmpireManager& empire_manager = Empires();
 
@@ -104,7 +58,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         return;
 
     // get system name
-    const std::string& system_name = ApparentSystemName(system, HumanClientApp::GetApp()->EmpireID(), hide_empty_or_missing_names);
+    const std::string& system_name = system->ApparentName(client_empire_id, blank_unexplored_and_none);
 
     // loop through planets in system, checking if any are a homeworld, capital
     // or have a shipyard, or have neutral population

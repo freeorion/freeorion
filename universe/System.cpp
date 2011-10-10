@@ -162,6 +162,50 @@ std::string System::Dump() const
     return os.str();
 }
 
+const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const
+{
+    static const std::string EMPTY_STRING;
+    if (!this)
+        return EMPTY_STRING;
+
+    if (empire_id == ALL_EMPIRES)
+        return this->PublicName(empire_id);
+
+    // has the indicated empire ever detected this system?
+    const Universe::VisibilityTurnMap& vtm = GetUniverse().GetObjectVisibilityTurnMapByEmpire(this->ID(), empire_id);
+    if (vtm.find(VIS_PARTIAL_VISIBILITY) == vtm.end()) {
+        if (blank_unexplored_and_none)
+            return EMPTY_STRING;
+
+        if (m_star == INVALID_STAR_TYPE)
+            return UserString("UNEXPLORED_REGION");
+        else
+            return UserString("UNEXPLORED_SYSTEM");
+    }
+
+    if (m_star == STAR_NONE) {
+        // determine if there are any planets in the system
+        const ObjectMap& objects = GetUniverse().EmpireKnownObjects(empire_id);
+        std::vector<const Planet*> planets = objects.FindObjects<Planet>();
+        bool system_has_planets = false;
+        for (std::vector<const Planet*>::const_iterator it = planets.begin(); it != planets.end(); ++it) {
+            if ((*it)->SystemID() == this->ID()) {
+                system_has_planets = true;
+                break;
+            }
+        }
+
+        if (system_has_planets)
+            return this->PublicName(empire_id);
+        else if (blank_unexplored_and_none)
+            return EMPTY_STRING;
+        else
+            return UserString("EMPTY_SPACE");
+    }
+
+    return this->PublicName(empire_id);
+}
+
 StarType System::GetStarType() const
 { return m_star; }
 
