@@ -4948,12 +4948,10 @@ void Universe::GenerateEmpires(std::vector<int>& homeworld_planet_ids,
         // if no empire starting species already set, do so automatically
         if (empire_starting_species.empty()) {
             // automatically pick a species
-            if (species_manager.empty()) {
-                Logger().errorStream() << "Universe::GenerateEmpires found an empty species manager!  Can't assign species to empires.";
+            if (species_manager.NumPlayableSpecies() < 1) {
+                Logger().errorStream() << "Universe::GenerateEmpires found no playable species!  Can't assign species to empires.";
             } else {
-                int species_name_idx = 0;
-                if (species_manager.NumPlayableSpecies() > 1)
-                    species_name_idx = RandSmallInt(0, species_manager.NumPlayableSpecies() - 1);
+                int species_name_idx = RandSmallInt(0, species_manager.NumPlayableSpecies() - 1);
                 SpeciesManager::playable_iterator it = species_manager.playable_begin();
                 std::advance(it, species_name_idx);
                 empire_starting_species = it->first;

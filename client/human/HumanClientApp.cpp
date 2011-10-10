@@ -368,7 +368,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart)
 
             if (!GetSpecies(human_player_setup_data.m_starting_species_name)) {
                 const SpeciesManager& sm = GetSpeciesManager();
-                if (sm.empty())
+                if (sm.NumPlayableSpecies() < 1)
                     human_player_setup_data.m_starting_species_name.clear();
                 else
                     human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
