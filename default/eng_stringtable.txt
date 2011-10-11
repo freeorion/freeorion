@@ -2454,14 +2454,14 @@ No Known Homeworld
 UNKNOWN_PLANET
 Unknown Planet
 
-CANNOT_PRODUCE_SHIPS
-Cannot Produce Ships
+PLANETBOUND
+Planetbound - cannot build ships
 
-CAN_PRODUCE_SHIPS
-Can Produce Ships
+SPACEFARING
+Spacefaring - can build ships
 
-CANNNOT_COLONIZE
-Cannot Colonize - cannot build colony ships
+SPACEBOUND
+Spacebound - cannot colonize planets
 
 CAN_COLONIZE
 Can Colonize - can build colony ships
@@ -3545,9 +3545,6 @@ The Gaian planet %planet% has terraformed itself to better accommodate its inhab
 EFFECT_TERRAFORM
 %planet% has been terraformed.
 
-EFFECT_STARVATION
-%planet% lost health due to starvation.
-
 # Conditions
 
 DESC_ALL
@@ -4554,9 +4551,6 @@ Improves Fleet Supply
 SHIP_REPAIR_DESC
 Repairs Ships
 
-DEFENSE_SHORT_DESC
-Improves Defense
-
 SHIELD_SHORT_DESC
 Improves Shield
 
@@ -4974,39 +4968,43 @@ By extracting neutronium from a neutron star, it is possible to utilize it in th
 PRO_INDUSTRY_MOD
 Industry Modifier
 
-SHP_LIGHTHOUSE
+DEF_LIGHTHOUSE
 Interstellar Lighthouses
 
-SHP_LIGHTHOUSE_DESC
+DEF_LIGHTHOUSE_DESC
 By using a complex pattern of EM pulses and particle streams to reveal the location of objects in a system, it is possible for even very stealthy objects to be illuminated and detected with moderate detection equipment.
 
-SHP_DEFENSE_NET
+DEF_DEFENSE_NET
 Planetary Defense Network
 
-SHP_DEFENSE_NET_DESC
+DEF_DEFENSE_NET_DESC
 '''Increases max defense on all planets by 5.
 
 With galactic exploration comes the possibility of meeting new races - and new enemies.  By placing several armed defense bases in orbit around a planet, it is possible to give that planet defensive capabilities without the need for ships.'''
 
-SHP_HI_ENRG_FOCUS
+DEF_HI_ENRG_FOCUS
 High Energy Focus
 
-SHP_HI_ENRG_FOCUS_DESC
-'''While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower.  Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship.  By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.
+DEF_HI_ENRG_FOCUS_DESC
+'''Increases max defense on all planets by 15.
 
-Increases max defense on all planets by 15.'''
+While having a multitude of defense satellites is superior to a single large defense satellite in terms of versatility and dependability, it is considerably inferior in terms of firepower.  Often, enemy shields can simply absorb numerous weak attacks where a single powerful attack would be able to penetrate its shields and severely damage the ship.  By using a high energy focusing device, the power of multiple defense satellites can be unified into a single powerful beam weapon.'''
 
-SHP_PLAN_DEFLECT_SHLD
+DEF_PLAN_DEFLECT_SHLD
 Planetary Deflector Shield
 
-SHP_PLAN_DEFLECT_SHLD_DESC
-Basic Planetary Shield.  Increases max shield on all planets by 10.  This is not cumulative with Planetary Barrier Shield.
+DEF_PLAN_DEFLECT_SHLD_DESC
+'''Increases max shield on all planets by 10.
 
-SHP_PLAN_BARRIER_SHLD
+Basic Planetary Shield.  This is not cumulative with Planetary Barrier Shield.'''
+
+DEF_PLAN_BARRIER_SHLD
 Planetary Barrier Shield
 
-SHP_PLAN_BARRIER_SHLD_DESC
-Advanced Planetary Shield.  Increases max shield on all planets by 45.  This is not cumulative with Planetary Deflector Shield.
+DEF_PLAN_BARRIER_SHLD_DESC
+'''Increases max shield on all planets by 45.  
+
+Advanced Planetary Shield.  This is not cumulative with Planetary Deflector Shield.'''
 
 SHP_FLEET_LOGISTICS
 Fleet Logistics
@@ -5050,10 +5048,10 @@ The structure of all ships belonging to an enemy empire which are present in a s
 
 The mines have a lifetime of one turn; they are gone by the time combat begins in a system and are replaced in time for the next turn.'''
 
-SHP_PLANET_CLOAK
+DEF_PLANET_CLOAK
 Planetary Cloaking Device
 
-SHP_PLANET_CLOAK_DESC
+DEF_PLANET_CLOAK_DESC
 By phasing parts a planet in and out of space-time, its stealth can be increased massively.
 
 SHP_ION_CANNON
@@ -5446,7 +5444,7 @@ SHP_PLANET_STEALTH_MOD
 Planet Stealth Modifier
 
 SHP_PLANET_STEALTH_MOD_DESC
-Increases the natural stealth of planets to 15, so that systems will be made visible to empires before their planets.
+'''Increases the natural stealth of planets to 4.99, so that systems will be made visible to empires before their planets.'''
 
 ########################################
 # Tech Refinement Names & Descriptions #

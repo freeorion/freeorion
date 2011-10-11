@@ -3177,11 +3177,11 @@ Tech
     unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
 
 Tech
-    name = "SHP_LIGHTHOUSE"
-    description = "SHP_LIGHTHOUSE_DESC"
+    name = "DEF_LIGHTHOUSE"
+    description = "DEF_LIGHTHOUSE_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 750
     researchturns = 3
     prerequisites = "SHP_ADV_NAVIGATION"
@@ -3450,11 +3450,11 @@ Tech
     unlock = Item type = ShipPart name = "PD_PHASOR"
 
 Tech
-    name = "SHP_DEFENSE_NET"
-    description = "SHP_DEFENSE_NET_DESC"
+    name = "DEF_DEFENSE_NET"
+    description = "DEF_DEFENSE_NET_DESC"
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 80
     researchturns = 1
     prerequisites = "SHP_SPACE_TACTICS"
@@ -3467,11 +3467,11 @@ Tech
             effects = SetDefense Value + 5
 
 Tech
-    name = "SHP_PLAN_DEFLECT_SHLD"
-    description = "SHP_PLAN_DEFLECT_SHLD_DESC"
+    name = "DEF_PLAN_DEFLECT_SHLD"
+    description = "DEF_PLAN_DEFLECT_SHLD_DESC"
     short_description = "SHIELD_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 450
     researchturns = 1
     prerequisites = "SHP_TACT_COUNTER"
@@ -3481,7 +3481,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            activation = Not OwnerHasTech "SHP_PLAN_BARRIER_SHLD"
+            activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
             effects = SetMaxShield Value + 10
 
 Tech
@@ -3566,11 +3566,11 @@ Tech
             effects = SetStealth Value + 15
 
 Tech
-    name = "SHP_HI_ENRG_FOCUS"
-    description = "SHP_HI_ENRG_FOCUS_DESC"
+    name = "DEF_HI_ENRG_FOCUS"
+    description = "DEF_HI_ENRG_FOCUS_DESC"
     short_description = "DEFENSE_SHORT_DESC"
     techtype = Theory
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 520
     researchturns = 2
     prerequisites = "SHP_MAX_DISRUPT"
@@ -3594,11 +3594,11 @@ Tech
     unlock = Item type = ShipPart name = "FU_ANTIMATTER_TANK"
 
 Tech
-    name = "SHP_PLAN_BARRIER_SHLD"
-    description = "SHP_PLAN_BARRIER_SHLD_DESC"
+    name = "DEF_PLAN_BARRIER_SHLD"
+    description = "DEF_PLAN_BARRIER_SHLD_DESC"
     short_description = "SHIELD_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 1250
     researchturns = 4
     prerequisites = "SHP_STRAT_DEFENSE"
@@ -3662,11 +3662,11 @@ Tech
             effects = SetDetection Value + 25
 
 Tech
-    name = "SHP_PLANET_CLOAK"
-    description = "SHP_PLANET_CLOAK_DESC"
+    name = "DEF_PLANET_CLOAK"
+    description = "DEF_PLANET_CLOAK_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 9999
     researchturns = 9999
     Unresearchable
@@ -3682,7 +3682,7 @@ Tech
     researchcost = 9999
     researchturns = 9999
     Unresearchable
-    prerequisites = "SHP_HI_ENRG_FOCUS"
+    prerequisites = "DEF_HI_ENRG_FOCUS"
     unlock = Item type = ShipPart name = "SR_DEATH_RAY"
 
 Tech
@@ -3702,7 +3702,7 @@ Tech
     description = "SHP_PLANET_STEALTH_MOD_DESC"
     short_description = "GAME_MAKE_WORK_SHORT_DESC"
     techtype = Application
-    category = "SHIPS_CATEGORY"
+    category = "DEFENSE_CATEGORY"
     researchcost = 1
     researchturns = 1
     Unresearchable
@@ -3714,7 +3714,8 @@ Tech
             ]
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 4.99
-
+    graphic = ""
+    
 Tech
     Name ="DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
@@ -3723,13 +3724,15 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 10
     researchturns = 1
+    prerequisites = []
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_1"
             effects = SetMaxTroops Value + 5
-
+    graphic = ""
+    
 Tech
     Name ="DEF_GARRISON_1"
     description = "DEF_GARRISON_1_DESC"
@@ -3739,12 +3742,14 @@ Tech
     researchcost = 20
     researchturns = 2
     prerequisites = "DEF_ROOT_DEFENSE"
+    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_2"
             effects = SetMaxTroops Value + 10
-
+    graphic = ""
+    
 Tech
     Name ="DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
@@ -3754,12 +3759,14 @@ Tech
     researchcost = 50
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
+    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_3"
             effects = SetMaxTroops Value + 20
-
+    graphic = ""
+    
 Tech
     Name ="DEF_GARRISON_3"
     description = "DEF_GARRISON_3_DESC"
@@ -3769,12 +3776,14 @@ Tech
     researchcost = 150
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
+    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             activation = NOT OwnerHasTech "DEF_GARRISON_4"
             effects = SetMaxTroops Value + 40
-
+    graphic = ""
+    
 Tech
     Name ="DEF_GARRISON_4"
     description = "DEF_GARRISON_4_DESC"
@@ -3784,7 +3793,10 @@ Tech
     researchcost = 400
     researchturns = 15
     prerequisites = "DEF_GARRISON_3"
+    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
             effects = SetMaxTroops Value + 80
+    graphic = ""
+    
