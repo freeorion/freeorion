@@ -3464,7 +3464,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDefense Value + 5
+            effects = SetMaxDefense Value + 5
 
 Tech
     name = "DEF_PLAN_DEFLECT_SHLD"
