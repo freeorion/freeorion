@@ -9,9 +9,10 @@ New Features / Improvements:
 
 Balancing:
  ~ Simplified the tech tree.
- ~ Slowed some monster and early-game ship movement rates.
+ ~ Adjusted stealth and detection values for monsters and early ship hulls.
  ~ ~ This helps avoid sudden appearances of ships in player systems, battles, and resulting loss of ship messages without warning.
  ~ Imperial palace now adds +10 to the capital planet troop meter.
+ ~ Switched research output to be population based.
 
 Content:
  ~ Added techs for increasing the size of troop garrisons.

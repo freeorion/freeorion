@@ -385,7 +385,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -949,7 +949,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -1514,7 +1514,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -2079,7 +2079,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -2638,7 +2638,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -3203,7 +3203,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -3768,7 +3768,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -4282,7 +4282,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -4847,7 +4847,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -5362,7 +5362,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -5927,7 +5927,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -6445,7 +6445,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -7001,7 +7001,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -7566,7 +7566,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -8131,7 +8131,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -8696,7 +8696,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -9261,7 +9261,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -9770,7 +9770,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -10335,7 +10335,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -10900,7 +10900,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -11466,7 +11466,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -12031,7 +12031,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -12596,7 +12596,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -13161,7 +13161,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -13726,7 +13726,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -14291,7 +14291,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -14856,7 +14856,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -15421,7 +15421,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -15986,7 +15986,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -16556,7 +16556,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
 
         EffectsGroup
             scope = Source
@@ -17031,7 +17031,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Focus type = "FOCUS_RESEARCH"
-            effects = SetTargetResearch Value + 10
+            effects = SetTargetResearch Value + Target.Population * 2
             
         EffectsGroup
             scope = Source

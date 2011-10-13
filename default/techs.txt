@@ -3708,12 +3708,9 @@ Tech
     Unresearchable
     effectsgroups =
         EffectsGroup
-            scope = Or [
-                Planet
-                Building
-            ]
+            scope = Building
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
-            effects = SetStealth Value + 4.99
+            effects = SetStealth Value + 9.99
     graphic = ""
     
 Tech

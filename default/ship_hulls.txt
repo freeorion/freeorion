@@ -2,7 +2,7 @@ Hull
     name = "SH_XENTRONIUM"
     description = "SH_XENTRONIUM_DESC"
     speed = 50
-    starlaneSpeed = 80
+    starlaneSpeed = 70
     fuel = 3
     stealth = 1
     structure = 100
@@ -23,7 +23,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -32,7 +32,7 @@ Hull
     speed = 10
     starlaneSpeed = 0
     fuel = 0
-    stealth = 0.1
+    stealth = 1
     structure = 5
     buildCost = 1
     buildTime = 1
@@ -45,16 +45,16 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
     
 Hull
     name = "SH_BASIC_SMALL"
     description = "SH_BASIC_SMALL_DESC"
     speed = 50
-    starlaneSpeed = 30
+    starlaneSpeed = 90
     fuel = 3
-    stealth = 5
+    stealth = 2
     structure = 8
     buildCost = 20
     buildTime = 2
@@ -70,16 +70,16 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = "hulls_design/basic-small-hull.png"
     
 Hull
     name = "SH_BASIC_MEDIUM"
     description = "SH_BASIC_MEDIUM_DESC"
     speed = 50
-    starlaneSpeed = 25
+    starlaneSpeed = 80
     fuel = 3
-    stealth = 5
+    stealth = 2
     structure = 15
     buildCost = 50
     buildTime = 2
@@ -96,16 +96,16 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = "hulls_design/basic-medium-hull.png"
     
 Hull
     name = "SH_STANDARD"
     description = "SH_STANDARD_DESC"
     speed = 50
-    starlaneSpeed = 20
+    starlaneSpeed = 65
     fuel = 3
-    stealth = 1
+    stealth = 1.5
     structure = 20
     buildCost = 100
     buildTime = 2
@@ -123,16 +123,16 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
     name = "SH_ROBOTIC"
     description = "SH_ROBOTIC_DESC"
     speed = 60
-    starlaneSpeed = 50
+    starlaneSpeed = 75
     fuel = 3
-    stealth = 1
+    stealth = 2
     structure = 15
     buildCost = 75
     buildTime = 2
@@ -170,7 +170,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -215,7 +215,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -263,7 +263,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -309,7 +309,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -363,7 +363,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -396,7 +396,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -464,7 +464,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -507,7 +507,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -546,7 +546,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -556,7 +556,7 @@ Hull
     speed = 30
     starlaneSpeed = 60
     fuel = 4
-    stealth = 0
+    stealth = 1
     structure = 40
     buildCost = 100
     buildTime = 2
@@ -592,7 +592,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -633,7 +633,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -672,7 +672,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -732,7 +732,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -775,7 +775,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -848,7 +848,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -895,7 +895,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
 
@@ -903,7 +903,7 @@ Hull
     name = "SH_ORGANIC"
     description = "SH_ORGANIC_DESC"
     speed = 50
-    starlaneSpeed = 100
+    starlaneSpeed = 90
     fuel = 2
     stealth = 20
     structure = 15
@@ -974,7 +974,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -1366,7 +1366,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -1428,7 +1428,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -1473,7 +1473,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     graphic = ""
 
 Hull
@@ -1565,7 +1565,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -1573,9 +1573,9 @@ Hull
     name = "SH_WEAK_MONSTER_BODY"
     description = "SH_WEAK_MONSTER_BODY_DESC"
     speed = 5
-    starlaneSpeed = 10
+    starlaneSpeed = 20
     fuel = 3
-    stealth = 5
+    stealth = 1.5
     structure = 10
     buildCost = 1
     buildTime = 2
@@ -1622,7 +1622,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 5
+    stealth = 1
     structure = 10
     buildCost = 1
     buildTime = 2
@@ -1655,9 +1655,9 @@ Hull
     name = "SH_STRONG_MONSTER_BODY"
     description = "SH_STRONG_MONSTER_BODY_DESC"
     speed = 20
-    starlaneSpeed = 20
+    starlaneSpeed = 30
     fuel = 5
-    stealth = 5
+    stealth = 1
     structure = 40
     buildCost = 1
     buildTime = 2
@@ -1696,7 +1696,7 @@ Hull
     speed = 20
     starlaneSpeed = 0
     fuel = 0
-    stealth = 5
+    stealth = 1
     structure = 40
     buildCost = 1
     buildTime = 2
@@ -1715,9 +1715,9 @@ Hull
     name = "SH_DRONE_BODY"
     description = "SH_DRONE_BODY_DESC"
     speed = 12
-    starlaneSpeed = 20
+    starlaneSpeed = 30
     fuel = 3
-    stealth = 5
+    stealth = 1.5
     structure = 5
     buildCost = 1
     buildTime = 2
@@ -1750,7 +1750,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 5
+    stealth = 1
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -1790,9 +1790,9 @@ Hull
     name = "SH_KRILL_1_BODY"
     description = "SH_KRILL_1_BODY_DESC"
     speed = 7
-    starlaneSpeed = 15
+    starlaneSpeed = 30
     fuel = 5
-    stealth = 5
+    stealth = 1.5
     structure = 5
     buildCost = 1
     buildTime = 1
@@ -1886,9 +1886,9 @@ Hull
     name = "SH_KRILL_2_BODY"
     description = "SH_KRILL_2_BODY_DESC"
     speed = 5
-    starlaneSpeed = 15
+    starlaneSpeed = 30
     fuel = 6
-    stealth = 5
+    stealth = 1
     structure = 10
     buildCost = 1
     buildTime = 1
@@ -1988,9 +1988,9 @@ Hull
     name = "SH_KRILL_3_BODY"
     description = "SH_KRILL_3_BODY_DESC"
     speed = 5
-    starlaneSpeed = 15
+    starlaneSpeed = 25
     fuel = 5
-    stealth = 5
+    stealth = 1
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2090,9 +2090,9 @@ Hull
     name = "SH_KRILL_4_BODY"
     description = "SH_KRILL_4_BODY_DESC"
     speed = 5
-    starlaneSpeed = 10
+    starlaneSpeed = 20
     fuel = 4
-    stealth = 5
+    stealth = 1
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -2143,9 +2143,9 @@ Hull
     name = "SH_KRAKEN_1_BODY"
     description = "SH_KRAKEN_1_BODY_DESC"
     speed = 20
-    starlaneSpeed = 50
+    starlaneSpeed = 40
     fuel = 4
-    stealth = 5
+    stealth = 1
     structure = 18
     buildCost = 1
     buildTime = 1
@@ -2191,7 +2191,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -2199,9 +2199,9 @@ Hull
     name = "SH_KRAKEN_2_BODY"
     description = "SH_KRAKEN_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
+    starlaneSpeed = 45
     fuel = 4
-    stealth = 5
+    stealth = 1
     structure = 35
     buildCost = 1
     buildTime = 1
@@ -2243,7 +2243,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -2251,9 +2251,9 @@ Hull
     name = "SH_KRAKEN_3_BODY"
     description = "SH_KRAKEN_3_BODY_DESC"
     speed = 20
-    starlaneSpeed = 30
+    starlaneSpeed = 50
     fuel = 4
-    stealth = 5
+    stealth = 1
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -2288,7 +2288,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -2298,9 +2298,9 @@ Hull
     name = "SH_SNOWFLAKE_1_BODY"
     description = "SH_SNOWFLAKE_1_BODY_DESC"
     speed = 50
-    starlaneSpeed = 30
+    starlaneSpeed = 55
     fuel = 5
-    stealth = 5
+    stealth = 1.5
     structure = 12
     buildCost = 1
     buildTime = 1
@@ -2351,9 +2351,9 @@ Hull
     name = "SH_SNOWFLAKE_2_BODY"
     description = "SH_SNOWFLAKE_2_BODY_DESC"
     speed = 50
-    starlaneSpeed = 35
+    starlaneSpeed = 60
     fuel = 5
-    stealth = 5
+    stealth = 1
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2403,9 +2403,9 @@ Hull
     name = "SH_SNOWFLAKE_3_BODY"
     description = "SH_SNOWFLAKE_3_BODY_DESC"
     speed = 50
-    starlaneSpeed = 40
+    starlaneSpeed = 65
     fuel = 5
-    stealth = 5
+    stealth = 1
     structure = 40
     buildCost = 1
     buildTime = 1
@@ -2447,9 +2447,9 @@ Hull
     name = "SH_JUGGERNAUT_1_BODY"
     description = "SH_JUGGERNAUT_1_BODY_DESC"
     speed = 20
-    starlaneSpeed = 10
+    starlaneSpeed = 30
     fuel = 3
-    stealth = 5
+    stealth = 1
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2495,7 +2495,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -2503,9 +2503,9 @@ Hull
     name = "SH_JUGGERNAUT_2_BODY"
     description = "SH_JUGGERNAUT_2_BODY_DESC"
     speed = 20
-    starlaneSpeed = 10
+    starlaneSpeed = 25
     fuel = 2
-    stealth = 5
+    stealth = 1
     structure = 40
     buildCost = 1
     buildTime = 1
@@ -2548,7 +2548,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
@@ -2556,9 +2556,9 @@ Hull
     name = "SH_JUGGERNAUT_3_BODY"
     description = "SH_JUGGERNAUT_3_BODY_DESC"
     speed = 20
-    starlaneSpeed = 10
+    starlaneSpeed = 25
     fuel = 5
-    stealth = 5
+    stealth = 1
     structure = 60
     buildCost = 1
     buildTime = 1
@@ -2590,7 +2590,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 3
     ]
     graphic = ""
     
