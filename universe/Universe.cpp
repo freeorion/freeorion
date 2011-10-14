@@ -1838,9 +1838,9 @@ void Universe::UpdateEmpireObjectVisibilities()
             // To determine if a detector can detect a target, the target's
             // stealth is subtracted from the detector's range, and the result
             // is compared to the distance between them. If the distance is
-            // less than 10*(detector_detection - target_stealth), then the
+            // less than (detector_detection - target_stealth), then the
             // target is seen by the detector with partial visibility.
-            double detect_range = 10.0*(detection - stealth);
+            double detect_range = detection - stealth;
             //Logger().debugStream() << "dist2: " << dist2 << " detect range: " << detect_range;
             if (detect_range >= 0.0 &&
                 dist2 <= detect_range*detect_range &&
