@@ -4572,6 +4572,9 @@ Eliminates Penalties
 GAME_MAKE_WORK_SHORT_DESC
 Makes the Game Work
 
+VICTORY_SHORT_DESC
+Brings Victory
+
 CON_ORBITAL_CON
 Orbital Construction
 

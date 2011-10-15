@@ -188,8 +188,8 @@ Tech
 Tech
     name = "LRN_TRANSCEND"
     description = "LRN_TRANSCEND_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "VICTORY_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 2500
     researchturns = 25
@@ -482,7 +482,7 @@ Tech
     name = "GRO_MEDICAL_PATH"
     description = "GRO_MEDICAL_PATH_DESC"
     short_description = "HEALTH_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 40
     researchturns = 4
@@ -518,8 +518,8 @@ Tech
 Tech
     name = "GRO_ENV_ENCAPSUL"
     description = "GRO_ENV_ENCAPSUL_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 10
     researchturns = 10
@@ -537,8 +537,8 @@ Tech
 Tech
     name = "GRO_SYMBIOTIC_BIO"
     description = "GRO_SYMBIOTIC_BIO_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "POPULATION_SHORT_DESC"
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 40
     researchturns = 10
@@ -614,7 +614,7 @@ Tech
     name = "GRO_GENETIC_MED"
     description = "GRO_GENETIC_MED_DESC"
     short_description = "HEALTH_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 120
     researchturns = 6
@@ -653,7 +653,7 @@ Tech
     name = "GRO_XENO_GENETICS"
     description = "GRO_XENO_GENETICS_DESC"
     short_description = "POPULATION_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 80
     researchturns = 12
@@ -842,7 +842,7 @@ Tech
     name = "GRO_XENO_HYBRIDS"
     description = "GRO_XENO_HYBRIDS_DESC"
     short_description = "POPULATION_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "GROWTH_CATEGORY"
     researchcost = 240
     researchturns = 15
@@ -1382,8 +1382,8 @@ Tech
 Tech
     name = "PRO_FUSION_GEN"
     description = "PRO_FUSION_GEN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "INDUSTRY_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 180
     researchturns = 1
@@ -1829,8 +1829,8 @@ Tech
 Tech
     name = "CON_TRANS_ARCH"
     description = "CON_TRANS_ARCH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 20000
     researchturns = 1
@@ -1889,7 +1889,7 @@ Tech
     name = "CON_ORBITAL_CON"
     description = "CON_ORBITAL_CON_DESC"
     short_description = "CONSTRUCTION_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 40
     researchturns = 1
@@ -2481,8 +2481,8 @@ Tech
 Tech
     name = "SHP_ASTEROID_HULLS"
     description = "SHP_ASTEROID_HULLS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 250
     researchturns = 3
@@ -3569,7 +3569,7 @@ Tech
     name = "DEF_HI_ENRG_FOCUS"
     description = "DEF_HI_ENRG_FOCUS_DESC"
     short_description = "DEFENSE_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 520
     researchturns = 2
@@ -3614,7 +3614,7 @@ Tech
     name = "SHP_DIST_MOD"
     description = "SHP_DIST_MOD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Theory
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 750
     researchturns = 3
@@ -3716,7 +3716,7 @@ Tech
 Tech
     Name ="DEF_ROOT_DEFENSE"
     description = "DEF_ROOT_DEFENSE_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
     techtype = Application
     category = "DEFENSE_CATEGORY"
     researchcost = 10
