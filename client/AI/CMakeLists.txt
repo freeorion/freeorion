@@ -35,6 +35,7 @@ set(THIS_EXE_SOURCES
     ../../universe/Enums.cpp
     ../../universe/Fleet.cpp
     ../../universe/Meter.cpp
+    ../../universe/ObjectMap.cpp
     ../../universe/ParserUtil.cpp
     ../../universe/Planet.cpp
     ../../universe/PopCenter.cpp
@@ -47,6 +48,7 @@ set(THIS_EXE_SOURCES
     ../../universe/System.cpp
     ../../universe/Tech.cpp
     ../../universe/TopLevelParsers.cpp
+    ../../universe/Universe.cpp
     ../../universe/UniverseObject.cpp
     ../../universe/ValueRef.cpp
     ../../universe/ValueRefParser.cpp
@@ -91,7 +93,6 @@ set(THIS_EXE_SOURCES
     ../../client/AI/AIClientApp.cpp
     ../../client/AI/camain.cpp
     ../../network/ClientNetworking.cpp
-    ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
     ../../AI/AIInterface.cpp
     ../../AI/PythonAI.cpp

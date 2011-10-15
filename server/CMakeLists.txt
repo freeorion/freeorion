@@ -35,6 +35,7 @@ set(THIS_EXE_SOURCES
     ../universe/Enums.cpp
     ../universe/Fleet.cpp
     ../universe/Meter.cpp
+    ../universe/ObjectMap.cpp
     ../universe/ParserUtil.cpp
     ../universe/Planet.cpp
     ../universe/PopCenter.cpp

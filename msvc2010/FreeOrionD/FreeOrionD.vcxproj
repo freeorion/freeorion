@@ -127,6 +127,7 @@
     <ClInclude Include="..\..\universe\Fleet.h" />
     <ClInclude Include="..\..\universe\InhibitableSignal.h" />
     <ClInclude Include="..\..\universe\Meter.h" />
+    <ClInclude Include="..\..\universe\ObjectMap.h" />
     <ClInclude Include="..\..\universe\Parser.h" />
     <ClInclude Include="..\..\universe\ParserUtil.h" />
     <ClInclude Include="..\..\universe\Planet.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="..\..\universe\Enums.cpp" />
     <ClCompile Include="..\..\universe\Fleet.cpp" />
     <ClCompile Include="..\..\universe\Meter.cpp" />
+    <ClCompile Include="..\..\universe\ObjectMap.cpp" />
     <ClCompile Include="..\..\universe\ParserUtil.cpp" />
     <ClCompile Include="..\..\universe\Planet.cpp" />
     <ClCompile Include="..\..\universe\PopCenter.cpp" />

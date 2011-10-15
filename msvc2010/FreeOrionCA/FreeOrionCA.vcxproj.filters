@@ -344,6 +344,9 @@
     <ClInclude Include="..\..\universe\ValueRefFwd.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\ObjectMap.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\AI\ReferenceAI.cpp">
@@ -626,6 +629,9 @@
       <Filter>Source Files\AI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\ConditionParser3.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ObjectMap.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
