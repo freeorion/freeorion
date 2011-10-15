@@ -318,8 +318,11 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
 
     ScriptingContext sc(source);
 
-    Condition::ObjectSet potential_targets; potential_targets.insert(location);
+    Condition::ObjectSet potential_targets;
+    potential_targets.reserve(RESERVE_SET_SIZE);
+    potential_targets.push_back(location);
     Condition::ObjectSet matched_targets;
+    matched_targets.reserve(RESERVE_SET_SIZE);
     m_location->Eval(sc, matched_targets, potential_targets);
 
     return !matched_targets.empty();

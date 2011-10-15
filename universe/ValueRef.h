@@ -513,8 +513,9 @@ void ValueRef::Statistic<T>::GetConditionMatches(const ScriptingContext& context
 
     // evaluate condition on all objects in Universe
     Condition::ObjectSet condition_non_targets;
+    condition_non_targets.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it) {
-        condition_non_targets.insert(it->second);
+        condition_non_targets.push_back(it->second);
     }
     condition->Eval(context, condition_targets, condition_non_targets);
 }
@@ -571,6 +572,7 @@ T ValueRef::Statistic<T>::Eval(const ScriptingContext& context) const
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
 
     Condition::ObjectSet condition_matches;
+    condition_matches.reserve(RESERVE_SET_SIZE);
     GetConditionMatches(context, condition_matches, m_sampling_condition);
 
     if (condition_matches.empty())

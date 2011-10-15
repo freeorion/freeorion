@@ -16,7 +16,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct ConditionBase;
-    typedef std::set<const UniverseObject*> ObjectSet;
+    typedef std::vector<const UniverseObject*> ObjectSet;
 }
 
 namespace Effect {
@@ -46,7 +46,7 @@ namespace Effect {
     class GenerateSitRepMessage;
     class SetDestination;
 
-    typedef std::set<UniverseObject*> TargetSet;
+    typedef std::vector<UniverseObject*> TargetSet;
 }
 
 namespace ValueRef {

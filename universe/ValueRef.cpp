@@ -674,6 +674,7 @@ namespace ValueRef {
     double Statistic<double>::Eval(const ScriptingContext& context) const
     {
         Condition::ObjectSet condition_matches;
+        condition_matches.reserve(RESERVE_SET_SIZE);
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (m_stat_type == COUNT)
@@ -690,6 +691,7 @@ namespace ValueRef {
     int Statistic<int>::Eval(const ScriptingContext& context) const
     {
         Condition::ObjectSet condition_matches;
+        condition_matches.reserve(RESERVE_SET_SIZE);
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (m_stat_type == COUNT)
@@ -711,6 +713,7 @@ namespace ValueRef {
             throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
 
         Condition::ObjectSet condition_matches;
+        condition_matches.reserve(RESERVE_SET_SIZE);
         GetConditionMatches(context, condition_matches, m_sampling_condition);
 
         if (condition_matches.empty())

@@ -19,7 +19,7 @@ struct ScriptingContext;
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
-    typedef std::set<const UniverseObject*> ObjectSet;
+    typedef std::vector<const UniverseObject*> ObjectSet;
 
     enum SearchDomain {
         NON_MATCHES,    ///< The Condition will only examine items in the non matches set; those that match the Condition will be inserted into the matches set.

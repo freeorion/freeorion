@@ -195,14 +195,16 @@ namespace {
 
     Condition::ObjectSet EffectTargetSetToConditionObjectSet(const TargetSet& target_set) {
         Condition::ObjectSet retval;
+        retval.reserve(RESERVE_SET_SIZE);
         std::copy(target_set.begin(), target_set.end(), std::inserter(retval, retval.begin()));
         return retval;
     }
 
     TargetSet ConditionObjectSetToEffectTargetSet(const Condition::ObjectSet& object_set) {
         TargetSet retval;
+        retval.reserve(RESERVE_SET_SIZE);
         for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
-            retval.insert(const_cast<UniverseObject*>(*it));
+            retval.push_back(const_cast<UniverseObject*>(*it));
         return retval;
     }
 }
@@ -247,14 +249,16 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
 
     // evaluate the activation condition only on the source object
     Condition::ObjectSet non_targets;
+    non_targets.reserve(RESERVE_SET_SIZE);
     Condition::ObjectSet matched_targets;
+    matched_targets.reserve(RESERVE_SET_SIZE);
 
     // if there is an activation condition, evaluate it on the source object,
     // and abort with no targets if the source object doesn't match.
     // if there is no activation condition, continue as if the source object
     // had matched an activation condition.
     if (m_activation) {
-        non_targets.insert(source);
+        non_targets.push_back(source);
         m_activation->Eval(ScriptingContext(source), matched_targets, non_targets);
 
         // if the activation condition did not evaluate to true for the source object, do nothing
@@ -265,8 +269,8 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
         matched_targets.clear();
     }
 
-    BOOST_MPL_ASSERT((boost::is_same<TargetSet, std::set<UniverseObject*> >));
-    BOOST_MPL_ASSERT((boost::is_same<ObjectSet, std::set<const UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<TargetSet, std::vector<UniverseObject*> >));
+    BOOST_MPL_ASSERT((boost::is_same<ObjectSet, std::vector<const UniverseObject*> >));
 
     // HACK! We're doing some dirt here for efficiency's sake.  Since we can't
     // const-cast std::set<UniverseObject*> to std::set<const
@@ -281,8 +285,9 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 {
     ObjectMap& objects = GetUniverse().Objects();
     TargetSet potential_targets;
+    potential_targets.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_targets.insert(it->second);
+        potential_targets.push_back(it->second);
     GetTargetSet(source_id, targets, potential_targets);
 }
 
@@ -1427,10 +1432,12 @@ void AddStarlanes::Execute(const ScriptingContext& context) const
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
+    potential_endpoint_objects.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.insert(it->second);
+        potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
+    endpoint_objects.reserve(RESERVE_SET_SIZE);
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
@@ -1501,10 +1508,12 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_endpoint_objects;
+    potential_endpoint_objects.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_endpoint_objects.insert(it->second);
+        potential_endpoint_objects.push_back(it->second);
 
     Condition::ObjectSet endpoint_objects;
+    endpoint_objects.reserve(RESERVE_SET_SIZE);
 
     // apply endpoints condition to determine objects whose systems should be
     // connected to the source system
@@ -1601,10 +1610,12 @@ void MoveTo::Execute(const ScriptingContext& context) const
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
+    potential_locations.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.insert(it->second);
+        potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
+    valid_locations.reserve(RESERVE_SET_SIZE);
 
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations, potential_locations);
@@ -1765,10 +1776,12 @@ void SetDestination::Execute(const ScriptingContext& context) const
 
     // get all objects in an ObjectSet
     Condition::ObjectSet potential_locations;
+    potential_locations.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        potential_locations.insert(it->second);
+        potential_locations.push_back(it->second);
 
     Condition::ObjectSet valid_locations;
+    valid_locations.reserve(RESERVE_SET_SIZE);
 
     // apply location condition to determine valid location to move target to
     m_location_condition->Eval(context, valid_locations, potential_locations);

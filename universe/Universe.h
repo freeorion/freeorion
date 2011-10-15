@@ -36,12 +36,14 @@ class UniverseObject;
 class System;
 namespace Condition {
     struct ConditionBase;
-    typedef std::set<const UniverseObject*> ObjectSet;
+    typedef std::vector<const UniverseObject*> ObjectSet;
 }
 namespace Effect {
     class EffectsGroup;
-    typedef std::set<UniverseObject*> TargetSet;
+    typedef std::vector<UniverseObject*> TargetSet;
 }
+
+extern const std::size_t RESERVE_SET_SIZE;
 
 
 /** Contains a set of objects that make up a (known or complete) Universe. */

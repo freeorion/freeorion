@@ -36,6 +36,9 @@
 #include <cmath>
 #include <stdexcept>
 
+
+const std::size_t RESERVE_SET_SIZE = 2048;
+
 namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
@@ -1375,8 +1378,9 @@ void Universe::GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map,
 {
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
+    all_potential_targets.reserve(RESERVE_SET_SIZE);
     for (std::vector<int>::const_iterator it = target_objects.begin(); it != target_objects.end(); ++it)
-        all_potential_targets.insert(m_objects.Object(*it));
+        all_potential_targets.push_back(m_objects.Object(*it));
 
     Logger().debugStream() << "Universe::GetEffectsAndTargets";
     // 0) EffectsGroups from Species
@@ -1503,6 +1507,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // create non_targets and targets sets for current effects group
         Effect::TargetSet target_set;                                    // initially empty
+        target_set.reserve(RESERVE_SET_SIZE);
 
         // get effects group to process for this iteration
         boost::shared_ptr<const Effect::EffectsGroup> effects_group = *effects_it;
@@ -1532,7 +1537,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
 
         // restore target_objects by moving objects back from targets to target_objects
         // this should be cheaper than doing a full copy because target_set is usually small
-        target_objects.insert(target_set.begin(), target_set.end());
+        target_objects.insert(target_objects.end(), target_set.begin(), target_set.end());
     }
 }
 
@@ -1557,10 +1562,14 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
         const EffectTargetAndCause& targets_and_cause = targets_it->second;
         Effect::TargetSet targets = targets_and_cause.target_set;
 
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
+        std::map<std::string, Effect::TargetSet>::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
-                targets.erase(*object_it);
+                Effect::TargetSet::iterator it = std::find(targets.begin(), targets.end(), *object_it);
+                if (it != targets.end()) {
+                    *it = targets.back();
+                    targets.pop_back();
+                }
             }
         }
 
@@ -1573,7 +1582,7 @@ void Universe::ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map)
         if (effects_group->StackingGroup() != "") {
             Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
             for (Effect::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it) {
-                affected_targets.insert(*object_it);
+                affected_targets.push_back(*object_it);
             }
         }
     }
@@ -1601,10 +1610,14 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
         const EffectTargetAndCause& targets_and_cause = targets_it->second;
         Effect::TargetSet targets = targets_and_cause.target_set;
 
-        std::map<std::string, std::set<UniverseObject*> >::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
+        std::map<std::string, Effect::TargetSet>::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
             for (Effect::TargetSet::const_iterator object_it = non_stacking_it->second.begin(); object_it != non_stacking_it->second.end(); ++object_it) {
-                targets.erase(*object_it);
+                Effect::TargetSet::iterator it = std::find(targets.begin(), targets.end(), *object_it);
+                if (it != targets.end()) {
+                    *it = targets.back();
+                    targets.pop_back();
+                }
             }
         }
 
@@ -1664,7 +1677,7 @@ void Universe::ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes
         if (effects_group->StackingGroup() != "") {
             Effect::TargetSet& affected_targets = executed_nonstacking_effects[effects_group->StackingGroup()];
             for (Effect::TargetSet::const_iterator object_it = targets.begin(); object_it != targets.end(); ++object_it)
-                affected_targets.insert(*object_it);
+                affected_targets.push_back(*object_it);
         }
     }
 }
@@ -4296,8 +4309,10 @@ void Universe::AddStartingSpecials(GalaxySetupOption specials_freq)
                 // be spawned automatically
                 const Condition::ConditionBase* location_test = special->Location();
                 Condition::ObjectSet obj_set, matches;
+                obj_set.reserve(RESERVE_SET_SIZE);
+                matches.reserve(RESERVE_SET_SIZE);
                 if (location_test) {
-                    obj_set.insert(obj);
+                    obj_set.push_back(obj);
                     location_test->Eval(matches, obj_set);
                     //Logger().debugStream() << "Special location condition: " << location_test->Dump();
                 }
@@ -4366,11 +4381,12 @@ void Universe::GenerateNatives(GalaxySetupOption freq)
     const SpeciesManager& species_manager = GetSpeciesManager();
 
     std::vector<Planet*> planet_vec = Objects().FindObjects<Planet>();
-    Condition::ObjectSet planet_set;
-    std::copy(planet_vec.begin(), planet_vec.end(), std::inserter(planet_set, planet_set.end()));
+    Condition::ObjectSet planet_set(planet_vec.size());
+    std::copy(planet_vec.begin(), planet_vec.end(), planet_set.begin());
 
     // select only planets far away from player homeworlds
     Condition::ObjectSet native_safe_planet_set;
+    native_safe_planet_set.reserve(RESERVE_SET_SIZE);
     homeworld_jumps_filter.Eval(native_safe_planet_set, planet_set);
     Logger().debugStream() << " ... native safe planets: " << native_safe_planet_set.size();
 
@@ -4475,8 +4491,10 @@ void Universe::GenerateSpaceMonsters(GalaxySetupOption freq)
                 // is no restriction on this monster's spawn location.
                 const Condition::ConditionBase* location_test = plan->Location();
                 Condition::ObjectSet sys_set, matches;
+                sys_set.reserve(RESERVE_SET_SIZE);
+                matches.reserve(RESERVE_SET_SIZE);
                 if (location_test) {
-                    sys_set.insert(system);
+                    sys_set.push_back(system);
                     location_test->Eval(matches, sys_set);
                 }
                 if (!location_test || !matches.empty()) {

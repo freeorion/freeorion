@@ -47,14 +47,14 @@ void Condition::ConditionBase::Eval(const ScriptingContext& parent_context, Obje
 {
     ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
     ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-    ObjectSet::iterator it = from_set.begin();
-    ObjectSet::iterator end_it = from_set.end();
-    for ( ; it != end_it; ) {
-        ObjectSet::iterator temp = it++;
-        bool match = Match(ScriptingContext(parent_context, *temp));
+    for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+        bool match = Match(ScriptingContext(parent_context, *it));
         if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-            to_set.insert(*temp);
-            from_set.erase(temp);
+            to_set.push_back(*it);
+            *it = from_set.back();
+            from_set.pop_back();
+        } else {
+            ++it;
         }
     }
 }
@@ -137,10 +137,12 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     } else {
         // get set of all UniverseObjects that satisfy m_condition
         ObjectSet condition_matches;
+        condition_matches.reserve(RESERVE_SET_SIZE);
         ObjectSet condition_non_matches;
+        condition_non_matches.reserve(RESERVE_SET_SIZE);
         ObjectMap& objects = GetUniverse().Objects();
         for (ObjectMap::iterator uit = objects.begin(); uit != objects.end(); ++uit) {
-            condition_non_matches.insert(uit->second);
+            condition_non_matches.push_back(uit->second);
         }
         m_condition->Eval(local_context, condition_matches, condition_non_matches, NON_MATCHES);
 
@@ -154,11 +156,11 @@ void Condition::Number::Eval(const ScriptingContext& parent_context, ObjectSet& 
     // transfer objects to or from candidate set, according to whether number of matches was within
     // the requested range.
     if (search_domain == MATCHES && !in_range) {
-        non_matches.insert(matches.begin(), matches.end());
+        non_matches.insert(non_matches.end(), matches.begin(), matches.end());
         matches.clear();
     }
     if (search_domain == NON_MATCHES && in_range) {
-        matches.insert(non_matches.begin(), non_matches.end());
+        matches.insert(matches.end(), non_matches.begin(), non_matches.end());
         non_matches.clear();
     }
 }
@@ -209,11 +211,11 @@ void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& ma
 
         if (match && search_domain == NON_MATCHES) {
             // move all objects from non_matches to matches
-            matches.insert(non_matches.begin(), non_matches.end());
+            matches.insert(matches.end(), non_matches.begin(), non_matches.end());
             non_matches.clear();
         } else if (!match && search_domain == MATCHES) {
             // move all objects from matches to non_matches
-            non_matches.insert(matches.begin(), matches.end());
+            non_matches.insert(non_matches.end(), matches.begin(), matches.end());
             matches.clear();
         }
     } else {
@@ -339,11 +341,13 @@ namespace {
 
         // transfer objects that have been flagged
         int i = 0;
-        for (Condition::ObjectSet::iterator it = from_set.begin() ; it != from_set.end(); ++i) {
-            Condition::ObjectSet::iterator temp = it++;
+        for (Condition::ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ++i) {
             if (transfer_flags[i]) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     }
@@ -390,10 +394,11 @@ namespace {
                  sorted_it != sort_key_objects.end(); ++sorted_it)
             {
                 const UniverseObject* object_to_transfer = sorted_it->second;
-                Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    from_set.erase(from_it);
-                    to_set.insert(object_to_transfer);
+                    *from_it = from_set.back();
+                    from_set.pop_back();
+                    to_set.push_back(object_to_transfer);
                     number_transferred++;
                     if (number_transferred >= number)
                         return;
@@ -406,10 +411,11 @@ namespace {
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
                 const UniverseObject* object_to_transfer = sorted_it->second;
-                Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
-                    from_set.erase(from_it);
-                    to_set.insert(object_to_transfer);
+                    *from_it = from_set.back();
+                    from_set.pop_back();
+                    to_set.push_back(object_to_transfer);
                     number_transferred++;
                     if (number_transferred >= number)
                         return;                }
@@ -447,10 +453,11 @@ namespace {
                      sorted_it != key_range.second; ++sorted_it)
                 {
                     const UniverseObject* object_to_transfer = sorted_it->second;
-                    Condition::ObjectSet::iterator from_it = from_set.find(object_to_transfer);
+                    Condition::ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
-                        from_set.erase(from_it);
-                        to_set.insert(object_to_transfer);
+                        *from_it = from_set.back();
+                        from_set.pop_back();
+                        to_set.push_back(object_to_transfer);
                         number_transferred++;
                         if (number_transferred >= number)
                             return;
@@ -489,6 +496,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
     // which input matches match the subcondition?
     ObjectSet subcondition_matching_matches;
+    subcondition_matching_matches.reserve(RESERVE_SET_SIZE);
     m_condition->Eval(local_context, subcondition_matching_matches, matches, NON_MATCHES);
 
     // remaining input matches don't match the subcondition...
@@ -497,6 +505,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
     // which input non_matches match the subcondition?
     ObjectSet subcondition_matching_non_matches;
+    subcondition_matching_non_matches.reserve(RESERVE_SET_SIZE);
     m_condition->Eval(local_context, subcondition_matching_non_matches, non_matches, NON_MATCHES);
 
     // remaining input non_matches don't match the subcondition...
@@ -505,7 +514,8 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
 
     // assemble single set of subcondition matching objects
     ObjectSet all_subcondition_matches = subcondition_matching_matches;
-    all_subcondition_matches.insert(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end());
+    all_subcondition_matches.reserve(RESERVE_SET_SIZE);
+    all_subcondition_matches.insert(all_subcondition_matches.end(), subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end());
 
     // how many subcondition matches to select as matches to this condition
     int number = m_number->Eval(local_context);
@@ -514,6 +524,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     // these are the objects that should be transferred from non_matches into
     // matches, or those left in matches while the rest are moved into non_matches
     ObjectSet matched_objects;
+    matched_objects.reserve(RESERVE_SET_SIZE);
     TransferSortedObjects(number, m_sort_key, local_context, m_sorting_method, all_subcondition_matches, matched_objects);
 
     // put objects back into matches and non_target sets as output...
@@ -524,21 +535,22 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
             const UniverseObject* matched_object = *match_it;
 
             // is this matched object in subcondition_matching_non_matches?
-            ObjectSet::iterator smnt_it = subcondition_matching_non_matches.find(matched_object);
+            ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
                 // yes; move object to matches
-                subcondition_matching_non_matches.erase(smnt_it);
-                matches.insert(matched_object);
+                *smnt_it = subcondition_matching_non_matches.back();
+                subcondition_matching_non_matches.pop_back();
+                matches.push_back(matched_object);
             }
         }
 
         // put remaining (non-matched) objects in subcondition_matching_non_matches back into non_matches
-        non_matches.insert( subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
         // put objects in subcondition_non_matching_non_matches back into non_matches
-        non_matches.insert( subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
         // put objects in subcondition_matching_matches and subcondition_non_matching_matches back into matches
-        matches.insert(     subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
-        matches.insert(     subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
+        matches.insert(     matches.end(),     subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
+        matches.insert(     matches.end(),     subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
         // this leaves the original contents of matches unchanged, other than
         // possibly having transferred some objects into matches from non_matches
 
@@ -548,21 +560,22 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
             const UniverseObject* matched_object = *match_it;
 
             // is this matched object in subcondition_matching_matches?
-            ObjectSet::iterator smt_it = subcondition_matching_matches.find(matched_object);
+            ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
                 // yes; move back into matches
-                subcondition_matching_matches.erase(smt_it);
-                matches.insert(matched_object);
+                *smt_it = subcondition_matching_matches.back();
+                subcondition_matching_matches.pop_back();
+                matches.push_back(matched_object);
             }
         }
 
         // put remaining (non-matched) objects in subcondition_matching_matches) into non_matches
-        non_matches.insert( subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_matching_matches.begin(),          subcondition_matching_matches.end());
         // put objects in subcondition_non_matching_matches into non_matches
-        non_matches.insert( subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_non_matching_matches.begin(),      subcondition_non_matching_matches.end());
         // put objects in subcondition_matching_non_matches and subcondition_non_matching_non_matches back into non_matches
-        non_matches.insert( subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
-        non_matches.insert( subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_matching_non_matches.begin(),      subcondition_matching_non_matches.end());
+        non_matches.insert( non_matches.end(), subcondition_non_matching_non_matches.begin(),  subcondition_non_matching_non_matches.end());
         // this leaves the original contents of non_matches unchanged, other than
         // possibly having transferred some objects into non_matches from matches
     }
@@ -654,7 +667,7 @@ void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 {
     if (search_domain == NON_MATCHES) {
         // move all objects from non_matches to matches
-        matches.insert(non_matches.begin(), non_matches.end());
+        matches.insert(matches.end(), non_matches.begin(), non_matches.end());
         non_matches.clear();
     }
     // if search_comain is MATCHES, do nothing: all objects in matches set
@@ -730,14 +743,14 @@ void Condition::EmpireAffiliation::Eval(const ScriptingContext& parent_context, 
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = EmpireAffiliationSimpleMatch(*temp, empire_id, m_affiliation);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = EmpireAffiliationSimpleMatch(*it, empire_id, m_affiliation);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -977,14 +990,14 @@ void Condition::Homeworld::Eval(const ScriptingContext& parent_context, ObjectSe
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = HomeworldSimpleMatch(*temp, names);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = HomeworldSimpleMatch(*it, names);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1256,14 +1269,14 @@ void Condition::Type::Eval(const ScriptingContext& parent_context, ObjectSet& ma
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = TypeSimpleMatch(*temp, type);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = TypeSimpleMatch(*it, type);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1386,14 +1399,14 @@ void Condition::Building::Eval(const ScriptingContext& parent_context, ObjectSet
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = BuildingSimpleMatch(*temp, names);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = BuildingSimpleMatch(*it, names);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1544,14 +1557,14 @@ void Condition::HasSpecial::Eval(const ScriptingContext& parent_context, ObjectS
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = HasSpecialSimpleMatch(*temp, m_name, low, high);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = HasSpecialSimpleMatch(*it, m_name, low, high);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -1662,14 +1675,14 @@ void Condition::CreatedOnTurn::Eval(const ScriptingContext& parent_context, Obje
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = CreatedOnTurnSimpleMatch(*temp, low, high);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = CreatedOnTurnSimpleMatch(*it, low, high);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1749,31 +1762,33 @@ void Condition::Contains::Eval(const ScriptingContext& parent_context, ObjectSet
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             // does candidate object contain any subcondition matches?
             bool match = false;
             // does candidate object contain any subcondition matches?
             for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it) {
-                if ((*temp)->Contains((*subcon_it)->ID())) {
+                if ((*it)->Contains((*subcon_it)->ID())) {
                     match = true;
                     break;
                 }
             }
             // transfer
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1817,9 +1832,11 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -1855,30 +1872,32 @@ void Condition::ContainedBy::Eval(const ScriptingContext& parent_context, Object
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_matches.reserve(RESERVE_SET_SIZE);
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             // is candidate object contained by any subcondition matches?
             bool match = false;
             for (ObjectSet::iterator subcon_it = subcondition_matches.begin(); subcon_it != subcondition_matches.end(); ++subcon_it) {
-                if ((*subcon_it)->Contains((*temp)->ID())) {
+                if ((*subcon_it)->Contains((*it)->ID())) {
                     match = true;
                     break;
                 }
             }
             // transfer
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -1922,9 +1941,11 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -1971,14 +1992,14 @@ void Condition::InSystem::Eval(const ScriptingContext& parent_context, ObjectSet
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = InSystemSimpleMatch(*temp, system_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = InSystemSimpleMatch(*it, system_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -2067,14 +2088,14 @@ void Condition::ObjectID::Eval(const ScriptingContext& parent_context, ObjectSet
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = ObjectIDSimpleMatch(*temp, object_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = ObjectIDSimpleMatch(*it, object_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -2189,14 +2210,14 @@ void Condition::PlanetType::Eval(const ScriptingContext& parent_context, ObjectS
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = PlanetTypeSimpleMatch(*temp, types);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = PlanetTypeSimpleMatch(*it, types);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -2358,14 +2379,14 @@ void Condition::PlanetSize::Eval(const ScriptingContext& parent_context, ObjectS
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = PlanetSizeSimpleMatch(*temp, sizes);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = PlanetSizeSimpleMatch(*it, sizes);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -2525,14 +2546,14 @@ void Condition::PlanetEnvironment::Eval(const ScriptingContext& parent_context, 
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = PlanetEnvironmentSimpleMatch(*temp, environments);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = PlanetEnvironmentSimpleMatch(*it, environments);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -2701,14 +2722,14 @@ void Condition::Species::Eval(const ScriptingContext& parent_context, ObjectSet&
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = SpeciesSimpleMatch(*temp, names);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = SpeciesSimpleMatch(*it, names);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -2882,14 +2903,14 @@ void Condition::FocusType::Eval(const ScriptingContext& parent_context, ObjectSe
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = FocusTypeSimpleMatch(*temp, names);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = FocusTypeSimpleMatch(*it, names);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -3038,14 +3059,14 @@ void Condition::StarType::Eval(const ScriptingContext& parent_context, ObjectSet
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = StarTypeSimpleMatch(*temp, types);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = StarTypeSimpleMatch(*it, types);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -3219,14 +3240,14 @@ void Condition::DesignHasPart::Eval(const ScriptingContext& parent_context, Obje
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = DesignHasPartSimpleMatch(*temp, low, high, m_name);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = DesignHasPartSimpleMatch(*it, low, high, m_name);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -3334,14 +3355,14 @@ void Condition::DesignHasPartClass::Eval(const ScriptingContext& parent_context,
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = DesignHasPartClassSimpleMatch(*temp, low, high, m_class);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = DesignHasPartClassSimpleMatch(*it, low, high, m_class);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -3474,14 +3495,14 @@ void Condition::NumberedShipDesign::Eval(const ScriptingContext& parent_context,
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = NumberedShipDesignSimpleMatch(*temp, design_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = NumberedShipDesignSimpleMatch(*it, design_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -3565,14 +3586,14 @@ void Condition::ProducedByEmpire::Eval(const ScriptingContext& parent_context, O
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = ProducedByEmpireSimpleMatch(*temp, empire_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = ProducedByEmpireSimpleMatch(*it, empire_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -3649,14 +3670,14 @@ void Condition::Chance::Eval(const ScriptingContext& parent_context, ObjectSet& 
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             bool match = RandZeroToOne() <= chance;
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -3744,14 +3765,14 @@ void Condition::MeterValue::Eval(const ScriptingContext& parent_context, ObjectS
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = MeterValueSimpleMatch(*temp, low, high, m_meter);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = MeterValueSimpleMatch(*it, low, high, m_meter);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -3901,14 +3922,14 @@ void Condition::EmpireStockpileValue::Eval(const ScriptingContext& parent_contex
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = EmpireStockpileValueSimpleMatch(*temp, low, high, m_stockpile);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = EmpireStockpileValueSimpleMatch(*it, low, high, m_stockpile);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -4029,14 +4050,14 @@ void Condition::VisibleToEmpire::Eval(const ScriptingContext& parent_context, Ob
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = (*temp)->GetVisibility(empire_id) != VIS_NO_VISIBILITY;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = (*it)->GetVisibility(empire_id) != VIS_NO_VISIBILITY;
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -4136,9 +4157,11 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, Obj
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_matches.reserve(RESERVE_SET_SIZE);
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4146,16 +4169,16 @@ void Condition::WithinDistance::Eval(const ScriptingContext& parent_context, Obj
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             // does candidate object contain any subcondition matches?
-            bool match = WithinDistanceSimpleMatch(*temp, subcondition_matches, distance);
+            bool match = WithinDistanceSimpleMatch(*it, subcondition_matches, distance);
             // transfer
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -4204,9 +4227,11 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     if (subcondition_matches.empty())
@@ -4310,7 +4335,7 @@ namespace {
             return false;
 
         // is candidate object close enough to any subcondition matches?
-        for (Condition::ObjectSet::const_iterator it = from_objects.begin(), end_it = from_objects.end(); it != end_it; ++it) {
+        for (Condition::ObjectSet::const_iterator it = from_objects.begin(); it != from_objects.end(); ++it) {
             if (jump_limit == 0) {
                 // special case, since LeastJumpsPath() doesn't expect the start point to be the end point
                 double delta_x = (*it)->X() - candidate->X();
@@ -4341,25 +4366,27 @@ void Condition::WithinStarlaneJumps::Eval(const ScriptingContext& parent_context
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_matches.reserve(RESERVE_SET_SIZE);
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
         int jump_limit = m_jumps->Eval(local_context);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             // does candidate object contain any subcondition matches?
-            bool match = WithinStarlaneJumpsSimpleMatch(*temp, subcondition_matches, jump_limit);
+            bool match = WithinStarlaneJumpsSimpleMatch(*it, subcondition_matches, jump_limit);
             // transfer
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -4406,9 +4433,11 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     int jump_limit = m_jumps->Eval(local_context);
@@ -4438,9 +4467,10 @@ namespace {
 
         // assemble all systems that are or that contain subcondition matches
         Condition::ObjectSet destination_systems;
+        destination_systems.reserve(RESERVE_SET_SIZE);
         for (Condition::ObjectSet::const_iterator it = destination_objects.begin(); it != destination_objects.end(); ++it)
             if (const System* system = objects.Object< ::System>((*it)->SystemID()))
-                destination_systems.insert(system);
+                destination_systems.push_back(system);
 
         if (destination_systems.empty())
             return false;
@@ -4468,24 +4498,26 @@ void Condition::CanAddStarlaneConnection::Eval(const ScriptingContext& parent_co
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_matches.reserve(RESERVE_SET_SIZE);
 
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
             // can starlanes be added between candidate and all subcondition matches?
-            bool match = CanAddStarlaneConnectionSimpleMatch(*temp, subcondition_matches);
+            bool match = CanAddStarlaneConnectionSimpleMatch(*it, subcondition_matches);
             // transfer
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
     } else {
@@ -4529,9 +4561,11 @@ bool Condition::CanAddStarlaneConnection::Match(const ScriptingContext& local_co
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4708,9 +4742,11 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::const_iterator it = objects.const_begin(); it != objects.const_end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
@@ -4805,14 +4841,14 @@ void Condition::ExploredByEmpire::Eval(const ScriptingContext& parent_context, O
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = ExploredByEmpireSimpleMatch(*temp, empire_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = ExploredByEmpireSimpleMatch(*it, empire_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -4954,14 +4990,14 @@ void Condition::FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_con
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = FleetSupplyableSimpleMatch(*temp, empire_id);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = FleetSupplyableSimpleMatch(*it, empire_id);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -5076,23 +5112,25 @@ void Condition::ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& pa
 
         // get objects to be considering for matching against subcondition
         ObjectSet subcondition_non_matches;
+        subcondition_non_matches.reserve(RESERVE_SET_SIZE);
         for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-            subcondition_non_matches.insert(it->second);
+            subcondition_non_matches.push_back(it->second);
         ObjectSet subcondition_matches;
+        subcondition_matches.reserve(RESERVE_SET_SIZE);
         m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
 
         int empire_id = m_empire_id->Eval(local_context);
 
         ObjectSet& from_set = search_domain == MATCHES ? matches : non_matches;
         ObjectSet& to_set = search_domain == MATCHES ? non_matches : matches;
-        ObjectSet::iterator it = from_set.begin();
-        ObjectSet::iterator end_it = from_set.end();
-        for ( ; it != end_it; ) {
-            ObjectSet::iterator temp = it++;
-            bool match = ResourceSupplySimpleMatch(*temp, empire_id, subcondition_matches);
+        for (ObjectSet::iterator it = from_set.begin(); it != from_set.end(); ) {
+            bool match = ResourceSupplySimpleMatch(*it, empire_id, subcondition_matches);
             if ((search_domain == MATCHES && !match) || (search_domain == NON_MATCHES && match)) {
-                to_set.insert(*temp);
-                from_set.erase(temp);
+                to_set.push_back(*it);
+                *it = from_set.back();
+                from_set.pop_back();
+            } else {
+                ++it;
             }
         }
 
@@ -5120,9 +5158,11 @@ bool Condition::ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& l
 
     // get objects to be considering for matching against subcondition
     ObjectSet subcondition_non_matches;
+    subcondition_non_matches.reserve(RESERVE_SET_SIZE);
     for (ObjectMap::iterator it = objects.begin(); it != objects.end(); ++it)
-        subcondition_non_matches.insert(it->second);
+        subcondition_non_matches.push_back(it->second);
     ObjectSet subcondition_matches;
+    subcondition_matches.reserve(RESERVE_SET_SIZE);
 
     m_condition->Eval(local_context, subcondition_matches, subcondition_non_matches);
     int empire_id = m_empire_id->Eval(local_context);
@@ -5183,6 +5223,7 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
 
     if (search_domain == NON_MATCHES) {
         ObjectSet partly_checked_non_matches;
+        partly_checked_non_matches.reserve(RESERVE_SET_SIZE);
 
         // move items in non_matches set that pass first operand condition into
         // partly_checked_non_matches set
@@ -5195,7 +5236,7 @@ void Condition::And::Eval(const ScriptingContext& parent_context, ObjectSet& mat
         }
 
         // merge items that passed all operand conditions into matches
-        matches.insert(partly_checked_non_matches.begin(), partly_checked_non_matches.end());
+        matches.insert(matches.end(), partly_checked_non_matches.begin(), partly_checked_non_matches.end());
 
         // items already in matches set are not checked, and remain in matches set even if
         // they don't match one of the operand conditions
@@ -5292,6 +5333,7 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
 
     } else {
         ObjectSet partly_checked_matches;
+        partly_checked_matches.reserve(RESERVE_SET_SIZE);
 
         // move items in matches set the fail the first operand condition into 
         // partly_checked_matches set
@@ -5304,7 +5346,7 @@ void Condition::Or::Eval(const ScriptingContext& parent_context, ObjectSet& matc
         }
 
         // merge items that failed all operand conditions into non_matches
-        non_matches.insert(partly_checked_matches.begin(), partly_checked_matches.end());
+        non_matches.insert(non_matches.end(), partly_checked_matches.begin(), partly_checked_matches.end());
 
         // items already in non_matches set are not checked and remain in
         // non_matches set even if they pass one or more of the operand 

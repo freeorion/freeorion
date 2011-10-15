@@ -1180,7 +1180,9 @@ const std::string& ShipDesign::Model() const {
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     Condition::ObjectSet locations;
+    locations.reserve(RESERVE_SET_SIZE);
     Condition::ObjectSet non_locations;
+    non_locations.reserve(RESERVE_SET_SIZE);
 
     const ObjectMap& objects = GetMainObjectMap();
 
@@ -1233,7 +1235,7 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
 
     ScriptingContext sc(source);
 
-    locations.insert(location);
+    locations.push_back(location);
 
     // apply hull location conditions to potential location
     const HullType* hull = GetHull();
