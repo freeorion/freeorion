@@ -20,7 +20,6 @@ Content:
  ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
  ~ Added a sitrep message when a planet is terraformed by the Terraforming building.
 
-
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.
  ~ Added clearer fleet icons.
@@ -33,6 +32,10 @@ GUI:
  ~ Hid unresearchable and unproducible items on the research, production, and design screens.
  ~ Made map zoom with the slider smoother.
  ~ Removed separate fleet windows that opened when double-clicking a fleet in the main fleets window.
+ ~ Limited messages window history to 100 lines.
+
+Bugs:
+ ~ Fixed problem with non-Latin font character rendering.
 
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

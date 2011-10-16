@@ -1481,7 +1481,7 @@ void MapWnd::RenderVisibilityRadii() {
             circle_colour.a = 64;
 
             GG::Pt circle_centre = ScreenCoordsFromUniversePosition(it->first.second.first, it->first.second.second);
-            double radius = 10.0*it->second*ZoomFactor();
+            double radius = it->second*ZoomFactor();
             if (radius < 20.0)
                 continue;
 
