@@ -76,19 +76,26 @@ Tech
 Tech
     name = "LRN_ARTIF_MINDS"
     description = "LRN_ARTIF_MINDS_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "RESEARCH_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
-    researchcost = 120
+    researchcost = 250
     researchturns = 6
     prerequisites = "LRN_ALGO_ELEGANCE"
-    graphic = "icons/tech/artificial_minds.png"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                PopulationCenter
+            ]
+            effects = SetTargetResearch Value + 5
+    graphic = "icons/tech/basic_autolabs.png"
 
 Tech
     name = "LRN_XENOARCH"
     description = "LRN_XENOARCH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "XENOARCH_SHORT_DESC"
+    techtype = Application
     category = "LEARNING_CATEGORY"
     researchcost = 360
     researchturns = 10
@@ -206,24 +213,6 @@ Tech
             scope = Source
             effects = Victory "TECH_VICTORY"
     graphic = "icons/tech/singularity_of_transcendence.png"
-        
-Tech
-    name = "LRN_AUTOLAB_I"
-    description = "LRN_AUTOLAB_I_DESC"
-    short_description = "RESEARCH_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 250
-    researchturns = 1
-    prerequisites = "LRN_ARTIF_MINDS"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                PopulationCenter
-            ]
-            effects = SetTargetResearch Value + 5
-    graphic = "icons/tech/basic_autolabs.png"
 
 Tech
     name = "LRN_DISTRIB_THOUGHT"
@@ -245,19 +234,6 @@ Tech
                 Focus "FOCUS_RESEARCH"
             ]
             effects = SetTargetResearch Value * 1.25
-
-Tech
-    name = "LRN_XENOARCH_RESTORE"
-    description = "LRN_XENOARCH_RESTORE_DESC"
-    short_description = "XENOARCH_RESTORE_SHORT_DESC"
-    techtype = Application
-    category = "LEARNING_CATEGORY"
-    researchcost = 900
-    researchturns = 1
-    prerequisites = [
-        "LRN_FORCE_FIELD"
-        "LRN_XENOARCH"
-    ]
 
 Tech
     name = "LRN_OBSERVATORY_I"
@@ -508,11 +484,29 @@ Tech
 Tech
     name = "GRO_GENETIC_ENG"
     description = "GRO_GENETIC_ENG_DESC"
-    short_description = "THEORY_SHORT_DESC"
+    short_description = "FARMING_SHORT_DESC"
     techtype = Theory
     category = "GROWTH_CATEGORY"
-    researchcost = 20
+    researchcost = 40
     researchturns = 5
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                    OwnedBy TheEmpire Source.Owner
+                    Focus "FOCUS_FARMING"
+                    Planet environment = Good
+            ]
+            effects = SetTargetFarming Value + Target.Population
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                Focus "FOCUS_FARMING"
+                Planet environment = Adequate
+            ]
+            effects = SetTargetFarming Value + Target.Population * 0.5
+    ]
+
     graphic = "icons/tech/genetic_engineering.png"
 
 Tech
@@ -1022,34 +1016,6 @@ Tech
     graphic = "icons/tech/industrial_farming.png"
 
 Tech
-    name = "GRO_SELF_ROTATING_CROPS"
-    description = "GRO_SELF_ROTATING_CROPS_DESC"
-    short_description = "FARMING_SHORT_DESC"
-    techtype = Application
-    category = "GROWTH_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "GRO_GENETIC_ENG"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                    OwnedBy TheEmpire Source.Owner
-                    Focus "FOCUS_FARMING"
-                    Planet environment = Good
-            ]
-            effects = SetTargetFarming Value + Target.Population
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                Focus "FOCUS_FARMING"
-                Planet environment = Adequate
-            ]
-            effects = SetTargetFarming Value + Target.Population * 0.5
-    ]
-    graphic = "icons/tech/self-rotating_crops.png"
-
-Tech
     name = "GRO_GENOME_BANK"
     description = "GRO_GENOME_BANK_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -1372,11 +1338,28 @@ Tech
 Tech
     name = "PRO_ROBOTIC_PROD"
     description = "PRO_ROBOTIC_PROD_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "PRODUCTION_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 120
-    researchturns = 1
+    researchturns = 2
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_INDUSTRY"
+                ]
+            effects = SetTargetIndustry Value + Target.Population * 0.2
+
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                ProductionCenter
+                Focus "FOCUS_MINING"
+            ]
+            effects = SetTargetMining Value + 10
+        ]
     graphic = "icons/tech/robotic_production.png"
 
 Tech
@@ -1411,19 +1394,20 @@ Tech
 Tech
     name = "PRO_ORBITAL_GEN"
     description = "PRO_ORBITAL_GEN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 600
     researchturns = 2
     prerequisites = "PRO_FUSION_GEN"
+    unlock = Item type = Building name = "BLD_GAS_GIANT_GEN"
     graphic = "icons/tech/orbital_generation.png"
 
 Tech
     name = "PRO_SENTIENT_AUTOMATION"
     description = "PRO_SENTIENT_AUTOMATION_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "INDUSTRY_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1250
     researchturns = 2
@@ -1431,18 +1415,26 @@ Tech
         "LRN_ARTIF_MINDS"
         "PRO_NANOTECH_PROD"
     ]
-    graphic = "icons/tech/sentient_autofactories.png"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                PopulationCenter
+                OwnedBy TheEmpire Source.Owner
+            ]
+            effects = SetTargetIndustry Value +5
+    graphic = "icons/tech/basic_autofactories.png"
 
 Tech
     name = "PRO_ENERGY_CONV"
     description = "PRO_ENERGY_CONV_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 2000
     researchturns = 3
     prerequisites = "LRN_EVERYTHING"
-    graphic = "icons/tech/matter-energy_conversion.png"
+    unlock = Item type = Building name = "BLD_REPLICATORS"
+    graphic = "icons/tech/matter-energy_replication.png"
 
 Tech
     name = "PRO_NDIM_ASSMB"
@@ -1458,17 +1450,17 @@ Tech
 Tech
     name = "PRO_SINGULAR_GEN"
     description = "PRO_SINGULAR_GEN_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "PRODUCTION_CATEGORY"
     researchcost = 1500
     researchturns = 3
     prerequisites = [
         "LRN_GRAVITONICS"
         "PRO_FUSION_GEN"
-        "PRO_NANOTECH_PROD"
     ]
-    graphic = "icons/tech/singularity_generation.png"
+    unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
+    graphic = "icons/tech/artificial_black_hole.png"
 
 Tech
     name = "PRO_ZERO_GEN"
@@ -1484,24 +1476,6 @@ Tech
         "PRO_ENERGY_CONV"
     ]
     graphic = "icons/tech/zero_point_energy.png"
-
-Tech
-    name = "PRO_AUTOFACTORY_I"
-    description = "PRO_AUTOFACTORY_I_DESC"
-    short_description = "INDUSTRY_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 450
-    researchturns = 1
-    prerequisites = "PRO_SENTIENT_AUTOMATION"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                PopulationCenter
-                OwnedBy TheEmpire Source.Owner
-            ]
-            effects = SetTargetIndustry Value +5
-    graphic = "icons/tech/basic_autofactories.png"
 
 Tech
     name = "PRO_HEAVY_MINING_I"
@@ -1542,17 +1516,6 @@ Tech
     researchturns = 1
     prerequisites = "PRO_MICROGRAV_MAN"
     graphic = "icons/tech/orbital_mining.png"
-
-Tech
-    name = "PRO_GAS_GIANT_GEN"
-    description = "PRO_GAS_GIANT_GEN_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 240
-    researchturns = 1
-    prerequisites = "PRO_ORBITAL_GEN"
-    unlock = Item type = Building name = "BLD_GAS_GIANT_GEN"
 
 Tech
     name = "PRO_ASTEROID_MINE"
@@ -1666,58 +1629,6 @@ Tech
     researchturns = 1
     prerequisites = "PRO_INDUSTRY_CENTER_II"
     graphic = "icons/tech/industrial_centre_iii.png"
-
-Tech
-    name = "PRO_BLACK_HOLE_POW_GEN"
-    description = "PRO_BLACK_HOLE_POW_GEN_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 600
-    researchturns = 1
-    prerequisites = "PRO_SINGULAR_GEN"
-    unlock = Item type = Building name = "BLD_BLACK_HOLE_POW_GEN"
-    graphic = "icons/tech/artificial_black_hole.png"
-
-Tech
-    name = "PRO_EXOBOTS"
-    description = "PRO_EXOBOTS_DESC"
-    short_description = "PRODUCTION_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 80
-    researchturns = 1
-    prerequisites = "PRO_ROBOTIC_PROD"
-    effectsgroups = [
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_INDUSTRY"
-                ]
-            effects = SetTargetIndustry Value + Target.Population * 0.2
-
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                ProductionCenter
-                Focus "FOCUS_MINING"
-            ]
-            effects = SetTargetMining Value + 10
-    ]
-    graphic = "icons/tech/exobots.png"
-
-Tech
-    name = "PRO_MATENG_REPLIC"
-    description = "PRO_MATENG_REPLIC_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "PRODUCTION_CATEGORY"
-    researchcost = 800
-    researchturns = 1
-    prerequisites = "PRO_ENERGY_CONV"
-    unlock = Item type = Building name = "BLD_REPLICATORS"
-    graphic = "icons/tech/matter-energy_replication.png"
 
 Tech
     name = "PRO_HYPER_DAM"
@@ -1866,23 +1777,31 @@ Tech
 Tech
     name = "CON_CONTGRAV_ARCH"
     description = "CON_CONTGRAV_ARCH_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "CONSTRUCTION_SHORT_DESC"
+    techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 500
     researchturns = 4
     prerequisites = "LRN_GRAVITONICS"
+    effectsgroups =
+        EffectsGroup
+            scope = And [
+                OwnedBy TheEmpire Source.Owner
+                TargetPopulation low = 1
+            ]
+            effects = SetTargetConstruction Value + 20
     graphic = "icons/tech/controlled_gravity_architecture.png"
 
 Tech
     name = "CON_ART_HEAVENLY"
     description = "CON_ART_HEAVENLY_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "BUILDING_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 750
     researchturns = 6
     prerequisites = "CON_CONTGRAV_ARCH"
+    unlock = Item type = Building name = "BLD_ART_MOON"
     graphic = "icons/tech/artificial_heavenly_bodies.png"
 
 Tech
@@ -2231,24 +2150,6 @@ Tech
     ]
 
 Tech
-    name = "CON_GRAVITY_WELLS"
-    description = "CON_GRAVITY_WELLS_DESC"
-    short_description = "CONSTRUCTION_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 300
-    researchturns = 2
-    prerequisites = "CON_CONTGRAV_ARCH"
-    effectsgroups =
-        EffectsGroup
-            scope = And [
-                OwnedBy TheEmpire Source.Owner
-                TargetPopulation low = 1
-            ]
-            effects = SetTargetConstruction Value + 20
-    graphic = "icons/tech/controlled_gravity_wells.png"
-
-Tech
     name = "CON_ART_PLANET"
     description = "CON_ART_PLANET_DESC"
     short_description = "BUILDING_UNLOCK_SHORT_DESC"
@@ -2261,17 +2162,6 @@ Tech
         "CON_INFRA_ECOL"
     ]
     unlock = Item type = Building name = "BLD_ART_PLANET"
-
-Tech
-    name = "CON_ART_MOON"
-    description = "CON_ART_MOON_DESC"
-    short_description = "BUILDING_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "CONSTRUCTION_CATEGORY"
-    researchcost = 420
-    researchturns = 2
-    prerequisites = "CON_ART_HEAVENLY"
-    unlock = Item type = Building name = "BLD_ART_MOON"
 
 Tech
     name = "CON_TRANS_STRC"
@@ -2402,22 +2292,30 @@ Tech
 Tech
     name = "SHP_MIL_ROBO_CONT"
     description = "SHP_MIL_ROBO_CONT_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 120
     researchturns = 1
     prerequisites = "PRO_ROBOTIC_PROD"
+    unlock = [
+        Item type = ShipHull name = "SH_ROBOTIC"
+        Item type = Building name = "BLD_SHIPYARD_CON_ROBO"
+    ]
 
 Tech
     name = "SHP_SPACE_FLUX_DRIVE"
     description = "SHP_SPACE_FLUX_DRIVE_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 750
     researchturns = 1
     prerequisites = "SHP_MIL_ROBO_CONT"
+    unlock = [
+        Item type = ShipHull name = "SH_SPATIAL_FLUX"
+        Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
+    ]
 
 Tech
     name = "SHP_CONTGRAV_MAINT"
@@ -2585,14 +2483,18 @@ Tech
 Tech
     name = "SHP_FRC_ENRG_COMP"
     description = "SHP_FRC_ENRG_COMP_DESC"
-    short_description = "THEORY_SHORT_DESC"
-    techtype = Theory
+    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
+    techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 1600
     researchturns = 3
     prerequisites = [
         "LRN_FORCE_FIELD"
         "LRN_GRAVITONICS"
+    ]
+    unlock = [
+        Item type = ShipHull name = "SH_COMPRESSED_ENERGY"
+        Item type = Building name = "BLD_SHIPYARD_ENRG_COMP"
     ]
 
 Tech
@@ -2638,6 +2540,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 1
     researchturns = 1
+    Unresearchable
     effectsgroups =
         EffectsGroup
             scope = And [
@@ -2650,34 +2553,6 @@ Tech
                 Not OwnerHasTech "SHP_SENSORS"
             ]
             effects = SetDetection Value + 5
-
-Tech
-    name = "SHP_ROBO_HULL"
-    description = "SHP_ROBO_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 40
-    researchturns = 1
-    prerequisites = "SHP_MIL_ROBO_CONT"
-    unlock = [
-        Item type = ShipHull name = "SH_ROBOTIC"
-        Item type = Building name = "BLD_SHIPYARD_CON_ROBO"
-    ]
-
-Tech
-    name = "SHP_SPACE_FLUX_HULL"
-    description = "SHP_SPACE_FLUX_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 320
-    researchturns = 1
-    prerequisites = "SHP_SPACE_FLUX_DRIVE"
-    unlock = [
-        Item type = ShipHull name = "SH_SPATIAL_FLUX"
-        Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
-    ]
 
 Tech
     name = "SHP_SELFGRAV_HULL"
@@ -3054,20 +2929,6 @@ Tech
         Item type = ShipPart name = "FI_BIOBOMBER"
         Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
         Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
-    ]
-
-Tech
-    name = "SHP_COMP_ENRG_HULL"
-    description = "SHP_COMP_ENRG_HULL_DESC"
-    short_description = "SHIP_HULL_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 750
-    researchturns = 2
-    prerequisites = "SHP_FRC_ENRG_COMP"
-    unlock = [
-        Item type = ShipHull name = "SH_COMPRESSED_ENERGY"
-        Item type = Building name = "BLD_SHIPYARD_ENRG_COMP"
     ]
 
 Tech

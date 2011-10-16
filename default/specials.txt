@@ -130,7 +130,7 @@ Special
             scope = Source
             activation = And [
                 Random probability = .2
-                OwnerHasTech "LRN_XENOARCH_RESTORE"
+                OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -148,7 +148,7 @@ Special
             scope = Source
             activation = And [
                 Random probability = .25
-                OwnerHasTech "LRN_XENOARCH_RESTORE"
+                OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -167,7 +167,7 @@ Special
             activation = And [
                 Random probability = .33
                 NotOwnerHasTech "SHP_PLANET_CLOAK"
-                OwnerHasTech "LRN_XENOARCH_RESTORE"
+                OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -186,7 +186,7 @@ Special
             activation = And [
                 Random probability = .50
                 NotOwnerHasTech "SHP_DEATH_RAY"
-                OwnerHasTech "LRN_XENOARCH_RESTORE"
+                OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -204,7 +204,7 @@ Special
             scope = Source
             activation = And [
                 Not OwnerHasTech "SHP_MULTISPEC_SHIELD"
-                OwnerHasTech "LRN_XENOARCH_RESTORE"
+                OwnerHasTech "LRN_XENOARCH"
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
@@ -220,7 +220,7 @@ Special
 
         EffectsGroup
             scope = Source
-            activation = OwnerHasTech "LRN_XENOARCH_RESTORE"
+            activation = OwnerHasTech "LRN_XENOARCH"
             effects = [
                 AddSpecial "ANCIENT_RUINS_DEPLETED_SPECIAL"
                 RemoveSpecial "ANCIENT_RUINS_SPECIAL"
