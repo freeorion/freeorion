@@ -2785,17 +2785,17 @@ An old abandoned colony.  Some of the infrastructure should still be useful.
 KRAKEN_NEST_SPECIAL
 Kraken Nest
 KRAKEN_NEST_SPECIAL_DESC
-At some point young kraken will rise from this place.
+At some point young kraken will rise from this place.  With the proper tech, these mega-fauna could be domesticated.
 
 SNOWFLAKE_NEST_SPECIAL
 Snowflake Nest
 SNOWFLAKE_NEST_SPECIAL_DESC
-At some point young snowflakes will rise from this place.
+At some point young snowflakes will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 JUGGERNAUT_NEST_SPECIAL
 Juggernaut Nest
 JUGGERNAUT_NEST_SPECIAL_DESC
-At some point young juggernauts will rise from this place.
+At some point young juggernauts will rise from this place. With the proper tech, these mega-fauna could be domesticated.
 
 #######################
 # Enumeration  values #
@@ -3914,7 +3914,7 @@ Economics
 SHIPS_CATEGORY
 Ships
 DEFENSE_CATEGORY
-Planetary Defense
+Defense
 
 
 ####################################
@@ -4000,13 +4000,19 @@ LRN_UNIF_CONC
 Unified Consciousness
 
 LRN_UNIF_CONC_DESC
-Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truly joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.
+'''By transferring the mind into cyberspace, thousands of minds can act as one, their actions perfectly unified and directed towards the good of the whole.
+
+Telepathic communication between individuals or mind-machine interfaces only permit the most basic, trivial and surface exchanges of thought and ideas.  Truly joined minds function as a single consciousness, with the summed faculties and knowledge of its constituent parts, and acting as a new unique entity.  This has great potential, but also significant risk, in that the union may not seek its own destruction, which is necessary for the original minds to be regained.  Alternatively, one of the minds may dominate the other, controlling or destroying the other, rather than forming an equal, harmonious union.'''
 
 LRN_QUANT_NET
 Quantum Networking
 
 LRN_QUANT_NET_DESC
-Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted.  Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances.  When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.
+'''Multiplies target research on all planets with the Research focus by 2.
+
+A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes.  This advancement greatly facilitates research throughout the empire.
+
+Every particle is inextricably connected on the quantum level to every particle with which it has previously interacted.  Older mechanistic ideas about cause and effect do not apply on this level, and particles can "communicate" instantaneously across vast distances.  When a thorough understanding of this phenomena is acquired, selective small-scale action-at-a-distance between any two points can be achieved instantaneously and outdated relativistic speed limits no longer apply to the transfer of information.'''
 
 LRN_TRANSCEND
 Singularity of Transcendence
@@ -4033,7 +4039,9 @@ GRO_GENETIC_ENG
 Genetic Engineering
 
 GRO_GENETIC_ENG_DESC
-The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.
+'''Increases farming on good worlds by the population and on adequate worlds by half of the population
+
+The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 
 GRO_ENV_ENCAPSUL
 Environmental Encapsulation
@@ -4081,7 +4089,11 @@ GRO_NANOTECH_MED
 Nanotech Medicine
 
 GRO_NANOTECH_MED_DESC
-While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corrective measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surgeries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.
+'''Increases health on all planets by 10.
+
+Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections.  By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.
+
+While genetic alteration can repair or undo the effects of harmful or undesired mutations or correct biochemical imbalances, treating major physical trauma and non-genetic congenital defects requires actual physical corrective measures.  Nanotechnology may be used to accomplish these tasks, with two important advantages:  Correction may be done without invasive surgeries and associated secondary damage and risks, and treatment reaction time is greatly reduced, as the tools to do the job are always in place and ready to function.'''
 
 GRO_ECO_METAMORPH
 Ecological Metamorphosis
@@ -4115,7 +4127,11 @@ GRO_ENERGY_META
 Pure-Energy Metabolism
 
 GRO_ENERGY_META_DESC
-The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.
+'''Increases max fuel on all ships by 2, max defense on all planets by 5, max shield on all planets by 5, target farming on all planets with the Farming focus by one quarter of the planet's population, target mining on all planets with the Mining focus by 10, target industry on all planets with the Industry focus by one quarter of the planet's population, and target research on all planets with the Research focus by one fifth.
+
+While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally.  Ship's crews for example, would no longer have to waste space with crew quarters or rations storage.  Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.
+
+The ultimate stage of physical development is to transcend the physical altogether.  Without bodies, individuals and society may move, grow and exist freely, unhindered by unnecessary physical limitations and inefficient metabolic processes that waste energy supporting homeostasis.'''
 
 PRO_MICROGRAV_MAN
 Microgravity Manufacturing
@@ -4123,17 +4139,25 @@ Microgravity Manufacturing
 PRO_MICROGRAV_MAN_DESC
 The microgravity of low planetary orbit offers great potential for novel manufacturing facility designs, equipment and techniques not possible on planet surfaces.  Solids may be held in place with minimal support.  Liquids and gases float freely, shaped only by surface tension, unless otherwise manipulated.  Factory equipment may be arranged optimally in three dimensions.  These conditions permit great increases in efficiency and productivity, if properly exploited.
 
-PRO_PLANET_GEOL
-Planetary Geology
+PRO_CORE_MINE
+Deep Core Mining
 
-PRO_PLANET_GEOL_DESC
-Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.
+PRO_CORE_MINE_DESC
+'''Increases target mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.
+
+The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.
+
+Useful minerals are created throughout the volume of a planet, under various exacting chemical and thermodynamic conditions, including aqueous surface sedimentation, crushing core differentiation and mid-depth metamorphosis.  After creation, processes such as plate tectonics, vulcanism and deep convection currents are equally important in determining the final location and form of these extractable resources.  Understanding these processes and their effects, causes and signs is essential for large scale efficient mining operations.'''
 
 PRO_ROBOTIC_PROD
 Robotic Production
 
 PRO_ROBOTIC_PROD_DESC
-Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.
+'''Increases target industry on all planets with the Industry focus by one fifth of the planet's population, and target mining on all planets with the Mining focus by 10.
+
+Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry.  Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.
+
+Although high level initial design and initial facility setup still require active supervision, the elimination of operators from the actual production process eliminates many bottlenecks.  Robots work continuously, without perpetual demands for greater economic compensation.  Robots have much greater tolerance for hazardous environmental conditions in the factory, and do not require additional habitable space off-site.  Robots perform their assigned tasks flawlessly, or at least as well as they are instructed.'''
 
 PRO_FUSION_GEN
 Fusion Generation
@@ -4173,7 +4197,11 @@ PRO_NDIM_ASSMB
 N-Dimensional Assembly
 
 PRO_NDIM_ASSMB_DESC
-The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.
+''' Unlocks Hyperspatial Dam
+
+Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
+
+The geometry of physical space has always been a major impediment to the assembly of objects within that space.  Objects cannot be collocated, and volumes cannot be simultaneously enclosed and open if their existence is restricted to a mere three dimensions.  Moving beyond this limitation, parts of objects can be folded out of the way in a pocket dimensions, and continguous lines may be passed around other masses by going "off-axis".  Similar mechanisms are also used to assemble lower-dimensional objects in configurations that would be impossible without higher-dimensional pathways.'''
 
 PRO_SINGULAR_GEN
 Singularity Generation
@@ -4215,7 +4243,9 @@ CON_ORGANIC_STRC
 Organic Structures
 
 CON_ORGANIC_STRC_DESC
-Buildings formed of inanimate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+'''Buildings formed of inanimate minerals are functional and occasionally elegant, and those of harvested but dead organics are often simple and inexpensive.  Actual living structures, however, can be grown into their final shape with no additional labour, as well effect some degree of self-repair when damaged.  They may also naturally self-regulate their internal environments, or potentially adapt to varied or changing surroundings as necessary, during or after their initial growth.
+
+A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebuilding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.'''
 
 CON_METRO_INFRA
 Metroplex Infrastructure
@@ -4239,7 +4269,11 @@ CON_FRC_ENRG_STRC
 Force-Energy Structures
 
 CON_FRC_ENRG_STRC_DESC
-When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resilience, portability and novel design possibilities.
+'''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
+
+The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.
+
+When forces and energy can be manipulated as desired to provide the same functionality as solid surfaces, there is no essential need to have physical materials enclosing the occupants of a building.  Structures composed entirely of energy have many advantages, including simple reconfiguration, resilience, portability and novel design possibilities.'''
 
 CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
@@ -4251,7 +4285,11 @@ CON_GAL_INFRA
 Galactic Infrastructure
 
 CON_GAL_INFRA_DESC
-Integration and development of the infrastructures on highly productive worlds into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.  When completed, such a system functionally unifies the worlds of which it is composed.  Integrated transportation, housing, maintenance, and construction tools may be fluidly deployed wherever needed to optimally alter resource allocations or adjust to changes.
+'''Increases the resource supply range of all colonies by 1.
+
+The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena.  By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.
+
+Integration and development of the infrastructures on highly productive worlds into a unified galaxy-spanning network is one of the greatest logistical effort conceivable.  When completed, such a system functionally unifies the worlds of which it is composed.  Integrated transportation, housing, maintenance, and construction tools may be fluidly deployed wherever needed to optimally alter resource allocations or adjust to changes.'''
 
 CON_ART_HEAVENLY
 Artificial Heavenly Bodies
@@ -4271,7 +4309,11 @@ CON_NDIM_STRC
 N-Dimensional Structures
 
 CON_NDIM_STRC_DESC
-Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design.  The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor.  As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.
+'''Increases the population that can be sustained by Good worlds by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.
+
+The primary limiting factors on a planets population capacity are environmental desirability and space.  By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.
+
+Of all the bizarre feats of applied physics, the ability to to fold space onto itself has the most direct and profound influence on structural form and design.  The potential is endless, literally as hallways are made to bend back upon their beginning, or given a twist so that their ceiling becomes their floor.  As well, the concept of urban sprawl becomes laughable, as any number of people may fit into an arbitrarily small volume, safely tucked into an adjacent plane of existence.'''
 
 SHP_GAL_EXPLO
 Galactic Exploration
@@ -4397,7 +4439,9 @@ SHP_ASTEROID_REFORM
 Asteroid Reformation
 
 SHP_ASTEROID_REFORM_DESC
-While modifying asteroids to serve as ship's hulls is very efficient, it is limited by the available sizes and shapes of available asteroids.  By combining or breaking apart asteroids, asteroid hulls of extremely large or small sizes could be produced.
+'''This massive hull is formed by combining several large asteroids.  It has fifteen external slots and four internal slots.  Structure is good, but speed is very low.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
+
+While modifying asteroids to serve as ship's hulls is very efficient, it is limited by the available sizes and shapes of available asteroids.  By combining or breaking apart asteroids, asteroid hulls of extremely large or small sizes could be produced.'''
 
 SHP_MONOMOLEC_LATTICE
 Monomolecular Latticing
@@ -4410,6 +4454,12 @@ Multi-Cellular Casting
 
 SHP_MULTICELL_CAST_DESC
 Even when it is inert, organic material is much more versatile than standard materials.  A non-living multi-cellular ship would provide some of the advantages of organic materials without the customary nuisances of organic life.
+
+SHP_DOMESTIC_MONSTER
+Domesticated Mega-Fauna
+
+SHP_DOMESTIC_MONSTER_DESC
+'''Though huge and alien the time-tested arts of domestication can also be applied to the space monsters that travel the starlanes.  Building Colonies or Outposts at monster nests will enable the raising of domesticated monsters.'''
 
 SHP_HAB_MEGAFAUN
 Habitable Mega-Fauna
@@ -4451,19 +4501,24 @@ SHP_QUANT_ENRG_MAG
 Quantum Energy Magnification
 
 SHP_QUANT_ENRG_MAG_DESC
-Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence.  By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.
+'''This hull magnifies quantum energy fluctuations to increase its own power.  It has seven external slots and three internal slots.  Speed and structure are very high, but stealth is very low.  This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
+
+Due to quantum uncertainty, it is possible for a particle to arbitrarily gain a small amount of energy or for new particles to temporarily enter existence.  By detecting and magnifying these fluctuations in quantum energy, it would be possible to tremendously increase the capabilities of an energy hull.'''
 
 SHP_ENRG_BOUND_MAN
 Energy Boundary Manipulation
 
 SHP_ENRG_BOUND_MAN_DESC
-Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility.  Pure energy however, has no such restrictions.  This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
+'''Whether constructed, grown, or adapted from a pre-existing structure, ships composed of matter must have a logical and co-ordinated structure to allow even basic utility.  Pure energy however, has no such restrictions.  This allows a pure energy hull to take on any form whatsoever, however impractical it would be from a material standpoint.
 
+This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull.  It has twenty-seven external slots, but no internal slots.  Stealth is very low, but structure and speed are average.  This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.'''
 SHP_SOLAR_CONT
 Solar Containment
 
 SHP_SOLAR_CONT_DESC
-A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects.  If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
+'''A hull constructed from pure energy, while far more versatile than a solid hull, has a disadvantage in that it is unable to harness the potential energy of material objects.  If, however, it were made possible to contain a hull composed not of pure energy, but of super-heated gases constantly undergoing a self-sustaining fusion reaction, the limitations of both pure energy and solid matter could be avoided.
+
+This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility.  All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth.  This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull.  Structure is extremely high, but speed and stealth are very low.  However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.  This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
 DEF_ROOT_DEFENSE
 Self Defense
@@ -4572,6 +4627,9 @@ Eliminates Penalties
 GAME_MAKE_WORK_SHORT_DESC
 Makes the Game Work
 
+TAME_MONSTER_SHORT_DESC
+Tames Space Monsters
+
 CON_ORBITAL_CON
 Orbital Construction
 
@@ -4600,14 +4658,6 @@ Concentration Camps
 CON_CONC_CAMP_DESC
 Typically, when forced to work to death, citizens will put up some resistance and have the sympathy and support of outside observers.  However, by carefully creating buildings designed to quench the fire of justice within outsiders, and to promote feelings of worthlessness and subservience in those on the inside, concentration camps can be effectively utilized without fear of revolt.
 
-CON_FRC_ENRG_INFRA
-Force-Energy Infrastructure
-
-CON_FRC_ENRG_INFRA_DESC
-'''Increases the growth of resource meters below target value to 3 per turn, and the decay of resource meters above target value to 5 per turn.
-
-The flexibility and versatility of force-energy structures permits a colonies buildings to be more easily re-tooled to suit new purposes, increasing the rate at which focus changes can take effect.'''
-
 CON_FRC_ENRG_CAMO
 Force-Energy Camouflage
 
@@ -4616,27 +4666,11 @@ CON_FRC_ENRG_CAMO_DESC
 
 Ordinary physical structures tend to be both opaque and rigid, being constructed from similarly opaque and rigid natural materials.  A force field does not, of necessity, possess these features in any permanent sense, and can be turned on and off or changed from one colour to another at will.  While most buildings are easily visible from many uus away with a powerful detection apparatus, a force-energy structure - or a regular structure surrounded by a series of camouflage force-fields - would be essentially invisible from great distances.'''
 
-CON_TRANSDIM_HOUSE
-Transdimensional Housing
-
-CON_TRANSDIM_HOUSE_DESC
-'''Increases the population that can be sustained by Good worlds by 3, 6, 9, 12 and 15 for Tiny, Small, Medium, Large and Huge planets, respectively.
-
-The primary limiting factors on a planets population capacity are environmental desirability and space.  By phasing basic infrastructure development into multiple dimensions, spatial limitations are all but eliminated, and under ideal environmental conditions, the maximum population of a planet can be greatly increased.'''
-
 CON_PLANET_DRIVE
 Planetary Starlane Drive
 
 CON_PLANET_DRIVE_DESC
 Planets in the outermost systems of an empire are often in great danger of attack from enemy fleets, yet these planets can often contain extremely valuable resources and specials.  By equipping an entire planet with the means to open and navigate a starlane, it would be possible to move such planets to a safer location in times of necessity.
-
-CON_GAL_RESOURCE_MAN
-Galactic Resource Management
-
-CON_GAL_RESOURCE_MAN_DESC
-'''Increases the resource supply range of all colonies by 1.
-
-The consistent and effective transportation of resources over large interstellar distances requires laborious planning, and is complicated by numerous factors such as the presence of space monsters, enemy empires and dangerous interstellar phenomena.  By utilizing integrated galactic infrastructure, the fluid deployment of resources between advanced and developing colonies can be achieved, and solutions can be found to particularly troubling logistical problems.'''
 
 CON_STARGATE
 Stargate
@@ -4663,12 +4697,6 @@ Artificial Moon
 
 CON_ART_MOON_DESC
 Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period.  Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.
-
-CON_TRANS_STRC
-Transforming Structures
-
-CON_TRANS_STRC_DESC
-A shutter functions as both a solid wall and open window, according to the desire of its user.  A room may be refurnished to serve an entirely new purpose, within the limits of the space available.  This concept may also be extended to the actual form and structure of an entire building or city, whether mechanical or organic.  Eliminating the need for demolition and rebuilding permits much greater infrastructure flexibility and efficiency.  Single or isolated structures may also serve many purposes simultaneously, that would previously have required much larger and elaborate fixed designs.
 
 CON_PALACE_EXCLUDE
 Palace Excluder
@@ -4725,14 +4753,6 @@ Changing the environmental type of a planet is a massive undertaking, the challe
 GRO_TERRAFORM_SHORT_DESC
 Allows terraforming
 
-GRO_ENDOPHIL_NANOMED
-Endophiliac Nanomedication
-
-GRO_ENDOPHIL_NANOMED_DESC
-'''Increases health on all planets by 10.
-
-Pathogens, particularly prokaryotes, are vulnerable to disruption of their genetic material from within - that is, if it is possible to permeate the cell membrane or the protein coating, in the case of viral infections.  By designing nanorobots capable of identifying and penetrating such pathogens, it would be possible to destroy them by completely deconstructing their genetic material.'''
-
 GRO_REMOTE_TERRAFORM
 Remote Terraforming
 
@@ -4764,14 +4784,6 @@ Theoretically, it is possible to completely predict the ecology of a single plan
 
 GRO_GAIA_TRANS_SHORT_DESC
 Allows Gaia Transformation
-
-GRO_NONCORP_MAN
-Non-Corporeal Manifestation
-
-GRO_NONCORP_MAN_DESC
-'''Increases max fuel on all ships by 2, max defense on all planets by 5, max shield on all planets by 5, target farming on all planets with the Farming focus by one quarter of the planet's population, target mining on all planets with the Mining focus by 10, target industry on all planets with the Industry focus by one quarter of the planet's population, and target research on all planets with the Research focus by one fifth.
-
-While transforming an entire population into beings of pure energy would be impractical, certain tasks are better suited to individuals able to manifest themselves non-corporeally.  Ship's crews for example, would no longer have to waste space with crew quarters or rations storage.  Beings with greater energy channeling abilities would be able to enhance planetary shields and defense, and resource production would be generally enhanced.'''
 
 LRN_OBSERVATORY_I
 Observatory
@@ -4838,20 +4850,6 @@ Enclave of the Void
 LRN_ENCLAVE_VOID_DESC
 Study of the Void Mind could be accelerated by genetically engineering the populace of an entire world to be attuned to the Void. This new priestly class could transform the entire social structure of their world to better understand and channel the wisdom of the Void Mind to the entire empire.
 
-LRN_GAL_DATA_NET
-Galactic Data Network
-
-LRN_GAL_DATA_NET_DESC
-'''Multiplies target research on all planets with the Research focus by 2.
-
-A massive, empire-wide data network able to transfer information instantaneously between any two places, rather than via the lengthy and indirect path of starlanes.  This advancement greatly facilitates research throughout the empire.'''
-
-LRN_COLLECTIVE_NET
-Collective Thought Network
-
-LRN_COLLECTIVE_NET_DESC
-By transferring the mind into cyberspace, thousands of minds can act as one, their actions perfectly unified and directed towards the good of the whole.
-
 LRN_ART_BLACK_HOLE
 Artificial Black Hole
 
@@ -4911,33 +4909,11 @@ Gas Giant Generation
 PRO_GAS_GIANT_GEN_DESC
 Once troublesome gravity well problems are overcome, gas giants offer a unique opportunity to harvest usable energy quickly and efficiently.  Methods which take advantage of the high density atmosphere and belt-zone circulation allow a significant amount of energy to be easily accrued and transported for use in nearby planets.
 
-PRO_CORE_MINE
-Deep Core Mining
-
-PRO_CORE_MINE_DESC
-'''Increases target mining on planets with the Mining focus by 5, 10, 15 and 20 for Large, Medium, Small and Tiny planets, respectively.
-
-The pressure and temperatures in terrestrial planet mantles and cores create large quantities of crystal and mineral formations that appear on upper crust layers only due to vulcanism.  The lower atmospheric layers and core materials of gaseous planets contain even more exotic materials, in greater concentrations.  Accessing these regions to extract the materials is difficult and treacherous, but eminently rewarding, compared to traditional surface mining activities.'''
-
-PRO_EXOBOTS
-Exobots
-
-PRO_EXOBOTS_DESC
-'''Increases target industry on all planets with the Industry focus by one fifth of the planet's population, and target mining on all planets with the Mining focus by 10.
-
-Exobots, as they become commonly known, are a marvel of form meets function. They are robots designed to fulfill nearly any manufacturing job, in fields as wide ranging as electronics to large-scale construction. Easily mass produced, they serve best on colonies that place a high priority on industry.  Every world focused primarily on industry receives a team of Exobots, greatly increasing industrial production.'''
-
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
 PRO_SOL_ORB_GEN_DESC
 Traditional solar generation methods rely solely on radiating solar energy.  By placing generators in low orbit around the star itself, the ability to directly harness the energy of supermassive stellar phenomena becomes a possibility, and a sizeable and far-reaching benefit to industry can be obtained.
-
-PRO_HYPER_DAM
-Hyperspatial Dam
-
-PRO_HYPER_DAM_DESC
-Once the greatest fear of N-dimensional physicists, now the noblest goal. To deliberately create a hyperspatial rift between our universe and the next, but inside a dimensional bubble, safely separate from known space-time. Once this is accomplished, it would be a relatively simple matter to tap into the enormous flow of energy that would travel across the rift.
 
 PRO_INDUSTRY_CENTER_I
 Industrial Centers
@@ -5314,12 +5290,6 @@ Camouflage Asteroid Parts
 SHP_CAMO_AST_PARTS_DESC
 This camouflage asteroid hull is able to make use of camouflage asteroid parts on it's exterior, although it must be made much smaller to compensate and avoid losing it's stealth bonus.  It has a single external slot and a single internal slot.  Speed is average, but structure is quite low.  This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
-SHP_AGREG_AST_HULL
-Agregate Asteroid Hull
-
-SHP_AGREG_AST_HULL_DESC
-This massive hull is formed by combining several large asteroids.  It has fifteen external slots and four internal slots.  Structure is good, but speed is very low.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
 SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
 
@@ -5421,24 +5391,6 @@ Compressed Energy Hull
 
 SHP_COMP_ENRG_HULL_DESC
 This fast hull is comprised entirely of compressed energy and has a single external slot.  Structure is low, but stealth and speed are very high.  This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
-
-SHP_FRAC_ENRG_HULL
-Fractal Energy Hull
-
-SHP_FRAC_ENRG_HULL_DESC
-This hull, while small, has a fractal surface which allows many more parts to be mounted than would be possible on a smoother hull.  It has twenty-seven external slots, but no internal slots.  Stealth is very low, but structure and speed are average.  This hull requires a very great deal of energy to construct and can only be built at a system with a star of type Blue or Black Hole.
-
-SHP_QUANT_ENRG_HULL
-Quantum Energy Hull
-
-SHP_QUANT_ENRG_HULL_DESC
-This hull magnifies quantum energy fluctuations to increase its own power.  It has seven external slots and three internal slots.  Speed and structure are very high, but stealth is very low.  This hull requires a very great deal of energy to construct and can only be build at a system with a star of type Blue or Black Hole.
-
-SHP_SOLAR_HULL
-Solar Hull
-
-SHP_SOLAR_HULL_DESC
-This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility.  All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth.  This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull.  Structure is extremely high, but speed and stealth are very low.  However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.  This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.
 
 SHP_PLANET_STEALTH_MOD
 Planet Stealth Modifier

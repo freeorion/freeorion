@@ -792,6 +792,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
+                OwnerHasTech "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.10
             ]
             stackinggroup = "KRAKEN_NEST_STACK"
@@ -833,6 +834,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
+                OwnerHasTech "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.16
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
@@ -874,6 +876,7 @@ Special
             activation = AND [
                 Planet
                 OwnedBy AnyEmpire
+                OwnerHasTech "SHP_DOMESTIC_MONSTER"
                 Random probability = 0.12
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
