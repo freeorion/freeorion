@@ -116,9 +116,7 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
 }
 
 const std::string& Fleet::TypeName() const
-{
-    return UserString("FLEET");
-}
+{ return UserString("FLEET"); }
 
 std::string Fleet::Dump() const
 {
@@ -137,19 +135,13 @@ std::string Fleet::Dump() const
 }
 
 Fleet::const_iterator Fleet::begin() const
-{
-    return m_ships.begin();
-}
+{ return m_ships.begin(); }
 
 Fleet::const_iterator Fleet::end() const
-{
-    return m_ships.end();
-}
+{ return m_ships.end(); }
 
 const std::set<int>& Fleet::ShipIDs() const
-{
-    return m_ships;
-}
+{ return m_ships; }
 
 const std::string& Fleet::PublicName(int empire_id) const
 {
@@ -175,9 +167,7 @@ const std::list<int>& Fleet::TravelRoute() const
 }
 
 std::list<MovePathNode> Fleet::MovePath() const
-{
-    return MovePath(TravelRoute());
-}
+{ return MovePath(TravelRoute()); }
 
 std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 {
@@ -423,9 +413,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 }
 
 std::pair<int, int> Fleet::ETA() const
-{
-    return ETA(MovePath());
-}
+{ return ETA(MovePath()); }
 
 std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
 {
@@ -578,19 +566,13 @@ bool Fleet::HasTroopShips() const
 }
 
 int Fleet::NumShips() const
-{
-    return m_ships.size();
-}
+{ return m_ships.size(); }
 
 bool Fleet::Empty() const
-{
-    return m_ships.empty();
-}
+{ return m_ships.empty(); }
 
 bool Fleet::Contains(int object_id) const
-{
-    return m_ships.find(object_id) != m_ships.end();
-}
+{ return m_ships.find(object_id) != m_ships.end(); }
 
 std::vector<UniverseObject*> Fleet::FindObjects() const
 {
@@ -623,9 +605,7 @@ int Fleet::ArrivalStarlane() const
 { return m_arrival_starlane; }
 
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<Fleet* const>(this));
-}
+{ return visitor.Visit(const_cast<Fleet* const>(this)); }
 
 void Fleet::SetRoute(const std::list<int>& route)
 {
@@ -940,14 +920,10 @@ void Fleet::MovementPhase()
 }
 
 Fleet::iterator Fleet::begin()
-{
-    return m_ships.begin();
-}
+{ return m_ships.begin(); }
 
 Fleet::iterator Fleet::end()
-{
-    return m_ships.end();
-}
+{ return m_ships.end(); }
 
 void Fleet::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
 {
