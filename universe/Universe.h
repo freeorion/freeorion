@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 #include "Predicates.h"
+#include "EffectAccounting.h"
 #include "ObjectMap.h"
 #include "../util/AppInterface.h"
 
@@ -39,10 +40,6 @@ namespace Condition {
     struct ConditionBase;
     typedef std::vector<const UniverseObject*> ObjectSet;
 }
-namespace Effect {
-    class EffectsGroup;
-    typedef std::vector<UniverseObject*> TargetSet;
-}
 
 extern const std::size_t RESERVE_SET_SIZE;
 
@@ -77,55 +74,9 @@ public:
     typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
     typedef ShipDesignMap::const_iterator           ship_design_iterator;           ///< const iterator over ship designs created by players that are known by this client
 
-
-    /** Combination of an EffectsGroup and the id of a source object. */
-    struct SourcedEffectsGroup {
-        SourcedEffectsGroup();
-        SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<const Effect::EffectsGroup>& effects_group_);
-        bool operator<(const SourcedEffectsGroup& right) const;
-        int                                             source_object_id;
-        boost::shared_ptr<const Effect::EffectsGroup>   effects_group;
-    };
-    /** Description of cause of an effect: the general cause type, and the
-      * specific cause.  eg. Building and a particular BuildingType. */
-    struct EffectCause {
-        EffectCause();
-        EffectCause(EffectsCauseType cause_type_, const std::string& specific_cause_);
-        EffectsCauseType                                cause_type;         ///< general type of effect cause, eg. tech, building, special...
-        std::string                                     specific_cause;     ///< name of specific cause, eg. "Wonder Farm", "Antenna Mk. VI"
-    };
-    /** Combination of targets and cause for an effects group. */
-    struct EffectTargetAndCause {
-        EffectTargetAndCause();
-        EffectTargetAndCause(const Effect::TargetSet& target_set_, const EffectCause& effect_cause_);
-        Effect::TargetSet                               target_set;
-        EffectCause                                     effect_cause;
-    };
-    /** Map from (effects group and source object) to target set of for
-      * that effects group with that source object.  A multimap is used
-      * so that a single source object can have multiple instances of the
-      * same effectsgroup.  This is useful when a Ship has multiple copies
-      * of the same effects group due to having multiple copies of the same
-      * ship part in its design. */
-    typedef std::multimap<SourcedEffectsGroup, EffectTargetAndCause> EffectsTargetsCausesMap;
-
-    /** Accounting information about what the causes are and changes produced
-      * by effects groups acting on meters of objects. */
-    struct EffectAccountingInfo : public EffectCause {
-        EffectAccountingInfo();                                                 ///< default ctor
-        int                                             source_id;              ///< source object of effect
-        double                                          meter_change;           ///< net change on meter due to this effect, as best known by client's empire
-        double                                          running_meter_total;    ///< meter total as of this effect.
-    };
-    /** Effect accounting information for all meters of all objects that are
-      * acted on by effects. */
-    typedef std::map<int, std::map<MeterType, std::vector<EffectAccountingInfo> > > EffectAccountingMap;
-
-
     /** \name Signal Types */ //@{
     typedef boost::signal<void (const UniverseObject *)> UniverseObjectDeleteSignalType; ///< emitted just before the UniverseObject is deleted
     //@}
-
 
     /** \name Structors */ //@{
     Universe();                                     ///< default ctor
@@ -230,13 +181,11 @@ public:
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
       * were applied to the meter. */
-    const EffectAccountingMap&
-                            GetEffectAccountingMap() const {return m_effect_accounting_map;}
+    const Effect::AccountingMap&            GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
     /** Returns set of objects that have been marked by the Victory effect
       * to grant their owners victory. */
-    const std::multimap<int, std::string>&
-                            GetMarkedForVictory() const {return m_marked_for_victory;}
+    const std::multimap<int, std::string>&  GetMarkedForVictory() const {return m_marked_for_victory;}
 
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
@@ -304,21 +253,14 @@ public:
 
     /** Based on (known subset of, if in a client) universe and any orders
       * given so far this turn, updates estimated meter maxes for next turn
-      * for the objects with ids indicated in \a objects_vec.  If
-      * \a meter_type is INVALID_METER_TYPE, all meter types are updated, but
-      * if \a meter_type is a valid meter type, just that type of meter is
-      * updated. */
-    void            UpdateMeterEstimates(const std::vector<int>& objects_vec,
-                                         MeterType meter_type = INVALID_METER_TYPE);
+      * for the objects with ids indicated in \a objects_vec. */
+    void            UpdateMeterEstimates(const std::vector<int>& objects_vec);
 
-    /** Updates indicated object's indicated meter, and if applicable, the
-      * indicated meters of objects contained within the indicated object
+    /** Updates indicated object's meters, and if applicable, the
+      * meters of objects contained within the indicated object.
       * If \a object_id is UniverseObject::INVALID_OBJECT_ID, then all
-      * objects' meters are updated.  If \a meter_type is INVALID_METER_TYPE,
-      * then all meter types are updated. */
-    void            UpdateMeterEstimates(int object_id,
-                                         MeterType meter_type = INVALID_METER_TYPE,
-                                         bool update_contained_objects = false);
+      * objects' meters are updated. */
+    void            UpdateMeterEstimates(int object_id, bool update_contained_objects = false);
 
     /** Updates all meters for all (known) objects */
     void            UpdateMeterEstimates();
@@ -423,7 +365,7 @@ private:
             T,
             boost::numeric::ublas::lower
         > storage_type;
- 
+
         struct const_row_ref
         {
             const_row_ref(std::size_t i, const storage_type& m) : m_i(i), m_m(m) {}
@@ -444,16 +386,16 @@ private:
 
         distance_matrix() :
             m_m()
-            {}
+        {}
 
         const_row_ref operator[](std::size_t i) const
-            { return const_row_ref(i, m_m); }
+        { return const_row_ref(i, m_m); }
 
         row_ref operator[](std::size_t i)
-            { return row_ref(i, m_m); }
+        { return row_ref(i, m_m); }
 
         void resize(std::size_t rows, std::size_t columns)
-            { m_m.resize(rows, columns); }
+        { m_m.resize(rows, columns); }
 
     private:
         storage_type m_m;
@@ -462,23 +404,16 @@ private:
     typedef distance_matrix<double> DistanceMatrix;
     typedef distance_matrix<short> JumpsMatrix;
 
-    /** Discrepancy between meter's value at start of turn, and the value that
-      * this client calculate that the meter should have with the knowledge
-      * available -> the unknown factor affecting the meter.  This is used
-      * when generating effect accounting, in the case where the expected
-      * and actual meter values don't match. */
-    typedef std::map<int, std::map<MeterType, double> > EffectDiscrepancyMap;
-
     struct GraphImpl;
 
     /** Clears \a effects_targets_map, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void    GetEffectsAndTargets(EffectsTargetsCausesMap& effects_targets_map);
+    void    GetEffectsAndTargets(Effect::TargetsCausesMap& effects_targets_map);
 
     /** Removes entries in \a effects_targets_map about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. */
-    void    GetEffectsAndTargets(EffectsTargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects);
+    void    GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects);
 
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
       * Stores target set of specified \a effects_groups and \a source_object_id
@@ -488,20 +423,20 @@ private:
     void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                  int source_object_id, EffectsCauseType effect_cause_type,
                                                  const std::string& specific_cause_name,
-                                                 Effect::TargetSet& target_objects, EffectsTargetsCausesMap& targets_causes_map);
+                                                 Effect::TargetSet& target_objects, Effect::TargetsCausesMap& targets_causes_map);
 
-    /** Executes all effects.  For use on server when processing turns. */
-    void    ExecuteEffects(const EffectsTargetsCausesMap& targets_causes_map);
-
-    /** Executes only meter-altering effects; ignores other effects..  Can be
-      * used on server or on clients to determine meter values after effects are
-      * applied */
-    void    ExecuteMeterEffects(const EffectsTargetsCausesMap& targets_causes_map);
+    /** Executes all effects.  For use on server when processing turns.
+      * If \a only_meter_effects is true, then only SetMeter effects are
+      * executed.  This is useful on server or clients to update meter
+      * values after the rest of effects (including non-meter effects) have
+      * been executed. */
+    void    ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map,
+                           bool update_effect_accounting, bool only_meter_effects = false);
 
     /** Does actual updating of meter estimates after the public function have
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. */
-    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec, MeterType meter_type = INVALID_METER_TYPE);
+    void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec);
 
 
     /** Generates planets for all systems that have empty object maps (ie those
@@ -556,8 +491,8 @@ private:
     GraphImpl*                      m_graph_impl;                       ///< a graph in which the systems are vertices and the starlanes are edges
     boost::unordered_map<int, int>  m_system_id_to_graph_index;
 
-    EffectAccountingMap             m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
-    EffectDiscrepancyMap            m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
+    Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
+    Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
 
     int                             m_last_allocated_object_id;
     int                             m_last_allocated_design_id;
@@ -648,6 +583,5 @@ protected:
     int                             m_spawn_limit;
     const Condition::ConditionBase* m_location;
 };
-
 
 #endif // _Universe_h_

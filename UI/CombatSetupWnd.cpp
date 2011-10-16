@@ -102,9 +102,9 @@ namespace {
             // tooltip info
             int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-            const Universe::EffectAccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
-            const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >* meter_map = 0;
-            Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
+            const Effect::AccountingMap& effect_accounting_map = GetUniverse().GetEffectAccountingMap();
+            const std::map<MeterType, std::vector<Effect::AccountingInfo> >* meter_map = 0;
+            Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(m_ship->ID());
             if (map_it != effect_accounting_map.end())
                 meter_map = &(map_it->second);
 

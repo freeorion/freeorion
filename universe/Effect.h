@@ -2,14 +2,16 @@
 #ifndef _Effect_h_
 #define _Effect_h_
 
-#include <set>
-#include <vector>
-
 #include "Enums.h"
+#include "EffectAccounting.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+
+#include <set>
+#include <vector>
+#include <map>
 
 class UniverseObject;
 struct ScriptingContext;
@@ -18,7 +20,6 @@ namespace Condition {
     struct ConditionBase;
     typedef std::vector<const UniverseObject*> ObjectSet;
 }
-
 namespace Effect {
     class EffectsGroup;
     class EffectBase;
@@ -45,10 +46,7 @@ namespace Effect {
     class Victory;
     class GenerateSitRepMessage;
     class SetDestination;
-
-    typedef std::vector<UniverseObject*> TargetSet;
 }
-
 namespace ValueRef {
     template <class T>
     struct ValueRefBase;
@@ -79,16 +77,26 @@ public:
                  const std::vector<EffectBase*>& effects, const std::string& stacking_group = "");
     virtual ~EffectsGroup();
 
-    void                            GetTargetSet(int source_id, TargetSet& targets) const;
-    void                            GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
-    /** WARNING: this GetTargetSet version will modify potential_targets. 
+    void    GetTargetSet(int source_id, TargetSet& targets) const;
+    void    GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const;
+    /** WARNING: this GetTargetSet version will modify potential_targets.
       * in particular, it will move detected targets from potential_targets
       * to targets. Cast the second parameter to \c const \c TargetSet& in
-      * order to leave potential_targets unchanged.
-      */
-    void                            GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
-    void                            Execute(int source_id, const TargetSet& targets) const;                    // execute all effects in group
-    void                            Execute(int source_id, const TargetSet& targets, int effect_index) const;  // execute effect with \a effect_index (but not other effects)
+      * order to leave potential_targets unchanged. */
+    void    GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const;
+
+    /** execute all effects in group */
+    void    Execute(int source_id, const TargetSet& targets) const;
+    void    Execute(int source_id, const TargetsAndCause& targets_and_cause,
+                    AccountingMap& accounting_map) const;
+    /** execute all non-active meter SetMeter effects (acting on TARGET, MAX,
+      * and unpaired meters) in group.  This is useful for doing meter estimate
+      * updates and effect accounting, for which executing non-meter effects is
+      * neither needed nor useful. */
+    void    ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetSet& targets) const;
+    void    ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
+                                             AccountingMap& accounting_map) const;
+
     const std::string&              StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;
     Description                     GetDescription() const;

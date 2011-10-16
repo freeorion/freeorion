@@ -150,10 +150,12 @@ include_directories(${CMAKE_SOURCE_DIR} UI/ogdf)
 #    universe/ConditionParser3.cpp
 #    universe/ConditionParser.cpp
 #    universe/Effect.cpp
+#    universe/EffectAccounting.cpp
 #    universe/EffectParser.cpp
 #    universe/Enums.cpp
 #    universe/Fleet.cpp
 #    universe/Meter.cpp
+#    universe/ObjectMap.cpp
 #    universe/ParserUtil.cpp
 #    universe/Planet.cpp
 #    universe/PopCenter.cpp

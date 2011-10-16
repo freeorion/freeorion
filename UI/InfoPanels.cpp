@@ -2834,11 +2834,11 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // get effect accounting info for this MeterBrowseWnd's object, aborting if non available
     const Universe& universe = GetUniverse();
-    const Universe::EffectAccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
-    Universe::EffectAccountingMap::const_iterator map_it = effect_accounting_map.find(m_object_id);
+    const Effect::AccountingMap& effect_accounting_map = universe.GetEffectAccountingMap();
+    Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(m_object_id);
     if (map_it == effect_accounting_map.end())
         return;
-    const std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >& meter_map = map_it->second;
+    const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
 
 
     // select which meter type to display accounting for.  if there is a valid
@@ -2856,17 +2856,17 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
 
     // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-    std::map<MeterType, std::vector<Universe::EffectAccountingInfo> >::const_iterator meter_it = meter_map.find(accounting_displayed_for_meter);
+    std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(accounting_displayed_for_meter);
     if (meter_it == meter_map.end() || meter_it->second.empty())
         return; // couldn't find appropriate meter type, or there were no entries for that meter.
-    const std::vector<Universe::EffectAccountingInfo>& info_vec = meter_it->second;
+    const std::vector<Effect::AccountingInfo>& info_vec = meter_it->second;
 
 
     const boost::shared_ptr<GG::Font>& font = ClientUI::GetFont();
 
 
     // add label-value pairs for each alteration recorded for this meter
-    for (std::vector<Universe::EffectAccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
+    for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
         const UniverseObject* source = GetObject(info_it->source_id);
         if (!source)
             source = GetEmpireKnownObject(info_it->source_id, HumanClientApp::GetApp()->EmpireID());

@@ -294,33 +294,143 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
 void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
 {
     UniverseObject* source = GetObject(source_id);
-    if (!source) {
-        Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
-        return;
-    }
 
     // execute effects on targets
-    for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it) {
+    for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+        UniverseObject* target = *target_it;
+
         //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
-        for (unsigned int i = 0; i < m_effects.size(); ++i)
-            m_effects[i]->Execute(ScriptingContext(source, *it));
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            (*effect_it)->Execute(ScriptingContext(source, target));
+        }
     }
 }
 
-void EffectsGroup::Execute(int source_id, const TargetSet& targets, int effect_index) const
+void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
 {
-    UniverseObject* source = GetObject(source_id);
-    if (!source) {
-        // TODO: Don't necessarily need to abort at this stage... some effects can function without a source object.
-        Logger().errorStream() << "EffectsGroup::Execute unable to get source object with id " << source_id;
-        return;
+    const UniverseObject* source = GetObject(source_id);
+    const TargetSet& targets = targets_and_cause.target_set;
+
+    // execute effects on targets
+    for (TargetSet::const_iterator target_it = targets.begin();
+         target_it != targets.end(); ++target_it)
+    {
+        UniverseObject* target = *target_it;
+
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            const EffectBase* effect = *effect_it;
+
+            if (const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect)) {
+                // record pre-effect meter values
+                MeterType meter_type = meter_effect->GetMeterType();
+                const Meter* meter = target->GetMeter(meter_type);
+                if (!meter)
+                    continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+                // accounting info for this effect on this meter
+                Effect::AccountingInfo info;
+                info.cause_type =           targets_and_cause.effect_cause.cause_type;
+                info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+                info.source_id =            source_id;
+                info.running_meter_total =  meter->Current();
+
+                // actually execute effect to modify meter
+                meter_effect->Execute(ScriptingContext(source, target));
+
+                // update for meter change and new total
+                info.meter_change = meter->Current() - info.running_meter_total;
+                info.running_meter_total = meter->Current();
+
+                // add accounting for this effect to end of vector
+                accounting_map[target->ID()][meter_type].push_back(info);
+
+            } else /* (!meter_effect) **/{
+                // don't need to do accounting for non-meter effects
+                effect->Execute(ScriptingContext(source, target));
+            }
+        }
     }
+}
 
-    assert(0 <= effect_index && effect_index < static_cast<int>(m_effects.size()));
+void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetSet& targets) const
+{
+    const UniverseObject* source = GetObject(source_id);
 
-    // execute effect on targets
-    for (TargetSet::const_iterator it = targets.begin(); it != targets.end(); ++it)
-        m_effects[effect_index]->Execute(ScriptingContext(source, *it));
+    // execute effects on targets
+    for (TargetSet::const_iterator target_it = targets.begin(); target_it != targets.end(); ++target_it) {
+        UniverseObject* target = *target_it;
+
+        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            const EffectBase* effect = *effect_it;
+            const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
+            if (!meter_effect)
+                continue;
+
+            // only act on target, max, and unpaired active meters
+            MeterType meter_type = meter_effect->GetMeterType();
+            if (!((meter_type >= METER_TARGET_POPULATION && meter_type <= METER_MAX_TROOPS) ||
+                  (meter_type >= METER_FOOD_CONSUMPTION && meter_type <= METER_STARLANE_SPEED)))
+            { continue; }
+
+            meter_effect->Execute(ScriptingContext(source, target));
+        }
+    }
+}
+
+void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
+{
+    const UniverseObject* source = GetObject(source_id);
+
+    // execute effects on targets
+    for (TargetSet::const_iterator target_it = targets_and_cause.target_set.begin();
+         target_it != targets_and_cause.target_set.end(); ++target_it)
+    {
+        UniverseObject* target = *target_it;
+
+        //Logger().debugStream() << "effectsgroup source: " << source->Name() << " target " << (*it)->Name();
+        for (std::vector<EffectBase*>::const_iterator effect_it = m_effects.begin();
+             effect_it != m_effects.end(); ++effect_it)
+        {
+            const EffectBase* effect = *effect_it;
+            const SetMeter* meter_effect = dynamic_cast<const SetMeter*>(effect);
+            if (!meter_effect)
+                continue;
+
+            // only act on target, max, and unpaired active meters
+            MeterType meter_type = meter_effect->GetMeterType();
+            if (!((meter_type >= METER_TARGET_POPULATION && meter_type <= METER_MAX_TROOPS) ||
+                  (meter_type >= METER_FOOD_CONSUMPTION && meter_type <= METER_STARLANE_SPEED)))
+            { continue; }
+
+            const Meter* meter = target->GetMeter(meter_type);
+            if (!meter)
+                continue;   // some objects might match target conditions, but not actually have the relevant meter
+
+            // record pre-effect meter values in accounting info for this effect on this meter
+            Effect::AccountingInfo info;
+            info.cause_type =           targets_and_cause.effect_cause.cause_type;
+            info.specific_cause =       targets_and_cause.effect_cause.specific_cause;
+            info.source_id =            source_id;
+            info.running_meter_total =  meter->Current();
+
+            // actually execute effect to modify meter
+            effect->Execute(ScriptingContext(source, target));
+
+            // update for meter change and new total
+            info.meter_change = meter->Current() - info.running_meter_total;
+            info.running_meter_total = meter->Current();
+
+            // add accounting for this effect to end of vector
+            accounting_map[target->ID()][meter_type].push_back(info);
+        }
+    }
 }
 
 const std::string& EffectsGroup::StackingGroup() const

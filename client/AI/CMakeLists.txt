@@ -31,6 +31,7 @@ set(THIS_EXE_SOURCES
     ../../universe/ConditionParser3.cpp
     ../../universe/ConditionParser.cpp
     ../../universe/Effect.cpp
+    ../../universe/EffectAccounting.cpp
     ../../universe/EffectParser.cpp
     ../../universe/Enums.cpp
     ../../universe/Fleet.cpp
