@@ -120,6 +120,9 @@ struct Condition::ConditionBase
     virtual std::string Dump() const;
 
 private:
+    struct MatchHelper;
+    friend struct MatchHelper;
+
     virtual bool        Match(const ScriptingContext& local_context) const;
 
     friend class boost::serialization::access;
