@@ -353,7 +353,7 @@ namespace {
             std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
             std::string stringtable_str;
 
-            boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
+            boost::filesystem::ifstream ifs(file_name);
             while (ifs) {
                 std::string line;
                 std::getline(ifs, line);
