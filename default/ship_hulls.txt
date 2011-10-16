@@ -23,7 +23,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -45,7 +45,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
     
 Hull
@@ -70,7 +70,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = "hulls_design/basic-small-hull.png"
     
 Hull
@@ -96,7 +96,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = "hulls_design/basic-medium-hull.png"
     
 Hull
@@ -123,7 +123,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -170,7 +170,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -215,7 +215,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -263,7 +263,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -309,7 +309,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -363,7 +363,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -396,7 +396,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -464,7 +464,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -507,7 +507,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -546,7 +546,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -592,7 +592,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -633,7 +633,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -672,7 +672,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -732,7 +732,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -775,7 +775,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -848,7 +848,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -895,7 +895,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
 
@@ -974,7 +974,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -1023,7 +1023,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     ]
     graphic = ""
 
@@ -1069,7 +1069,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     ]
     graphic = ""
 
@@ -1118,7 +1118,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     ]
     graphic = ""
 
@@ -1170,7 +1170,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     ]
     graphic = ""
 
@@ -1216,7 +1216,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 15
+            effects = SetDetection Value + 150
     ]
     graphic = ""
 
@@ -1263,7 +1263,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 15
+            effects = SetDetection Value + 150
     ]
     graphic = ""
 
@@ -1328,14 +1328,14 @@ Hull
             activation = Source
             stackinggroup = "FLAGSHIP_EFFECT_SENTIENT"
             effects = [
-                SetStealth Value + 10
-                SetDetection Value + 10
+                SetStealth Value + 100
+                SetDetection Value + 100
             ]
 
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     ]
     graphic = ""
 
@@ -1366,7 +1366,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 300
     graphic = ""
 
 Hull
@@ -1428,7 +1428,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -1473,7 +1473,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = ""
 
 Hull
@@ -1565,7 +1565,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2191,7 +2191,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2243,7 +2243,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2288,7 +2288,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2343,7 +2343,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 6
+            effects = SetDetection Value + 60
         ]
     graphic = ""
     
@@ -2395,7 +2395,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 7
+            effects = SetDetection Value + 70
     ]
     graphic = ""
     
@@ -2437,7 +2437,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 8
+            effects = SetDetection Value + 80
     ]
     graphic = ""
     
@@ -2495,7 +2495,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2548,7 +2548,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     
@@ -2590,7 +2590,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     ]
     graphic = ""
     

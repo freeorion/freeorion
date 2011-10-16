@@ -2552,7 +2552,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 5
+            effects = SetDetection Value + 50
 
 Tech
     name = "SHP_SELFGRAV_HULL"
@@ -3134,7 +3134,7 @@ Tech
                 Not OwnerHasTech "SHP_NEUTRON_SCANNER"
                 Not OwnerHasTech "SHP_SENSORS"
             ]
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
 
 Tech
     name = "SHP_DEUTERIUM_TANK"
@@ -3241,7 +3241,7 @@ Tech
                 Planet
             ]
             activation = Not OwnerHasTech "SHP_SENSORS"
-            effects = SetDetection Value + 20
+            effects = SetDetection Value + 200
 
 Tech
     name = "SHP_BASIC_DAM_CONT"
@@ -3520,7 +3520,7 @@ Tech
                 OwnedBy TheEmpire Source.Owner
                 Planet
             ]
-            effects = SetDetection Value + 25
+            effects = SetDetection Value + 250
 
 Tech
     name = "DEF_PLANET_CLOAK"
