@@ -43,10 +43,7 @@ namespace {
             if ((search_domain == Condition::MATCHES && !match) || (search_domain == Condition::NON_MATCHES && match)) {
                 to_set.push_back(*it);
                 *it = from_set.back();
-                bool break_ = it + 1 == from_set.end();
                 from_set.pop_back();
-                if (break_)
-                    break;
             } else {
                 ++it;
             }
