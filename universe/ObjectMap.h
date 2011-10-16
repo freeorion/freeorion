@@ -110,7 +110,7 @@ public:
       * Copy or Clone functions of the copied UniverseObjects.  Any objects
       * in this ObjectMap that have no corresponding object in \a copied_map
       * are left unchanged. */
-    void                                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+    void                Copy(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
     /** Copies the passed \a object into this ObjectMap, overwriting any
       * existing information about that object or creating a new object in this
@@ -119,7 +119,7 @@ public:
       * another empire id is specified, then the copied informatio is limited
       * by passed that \a empire_id to Copy or Clone of the object.  The
       * passed object is unchanged. */
-    void                                Copy(const UniverseObject* obj, int empire_id = ALL_EMPIRES);
+    void                Copy(const UniverseObject* obj, int empire_id = ALL_EMPIRES);
 
     /** Copies the objects of the ObjectMap \a copied_map that are visible to
       * the empire with id \a empire_id into this ObjectMap.  Copied objects
@@ -129,7 +129,7 @@ public:
       * the empire with id \a empire_id are left unchanged.  If \a empire_id is
       * ALL_EMPIRES, then all objects in \a copied_map are copied completely
       * and this function acts just like ObjectMap::Copy .*/
-    void                                CompleteCopyVisible(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
+    void                CompleteCopyVisible(const ObjectMap& copied_map, int empire_id = ALL_EMPIRES);
 
     /** Adds object \a obj to the map under id \a id if id is a valid object id
       * and obj is an object with that id set.  If there already was an object
@@ -137,28 +137,28 @@ public:
       * is returned. This ObjectMap takes ownership of the passed
       * UniverseObject. The caller takes ownership of any returned
       * UniverseObject. */
-    UniverseObject*                     Insert(int id, UniverseObject* obj);
+    UniverseObject*     Insert(int id, UniverseObject* obj);
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
       * existed in the map, 0 is returned and nothing is removed. The caller
       * takes ownership of any returned UniverseObject. */
-    UniverseObject*                     Remove(int id);
+    UniverseObject*     Remove(int id);
 
     /** Removes object with id \a id from map, and deletes that object, if
       * there was an object under that ID in the map.  If no such object
       * existed in the map, nothing is done. */
-    void                                Delete(int id);
+    void                Delete(int id);
 
     /** Empties map and deletes all objects within. */
-    void                                Clear();
+    void                Clear();
 
     /** Swaps the contents of *this with \a rhs. */
-    void                                swap(ObjectMap& rhs);
+    void                swap(ObjectMap& rhs);
     //@}
 
 private:
-    void                                CopyObjectsToConstObjects();
+    void                CopyObjectsToConstObjects();
 
     std::map<int, UniverseObject*>          m_objects;
     std::map<int, const UniverseObject*>    m_const_objects;
