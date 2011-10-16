@@ -10,7 +10,7 @@
 #include <stdexcept>
 
 namespace {
-    const double MINIMUM_POP_CENTER_POPULATION = 0.051;  // rounds up to 0.1 when showing only two digits
+    const double MINIMUM_POP_CENTER_POPULATION = 0.05001;  // rounds up to 0.1 when showing 2 digits, down to 0.05 or 50.0 when showing 3
 }
 
 class Species;
@@ -118,59 +118,9 @@ double PopCenter::PopCenterNextTurnMeterValue(MeterType meter_type) const
 }
 
 double PopCenter::FoodAllocationForMaxGrowth() const
-{
-    // the same as PopCenterNextTurnMeterValue(METER_FOOD_ALLOCATION), but
-    // using NextTurnPopGrowhtMax instead of NextTurnPopGrowth
-    double next_turn_max_pop_growth = this->NextTurnPopGrowthMax();
-    double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));  // floor to effective current population, to prevent overflow issues
-    double fractional_max_growth = next_turn_max_pop_growth / current_pop;
-    double max_growth_next_turn_food_consumption = this->CurrentMeterValue(METER_FOOD_CONSUMPTION) * (1.0 + fractional_max_growth);
-    return max_growth_next_turn_food_consumption;
-}
+{ return PopCenterNextTurnMeterValue(METER_FOOD_CONSUMPTION); }
 
 double PopCenter::NextTurnPopGrowth() const
-{
-    //Logger().debugStream() << "PopCenter::NextTurnPopGrowth  growth max: " << NextTurnPopGrowthMax() << "  allocated food: " << AllocatedFood();
-
-    double next_turn_pop_growth_max = NextTurnPopGrowthMax();       // before food considerations
-    double current_pop = std::max(MINIMUM_POP_CENTER_POPULATION, this->CurrentMeterValue(METER_POPULATION));    // floor to effective current population, to prevent overflow issues
-    double need_for_stable_population = this->CurrentMeterValue(METER_FOOD_CONSUMPTION);
-
-    // if food need for stable population is sufficiently small, ignore any
-    // food allocation requirements when determining growth.  This lets races
-    // that don't require food grow without need to be allocated any, and
-    // avoids any divide by zero issues.
-    //
-    // this may however cause issues when at small populations that need
-    // less than one food per unit of pop, when a population could end up
-    // growing for a few turns until it gets big enough to start needing food,
-    // at which point it could starve...
-    if (need_for_stable_population < MINIMUM_POP_CENTER_POPULATION) {
-        double new_pop = current_pop + next_turn_pop_growth_max;
-        if (new_pop < MINIMUM_POP_CENTER_POPULATION)
-            next_turn_pop_growth_max = -current_pop;
-        return next_turn_pop_growth_max;
-    }
-
-    // determine fraction of required food that was allocated.
-    double allocated_food = AllocatedFood();
-    double food_allocation_fraction = allocated_food / need_for_stable_population;
-
-    double population_supportable_by_allocated_food = current_pop * food_allocation_fraction;
-
-    double new_pop = std::min(current_pop + next_turn_pop_growth_max, population_supportable_by_allocated_food);
-    if (new_pop < MINIMUM_POP_CENTER_POPULATION)
-        new_pop = 0.0;
-
-    //Logger().debugStream() << "PopCenter::NextTurnPopGrowth() allocated food: " << allocated_food <<
-    //    " food allocation fraction: " << food_allocation_fraction <<
-    //    " supportable pop: " << population_supportable_by_allocated_food <<
-    //    " new pop: " << new_pop;
-
-    return new_pop - current_pop;
-}
-
-double PopCenter::NextTurnPopGrowthMax() const
 {
     double target_pop = std::max(GetMeter(METER_TARGET_POPULATION)->Current(), 1.0);    // clamping target pop to at least 1 prevents divide by zero cases
     double cur_pop = GetMeter(METER_POPULATION)->Current();
@@ -275,10 +225,12 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase()
 
 void PopCenter::PopCenterClampMeters()
 {
-    GetMeter(METER_POPULATION)->ClampCurrentToRange();
     GetMeter(METER_TARGET_POPULATION)->ClampCurrentToRange();
-    GetMeter(METER_HEALTH)->ClampCurrentToRange();
     GetMeter(METER_TARGET_HEALTH)->ClampCurrentToRange();
+
+    GetMeter(METER_POPULATION)->ClampCurrentToRange();
+    GetMeter(METER_HEALTH)->ClampCurrentToRange();
+
     GetMeter(METER_FOOD_CONSUMPTION)->ClampCurrentToRange();
 }
 
@@ -303,7 +255,4 @@ void PopCenter::SetSpecies(const std::string& species_name)
 }
 
 void PopCenter::SetAllocatedFood(double allocated_food)
-{
-    m_allocated_food = allocated_food;
-}
-
+{ m_allocated_food = allocated_food; }

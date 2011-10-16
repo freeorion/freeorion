@@ -31,7 +31,6 @@ public:
     std::string         Dump() const;
 
     double              NextTurnPopGrowth() const;                          ///< predicted pop growth next turn, accounting for limits due to allocated food
-    double              NextTurnPopGrowthMax() const;                       ///< maximum possible pop growth next turn, not accounting for limits due to food
 
     virtual double      CurrentMeterValue(MeterType type) const = 0;        ///< implementation should current value of the specified meter \a type
     virtual double      NextTurnCurrentMeterValue(MeterType type) const = 0;///< implementation should return an estimate of the next turn's current value of the specified meter \a type
