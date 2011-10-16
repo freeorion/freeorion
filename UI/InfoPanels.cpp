@@ -2871,7 +2871,6 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (!source)
             source = GetEmpireKnownObject(info_it->source_id, HumanClientApp::GetApp()->EmpireID());
 
-        int             empire_id = ALL_EMPIRES;
         const Empire*   empire = 0;
         const Building* building = 0;
         const Planet*   planet = 0;

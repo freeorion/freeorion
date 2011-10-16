@@ -470,8 +470,8 @@ ClientUI::ClientUI() :
     m_message_wnd(0),
     m_player_list_wnd(0),
     m_intro_screen(0),
-    m_multiplayer_lobby_wnd(0),
-    m_combat_wnd(0)
+    m_combat_wnd(0),
+    m_multiplayer_lobby_wnd(0)
 {
     s_the_UI = this;
 

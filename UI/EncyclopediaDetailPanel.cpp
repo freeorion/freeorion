@@ -596,6 +596,7 @@ void EncyclopediaDetailPanel::Refresh() {
                 case UIT_SHIP_HULL:     TAG = VarText::SHIP_HULL_TAG;           break;
                 case UIT_SHIP_DESIGN:   TAG = VarText::PREDEFINED_DESIGN_TAG;   break;
                 case UIT_TECH:          TAG = VarText::TECH_TAG;                break;
+                default: break;
                 }
 
                 std::string link_text;

@@ -308,7 +308,7 @@ void UniverseObject::SetOwner(int id)
 {
     if (m_owner_empire_id != id) {
         m_owner_empire_id = id;
-        StateChangedSignal;
+        StateChangedSignal();
     }
     /* TODO: if changing object ownership gives an the new owner an
      * observer in, or ownership of a previoiusly unexplored system, then need

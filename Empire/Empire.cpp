@@ -2831,10 +2831,6 @@ void Empire::UpdateFoodDistribution()
 
     m_resource_pools[RE_FOOD]->Update();  // recalculate total food production
 
-    const std::vector<int>& pop_centers =       m_population_pool.PopCenterIDs();
-    const std::vector<int>& res_pool_objects =  m_resource_pools[RE_FOOD]->ObjectIDs();
-
-
     // get sets of resource-sharing objects and amount of resource available in
     // each, and distribute food within each group independently
     std::map<std::set<int>, double> groups_food_available = m_resource_pools[RE_FOOD]->Available();

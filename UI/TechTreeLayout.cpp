@@ -28,7 +28,6 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
         m_column.resize(index + node->m_weight, 0);
     } 
     if (0 < index) {
-        bool fits = true;
         for ( int j = index + node->m_weight; j-->index; ) {
             if ( m_column[j] != 0 && m_column[j] != node ) {
                 return false;
@@ -133,9 +132,9 @@ bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
 // class Edge //
 ////////////////
 TechTreeLayout::Edge::Edge(const Tech* from, const Tech* to) : 
+    m_points(std::vector<std::pair<double,double> >( )),
     m_from(from),
-    m_to(to),
-    m_points(std::vector<std::pair<double,double> >( ))
+    m_to(to)
 { 
     assert(from != 0 && to != 0);
 }
@@ -173,10 +172,10 @@ void TechTreeLayout::Edge::Debug() const {
 TechTreeLayout::TechTreeLayout() :
     m_width(0),
     m_height(0),
-    m_nodes(),
-    m_node_map(),
     m_row_count(0),
-    m_column_count(0)
+    m_column_count(0),
+    m_node_map(),
+    m_nodes()
 {}
 /**
  * releases all resources
@@ -220,7 +219,6 @@ void TechTreeLayout::DoLayout( double column_width, double row_height, double x_
     }
     //4.c. optimize layout, every node gets a rateing if moving would shorten the distance to it's family
     //     if the movement is possible eith if the place if free or the neighbour has the opposite wish
-    int depth = 0;
     bool movement = true;
     while (movement) {
         movement = false;
@@ -311,43 +309,43 @@ void TechTreeLayout::Clear() {
  * creates a node for that tech
  */
 TechTreeLayout::Node::Node(const Tech *tech, GG::X width, GG::Y height) :
-    m_width(Value(width)),
-    m_height(Value(height)),
-    m_children_rows(0),
-    m_name(tech->Name()),
-    m_place_holder(false),
+    m_weight(NODE_CELL_HEIGHT),
+    m_depth(-1),
+    m_row(-1),
     m_tech(tech),
+    m_name(tech->Name()),
     m_x(0),
     m_y(0),
+    m_width(Value(width)),
+    m_height(Value(height)),
+    m_place_holder(false),
+    m_children_rows(0),
     m_parents(),
     m_children(),
     m_child(0),
-    m_out_edges(),
-    m_weight(NODE_CELL_HEIGHT),
-    m_row(-1),
-    m_depth(-1)
+    m_out_edges()
 {
     assert(width > 0 && height > 0);
 }
 /**
  * creates dummie nodes between parent and child
  */
-    TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes) :
-    m_width(0),
-    m_height(0),
-    m_children_rows(0),
-    m_name(child->m_name),
-    m_place_holder(true),
+TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes) :
+    m_weight(LINE_CELL_HEIGHT),
+    m_depth(parent->m_depth + 1),
+    m_row(-1),
     m_tech(child->m_tech),
+    m_name(child->m_name),
     m_x(0),
     m_y(0),
+    m_width(0),
+    m_height(0),
+    m_place_holder(true),
+    m_children_rows(0),
     m_parents(),
     m_children(),
     m_child(0),
-    m_out_edges(),
-    m_weight(LINE_CELL_HEIGHT),
-    m_row(-1),
-    m_depth(parent->m_depth + 1)
+    m_out_edges()
 {
     assert(parent != 0 && child != 0);
     if ( m_depth + 1 == child->m_depth ) {
@@ -405,7 +403,6 @@ bool TechTreeLayout::Node::IsPlaceHolder( ) const {
 }
 double TechTreeLayout::Node::CalculateFamilyDistance(int row) {
     double distance = 0;
-    int count = 0;
     int familysize = (m_parents.size() + m_children.size());
     if (familysize == 0) return 0;
     Node* node = 0;

@@ -133,7 +133,6 @@ void AIClientApp::HandleMessage(const Message& msg)
     }
 
     case Message::HOST_ID: {
-        const int initial_host_id = m_networking.HostPlayerID();
         const std::string& text = msg.Text();
         int host_id = Networking::INVALID_PLAYER_ID;
         if (text.empty()) {

@@ -710,7 +710,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
         BuildingTypeManager& manager = GetBuildingTypeManager();
 
         for (BuildingTypeManager::iterator it = manager.begin(); it != manager.end(); ++it, ++i) {
-            const BuildingType* type = it->second;
             const std::string name = it->first;
 
             if (!BuildableItemVisible(BT_BUILDING, name)) continue;
@@ -832,7 +831,6 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP)
 {
     const GG::X SIDEPANEL_WIDTH =       GG::X(GetOptionsDB().Get<int>("UI.sidepanel-width"));
-    const int   MAX_PLANET_DIAMETER =   GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter");
     const GG::X CHILD_WIDTHS =          w - SIDEPANEL_WIDTH;
     const GG::Y DETAIL_PANEL_HEIGHT =   TechTreeWnd::NAVIGATOR_AND_DETAIL_HEIGHT;
     const GG::Y BUILD_SELECTOR_HEIGHT = DETAIL_PANEL_HEIGHT;

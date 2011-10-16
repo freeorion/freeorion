@@ -556,7 +556,6 @@ std::string TechManager::FindIllegalDependencies()
     std::string retval;
     for (iterator it = begin(); it != end(); ++it) {
         const Tech* tech = *it;
-        TechType tech_type = tech->Type();
         const std::set<std::string>& prereqs = tech->Prerequisites();
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
             const Tech* prereq_tech = GetTech(*prereq_it);

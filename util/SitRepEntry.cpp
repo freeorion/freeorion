@@ -74,15 +74,15 @@ SitRepEntry* CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_
 
     SitRepEntry* sitrep(0);
 
-    if (const Ship* ship = universe_object_cast<const Ship*>(obj)) {
+    if (universe_object_cast<const Ship*>(obj)) {
         sitrep = new SitRepEntry("SITREP_SHIP_DESTROYED_AT_SYSTEM");
         sitrep->AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
 
-    } else if (const Fleet* fleet = universe_object_cast<const Fleet*>(obj)) {
+    } else if (universe_object_cast<const Fleet*>(obj)) {
         SitRepEntry* sitrep = new SitRepEntry("SITREP_FLEET_DESTROYED_AT_SYSTEM");
         sitrep->AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(object_id));
 
-    } else if (const Planet* planet = universe_object_cast<const Planet*>(obj)) {
+    } else if (universe_object_cast<const Planet*>(obj)) {
         SitRepEntry* sitrep = new SitRepEntry("SITREP_PLANET_DESTROYED_AT_SYSTEM");
         sitrep->AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 

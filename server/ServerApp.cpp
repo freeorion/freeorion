@@ -1224,7 +1224,6 @@ namespace {
                 for (std::set<int>::const_iterator dest_obj_it = destroyed_object_ids.begin();
                      dest_obj_it != destroyed_object_ids.end(); ++dest_obj_it)
                 {
-                    int destroyed_object_id = *dest_obj_it;
                     empire->AddSitRepEntry(CreateCombatDestroyedObjectSitRep(*dest_obj_it, combat_info.system_id, empire_id));
                 }
             }
@@ -1571,7 +1570,6 @@ namespace {
                 if ((planet->Unowned() && victor_id != ALL_EMPIRES) ||
                     (!planet->Unowned() && !planet->OwnedBy(victor_id)))
                 {
-                    int original_owner_id = planet->Owner();
                     planet->Conquer(victor_id);
 
                     // create planet conquered sitrep for all involved empires

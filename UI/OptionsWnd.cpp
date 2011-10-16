@@ -645,7 +645,7 @@ void OptionsWnd::ResolutionOption()
 
 
     // fullscreen / windowed toggle
-    CUIStateButton* fullscreen_button = BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
+    BoolOption("fullscreen", UserString("OPTIONS_FULLSCREEN"));
 
 
     // fps

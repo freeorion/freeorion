@@ -752,7 +752,7 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const
         } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
             // do nothing special for this player
         } else {
-            if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(*it)) {
+            if (dynamic_cast<const EmptyPlayerRow*>(*it)) {
                 // ignore empty player row
             } else {
                 Logger().errorStream() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";
@@ -763,8 +763,8 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const
     // any duplicate names or colours will means that the number of active
     // players and number of colours / names won't match
     return num_players_excluding_observers > 0 &&
-           empire_names.size() == num_players_excluding_observers &&
-           empire_colors.size() == num_players_excluding_observers;
+           static_cast<int>(empire_names.size()) == num_players_excluding_observers &&
+           static_cast<int>(empire_colors.size()) == num_players_excluding_observers;
 }
 
 bool MultiPlayerLobbyWnd::CanStart() const

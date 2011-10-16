@@ -252,7 +252,6 @@ boost::statechart::result MPLobby::react(const Disconnection& d)
 
 boost::statechart::result MPLobby::react(const HostID& msg)
 {
-    const int initial_host_id = Client().m_networking.HostPlayerID();
     const std::string& text = msg.m_message.Text();
     int host_id = Networking::INVALID_PLAYER_ID;
     if (text.empty()) {

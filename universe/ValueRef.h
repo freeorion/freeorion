@@ -406,7 +406,7 @@ std::string ValueRef::Variable<T>::Description() const
     case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE:   formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:    formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    //case NON_OBJECT_REFERENCE:
+    default: formatter % "???";  break;
     }
     for (unsigned int i = 0; i < m_property_name.size(); ++i) {
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
@@ -423,7 +423,7 @@ std::string ValueRef::Variable<T>::Dump() const
     case EFFECT_TARGET_REFERENCE:               str = "Target";         break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE:   str = "LocalCandidate"; break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:    str = "RootCandidate";  break;
-    //case NON_OBJECT_REFERENCE:
+    default: str = "???";  break;
     }
     if (m_ref_type != NON_OBJECT_REFERENCE) {
         for (unsigned int i = 0; i < m_property_name.size(); ++i)
@@ -788,6 +788,8 @@ T ValueRef::Statistic<T>::ReduceData(const std::map<const UniverseObject*, T>& o
             throw std::runtime_error("ValueRef evaluated with an unknown or invalid StatisticType.");
             break;
     }
+
+    return T(0);
 }
 
 template <class T>

@@ -1086,12 +1086,12 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_tech_types_shown(),
     m_tech_statuses_shown(),
     m_selected_tech(0),
+    m_graph(),
     m_layout_surface(0),
     m_vscroll(0),
     m_hscroll(0),
     m_zoom_in_button(0),
-    m_zoom_out_button(0),
-    m_graph()
+    m_zoom_out_button(0)
 {
     SetChildClippingMode(ClipToClient);
 
@@ -1340,10 +1340,8 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale)
         scale = MIN_SCALE;
     if (MAX_SCALE < scale)
         scale = MAX_SCALE;
-    if (m_scale != scale) {
-        double old_scale = m_scale;
+    if (m_scale != scale)
         m_scale = scale;
-    }
 }
 
 void TechTreeWnd::LayoutPanel::ShowCategory(const std::string& category)
