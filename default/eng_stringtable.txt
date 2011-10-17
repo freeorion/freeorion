@@ -2454,17 +2454,17 @@ No Known Homeworld
 UNKNOWN_PLANET
 Unknown Planet
 
-PLANETBOUND
-Planetbound - cannot build ships
+CANNOT_PRODUCE_SHIPS
+Cannot Produce Ships
 
-SPACEFARING
-Spacefaring - can build ships
+CAN_PRODUCE_SHIPS
+Can Produce Ships
 
-SPACEBOUND
-Spacebound - cannot colonize planets
+CANNNOT_COLONIZESPACEBOUND
+Cannot Colonize Planets
 
 CAN_COLONIZE
-Can Colonize - can build colony ships
+Can Produce Colony Ships
 
 OCCUPIED_PLANETS
 Occupied Planets:
@@ -2600,7 +2600,7 @@ Can only produce Food or Research.'''
 SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_DESC
-Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
+Enigmatic wheeled robots devoted to carving up their planet into the elaborate curves and spirals.
 
 SP_BEIGEGOO
 Beige Goo
@@ -3261,7 +3261,7 @@ DESC_VAR_DEFENSE
 [[METER_DEFENSE]]
 DESC_VAR_TROOPS
 [[METER_TROOPS]]
-DESC_VAR_FOOD_CONSUMPTION
+DESC_VAR_FOODCONSUMPTION
 [[METER_FOOD_CONSUMPTION]]
 DESC_VAR_SUPPLY
 [[METER_SUPPLY]]
@@ -3366,6 +3366,12 @@ focus
 
 DESC_VAR_LASTTURNBATTLEHERE
 last turn a battle occured here
+
+DESC_VAR_ALLOCATEDFOOD
+allocated food
+
+FoodAllocationForMaxGrowth
+food allocation needed for max growth
 
 # this one is intentionally left empty
 DESC_VALUE_REF_MULTIPART_VARIABLE0
@@ -3544,6 +3550,9 @@ The Gaian planet %planet% has terraformed itself to better accommodate its inhab
 
 EFFECT_TERRAFORM
 %planet% has been terraformed.
+
+EFFECT_STARVATION
+Famine struck %planet%.
 
 # Conditions
 
