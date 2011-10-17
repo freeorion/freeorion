@@ -135,33 +135,35 @@ namespace {
         }
         return obj;
     }
+}
 
-    std::string ReconstructName(const std::vector<std::string>& property_name,
-                                ValueRef::ReferenceType ref_type)
-    {
-        std::string retval;
-        switch (ref_type) {
-        case ValueRef::SOURCE_REFERENCE:                    retval = "Source";          break;
-        case ValueRef::EFFECT_TARGET_REFERENCE: {
-            // "Value" is actually a reference to the target object, but we
-            // don't want to output "Target.Value", so if "Value" is the
-            // property name, skip prepending "Target".  Otherwise, prepend
-            // target as with other direct object references.
-
-            if (!boost::iequals(property_name[0], "Value"))
-                retval = "Target";
-            break;
-        }
-        case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
-        case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
-        default:                                            retval = "?????";   break;
-        }
-        for (unsigned int i = 0; i < property_name.size(); ++i) {
-            retval += '.';
-            retval += property_name[i];
-        }
-        return retval;
+std::string ValueRef::ReconstructName(const std::vector<std::string>& property_name,
+                                      ValueRef::ReferenceType ref_type)
+{
+    std::string retval;
+    switch (ref_type) {
+    case ValueRef::SOURCE_REFERENCE:                    retval = "Source";          break;
+    case ValueRef::EFFECT_TARGET_REFERENCE: {
+        // "Value" is actually a reference to the target object, but we
+        // don't want to output "Target.Value", so if "Value" is the
+        // property name, skip prepending "Target".  Otherwise, prepend
+        // target as with other direct object references.
+        if (!boost::iequals(property_name[0], "Value"))
+            retval = "Target";
+        break;
     }
+    case ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE: retval = "LocalCandidate";  break;
+    case ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE:  retval = "RootCandidate";   break;
+    case ValueRef::NON_OBJECT_REFERENCE:                retval = "";                break;
+    default:                                            retval = "?????";           break;
+    }
+
+    for (unsigned int i = 0; i < property_name.size(); ++i) {
+        if (!retval.empty())
+            retval += '.';
+        retval += property_name[i];
+    }
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -778,6 +780,4 @@ namespace ValueRef {
 }
 
 std::string DumpIndent()
-{
-    return std::string(g_indent * 4, ' ');
-}
+{ return std::string(g_indent * 4, ' '); }

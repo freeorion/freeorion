@@ -289,6 +289,10 @@ private:
   * several units (Condition.cpp, Effect.cpp, etc.), not just this one. */
 std::string DumpIndent();
 
+namespace ValueRef {
+    std::string ReconstructName(const std::vector<std::string>& property_name,
+                                ReferenceType ref_type);
+}
 
 // Template Implementations
 ///////////////////////////////////////////////////////////
@@ -406,33 +410,17 @@ std::string ValueRef::Variable<T>::Description() const
     case EFFECT_TARGET_REFERENCE:               formatter % UserString("DESC_VAR_TARGET");          break;
     case CONDITION_LOCAL_CANDIDATE_REFERENCE:   formatter % UserString("DESC_VAR_LOCAL_CANDIDATE"); break;
     case CONDITION_ROOT_CANDIDATE_REFERENCE:    formatter % UserString("DESC_VAR_ROOT_CANDIDATE");  break;
-    default: formatter % "???";  break;
+    case NON_OBJECT_REFERENCE:                  formatter % "";                                     break;
+    default:                                    formatter % "???";                                  break;
     }
-    for (unsigned int i = 0; i < m_property_name.size(); ++i) {
+    for (unsigned int i = 0; i < m_property_name.size(); ++i)
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
-    }
     return boost::io::str(formatter);
 }
 
 template <class T>
 std::string ValueRef::Variable<T>::Dump() const
-{
-    std::string str;
-    switch (m_ref_type) {
-    case SOURCE_REFERENCE:                      str = "Source";         break;
-    case EFFECT_TARGET_REFERENCE:               str = "Target";         break;
-    case CONDITION_LOCAL_CANDIDATE_REFERENCE:   str = "LocalCandidate"; break;
-    case CONDITION_ROOT_CANDIDATE_REFERENCE:    str = "RootCandidate";  break;
-    default: str = "???";  break;
-    }
-    if (m_ref_type != NON_OBJECT_REFERENCE) {
-        for (unsigned int i = 0; i < m_property_name.size(); ++i)
-            str += '.' + m_property_name[i];
-    } else if (!m_property_name.empty()) {
-        str = m_property_name[0];
-    }
-    return str;
-}
+{ return ReconstructName(m_property_name, m_ref_type); }
 
 namespace ValueRef {
     template <>
