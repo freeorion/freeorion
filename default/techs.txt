@@ -29,6 +29,204 @@ Category
     colour = (255, 139, 85, 255)
 
 Tech
+    Name ="DEF_ROOT_DEFENSE"
+    description = "DEF_ROOT_DEFENSE_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 10
+    researchturns = 1
+    prerequisites = []
+    unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
+    effectsgroups =
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = NOT OwnerHasTech "DEF_GARRISON_1"
+            effects = SetMaxTroops Value + 5
+    graphic = ""
+
+Tech
+    Name ="DEF_GARRISON_1"
+    description = "DEF_GARRISON_1_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 20
+    researchturns = 2
+    prerequisites = "DEF_ROOT_DEFENSE"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = NOT OwnerHasTech "DEF_GARRISON_2"
+            effects = SetMaxTroops Value + 10
+    graphic = ""
+    
+Tech
+    Name ="DEF_GARRISON_2"
+    description = "DEF_GARRISON_2_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 50
+    researchturns = 5
+    prerequisites = "DEF_GARRISON_1"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = NOT OwnerHasTech "DEF_GARRISON_3"
+            effects = SetMaxTroops Value + 20
+    graphic = ""
+    
+Tech
+    Name ="DEF_GARRISON_3"
+    description = "DEF_GARRISON_3_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 150
+    researchturns = 8
+    prerequisites = "DEF_GARRISON_2"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            activation = NOT OwnerHasTech "DEF_GARRISON_4"
+            effects = SetMaxTroops Value + 40
+    graphic = ""
+    
+Tech
+    Name ="DEF_GARRISON_4"
+    description = "DEF_GARRISON_4_DESC"
+    short_description = "DEFENSE_SHORT_DESC"
+    techtype = Application
+    category = "DEFENSE_CATEGORY"
+    researchcost = 400
+    researchturns = 15
+    prerequisites = "DEF_GARRISON_3"
+    unlock = []
+    effectsgroups =
+        EffectsGroup
+            scope = OwnedBy TheEmpire Source.Owner
+            effects = SetMaxTroops Value + 80
+    graphic = ""
+
+Tech
+    Name ="SHP_ROOT_AGGRESSION"
+    description = "SHP_ROOT_AGGRESSION_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 10
+    researchturns = 1
+    prerequisites = []
+    unlock = [
+        Item type = ShipPart name = "SR_WEAPON_1"
+        Item type = ShipPart name = "GT_TROOP_POD"
+    ]
+    graphic = ""
+
+Tech
+    name = "SHP_WEAPON_2"
+    description = "SHP_WEAPON_2_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 25
+    researchturns = 2
+    prerequisites = "SHP_ROOT_AGGRESSION"
+    unlock = Item type = ShipPart name = "SR_WEAPON_2"
+    
+Tech
+    name = "SHP_WEAPON_3"
+    description = "SHP_WEAPON_3_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 50
+    researchturns = 3
+    prerequisites = "SHP_WEAPON_2"
+    unlock = Item type = ShipPart name = "SR_WEAPON_3"
+
+Tech
+    name = "SHP_WEAPON_4"
+    description = "SHP_WEAPON_4_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 100
+    researchturns = 4
+    prerequisites = "SHP_WEAPON_3"
+    unlock = Item type = ShipPart name = "SR_WEAPON_4"
+
+Tech
+    name = "SHP_WEAPON_5"
+    description = "SHP_WEAPON_5_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 200
+    researchturns = 5
+    prerequisites = "SHP_WEAPON_4"
+    unlock = Item type = ShipPart name = "SR_WEAPON_5"
+
+Tech
+    name = "SHP_WEAPON_6"
+    description = "SHP_WEAPON_6_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 500
+    researchturns = 6
+    prerequisites = "SHP_WEAPON_5"
+    unlock = Item type = ShipPart name = "SR_WEAPON_6"
+
+Tech
+    name = "SHP_WEAPON_7"
+    description = "SHP_WEAPON_7_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1000
+    researchturns = 7
+    prerequisites = "SHP_WEAPON_6"
+    unlock = Item type = ShipPart name = "SR_WEAPON_7"
+
+Tech
+    name = "SHP_WEAPON_8"
+    description = "SHP_WEAPON_8_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 2000
+    researchturns = 8
+    prerequisites = "SHP_WEAPON_7"
+    unlock = Item type = ShipPart name = "SR_WEAPON_8"
+
+Tech
+    name = "SHP_WEAPON_9"
+    description = "SHP_WEAPON_9_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 4000
+    researchturns = 9
+    prerequisites = "SHP_WEAPON_8"
+    unlock = Item type = ShipPart name = "SR_WEAPON_9"
+
+Tech
+    name = "SHP_WEAPON_10"
+    description = "SHP_WEAPON_10_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 8000
+    researchturns = 10
+    prerequisites = "SHP_WEAPON_9"
+    unlock = Item type = ShipPart name = "SR_WEAPON_10"
+
+Tech
     name = "LRN_PHYS_BRAIN"
     description = "LRN_PHYS_BRAIN_DESC"
     short_description = "THEORY_SHORT_DESC"
@@ -2332,6 +2530,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 20
     researchturns = 5
+    prerequisites = "GRO_GENETIC_ENG"
 
 Tech
     name = "SHP_HAB_MEGAFAUN"
@@ -3442,87 +3641,4 @@ Tech
             effects = SetStealth Value + 9.99
     graphic = ""
     
-Tech
-    Name ="DEF_ROOT_DEFENSE"
-    description = "DEF_ROOT_DEFENSE_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 10
-    researchturns = 1
-    prerequisites = []
-    unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_1"
-            effects = SetMaxTroops Value + 5
-    graphic = ""
-    
-Tech
-    Name ="DEF_GARRISON_1"
-    description = "DEF_GARRISON_1_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 20
-    researchturns = 2
-    prerequisites = "DEF_ROOT_DEFENSE"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_2"
-            effects = SetMaxTroops Value + 10
-    graphic = ""
-    
-Tech
-    Name ="DEF_GARRISON_2"
-    description = "DEF_GARRISON_2_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 50
-    researchturns = 5
-    prerequisites = "DEF_GARRISON_1"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_3"
-            effects = SetMaxTroops Value + 20
-    graphic = ""
-    
-Tech
-    Name ="DEF_GARRISON_3"
-    description = "DEF_GARRISON_3_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 150
-    researchturns = 8
-    prerequisites = "DEF_GARRISON_2"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            activation = NOT OwnerHasTech "DEF_GARRISON_4"
-            effects = SetMaxTroops Value + 40
-    graphic = ""
-    
-Tech
-    Name ="DEF_GARRISON_4"
-    description = "DEF_GARRISON_4_DESC"
-    short_description = "DEFENSE_SHORT_DESC"
-    techtype = Application
-    category = "DEFENSE_CATEGORY"
-    researchcost = 400
-    researchturns = 15
-    prerequisites = "DEF_GARRISON_3"
-    unlock = []
-    effectsgroups =
-        EffectsGroup
-            scope = OwnedBy TheEmpire Source.Owner
-            effects = SetMaxTroops Value + 80
-    graphic = ""
     

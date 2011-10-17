@@ -28,7 +28,7 @@ ShipDesign
     hull = "SH_KRILL_3_BODY"
     parts = [
         ""
-        "SR_LASER"
+        "SR_WEAPON_3"
         ""
     ]
     graphic = "icons/monsters/krill-3.png"
@@ -40,7 +40,7 @@ ShipDesign
     hull = "SH_KRILL_4_BODY"
     parts = [
         ""
-        "SR_MASS_DRIVER"
+        "SR_WEAPON_4"
         ""
     ]
     graphic = "icons/monsters/krill-4.png"
@@ -71,8 +71,8 @@ ShipDesign
     description = "SM_DRAGON_DESC"
     hull = "SH_STRONG_MONSTER_BODY"
     parts = [
-        "SR_MASS_DRIVER"
-        "LR_NUCLEAR_MISSILE"
+        "SR_WEAPON_5"
+        "SR_WEAPON_3"
         "DT_OPTICAL_SCANNER"
         "AR_ROCK_PLATE"
         "FU_ZERO_FUEL"
@@ -85,8 +85,8 @@ ShipDesign
     description = "SM_GUARD_1"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_ION_CANNON"
-        "LR_NUCLEAR_MISSILE"
+        "SR_WEAPON_4"
+        ""
         "DT_OPTICAL_SCANNER"
         "AR_ROCK_PLATE"
     ]
@@ -98,8 +98,8 @@ ShipDesign
     description = "SM_GUARD_2"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_MASS_DRIVER"
-        "LR_SPECTRAL_MISSILE"
+        "SR_WEAPON_5"
+        ""
         "DT_OPTICAL_SCANNER"
         "AR_ZORTRIUM_PLATE"
     ]
@@ -111,8 +111,8 @@ ShipDesign
     description = "SM_GUARD_3"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [
-        "SR_DEATH_RAY"
-        "LR_SPECTRAL_MISSILE"
+        "SR_WEAPON_6"
+        "SR_WEAPON_3"
         "DT_OPTICAL_SCANNER"
         "AR_CRYSTAL_PLATE"
     ]
@@ -125,7 +125,7 @@ ShipDesign
     hull = "SH_DRONE_BODY"
     parts = [
         "AR_ROCK_PLATE"
-        "SR_ION_CANNON"
+        "SR_WEAPON_2"
     ]
     graphic = "icons/ship_parts/colony_pod.png"
     model = "seed"
@@ -136,7 +136,7 @@ ShipDesign
     hull = "SH_IMMOBILE_FACTORY"
     parts = [
         "SH_DEFLECTOR"
-        "SR_MASS_DRIVER"
+        "SR_WEAPON_3"
         ""
     ]
     graphic = "icons/ship_parts/antimatter_tank.png"
@@ -148,7 +148,7 @@ ShipDesign
     hull = "SH_KRAKEN_1_BODY"
     parts = [
         ""
-        "LR_NUCLEAR_MISSILE"
+        "SR_WEAPON_3"
         ""
         ]
     graphic = "icons/monsters/kraken-1.png"
@@ -159,8 +159,8 @@ ShipDesign
     description = "SM_KRAKEN_2_DESC"
     hull = "SH_KRAKEN_2_BODY"
     parts = [
-        "SR_LASER"
-        "LR_NEUTRONIUM_PLATE_NUC_MIS"
+        "SR_WEAPON_4"
+        ""
         ""
         ]
     graphic = "icons/monsters/kraken-2.png"
@@ -171,8 +171,8 @@ ShipDesign
     description = "SM_KRAKEN_3_DESC"
     hull = "SH_KRAKEN_3_BODY"
     parts = [
-        "SR_LASER"
-        "LR_NEUTRONIUM_PLATE_SPEC_MIS"
+        "SR_WEAPON_5"
+        ""
         ""
         ]
     graphic = "icons/monsters/kraken-3.png"
@@ -183,8 +183,8 @@ ShipDesign
     description = "SM_SNOWFLAKE_1_DESC"
     hull = "SH_SNOWFLAKE_1_BODY"
     parts = [
-        "SR_LASER"
-        ""
+        "SR_WEAPON_1"
+        "SR_WEAPON_1"
         ""
         ]
     graphic = "icons/monsters/snowflake-1.png"
@@ -195,8 +195,8 @@ ShipDesign
     description = "SM_SNOWFLAKE_2_DESC"
     hull = "SH_SNOWFLAKE_2_BODY"
     parts = [
-        "SR_LASER"
-        "SR_LASER"
+        "SR_WEAPON_2"
+        ""
         ""
         ]
     graphic = "icons/monsters/snowflake-2.png"
@@ -207,8 +207,8 @@ ShipDesign
     description = "SM_SNOWFLAKE_3_DESC"
     hull = "SH_SNOWFLAKE_3_BODY"
     parts = [
-        "SR_LASER"
-        "LR_NUCLEAR_MISSILE"
+        "SR_WEAPON_3"
+        "SR_WEAPON_1"
         ""
         ]
     graphic = "icons/monsters/snowflake-3.png"
@@ -219,8 +219,8 @@ ShipDesign
     description = "SM_JUGGERNAUT_1_DESC"
     hull = "SH_JUGGERNAUT_1_BODY"
     parts = [
-        "SR_LASER"
-        ""
+        "SR_WEAPON_2"
+        "SR_WEAPON_1"
         "SH_DEFENSE_GRID"
         ]
     graphic = "icons/monsters/juggernaut-1.png"
@@ -231,8 +231,8 @@ ShipDesign
     description = "SM_JUGGERNAUT_2_DESC"
     hull = "SH_JUGGERNAUT_2_BODY"
     parts = [
-        "SR_LASER"
-        "SR_LASER"
+        "SR_WEAPON_3"
+        "SR_WEAPON_1"
         "SH_DEFLECTOR"
         ]
     graphic = "icons/monsters/juggernaut-2.png"
@@ -243,8 +243,8 @@ ShipDesign
     description = "SM_JUGGERNAUT_3_DESC"
     hull = "SH_JUGGERNAUT_3_BODY"
     parts = [
-        "SR_MASS_DRIVER"
-        "LR_NUCLEAR_MISSILE"
+        "SR_WEAPON_4"
+        "SR_WEAPON_2"
         "SH_DEFLECTOR"
         ]
     graphic = "icons/monsters/juggernaut-3.png"

@@ -67,8 +67,8 @@ ShipDesign
     description = "SD_MARK1_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_LASER"
-        "SR_LASER"
+        "SR_WEAPON_1"
+        "SR_WEAPON_1"
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/mark1.png"
@@ -79,8 +79,8 @@ ShipDesign
     description = "SD_MARK2_DESC"
     hull = "SH_BASIC_MEDIUM"
     parts = [
-        "SR_ION_CANNON"
-        "SR_ION_CANNON"
+        "SR_WEAPON_2"
+        "SR_WEAPON_2"
         "SH_DEFENSE_GRID"
     ]
     graphic = "misc/generic.png"
@@ -92,8 +92,8 @@ ShipDesign
     hull = "SH_ROBOTIC"
     parts = [
         "DT_OPTICAL_SCANNER"
-        "SR_ION_CANNON"
-        "SR_ION_CANNON"
+        "SR_WEAPON_3"
+        "SR_WEAPON_3"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
@@ -105,10 +105,10 @@ ShipDesign
     hull = "SH_SELF_GRAVITATING"
     parts = [
         "DT_OPTICAL_SCANNER"
-        "SR_MASS_DRIVER"
-        "SR_MASS_DRIVER"
-        "SR_MASS_DRIVER"
-        "SH_DEFLECTOR"
+        "SR_WEAPON_4"
+        "SR_WEAPON_4"
+        "SR_WEAPON_4"
+        "SR_WEAPON_4"
         "SH_DEFLECTOR"
     ]
     graphic = "misc/generic.png"
@@ -120,9 +120,9 @@ ShipDesign
     hull = "SH_XENTRONIUM"
     parts = [
         "DT_SENSORS"
-        "SR_DEATH_RAY"
-        "PD_PARTICLE_BEAM"
-        "SH_MULTISPEC"
+        "SR_WEAPON_10"
+        "SR_WEAPON_8"
+        "SR_WEAPON_8"
         "FU_ZERO_FUEL"
     ]
     graphic = "misc/generic.png"

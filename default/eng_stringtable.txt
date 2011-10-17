@@ -2600,7 +2600,7 @@ Can only produce Food or Research.'''
 SP_TRENCHERS
 Trenchers
 SP_TRENCHERS_DESC
-Enigmatic wheeled robots devoted to carving up their planet into the elaborate curves and spirals.
+Enigmatic wheeled robots devoted to carving up their planet into the most elaborate curves and spirals.
 
 SP_BEIGEGOO
 Beige Goo
@@ -4529,6 +4529,11 @@ SHP_SOLAR_CONT_DESC
 
 This mighty flagship is essentially a miniature sun, and as such is a great source of both fuel and visibility.  All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to stealth.  This hull has eighteen external slots and nine internal slots - a far greater internal capacity than any other hull.  Structure is extremely high, but speed and stealth are very low.  However, this ship has the ability to enter a star and hide, giving it perfect stealth on the galaxy map when it is in a system with a star of type other than Black Hole or Neutron, and in combat, when it is hiding inside such a star.  This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a Black Hole in its formation.'''
 
+SHP_ROOT_AGGRESSION
+Aggression
+SHP_ROOT_AGGRESSION_DESC
+'''Allows basic weapons and troop pods.'''
+
 DEF_ROOT_DEFENSE
 Self Defense
 DEF_ROOT_DEFENSE_DESC
@@ -4566,6 +4571,9 @@ Useless: Does Nothing
 
 SHIP_PART_UNLOCK_SHORT_DESC
 Unlocks Ship Part
+
+SHIP_WEAPON_UNLOCK_SHORT_DESC
+Unlocks Ship Weapon
 
 SHIP_HULL_UNLOCK_SHORT_DESC
 Unlocks Ship Hull
@@ -5038,6 +5046,51 @@ Planetary Cloaking Device
 
 DEF_PLANET_CLOAK_DESC
 By phasing parts a planet in and out of space-time, its stealth can be increased massively.
+
+SHP_WEAPON_2
+Weapon 2: Nuclear Missile
+SHP_WEAPON_2_DESC
+'''Unlocks ship weapon tech #2: Nuclear Missile.'''
+
+SHP_WEAPON_3
+Weapon 3: Laser
+SHP_WEAPON_3_DESC
+'''Unlocks ship weapon tech #3: Laser.'''
+
+SHP_WEAPON_4
+Weapon 4: Pulse Laser
+SHP_WEAPON_4_DESC
+'''Unlocks ship weapon tech #4: Pulse Laser.'''
+
+SHP_WEAPON_5
+Weapon 5: Ion Cannon
+SHP_WEAPON_5_DESC
+'''Unlocks ship weapon tech #5: Ion Cannon.'''
+
+SHP_WEAPON_6
+Weapon 6: Particle Beam
+SHP_WEAPON_6_DESC
+'''Unlocks ship weapon tech #6: Particle Beam.'''
+
+SHP_WEAPON_7
+Weapon 7: Antimatter Torpedo
+SHP_WEAPON_7_DESC
+'''Unlocks ship weapon tech #7: Antimatter Torpedo.'''
+
+SHP_WEAPON_8
+Weapon 8: Phasor
+SHP_WEAPON_8_DESC
+'''Unlocks ship weapon tech #8: Phasor.'''
+
+SHP_WEAPON_9
+Weapon 9: Quantum Cannon
+SHP_WEAPON_9_DESC
+'''Unlocks ship weapon tech #9: Quantum Cannon'.'''
+
+SHP_WEAPON_10
+Weapon 10: Death Ray
+SHP_WEAPON_10_DESC
+'''Unlocks ship weapon tech #10: Death Ray.'''
 
 SHP_ION_CANNON
 Ion Cannon
@@ -5917,6 +5970,56 @@ Capacity: %9% fighters'''
 ##############
 # Ship Parts #
 ##############
+
+SR_WEAPON_1
+'''Rail Gun'''
+SR_WEAPON_1_DESC
+'''Weapon 1: Rail Gun'''
+
+SR_WEAPON_2
+'''Nuclear Missile'''
+SR_WEAPON_2_DESC
+'''Weapon 2: Nuclear Missile'''
+
+SR_WEAPON_3
+'''Laser'''
+SR_WEAPON_3_DESC
+'''Weapon 3: Laser'''
+
+SR_WEAPON_4
+'''Pulse Laser'''
+SR_WEAPON_4_DESC
+'''Weapon 4: Pulse Laser'''
+
+SR_WEAPON_5
+'''Ion Cannon'''
+SR_WEAPON_5_DESC
+'''Weapon 5: Ion Cannon'''
+
+SR_WEAPON_6
+'''Particle Beam'''
+SR_WEAPON_6_DESC
+'''Weapon 6: Particle Beam'''
+
+SR_WEAPON_7
+'''Antimatter Torpedo'''
+SR_WEAPON_7_DESC
+'''Weapon 7: Antimatter Torpedo'''
+
+SR_WEAPON_8
+'''Phasor'''
+SR_WEAPON_8_DESC
+'''Weapon 8: Phasor'''
+
+SR_WEAPON_9
+'''Quantum Cannon'''
+SR_WEAPON_9_DESC
+'''Weapon 9: Quantum Cannon'''
+
+SR_WEAPON_10
+'''Death Ray'''
+SR_WEAPON_10_DESC
+'''Weapon 10: Death Ray'''
 
 SR_LASER
 Laser
