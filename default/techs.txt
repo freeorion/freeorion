@@ -215,7 +215,6 @@ Tech
         "CON_TRANS_ARCH"
         "LRN_TIME_MECH"
         "LRN_UNIF_CONC"
-        "LRN_QUANT_NET"
         "PRO_ZERO_GEN"
         "GRO_ENERGY_META"
     ]
@@ -2620,10 +2619,7 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 1450
     researchturns = 2
-    prerequisites = [
-        "SHP_ASTEROID_REFORM"
-        "SHP_MINIAST_SWARM"
-    ]
+    prerequisites = "SHP_MINIAST_SWARM"
     unlock = [
         Item type = ShipHull name = "SH_SCATTERED_ASTEROID"
         Item type = Building name = "BLD_SHIPYARD_AST_REF"
