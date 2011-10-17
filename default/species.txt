@@ -97,16 +97,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -229,46 +219,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -661,16 +611,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -793,46 +733,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -1226,16 +1126,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -1358,46 +1248,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -1791,16 +1641,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -1923,46 +1763,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -2350,16 +2150,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -2482,46 +2272,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -2915,16 +2665,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -3047,46 +2787,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -3480,16 +3180,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -3612,46 +3302,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -3994,16 +3644,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -4126,46 +3766,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -4559,16 +4159,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -4691,46 +4281,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -5074,16 +4624,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -5206,46 +4746,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -5639,16 +5139,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -5771,46 +5261,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -6075,7 +5525,6 @@ Species
             ]
             graphic = "icons/focus/industry.png"
 
-
         Focus
             name = "FOCUS_LOGISTICS"
             description = "FOCUS_LOGISTICS_DESC"
@@ -6155,16 +5604,6 @@ Species
             graphic = "icons/focus/distortion.png"
     ]
     effectsgroups = [
-        EffectsGroup
-            scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
         EffectsGroup
             scope = Source
             activation = And [
@@ -6289,46 +5728,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -6556,7 +5955,6 @@ Species
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
     ]
-    
     environments = [
         type = Swamp        environment = Hostile
         type = Toxic        environment = Poor
@@ -6713,16 +6111,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -6845,46 +6233,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -7278,16 +6626,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -7410,46 +6748,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -7843,16 +7141,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -7975,46 +7263,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -8409,14 +7657,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
+            effects = SetHealth Value + 2        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
@@ -8540,46 +7781,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -8974,14 +8175,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
+            effects = SetHealth Value + 2        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
@@ -9105,46 +8299,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -9483,14 +8637,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
+            effects = SetHealth Value + 2        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
@@ -9614,46 +8761,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -10049,12 +9156,6 @@ Species
             scope = Source
             activation = Health high = RootCandidate.TargetHealth - 3
             effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
         EffectsGroup
             scope = Source
             activation = And [
@@ -10179,46 +9280,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -10613,14 +9674,7 @@ Species
         EffectsGroup
             scope = Source
             activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
+            effects = SetHealth Value + 2        EffectsGroup
             scope = Source
             activation = And [
                 Planet environment = Good
@@ -10744,46 +9798,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -11178,16 +10192,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -11313,51 +10317,11 @@ Species
 
         EffectsGroup
             scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Focus type = "FOCUS_FARMING"
                 Planet environment = Good
             ]
-            effects = SetTargetFarming Value + Target.Population * 2.0
+            effects = SetTargetFarming Value + Target.Population * 1.25
 
         EffectsGroup
             scope = Source
@@ -11576,6 +10540,21 @@ Species
             scope = Source
             activation = Not OwnedBy AnyEmpire
             effects = SetMaxTroops Value + 5
+
+        EffectsGroup
+            scope = Source
+            activation = And [
+                Planet
+                FoodConsumption low = LocalCandidate.AllocatedFood + 0.001
+            ]
+            effects = [
+                SetMaxDefense Value + 10
+                SetHealth Value - (Target.FoodConsumption - Target.AllocatedFood)   // each turn, subtract from health the difference between need and actual allocation
+                GenerateSitRepMessage
+                    message = "EFFECT_STARVATION"
+                    parameters = tag = "planet" data = Source.ID
+                    empire = Target.Owner
+            ]
     ]
     environments = [
         type = Swamp        environment = Poor
@@ -11743,16 +10722,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -11875,46 +10844,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -12308,16 +11237,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -12440,46 +11359,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -12873,16 +11752,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -13005,46 +11874,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -13438,16 +12267,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -13570,46 +12389,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -14003,16 +12782,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -14135,46 +12904,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -14568,16 +13297,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -14700,46 +13419,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -15133,16 +13812,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -15265,46 +13934,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -15698,16 +14327,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -15830,46 +14449,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -16268,16 +14847,6 @@ Species
     
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -16400,46 +14969,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
@@ -16743,16 +15272,6 @@ Species
     effectsgroups = [
         EffectsGroup
             scope = Source
-            activation = Health high = RootCandidate.TargetHealth - 3
-            effects = SetHealth Value + 2
-
-        EffectsGroup
-            scope = Source
-            activation = Health low = RootCandidate.TargetHealth - 3 high = RootCandidate.TargetHealth
-            effects = SetHealth Target.TargetHealth
-
-        EffectsGroup
-            scope = Source
             activation = And [
                 Planet environment = Good
                 Planet size = [Huge GasGiant Asteroids]
@@ -16875,46 +15394,6 @@ Species
             scope = Source
             activation = Source
             effects = SetFoodConsumption Value + Target.Population * 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming + 2
-            effects = SetFarming Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining + 2
-            effects = SetMining Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch + 2
-            effects = SetResearch Value - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Farming low = RootCandidate.TargetFarming high = RootCandidate.TargetFarming + 2
-            effects = SetFarming Target.TargetFarming
-
-        EffectsGroup
-            scope = Source
-            activation = Mining low = RootCandidate.TargetMining high = RootCandidate.TargetMining + 2
-            effects = SetMining Target.TargetMining
-
-        EffectsGroup
-            scope = Source
-            activation = Industry low = RootCandidate.TargetIndustry high = RootCandidate.TargetIndustry + 2
-            effects = SetIndustry Target.TargetIndustry
-
-        EffectsGroup
-            scope = Source
-            activation = Research low = RootCandidate.TargetResearch high = RootCandidate.TargetResearch + 2
-            effects = SetResearch Target.TargetResearch
 
         EffectsGroup
             scope = Source
