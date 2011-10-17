@@ -127,25 +127,14 @@ void ResourceCenter::SetFocus(const std::string& focus)
     ResourceCenterChangedSignal();
 }
 
-void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void ResourceCenter::ResourceCenterResetTargetMaxUnpairedMeters()
 {
-    std::vector<MeterType> res_meter_types;
-    res_meter_types.push_back(METER_TARGET_FARMING);
-    res_meter_types.push_back(METER_TARGET_MINING);
-    res_meter_types.push_back(METER_TARGET_INDUSTRY);
-    res_meter_types.push_back(METER_TARGET_RESEARCH);
-    res_meter_types.push_back(METER_TARGET_TRADE);
-    res_meter_types.push_back(METER_TARGET_CONSTRUCTION);
-
-    // all meters matching parameter meter_type should be adjusted, depending on focus
-
-    // TODO: Remove this once species give focus-related bonuses
-    for (unsigned int i = 0; i < res_meter_types.size(); ++i) {
-        const MeterType CUR_METER_TYPE = res_meter_types[i];
-
-        if (meter_type == INVALID_METER_TYPE || meter_type == CUR_METER_TYPE)
-            GetMeter(CUR_METER_TYPE)->ResetCurrent();
-    }
+    GetMeter(METER_TARGET_FARMING)->ResetCurrent();
+    GetMeter(METER_TARGET_INDUSTRY)->ResetCurrent();
+    GetMeter(METER_TARGET_MINING)->ResetCurrent();
+    GetMeter(METER_TARGET_RESEARCH)->ResetCurrent();
+    GetMeter(METER_TARGET_TRADE)->ResetCurrent();
+    GetMeter(METER_TARGET_CONSTRUCTION)->ResetCurrent();
 }
 
 void ResourceCenter::ResourceCenterPopGrowthProductionResearchPhase()

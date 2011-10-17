@@ -178,9 +178,10 @@ public:
     lane_iterator           end_lanes();                    ///< end iterator for all starlanes and wormholes terminating in this system
     //@}
 
-private:
-    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+protected:
+    virtual void            ResetTargetMaxUnpairedMeters();
 
+private:
     /** returns the subset of m_objects that is visible to empire with id
       * \a empire_id */
     ObjectMultimap          VisibleContainedObjects(int empire_id) const;

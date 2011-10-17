@@ -29,7 +29,7 @@ Graphics:
 GUI:
  ~ Sorted techs alphabetically in encyclopedia index.
  ~ Added a separate message for starting up AIs so any problems with that won't appear to happen during universe generation.
- ~ Hid unresearchable and unproducible items on the research, production, and design screens.
+ ~ Hid unresearchable and unproducible items on the tech tree, production screen, and design screen.
  ~ Made map zoom with the slider smoother.
  ~ Removed separate fleet windows that opened when double-clicking a fleet in the main fleets window.
  ~ Limited messages window history to 100 lines.

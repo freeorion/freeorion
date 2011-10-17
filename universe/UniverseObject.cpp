@@ -338,29 +338,21 @@ std::map<MeterType, Meter> UniverseObject::CensoredMeters(Visibility vis) const
     return retval;
 }
 
-void UniverseObject::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void UniverseObject::ResetTargetMaxUnpairedMeters()
 { GetMeter(METER_STEALTH)->ResetCurrent(); }
 
-void UniverseObject::ResetPairedActiveMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void UniverseObject::ResetPairedActiveMeters()
 {
-    std::vector<MeterType> meters;
-    meters.push_back(METER_POPULATION);
-    meters.push_back(METER_HEALTH);
-    meters.push_back(METER_FARMING);
-    meters.push_back(METER_MINING);
-    meters.push_back(METER_INDUSTRY);
-    meters.push_back(METER_RESEARCH);
-    meters.push_back(METER_TRADE);
-    meters.push_back(METER_CONSTRUCTION);
-    meters.push_back(METER_FUEL);
-    meters.push_back(METER_SHIELD);
-    meters.push_back(METER_STRUCTURE);
-    meters.push_back(METER_DEFENSE);
-
-    for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it)
-        if (meter_type == INVALID_METER_TYPE || *it == meter_type)
-            if (Meter* meter = GetMeter(*it))
-                meter->SetCurrent(meter->Initial());
+    // iterate over paired active meters (those that have an associated max or
+    // target meter.  if another paired meter type is added to Enums.h, it
+    // should be added here as well.
+    for (MeterType meter_type = MeterType(METER_POPULATION);
+         meter_type <= MeterType(METER_TROOPS);
+         meter_type = MeterType(meter_type + 1))
+    {
+        if (Meter* meter = GetMeter(meter_type))
+            meter->SetCurrent(meter->Initial());
+    }
 }
 
 void UniverseObject::ClampMeters()

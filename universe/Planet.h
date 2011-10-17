@@ -163,13 +163,15 @@ public:
     void            SetLastTurnAttackedByShip(int turn);///< Sets the last turn this planet was attacked by a ship
     //@}
 
+protected:
+    virtual void            ResetTargetMaxUnpairedMeters();
+
 private:
     void Init();
 
     virtual const Meter*    GetMeter(MeterType type) const;
 
     virtual void            PopGrowthProductionResearchPhase();
-    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
     virtual void            ClampMeters();
 
     virtual Visibility      GetVisibility(int empire_id) const  {return UniverseObject::GetVisibility(empire_id);}

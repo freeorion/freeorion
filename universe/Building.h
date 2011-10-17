@@ -53,14 +53,14 @@ public:
     void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
     //@}
 
-private:
-    virtual void    ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+protected:
+    virtual void    ResetTargetMaxUnpairedMeters();
 
+private:
     std::string m_building_type;
     int         m_planet_id;
     bool        m_ordered_scrapped;
     int         m_produced_by_empire_id;
-
 
     friend class boost::serialization::access;
     template <class Archive>

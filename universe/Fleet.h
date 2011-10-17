@@ -119,9 +119,10 @@ public:
     static const int            ETA_UNKNOWN;                                ///< returned when ETA can't be determined
     static const int            ETA_OUT_OF_RANGE;                           ///< returned by ETA when fleet can't reach destination due to insufficient fuel capacity and lack of fleet resupply on route
 
-private:
-    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+protected:
+    virtual void            ResetTargetMaxUnpairedMeters();
 
+private:
     void                    ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system);   ///< removes any systems on the route after the specified system
 
     ShipIDSet               VisibleContainedObjects(int empire_id) const;   ///< returns the subset of m_ships that is visible to empire with id \a empire_id

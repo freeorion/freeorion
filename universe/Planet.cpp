@@ -648,33 +648,24 @@ void Planet::PopGrowthProductionResearchPhase()
     StateChangedSignal();
 }
 
-void Planet::ResetTargetMaxUnpairedMeters(MeterType meter_type)
+void Planet::ResetTargetMaxUnpairedMeters()
 {
-    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
-    ResourceCenterResetTargetMaxUnpairedMeters(meter_type);
-    PopCenterResetTargetMaxUnpairedMeters(meter_type);
+    UniverseObject::ResetTargetMaxUnpairedMeters();
+    ResourceCenterResetTargetMaxUnpairedMeters();
+    PopCenterResetTargetMaxUnpairedMeters();
 
-    // give planets base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
-        if (Meter* stealth = GetMeter(METER_STEALTH)) {
-            stealth->ResetCurrent();
-            stealth->AddToCurrent(0.01);
-        }
+    // give planets base stealth slightly above zero, so that they can't be
+    // seen from a distance without high detection ability
+    if (Meter* stealth = GetMeter(METER_STEALTH)) {
+        stealth->ResetCurrent();
+        stealth->AddToCurrent(0.01);
+    }
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_SUPPLY)
-        GetMeter(METER_SUPPLY)->ResetCurrent();
-
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_SHIELD)
-        GetMeter(METER_MAX_SHIELD)->ResetCurrent();
-
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_DEFENSE)
-        GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
-
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_TROOPS)
-        GetMeter(METER_MAX_TROOPS)->ResetCurrent();
-
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_DETECTION)
-        GetMeter(METER_DETECTION)->ResetCurrent();
+    GetMeter(METER_SUPPLY)->ResetCurrent();
+    GetMeter(METER_MAX_SHIELD)->ResetCurrent();
+    GetMeter(METER_MAX_DEFENSE)->ResetCurrent();
+    GetMeter(METER_MAX_TROOPS)->ResetCurrent();
+    GetMeter(METER_DETECTION)->ResetCurrent();
 }
 
 void Planet::ClampMeters()

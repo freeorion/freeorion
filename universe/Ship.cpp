@@ -457,28 +457,20 @@ Meter* Ship::GetMeter(MeterType type, const std::string& part_name)
     return retval;
 }
 
-void Ship::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void Ship::ResetTargetMaxUnpairedMeters()
 {
-    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
+    UniverseObject::ResetTargetMaxUnpairedMeters();
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_FUEL)
-        UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_SHIELD)
-        UniverseObject::GetMeter(METER_MAX_SHIELD)->ResetCurrent();
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_MAX_STRUCTURE)
-        UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
+    UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
+    UniverseObject::GetMeter(METER_MAX_SHIELD)->ResetCurrent();
+    UniverseObject::GetMeter(METER_MAX_STRUCTURE)->ResetCurrent();
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_DETECTION)
-        UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_BATTLE_SPEED)
-        UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STARLANE_SPEED)
-        UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
+    UniverseObject::GetMeter(METER_BATTLE_SPEED)->ResetCurrent();
+    UniverseObject::GetMeter(METER_STARLANE_SPEED)->ResetCurrent();
 
-    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
-        if (meter_type == INVALID_METER_TYPE || it->first.first == meter_type)
-            it->second.ResetCurrent();
-    }
+    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
+        it->second.ResetCurrent();
 }
 
 void Ship::ClampMeters()
@@ -496,7 +488,6 @@ void Ship::ClampMeters()
     UniverseObject::GetMeter(METER_BATTLE_SPEED)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_STARLANE_SPEED)->ClampCurrentToRange();
 
-    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it) {
+    for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ClampCurrentToRange();
-    }
 }

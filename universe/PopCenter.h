@@ -53,7 +53,7 @@ protected:
     double  NextTurnHealthGrowth() const;               ///< returns change in actual health for next turn.
 
     double  PopCenterNextTurnMeterValue(MeterType meter_type) const;///< returns estimate of the next turn's current values of meters relevant to this PopCenter
-    void    PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    void    PopCenterResetTargetMaxUnpairedMeters();
     void    PopCenterClampMeters();
 
     void    PopCenterPopGrowthProductionResearchPhase();

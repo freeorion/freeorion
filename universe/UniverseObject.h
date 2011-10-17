@@ -146,15 +146,13 @@ public:
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
-      * Effects that alter these meter(s) act on the object.  if \a meter_type
-      * is INVALID_METER_TYPE, all meters are reset.  if \a meter_type is a
-      * valid meter type, just that meter is reset. */
-    virtual void            ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+      * Effects that alter these meter(s) act on the object. */
+    virtual void            ResetTargetMaxUnpairedMeters();
 
     /** Sets current value of active paired meters (the non-max non-target
       * meters that have a max or target meter associated with them) back to
       * the initial value the meter had at the start of this turn. */
-    virtual void            ResetPairedActiveMeters(MeterType meter_type = INVALID_METER_TYPE);
+    virtual void            ResetPairedActiveMeters();
 
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for

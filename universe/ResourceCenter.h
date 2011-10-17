@@ -55,7 +55,7 @@ protected:
     void            Init();                                                         ///< initialization that needs to be called by derived class after derived class is constructed
 
     double          ResourceCenterNextTurnMeterValue(MeterType meter_type) const;   ///< returns estimate of the next turn's current values of meters relevant to this ResourceCenter
-    void            ResourceCenterResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
+    void            ResourceCenterResetTargetMaxUnpairedMeters();
     void            ResourceCenterClampMeters();
 
     void            ResourceCenterPopGrowthProductionResearchPhase();

@@ -356,7 +356,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
     }
 }
 
-void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetSet& targets) const
+void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) const
 {
     const UniverseObject* source = GetObject(source_id);
 
@@ -373,18 +373,17 @@ void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetS
             if (!meter_effect)
                 continue;
 
-            // only act on target, max, and unpaired active meters
             MeterType meter_type = meter_effect->GetMeterType();
-            if (!((meter_type >= METER_TARGET_POPULATION && meter_type <= METER_MAX_TROOPS) ||
-                  (meter_type >= METER_FOOD_CONSUMPTION && meter_type <= METER_STARLANE_SPEED)))
-            { continue; }
+            const Meter* meter = target->GetMeter(meter_type);
+            if (!meter)
+                continue;
 
             meter_effect->Execute(ScriptingContext(source, target));
         }
     }
 }
 
-void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
+void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
 {
     const UniverseObject* source = GetObject(source_id);
 
@@ -403,15 +402,10 @@ void EffectsGroup::ExecuteTargetMaxUnpairedSetMeter(int source_id, const Targets
             if (!meter_effect)
                 continue;
 
-            // only act on target, max, and unpaired active meters
             MeterType meter_type = meter_effect->GetMeterType();
-            if (!((meter_type >= METER_TARGET_POPULATION && meter_type <= METER_MAX_TROOPS) ||
-                  (meter_type >= METER_FOOD_CONSUMPTION && meter_type <= METER_STARLANE_SPEED)))
-            { continue; }
-
             const Meter* meter = target->GetMeter(meter_type);
             if (!meter)
-                continue;   // some objects might match target conditions, but not actually have the relevant meter
+                continue;
 
             // record pre-effect meter values in accounting info for this effect on this meter
             Effect::AccountingInfo info;
@@ -2117,12 +2111,14 @@ std::string GenerateSitRepMessage::Description() const
 std::string GenerateSitRepMessage::Dump() const
 {
     std::string retval = DumpIndent();
-    retval += "GenerateSitRepMessage message = \"" + m_message_string + "\"";
+    retval += "GenerateSitRepMessage\n";
+    ++g_indent;
+    retval += DumpIndent() + "message = \"" + m_message_string + "\"\n";
 
     if (m_message_parameters.size() == 1) {
-        retval += "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
+        retval += DumpIndent() + "parameters = tag = " + m_message_parameters[0].first + " data = " + m_message_parameters[0].second->Dump() + "\n";
     } else if (!m_message_parameters.empty()) {
-        retval += "parameters = [ ";
+        retval += DumpIndent() + "parameters = [ ";
         for (unsigned int i = 0; i < m_message_parameters.size(); ++i) {
             retval += " tag = " + m_message_parameters[i].first
                    + " data = " + m_message_parameters[i].second->Dump()
@@ -2131,7 +2127,7 @@ std::string GenerateSitRepMessage::Dump() const
         retval += "]\n";
     }
 
-    retval += " affiliation = ";
+    retval += DumpIndent() + "affiliation = ";
     switch (m_affiliation) {
     case AFFIL_SELF:    retval += "TheEmpire";  break;
     case AFFIL_ENEMY:   retval += "EnemyOf";    break;
@@ -2140,7 +2136,8 @@ std::string GenerateSitRepMessage::Dump() const
     default:            retval += "?";          break;
     }
 
-    retval += " empire = " + m_recipient_empire_id->Dump() + "\n";
+    retval += "\n" + DumpIndent() + "empire = " + m_recipient_empire_id->Dump() + "\n";
+    --g_indent;
 
     return retval;
 }

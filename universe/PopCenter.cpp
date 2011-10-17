@@ -183,16 +183,12 @@ double PopCenter::NextTurnHealthGrowth() const
         return std::max(health - 1.0, target_health) - health;
 }
 
-void PopCenter::PopCenterResetTargetMaxUnpairedMeters(MeterType meter_type)
+void PopCenter::PopCenterResetTargetMaxUnpairedMeters()
 {
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_POPULATION)
-        GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
+    GetMeter(METER_TARGET_POPULATION)->ResetCurrent();
+    GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
 
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_HEALTH)
-        GetMeter(METER_TARGET_HEALTH)->ResetCurrent();
-
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_FOOD_CONSUMPTION)
-        GetMeter(METER_FOOD_CONSUMPTION)->ResetCurrent();
+    GetMeter(METER_FOOD_CONSUMPTION)->ResetCurrent();
 }
 
 void PopCenter::PopCenterPopGrowthProductionResearchPhase()

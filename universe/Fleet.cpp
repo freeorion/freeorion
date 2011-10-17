@@ -925,16 +925,17 @@ Fleet::iterator Fleet::begin()
 Fleet::iterator Fleet::end()
 { return m_ships.end(); }
 
-void Fleet::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void Fleet::ResetTargetMaxUnpairedMeters()
 {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     // give fleets base stealth very high, so that they can (almost?) never be
     // seen by empires that don't own them, unless their ships are seen and
     // that visibility is propegated to the fleet that contains the ships
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
-        if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AddToCurrent(2000.0);  // very large addition to make fleets always very stealthy, so that their visibility will always be determined by their contained fleets
+    if (Meter* stealth = GetMeter(METER_STEALTH)) {
+        stealth->ResetCurrent();
+        stealth->AddToCurrent(2000.0);
+    }
 }
 
 void Fleet::CalculateRoute() const

@@ -81,10 +81,12 @@ public:
     Meter*          GetMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}
 
+protected:
+    virtual void    ResetTargetMaxUnpairedMeters();
+
 private:
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
 
-    virtual void    ResetTargetMaxUnpairedMeters(MeterType meter_type = INVALID_METER_TYPE);
     virtual void    ClampMeters();
 
     int             m_design_id;

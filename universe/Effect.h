@@ -89,13 +89,12 @@ public:
     void    Execute(int source_id, const TargetSet& targets) const;
     void    Execute(int source_id, const TargetsAndCause& targets_and_cause,
                     AccountingMap& accounting_map) const;
-    /** execute all non-active meter SetMeter effects (acting on TARGET, MAX,
-      * and unpaired meters) in group.  This is useful for doing meter estimate
-      * updates and effect accounting, for which executing non-meter effects is
-      * neither needed nor useful. */
-    void    ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetSet& targets) const;
-    void    ExecuteTargetMaxUnpairedSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
-                                             AccountingMap& accounting_map) const;
+    /** execute all SetMeter effects  in group.  This is useful for doing meter
+      * estimate updates and effect accounting, for which executing non-meter
+      * effects is neither needed nor useful. */
+    void    ExecuteSetMeter(int source_id, const TargetSet& targets) const;
+    void    ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause,
+                            AccountingMap& accounting_map) const;
 
     const std::string&              StackingGroup() const;
     const std::vector<EffectBase*>& EffectsList() const;

@@ -546,13 +546,16 @@ void System::UpdateOwnership()
 void System::SetLastTurnBattleHere(int turn)
 { m_last_turn_battle_here = turn; }
 
-void System::ResetTargetMaxUnpairedMeters(MeterType meter_type/* = INVALID_METER_TYPE*/)
+void System::ResetTargetMaxUnpairedMeters()
 {
-    UniverseObject::ResetTargetMaxUnpairedMeters(meter_type);
-    // give systems base stealth slightly above zero, so that they can't be seen from a distance without high detection ability
-    if (meter_type == INVALID_METER_TYPE || meter_type == METER_STEALTH)
-        if (Meter* stealth = GetMeter(METER_STEALTH))
-            stealth->AddToCurrent(0.01);
+    UniverseObject::ResetTargetMaxUnpairedMeters();
+
+    // give systems base stealth slightly above zero, so that they can't be
+    // seen from a distance without high detection ability
+    if (Meter* stealth = GetMeter(METER_STEALTH)) {
+        stealth->ResetCurrent();
+        stealth->AddToCurrent(0.01);
+    }
 }
 
 System::orbit_iterator System::begin()

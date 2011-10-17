@@ -790,7 +790,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
 
     // revert all current meter values (which are modified by effects) to
-    // their initial state for this turn, so that max/target/unpaired meter
+    // their initial state for this turn, so meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
@@ -914,7 +914,7 @@ void Universe::UpdateMeterEstimates(const std::vector<int>& objects_vec)
     for (std::vector<int>::const_iterator obj_it = objects_vec.begin(); obj_it != objects_vec.end(); ++obj_it) {
         int cur_object_id = *obj_it;
         m_effect_accounting_map[cur_object_id].clear();
-        objects_set.insert(cur_object_id);    // all meters are accepted, so don't need to check if an object has a particular meter (ignoring case where objects have no meters)
+        objects_set.insert(cur_object_id);
     }
     std::vector<int> final_objects_vec;
     std::copy(objects_set.begin(), objects_set.end(), std::back_inserter(final_objects_vec));
@@ -927,10 +927,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec)
         int obj_id = *obj_it;
         UniverseObject* obj = m_objects.Object(obj_id);
 
-        // Reset max meters to DEFAULT_VALUE
+        // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
         obj->ResetTargetMaxUnpairedMeters();
-
-        // Reset current meters to initial value at start of this turn
         obj->ResetPairedActiveMeters();
 
         // record current value(s) of meters after resetting
@@ -1225,6 +1223,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map
         const boost::shared_ptr<const Effect::EffectsGroup> effects_group = sourced_effects_group.effects_group;
         const Effect::TargetsAndCause& targets_and_cause = targets_it->second;
         Effect::TargetSet targets = targets_and_cause.target_set;
+        if (targets.empty())
+            continue;
 
         std::map<std::string, Effect::TargetSet>::iterator non_stacking_it = executed_nonstacking_effects.find(effects_group->StackingGroup());
         if (non_stacking_it != executed_nonstacking_effects.end()) {
@@ -1238,29 +1238,32 @@ void Universe::ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map
                 }
             }
         }
+        if (targets.empty())
+            continue;
         Effect::TargetsAndCause filtered_targets_and_cause(targets, targets_and_cause.effect_cause);
 
-        //// DEBUG
-        //Logger().debugStream() << "Effect Targets before: ";
-        //for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-        //    Logger().debugStream() << " ... " << (*t_it)->Dump();
-        //// END DEBUG
+        // DEBUG
+        Logger().debugStream() << "ExecuteEffects effectsgroup: " << effects_group->Dump();
+        Logger().debugStream() << "ExecuteEffects Targets before: ";
+        for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+            Logger().debugStream() << " ... " << (*t_it)->Dump();
+        // END DEBUG
 
-        // execute Effects in the EffectsGroup   TODO: pass accountinfo selectively
+        // execute Effects in the EffectsGroup
         if (update_effect_accounting && only_meter_effects)
-            effects_group->ExecuteTargetMaxUnpairedSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
+            effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
         else if (only_meter_effects)
-            effects_group->ExecuteTargetMaxUnpairedSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
+            effects_group->ExecuteSetMeter(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
         else if (update_effect_accounting)
             effects_group->Execute(sourced_effects_group.source_object_id, filtered_targets_and_cause, m_effect_accounting_map);
         else
             effects_group->Execute(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
 
-        //// DEBUG
-        //Logger().debugStream() << "Effect Targets after: ";
-        //for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-        //    Logger().debugStream() << " ... " << (*t_it)->Dump();
-        //// END DEBUG
+        // DEBUG
+        Logger().debugStream() << "ExecuteEffects Targets after: ";
+        for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+            Logger().debugStream() << " ... " << (*t_it)->Dump();
+        // END DEBUG
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
         if (!effects_group->StackingGroup().empty()) {
