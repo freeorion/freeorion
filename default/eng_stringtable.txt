@@ -3554,6 +3554,9 @@ EFFECT_TERRAFORM
 EFFECT_STARVATION
 Famine struck %planet%.
 
+EFFECT_TAME_MONSTER_HATCHED
+A tamed %predefinedshipdesign% is ready for service at %planet%.
+
 # Conditions
 
 DESC_ALL

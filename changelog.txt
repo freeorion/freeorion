@@ -17,14 +17,18 @@ Balancing:
 Content:
  ~ Added techs for increasing the size of troop garrisons.
  ~ Added new 'Planetary Defense' tech catagory
+ ~ Combined some theory techs with their application to simplify the tech tree.
  ~ Made some techs, ship parts, ship hulls, and building types that had very large costs be officially not researchable or producible.
- ~ Added a sitrep message when a planet is terraformed by the Terraforming building.
+ ~ New Sitrep messages: 
+ ~ ~ when a planet is terraformed by the Terraforming building.
+ ~ ~ when a tame space monster is 'born'.
 
 Graphics:
  ~ Made companion stars always visibile in in sidepanel.
  ~ Added clearer fleet icons.
- ~ Made AI colours more distinct.
+ ~ Made AI empires choose more distinctive colors.
  ~ Made structure meter icon distinct from health meter icon.
+ ~ Added icons for some ship parts.
 
 GUI:
  ~ Sorted techs alphabetically in encyclopedia index.

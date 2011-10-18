@@ -798,6 +798,13 @@ Special
             stackinggroup = "KRAKEN_NEST_STACK"
             effects = [
                 CreateShip "SM_KRAKEN_1" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_KRAKEN_1"
+                    ]
+                    empire = Source.Owner
             ]
         EffectsGroup
             scope = Source
@@ -839,7 +846,14 @@ Special
             ]
             stackinggroup = "SNOWFLAKE_NEST_STACK"
             effects = [
-                CreateShip "SM_SNOWFLAKE_1" Source.Owner Species = ""
+                CreateShip "SM_SNOWFLAKE_1" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_SNOWFLAKE_1"
+                    ]
+                    empire = Source.Owner
             ]
         EffectsGroup
             scope = Source
@@ -881,7 +895,14 @@ Special
             ]
             stackinggroup = "JUGGERNAUT_NEST_STACK"
             effects = [
-                CreateShip "SM_JUGGERNAUT_1" Source.Owner Species = ""
+                CreateShip "SM_JUGGERNAUT_1" Source.Owner
+                GenerateSitRepMessage
+                    message = "EFFECT_TAME_MONSTER_HATCHED"
+                    parameters = [
+                        tag = "planet" data = Source.ID
+                        tag = "predefinedshipdesign" data = "SM_JUGGERNAUT_1"
+                    ]
+                    empire = Source.Owner
             ]
         EffectsGroup
             scope = Source
