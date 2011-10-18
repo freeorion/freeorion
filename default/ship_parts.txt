@@ -86,7 +86,7 @@ Part
     buildtime = 2
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"
+    graphic = "icons/ship_parts/weapon-6.png"
 
 Part
     name = "SR_WEAPON_7"
@@ -99,7 +99,7 @@ Part
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"
+    graphic = "icons/ship_parts/weapon-7.png"
 
 Part
     name = "SR_WEAPON_8"
@@ -112,7 +112,7 @@ Part
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"
+    graphic = "icons/ship_parts/weapon-8.png"
     
 Part
     name = "SR_WEAPON_9"
@@ -125,7 +125,7 @@ Part
     buildtime = 3
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"
+    graphic = "icons/ship_parts/weapon-9.png"
     
 Part
     name = "SR_WEAPON_10"
@@ -138,7 +138,7 @@ Part
     buildtime = 4
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"    
+    graphic = "icons/ship_parts/weapon-10.png"    
     
 Part
     name = "SR_LASER"
@@ -633,7 +633,7 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 35
-    graphic = "icons/ship_parts/active_radar.png"
+    graphic = "icons/ship_parts/sensors.png"
 
 Part
     name = "DT_NEUTRON_SCANNER"
@@ -650,7 +650,7 @@ Part
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
             effects = SetDetection Value + 25
-    graphic = "icons/ship_parts/active_radar.png"
+    graphic = "icons/ship_parts/neutron-scanner.png"
 
 Part
     name = "DT_ACTIVE_RADAR"
