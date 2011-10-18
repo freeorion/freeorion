@@ -44,6 +44,7 @@ MonsterFleet
         Not WithinStarlaneJumps 3 Contains And [
             Planet
             OwnedBy AnyEmpire
+        Not Star type = NoStar
         ]
     ]
 

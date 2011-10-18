@@ -2171,7 +2171,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.5
+            activation = AND [
+                Random probability = 0.4
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2185,13 +2188,13 @@ Hull
             ]
             activation = Random probability = 0.025
             effects = [
-                CreateShip "SM_KRAKEN_2"
+                CreateShip "SM_KRAKEN_2" Source.Owner
                 Destroy
             ]
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 30
+            effects = SetDetection Value + 40
     ]
     graphic = ""
     
@@ -2219,7 +2222,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.4
+            activation = AND [
+                Random probability = 0.4
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2237,13 +2243,13 @@ Hull
             ]
             activation = Random probability = 0.025
             effects = [
-                CreateShip "SM_KRAKEN_3"
+                CreateShip "SM_KRAKEN_3" Source.Owner
                 Destroy
             ]
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 30
+            effects = SetDetection Value + 50
     ]
     graphic = ""
     
@@ -2288,7 +2294,7 @@ Hull
         EffectsGroup
             scope = Source
             activation = Source
-            effects = SetDetection Value + 30
+            effects = SetDetection Value + 50
     ]
     graphic = ""
     
@@ -2323,7 +2329,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.6
+            activation = AND [
+                Random probability = 0.6
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "SNOWFLAKE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2337,7 +2346,7 @@ Hull
             ]
             activation = Random probability = 0.03
             effects = [
-                CreateShip "SM_SNOWFLAKE_2"
+                CreateShip "SM_SNOWFLAKE_2" Source.Owner
                 Destroy
             ]
         EffectsGroup
@@ -2371,7 +2380,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = AND [
+                Random probability = 0.3
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2389,7 +2401,7 @@ Hull
             ]
             activation = Random probability = 0.03
             effects = [
-                CreateShip "SM_SNOWFLAKE_3"
+                CreateShip "SM_SNOWFLAKE_3" Source.Owner
                 Destroy
             ]
         EffectsGroup
@@ -2423,7 +2435,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = AND [
+                Random probability = 0.3
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2489,7 +2504,7 @@ Hull
             ]
             activation = Random probability = 0.03
             effects = [
-                CreateShip "SM_JUGGERNAUT_2"
+                CreateShip "SM_JUGGERNAUT_2" Source.Owner
                 Destroy
             ]
         EffectsGroup
@@ -2523,7 +2538,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.3
+            activation = AND [
+                Random probability = 0.3
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
@@ -2541,7 +2559,7 @@ Hull
             ]
             activation = Random probability = 0.02
             effects = [
-                CreateShip "SM_JUGGERNAUT_3"
+                CreateShip "SM_JUGGERNAUT_3" Source.Owner
                 Destroy
             ]
             
@@ -2576,7 +2594,10 @@ Hull
                 Stationary
                 Contains Source
             ]
-            activation = Random probability = 0.25
+            activation = AND [
+                Random probability = 0.25
+                NOT OwnedBy AnyEmpire
+            ]
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System

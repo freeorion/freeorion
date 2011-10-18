@@ -40,6 +40,7 @@ GUI:
 
 Bugs:
  ~ Fixed problem with non-Latin font character rendering.
+ ~ Fixed tamed monsters wandering off on their own initiative.
 
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

@@ -15206,8 +15206,8 @@ Species
         type = Desert       environment = Good
         type = Terran       environment = Good
         type = Ocean        environment = Good
-        type = Asteroids    environment = Good
-        type = Gasgiant     environment = Good
+        type = Asteroids    environment = Adequate
+        type = Gasgiant     environment = Adequate
     ]
     graphic = "icons/species/other-04.png"
 
