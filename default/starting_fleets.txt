@@ -19,8 +19,8 @@ Fleet
         "SD_TROOP_SHIP"
         "SD_MARK1"
         ]
-
-/* Uncomment this to have an overpowered fleet at the start-- for testing.
+        
+/* Uncomment this to have an overpowered fleet at the start for testing.
 
 Fleet
     name = "FN_BATTLE_FLEET"
@@ -29,5 +29,16 @@ Fleet
         "SD_DRAGON_TOOTH"
         "SD_DRAGON_TOOTH"
         "SD_DRAGON_TOOTH"
+    ]
+*/
+
+/* //Uncomment this to test tame monsters.
+
+Fleet
+    name = "FN_BATTLE_FLEET"
+    ships = [
+        "SM_JUGGERNAUT_1"
+        "SM_SNOWFLAKE_1"
+        "SM_KRAKEN_1"
     ]
 */
