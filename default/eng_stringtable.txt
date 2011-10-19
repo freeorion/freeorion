@@ -2743,7 +2743,7 @@ Very Slow Rotation
 SLOW_ROTATION_SPECIAL_DESC
 '''This planet rotates about its axis very slowly, causing very long days and nights.  Infrastructure growth and food production are reduced.
 
-Resource supply length from this planet is decreased by 1, and target farming is decreased by 10.'''
+Resource supply length from this planet is decreased by 1, and target farming is decreased by 10, unless the Orbital Farming tech has been researched.'''
 
 TIDAL_LOCK_SPECIAL
 Tidally Locked Rotation
