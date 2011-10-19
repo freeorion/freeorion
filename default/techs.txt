@@ -2763,7 +2763,7 @@ Tech
     researchturns = 1
     prerequisites = "SHP_SPACE_FLUX_DRIVE"
     unlock = [
-        Item type = ShipPart name = "LR_ANTIMATTER_TORPEDO"
+       // Item type = ShipPart name = "LR_ANTIMATTER_TORPEDO"
         Item type = Building name = "BLD_SHIPYARD_CON_ENGINE"
     ]
 
@@ -2777,7 +2777,7 @@ Tech
     researchturns = 1
     prerequisites = "SHP_TRANSSPACE_DRIVE"
     unlock = [
-        Item type = ShipPart name = "LR_PLASMA_TORPEDO"
+       // Item type = ShipPart name = "LR_PLASMA_TORPEDO"
         Item type = Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"
     ]
 
@@ -3005,53 +3005,6 @@ Tech
     ]
 
 Tech
-    name = "SHP_BIOINTERCEPTOR"
-    description = "SHP_BIOINTERCEPTOR_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 720
-    researchturns = 4
-    prerequisites = [
-        "SHP_MONOCELL_EXP"
-        "SHP_CONT_SYMB"
-    ]
-    unlock = [
-        Item type = ShipPart name = "FI_BIOINTERCEPTOR"
-        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
-        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
-    ]
-
-Tech
-    name = "SHP_BIOBOMBER"
-    description = "SHP_BIOBOMBER_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 2000
-    researchturns = 5
-    prerequisites = [
-        "SHP_CONT_BIOADAPT"
-        "SHP_BIONEUR_SPEC"
-    ]
-    unlock = [
-        Item type = ShipPart name = "FI_BIOBOMBER"
-        Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
-        Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
-    ]
-
-Tech
-    name = "SHP_PULSE_LASER"
-    description = "SHP_PULSE_LASER_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 450
-    researchturns = 1
-    prerequisites = "SHP_TACT_COUNTER"
-    unlock = Item type = ShipPart name = "PD_PULSE_LASER"
-
-Tech
     name = "SHP_LEAD_PLATE"
     description = "SHP_LEAD_PLATE_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -3075,34 +3028,6 @@ Tech
         "PRO_NEUTRONIUM_EXTRACTION"
     ]
     unlock = Item type = ShipPart name = "AR_NEUTRONIUM_PLATE"
-
-Tech
-    name = "SHP_NEUTRONIUM_PLATE_NUC_MIS"
-    description = "SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 80
-    researchturns = 6
-    prerequisites = [
-        "PRO_NEUTRONIUM_EXTRACTION"
-        "SHP_NUCLEAR_MISSILE"
-    ]
-    unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
-
-Tech
-    name = "SHP_NEUTRONIUM_PLATE_SPEC_MIS"
-    description = "SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 520
-    researchturns = 8
-    prerequisites = [
-        "PRO_NEUTRONIUM_EXTRACTION"
-        "SHP_SPECTRAL_MISSILE"
-    ]
-    unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
 
 Tech
     name = "DEF_LIGHTHOUSE"
@@ -3147,28 +3072,6 @@ Tech
                 ResupplyableBy empire = Source.Owner
             ]
             effects = SetStructure Value + 1
-
-Tech
-    name = "SHP_ION_CANNON"
-    description = "SHP_ION_CANNON_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 450
-    researchturns = 1
-    prerequisites = "SHP_SPACE_WEAPON"
-    unlock = Item type = ShipPart name = "SR_ION_CANNON"
-
-Tech
-    name = "SHP_NUCLEAR_MISSILE"
-    description = "SHP_NUCLEAR_MISSILE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 80
-    researchturns = 1
-    prerequisites = "SHP_SPACE_TACTICS"
-    unlock = Item type = ShipPart name = "LR_NUCLEAR_MISSILE"
 
 Tech
     name = "SHP_DEFLECTOR"
@@ -3258,38 +3161,6 @@ Tech
             ]
             effects = SetStealth Value + 5
 
-Tech
-    name = "SHP_INTERCEPTOR"
-    description = "SHP_INTERCEPTOR_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 520
-    researchturns = 2
-    prerequisites = "SHP_TACT_SUPER"
-    unlock = Item type = ShipPart name = "FI_INTERCEPTOR"
-
-Tech
-    name = "SHP_BOMBER"
-    description = "SHP_BOMBER_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 750
-    researchturns = 3
-    prerequisites = "SHP_SURGICAL_DESTRUCT"
-    unlock = Item type = ShipPart name = "FI_BOMBER"
-
-Tech
-    name = "SHP_SPECTRAL_MISSILE"
-    description = "SHP_SPECTRAL_MISSILE_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 520
-    researchturns = 2
-    prerequisites = "SHP_MAX_DISRUPT"
-    unlock = Item type = ShipPart name = "LR_SPECTRAL_MISSILE"
 
 Tech
     name = "SHP_NEUTRON_SCANNER"
@@ -3367,17 +3238,6 @@ Tech
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
 
 Tech
-    name = "SHP_PHASOR"
-    description = "SHP_PHASOR_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 1250
-    researchturns = 4
-    prerequisites = "SHP_STRAT_DEFENSE"
-    unlock = Item type = ShipPart name = "PD_PHASOR"
-
-Tech
     name = "DEF_DEFENSE_NET"
     description = "DEF_DEFENSE_NET_DESC"
     short_description = "DEFENSE_SHORT_DESC"
@@ -3411,17 +3271,6 @@ Tech
             ]
             activation = Not OwnerHasTech "DEF_PLAN_BARRIER_SHLD"
             effects = SetMaxShield Value + 10
-
-Tech
-    name = "SHP_MASS_DRIVER"
-    description = "SHP_MASS_DRIVER_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 520
-    researchturns = 2
-    prerequisites = "SHP_MAX_DISRUPT"
-    unlock = Item type = ShipPart name = "SR_MASS_DRIVER"
 
 Tech
     name = "SHP_SYST_DEF_MINE"
@@ -3602,18 +3451,6 @@ Tech
     unlock = Item type = Building name = "BLD_PLANET_CLOAK"
 
 Tech
-    name = "SHP_DEATH_RAY"
-    description = "SHP_DEATH_RAY_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
-    category = "SHIPS_CATEGORY"
-    researchcost = 9999
-    researchturns = 9999
-    Unresearchable
-    prerequisites = "DEF_HI_ENRG_FOCUS"
-    unlock = Item type = ShipPart name = "SR_DEATH_RAY"
-
-Tech
     name = "SHP_MULTISPEC_SHIELD"
     description = "SHP_MULTISPEC_SHIELD_DESC"
     short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
@@ -3640,5 +3477,175 @@ Tech
             stackinggroup = "PLANET_STEALTH_MOD_STACK"
             effects = SetStealth Value + 9.99
     graphic = ""
-    
-    
+
+
+
+
+
+/*
+------- WEAPON TECHS TEMPORARILY REMOVED
+
+Tech
+    name = "SHP_ION_CANNON"
+    description = "SHP_ION_CANNON_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450
+    researchturns = 1
+    prerequisites = "SHP_SPACE_WEAPON"
+    unlock = Item type = ShipPart name = "SR_ION_CANNON"
+
+Tech
+    name = "SHP_NUCLEAR_MISSILE"
+    description = "SHP_NUCLEAR_MISSILE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 80
+    researchturns = 1
+    prerequisites = "SHP_SPACE_TACTICS"
+    unlock = Item type = ShipPart name = "LR_NUCLEAR_MISSILE"
+
+Tech
+    name = "SHP_MASS_DRIVER"
+    description = "SHP_MASS_DRIVER_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 520
+    researchturns = 2
+    prerequisites = "SHP_MAX_DISRUPT"
+    unlock = Item type = ShipPart name = "SR_MASS_DRIVER"
+
+Tech
+    name = "SHP_DEATH_RAY"
+    description = "SHP_DEATH_RAY_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 9999
+    researchturns = 9999
+    Unresearchable
+    prerequisites = "DEF_HI_ENRG_FOCUS"
+    unlock = Item type = ShipPart name = "SR_DEATH_RAY"
+
+Tech
+    name = "SHP_BIOINTERCEPTOR"
+    description = "SHP_BIOINTERCEPTOR_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 720
+    researchturns = 4
+    prerequisites = [
+        "SHP_MONOCELL_EXP"
+        "SHP_CONT_SYMB"
+    ]
+    unlock = [
+        Item type = ShipPart name = "FI_BIOINTERCEPTOR"
+        Item type = Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
+        Item type = Building name = "BLD_SHIPYARD_ORG_XENO_FAC"
+    ]
+
+Tech
+    name = "SHP_BIOBOMBER"
+    description = "SHP_BIOBOMBER_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 2000
+    researchturns = 5
+    prerequisites = [
+        "SHP_CONT_BIOADAPT"
+        "SHP_BIONEUR_SPEC"
+    ]
+    unlock = [
+        Item type = ShipPart name = "FI_BIOBOMBER"
+        Item type = Building name = "BLD_SHIPYARD_ORG_BIONEUR_MOD"
+        Item type = Building name = "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB"
+    ]
+
+Tech
+    name = "SHP_PULSE_LASER"
+    description = "SHP_PULSE_LASER_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 450
+    researchturns = 1
+    prerequisites = "SHP_TACT_COUNTER"
+    unlock = Item type = ShipPart name = "PD_PULSE_LASER"
+
+Tech
+    name = "SHP_PHASOR"
+    description = "SHP_PHASOR_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 1250
+    researchturns = 4
+    prerequisites = "SHP_STRAT_DEFENSE"
+    unlock = Item type = ShipPart name = "PD_PHASOR"
+
+Tech
+    name = "SHP_NEUTRONIUM_PLATE_NUC_MIS"
+    description = "SHP_NEUTRONIUM_PLATE_NUC_MIS_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 80
+    researchturns = 6
+    prerequisites = [
+        "PRO_NEUTRONIUM_EXTRACTION"
+        "SHP_NUCLEAR_MISSILE"
+    ]
+    unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
+
+Tech
+    name = "SHP_NEUTRONIUM_PLATE_SPEC_MIS"
+    description = "SHP_NEUTRONIUM_PLATE_SPEC_MIS_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 520
+    researchturns = 8
+    prerequisites = [
+        "PRO_NEUTRONIUM_EXTRACTION"
+        "SHP_SPECTRAL_MISSILE"
+    ]
+    unlock = Item type = ShipPart name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
+
+Tech
+    name = "SHP_INTERCEPTOR"
+    description = "SHP_INTERCEPTOR_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 520
+    researchturns = 2
+    prerequisites = "SHP_TACT_SUPER"
+    unlock = Item type = ShipPart name = "FI_INTERCEPTOR"
+
+Tech
+    name = "SHP_BOMBER"
+    description = "SHP_BOMBER_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 750
+    researchturns = 3
+    prerequisites = "SHP_SURGICAL_DESTRUCT"
+    unlock = Item type = ShipPart name = "FI_BOMBER"
+
+Tech
+    name = "SHP_SPECTRAL_MISSILE"
+    description = "SHP_SPECTRAL_MISSILE_DESC"
+    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 520
+    researchturns = 2
+    prerequisites = "SHP_MAX_DISRUPT"
+    unlock = Item type = ShipPart name = "LR_SPECTRAL_MISSILE"
+*/

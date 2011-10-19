@@ -139,360 +139,6 @@ Part
     mountableSlotTypes = External
     location = OwnedBy TheEmpire Source.Owner
     graphic = "icons/ship_parts/weapon-10.png"    
-    
-Part
-    name = "SR_LASER"
-    description = "SR_LASER_DESC"
-    class = ShortRange
-    damage = 1
-    ROF = 1
-    range = 50
-    buildcost = 4
-    buildtime = 1
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/laser.png"
-
-Part
-    name = "SR_ION_CANNON"
-    description = "SR_ION_CANNON_DESC"
-    class = ShortRange
-    damage = 3
-    ROF = 1
-    range = 50
-    buildcost = 10
-    buildtime = 2
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/ion_cannon.png"
-
-Part
-    name = "SR_MASS_DRIVER"
-    description = "SR_MASS_DRIVER_DESC"
-    class = ShortRange
-    damage = 5
-    ROF = 1
-    range = 50
-    buildcost = 15
-    buildtime = 3
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/mass_driver.png"
-
-Part
-    name = "SR_DEATH_RAY"
-    description = "SR_DEATH_RAY_DESC"
-    class = ShortRange
-    damage = 100
-    ROF = 1
-    range = 50
-    buildcost = 150
-    buildtime = 3
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "PD_PULSE_LASER"
-    description = "PD_PULSE_LASER_DESC"
-    class = PointDefense
-    damage = 1
-    ROF = 10
-    range = 20
-    buildcost = 4
-    buildtime = 1
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "PD_PHASOR"
-    description = "PD_PHASOR_DESC"
-    class = PointDefense
-    damage = 2
-    ROF = 20
-    range = 20
-    buildcost = 15
-    buildtime = 2
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "PD_PARTICLE_BEAM"
-    description = "PD_PARTICLE_BEAM_DESC"
-    class = PointDefense
-    damage = 3
-    ROF = 100
-    range = 20
-    buildcost = 150
-    buildtime = 3
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "FI_INTERCEPTOR"
-    description = "FI_INTERCEPTOR_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 1
-    launchrate = 6
-    fighterweaponrange = 20
-    speed = 75
-    stealth = 0
-    structure = 1
-    detection = 1
-    capacity = 12
-    buildcost = 4
-    buildtime = 1
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "FI_BOMBER"
-    description = "FI_BOMBER_DESC"
-    class = Fighters
-    type = Bomber
-    antishipdamage = 2
-    antifighterdamage = 0
-    launchrate = 3
-    fighterweaponrange = 20
-    speed = 60
-    stealth = 0
-    structure = 2
-    detection = 1
-    capacity = 6
-    buildcost = 4
-    buildtime = 1
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "FI_RECON"
-    description = "FI_RECON_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 0
-    launchrate = 6
-    fighterweaponrange = 1
-    speed = 100
-    stealth = 0
-    structure = 1
-    detection = 20
-    capacity = 12
-    buildcost = 20
-    buildtime = 1
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "FI_BIOINTERCEPTOR"
-    description = "FI_BIOINTERCEPTOR_DESC"
-    class = Fighters
-    type = Interceptor
-    antishipdamage = 0
-    antifighterdamage = 3
-    launchrate = 6
-    fighterweaponrange = 25
-    speed = 90
-    stealth = 15
-    structure = 3
-    detection = 40
-    capacity = 36
-    buildcost = 30
-    buildtime = 2
-    mountableSlotTypes = External
-    location = And [
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = ""
-
-Part
-    name = "FI_BIOBOMBER"
-    description = "FI_BIOBOMBER_DESC"
-    class = Fighters
-    type = Bomber
-    antishipdamage = 6
-    antifighterdamage = 0
-    launchrate = 3
-    fighterweaponrange = 25
-    speed = 70
-    stealth = 15
-    structure = 5
-    detection = 40
-    capacity = 18
-    buildcost = 30
-    buildtime = 2
-    mountableSlotTypes = External
-    location = And [
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_BIONEUR_MOD" Or [
-            OwnedBy TheEmpire Source.Owner
-            OwnedBy AllyOf Source.Owner
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = ""
-
-Part
-    name = "LR_NUCLEAR_MISSILE"
-    description = "LR_NUCLEAR_MISSILE"
-    class = Missiles
-    damage = 3
-    ROF = 1
-    range = 125
-    speed = 15
-    stealth = 0
-    structure = 1
-    capacity = 20
-    buildcost = 12
-    buildtime = 4
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = "icons/ship_parts/nuclear_missile.png"
-
-Part
-    name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
-    description = "LR_NEUTRONIUM_PLATE_NUC_MIS_DESC"
-    class = Missiles
-    damage = 3
-    ROF = 1
-    range = 125
-    speed = 15
-    stealth = 0
-    structure = 6
-    capacity = 20
-    buildcost = 60
-    buildtime = 8
-    mountableSlotTypes = External
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_NEUTRONIUM_FORGE"
-        Number low = 1 high = 999 condition = And [
-            OwnedBy TheEmpire Source.Owner
-            Or [
-                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
-                Building name = "BLD_NEUTRONIUM_SYNTH"
-            ]
-        ]
-    ]
-    graphic = ""
-
-Part
-    name = "LR_SPECTRAL_MISSILE"
-    description = "LR_SPECTRAL_MISSILE_DESC"
-    class = Missiles
-    damage = 10
-    ROF = 1
-    range = 125
-    speed = 50
-    stealth = 15
-    structure = 1
-    capacity = 20
-    buildcost = 25
-    buildtime = 6
-    mountableSlotTypes = External
-    location = OwnedBy TheEmpire Source.Owner
-    graphic = ""
-
-Part
-    name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
-    description = "LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC"
-    class = Missiles
-    damage = 10
-    ROF = 1
-    range = 125
-    speed = 50
-    stealth = 15
-    structure = 6
-    capacity = 20
-    buildcost = 125
-    buildtime = 12
-    mountableSlotTypes = External
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-        Contains Building name = "BLD_NEUTRONIUM_FORGE"
-        Number low = 1 high = 999 condition = And [
-            OwnedBy TheEmpire Source.Owner
-            Or [
-                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
-                Building name = "BLD_NEUTRONIUM_SYNTH"
-            ]
-        ]
-    ]
-    graphic = ""
-
-Part
-    name = "LR_ANTIMATTER_TORPEDO"
-    description = "LR_ANTIMATTER_TORPEDO_DESC"
-    class = Missiles
-    damage = 8
-    ROF = 0.5
-    range = 175
-    speed = 50
-    stealth = 0
-    structure = 1
-    capacity = 10
-    buildcost = 50
-    buildtime = 1
-    mountableSlotTypes = External
-    location = And [
-        Number low = 1 high = 999 And [
-            Or [
-                Building "BLD_SHIPYARD_CON_ENGINE"
-                Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            ]
-            Or [
-                OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
-            ]
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = ""
-
-Part
-    name = "LR_PLASMA_TORPEDO"
-    description = "LR_PLASMA_TORPEDO_DESC"
-    class = Missiles
-    damage = 25
-    ROF = 0.5
-    range = 175
-    speed = 75
-    stealth = 25
-    structure = 1
-    capacity = 10
-    buildcost = 300
-    buildtime = 2
-    mountableSlotTypes = External
-    location = And [
-        Number low = 1 high = 999 And [
-            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
-            Or [
-                OwnedBy TheEmpire Source.Owner
-                OwnedBy AllyOf Source.Owner
-            ]
-        ]
-        OwnedBy TheEmpire Source.Owner
-    ]
-    graphic = ""
 
 Part
     name = "AR_LEAD_PLATE"
@@ -861,3 +507,364 @@ Part
             stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
             effects = SetStealth Value - 20
     graphic = ""
+
+
+
+
+/*
+
+------ TEMPORARILY REMOVED WEAPONS
+Part
+    name = "SR_LASER"
+    description = "SR_LASER_DESC"
+    class = ShortRange
+    damage = 1
+    ROF = 1
+    range = 50
+    buildcost = 4
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/laser.png"
+
+Part
+    name = "SR_ION_CANNON"
+    description = "SR_ION_CANNON_DESC"
+    class = ShortRange
+    damage = 3
+    ROF = 1
+    range = 50
+    buildcost = 10
+    buildtime = 2
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/ion_cannon.png"
+
+Part
+    name = "SR_MASS_DRIVER"
+    description = "SR_MASS_DRIVER_DESC"
+    class = ShortRange
+    damage = 5
+    ROF = 1
+    range = 50
+    buildcost = 15
+    buildtime = 3
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/mass_driver.png"
+
+Part
+    name = "SR_DEATH_RAY"
+    description = "SR_DEATH_RAY_DESC"
+    class = ShortRange
+    damage = 100
+    ROF = 1
+    range = 50
+    buildcost = 150
+    buildtime = 3
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "PD_PULSE_LASER"
+    description = "PD_PULSE_LASER_DESC"
+    class = PointDefense
+    damage = 1
+    ROF = 10
+    range = 20
+    buildcost = 4
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "PD_PHASOR"
+    description = "PD_PHASOR_DESC"
+    class = PointDefense
+    damage = 2
+    ROF = 20
+    range = 20
+    buildcost = 15
+    buildtime = 2
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "PD_PARTICLE_BEAM"
+    description = "PD_PARTICLE_BEAM_DESC"
+    class = PointDefense
+    damage = 3
+    ROF = 100
+    range = 20
+    buildcost = 150
+    buildtime = 3
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "FI_INTERCEPTOR"
+    description = "FI_INTERCEPTOR_DESC"
+    class = Fighters
+    type = Interceptor
+    antishipdamage = 0
+    antifighterdamage = 1
+    launchrate = 6
+    fighterweaponrange = 20
+    speed = 75
+    stealth = 0
+    structure = 1
+    detection = 1
+    capacity = 12
+    buildcost = 4
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "FI_BOMBER"
+    description = "FI_BOMBER_DESC"
+    class = Fighters
+    type = Bomber
+    antishipdamage = 2
+    antifighterdamage = 0
+    launchrate = 3
+    fighterweaponrange = 20
+    speed = 60
+    stealth = 0
+    structure = 2
+    detection = 1
+    capacity = 6
+    buildcost = 4
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "FI_RECON"
+    description = "FI_RECON_DESC"
+    class = Fighters
+    type = Interceptor
+    antishipdamage = 0
+    antifighterdamage = 0
+    launchrate = 6
+    fighterweaponrange = 1
+    speed = 100
+    stealth = 0
+    structure = 1
+    detection = 20
+    capacity = 12
+    buildcost = 20
+    buildtime = 1
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "FI_BIOINTERCEPTOR"
+    description = "FI_BIOINTERCEPTOR_DESC"
+    class = Fighters
+    type = Interceptor
+    antishipdamage = 0
+    antifighterdamage = 3
+    launchrate = 6
+    fighterweaponrange = 25
+    speed = 90
+    stealth = 15
+    structure = 3
+    detection = 40
+    capacity = 36
+    buildcost = 30
+    buildtime = 2
+    mountableSlotTypes = External
+    location = And [
+        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB" Or [
+            OwnedBy TheEmpire Source.Owner
+            OwnedBy AllyOf Source.Owner
+        ]
+        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_XENO_FAC" Or [
+            OwnedBy TheEmpire Source.Owner
+            OwnedBy AllyOf Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    graphic = ""
+
+Part
+    name = "FI_BIOBOMBER"
+    description = "FI_BIOBOMBER_DESC"
+    class = Fighters
+    type = Bomber
+    antishipdamage = 6
+    antifighterdamage = 0
+    launchrate = 3
+    fighterweaponrange = 25
+    speed = 70
+    stealth = 15
+    structure = 5
+    detection = 40
+    capacity = 18
+    buildcost = 30
+    buildtime = 2
+    mountableSlotTypes = External
+    location = And [
+        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_COMP_MAT_CHAMB" Or [
+            OwnedBy TheEmpire Source.Owner
+            OwnedBy AllyOf Source.Owner
+        ]
+        Number low = 1 high = 999 Building "BLD_SHIPYARD_ORG_BIONEUR_MOD" Or [
+            OwnedBy TheEmpire Source.Owner
+            OwnedBy AllyOf Source.Owner
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    graphic = ""
+
+Part
+    name = "LR_NUCLEAR_MISSILE"
+    description = "LR_NUCLEAR_MISSILE"
+    class = Missiles
+    damage = 3
+    ROF = 1
+    range = 125
+    speed = 15
+    stealth = 0
+    structure = 1
+    capacity = 20
+    buildcost = 12
+    buildtime = 4
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = "icons/ship_parts/nuclear_missile.png"
+
+Part
+    name = "LR_NEUTRONIUM_PLATE_NUC_MIS"
+    description = "LR_NEUTRONIUM_PLATE_NUC_MIS_DESC"
+    class = Missiles
+    damage = 3
+    ROF = 1
+    range = 125
+    speed = 15
+    stealth = 0
+    structure = 6
+    capacity = 20
+    buildcost = 60
+    buildtime = 8
+    mountableSlotTypes = External
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        Number low = 1 high = 999 condition = And [
+            OwnedBy TheEmpire Source.Owner
+            Or [
+                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
+                Building name = "BLD_NEUTRONIUM_SYNTH"
+            ]
+        ]
+    ]
+    graphic = ""
+
+Part
+    name = "LR_SPECTRAL_MISSILE"
+    description = "LR_SPECTRAL_MISSILE_DESC"
+    class = Missiles
+    damage = 10
+    ROF = 1
+    range = 125
+    speed = 50
+    stealth = 15
+    structure = 1
+    capacity = 20
+    buildcost = 25
+    buildtime = 6
+    mountableSlotTypes = External
+    location = OwnedBy TheEmpire Source.Owner
+    graphic = ""
+
+Part
+    name = "LR_NEUTRONIUM_PLATE_SPEC_MIS"
+    description = "LR_NEUTRONIUM_PLATE_SPEC_MIS_DESC"
+    class = Missiles
+    damage = 10
+    ROF = 1
+    range = 125
+    speed = 50
+    stealth = 15
+    structure = 6
+    capacity = 20
+    buildcost = 125
+    buildtime = 12
+    mountableSlotTypes = External
+    location = And [
+        OwnedBy TheEmpire Source.Owner
+        Contains Building name = "BLD_NEUTRONIUM_FORGE"
+        Number low = 1 high = 999 condition = And [
+            OwnedBy TheEmpire Source.Owner
+            Or [
+                Building name = "BLD_NEUTRONIUM_EXTRACTOR"
+                Building name = "BLD_NEUTRONIUM_SYNTH"
+            ]
+        ]
+    ]
+    graphic = ""
+
+Part
+    name = "LR_ANTIMATTER_TORPEDO"
+    description = "LR_ANTIMATTER_TORPEDO_DESC"
+    class = Missiles
+    damage = 8
+    ROF = 0.5
+    range = 175
+    speed = 50
+    stealth = 0
+    structure = 1
+    capacity = 10
+    buildcost = 50
+    buildtime = 1
+    mountableSlotTypes = External
+    location = And [
+        Number low = 1 high = 999 And [
+            Or [
+                Building "BLD_SHIPYARD_CON_ENGINE"
+                Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+            ]
+            Or [
+                OwnedBy TheEmpire Source.Owner
+                OwnedBy AllyOf Source.Owner
+            ]
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    graphic = ""
+
+Part
+    name = "LR_PLASMA_TORPEDO"
+    description = "LR_PLASMA_TORPEDO_DESC"
+    class = Missiles
+    damage = 25
+    ROF = 0.5
+    range = 175
+    speed = 75
+    stealth = 25
+    structure = 1
+    capacity = 10
+    buildcost = 300
+    buildtime = 2
+    mountableSlotTypes = External
+    location = And [
+        Number low = 1 high = 999 And [
+            Building "BLD_SHIPYARD_CON_ADV_ENGINE"
+            Or [
+                OwnedBy TheEmpire Source.Owner
+                OwnedBy AllyOf Source.Owner
+            ]
+        ]
+        OwnedBy TheEmpire Source.Owner
+    ]
+    graphic = ""
+*/
