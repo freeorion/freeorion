@@ -391,7 +391,9 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         int owner = obj->Owner();
 
         // for all empires, can they attack this object?
-        for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin(); empire_it != combat_info.empire_ids.end(); ++empire_it) {
+        for (std::set<int>::const_iterator empire_it = combat_info.empire_ids.begin();
+             empire_it != combat_info.empire_ids.end(); ++empire_it)
+        {
             int empire_id = *empire_it;
             if (empire_id != owner) {
                 empire_valid_targets[empire_id].push_back(object_id);

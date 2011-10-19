@@ -1092,8 +1092,34 @@ SetOwner::~SetOwner()
 void SetOwner::Execute(const ScriptingContext& context) const
 {
     int empire_id = m_empire_id->Eval(context);
-    if (context.effect_target)
-        context.effect_target->SetOwner(empire_id);
+    if (!context.effect_target)
+        return;
+    int initial_owner = context.effect_target->Owner();
+    if (initial_owner == empire_id)
+        return;
+
+    context.effect_target->SetOwner(empire_id);
+
+    if (Ship* ship = universe_object_cast<Ship*>(context.effect_target)) {
+        // assigning ownership of a ship requires updating the containing
+        // fleet, or splitting ship off into a new fleet at the same location
+        Fleet* fleet = GetObject<Fleet>(ship->FleetID());
+        if (!fleet)
+            return;
+        if (fleet->Owner() == empire_id)
+            return;
+
+        // move ship into new fleet
+        if (System* system = GetObject<System>(ship->SystemID()))
+            CreateNewFleet(system, ship);
+        else
+            CreateNewFleet(ship->X(), ship->Y(), ship);
+
+        // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
+        // in case that would reval something to the recipient that shouldn't be...
+        if (fleet->Empty())
+            GetUniverse().EffectDestroy(fleet->ID());
+    }
 }
 
 std::string SetOwner::Description() const

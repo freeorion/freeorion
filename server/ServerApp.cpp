@@ -1763,7 +1763,9 @@ void ServerApp::ProcessCombats()
 
         // find which human players are involved in this battle
         std::set<int> human_empires_involved;
-        for (std::set<int>::const_iterator empires_with_fleets_it = empire_ids.begin(); empires_with_fleets_it != empire_ids.end(); ++empires_with_fleets_it) {
+        for (std::set<int>::const_iterator empires_with_fleets_it = empire_ids.begin();
+             empires_with_fleets_it != empire_ids.end(); ++empires_with_fleets_it)
+        {
             int empire_id = *empires_with_fleets_it;
             if (human_controlled_empire_ids.find(empire_id) != human_controlled_empire_ids.end())
                 human_empires_involved.insert(empire_id);
