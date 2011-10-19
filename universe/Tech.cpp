@@ -151,19 +151,13 @@ Tech::Tech(const TechInfo& tech_info,
 {}
 
 const std::string& Tech::Name() const
-{
-    return m_name;
-}
+{ return m_name; }
 
 const std::string& Tech::Description() const
-{
-    return m_description;
-}
+{ return m_description; }
 
 const std::string& Tech::ShortDescription() const
-{
-    return m_short_description;
-}
+{ return m_short_description; }
 
 std::string Tech::Dump() const
 {
@@ -235,14 +229,10 @@ std::string Tech::Dump() const
 }
 
 TechType Tech::Type() const
-{
-    return m_type;
-}
+{ return m_type; }
 
 const std::string& Tech::Category() const
-{
-    return m_category;
-}
+{ return m_category; }
 
 double Tech::ResearchCost() const
 {
@@ -253,9 +243,7 @@ double Tech::ResearchCost() const
 }
 
 double Tech::PerTurnCost() const
-{
-    return ResearchCost() / std::max(1, ResearchTime());
-}
+{ return ResearchCost() / std::max(1, ResearchTime()); }
 
 int Tech::ResearchTime() const
 {
@@ -266,34 +254,22 @@ int Tech::ResearchTime() const
 }
 
 bool Tech::Researchable() const
-{
-    return m_researchable;
-}
+{ return m_researchable; }
 
 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects() const
-{
-    return m_effects;
-}
+{ return m_effects; }
 
 const std::set<std::string>& Tech::Prerequisites() const
-{
-    return m_prerequisites;
-}
+{ return m_prerequisites; }
 
 const std::string& Tech::Graphic() const
-{
-    return m_graphic;
-}
+{ return m_graphic; }
 
 const std::vector<ItemSpec>& Tech::UnlockedItems() const
-{
-    return m_unlocked_items;
-}
+{ return m_unlocked_items; }
 
 const std::set<std::string>& Tech::UnlockedTechs() const
-{
-    return m_unlocked_techs;
-}
+{ return m_unlocked_techs; }
 
 
 ///////////////////////////////////////////////////////////
@@ -337,14 +313,7 @@ TechCategory::TechCategory(const std::string& name_, const std::string& graphic_
     name(name_),
     graphic(graphic_),
     colour(colour_)
-{
-    //Logger().debugStream() << "TechCategory::TechCategory(" << name << ", " << graphic << ", [" 
-    //                           << static_cast<unsigned int>(colour.r) << ", "
-    //                           << static_cast<unsigned int>(colour.g) << ", "
-    //                           << static_cast<unsigned int>(colour.b) << ", "
-    //                           << static_cast<unsigned int>(colour.a)
-    //                       << "])";
-}
+{}
 
 
 ///////////////////////////////////////////////////////////
@@ -402,9 +371,7 @@ std::vector<const Tech*> TechManager::AllNextTechs(const std::set<std::string>& 
 }
 
 const Tech* TechManager::CheapestNextTech(const std::set<std::string>& known_techs)
-{
-    return Cheapest(AllNextTechs(known_techs));
-}
+{ return Cheapest(AllNextTechs(known_techs)); }
 
 std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::string>& known_techs,
                                                        const std::string& desired_tech)
@@ -417,29 +384,19 @@ std::vector<const Tech*> TechManager::NextTechsTowards(const std::set<std::strin
 
 const Tech* TechManager::CheapestNextTechTowards(const std::set<std::string>& known_techs,
                                                  const std::string& desired_tech)
-{
-    return Cheapest(NextTechsTowards(known_techs, desired_tech));
-}
+{ return Cheapest(NextTechsTowards(known_techs, desired_tech)); }
 
 TechManager::iterator TechManager::begin() const
-{
-    return m_techs.get<NameIndex>().begin();
-}
+{ return m_techs.get<NameIndex>().begin(); }
 
 TechManager::iterator TechManager::end() const
-{
-    return m_techs.get<NameIndex>().end();
-}
+{ return m_techs.get<NameIndex>().end(); }
 
 TechManager::category_iterator TechManager::category_begin(const std::string& name) const
-{
-    return m_techs.get<CategoryIndex>().lower_bound(name);
-}
+{ return m_techs.get<CategoryIndex>().lower_bound(name); }
 
 TechManager::category_iterator TechManager::category_end(const std::string& name) const
-{
-    return m_techs.get<CategoryIndex>().upper_bound(name);
-}
+{ return m_techs.get<CategoryIndex>().upper_bound(name); }
 
 TechManager::TechManager()
 {
@@ -509,8 +466,10 @@ TechManager::TechManager()
     }
 
     std::string illegal_dependency_str = FindIllegalDependencies();
-    if (!illegal_dependency_str.empty())
+    if (!illegal_dependency_str.empty()) {
         Logger().errorStream() << illegal_dependency_str;
+        throw std::runtime_error(illegal_dependency_str.c_str());
+    }
 
     std::string cycle_str = FindFirstDependencyCycle();
     if (!cycle_str.empty()) {
@@ -522,7 +481,8 @@ TechManager::TechManager()
     for (iterator it = begin(); it != end(); ++it) {
         const std::set<std::string>& prereqs = (*it)->Prerequisites();
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
-            const_cast<Tech*>(GetTech(*prereq_it))->m_unlocked_techs.insert((*it)->Name());
+            if (Tech* tech = const_cast<Tech*>(GetTech(*prereq_it)))
+                tech->m_unlocked_techs.insert((*it)->Name());
         }
     }
 
@@ -552,16 +512,21 @@ TechManager::~TechManager()
 std::string TechManager::FindIllegalDependencies()
 {
     assert(!m_techs.empty());
-
     std::string retval;
     for (iterator it = begin(); it != end(); ++it) {
         const Tech* tech = *it;
+        if (!tech) {
+            std::stringstream stream;
+            stream << "ERROR: Missing tech referenced in techs.txt for unknown reasons...";
+            return stream.str();
+        }
         const std::set<std::string>& prereqs = tech->Prerequisites();
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
             const Tech* prereq_tech = GetTech(*prereq_it);
             if (!prereq_tech) {
-                retval += "ERROR: Tech \"" + tech->Name() + "\" requires a missing or malformed tech as its prerequisite.\"\n";
-                continue;
+                std::stringstream stream;
+                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << *prereq_it << "\" as its prerequisite.";
+                return stream.str();
             }
             //TechType prereq_type = prereq_tech->Type();
             //if (tech_type == TT_THEORY && prereq_type != TT_THEORY)
@@ -576,6 +541,7 @@ std::string TechManager::FindIllegalDependencies()
 std::string TechManager::FindFirstDependencyCycle()
 {
     assert(!m_techs.empty());
+    static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
     for (iterator it = begin(); it != end(); ++it) {
@@ -590,33 +556,38 @@ std::string TechManager::FindFirstDependencyCycle()
             // checked; otherwise, push all its unchecked prerequisites onto the stack.
             const Tech* current_tech = stack.back();
             unsigned int starting_stack_size = stack.size();
-            const std::set<std::string>& prereqs = current_tech->Prerequisites();
-            for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
+
+            const std::set<std::string>& prereqs = (current_tech ? current_tech->Prerequisites() : EMPTY_STRING_SET);
+            for (std::set<std::string>::const_iterator prereq_it = prereqs.begin();
+                 prereq_it != prereqs.end(); ++prereq_it)
+            {
                 const Tech* prereq_tech = GetTech(*prereq_it);
-                if (checked_techs.find(prereq_tech) == checked_techs.end()) {
-                    // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
-                    std::vector<const Tech*>::reverse_iterator stack_duplicate_it =
-                        std::find(stack.rbegin(), stack.rend(), prereq_tech);
-                    if (stack_duplicate_it != stack.rend()) {
-                        std::stringstream stream;
-                        std::string current_tech_name = prereq_tech->Name();
-                        stream << "ERROR: Tech dependency cycle found in techs.txt (A <-- B means A is a prerequisite of B): \""
-                               << current_tech_name << "\"";
-                        for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
-                             stack_it != stack_duplicate_it;
-                             ++stack_it) {
-                            if ((*stack_it)->Prerequisites().find(current_tech_name) != (*stack_it)->Prerequisites().end()) {
-                                current_tech_name = (*stack_it)->Name();
-                                stream << " <-- \"" << current_tech_name << "\"";
-                            }
+                if (!prereq_tech || checked_techs.find(prereq_tech) != checked_techs.end())
+                    continue;
+
+                // since this is not a checked prereq, see if it is already in the stack somewhere; if so, we have a cycle
+                std::vector<const Tech*>::reverse_iterator stack_duplicate_it =
+                    std::find(stack.rbegin(), stack.rend(), prereq_tech);
+                if (stack_duplicate_it != stack.rend()) {
+                    std::stringstream stream;
+                    std::string current_tech_name = prereq_tech->Name();
+                    stream << "ERROR: Tech dependency cycle found in techs.txt (A <-- B means A is a prerequisite of B): \""
+                            << current_tech_name << "\"";
+                    for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
+                            stack_it != stack_duplicate_it;
+                            ++stack_it) {
+                        if ((*stack_it)->Prerequisites().find(current_tech_name) != (*stack_it)->Prerequisites().end()) {
+                            current_tech_name = (*stack_it)->Name();
+                            stream << " <-- \"" << current_tech_name << "\"";
                         }
-                        stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
-                        return stream.str();
-                    } else {
-                        stack.push_back(prereq_tech);
                     }
+                    stream << " <-- \"" << prereq_tech->Name() << "\" ... ";
+                    return stream.str();
+                } else {
+                    stack.push_back(prereq_tech);
                 }
             }
+
             if (starting_stack_size == stack.size()) {
                 stack.pop_back();
                 checked_techs.insert(current_tech);
@@ -632,17 +603,27 @@ std::string TechManager::FindRedundantDependency()
 
     for (iterator it = begin(); it != end(); ++it) {
         const Tech* tech = *it;
+        if (!tech) {
+            std::stringstream stream;
+            stream << "ERROR: Missing tech referenced in techs.txt for unknown reasons...";
+            return stream.str();
+        }
         std::set<std::string> prereqs = tech->Prerequisites();
         std::map<std::string, std::string> techs_unlocked_by_prereqs;
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
             const Tech* prereq_tech = GetTech(*prereq_it);
+            if (!prereq_tech) {
+                std::stringstream stream;
+                stream << "ERROR: Tech \"" << tech->Name() << "\" requires a missing or malformed tech \"" << *prereq_it << "\" as its prerequisite.";
+                return stream.str();
+            }
             AllChildren(prereq_tech, techs_unlocked_by_prereqs);
         }
         for (std::set<std::string>::const_iterator prereq_it = prereqs.begin(); prereq_it != prereqs.end(); ++prereq_it) {
             std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(*prereq_it);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
-                stream << "ERROR: Redundant dependency found in tech.txt (A <-- B means A is a prerequisite of B): "
+                stream << "ERROR: Redundant dependency found in techs.txt (A <-- B means A is a prerequisite of B): "
                        << map_it->second << " <-- " << map_it->first << ", "
                        << map_it->first << " <-- " << (*it)->Name() << ", "
                        << map_it->second << " <-- " << (*it)->Name() << "; remove the " << map_it->second << " <-- " << (*it)->Name()
@@ -674,16 +655,10 @@ TechManager& TechManager::GetTechManager()
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
 TechManager& GetTechManager()
-{
-    return TechManager::GetTechManager();
-}
+{ return TechManager::GetTechManager(); }
 
 const Tech* GetTech(const std::string& name)
-{
-    return GetTechManager().GetTech(name);
-}
+{ return GetTechManager().GetTech(name); }
 
 const TechCategory* GetTechCategory(const std::string& name)
-{
-    return GetTechManager().GetTechCategory(name);
-}
+{ return GetTechManager().GetTechCategory(name); }

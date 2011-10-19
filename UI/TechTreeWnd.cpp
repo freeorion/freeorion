@@ -678,10 +678,10 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
 {
     SetChildClippingMode(ClipToClient);
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-    if (empire && empire->TechResearched(m_tech->Name())) {
+    if (empire && m_tech && empire->TechResearched(m_tech->Name())) {
         SetColor(ClientUI::KnownTechFillColor());
         m_border_color = ClientUI::KnownTechTextAndBorderColor();
-    } else if (empire && empire->ResearchableTech(m_tech->Name())) {
+    } else if (empire && m_tech && empire->ResearchableTech(m_tech->Name())) {
         SetColor(ClientUI::ResearchableTechFillColor());
         m_border_color = ClientUI::ResearchableTechTextAndBorderColor();
     } else {
@@ -690,7 +690,7 @@ TechTreeWnd::TechNavigator::TechControl::TechControl(const Tech* tech) :
     }
     GG::Pt client_size = ClientSize();
     m_name_text = new GG::TextControl(GG::X0, GG::Y0, GG::X(10), GG::Y(3*ClientUI::Pts()/2 + 4),
-                                      UserString(m_tech->Name()), ClientUI::GetFont(),
+                                      (m_tech ? UserString(m_tech->Name()) : UserString("ERROR")), ClientUI::GetFont(),
                                       m_border_color, GG::FORMAT_LEFT);
     AttachChild(m_name_text);
 }
@@ -1498,9 +1498,11 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
             continue;
         for (std::set<std::string>::const_iterator prereq_it = (*it)->Prerequisites().begin();
              prereq_it != (*it)->Prerequisites().end();
-             ++prereq_it) {
-            if (!TechVisible(GetTech(*prereq_it)))
-            continue;
+             ++prereq_it)
+        {
+            const Tech* tech = GetTech(*prereq_it);
+            if (!tech || !TechVisible(tech))
+                continue;
             m_graph.AddEdge(*prereq_it, (*it)->Name());
         }
     }
@@ -1583,6 +1585,8 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
 
 bool TechTreeWnd::LayoutPanel::TechVisible(const Tech* tech)
 {
+    if (!tech)
+        return false;
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (!empire)
         return true;
