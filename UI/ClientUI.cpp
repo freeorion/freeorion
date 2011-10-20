@@ -125,20 +125,22 @@ boost::shared_ptr<GG::Texture> ClientUI::BuildingTexture(const std::string& buil
 boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name)
 {
     std::string icon_filename;
-    const TechCategory* category = GetTechCategory(category_name);
-    if (category)
-        icon_filename = category->graphic;
-    return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / icon_filename, true);
+
+    if (const TechCategory* category = GetTechCategory(category_name))
+        return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / category->graphic, true);
+    else
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
 }
 
 boost::shared_ptr<GG::Texture> ClientUI::TechTexture(const std::string& tech_name)
 {
     const Tech* tech = GetTechManager().GetTech(tech_name);
-    std::string texture_name = "";
-    if (tech)
+    std::string texture_name;
+    if (tech) {
         texture_name = tech->Graphic();
-    if (texture_name.empty())
-        return CategoryIcon(tech->Category());
+        if (texture_name.empty())
+            return CategoryIcon(tech->Category());
+    }
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
@@ -192,68 +194,51 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type)
     switch (meter_type) {
     case METER_POPULATION:
     case METER_TARGET_POPULATION:
-        icon_filename = "pop.png";
-        break;
+        icon_filename = "pop.png";          break;
     case METER_FARMING:
     case METER_TARGET_FARMING:
-        icon_filename = "farming.png";
-        break;
+        icon_filename = "farming.png";      break;
     case METER_INDUSTRY:
     case METER_TARGET_INDUSTRY:
-        icon_filename = "industry.png";
-        break;
+        icon_filename = "industry.png";     break;
     case METER_RESEARCH:
     case METER_TARGET_RESEARCH:
-        icon_filename = "research.png";
-        break;
+        icon_filename = "research.png";     break;
     case METER_TRADE:
     case METER_TARGET_TRADE:
-        icon_filename = "trade.png";
-        break;
+        icon_filename = "trade.png";        break;
     case METER_MINING:
     case METER_TARGET_MINING:
-        icon_filename = "mining.png";
-        break;
+        icon_filename = "mining.png";       break;
     case METER_CONSTRUCTION:
     case METER_TARGET_CONSTRUCTION:
-        icon_filename = "construction.png";
-        break;
+        icon_filename = "construction.png"; break;
     case METER_HEALTH:
     case METER_TARGET_HEALTH:
-        icon_filename = "health.png";
-        break;
+        icon_filename = "health.png";       break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
-        icon_filename = "structure.png";
-        break;
+        icon_filename = "structure.png";    break;
     case METER_FUEL:
     case METER_MAX_FUEL:
-        icon_filename = "fuel.png";
-        break;
+        icon_filename = "fuel.png";         break;
     case METER_FOOD_CONSUMPTION:
-        icon_filename = "hunger.png";
-        break;
+        icon_filename = "hunger.png";       break;
     case METER_SUPPLY:
-        icon_filename = "supply.png";
-        break;
+        icon_filename = "supply.png";       break;
     case METER_STEALTH:
-        icon_filename = "stealth.png";
-        break;
+        icon_filename = "stealth.png";      break;
     case METER_DETECTION:
-        icon_filename = "detection.png";
-        break;
+        icon_filename = "detection.png";    break;
     case METER_SHIELD:
     case METER_MAX_SHIELD:
-        icon_filename = "shield.png";
-        break;
+        icon_filename = "shield.png";       break;
     case METER_DEFENSE:
     case METER_MAX_DEFENSE:
-        icon_filename = "defense.png";
-        break;
+        icon_filename = "defense.png";      break;
     case METER_TROOPS:
     case METER_MAX_TROOPS:
-        icon_filename = "troops.png";
-        break;
+        icon_filename = "troops.png";       break;
     default:
         break;
     }

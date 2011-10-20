@@ -64,9 +64,9 @@ namespace {
 
         // this space intentionally left blank to line up with ProductionWnd's QueueRow implementation
 
-        double per_turn_cost = tech->PerTurnCost();
+        double per_turn_cost = tech ? tech->PerTurnCost() : 1;
         double progress = 0.0;
-        if (empire)
+        if (empire && tech)
             progress = empire->ResearchStatus(tech->Name());
         if (progress == -1.0)
             progress = 0.0;
@@ -90,7 +90,7 @@ namespace {
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech(tech),
         m_in_progress(turn_spending),
-        m_total_turns(tech->ResearchTime()),
+        m_total_turns(m_tech ? m_tech->ResearchTime() : 1),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
@@ -110,24 +110,29 @@ namespace {
         Resize(GG::Pt(w, HEIGHT));
 
 
-        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor()) : ClientUI::ResearchableTechTextAndBorderColor();
+        GG::Clr clr = m_in_progress ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
+                                    : ClientUI::ResearchableTechTextAndBorderColor();
         boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
 
         GG::Y top(MARGIN);
         GG::X left(MARGIN);
 
 
-        m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE), ClientUI::TechTexture(m_tech->Name()), GG::GRAPHIC_FITGRAPHIC);
-        m_icon->SetColor(ClientUI::CategoryColor(m_tech->Category()));
+        m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
+                                       ClientUI::TechTexture(m_tech ? m_tech->Name() : ""),
+                                       GG::GRAPHIC_FITGRAPHIC);
+        m_icon->SetColor(m_tech ? ClientUI::CategoryColor(m_tech->Category()) : GG::Clr());
 
         left += m_icon->Width() + MARGIN;
 
-        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN), UserString(tech->Name()), font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
+        m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
+                                          UserString(m_tech ? m_tech->Name() : "ERROR"),
+                                          font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech->ResearchTime(),
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, m_tech ? m_tech->ResearchTime() : 1,
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
@@ -142,7 +147,8 @@ namespace {
 
         left += TURNS_AND_COST_WIDTH;
 
-        std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER") : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
+        std::string turns_left_text = turns_left < 0 ? UserString("TECH_TURNS_LEFT_NEVER")
+                                                     : str(FlexibleFormat(UserString("TECH_TURNS_LEFT_STR")) % turns_left);
         m_turns_remaining_text = new GG::TextControl(left, top, TURNS_AND_COST_WIDTH, GG::Y(FONT_PTS + MARGIN),
                                                      turns_left_text, font, clr, GG::FORMAT_RIGHT);
         m_turns_remaining_text->ClipText(true);

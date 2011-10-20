@@ -313,7 +313,8 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->allocated_rp && it->allocated_rp < it->tech->ResearchCost() && 1 < it->turns_left)
+        double research_cost = it->tech ? it->tech->ResearchCost() : 1.0;
+        if (it->allocated_rp && it->allocated_rp < research_cost && 1 < it->turns_left)
             return it;
     }
     return end();

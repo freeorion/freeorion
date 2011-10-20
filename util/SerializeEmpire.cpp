@@ -11,14 +11,12 @@ void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
     std::string tech_name;
     if (Archive::is_saving::value) {
-        assert(tech);
-        tech_name = tech->Name();
+        tech_name = tech ? tech->Name() : "";
     }
     ar  & BOOST_SERIALIZATION_NVP(tech_name)
         & BOOST_SERIALIZATION_NVP(allocated_rp)
         & BOOST_SERIALIZATION_NVP(turns_left);
     if (Archive::is_loading::value) {
-        assert(tech_name != "");
         tech = GetTech(tech_name);
     }
 }
