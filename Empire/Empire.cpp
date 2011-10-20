@@ -261,39 +261,25 @@ ResearchQueue::ResearchQueue() :
 {}
 
 bool ResearchQueue::InQueue(const Tech* tech) const
-{
-    return find(tech) != end();
-}
+{ return find(tech) != end(); }
 
 int ResearchQueue::ProjectsInProgress() const
-{
-    return m_projects_in_progress;
-}
+{ return m_projects_in_progress; }
 
 double ResearchQueue::TotalRPsSpent() const
-{
-    return m_total_RPs_spent;
-}
+{ return m_total_RPs_spent; }
 
 bool ResearchQueue::empty() const
-{
-    return !m_queue.size();
-}
+{ return !m_queue.size(); }
 
 unsigned int ResearchQueue::size() const
-{
-    return m_queue.size();
-}
+{ return m_queue.size(); }
 
 ResearchQueue::const_iterator ResearchQueue::begin() const
-{
-    return m_queue.begin();
-}
+{ return m_queue.begin(); }
 
 ResearchQueue::const_iterator ResearchQueue::end() const
-{
-    return m_queue.end();
-}
+{ return m_queue.end(); }
 
 ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
 {
@@ -409,14 +395,10 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
 }
 
 void ResearchQueue::push_back(const Tech* tech)
-{
-    m_queue.push_back(Element(tech, 0.0, -1));
-}
+{ m_queue.push_back(Element(tech, 0.0, -1)); }
 
 void ResearchQueue::insert(iterator it, const Tech* tech)
-{
-    m_queue.insert(it, Element(tech, 0.0, -1));
-}
+{ m_queue.insert(it, Element(tech, 0.0, -1)); }
 
 void ResearchQueue::erase(iterator it)
 {
@@ -434,14 +416,10 @@ ResearchQueue::iterator ResearchQueue::find(const Tech* tech)
 }
 
 ResearchQueue::iterator ResearchQueue::begin()
-{
-    return m_queue.begin();
-}
+{ return m_queue.begin(); }
 
 ResearchQueue::iterator ResearchQueue::end()
-{
-    return m_queue.end();
-}
+{ return m_queue.end(); }
 
 ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 {
@@ -2412,8 +2390,31 @@ void Empire::ClearSitRep()
     m_sitrep_entries.clear();
 }
 
+namespace {
+    // remove nonexistant / invalid techs from queue
+    void SanitizeResearchQueue(ResearchQueue& queue) {
+        bool done = false;
+        while (!done) {
+            ResearchQueue::iterator it = queue.begin();
+            while (true) {
+                if (it == queue.end()) {
+                    done = true;        // got all the way through the queue without finding an invalid tech
+                    break;
+                } else if (!it->tech) {
+                    queue.erase(it);    // remove invalid tech, end inner loop without marking as finished
+                    break;
+                } else {
+                    ++it;               // check next element
+                }
+            }
+        }
+    }
+}
+
 void Empire::CheckResearchProgress()
 {
+    SanitizeResearchQueue(m_research_queue);
+
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
     // m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
     std::vector<const Tech*> to_erase;
