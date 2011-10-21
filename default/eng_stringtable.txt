@@ -3557,6 +3557,9 @@ Famine struck %planet%.
 EFFECT_TAME_MONSTER_HATCHED
 A tamed %predefinedshipdesign% is ready for service at %planet%.
 
+EFFECT_GATEWAY_VOID_DESTROY
+The %buildingtype% at %planet% destroyed all that entered the system.
+
 # Conditions
 
 DESC_ALL

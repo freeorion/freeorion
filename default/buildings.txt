@@ -1131,8 +1131,16 @@ BuildingType
                 Fleet
             ]
             activation = Source
-            effects = Destroy
-
+            effects = [
+                Destroy
+                GenerateSitRepMessage
+                    message = "EFFECT_GATEWAY_VOID_DESTROY"
+                    parameters = [
+                        tag = "buildingtype" data = "BLD_GATEWAY_VOID"
+                        tag = "planet" data = Source.PlanetID
+                    ]
+                    empire = Source.Owner
+            ]
         EffectsGroup
             scope = And [
                 ContainedBy Contains Source
