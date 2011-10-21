@@ -872,7 +872,8 @@ void EncyclopediaDetailPanel::Refresh() {
             % design->StarlaneSpeed()
             % design->Fuel()
             % design->ColonyCapacity()
-            % design->TroopCapacity());
+            % design->TroopCapacity()
+            % design->Attack());
 
         // ships of this design
         std::vector<const Ship*> all_ships = objects.FindObjects<Ship>();
