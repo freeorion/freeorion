@@ -2162,7 +2162,8 @@ std::string GenerateSitRepMessage::Dump() const
     default:            retval += "?";          break;
     }
 
-    retval += "\n" + DumpIndent() + "empire = " + m_recipient_empire_id->Dump() + "\n";
+    if (m_recipient_empire_id)
+        retval += "\n" + DumpIndent() + "empire = " + m_recipient_empire_id->Dump() + "\n";
     --g_indent;
 
     return retval;

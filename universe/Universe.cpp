@@ -624,7 +624,15 @@ short Universe::JumpDistance(int system1_id, int system2_id) const
     //Logger().debugStream() << "JumpDistance(" << system1_id << ": " << GetObject(system1_id)->Name() << ", "
     //                                          << system2_id << ": " << GetObject(system2_id)->Name() << "): "
     //                                          << m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
-    short jumps = m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
+    if (system1_id == UniverseObject::INVALID_OBJECT_ID || system2_id == UniverseObject::INVALID_OBJECT_ID)
+        return -1;
+    short jumps = -1;
+    try {
+        jumps = m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
+    } catch (const std::out_of_range&) {
+        Logger().errorStream() << "Universe::JumpsDistance passed invalid system id";
+        return -1;
+    }
     if (jumps == SHRT_MAX)  // value returned for no valid path
         return -1;
     return jumps;
