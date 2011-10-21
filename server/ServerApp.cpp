@@ -1300,6 +1300,8 @@ namespace {
         planet->GetMeter(METER_TARGET_HEALTH)->SetCurrent(20.0);
         planet->BackPropegateMeters();
 
+        planet->SetAllocatedFood(Meter::LARGE_VALUE);
+
         planet->SetOwner(empire_id);
 
         const std::set<int>& planet_buildings = planet->Buildings();
