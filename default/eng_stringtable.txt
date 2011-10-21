@@ -232,28 +232,33 @@ Monster
 SM_KRILL_1
 Small Krill Swarm
 SM_KRILL_1_DESC
-Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_KRILL_2
 Medium Krill Swarm
 SM_KRILL_2_DESC
-Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Though normally not aggressive, their numbers become a hazard for navigation, and block resupply. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_KRILL_3
 Large Krill Swarm
 SM_KRILL_3_DESC
-Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. When in large enough numbers they begin to become agressive towards ships. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_KRILL_4
 Plauge of Krill
 SM_KRILL_4_DESC
-Space Krill are small vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.
+'''Space Krill are small, vaguely insectile organisms that feed on the dust and rocks far from any gravity well.  Individually simple, Krill communicate via coherent light, allowing the swarm to coordinate and calculate trajectories. Krill behavior changes radically when a critical population is reached-- somewhere in the 10s of millions. The normally flighty Krill, become aggressive, attacking ships and destroying orbital structures. The high quantity of low-G resources found in an asteroid belt, provide Krill with the perfect conditions to rapidly multiply.'''
 
 SM_TREE
-Solar Tree
+Dyson Forest
 
 SM_TREE_DESC
-Large branching space-born tree with filamentous branches. Solar Trees gradually grow larger and tougher.
+'''A Dyson Forest is made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to erradicate.  At intervals they may send out a seed through the star-lanes to colonize other stars.'''
+SM_SEED
+Dyson Seed
+
+SM_SEED_DESC
+Dyson Forests intermittantly produce a star-lane capable seed, sent away to found a new forest around other stars.
 
 SM_FLOATER
 Floater
@@ -270,7 +275,7 @@ Terrifying giant monster that prowls space for prey.
 SM_DRONE
 Drone
 SM_DRONE_DESC
-Tool of a forgotten war, the Drone Fighter still fulfills it's original purpose, mindlessly attacking any ships in range.
+'''Tool of a forgotten war, the Drone Fighter still fulfills it's original purpose: mindlessly attacking any ships in range.'''
 
 SM_DRONE_FACTORY
 Drone Factory
