@@ -4416,6 +4416,7 @@ void Universe::GenerateHomeworlds(int players, std::vector<int>& homeworld_plane
         Planet* planet = new Planet(PT_TERRAN, SZ_MEDIUM);
         planet_id = Insert(planet);
         planet->Rename(planet_name);
+        planet->SetAllocatedFood(Meter::LARGE_VALUE);
         system->Insert(planet, home_orbit);
 
         homeworld_planet_ids.push_back(planet_id);
