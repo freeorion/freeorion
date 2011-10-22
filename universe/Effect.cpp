@@ -1110,10 +1110,13 @@ void SetOwner::Execute(const ScriptingContext& context) const
             return;
 
         // move ship into new fleet
+        Fleet* new_fleet = 0;
         if (System* system = GetObject<System>(ship->SystemID()))
-            CreateNewFleet(system, ship);
+            new_fleet = CreateNewFleet(system, ship);
         else
-            CreateNewFleet(ship->X(), ship->Y(), ship);
+            new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
+        if (new_fleet)
+            new_fleet->SetNextAndPreviousSystems(fleet->NextSystemID(), fleet->PreviousSystemID());
 
         // if old fleet is empty, destroy it.  Don't reassign ownership of fleet
         // in case that would reval something to the recipient that shouldn't be...
@@ -1941,6 +1944,10 @@ void SetDestination::Execute(const ScriptingContext& context) const
     // find shortest path for fleet's owner
     std::pair<std::list<int>, double> short_path = universe.ShortestPath(start_system_id, destination_system_id, target_fleet->Owner());
     const std::list<int>& route_list = short_path.first;
+
+    // reject empty move paths (no path exists).
+    if (route_list.empty())
+        return;
 
     // check destination validity: disallow movement that's out of range
     std::pair<int, int> eta = target_fleet->ETA(target_fleet->MovePath(route_list));
