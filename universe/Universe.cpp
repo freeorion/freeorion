@@ -1463,9 +1463,12 @@ void Universe::UpdateEmpireObjectVisibilities()
             // target is seen by the detector with partial visibility.
             double detect_range = detection - stealth;
             //Logger().debugStream() << "dist2: " << dist2 << " detect range: " << detect_range;
-            if (detect_range >= 0.0 &&
-                dist2 <= detect_range*detect_range &&
-                target_visibility_to_detector < VIS_PARTIAL_VISIBILITY)
+            if (target_visibility_to_detector < VIS_PARTIAL_VISIBILITY &&
+                (
+                 (detect_range >= 0.0 && dist2 <= detect_range*detect_range) ||
+                 (dist2 == 0.0 && universe_object_cast<const System*>(target))
+                )
+               )
             {
                 target_visibility_to_detector = VIS_PARTIAL_VISIBILITY;
             }
