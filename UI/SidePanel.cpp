@@ -280,7 +280,19 @@ namespace {
         return light_colors;
     }
 
-    void        RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture, double initial_rotation, double RPM, double axial_tilt, double shininess, StarType star_type) {
+    const std::vector<float>& StarLightColour(StarType star_type) {
+        static std::vector<float> white(4, 0.0f);
+        const std::map<StarType, std::vector<float> >& colour_map = GetStarLightColors();
+        std::map<StarType, std::vector<float> >::const_iterator it = colour_map.find(star_type);
+        if (it != colour_map.end())
+            return it->second;
+        return white;
+    }
+
+    void        RenderPlanet(const GG::Pt& center, int diameter, boost::shared_ptr<GG::Texture> texture,
+                             double initial_rotation, double RPM, double axial_tilt, double shininess,
+                             StarType star_type)
+    {
         glPushAttrib(GL_ENABLE_BIT | GL_PIXEL_MODE_BIT | GL_TEXTURE_BIT | GL_SCISSOR_BIT);
         HumanClientApp::GetApp()->Exit2DMode();
 
@@ -301,9 +313,10 @@ namespace {
         glLightfv(GL_LIGHT0, GL_POSITION, light_position);
         glEnable(GL_LIGHTING);
         glEnable(GL_LIGHT0);
-        const std::map<StarType, std::vector<float> >& star_light_colors = GetStarLightColors();
-        glLightfv(GL_LIGHT0, GL_DIFFUSE, &star_light_colors.find(star_type)->second[0]);
-        glLightfv(GL_LIGHT0, GL_SPECULAR, &star_light_colors.find(star_type)->second[0]);
+
+        const std::vector<float>& colour = StarLightColour(star_type);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, &colour[0]);
+        glLightfv(GL_LIGHT0, GL_SPECULAR, &colour[0]);
         glEnable(GL_TEXTURE_2D);
 
         glTranslated(Value(center.x), Value(center.y), -(diameter / 2 + 1));

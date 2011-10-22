@@ -13,8 +13,8 @@
 #include <cmath>
 
 namespace {
-    const double MAX_SHIP_SPEED = 500.0;            // max allowed speed of ship movement
-    const double FLEET_MOVEMENT_EPSILON = 1.0e-1;   // how close a fleet needs to be to a system to have arrived in the system
+    const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement
+    const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
 
     bool SystemHasNoVisibleStarlanes(int system_id, int empire_id) {
         return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id);
