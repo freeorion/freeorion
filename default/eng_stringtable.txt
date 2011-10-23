@@ -2239,6 +2239,7 @@ ENC_SHIP_DESIGN_DESCRIPTION_STR
 Hull: %2%
 Parts: %3%
 
+Total Attack Damage: %17%
 Structure: %8%
 Shields: %9%
 Detection: %10%
@@ -2246,13 +2247,16 @@ Stealth: %11%
 Fuel Capacity: %14%
 Colonization Capacity: %15%
 Troops: %16%
-Direct Fire Parts: %4%
-Missile Parts: %5%
-Fighter Bays: %6%
-Point Defense Parts: %7%
-Battle Speed: %12%
 Starlane Speed: %13%
 '''
+
+## Temporarily removed
+# Direct Fire Parts: %4%
+# Missile Parts: %5%
+# Fighter Bays: %6%
+# Point Defense Parts: %7%
+# Battle Speed: %12%
+##
 
 ENC_TECH_DETAIL_UNLOCKS_SECTION_STR
 '''
@@ -3563,7 +3567,7 @@ EFFECT_TAME_MONSTER_HATCHED
 A tamed %predefinedshipdesign% is ready for service at %planet%.
 
 EFFECT_GATEWAY_VOID_DESTROY
-The %buildingtype% at %planet% destroyed all that entered the system.
+The %buildingtype% at %planet% destroyed the %fleet% fleet.
 
 # Conditions
 
@@ -5954,9 +5958,12 @@ PART_DESC_STRENGTH
 Strength: %1%
 
 PART_DESC_DIRECT_FIRE_STATS
-'''Damage: %1%
-Rate of Fire: %2% shots/turn
-Range: %3%'''
+'''Attack Damage: %1%
+'''
+
+## TEMPORARILY HIDDEN
+# Rate of Fire: %2% shots/turn
+# Range: %3%
 
 PART_DESC_LR_STATS
 '''Damage: %1%

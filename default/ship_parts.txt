@@ -278,7 +278,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 35
+            effects = SetDetection Value + 350
     graphic = "icons/ship_parts/sensors.png"
 
 Part
@@ -295,7 +295,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 25
+            effects = SetDetection Value + 250
     graphic = "icons/ship_parts/neutron-scanner.png"
 
 Part
@@ -312,7 +312,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 10
+            effects = SetDetection Value + 100
     graphic = "icons/ship_parts/active_radar.png"
 
 Part
@@ -329,7 +329,7 @@ Part
             scope = Source
             activation = Source
             stackinggroup = "DETECTION_PART_STACK"
-            effects = SetDetection Value + 3
+            effects = SetDetection Value + 30
     graphic = "icons/ship_parts/optical_sensors.png"
 
 Part

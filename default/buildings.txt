@@ -1138,6 +1138,7 @@ BuildingType
                     parameters = [
                         tag = "buildingtype" data = "BLD_GATEWAY_VOID"
                         tag = "planet" data = Source.PlanetID
+                        tag = "fleet" data = Target.ID
                     ]
                     empire = Source.Owner
             ]

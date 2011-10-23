@@ -4,7 +4,7 @@ Hull
     speed = 50
     starlaneSpeed = 70
     fuel = 3
-    stealth = 1
+    stealth = 10
     structure = 100
     buildCost = 1000
     buildTime = 10
@@ -32,7 +32,7 @@ Hull
     speed = 10
     starlaneSpeed = 0
     fuel = 0
-    stealth = 1
+    stealth = 10
     structure = 5
     buildCost = 1
     buildTime = 1
@@ -105,7 +105,7 @@ Hull
     speed = 50
     starlaneSpeed = 65
     fuel = 3
-    stealth = 1.5
+    stealth = 15
     structure = 20
     buildCost = 100
     buildTime = 2
@@ -272,7 +272,7 @@ Hull
     speed = 70
     starlaneSpeed = 80
     fuel = 3
-    stealth = 1
+    stealth = 10
     structure = 10
     buildCost = 125
     buildTime = 2
@@ -405,7 +405,7 @@ Hull
     speed = 25
     starlaneSpeed = 80
     fuel = 3
-    stealth = 1
+    stealth = 10
     structure = 60
     buildCost = 750
     buildTime = 15
@@ -556,7 +556,7 @@ Hull
     speed = 30
     starlaneSpeed = 60
     fuel = 4
-    stealth = 1
+    stealth = 10
     structure = 40
     buildCost = 100
     buildTime = 2
@@ -643,7 +643,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 4
-    stealth = 10
+    stealth = 100
     structure = 5
     buildCost = 30
     buildTime = 2
@@ -742,7 +742,7 @@ Hull
     speed = 70
     starlaneSpeed = 60
     fuel = 4
-    stealth = 10
+    stealth = 100
     structure = 3
     buildCost = 50
     buildTime = 3
@@ -1575,7 +1575,7 @@ Hull
     speed = 5
     starlaneSpeed = 20
     fuel = 3
-    stealth = 1.5
+    stealth = 15
     structure = 10
     buildCost = 1
     buildTime = 2
@@ -1622,7 +1622,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 1
+    stealth = 10
     structure = 10
     buildCost = 1
     buildTime = 2
@@ -1657,7 +1657,7 @@ Hull
     speed = 20
     starlaneSpeed = 30
     fuel = 5
-    stealth = 1
+    stealth = 10
     structure = 40
     buildCost = 1
     buildTime = 2
@@ -1696,7 +1696,7 @@ Hull
     speed = 20
     starlaneSpeed = 0
     fuel = 0
-    stealth = 1
+    stealth = 10
     structure = 40
     buildCost = 1
     buildTime = 2
@@ -1717,7 +1717,7 @@ Hull
     speed = 12
     starlaneSpeed = 30
     fuel = 3
-    stealth = 1.5
+    stealth = 15
     structure = 5
     buildCost = 1
     buildTime = 2
@@ -1750,7 +1750,7 @@ Hull
     speed = 0
     starlaneSpeed = 0
     fuel = 0
-    stealth = 1
+    stealth = 10
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -1792,7 +1792,7 @@ Hull
     speed = 7
     starlaneSpeed = 30
     fuel = 5
-    stealth = 1.5
+    stealth = 15
     structure = 5
     buildCost = 1
     buildTime = 1
@@ -1888,7 +1888,7 @@ Hull
     speed = 5
     starlaneSpeed = 30
     fuel = 6
-    stealth = 1
+    stealth = 10
     structure = 10
     buildCost = 1
     buildTime = 1
@@ -1990,7 +1990,7 @@ Hull
     speed = 5
     starlaneSpeed = 25
     fuel = 5
-    stealth = 1
+    stealth = 10
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2092,7 +2092,7 @@ Hull
     speed = 5
     starlaneSpeed = 20
     fuel = 4
-    stealth = 1
+    stealth = 10
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -2145,7 +2145,7 @@ Hull
     speed = 20
     starlaneSpeed = 40
     fuel = 4
-    stealth = 1
+    stealth = 10
     structure = 18
     buildCost = 1
     buildTime = 1
@@ -2204,7 +2204,7 @@ Hull
     speed = 20
     starlaneSpeed = 45
     fuel = 4
-    stealth = 1
+    stealth = 10
     structure = 35
     buildCost = 1
     buildTime = 1
@@ -2259,7 +2259,7 @@ Hull
     speed = 20
     starlaneSpeed = 50
     fuel = 4
-    stealth = 1
+    stealth = 10
     structure = 50
     buildCost = 1
     buildTime = 1
@@ -2306,7 +2306,7 @@ Hull
     speed = 50
     starlaneSpeed = 55
     fuel = 5
-    stealth = 1.5
+    stealth = 15
     structure = 12
     buildCost = 1
     buildTime = 1
@@ -2362,7 +2362,7 @@ Hull
     speed = 50
     starlaneSpeed = 60
     fuel = 5
-    stealth = 1
+    stealth = 10
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2417,7 +2417,7 @@ Hull
     speed = 50
     starlaneSpeed = 65
     fuel = 5
-    stealth = 1
+    stealth = 10
     structure = 40
     buildCost = 1
     buildTime = 1
@@ -2464,7 +2464,7 @@ Hull
     speed = 20
     starlaneSpeed = 30
     fuel = 3
-    stealth = 1
+    stealth = 10
     structure = 25
     buildCost = 1
     buildTime = 1
@@ -2520,7 +2520,7 @@ Hull
     speed = 20
     starlaneSpeed = 25
     fuel = 2
-    stealth = 1
+    stealth = 10
     structure = 40
     buildCost = 1
     buildTime = 1
@@ -2576,7 +2576,7 @@ Hull
     speed = 20
     starlaneSpeed = 25
     fuel = 5
-    stealth = 1
+    stealth = 10
     structure = 60
     buildCost = 1
     buildTime = 1
