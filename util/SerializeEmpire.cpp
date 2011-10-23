@@ -9,16 +9,9 @@
 template <class Archive>
 void ResearchQueue::Element::serialize(Archive& ar, const unsigned int version)
 {
-    std::string tech_name;
-    if (Archive::is_saving::value) {
-        tech_name = tech ? tech->Name() : "";
-    }
-    ar  & BOOST_SERIALIZATION_NVP(tech_name)
+    ar  & BOOST_SERIALIZATION_NVP(name)
         & BOOST_SERIALIZATION_NVP(allocated_rp)
         & BOOST_SERIALIZATION_NVP(turns_left);
-    if (Archive::is_loading::value) {
-        tech = GetTech(tech_name);
-    }
 }
 
 template void ResearchQueue::Element::serialize<FREEORION_OARCHIVE_TYPE>(FREEORION_OARCHIVE_TYPE&, const unsigned int);

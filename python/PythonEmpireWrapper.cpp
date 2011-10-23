@@ -5,10 +5,11 @@
 #include <boost/python.hpp>
 
 namespace {
-    // Research queue tests whether it contains a Tech but Python needs a __contains__ function that takes a
-    // *Queue::Element.  This helper functions take an Element and returns the associated Tech.
-    const Tech*         TechFromResearchQueueElement(const ResearchQueue::Element& element) {
-        return element.tech;
+    // Research queue tests whether it contains a Tech by name, but Python needs
+    // a __contains__ function that takes a *Queue::Element.  This helper
+    // functions take an Element and returns the associated Tech name string.
+    const std::string&  TechFromResearchQueueElement(const ResearchQueue::Element& element) {
+        return element.name;
     }
 
     std::vector<std::string> (TechManager::*TechNamesVoid)(void) const =                                    &TechManager::TechNames;
@@ -104,8 +105,8 @@ namespace FreeOrionPython {
 
             .def("population",                      &Empire::Population)
 
-            .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,return_internal_reference<>()))
-            .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,return_internal_reference<>()))
+            .add_property("fleetSupplyableSystemIDs",   make_function(&Empire::FleetSupplyableSystemIDs,    return_internal_reference<>()))
+            .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
         ;
 
 
@@ -113,7 +114,7 @@ namespace FreeOrionPython {
         // Research Queue //
         ////////////////////
         class_<ResearchQueue::Element>("researchQueueElement", no_init)
-            .add_property("tech",                   make_getter(&ResearchQueue::Element::tech,      return_value_policy<reference_existing_object>()))
+            .def_readonly("tech",                   &ResearchQueue::Element::name)
             .def_readonly("allocation",             &ResearchQueue::Element::allocated_rp)
             .def_readonly("turnsLeft",              &ResearchQueue::Element::turns_left)
         ;
@@ -124,11 +125,6 @@ namespace FreeOrionPython {
             .add_property("size",                   &ResearchQueue::size)
             .add_property("empty",                  &ResearchQueue::empty)
             .def("inQueue",                         &ResearchQueue::InQueue)
-            .def("inQueue",                         make_function(
-                                                        boost::bind(&ResearchQueue::InQueue, _1, boost::bind(&GetTech, _2)),
-                                                        return_value_policy<return_by_value>(),
-                                                        boost::mpl::vector<bool, const ResearchQueue*, const std::string&>()
-                                                    ))
             .def("__contains__",                    make_function(
                                                         boost::bind(InQueueFromResearchQueueElementFunc, _1, _2),
                                                         return_value_policy<return_by_value>(),

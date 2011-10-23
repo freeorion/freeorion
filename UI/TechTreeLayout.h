@@ -64,7 +64,7 @@ public:
     class Column;
     TechTreeLayout( );
     ~TechTreeLayout( );
-    void AddNode(const Tech *tech, GG::X width, GG::Y height);
+    void AddNode(const std::string& tech, GG::X width, GG::Y height);
     const Node* GetNode(const std::string & name) const;
     void AddEdge(const std::string & parent, const std::string & child);
     const GG::X GetWidth( ) const;
@@ -86,30 +86,29 @@ private:
 
 class TechTreeLayout::Edge {
 public:
-    Edge(const Tech* from, const Tech* to);
+    Edge(const std::string& from, const std::string& to);
     ~Edge( );
-    const Tech* GetTechFrom( ) const;
-    const Tech* GetTechTo( ) const;
+    const std::string& GetTechFrom( ) const;
+    const std::string& GetTechTo( ) const;
     void ReadPoints(std::vector<std::pair<double,double> > & points) const;
     void AddPoint(double x, double y);
     void Debug( ) const;
 private:
     std::vector<std::pair<double,double> > m_points; // point list of connection
-    const Tech* m_from; //source tech
-    const Tech* m_to;   //destination tech
+    std::string m_from; //source tech
+    std::string m_to;   //destination tech
 };
 
 class TechTreeLayout::Node {
     friend class TechTreeLayout;
     friend class Column;
 public:
-    Node(const Tech *tech, GG::X width, GG::Y height);
+    Node(const std::string& tech, GG::X width, GG::Y height);
     ~Node( );
     const GG::X GetX() const;
     const GG::Y GetY() const;
     unsigned int GetDepth() const;
-    const Tech *GetTech( ) const;
-    const std::string& GetName() const;
+    const std::string& GetTech( ) const;
     const std::vector<Edge*>& GetOutEdges( ) const;
     int GetNumberOfChildren( ) const;
     int GetNumberOfParents( ) const;
@@ -132,8 +131,7 @@ private:
     void CalculateDepth( int depth );
     int m_depth; // depth 1 available at beginning 2 one requisite etc
     int m_row;   //layout row, every node is organized in a straight tabelle system
-    const Tech* m_tech;     // associated tech
-    std::string m_name;     // name
+    std::string m_tech;      // name
     double m_x;              // left border
     double m_y;              // top border
     double m_width;          // width

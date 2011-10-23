@@ -14,10 +14,10 @@ class TechTreeWnd : public GG::Wnd
 {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signal<void (const Tech*)>                      TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
-    typedef boost::signal<void (const Tech*)>                      TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
-    typedef boost::signal<void (const Tech*)>                      TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
-    typedef boost::signal<void (const std::vector<const Tech*>&)>  AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
+    typedef boost::signal<void (const std::string&)>                TechBrowsedSignalType;              ///< emitted when a technology is single-clicked
+    typedef boost::signal<void (const std::string&)>                TechClickedSignalType;              ///< emitted when the mouse rolls over a technology
+    typedef boost::signal<void (const std::string&)>                TechDoubleClickedSignalType;        ///< emitted when a technology is double-clicked
+    typedef boost::signal<void (const std::vector<std::string>&)>   AddMultipleTechsToQueueSignalType;  ///< emitted to enqueue multiple techs simultaneously, without updating the GUI after each
     //@}
 
     /** \name Structors */ //@{
@@ -33,7 +33,7 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void                    Update(const Tech* tech = 0);
+    void                    Update();
     void                    Clear();
     void                    Reset();
     void                    SetScale(double scale);
@@ -56,9 +56,9 @@ public:
     void                    ShowTreeView();
     void                    ShowListView();
 
-    void                    CenterOnTech(const Tech* tech);
-    void                    SetEncyclopediaTech(const Tech* tech);
-    void                    SelectTech(const Tech* tech);
+    void                    CenterOnTech(const std::string& tech_name);
+    void                    SetEncyclopediaTech(const std::string& tech_name);
+    void                    SelectTech(const std::string& tech_name);
     //@}
 
     static const GG::Y          NAVIGATOR_AND_DETAIL_HEIGHT;
@@ -74,9 +74,9 @@ private:
     class LayoutPanel;
     class TechListBox;
 
-    void                    TechBrowsedSlot(const Tech* tech);
-    void                    TechClickedSlot(const Tech* tech);
-    void                    TechDoubleClickedSlot(const Tech* tech);
+    void                    TechBrowsedSlot(const std::string& tech_name);
+    void                    TechClickedSlot(const std::string& tech_name);
+    void                    TechDoubleClickedSlot(const std::string& tech_name);
 
     TechTreeControls*           m_tech_tree_controls;
     EncyclopediaDetailPanel*    m_enc_detail_panel;

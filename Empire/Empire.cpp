@@ -46,22 +46,21 @@ namespace {
 
         for (ResearchQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
             // get details on what is being researched...
-            const Tech* tech = it->tech;
+            const Tech* tech = GetTech(it->name);
             if (!tech) {
                 Logger().errorStream() << "SetTechQueueElementSpending found null tech on research queue?!";
                 continue;
             }
-            const std::string name = tech->Name();
-            std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(name);
+            std::map<std::string, TechStatus>::const_iterator status_it = research_status.find(it->name);
             if (status_it == research_status.end()) {
-                Logger().errorStream() << "SetTechQueueElementSpending couldn't find tech with name " << name << " in the research status map";
+                Logger().errorStream() << "SetTechQueueElementSpending couldn't find tech with name " << it->name << " in the research status map";
                 continue;
             }
             bool researchable = false;
             if (status_it->second == TS_RESEARCHABLE) researchable = true;
 
             if (researchable) {
-                std::map<std::string, double>::const_iterator progress_it = research_progress.find(name);
+                std::map<std::string, double>::const_iterator progress_it = research_progress.find(it->name);
                 double progress = progress_it == research_progress.end() ? 0.0 : progress_it->second;
                 double RPs_needed = tech->ResearchCost() - progress;
                 double RPs_per_turn_limit = tech->ResearchCost() / std::max(tech->ResearchTime(), 1);
@@ -240,13 +239,13 @@ namespace {
 // ResearchQueue::Element             //
 ////////////////////////////////////////
 ResearchQueue::Element::Element() :
-    tech(0),
+    name(),
     allocated_rp(0.0),
     turns_left(0)
 {}
 
-ResearchQueue::Element::Element(const Tech* tech_, double spending_, int turns_left_) :
-    tech(tech_),
+ResearchQueue::Element::Element(const std::string& name_, double spending_, int turns_left_) :
+    name(name_),
     allocated_rp(spending_),
     turns_left(turns_left_)
 {}
@@ -260,8 +259,8 @@ ResearchQueue::ResearchQueue() :
     m_total_RPs_spent(0.0)
 {}
 
-bool ResearchQueue::InQueue(const Tech* tech) const
-{ return find(tech) != end(); }
+bool ResearchQueue::InQueue(const std::string& tech_name) const
+{ return find(tech_name) != end(); }
 
 int ResearchQueue::ProjectsInProgress() const
 { return m_projects_in_progress; }
@@ -281,10 +280,10 @@ ResearchQueue::const_iterator ResearchQueue::begin() const
 ResearchQueue::const_iterator ResearchQueue::end() const
 { return m_queue.end(); }
 
-ResearchQueue::const_iterator ResearchQueue::find(const Tech* tech) const
+ResearchQueue::const_iterator ResearchQueue::find(const std::string& tech_name) const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        if (it->tech == tech)
+        if (it->name == tech_name)
             return it;
     }
     return end();
@@ -299,9 +298,15 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const
 ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const
 {
     for (const_iterator it = begin(); it != end(); ++it) {
-        double research_cost = it->tech ? it->tech->ResearchCost() : 1.0;
-        if (it->allocated_rp && it->allocated_rp < research_cost && 1 < it->turns_left)
-            return it;
+        if (const Tech* tech = GetTech(it->name)) {
+            if (it->allocated_rp &&
+                it->allocated_rp < tech->ResearchCost()
+                && 1 < it->turns_left)
+            {
+                return it;
+            }
+            return end();
+        }
     }
     return end();
 }
@@ -327,29 +332,30 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
         QueueType sim_queue = m_queue;
         std::map<std::string, double> sim_research_progress = research_progress;
 
-        std::map<const Tech*, int> simulation_results;
+        std::map<std::string, int> simulation_results;
         // initialize simulation_results with -1 for all techs, so that any techs that aren't
         // finished in simulation by turn TOO_MANY_TURNS will be left marked as never to be finished
         for (unsigned int i = 0; i < sim_queue.size(); ++i)
-            simulation_results[m_queue[i].tech] = -1;
+            simulation_results[m_queue[i].name] = -1;
 
         while (!sim_queue.empty() && turns < TOO_MANY_TURNS) {
             double total_RPs_spent = 0.0;
             int projects_in_progress = 0;
             SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                const Tech* tech = sim_queue[i].tech;
+                const std::string& name = sim_queue[i].name;
+                const Tech* tech = GetTech(name);
                 if (!tech) {
                     Logger().errorStream() << "ResearchQueue::Update found null tech on future simulated research queue.  skipping.";
                     continue;
                 }
-                double& status = sim_research_progress[tech->Name()];
+                double& status = sim_research_progress[name];
                 status += sim_queue[i].allocated_rp;
                 if (tech->ResearchCost() - EPSILON <= status) {
-                    m_queue[i].turns_left = simulation_results[m_queue[i].tech];
-                    simulation_results[tech] = turns;
+                    m_queue[i].turns_left = simulation_results[name];
+                    simulation_results[name] = turns;
                     sim_queue.erase(sim_queue.begin() + i--);
-                    sim_tech_status_map[tech->Name()] = TS_COMPLETE;
+                    sim_tech_status_map[name] = TS_COMPLETE;
                 }
             }
 
@@ -357,10 +363,9 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             // only need to check techs that are actually on the queue, as these are the only ones
             // that might now be researched
             for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                const Tech* tech = sim_queue[i].tech;
-                if (!tech) {
-                    continue;   // already output error message above
-                }                const std::string tech_name = tech->Name();
+                const std::string& tech_name = sim_queue[i].name;
+                const Tech* tech = GetTech(tech_name);
+                if (!tech) continue;   // already output error message above
                 // if tech is currently not researchable, this is because one or more of its prereqs is not researched
                 if (sim_tech_status_map[tech_name] == TS_UNRESEARCHABLE) {
                     const std::set<std::string>& prereqs = tech->Prerequisites();
@@ -382,7 +387,7 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
         }
         // return results
         for (unsigned int i = 0; i < m_queue.size(); ++i) {
-            m_queue[i].turns_left = simulation_results[m_queue[i].tech];
+            m_queue[i].turns_left = simulation_results[m_queue[i].name];
         }
     } else {
         // since there are so few RPs, indicate that the number of turns left is indeterminate by providing a number < 0
@@ -394,11 +399,11 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
     ResearchQueueChangedSignal();
 }
 
-void ResearchQueue::push_back(const Tech* tech)
-{ m_queue.push_back(Element(tech, 0.0, -1)); }
+void ResearchQueue::push_back(const std::string& tech_name)
+{ m_queue.push_back(Element(tech_name, 0.0, -1)); }
 
-void ResearchQueue::insert(iterator it, const Tech* tech)
-{ m_queue.insert(it, Element(tech, 0.0, -1)); }
+void ResearchQueue::insert(iterator it, const std::string& tech_name)
+{ m_queue.insert(it, Element(tech_name, 0.0, -1)); }
 
 void ResearchQueue::erase(iterator it)
 {
@@ -406,10 +411,10 @@ void ResearchQueue::erase(iterator it)
     m_queue.erase(it);
 }
 
-ResearchQueue::iterator ResearchQueue::find(const Tech* tech)
+ResearchQueue::iterator ResearchQueue::find(const std::string& tech_name)
 {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it->tech == tech)
+        if (it->name == tech_name)
             return it;
     }
     return end();
@@ -424,8 +429,15 @@ ResearchQueue::iterator ResearchQueue::end()
 ResearchQueue::iterator ResearchQueue::UnderfundedProject()
 {
     for (iterator it = begin(); it != end(); ++it) {
-        if (it->allocated_rp && it->allocated_rp < it->tech->ResearchCost() && 1 < it->turns_left)
-            return it;
+        if (const Tech* tech = GetTech(it->name)) {
+            if (it->allocated_rp &&
+                it->allocated_rp < tech->ResearchCost()
+                && 1 < it->turns_left)
+            {
+                return it;
+            }
+            return end();
+        }
     }
     return end();
 }
@@ -1999,28 +2011,32 @@ void Empire::SetResourceStockpile(ResourceType resource_type, double stockpile)
 void Empire::SetResourceMaxStockpile(ResourceType resource_type, double max)
 {}
 
-void Empire::PlaceTechInQueue(const Tech* tech, int pos/* = -1*/)
+void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/)
 {
-    if (TechResearched(tech->Name()) || m_techs.find(tech->Name()) != m_techs.end() || !tech->Researchable())
+    if (name.empty() || TechResearched(name) || m_techs.find(name) != m_techs.end())
         return;
-    ResearchQueue::iterator it = m_research_queue.find(tech);
+    const Tech* tech = GetTech(name);
+    if (!tech || !tech->Researchable())
+        return;
+
+    ResearchQueue::iterator it = m_research_queue.find(name);
     if (pos < 0 || static_cast<int>(m_research_queue.size()) <= pos) {
         if (it != m_research_queue.end())
             m_research_queue.erase(it);
-        m_research_queue.push_back(tech);
+        m_research_queue.push_back(name);
     } else {
         if (it < m_research_queue.begin() + pos)
             --pos;
         if (it != m_research_queue.end())
             m_research_queue.erase(it);
-        m_research_queue.insert(m_research_queue.begin() + pos, tech);
+        m_research_queue.insert(m_research_queue.begin() + pos, name);
     }
     m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
 }
 
-void Empire::RemoveTechFromQueue(const Tech* tech)
+void Empire::RemoveTechFromQueue(const std::string& name)
 {
-    ResearchQueue::iterator it = m_research_queue.find(tech);
+    ResearchQueue::iterator it = m_research_queue.find(name);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
         m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
@@ -2400,7 +2416,7 @@ namespace {
                 if (it == queue.end()) {
                     done = true;        // got all the way through the queue without finding an invalid tech
                     break;
-                } else if (!it->tech) {
+                } else if (!GetTech(it->name)) {
                     queue.erase(it);    // remove invalid tech, end inner loop without marking as finished
                     break;
                 } else {
@@ -2417,24 +2433,28 @@ void Empire::CheckResearchProgress()
 
     // following commented line should be redundant, as previous call to UpdateResourcePools should have generated necessary info
     // m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
-    std::vector<const Tech*> to_erase;
+    std::vector<std::string> to_erase;
     for (ResearchQueue::iterator it = m_research_queue.begin(); it != m_research_queue.end(); ++it) {
-        const Tech* tech = it->tech;
-        double& progress = m_research_progress[tech->Name()];
+        const Tech* tech = GetTech(it->name);
+        if (!tech) {
+            Logger().errorStream() << "Empire::CheckResearchProgress couldn't find tech on queue, even after sanitizing!";
+            continue;
+        }
+        double& progress = m_research_progress[it->name];
         progress += it->allocated_rp;
         if (tech->ResearchCost() - EPSILON <= progress) {
-            m_techs.insert(tech->Name());
+            m_techs.insert(it->name);
             const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
             for (unsigned int i = 0; i < unlocked_items.size(); ++i)
                 UnlockItem(unlocked_items[i]);
-            AddSitRepEntry(CreateTechResearchedSitRep(tech->Name()));
+            AddSitRepEntry(CreateTechResearchedSitRep(it->name));
             // TODO: create unlocked item sitreps?
-            m_research_progress.erase(tech->Name());
-            to_erase.push_back(tech);
+            m_research_progress.erase(it->name);
+            to_erase.push_back(it->name);
         }
     }
 
-    for (std::vector<const Tech*>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
+    for (std::vector<std::string>::iterator it = to_erase.begin(); it != to_erase.end(); ++it) {
         ResearchQueue::iterator temp_it = m_research_queue.find(*it);
         if (temp_it != m_research_queue.end())
             m_research_queue.erase(temp_it);

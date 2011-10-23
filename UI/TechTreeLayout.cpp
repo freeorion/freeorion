@@ -131,20 +131,20 @@ bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
 ////////////////
 // class Edge //
 ////////////////
-TechTreeLayout::Edge::Edge(const Tech* from, const Tech* to) : 
+TechTreeLayout::Edge::Edge(const std::string& from, const std::string& to) :
     m_points(std::vector<std::pair<double,double> >( )),
     m_from(from),
     m_to(to)
-{ 
-    assert(from != 0 && to != 0);
+{
+    assert(GetTech(from) && GetTech(to));
 }
 TechTreeLayout::Edge::~Edge( ) {
     m_points.clear( );
 }
-const Tech* TechTreeLayout::Edge::GetTechFrom( ) const {
+const std::string& TechTreeLayout::Edge::GetTechFrom( ) const {
     return m_from;
 }
-const Tech* TechTreeLayout::Edge::GetTechTo( ) const {
+const std::string& TechTreeLayout::Edge::GetTechTo( ) const {
     return m_to;
 }
 void TechTreeLayout::Edge::AddPoint(double x, double y) {
@@ -157,7 +157,7 @@ void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double,double> > & p
 }
 
 void TechTreeLayout::Edge::Debug() const {
-    Logger().debugStream() << "Edge " << m_from->Name() << "-> " << m_to->Name() << ": ";
+    Logger().debugStream() << "Edge " << m_from << "-> " << m_to << ": ";
     for(std::vector<std::pair<double,double> >::const_iterator p = m_points.begin(); p != m_points.end(); p++) {
         Logger().debugStream() << "(" << (*p).first << "," << (*p).second << ") ";
     }
@@ -213,9 +213,11 @@ void TechTreeLayout::DoLayout( double column_width, double row_height, double x_
     //4.b. distribute tech nodes over the table
     std::string cat = "";
     for(unsigned int i = 0; i < m_nodes.size(); i++) {
-        bool new_cat = m_nodes[i]->GetTech()->Category() != cat;
+        const Tech* node_tech = GetTech(m_nodes[i]->GetTech());
+        std::string& node_tech_cat = node_tech ? node_tech->Category() : "";
+        bool new_cat = node_tech_cat != cat;
         m_nodes[i]->DoLayout( row_index, new_cat);
-        cat = m_nodes[i]->GetTech()->Category();
+        cat = node_tech_cat;
     }
     //4.c. optimize layout, every node gets a rateing if moving would shorten the distance to it's family
     //     if the movement is possible eith if the place if free or the neighbour has the opposite wish
@@ -250,10 +252,10 @@ void TechTreeLayout::DoLayout( double column_width, double row_height, double x_
 }
 
 const GG::X TechTreeLayout::GetWidth( ) const {
-    return GG::X((int)m_width);
+    return GG::X(static_cast<int>(m_width));
 }
 const GG::Y TechTreeLayout::GetHeight( ) const {
-    return GG::Y((int)m_height);
+    return GG::Y(static_cast<int>(m_height));
 }
 const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) const {
     std::map< std::string, TechTreeLayout::Node*>::const_iterator item = m_node_map.find(name);
@@ -265,11 +267,11 @@ const TechTreeLayout::Node* TechTreeLayout::GetNode(const std::string & name) co
         return (*item).second;
     }
 }
-void TechTreeLayout::AddNode(const Tech *tech, GG::X width, GG::Y height) {
-    assert(width > 0 && height > 0 && tech != 0);
+void TechTreeLayout::AddNode(const std::string& tech, GG::X width, GG::Y height) {
+    assert(width > 0 && height > 0 && GetTech(tech));
     TechTreeLayout::Node *node = new TechTreeLayout::Node(tech, width, height);
     m_nodes.push_back(node);
-    m_node_map[tech->Name()] = node;
+    m_node_map[tech] = node;
 }
 void TechTreeLayout::AddEdge(const std::string & parent, const std::string & child) {
     std::map< std::string, TechTreeLayout::Node*>::iterator p = m_node_map.find(parent);
@@ -308,12 +310,11 @@ void TechTreeLayout::Clear() {
 /**
  * creates a node for that tech
  */
-TechTreeLayout::Node::Node(const Tech *tech, GG::X width, GG::Y height) :
+TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
     m_weight(NODE_CELL_HEIGHT),
     m_depth(-1),
     m_row(-1),
     m_tech(tech),
-    m_name(tech->Name()),
     m_x(0),
     m_y(0),
     m_width(Value(width)),
@@ -325,7 +326,7 @@ TechTreeLayout::Node::Node(const Tech *tech, GG::X width, GG::Y height) :
     m_child(0),
     m_out_edges()
 {
-    assert(width > 0 && height > 0);
+    assert(width > 0 && height > 0 && ::GetTech(tech));
 }
 /**
  * creates dummie nodes between parent and child
@@ -335,7 +336,6 @@ TechTreeLayout::Node::Node(Node *parent, Node *child, std::vector<Node*> & nodes
     m_depth(parent->m_depth + 1),
     m_row(-1),
     m_tech(child->m_tech),
-    m_name(child->m_name),
     m_x(0),
     m_y(0),
     m_width(0),
@@ -367,7 +367,7 @@ TechTreeLayout::Node::~Node( ) {
 unsigned int TechTreeLayout::Node::GetDepth() const {
     return m_depth;
 }
-const Tech* TechTreeLayout::Node::GetTech( ) const {
+const std::string& TechTreeLayout::Node::GetTech( ) const {
     return m_tech;
 }
 int TechTreeLayout::Node::GetNumberOfChildren( ) const {
@@ -380,17 +380,14 @@ const std::vector<TechTreeLayout::Edge*>& TechTreeLayout::Node::GetOutEdges( ) c
     return m_out_edges;
 }
 const GG::X TechTreeLayout::Node::GetX() const{
-    return GG::X((int)m_x);
+    return GG::X(static_cast<int>(m_x));
 }
 const GG::Y TechTreeLayout::Node::GetY() const {
-    return GG::Y((int)m_y);
+    return GG::Y(static_cast<int>(m_y));
 }
 void TechTreeLayout::Node::CalculateCoordinate( double column_width, double row_height) {
-    m_x = ((double)m_depth - 0.5) * column_width;
+    m_x = (static_cast<double>(m_depth) - 0.5) * column_width;
     m_y = m_row * row_height;
-}
-const std::string & TechTreeLayout::Node::GetName() const {
-    return m_name;
 }
 bool TechTreeLayout::Node::IsFinalNode( ) const {
     return m_children.empty( );
@@ -462,17 +459,22 @@ bool TechTreeLayout::Node::Wobble(Column & column) {
 }
 bool TechTreeLayout::Node::operator<(const TechTreeLayout::Node & y) const {
     if (m_depth == y.m_depth) {
-        if (m_tech->Category() == y.m_tech->Category()) {
-            return m_name <  y.m_name;
+        const Tech* this_node_tech = ::GetTech(m_tech);
+        assert(this_node_tech);
+        const Tech* y_node_tech = ::GetTech(y.m_tech);
+        assert(y_node_tech);
+
+        if (this_node_tech->Category() == y_node_tech->Category()) {
+            return m_tech <  y.m_tech;
         } else {
-            return m_tech->Category() < y.m_tech->Category();
-        }                
+            return this_node_tech->Category() < y_node_tech->Category();
+        }
     } else {
         return m_depth < y.m_depth;
-    }    
+    }
 }
 void TechTreeLayout::Node::AddChild(Node* node) {
-    assert(node != 0);
+    assert(node);
     m_children.push_back(node);
     node->m_parents.push_back(this);
     //Note: m_child is used as sorting criteria
@@ -480,41 +482,50 @@ void TechTreeLayout::Node::AddChild(Node* node) {
     // so we need to choose wisely which node is our heir 
     // 1. we prefere childs with the same category, or lexically
     // 2. we order lexically
-    if (m_child == 0) {
+    if (!m_child) {
         //no choice
         m_child = node;
-    } else {
-        //reaching this case means we will get crossing lines
-        //we decide which node is the better child for layout decisions
-        if(!node->m_place_holder) {
-            int n = ((m_child->m_tech->Category() == m_tech->Category())?0:1) 
-             //binary case 00 01 10 11
-                +  ((node->m_tech->Category() == m_tech->Category())?0:2);
-            switch (n) {
-                case 0: //both categories fit
-                    if(node->m_tech->Name() < m_child->m_tech->Name()) {
-                        m_child = node;
-                    }
-                    break;
-                case 1:  //only m_child category fits
-                    //keep m_child 
-                    break;
-                case 2: //only node category fits
-                    m_child = node;
-                    break;
-                case 3: //both categories are wrong
-                    if(node->m_tech->Category() < m_child->m_tech->Category()) {
-                        m_child = node;
-                    } //else keep child
-                    break;
-            }
+        return;
+    }
+
+    if (node->m_place_holder)
+        return;
+
+    //reaching this case means we will get crossing lines
+    //we decide which node is the better child for layout decisions
+    const Tech* this_node_tech = ::GetTech(m_tech);
+    assert(this_node_tech);
+    const Tech* child_node_tech = ::GetTech(m_child->m_tech);
+    assert(child_node_tech);
+    const Tech* input_node_tech = ::GetTech(node->m_tech);
+    assert(input_node_tech);
+
+    int n = ((child_node_tech->Category() == this_node_tech->Category()) ? 0 : 1)
+        //binary case 00 01 10 11
+        +  ((input_node_tech->Category() == this_node_tech->Category()) ? 0 : 2);
+    switch (n) {
+    case 0: //both categories fit
+        if (node->m_tech < m_child->m_tech) {
+            m_child = node;
         }
+        break;
+    case 1:  //only m_child category fits
+        //keep m_child 
+        break;
+    case 2: //only node category fits
+        m_child = node;
+        break;
+    case 3: //both categories are wrong
+        if (input_node_tech->Category() < child_node_tech->Category()) {
+            m_child = node;
+        } //else keep child
+        break;
     }
 }
 void TechTreeLayout::Node::CalculateDepth( ) {
-    if (!IsStartNode( )) {
+    if (!IsStartNode( ))
         return; // no start node
-    }
+
     //start node
     m_depth = 0;
     for(int i = m_children.size(); i-->0; ) {
@@ -587,20 +598,17 @@ void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat )
 
 void TechTreeLayout::Node::CreateEdges( double x_margin, double column_width, double row_height ) {
     assert(column_width > 0);
-    Edge *edge;
-    const Tech *to;
-    Node *next;
-    for(int i = m_children.size(); i --> 0; ) {
+    for (int i = m_children.size(); i --> 0; ) {
         //find next real node and create coordinates
-        next = m_children[i];
+        Node* next = m_children[i];
         while (next->m_place_holder) { 
             next->CalculateCoordinate( column_width, row_height);
             next = next->m_child; 
         }
-        to = next->m_tech; 
+        const std::string& to = next->m_tech;
         //create drawing path
         next = m_children[i];
-        edge = new Edge(m_tech, to);
+        Edge* edge = new Edge(m_tech, to);
         //from, line start
         edge->AddPoint(m_x + m_width / 2, m_y + m_height / 2); // start in the middle of the node
         edge->AddPoint(m_x + m_width + x_margin, m_y + m_height / 2);
@@ -619,15 +627,15 @@ void TechTreeLayout::Node::CreateEdges( double x_margin, double column_width, do
     }
 }
 void TechTreeLayout::Node::Debug() const {
-    Logger().debugStream() << "Tech - " << m_name << " (" << m_x << "," << m_y << ") #" << m_depth << "\n";
+    Logger().debugStream() << "Tech - " << m_tech << " (" << m_x << "," << m_y << ") #" << m_depth << "\n";
     Logger().debugStream() << "  Parents - ";
     for(int i = m_parents.size(); i --> 0; ) {
-        Logger().debugStream() << m_parents[i]->m_name << "#" << m_parents[i]->m_depth;
+        Logger().debugStream() << m_parents[i]->m_tech << "#" << m_parents[i]->m_depth;
     }
     Logger().debugStream() << "\n";
     Logger().debugStream() << "  Children - ";
     for(int i = m_children.size(); i --> 0; ) {
-        Logger().debugStream() << m_children[i]->m_name << "#" << m_children[i]->m_depth;;
+        Logger().debugStream() << m_children[i]->m_tech << "#" << m_children[i]->m_depth;;
     }
     Logger().debugStream() << "\n";
 

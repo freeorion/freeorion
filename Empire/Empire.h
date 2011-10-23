@@ -38,9 +38,9 @@ struct ResearchQueue
     struct Element
     {
         Element(); ///< default ctor.
-        Element(const Tech* tech_, double spending_, int turns_left_); ///< basic ctor.
+        Element(const std::string& name_, double spending_, int turns_left_); ///< basic ctor.
 
-        const Tech* tech;
+        std::string name;
         double      allocated_rp;
         int         turns_left;
 
@@ -66,7 +66,7 @@ struct ResearchQueue
     //@}
 
     /** \name Accessors */ //@{
-    bool            InQueue(const Tech* tech) const;    ///< Returns true iff \a tech is in this queue.
+    bool            InQueue(const std::string& tech_name) const;    ///< Returns true iff \a tech is in this queue.
     int             ProjectsInProgress() const;         ///< Returns the number of research projects currently (perhaps partially) funded.
     double          TotalRPsSpent() const;              ///< Returns the number of RPs currently spent on the projects in this queue.
 
@@ -75,7 +75,7 @@ struct ResearchQueue
     unsigned int    size() const;
     const_iterator  begin() const;
     const_iterator  end() const;
-    const_iterator  find(const Tech* tech) const;
+    const_iterator  find(const std::string& tech_name) const;
     const Element&  operator[](int i) const;
 
     /** Returns an iterator to the underfunded research project, or end() if
@@ -93,13 +93,13 @@ struct ResearchQueue
     void            Update(Empire* empire, double RPs, const std::map<std::string, double>& research_progress);
 
     // STL container-like interface
-    void            push_back(const Tech* tech);
-    void            insert(iterator it, const Tech* tech);
+    void            push_back(const std::string& tech_name);
+    void            insert(iterator it, const std::string& tech_name);
     void            erase(iterator it);
 
     iterator        begin();
     iterator        end();
-    iterator        find(const Tech* tech);
+    iterator        find(const std::string& tech_name);
 
     void            clear();
 
@@ -386,11 +386,11 @@ public:
       * from its former position.  If \a pos < 0 or queue.size() <= pos, \a tech
       * is placed at the end of the queue. If \a tech is already available, no
       * action is taken. */
-    void                    PlaceTechInQueue(const Tech* tech, int pos = -1);
+    void                    PlaceTechInQueue(const std::string& name, int pos = -1);
 
     /** Removes \a tech from the research queue, if it is in the research
       * queue already. */
-    void                    RemoveTechFromQueue(const Tech* tech);
+    void                    RemoveTechFromQueue(const std::string& name);
 
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is

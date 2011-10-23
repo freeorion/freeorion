@@ -25,9 +25,10 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow
     //////////////////////////////////////////////////
-    struct QueueRow : GG::ListBox::Row {
-        QueueRow(GG::X w, const Tech* tech_, double allocated_rp, int turns_left);
-        const Tech* const tech;
+    struct QueueRow : GG::ListBox::Row
+    {
+        QueueRow(GG::X w, const std::string& tech_name_, double allocated_rp, int turns_left);
+        std::string tech_name;
     };
 
     //////////////////////////////////////////////////
@@ -35,13 +36,14 @@ namespace {
     //////////////////////////////////////////////////
     class QueueTechPanel : public GG::Control {
     public:
-        QueueTechPanel(GG::X w, const Tech* tech, double allocated_rp, int turns_left, int turns_completed, double partially_complete_turn);
+        QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
+                       int turns_left, int turns_completed, double partially_complete_turn);
         virtual void Render();
 
     private:
         void Draw(GG::Clr clr, bool fill);
 
-        const Tech* const       m_tech;
+        const std::string&      m_tech_name;
         GG::TextControl*        m_name_text;
         GG::TextControl*        m_RPs_and_turns_text;
         GG::TextControl*        m_turns_remaining_text;
@@ -56,22 +58,23 @@ namespace {
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const Tech* tech_, double allocated_rp, int turns_left) :
+    QueueRow::QueueRow(GG::X w, const std::string& tech_name_, double allocated_rp, int turns_left) :
         GG::ListBox::Row(),
-        tech(tech_)
+        tech_name(tech_name_)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
         // this space intentionally left blank to line up with ProductionWnd's QueueRow implementation
 
+        const Tech* tech = GetTech(tech_name);
         double per_turn_cost = tech ? tech->PerTurnCost() : 1;
         double progress = 0.0;
         if (empire && tech)
-            progress = empire->ResearchStatus(tech->Name());
+            progress = empire->ResearchStatus(tech_name);
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueTechPanel(w, tech_,
+        GG::Control* panel = new QueueTechPanel(w, tech_name,
                                                 allocated_rp, turns_left,
                                                 static_cast<int>(progress / per_turn_cost),
                                                 std::fmod(progress, per_turn_cost));
@@ -84,13 +87,13 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(GG::X w, const Tech* tech,
+    QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name,
                                    double turn_spending, int turns_left,
                                    int turns_completed, double partially_complete_turn) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
-        m_tech(tech),
+        m_tech_name(tech_name),
         m_in_progress(turn_spending),
-        m_total_turns(m_tech ? m_tech->ResearchTime() : 1),
+        m_total_turns(1),
         m_turns_completed(turns_completed),
         m_partially_complete_turn(partially_complete_turn)
     {
@@ -107,6 +110,10 @@ namespace {
         const GG::X METER_WIDTH = w - GRAPHIC_SIZE - 3*MARGIN - 3;
         const GG::X TURNS_AND_COST_WIDTH = NAME_WIDTH/2;
 
+        const Tech* tech = GetTech(m_tech_name);
+        if (tech)
+            m_total_turns = tech->ResearchTime();
+
         Resize(GG::Pt(w, HEIGHT));
 
 
@@ -119,20 +126,20 @@ namespace {
 
 
         m_icon = new GG::StaticGraphic(left, top, GG::X(GRAPHIC_SIZE), GG::Y(GRAPHIC_SIZE),
-                                       ClientUI::TechTexture(m_tech ? m_tech->Name() : ""),
+                                       ClientUI::TechTexture(m_tech_name),
                                        GG::GRAPHIC_FITGRAPHIC);
-        m_icon->SetColor(m_tech ? ClientUI::CategoryColor(m_tech->Category()) : GG::Clr());
+        m_icon->SetColor(tech ? ClientUI::CategoryColor(tech->Category()) : GG::Clr());
 
         left += m_icon->Width() + MARGIN;
 
         m_name_text = new GG::TextControl(left, top, NAME_WIDTH, GG::Y(FONT_PTS + 2*MARGIN),
-                                          UserString(m_tech ? m_tech->Name() : "ERROR"),
+                                          UserString(m_tech_name),
                                           font, clr, GG::FORMAT_TOP | GG::FORMAT_LEFT);
         m_name_text->ClipText(true);
 
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
-        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, m_tech ? m_tech->ResearchTime() : 1,
+        m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime() : 1,
                                                   turns_completed, partially_complete_turn, ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
@@ -255,21 +262,21 @@ void ResearchWnd::Update()
 }
 
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
-{ m_tech_tree_wnd->CenterOnTech(GetTech(tech_name)); }
+{ m_tech_tree_wnd->CenterOnTech(tech_name); }
 
 void ResearchWnd::ShowTech(const std::string& tech_name)
 {
-    m_tech_tree_wnd->CenterOnTech(GetTech(tech_name));
-    m_tech_tree_wnd->SetEncyclopediaTech(GetTech(tech_name));
-    m_tech_tree_wnd->SelectTech(GetTech(tech_name));
+    m_tech_tree_wnd->CenterOnTech(tech_name);
+    m_tech_tree_wnd->SetEncyclopediaTech(tech_name);
+    m_tech_tree_wnd->SelectTech(tech_name);
 }
 
 void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 {
-    HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
-                                        boost::polymorphic_downcast<QueueRow*>(row)->tech->Name(),
-                                        position)));
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row))
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
+                                            queue_row->tech_name, position)));
 }
 
 void ResearchWnd::Sanitize()
@@ -296,7 +303,7 @@ void ResearchWnd::UpdateQueue()
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
     for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->tech, it->allocated_rp, it->turns_left));
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->name, it->allocated_rp, it->turns_left));
     }
 
     if (!m_queue_lb->Empty())
@@ -324,7 +331,7 @@ void ResearchWnd::UpdateInfoPanel()
     //empire->GetResearchResPool().ChangedSignal(); 
 }
 
-void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
+void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name)
 {
     if (!m_enabled)
         return;
@@ -332,13 +339,14 @@ void ResearchWnd::AddTechToQueueSlot(const Tech* tech)
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    if (!queue.InQueue(tech)) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), tech->Name(), -1)));
+    if (!queue.InQueue(tech_name)) {
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(
+            HumanClientApp::GetApp()->EmpireID(), tech_name, -1)));
         m_tech_tree_wnd->Update();
     }
 }
 
-void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& tech_vec)
+void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& tech_vec)
 {
     if (!m_enabled)
         return;
@@ -346,12 +354,12 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& te
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    const int id = HumanClientApp::GetApp()->EmpireID();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
-    for (std::vector<const Tech*>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
-        const Tech* tech = *it;
-        if (!queue.InQueue(tech))
-            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(id, tech->Name(), -1)));
+    for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
+        const std::string& tech_name = *it;
+        if (!queue.InQueue(tech_name))
+            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
     }
 
     m_tech_tree_wnd->Update();
@@ -359,23 +367,24 @@ void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<const Tech*>& te
 
 void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
-    if (m_enabled)
+    if (!m_enabled)
+        return;
+
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(),
-                                            boost::polymorphic_downcast<QueueRow*>(*it)->tech->Name())));
+            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_row->tech_name)));
+    }
     m_tech_tree_wnd->Update();
     ResearchQueueChangedSlot();
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
 {
-    const Tech* tech = boost::polymorphic_downcast<QueueRow*>(*it)->tech;
-    if (!tech) {
-        Logger().errorStream() << "ResearchWnd::QueueItemClickedSlot couldn't get tech from clicked row";
+    QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+    if (!queue_row)
         return;
-    }
-    m_tech_tree_wnd->CenterOnTech(tech);
-    m_tech_tree_wnd->SetEncyclopediaTech(tech);
+    m_tech_tree_wnd->CenterOnTech(queue_row->tech_name);
+    m_tech_tree_wnd->SetEncyclopediaTech(queue_row->tech_name);
 }
 
 void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)

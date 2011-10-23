@@ -697,10 +697,11 @@ void ResearchQueueOrder::ExecuteImpl() const
     ValidateEmpireID();
 
     Empire* empire = Empires().Lookup(EmpireID());
+    if (!empire) return;
     if (m_remove)
-        empire->RemoveTechFromQueue(GetTech(m_tech_name));
+        empire->RemoveTechFromQueue(m_tech_name);
     else
-        empire->PlaceTechInQueue(GetTech(m_tech_name), m_position);
+        empire->PlaceTechInQueue(m_tech_name, m_position);
 }
 
 ////////////////////////////////////////////////
