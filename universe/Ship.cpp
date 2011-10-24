@@ -311,12 +311,12 @@ UniverseObject* Ship::Accept(const UniverseObjectVisitor& visitor) const {
 }
 
 double Ship::NextTurnCurrentMeterValue(MeterType type) const {
-    if (type == INVALID_METER_TYPE || type == METER_FUEL) {
-        // todo: consider fleet movement or being stationary, which may parfly replenish fuel
-        // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
-    } else if (type == INVALID_METER_TYPE || type == METER_SUPPLY) {
-        // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
-    }
+    //if (type == METER_FUEL) {
+    //    // todo: consider fleet movement or being stationary, which may partly replenish fuel
+    //    // todo: consider fleet passing through or being in a supplied system, which replenishes fuel
+    //} else if (type == METER_SUPPLY) {
+    //    // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
+    //}
 
     return UniverseObject::NextTurnCurrentMeterValue(type);
 }
@@ -351,27 +351,31 @@ void Ship::Resupply()
     fuel_meter->SetCurrent(max_fuel_meter->Current());
 
     for (ConsumablesMap::iterator it = m_fighters.begin();
-         it != m_fighters.end();
-         ++it) {
-        it->second.second =
-            it->second.first *
-            boost::get<FighterStats>(GetPartType(it->first)->Stats()).m_capacity;
+         it != m_fighters.end(); ++it)
+    {
+        const PartType* part_type = GetPartType(it->first);
+        if (part_type)
+            it->second.second = it->second.first *
+                boost::get<FighterStats>(part_type->Stats()).m_capacity;
     }
 
     for (ConsumablesMap::iterator it = m_missiles.begin();
-         it != m_missiles.end();
-         ++it) {
-        it->second.second =
-            it->second.first *
-            boost::get<LRStats>(GetPartType(it->first)->Stats()).m_capacity;
+         it != m_missiles.end(); ++it)
+    {
+        const PartType* part_type = GetPartType(it->first);
+        if (part_type)
+            it->second.second = it->second.first *
+                boost::get<LRStats>(part_type->Stats()).m_capacity;
     }
 }
 
 void Ship::AddFighters(const std::string& part_name, std::size_t n)
 {
+    const PartType* part_type = GetPartType(part_name);
+    if (!part_type) return;
     assert(m_fighters[part_name].second + n <=
            m_fighters[part_name].first *
-           boost::get<FighterStats>(GetPartType(part_name)->Stats()).m_capacity);
+           boost::get<FighterStats>(part_type->Stats()).m_capacity);
     m_fighters[part_name].second += n;
 }
 
