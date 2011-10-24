@@ -1013,8 +1013,8 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
     bool researchable_tech = false;
 
     const Tech* tech = GetTech(m_tech_name);
-    int time = tech ? tech->ResearchTime() : 1;
-    double cost = tech ? tech->ResearchCost() : 1.0;
+    int time = tech ? tech->ResearchTime() : 999999;         // arbitrary large value
+    double cost = tech ? tech->ResearchCost() : 9999999.9;    // arbitrary large value
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
     if (empire) {
@@ -1028,12 +1028,18 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
             double rps_spent = empire->ResearchStatus(m_tech_name);
             if (0.0 <= rps_spent) {
                 m_progress = rps_spent / (time * cost);
-                assert(0.0 <= m_progress && m_progress <= 1.0);
+                if (m_progress < 0.0) {
+                    Logger().errorStream() << "TechPanel::Update progress oddly small...";
+                    m_progress = 0.0;
+                } else if (m_progress > 1.0) {
+                    Logger().errorStream() << "TechPanel::Update progress oddly large...";
+                    m_progress = 1.0;
+                }
             }
             researchable_tech = empire->ResearchableTech(m_tech_name);
         }
     } else { // (!empire)
-        researchable_tech = true;
+        researchable_tech = tech->Researchable();
     }
 
 
