@@ -214,7 +214,7 @@ void TechTreeLayout::DoLayout( double column_width, double row_height, double x_
     std::string cat = "";
     for(unsigned int i = 0; i < m_nodes.size(); i++) {
         const Tech* node_tech = GetTech(m_nodes[i]->GetTech());
-        std::string& node_tech_cat = node_tech ? node_tech->Category() : "";
+        const std::string& node_tech_cat = node_tech ? node_tech->Category() : "";
         bool new_cat = node_tech_cat != cat;
         m_nodes[i]->DoLayout( row_index, new_cat);
         cat = node_tech_cat;
