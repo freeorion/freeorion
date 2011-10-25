@@ -4251,7 +4251,12 @@ namespace {
         if (system_one && system_two) {
             // both condition-matching object and candidate are / in systems.
             // can just find the shortest path between the two systems
-            short jumps = GetUniverse().JumpDistance(system_one->ID(), system_two->ID());
+            short jumps = -1;
+            try {
+                jumps = GetUniverse().JumpDistance(system_one->ID(), system_two->ID());
+            } catch (...) {
+                Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
+            }
             if (jumps != -1)    // if jumps is -1, no path exists between the systems
                 return static_cast<int>(jumps);
 
@@ -4260,8 +4265,13 @@ namespace {
             if (const Fleet* fleet = FleetFromObject(two)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
-                short jumps1 = GetUniverse().JumpDistance(system_one->ID(), fleet->PreviousSystemID());
-                short jumps2 = GetUniverse().JumpDistance(system_one->ID(), fleet->NextSystemID());
+                short jumps1 = -1, jumps2 = -1;
+                try {
+                    jumps1 = GetUniverse().JumpDistance(system_one->ID(), fleet->PreviousSystemID());
+                    jumps2 = GetUniverse().JumpDistance(system_one->ID(), fleet->NextSystemID());
+                } catch (...) {
+                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
+                }
                 int jumps = static_cast<int>(std::max(jumps1, jumps2));
                 if (jumps != -1)
                     return jumps - 1;
@@ -4272,8 +4282,13 @@ namespace {
             if (const Fleet* fleet = FleetFromObject(one)) {
                 // other object is a fleet that is between systems
                 // need to check shortest path from systems on either side of starlane fleet is on
-                short jumps1 = GetUniverse().JumpDistance(system_two->ID(), fleet->PreviousSystemID());
-                short jumps2 = GetUniverse().JumpDistance(system_two->ID(), fleet->NextSystemID());
+                short jumps1 = -1, jumps2 = -1;
+                try {
+                    jumps1 = GetUniverse().JumpDistance(system_two->ID(), fleet->PreviousSystemID());
+                    jumps2 = GetUniverse().JumpDistance(system_two->ID(), fleet->NextSystemID());
+                } catch (...) {
+                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
+                }
                 int jumps = static_cast<int>(std::max(jumps1, jumps2));
                 if (jumps != -1)
                     return jumps - 1;
@@ -4288,16 +4303,19 @@ namespace {
                 // both objects are / in a fleet.
                 // need to check all combinations of systems on either sides of
                 // starlanes condition-matching object and candidate are on
-
                 int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
                 int fleet_one_next_system_id = fleet_one->NextSystemID();
                 int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
                 int fleet_two_next_system_id = fleet_two->NextSystemID();
-
-                short jumps1 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                short jumps2 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_next_system_id);
-                short jumps3 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_prev_system_id);
-                short jumps4 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_next_system_id);
+                short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
+                try {
+                    jumps1 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_prev_system_id);
+                    jumps2 = GetUniverse().JumpDistance(fleet_one_prev_system_id, fleet_two_next_system_id);
+                    jumps3 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_prev_system_id);
+                    jumps4 = GetUniverse().JumpDistance(fleet_one_next_system_id, fleet_two_next_system_id);
+                } catch (...) {
+                    Logger().errorStream() << "JumpsBetweenObjects caught exception when calling JumpDistance";
+                }
                 int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
                 if (jumps != -1)
                     return jumps - 1;

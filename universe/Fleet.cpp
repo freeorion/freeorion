@@ -950,7 +950,6 @@ void Fleet::CalculateRoute() const
     if (m_moving_to == INVALID_OBJECT_ID)
         return;
 
-
     if (m_prev_system != UniverseObject::INVALID_OBJECT_ID && SystemID() == m_prev_system) {
         // if we haven't actually left yet, we have to move from whichever system we are at now
 
