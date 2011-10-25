@@ -220,14 +220,18 @@ namespace SystemPathing {
         typedef typename boost::property_map<Graph, boost::vertex_index_t>::const_type  ConstIndexPropertyMap;
         typedef typename boost::property_map<Graph, boost::edge_weight_t>::const_type   ConstEdgeWeightPropertyMap;
 
-        std::pair<std::list<int>, double> retval;
+        std::pair<std::list<int>, double> retval(std::list<int>(), -1.0);
 
         ConstSystemIDPropertyMap sys_id_property_map = boost::get(vertex_system_id_t(), graph);
 
-
-        int system1_index = id_to_graph_index.at(system1_id);
-        int system2_index = id_to_graph_index.at(system2_id);
-
+        // convert system IDs to graph indices.  try/catch for invalid input system ids.
+        int system1_index, system2_index;
+        try {
+            system1_index = id_to_graph_index.at(system1_id);
+            system2_index = id_to_graph_index.at(system2_id);
+        } catch (...) {
+            return retval;
+        }
 
         // early exit if systems are the same
         if (system1_id == system2_id) {
@@ -617,50 +621,96 @@ const Universe::VisibilityTurnMap& Universe::GetObjectVisibilityTurnMapByEmpire(
 }
 
 double Universe::LinearDistance(int system1_id, int system2_id) const
-{ return m_system_distances[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)]; }
+{
+    try {
+        int system1_index = m_system_id_to_graph_index.at(system1_id);
+        int system2_index = m_system_id_to_graph_index.at(system2_id);
+        return m_system_distances[system1_index][system2_index];
+    } catch (const std::out_of_range&) {
+        Logger().errorStream() << "Universe::LinearDistance passed invalid system id(s): "
+                               << system1_id << " & " << system2_id;
+        throw;
+    }
+}
 
 short Universe::JumpDistance(int system1_id, int system2_id) const
 {
-    //Logger().debugStream() << "JumpDistance(" << system1_id << ": " << GetObject(system1_id)->Name() << ", "
-    //                                          << system2_id << ": " << GetObject(system2_id)->Name() << "): "
-    //                                          << m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
-    if (system1_id == UniverseObject::INVALID_OBJECT_ID || system2_id == UniverseObject::INVALID_OBJECT_ID)
-        return -1;
-    short jumps = -1;
     try {
-        jumps = m_system_jumps[m_system_id_to_graph_index.at(system1_id)][m_system_id_to_graph_index.at(system2_id)];
+        int system1_index = m_system_id_to_graph_index.at(system1_id);
+        int system2_index = m_system_id_to_graph_index.at(system2_id);
+        short jumps = m_system_jumps[system1_index][system2_index];
+        if (jumps == SHRT_MAX)  // value returned for no valid path
+            return -1;
+        return jumps;
     } catch (const std::out_of_range&) {
-        Logger().errorStream() << "Universe::JumpsDistance passed invalid system id";
-        return -1;
+        Logger().errorStream() << "Universe::JumpDistance passed invalid system id(s): "
+                               << system1_id << " & " << system2_id;
+        throw;
     }
-    if (jumps == SHRT_MAX)  // value returned for no valid path
-        return -1;
-    return jumps;
 }
 
 std::pair<std::list<int>, double> Universe::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const
 {
-    double linear_distance = LinearDistance(system1_id, system2_id);
     if (empire_id == ALL_EMPIRES) {
-        return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id, linear_distance, m_system_id_to_graph_index);
-    } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return ShortestPathImpl(*graph_it->second, system1_id, system2_id, linear_distance, m_system_id_to_graph_index);
+        // find path on full / complete system graph
+        try {
+            double linear_distance = LinearDistance(system1_id, system2_id);
+            return ShortestPathImpl(m_graph_impl->system_graph, system1_id, system2_id,
+                                    linear_distance, m_system_id_to_graph_index);
+        } catch (const std::out_of_range&) {
+            Logger().errorStream() << "Universe::ShortestPath passed invalid system id(s): "
+                                   << system1_id << " & " << system2_id;
+            throw;
+        }
     }
-    return std::pair<std::list<int>, double>();
+
+    // find path on single empire's view of system graph
+    GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it =
+        m_graph_impl->empire_system_graph_views.find(empire_id);
+    if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
+        Logger().errorStream() << "Universe::ShortestPath passed unknown empire id: " << empire_id;
+        throw std::out_of_range("Universe::ShortestPath passed unknown empire id");
+    }
+    try {
+        double linear_distance = LinearDistance(system1_id, system2_id);
+        return ShortestPathImpl(*graph_it->second, system1_id, system2_id,
+                                linear_distance, m_system_id_to_graph_index);
+    } catch (const std::out_of_range&) {
+        Logger().errorStream() << "Universe::ShortestPath passed invalid system id(s): "
+                               << system1_id << " & " << system2_id;
+        throw;
+    }
 }
 
 std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/, int max_jumps/* = INT_MAX*/) const
 {
     if (empire_id == ALL_EMPIRES) {
-        return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
-    } else {
-        GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it = m_graph_impl->empire_system_graph_views.find(empire_id);
-        if (graph_it != m_graph_impl->empire_system_graph_views.end())
-            return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id, m_system_id_to_graph_index, max_jumps);
+        // find path on full / complete system graph
+        try {
+            return LeastJumpsPathImpl(m_graph_impl->system_graph, system1_id, system2_id,
+                                      m_system_id_to_graph_index, max_jumps);
+        } catch (const std::out_of_range&) {
+            Logger().errorStream() << "Universe::LeastJumpsPath passed invalid system id(s): "
+                                   << system1_id << " & " << system2_id;
+            throw;
+        }
     }
-    return std::pair<std::list<int>, int>();
+
+    // find path on single empire's view of system graph
+    GraphImpl::EmpireViewSystemGraphMap::const_iterator graph_it =
+        m_graph_impl->empire_system_graph_views.find(empire_id);
+    if (graph_it == m_graph_impl->empire_system_graph_views.end()) {
+        Logger().errorStream() << "Universe::LeastJumpsPath passed unknown empire id: " << empire_id;
+        throw std::out_of_range("Universe::LeastJumpsPath passed unknown empire id");
+    }
+    try {
+        return LeastJumpsPathImpl(*graph_it->second, system1_id, system2_id,
+                                  m_system_id_to_graph_index, max_jumps);
+    } catch (const std::out_of_range&) {
+        Logger().errorStream() << "Universe::LeastJumpsPath passed invalid system id(s): "
+                               << system1_id << " & " << system2_id;
+        throw;
+    }
 }
 
 bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) const

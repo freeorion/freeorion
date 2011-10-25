@@ -76,21 +76,55 @@ namespace {
 
     void                    (Universe::*UpdateMeterEstimatesVoidFunc)(void) =                   &Universe::UpdateMeterEstimates;
 
-    std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
+    double                  LinearDistance(const Universe& universe, int system1_id, int system2_id) {
+        double retval = 9999999.9;  // arbitrary large value
+        try {
+            retval = universe.LinearDistance(system1_id, system2_id);
+        } catch (...) {
+        }
+        return retval;
+    }
+    boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
+
+    int                     JumpDistance(const Universe& universe, int system1_id, int system2_id) {
+        try {
+            return universe.JumpDistance(system1_id, system2_id);
+        } catch (...) {
+        }
+        return -1;
+    }
+    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistance;
+
+    std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
-        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
+        try {
+            std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
+            std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
+        } catch (...) {
+        }
+        return retval;
+    }
+    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
+
+    std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
+        std::vector<int> retval;
+        try {
+            std::pair<std::list<int>, int> path = universe.LeastJumpsPath(start_sys, end_sys, empire_id);
+            std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
+        } catch (...) {
+        }
         return retval;
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> LeastJumpsFunc =          &LeastJumpsPath;
 
-    std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
-        std::pair<std::list<int>, int> path = universe.ShortestPath(start_sys, end_sys, empire_id);
-        std::vector<int> retval;
-        std::copy(path.first.begin(), path.first.end(), std::back_inserter(retval));
-        return retval;
+    bool                    SystemsConnected(const Universe& universe, int system1_id, int system2_id) {
+        try {
+            return universe.SystemsConnected(system1_id, system2_id);
+        } catch (...) {
+        }
+        return false;
     }
-    boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
+    boost::function<bool(const Universe&, int, int)> SystemsConnectedFunc =                     &SystemsConnected;
 
     const Meter*            (UniverseObject::*ObjectGetMeter)(MeterType) const =                &UniverseObject::GetMeter;
 

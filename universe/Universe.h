@@ -118,10 +118,22 @@ public:
       * ids is returned */
     const std::set<int>&    EmpireKnownShipDesignIDs(int empire_id) const;
 
-    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id) const;///< returns the Visibility level of empire with id \a empire_id of UniverseObject with id \a object_id as determined by calling UpdateEmpireObjectVisibilities
-    const VisibilityTurnMap&GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const; ///< returns the map from Visibility level to turn number on which the empire with id \a empire_id last had the various Visibility levels of the UniverseObject with id \a object_id .  The returned map may be empty or not have entries for all visibility levels, if the empire has not seen the object at that visibility level yet.
+    /** Returns the Visibility level of empire with id \a empire_id of
+      * UniverseObject with id \a object_id as determined by calling
+      * UpdateEmpireObjectVisibilities. */
+    Visibility              GetObjectVisibilityByEmpire(int object_id, int empire_id) const;
 
-    double                  LinearDistance(int system1_id, int system2_id) const;           ///< returns the straight-line distance between the systems with the given IDs. \throw std::out_of_range This function will throw if either system ID is out of range.
+    /** Returns the map from Visibility level to turn number on which the empire
+      * with id \a empire_id last had the various Visibility levels of the
+      * UniverseObject with id \a object_id .  The returned map may be empty or
+      * not have entries for all visibility levels, if the empire has not seen
+      * the object at that visibility level yet. */
+    const VisibilityTurnMap&GetObjectVisibilityTurnMapByEmpire(int object_id, int empire_id) const;
+
+    /** Returns the straight-line distance between the systems with the given
+      * IDs. \throw std::out_of_range This function will throw if either system
+      * ID is out of range. */
+    double                  LinearDistance(int system1_id, int system2_id) const;
 
     /** Returns the number of starlane jumps between the systems with the given
       * IDs. If there is no path between the systems, -1 is returned.
@@ -137,7 +149,7 @@ public:
       * using the visibility for empire \a empire_id, or without regard to
       * visibility if \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if either system ID
-      * is out of range. */
+      * is out of range, or if the empire ID is not known. */
     std::pair<std::list<int>, double>
                             ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
@@ -147,15 +159,18 @@ public:
       * exists, the list will be empty.  The path is calculated using the
       * visibility for empire \a empire_id, or without regard to visibility if
       * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
-      * will throw if either system ID is out of range. */
+      * will throw if either system ID is out of range or if the empire ID is
+      * not known. */
     std::pair<std::list<int>, int>
-                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES, int max_jumps = INT_MAX) const;
-    
+                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES,
+                                           int max_jumps = INT_MAX) const;
+
     /** Returns whether there is a path known to empire \a empire_id between
       * system \a system1 and system \a system2.  The path is calculated using
       * the visibility for empire \a empire_id, or without regard to visibility
       * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
-      * will throw if either system ID is out of range. */
+      * will throw if either system ID is out of range or if the empire ID is
+      * not known. */
     bool                    SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns true iff \a system is reachable from another system (i.e. it
@@ -164,9 +179,7 @@ public:
       * groups of locally but not globally interconnected systems may exist.
       * The starlanes considered depend on their visibility for empire
       * \a empire_id, or without regard to visibility if
-      * \a empire_id == ALL_EMPIRES.
-      * \throw std::out_of_range This function will throw if the system ID is
-      * out of range. */
+      * \a empire_id == ALL_EMPIRES. */
     bool                    SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
 
     /** Returns the systems that are one starlane hop away from system
@@ -437,7 +450,6 @@ private:
       * processed objects_vec or whatever they were passed and cleared the
       * relevant effect accounting for those objects and meters. */
     void    UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec);
-
 
     /** Generates planets for all systems that have empty object maps (ie those
       * that aren't homeworld systems).*/

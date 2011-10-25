@@ -4794,7 +4794,6 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
     // test graph.
     for (std::set<const System*>::const_iterator it = destination_systems.begin(); it != destination_systems.end(); ++it) {}
 
-    //SystemsConnected(graph_impl
     return true;
 }
 
