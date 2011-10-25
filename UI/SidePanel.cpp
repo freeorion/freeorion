@@ -1140,54 +1140,54 @@ void SidePanel::PlanetPanel::Refresh()
         DetachChild(m_military_panel);
     }
 
+    // calculate our truth tables using simpler words
     const Ship* colony_ship = ValidSelectedColonyShip(SidePanel::SystemID());
     std::set<Ship*> invasion_ships = ValidSelectedInvasionShips(SidePanel::SystemID());
+    bool mine = planet->OwnedBy(client_empire_id);
+    bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
+    bool habitable = planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0.;
+    bool visible = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY;
+    bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
+    bool being_colonized = planet->IsAboutToBeColonized();
+    bool colonizable = !populated && habitable && visible && !being_colonized;
+    bool can_colonize = colonizable && colony_ship;
+//    bool could_colonize = colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    bool could_colonize = !populated && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
+    bool being_invaded = planet->IsAboutToBeInvaded();
+    bool invadable = !mine && vulnerable && habitable && visible && !being_invaded && !invasion_ships.empty();
 
 
-    if (!Disabled() &&
-        planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
-        colony_ship &&
-        !planet->IsAboutToBeColonized() &&
-        planet->CurrentMeterValue(METER_TARGET_POPULATION) > 0 &&
-        GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
-    {
+    DetachChild(m_invade_button);
+    DetachChild(m_colonize_button);
+    DetachChild(m_colonize_instruction);
+    std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
+                                               % GetPlanetSizeName(*planet)
+                                               % GetPlanetTypeName(*planet));
+
+    if(Disabled() || !(can_colonize || could_colonize || being_colonized || invadable || being_invaded)) {
+        // hide everything
+
+    } else if(can_colonize) {
         // show colonize button
-        DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
         std::string initial_pop = DoubleToString(ColonyShipCapacity(colony_ship), 2, false);
         std::string target_pop = DoubleToString(planet->CurrentMeterValue(METER_TARGET_POPULATION), 2, false);
         std::string colonize_text = boost::io::str(FlexibleFormat(UserString("PL_COLONIZE")) % initial_pop % target_pop);
         if (m_colonize_button)
             m_colonize_button->SetText(colonize_text);
-        DetachChild(m_colonize_instruction);
 
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet)
-                                                   % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
-        m_env_size->SetText(env_size_text);
+        env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE_ENV"))
+                                       % GetPlanetSizeName(*planet)
+                                       % GetPlanetTypeName(*planet)
+                                       % GetPlanetEnvironmentName(*planet, colony_ship->SpeciesName()));
 
-    } else if (!Disabled() && planet->IsAboutToBeColonized()) {
+    } else if(being_colonized) {
         // shown colonize cancel button
-        DetachChild(m_invade_button);
         AttachChild(m_colonize_button);
         if (m_colonize_button)
             m_colonize_button->SetText(UserString("PL_CANCEL_COLONIZE"));
-        DetachChild(m_colonize_instruction);
 
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
-
-    } else if (!Disabled() &&
-               !planet->OwnedBy(client_empire_id) &&
-               !planet->IsAboutToBeInvaded() &&
-               planet->CurrentMeterValue(METER_POPULATION) > 0.0 &&
-               planet->CurrentMeterValue(METER_SHIELD) <= 0.0 &&
-               !invasion_ships.empty() &&
-               GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
-    {
+    } else if(invadable) {
         // show invade button
         AttachChild(m_invade_button);
         double invasion_troops = 0.0;
@@ -1203,56 +1203,18 @@ void SidePanel::PlanetPanel::Refresh()
         if (m_invade_button)
             m_invade_button->SetText(invasion_text);
 
-        DetachChild(m_colonize_button);
-        DetachChild(m_colonize_instruction);
-
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
-
-    } else if (!Disabled() && planet->IsAboutToBeInvaded()) {
+    } else if(being_invaded) {
         // show invade cancel button
         AttachChild(m_invade_button);
         if (m_invade_button)
             m_invade_button->SetText(UserString("PL_CANCEL_INVADE"));
-        DetachChild(m_colonize_button);
-        DetachChild(m_colonize_instruction);
 
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
-
-    } else if (!Disabled() &&
-               planet->CurrentMeterValue(METER_POPULATION) <= 0.0 &&
-               !planet->IsAboutToBeColonized() &&
-               !ValidSelectedColonyShip(SidePanel::SystemID()) &&
-               OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID()) &&
-               GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id) >= VIS_PARTIAL_VISIBILITY)
-    {
+    } else if(could_colonize) {
         // show colonization instruction text
-        DetachChild(m_invade_button);
         AttachChild(m_colonize_instruction);
-        DetachChild(m_colonize_button);
-
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
-
-    } else {
-        // hide everything
-        DetachChild(m_invade_button);
-        DetachChild(m_colonize_button);
-        DetachChild(m_colonize_instruction);
-
-        std::string env_size_text = boost::io::str(FlexibleFormat(UserString("PL_TYPE_SIZE"))
-                                                   % GetPlanetSizeName(*planet)
-                                                   % GetPlanetTypeName(*planet));
-        m_env_size->SetText(env_size_text);
     }
 
+    m_env_size->SetText(env_size_text);
 
     // update panels
     if (m_buildings_panel)
