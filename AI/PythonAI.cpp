@@ -223,7 +223,7 @@ PythonAI::PythonAI() {
                                     "    freeOrionLogger.error(stng)\n"
                                     "sys.stdout = debugLogger()\n"
                                     "sys.stderr = errorLogger()\n"
-                                    "print 'Python stdout and stderr redirected'";
+                                    "print ('Python stdout and stderr redirected')";
         object ignored = exec(logger_script.c_str(), s_main_namespace, s_main_namespace);
     } catch (error_already_set err) {
         Logger().errorStream() << "Unable to redirect Python stdout and stderr.";
