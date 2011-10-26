@@ -195,16 +195,34 @@ namespace FreeOrionPython {
 
             .def("updateMeterEstimates",        UpdateMeterEstimatesVoidFunc)
 
-            .def("leastJumpsPath",              make_function(
-                                                    LeastJumpsFunc,
+            .def("linearDistance",              make_function(
+                                                    LinearDistanceFunc,
                                                     return_value_policy<return_by_value>(),
-                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
+                                                    boost::mpl::vector<double, const Universe&, int, int>()
+                                                ))
+
+            .def("jumpDistance",              make_function(
+                                                    JumpDistanceFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<int, const Universe&, int, int>()
                                                 ))
 
             .def("shortestPath",                make_function(
                                                     ShortestPathFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
+                                                ))
+
+            .def("leastJumpsPath",              make_function(
+                                                    LeastJumpsFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
+                                                ))
+
+            .def("systemsConnected",            make_function(
+                                                    SystemsConnectedFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<bool, const Universe&, int, int>()
                                                 ))
 
             .def("dump",                        &DumpObjects)
