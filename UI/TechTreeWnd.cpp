@@ -1109,8 +1109,7 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 {
     SetChildClippingMode(ClipToClient);
 
-//    m_scale = 1.0 / ZOOM_STEP_SIZE; // because fully zoomed in is too close
-    m_scale = 1.0; //(LATHANDA) Initialise Fullzoom an do real zooming using GL TODO CHec best size
+    m_scale = 1.0; //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = new LayoutSurface();
     m_vscroll = new CUIScroll(w - ClientUI::ScrollWidth(), GG::Y0, GG::X(ClientUI::ScrollWidth()),
@@ -1459,9 +1458,8 @@ GG::Pt TechTreeWnd::LayoutPanel::Convert(const GG::Pt & p) const
     return GG::Pt(GG::X(static_cast<int>(x)), GG::Y(static_cast<int>(y)));
 }
 
-void TechTreeWnd::LayoutPanel::Layout(bool keep_position) 
+void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
 {
-    //constants
     const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
     const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
     const double RANK_SEP = Value(TECH_PANEL_LAYOUT_WIDTH) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
@@ -1470,36 +1468,37 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     const double HEIGHT = Value(TECH_PANEL_LAYOUT_HEIGHT);
     const double X_MARGIN = HORIZONTAL_LINE_LENGTH;
 
-    //store data that may be restored
-    double relativ_scroll_position_x = m_hscroll->PosnRange().first / m_hscroll->ScrollRange().second;
-    double relativ_scroll_position_y = m_vscroll->PosnRange().first / m_vscroll->ScrollRange().second;
+    // view state initial data
+    int initial_hscroll_pos = m_hscroll->PosnRange().first;
+    int initial_vscroll_pos = m_vscroll->PosnRange().first;
+    double initial_hscroll_page_size = m_hscroll->PageSize();
+    double initial_vscroll_page_size = m_vscroll->PageSize();
     const std::string selected_tech = m_selected_tech_name;
 
-    //cleanup old data for new layout
+    // cleanup old data for new layout
     Clear();
 
     Logger().debugStream() << "Tech Tree Layout Preparing Tech Data";
 
-    //create a node for every tech
+    // create a node for every tech
     TechManager& manager = GetTechManager();
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
+        if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name))
-            continue;
+        if (!TechVisible(tech_name)) continue;
         m_techs[tech_name] = new TechPanel(tech_name, this);
         m_graph.AddNode(tech_name, m_techs[tech_name]->Width(), m_techs[tech_name]->Height());
     }
 
-    //create an edge for every prerequisite
+    // create an edge for every prerequisite
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
+        if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name))
-            continue;
+        if (!TechVisible(tech_name)) continue;
         for (std::set<std::string>::const_iterator prereq_it = tech->Prerequisites().begin();
-             prereq_it != tech->Prerequisites().end();
-             ++prereq_it)
+             prereq_it != tech->Prerequisites().end(); ++prereq_it)
         {
             if (!TechVisible(*prereq_it)) continue;
             m_graph.AddEdge(*prereq_it, tech_name);
@@ -1509,7 +1508,7 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     Logger().debugStream() << "Tech Tree Layout Doing Graph Layout";
 
     //calculate layout
-    m_graph.DoLayout((int)(WIDTH + RANK_SEP), (int)(HEIGHT + NODE_SEP), (int)(X_MARGIN));
+    m_graph.DoLayout(static_cast<int>(WIDTH + RANK_SEP), static_cast<int>(HEIGHT + NODE_SEP), static_cast<int>(X_MARGIN));
 
     const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
 
@@ -1518,9 +1517,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
     // create new tech panels and new dependency arcs 
     for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
         const Tech* tech = *it;
+        if (!tech) continue;
         const std::string& tech_name = tech->Name();
-        if (!TechVisible(tech_name))
-            continue;
+        if (!TechVisible(tech_name)) continue;
         //techpanel
         const TechTreeLayout::Node* node = m_graph.GetNode(tech_name);
         //move TechPanel
@@ -1546,26 +1545,32 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position)
                 arc_type = empire->GetTechStatus(to);
             m_dependency_arcs[arc_type].insert(std::make_pair(from, std::make_pair(to, points)));
         }
-        
     }
-    //format window
+    // format window
     GG::Pt client_sz = ClientSize();
     GG::Pt layout_size(std::max(client_sz.x, m_graph.GetWidth() + 2 * TECH_PANEL_MARGIN_X + PROGRESS_PANEL_LEFT_EXTRUSION),
                        std::max(client_sz.y, m_graph.GetHeight() + 2 * TECH_PANEL_MARGIN_Y + PROGRESS_PANEL_BOTTOM_EXTRUSION));
     m_layout_surface->Resize(layout_size);
-    //format scrollbar
+    // format scrollbar
     m_vscroll->SizeScroll(0, Value(layout_size.y - 1), std::max(50, Value(std::min(layout_size.y / 10, client_sz.y))), Value(client_sz.y));
     m_hscroll->SizeScroll(0, Value(layout_size.x - 1), std::max(50, Value(std::min(layout_size.x / 10, client_sz.x))), Value(client_sz.x));
 
     Logger().debugStream() << "Tech Tree Layout Done";
 
-    //restore save data
+    // restore save data
     if (keep_position) {
         m_selected_tech_name = selected_tech;
-        m_hscroll->ScrollTo((int)(m_hscroll->ScrollRange().second * relativ_scroll_position_x));
-        m_vscroll->ScrollTo((int)(m_vscroll->ScrollRange().second * relativ_scroll_position_y));
+        // select clicked on tech
+        if (m_techs.find(m_selected_tech_name) != m_techs.end())
+            m_techs[m_selected_tech_name]->Select(true);
+        double hscroll_page_size_ratio = m_hscroll->PageSize() / initial_hscroll_page_size;
+        double vscroll_page_size_ratio = m_vscroll->PageSize() / initial_vscroll_page_size;
+        m_hscroll->ScrollTo(static_cast<int>(initial_hscroll_pos * hscroll_page_size_ratio));
+        m_vscroll->ScrollTo(static_cast<int>(initial_vscroll_pos * vscroll_page_size_ratio));
+        GG::SignalScroll(*m_hscroll, true);
+        GG::SignalScroll(*m_vscroll, true);
     } else {
-        m_selected_tech_name.clear();;
+        m_selected_tech_name.clear();
         // find a tech to centre view on
         for (TechManager::iterator it = manager.begin(); it != manager.end(); ++it) {
             const Tech* tech = *it;
