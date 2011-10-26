@@ -678,14 +678,14 @@ ResearchQueueOrder::ResearchQueueOrder() :
     m_remove(false)
 {}
 
-ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) : 
+ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :
     Order(empire),
     m_tech_name(tech_name),
     m_position(-1),
     m_remove(true)
 {}
 
-ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) : 
+ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) :
     Order(empire),
     m_tech_name(tech_name),
     m_position(position),

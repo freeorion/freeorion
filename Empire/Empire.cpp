@@ -386,14 +386,13 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             ++turns;
         }
         // return results
-        for (unsigned int i = 0; i < m_queue.size(); ++i) {
+        for (unsigned int i = 0; i < m_queue.size(); ++i)
             m_queue[i].turns_left = simulation_results[m_queue[i].name];
-        }
+
     } else {
         // since there are so few RPs, indicate that the number of turns left is indeterminate by providing a number < 0
-        for (unsigned int i = 0; i < m_queue.size(); ++i) {
+        for (unsigned int i = 0; i < m_queue.size(); ++i)
             m_queue[i].turns_left = -1;
-        }
     }
 
     ResearchQueueChangedSignal();
