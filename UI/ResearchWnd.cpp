@@ -289,6 +289,7 @@ void ResearchWnd::ResearchQueueChangedSlot()
 {
     UpdateQueue();
     UpdateInfoPanel();
+    m_tech_tree_wnd->Update();
 }
 
 void ResearchWnd::UpdateQueue()
@@ -328,54 +329,48 @@ void ResearchWnd::UpdateInfoPanel()
        which causes the resource indicator to be updated (which polls the ResearchQueue to
        determine how many RPs are being spent).  If/when RP are stockpilable, this might matter,
        so then the following line should be uncommented.*/
-    //empire->GetResearchResPool().ChangedSignal(); 
+    //empire->GetResearchResPool().ChangedSignal();
 }
 
 void ResearchWnd::AddTechToQueueSlot(const std::string& tech_name)
 {
     if (!m_enabled)
         return;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    if (!queue.InQueue(tech_name)) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(
-            HumanClientApp::GetApp()->EmpireID(), tech_name, -1)));
-        m_tech_tree_wnd->Update();
-    }
+    OrderSet& orders = HumanClientApp::GetApp()->Orders();
+    if (!queue.InQueue(tech_name))
+        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
 }
 
 void ResearchWnd::AddMultipleTechsToQueueSlot(const std::vector<std::string>& tech_vec)
 {
     if (!m_enabled)
         return;
-    const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = Empires().Lookup(empire_id);
     if (!empire)
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
         const std::string& tech_name = *it;
         if (!queue.InQueue(tech_name))
             orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, -1)));
     }
-
-    m_tech_tree_wnd->Update();
 }
 
 void ResearchWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
     if (!m_enabled)
         return;
-
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it)) {
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_row->tech_name)));
-    }
-    m_tech_tree_wnd->Update();
-    ResearchQueueChangedSlot();
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    OrderSet& orders = HumanClientApp::GetApp()->Orders();
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
+        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->tech_name)));
 }
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
