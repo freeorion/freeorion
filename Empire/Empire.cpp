@@ -342,20 +342,24 @@ void ResearchQueue::Update(Empire* empire, double RPs, const std::map<std::strin
             double total_RPs_spent = 0.0;
             int projects_in_progress = 0;
             SetTechQueueElementSpending(RPs, sim_research_progress, sim_tech_status_map, sim_queue, total_RPs_spent, projects_in_progress);
-            for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-                const std::string& name = sim_queue[i].name;
+            QueueType::iterator sim_q_it = sim_queue.begin();
+            while (sim_q_it != sim_queue.end()) {
+                const std::string& name = sim_q_it->name;
                 const Tech* tech = GetTech(name);
                 if (!tech) {
                     Logger().errorStream() << "ResearchQueue::Update found null tech on future simulated research queue.  skipping.";
+                    ++sim_q_it;
                     continue;
                 }
-                double& status = sim_research_progress[name];
-                status += sim_queue[i].allocated_rp;
-                if (tech->ResearchCost() - EPSILON <= status) {
-                    m_queue[i].turns_left = simulation_results[name];
-                    simulation_results[name] = turns;
-                    sim_queue.erase(sim_queue.begin() + i--);
+                double& tech_progress = sim_research_progress[name];
+                tech_progress += sim_q_it->allocated_rp;
+                if (tech->ResearchCost() - EPSILON <= tech_progress) {
                     sim_tech_status_map[name] = TS_COMPLETE;
+                    sim_q_it->turns_left = simulation_results[name];
+                    simulation_results[name] = turns;
+                    sim_q_it = sim_queue.erase(sim_q_it);
+                } else {
+                    ++sim_q_it;
                 }
             }
 

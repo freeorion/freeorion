@@ -41,6 +41,8 @@ GUI:
 Bugs:
  ~ Fixed problem with non-Latin font character rendering.
  ~ Fixed tamed monsters wandering off on their own initiative.
+ ~ Fixed some crash bugs related to the Psychic Domination tech.
+ ~ Fixed bug where the tech tree view reset every time a tech was added or removed from the queue.
 
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
