@@ -1874,6 +1874,12 @@ Foreign ship
 FW_ROGUE_SHIP
 Rogue Ship
 
+SHIP_DAMAGE_STAT_TITLE
+Damage
+
+SHIP_DAMAGE_STAT_MAIN
+Total damage done by ship weapons per combat round.
+
 SHIP_SPEED_STAT_TITLE
 Speed
 

@@ -40,6 +40,7 @@ namespace {
     const std::string   SHIP_DROP_TYPE_STRING = "FleetWnd ShipRow";
     const std::string   FLEET_DROP_TYPE_STRING = "FleetWnd FleetRow";
 
+    const std::string   DAMAGE_STAT_STRING = "Damage Stat";
     const std::string   SPEED_STAT_STRING = "Speed Stat";
     const std::string   COLONY_CAPACITY_STAT_STRING = "Colony Capacity";
     const std::string   TROOP_CAPACITY_STAT_STRING = "Troop Capacity";
@@ -81,6 +82,10 @@ namespace {
 
     boost::shared_ptr<GG::Texture> SpeedIcon() {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true);
+    }
+
+    boost::shared_ptr<GG::Texture> DamageIcon() {
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "damage.png", true);
     }
 
     std::string FleetDestinationText(int fleet_id) {
@@ -489,11 +494,17 @@ namespace {
             int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
 
+            // damage stat icon
+            StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                                    DamageIcon(), 0, 0, false);
+            m_stat_icons.push_back(std::make_pair(DAMAGE_STAT_STRING, icon));
+            AttachChild(icon);
+            icon->SetBrowseModeTime(tooltip_delay);
+
             // meter stat icons
             std::vector<MeterType> meters;
-            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_FUEL);   meters.push_back(METER_DETECTION);
-            meters.push_back(METER_STEALTH);    meters.push_back(METER_SHIELD);
-
+            meters.push_back(METER_STRUCTURE);  meters.push_back(METER_SHIELD); meters.push_back(METER_FUEL);
+            meters.push_back(METER_DETECTION);  meters.push_back(METER_STEALTH);
             for (std::vector<MeterType>::const_iterator it = meters.begin(); it != meters.end(); ++it) {
                 StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
                                                         ClientUI::MeterIcon(*it), 0, 0, false);
@@ -502,10 +513,9 @@ namespace {
                 icon->SetBrowseModeTime(tooltip_delay);
             }
 
-
             // speed stat icon
-            StatisticIcon* icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
-                                                    SpeedIcon(), 0, 0, false);
+            icon = new StatisticIcon(GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y,
+                                     SpeedIcon(), 0, 0, false);
             m_stat_icons.push_back(std::make_pair(SPEED_STAT_STRING, icon));
             AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
@@ -672,7 +682,11 @@ namespace {
                 it->second->SetValue(StatValue(it->first));
 
                 it->second->ClearBrowseInfoWnd();
-                if (it->first == SPEED_STAT_STRING) {
+                if (it->first == DAMAGE_STAT_STRING) {
+                    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(DamageIcon(), UserString("SHIP_DAMAGE_STAT_TITLE"),
+                                                                                          UserString("SHIP_DAMAGE_STAT_MAIN")));
+                    it->second->SetBrowseInfoWnd(browse_wnd);
+                } else if (it->first == SPEED_STAT_STRING) {
                     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(SpeedIcon(), UserString("SHIP_SPEED_STAT_TITLE"),
                                                                                           UserString("SHIP_SPEED_STAT_MAIN")));
                     it->second->SetBrowseInfoWnd(browse_wnd);
@@ -690,8 +704,14 @@ namespace {
 
         double StatValue(const std::string& stat_name) const {
             if (const Ship* ship = GetObject<Ship>(m_ship_id)) {
-                if (stat_name == SPEED_STAT_STRING)
+                if (stat_name == DAMAGE_STAT_STRING) {
+                    if (const ShipDesign* design = ship->Design())
+                        return design->Attack();
+                    else
+                        return 0.0;
+                } else if (stat_name == SPEED_STAT_STRING) {
                     return ship->Speed();
+                }
 
                 MeterType meter_type = MeterTypeFromStatString(stat_name);
                 //std::cout << "got meter type " << boost::lexical_cast<std::string>(meter_type) << " from stat_name " << stat_name << std::endl;
