@@ -4841,8 +4841,8 @@ Xenoarchaeological Restoration
 LRN_XENOARCH_RESTORE_DESC
 It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology.  Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost.  By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.
 
-XENOARCH_RESTORE_SHORT_DESC
-Allows Ultra-Rare Techs
+XENOARCH_SHORT_DESC
+Allows discoveries from Ruins
 
 LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
