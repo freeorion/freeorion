@@ -5069,49 +5069,84 @@ DEF_PLANET_CLOAK_DESC
 By phasing parts a planet in and out of space-time, its stealth can be increased massively.
 
 SHP_WEAPON_2
-Weapon 2: Nuclear Missile
+Mass Driver 2
 SHP_WEAPON_2_DESC
-'''Unlocks ship weapon tech #2: Nuclear Missile.'''
+'''Refines Mass Driver to level 2.'''
 
 SHP_WEAPON_3
-Weapon 3: Laser
+Mass Driver 3
 SHP_WEAPON_3_DESC
-'''Unlocks ship weapon tech #3: Laser.'''
+'''Refines Mass Driver to level 3.'''
 
 SHP_WEAPON_4
-Weapon 4: Pulse Laser
+Mass Driver 4
 SHP_WEAPON_4_DESC
-'''Unlocks ship weapon tech #4: Pulse Laser.'''
+'''Refines Mass Driver to level 4.'''
 
 SHP_WEAPON_5
-Weapon 5: Ion Cannon
+Laser 1
 SHP_WEAPON_5_DESC
-'''Unlocks ship weapon tech #5: Ion Cannon.'''
+'''Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.'''
 
 SHP_WEAPON_6
-Weapon 6: Particle Beam
+Laser 2
 SHP_WEAPON_6_DESC
-'''Unlocks ship weapon tech #6: Particle Beam.'''
+'''Refines Laser to level 2.'''
 
 SHP_WEAPON_7
-Weapon 7: Antimatter Torpedo
+Laser 3
 SHP_WEAPON_7_DESC
-'''Unlocks ship weapon tech #7: Antimatter Torpedo.'''
+'''Refines Laser to level 3.'''
 
 SHP_WEAPON_8
-Weapon 8: Phasor
+Laser 4
 SHP_WEAPON_8_DESC
-'''Unlocks ship weapon tech #8: Phasor.'''
+'''Refines Laser to level 4.'''
 
 SHP_WEAPON_9
-Weapon 9: Quantum Cannon
+Plasma Cannon 1
 SHP_WEAPON_9_DESC
-'''Unlocks ship weapon tech #9: Quantum Cannon'.'''
+'''Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
 SHP_WEAPON_10
-Weapon 10: Death Ray
+Plasma Cannon 2
 SHP_WEAPON_10_DESC
-'''Unlocks ship weapon tech #10: Death Ray.'''
+'''Refines Plasma Cannon to level 2.'''
+
+SHP_WEAPON_11
+Plasma Cannon 3
+SHP_WEAPON_11_DESC
+'''Refines Plasma Cannon to level 3.'''
+
+SHP_WEAPON_12
+Plasma Cannon 4
+SHP_WEAPON_12_DESC
+'''Refines Plasma Cannon to level 4.'''
+
+SHP_WEAPON_13
+Death Ray 1
+SHP_WEAPON_13_DESC
+'''Unlocks the Death Ray, the ultimate ship's weapon.'''
+
+SHP_WEAPON_14
+Death Ray 2
+SHP_WEAPON_14_DESC
+'''Refines Death Ray to level 2.'''
+
+SHP_WEAPON_15
+Death Ray 3
+SHP_WEAPON_15_DESC
+'''Refines Death Ray to level 3.'''
+
+SHP_WEAPON_16
+Death Ray 4
+SHP_WEAPON_16_DESC
+'''Refines Death Ray to level 4.'''
+
+SHP_WEAPON_17
+Death Ray 5
+SHP_WEAPON_17_DESC
+'''Refines Death Ray to level 5.  The ultimate refinement of the ultimate weapon.'''
 
 SHP_ION_CANNON
 Ion Cannon
@@ -5996,54 +6031,89 @@ Capacity: %9% fighters'''
 ##############
 
 SR_WEAPON_1
-'''Rail Gun'''
+Mass Driver 1
 SR_WEAPON_1_DESC
-'''Weapon 1: Rail Gun'''
+'''The Mass Driver, a basic weapon.'''
 
 SR_WEAPON_2
-'''Nuclear Missile'''
+Mass Driver 2
 SR_WEAPON_2_DESC
-'''Weapon 2: Nuclear Missile'''
+'''Mass Driver, refined to level 2.'''
 
 SR_WEAPON_3
-'''Laser'''
+Mass Driver 3
 SR_WEAPON_3_DESC
-'''Weapon 3: Laser'''
+'''Mass Driver, refined to level 3.'''
 
 SR_WEAPON_4
-'''Pulse Laser'''
+Mass Driver 4
 SR_WEAPON_4_DESC
-'''Weapon 4: Pulse Laser'''
+'''Mass Driver, refined to level 4.'''
 
 SR_WEAPON_5
-'''Ion Cannon'''
+Laser 1
 SR_WEAPON_5_DESC
-'''Weapon 5: Ion Cannon'''
+'''The Laser, a more powerful ship's weapon than the Mass Driver.'''
 
 SR_WEAPON_6
-'''Particle Beam'''
+Laser 2
 SR_WEAPON_6_DESC
-'''Weapon 6: Particle Beam'''
+'''Laser, refined to level 2.'''
 
 SR_WEAPON_7
-'''Antimatter Torpedo'''
+Laser 3
 SR_WEAPON_7_DESC
-'''Weapon 7: Antimatter Torpedo'''
+'''Laser, refined to level 3.'''
 
 SR_WEAPON_8
-'''Phasor'''
+Laser 4
 SR_WEAPON_8_DESC
-'''Weapon 8: Phasor'''
+'''Laser, refined to level 4.'''
 
 SR_WEAPON_9
-'''Quantum Cannon'''
+Plasma Cannon 1
 SR_WEAPON_9_DESC
-'''Weapon 9: Quantum Cannon'''
+'''The Plasma Cannon, a more powerful ship's weapon than the Laser.'''
 
 SR_WEAPON_10
-'''Death Ray'''
+Plasma Cannon 2
 SR_WEAPON_10_DESC
-'''Weapon 10: Death Ray'''
+'''Plasma Cannon, refined to level 2.'''
+
+SR_WEAPON_11
+Plasma Cannon 3
+SR_WEAPON_11_DESC
+'''Plasma Cannon, refined to level 3.'''
+
+SR_WEAPON_12
+Plasma Cannon 4
+SR_WEAPON_12_DESC
+'''Plasma Cannon, refined to level 4.'''
+
+SR_WEAPON_13
+Death Ray 1
+SR_WEAPON_13_DESC
+'''The Death Ray, the ultimate ship's weapon.'''
+
+SR_WEAPON_14
+Death Ray 2
+SR_WEAPON_14_DESC
+'''Death Ray, refined to level 2.'''
+
+SR_WEAPON_15
+Death Ray 3
+SR_WEAPON_15_DESC
+'''Death Ray, refined to level 3.'''
+
+SR_WEAPON_16
+Death Ray 4
+SR_WEAPON_16_DESC
+'''Death Ray, refined to level 4.'''
+
+SR_WEAPON_17
+Death Ray 5
+SR_WEAPON_17_DESC
+'''Death Ray, refined to level 5.  The ultimate refinement of the ultimate weapon.'''
 
 SR_LASER
 Laser

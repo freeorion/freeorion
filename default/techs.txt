@@ -131,10 +131,10 @@ Tech
     name = "SHP_WEAPON_2"
     description = "SHP_WEAPON_2_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 25
-    researchturns = 2
+    researchcost = 20
+    researchturns = 5
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_2"
     
@@ -142,9 +142,9 @@ Tech
     name = "SHP_WEAPON_3"
     description = "SHP_WEAPON_3_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 50
+    researchcost = 40
     researchturns = 3
     prerequisites = "SHP_WEAPON_2"
     unlock = Item type = ShipPart name = "SR_WEAPON_3"
@@ -152,10 +152,10 @@ Tech
 Tech
     name = "SHP_WEAPON_4"
     description = "SHP_WEAPON_4_DESC"
-    short_description = "SHIP_PART_UNLOCK_SHORT_DESC"
-    techtype = Application
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 100
+    researchcost = 50
     researchturns = 4
     prerequisites = "SHP_WEAPON_3"
     unlock = Item type = ShipPart name = "SR_WEAPON_4"
@@ -167,18 +167,18 @@ Tech
     techtype = Application
     category = "SHIPS_CATEGORY"
     researchcost = 200
-    researchturns = 5
-    prerequisites = "SHP_WEAPON_4"
+    researchturns = 10
+    prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_5"
 
 Tech
     name = "SHP_WEAPON_6"
     description = "SHP_WEAPON_6_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 500
-    researchturns = 6
+    researchcost = 100
+    researchturns = 5
     prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_6"
 
@@ -186,10 +186,10 @@ Tech
     name = "SHP_WEAPON_7"
     description = "SHP_WEAPON_7_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 1000
-    researchturns = 7
+    researchcost = 200
+    researchturns = 6
     prerequisites = "SHP_WEAPON_6"
     unlock = Item type = ShipPart name = "SR_WEAPON_7"
 
@@ -197,10 +197,10 @@ Tech
     name = "SHP_WEAPON_8"
     description = "SHP_WEAPON_8_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 2000
-    researchturns = 8
+    researchcost = 400
+    researchturns = 7
     prerequisites = "SHP_WEAPON_7"
     unlock = Item type = ShipPart name = "SR_WEAPON_8"
 
@@ -210,21 +210,98 @@ Tech
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
     techtype = Application
     category = "SHIPS_CATEGORY"
-    researchcost = 4000
-    researchturns = 9
-    prerequisites = "SHP_WEAPON_8"
+    researchcost = 1000
+    researchturns = 15
+    prerequisites = "SHP_WEAPON_5"
     unlock = Item type = ShipPart name = "SR_WEAPON_9"
 
 Tech
     name = "SHP_WEAPON_10"
     description = "SHP_WEAPON_10_DESC"
     short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
-    techtype = Application
+    techtype = Refinement
     category = "SHIPS_CATEGORY"
-    researchcost = 8000
-    researchturns = 10
+    researchcost = 500
+    researchturns = 8
     prerequisites = "SHP_WEAPON_9"
     unlock = Item type = ShipPart name = "SR_WEAPON_10"
+
+Tech
+    name = "SHP_WEAPON_11"
+    description = "SHP_WEAPON_11_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 1000
+    researchturns = 9
+    prerequisites = "SHP_WEAPON_10"
+    unlock = Item type = ShipPart name = "SR_WEAPON_11"
+
+Tech
+    name = "SHP_WEAPON_12"
+    description = "SHP_WEAPON_12_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 2000
+    researchturns = 10
+    prerequisites = "SHP_WEAPON_11"
+    unlock = Item type = ShipPart name = "SR_WEAPON_12"
+
+Tech
+    name = "SHP_WEAPON_13"
+    description = "SHP_WEAPON_13_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Application
+    category = "SHIPS_CATEGORY"
+    researchcost = 5000
+    researchturns = 20
+    prerequisites = "SHP_WEAPON_9"
+    unlock = Item type = ShipPart name = "SR_WEAPON_13"
+
+Tech
+    name = "SHP_WEAPON_14"
+    description = "SHP_WEAPON_14_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 2500
+    researchturns = 11
+    prerequisites = "SHP_WEAPON_13"
+    unlock = Item type = ShipPart name = "SR_WEAPON_14"
+
+Tech
+    name = "SHP_WEAPON_15"
+    description = "SHP_WEAPON_15_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 5000
+    researchturns = 12
+    prerequisites = "SHP_WEAPON_14"
+    unlock = Item type = ShipPart name = "SR_WEAPON_15"
+
+Tech
+    name = "SHP_WEAPON_16"
+    description = "SHP_WEAPON_16_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 10000
+    researchturns = 13
+    prerequisites = "SHP_WEAPON_15"
+    unlock = Item type = ShipPart name = "SR_WEAPON_16"
+
+Tech
+    name = "SHP_WEAPON_17"
+    description = "SHP_WEAPON_17_DESC"
+    short_description = "SHIP_WEAPON_UNLOCK_SHORT_DESC"
+    techtype = Refinement
+    category = "SHIPS_CATEGORY"
+    researchcost = 20000
+    researchturns = 14
+    prerequisites = "SHP_WEAPON_16"
+    unlock = Item type = ShipPart name = "SR_WEAPON_17"
 
 Tech
     name = "LRN_PHYS_BRAIN"
