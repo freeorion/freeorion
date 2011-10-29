@@ -493,7 +493,7 @@ void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mo
 void SystemIcon::SetSelected(bool selected)
 {
     m_selected = selected;
-    SizeMove(UpperLeft(), LowerRight());
+    Resize(Size());
 }
 
 void SystemIcon::Refresh()
