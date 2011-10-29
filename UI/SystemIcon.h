@@ -11,6 +11,7 @@ class FleetButton;
 class System;
 namespace GG {
     class StaticGraphic;
+    class DynamicGraphic;
     class TextControl;
 }
 
@@ -91,16 +92,17 @@ private:
     void            Init(); //!< common constructor tasks
     void            PositionSystemName();
 
-    int                             m_system_id;            //!< the System object associated with this SystemIcon
-    boost::shared_ptr<GG::Texture>  m_disc_texture;         //!< solid star disc texture
-    boost::shared_ptr<GG::Texture>  m_halo_texture;         //!< transparent star halo texture
-    boost::shared_ptr<GG::Texture>  m_tiny_texture;         //!< alternate texture shown when icon very small
-    GG::StaticGraphic*              m_tiny_graphic;
-    GG::StaticGraphic*              m_selection_indicator;  //!< shown to indicate system is selected in sidepanel
-    GG::StaticGraphic*              m_mouseover_indicator;  //!< shown when the mouse cursor is over the system
-    bool                            m_selected;             //!< is this icon presently selected / should it show m_selected_indicator
-    OwnerColoredSystemName*         m_colored_name;         //!< the control that holds the name of the system
-    bool                            m_showing_name;         //!< is the icon supposed to show its name?
+    int                             m_system_id;                //!< the System associated with this SystemIcon
+    boost::shared_ptr<GG::Texture>  m_disc_texture;             //!< solid star disc texture
+    boost::shared_ptr<GG::Texture>  m_halo_texture;             //!< transparent star halo texture
+    boost::shared_ptr<GG::Texture>  m_tiny_texture;             //!< alternate texture shown when icon very small
+    GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
+    GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
+    GG::DynamicGraphic*             m_tiny_selection_indicator; //!< non-scaled indicator shown when showing tiny graphic
+    GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system
+    bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator
+    OwnerColoredSystemName*         m_colored_name;             //!< the control that holds the name of the system
+    bool                            m_showing_name;             //!< is the icon supposed to show its name?
 
     boost::signals::connection      m_system_connection;
 };

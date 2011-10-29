@@ -102,17 +102,27 @@ namespace {
         db.Add("UI.fleet-supply-line-dot-spacing",  "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING",     20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     "OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE",        0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.unowned-starlane-colour",        "OPTIONS_DB_UNOWNED_STARLANE_COLOUR",           StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
+
         db.Add("UI.show-detection-range",           "OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE",        false,      Validator<bool>());
-        db.Add("UI.detection-range-stealth-threshold","OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD",  0.0,    RangedStepValidator<double>(1.0, 0.0, 100.0));
-        db.Add("UI.show-stealth-threshold-slider",  "OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER",       false,  Validator<bool>());
+        db.Add("UI.detection-range-stealth-threshold",
+               "OPTIONS_DB_GALAXY_MAP_DETECTION_STEALTH_THRESHOLD",                                 0.0,        RangedStepValidator<double>(1.0, 0.0, 100.0));
+        db.Add("UI.show-stealth-threshold-slider",
+               "OPTIONS_DB_GALAXY_MAP_STEALTH_THRESHOLD_SLIDER",                                    false,      Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              "OPTIONS_DB_UI_SYSTEM_FOG",                     true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      "OPTIONS_DB_UI_SYSTEM_FOG_SPACING",             4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
+
+        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
+
         db.Add("UI.system-circles",                 "OPTIONS_DB_UI_SYSTEM_CIRCLES",                 true,       Validator<bool>());
         db.Add("UI.system-circle-size",             "OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE",             1.0,        RangedStepValidator<double>(0.125, 1.0, 2.5));
-        db.Add("UI.system-icon-size",               "OPTIONS_DB_UI_SYSTEM_ICON_SIZE",               14,         RangedValidator<int>(8, 50));
-        db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
+
+        db.Add("UI.system-tiny-icon-size-threshold","OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD",10,         RangedValidator<int>(1, 16));
         db.Add("UI.system-selection-indicator-size","OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE",1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("UI.system-selection-indicator-fps", "OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS", 12,         RangedValidator<int>(1, 60));
+
+        db.Add("UI.system-name-unowned-color",      "OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR",      StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
+
         db.Add("UI.tiny-fleet-button-minimum-zoom", "OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM",     0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom","OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM",    1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom","OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM",  4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
@@ -1078,7 +1088,9 @@ void MapWnd::RenderSystems()
             glMatrixMode(GL_MODELVIEW);
         }
 
-        if (m_star_texture_coords.size() && GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold") < ZoomFactor() * ClientUI::SystemIconSize()) {
+        if (m_star_texture_coords.size() &&
+            ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
+        {
             for (std::map<boost::shared_ptr<GG::Texture>, GL2DVertexBuffer>::const_iterator it = m_star_core_quad_vertices.begin();
                  it != m_star_core_quad_vertices.end(); ++it)
             {
@@ -1086,9 +1098,9 @@ void MapWnd::RenderSystems()
                     continue;
 
                 glBindTexture(GL_TEXTURE_2D, it->first->OpenGLId());
-                
+
                 it->second.activate();
-                
+
                 m_star_texture_coords.activate();
                 glDrawArrays(GL_QUADS, 0, it->second.size());
             }
@@ -2268,7 +2280,7 @@ LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1,
     double deltaX = X2 - X1, deltaY = Y2 - Y1;
     double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
 
-    double ring_radius = GetOptionsDB().Get<int>("UI.system-icon-size") * GetOptionsDB().Get<double>("UI.system-circle-size") / 2.0 + 0.5;
+    double ring_radius = ClientUI::SystemCircleSize() / 2.0 + 0.5;
 
     // safety check.  don't modify original coordinates if they're too close togther
     if (mag > 2*ring_radius) {

@@ -748,7 +748,7 @@ OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator, relative to system icon size.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
-Sets size of system icon below which the special fixed-size tiny icons will be shown.
+Sets size of system icons below which the fixed-size tiny icons will be shown.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip popup delay, in ms.

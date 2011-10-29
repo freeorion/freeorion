@@ -153,19 +153,22 @@ public:
 
     static GG::Clr      EditHiliteColor();
 
-    static GG::Clr      StatIncrColor();                        //!< used to color increasing stats text (eg "+2")
-    static GG::Clr      StatDecrColor();                        //!< used to color decreasing stats text (eg "-3")
+    static GG::Clr      StatIncrColor();        //!< used to color increasing stats text (eg "+2")
+    static GG::Clr      StatDecrColor();        //!< used to color decreasing stats text (eg "-3")
 
-    static GG::Clr      StateButtonColor();                     //!< colour of selected state button markers
+    static GG::Clr      StateButtonColor();     //!< colour of selected state button markers
 
-    static int          SystemIconSize();                       //!< the width/height of a System/Icon at zoom = 1.0
-    static GG::Clr      SystemNameTextColor();                  //!< the colour of system names that aren't owned by any player (as far as this client knows)
-    static double       SystemCircleSize();                     //!< the width/height of the system-enclosing circle, relative to the size of a SystemIcon
-    static double       SystemSelectionIndicatorSize();         //!< the width/height of a system selection indicator, relative to the size of a SystemIcon
+    static int          SystemIconSize();                   //!< the width/height of a System/Icon at zoom = 1.0
+    static int          SystemTinyIconSizeThreshold();      //!< the width/height of a system icon below which the tiny system icons should be used
+    static int          SystemCircleSize();                 //!< the width/height of the system-enclosing circle
+    static int          SystemSelectionIndicatorSize();     //!< the width/height of a system selection indicator
+    static int          SystemSelectionIndicatorFPS();      //!< frames per second to animate system selection indicator
 
-    static double       TinyFleetButtonZoomThreshold();         //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
-    static double       SmallFleetButtonZoomThreshold();        //!< the minimum zoom level of the map at which to show small fleet icons
-    static double       MediumFleetButtonZoomThreshold();       //!< the minimum zoom level of the map at which to show medium fleet icons
+    static GG::Clr      SystemNameTextColor();              //!< the colour of system names that aren't owned by any player (as far as this client knows)
+
+    static double       TinyFleetButtonZoomThreshold();     //!< the minimum zoom level of the map at which to show tiny (any) fleet icons
+    static double       SmallFleetButtonZoomThreshold();    //!< the minimum zoom level of the map at which to show small fleet icons
+    static double       MediumFleetButtonZoomThreshold();   //!< the minimum zoom level of the map at which to show medium fleet icons
 
     // Content Texture Getters
     static boost::shared_ptr<GG::Texture>   ShipIcon(int design_id);

@@ -85,10 +85,13 @@ GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<Stre
 
 GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
 
-double      ClientUI::SystemCircleSize()        { return GetOptionsDB().Get<double>("UI.system-circle-size"); }
-int         ClientUI::SystemIconSize()          { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
-GG::Clr     ClientUI::SystemNameTextColor()     { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
-double      ClientUI::SystemSelectionIndicatorSize()    { return GetOptionsDB().Get<double>("UI.system-selection-indicator-size"); }
+int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
+int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
+int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-circle-size")); }
+int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-selection-indicator-size")); }
+int         ClientUI::SystemSelectionIndicatorFPS()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-fps"); }
+
+GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
@@ -98,7 +101,7 @@ double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().
 // content texture getters
 boost::shared_ptr<GG::Texture> ClientUI::ShipIcon(int design_id)
 {
-    std::string graphic_name = "";
+    std::string graphic_name;
     const ShipDesign* design = GetShipDesign(design_id);
     if (design) {
         graphic_name = design->Graphic();

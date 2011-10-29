@@ -28,13 +28,19 @@ namespace {
     bool PlaySounds() {return GetOptionsDB().Get<bool>("UI.sound.enabled");}
     void PlaySystemIconRolloverSound() {if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover"));}
 
+    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTextures() {
+        static std::vector<boost::shared_ptr<GG::Texture> > normal_textures =
+            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection", "system_selection", true);
+        return normal_textures;
+    }
+    const std::vector<boost::shared_ptr<GG::Texture> >& GetSelectionIndicatorTinyTextures() {
+        static std::vector<boost::shared_ptr<GG::Texture> > tiny_textures =
+            ClientUI::GetClientUI()->GetPrefixedTextures(ClientUI::ArtDir() / "misc" / "system_selection_tiny", "system_selection_tiny", false);
+        return tiny_textures;
+    }
+
     const double        PI = 3.1415926535;
     const unsigned int  MAX_TRIES = 128;     // most allowed unique fleetbutton locations
-
-    void AddOptions(OptionsDB& db) {
-        db.Add("UI.system-tiny-icon-size-threshold",    "OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD",    10, RangedValidator<int>(1, 16));
-    }
-    bool temp_bool = RegisterOptions(&AddOptions);
 }
 
 ////////////////////////////////////////////////
@@ -201,8 +207,28 @@ void SystemIcon::Init() {
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    boost::shared_ptr<GG::Texture> selection_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection.png");
-    m_selection_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(DEFAULT_SIZE), GG::Y(DEFAULT_SIZE), selection_texture, GG::GRAPHIC_FITGRAPHIC);
+    const std::vector<boost::shared_ptr<GG::Texture> >& textures = GetSelectionIndicatorTextures();
+    GG::X texture_width = textures.at(0)->DefaultWidth();
+    GG::Y texture_height = textures.at(0)->DefaultHeight();
+    m_selection_indicator = new GG::DynamicGraphic(GG::X0, GG::Y0,
+                                                   texture_width, texture_height, true,
+                                                   texture_width, texture_height, 0, textures,
+                                                   GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_selection_indicator->SetFPS(ClientUI::SystemSelectionIndicatorFPS());
+    AttachChild(m_selection_indicator);
+    m_selection_indicator->Play();
+
+    // tiny selection indicator graphic
+    const std::vector<boost::shared_ptr<GG::Texture> >& tiny_textures = GetSelectionIndicatorTinyTextures();
+    texture_width = tiny_textures.at(0)->DefaultWidth();
+    texture_height = tiny_textures.at(0)->DefaultHeight();
+    m_tiny_selection_indicator = new GG::DynamicGraphic(GG::X0, GG::Y0,
+                                                        texture_width, texture_height, true,
+                                                        texture_width, texture_height, 0, tiny_textures,
+                                                        GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    m_tiny_selection_indicator->SetFPS(ClientUI::SystemSelectionIndicatorFPS());
+    AttachChild(m_tiny_selection_indicator);
+    m_tiny_selection_indicator->Play();
 
     // mouseover indicator graphic
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
@@ -213,9 +239,10 @@ void SystemIcon::Init() {
 
 SystemIcon::~SystemIcon()
 {
-    delete m_selection_indicator;
-    delete m_mouseover_indicator;
     delete m_tiny_graphic;
+    delete m_selection_indicator;
+    delete m_tiny_selection_indicator;
+    delete m_mouseover_indicator;
     delete m_colored_name;
 }
 
@@ -335,34 +362,62 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
 }
 
 int SystemIcon::EnclosingCircleDiameter() const
-{
-    return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("UI.system-circle-size")) + 1;
-}
+{ return static_cast<const int>(Value(Width()) * GetOptionsDB().Get<double>("UI.system-circle-size")) + 1; }
 
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
 
-    if (m_tiny_graphic && lr.x - ul.x < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold")) {
+    const bool USE_TINY_GRAPHICS = lr.x - ul.x < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
+    GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
+
+    // tiny graphic?
+    if (m_tiny_graphic && USE_TINY_GRAPHICS) {
         GG::Pt tiny_size = m_tiny_graphic->Size();
-        GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
         GG::Pt tiny_ul(static_cast<GG::X>(middle.x - tiny_size.x / 2.0),
                        static_cast<GG::Y>(middle.y - tiny_size.y / 2.0));
         m_tiny_graphic->SizeMove(tiny_ul, tiny_ul + tiny_size);
+        AttachChild(m_tiny_graphic);
         m_tiny_graphic->Show();
-    } else {
+    } else if (m_tiny_graphic) {
+        DetachChild(m_tiny_graphic);
         m_tiny_graphic->Hide();
     }
 
-    int ind_size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Value(Width()));
-    GG::Pt ind_ul((Width() - ind_size) / 2, (Height() - ind_size) / 2);
-    GG::Pt ind_lr = ind_ul + GG::Pt(GG::X(ind_size), GG::Y(ind_size));
+    // tiny selection indicator
+    if (m_selected && m_tiny_selection_indicator && USE_TINY_GRAPHICS) {
+        GG::Pt tiny_sel_ind_size = m_tiny_selection_indicator->Size();
+        GG::Pt tiny_sel_ind_ul(static_cast<GG::X>(middle.x - tiny_sel_ind_size.x / 2.0),
+                               static_cast<GG::Y>(middle.y - tiny_sel_ind_size.y / 2.0));
+        m_tiny_selection_indicator->SizeMove(tiny_sel_ind_ul, tiny_sel_ind_ul + tiny_sel_ind_size);
+        AttachChild(m_tiny_selection_indicator);
+        m_tiny_selection_indicator->Show();
+    } else if (m_tiny_selection_indicator) {
+        DetachChild(m_tiny_selection_indicator);
+        m_tiny_selection_indicator->Hide();
+    }
 
-    if (m_selection_indicator && m_selected)
-        m_selection_indicator->SizeMove(ind_ul, ind_lr);
+    const int SEL_IND_WIDTH_HEIGHT = ClientUI::SystemSelectionIndicatorSize() * Value(Width()) / ClientUI::SystemIconSize();
+    const GG::Pt SEL_IND_SIZE = GG::Pt(GG::X(SEL_IND_WIDTH_HEIGHT), GG::Y(SEL_IND_WIDTH_HEIGHT));
 
-    if (m_mouseover_indicator)
-        m_mouseover_indicator->SizeMove(ind_ul, ind_lr);
+    // normal selection indicator
+    if (m_selected && m_selection_indicator && !USE_TINY_GRAPHICS) {
+        GG::Pt sel_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
+                          static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
+        m_selection_indicator->SizeMove(sel_ind_ul, sel_ind_ul + SEL_IND_SIZE);
+        AttachChild(m_selection_indicator);
+        m_selection_indicator->Show();
+    } else if (m_selection_indicator) {
+        DetachChild(m_selection_indicator);
+        m_selection_indicator->Hide();
+    }
+
+    // mouseover attached / detach / show / hide done by MouseEnter and MouseLeave
+    if (m_mouseover_indicator) {
+        GG::Pt mouse_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
+                            static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
+        m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
+    }
 
     Refresh();
 }
@@ -391,28 +446,16 @@ void SystemIcon::ManualRender(double halo_scale_factor)
 }
 
 void SystemIcon::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        LeftClickedSignal(m_system_id);
-}
+{ if (!Disabled()) LeftClickedSignal(m_system_id); }
 
 void SystemIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        RightClickedSignal(m_system_id);
-}
+{ if (!Disabled()) RightClickedSignal(m_system_id); }
 
 void SystemIcon::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        LeftDoubleClickedSignal(m_system_id);
-}
+{ if (!Disabled()) LeftDoubleClickedSignal(m_system_id); }
 
 void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
-{
-    if (!Disabled())
-        RightDoubleClickedSignal(m_system_id);
-}
+{ if (!Disabled()) RightDoubleClickedSignal(m_system_id); }
 
 void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
@@ -434,9 +477,8 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 void SystemIcon::MouseLeave()
 {
     // un-indicate mouseover
-    if (m_mouseover_indicator) {
+    if (m_mouseover_indicator)
         DetachChild(m_mouseover_indicator);
-    }
 
     // hide name if not showing by default
     if (!m_showing_name)
@@ -446,24 +488,12 @@ void SystemIcon::MouseLeave()
 }
 
 void SystemIcon::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
-{
-    ForwardEventToParent();
-}
+{ ForwardEventToParent(); }
 
 void SystemIcon::SetSelected(bool selected)
 {
     m_selected = selected;
-
-    if (m_selected) {
-        int size = static_cast<int>(ClientUI::SystemSelectionIndicatorSize() * Value(Width()));
-        GG::Pt ind_ul = GG::Pt((Width() - size) / 2, (Height() - size) / 2);
-        GG::Pt ind_lr = ind_ul + GG::Pt(GG::X(size), GG::Y(size));
-        AttachChild(m_selection_indicator);
-        m_selection_indicator->SizeMove(ind_ul, ind_lr);
-        MoveChildUp(m_selection_indicator);
-    } else {
-        DetachChild(m_selection_indicator);
-    }
+    SizeMove(UpperLeft(), LowerRight());
 }
 
 void SystemIcon::Refresh()
