@@ -768,14 +768,15 @@ void OptionsWnd::Init()
     BeginPage(UserString("OPTIONS_GALAXY_MAP"));
     BeginSection(UserString("OPTIONS_SYSTEM_ICONS"));
     IntOption("UI.system-icon-size",                    UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
-    BoolOption("UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
-    DoubleOption("UI.system-fog-of-war-spacing",        UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
     BoolOption("UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption("UI.system-circle-size",               UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption("UI.system-selection-indicator-size",  UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
+    IntOption("UI.system-selection-indicator-fps",      UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
     IntOption("UI.system-tiny-icon-size-threshold",     UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
-    BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     ColorOption("UI.system-name-unowned-color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
+    BoolOption("UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
+    DoubleOption("UI.system-fog-of-war-spacing",        UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
+    BoolOption("UI.optimized-system-rendering",         UserString("OPTIONS_OPTIMIZED_SYSTEM_RENDERING"));
     EndSection();
     BeginSection(UserString("OPTIONS_FLEET_ICONS"));
     DoubleOption("UI.tiny-fleet-button-minimum-zoom",   UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));

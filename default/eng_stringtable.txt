@@ -747,6 +747,9 @@ Sets size of fleet selection indicator, relative to fleet icon size.
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator, relative to system icon size.
 
+OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
+Sets the frame rate of animation of system selection indicator.
+
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Sets size of system icons below which the fixed-size tiny icons will be shown.
 
@@ -1323,6 +1326,9 @@ System circle relative size
 
 OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 System selection indicator relative size
+
+OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS
+System selection indicator animation frame rate
 
 OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Tiny system icon size threshold
