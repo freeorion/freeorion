@@ -1770,8 +1770,8 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
 {
     const GG::X GRAPHIC_WIDTH(ClientUI::Pts() * 2);
     const GG::X NAME_WIDTH(ClientUI::Pts() * 18);
-    const GG::X COST_WIDTH(ClientUI::Pts() * 2);
-    const GG::X TIME_WIDTH(ClientUI::Pts() * 2);
+    const GG::X COST_WIDTH(ClientUI::Pts() * 4);
+    const GG::X TIME_WIDTH(ClientUI::Pts() * 4);
     const GG::X CATEGORY_WIDTH(ClientUI::Pts() * 8);
     const GG::X TYPE_WIDTH(ClientUI::Pts() * 8);
 

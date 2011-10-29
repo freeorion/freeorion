@@ -955,7 +955,8 @@ void EncyclopediaDetailPanel::Refresh() {
                 % incomplete_design->StarlaneSpeed()
                 % incomplete_design->Fuel()
                 % incomplete_design->ColonyCapacity()
-                % incomplete_design->TroopCapacity());
+                % incomplete_design->TroopCapacity()
+                % incomplete_design->Attack());
         }
 
         general_type = UserString("ENC_INCOMPETE_SHIP_DESIGN");
