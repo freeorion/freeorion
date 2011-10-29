@@ -4,6 +4,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
 #include "../util/AppInterface.h"
+#include "../util/OptionsDB.h"
 #include "../universe/Building.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
@@ -989,20 +990,20 @@ namespace {
         if (!result.full)
             ReportError(input.c_str(), result);
 
-//#ifdef OUTPUT_ALIGNMENTS_LIST
-        Logger().debugStream() << "Alignments:";
-        for (std::vector<Alignment>::const_iterator it = m_alignments.begin(); it != m_alignments.end(); ++it) {
-            const Alignment& p = *it;
-            Logger().debugStream() << " ... " << p.Name();
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+            Logger().debugStream() << "Alignments:";
+            for (std::vector<Alignment>::const_iterator it = m_alignments.begin(); it != m_alignments.end(); ++it) {
+                const Alignment& p = *it;
+                Logger().debugStream() << " ... " << p.Name();
+            }
+            Logger().debugStream() << "Alignment Effects:";
+            for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
+                 it != m_effects_groups.end(); ++it)
+            {
+                //const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
+                Logger().debugStream() << " ... " /*<< p->Dump()*/;
+            }
         }
-        Logger().debugStream() << "Alignment Effects:";
-        for (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >::const_iterator it = m_effects_groups.begin();
-             it != m_effects_groups.end(); ++it)
-        {
-            //const boost::shared_ptr<const Effect::EffectsGroup>& p = *it;
-            Logger().debugStream() << " ... " /*<< p->Dump()*/;
-        }
-//#endif
     }
 
     /** returns the singleton alignment manager */

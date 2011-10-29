@@ -1300,12 +1300,12 @@ void Universe::ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map
             continue;
         Effect::TargetsAndCause filtered_targets_and_cause(targets, targets_and_cause.effect_cause);
 
-        // DEBUG
-        Logger().debugStream() << "ExecuteEffects effectsgroup: " << effects_group->Dump();
-        Logger().debugStream() << "ExecuteEffects Targets before: ";
-        for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-            Logger().debugStream() << " ... " << (*t_it)->Dump();
-        // END DEBUG
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+            Logger().debugStream() << "ExecuteEffects effectsgroup: " << effects_group->Dump();
+            Logger().debugStream() << "ExecuteEffects Targets before: ";
+            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                Logger().debugStream() << " ... " << (*t_it)->Dump();
+        }
 
         // execute Effects in the EffectsGroup
         if (update_effect_accounting && only_meter_effects)
@@ -1317,11 +1317,11 @@ void Universe::ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map
         else
             effects_group->Execute(sourced_effects_group.source_object_id, filtered_targets_and_cause.target_set);
 
-        // DEBUG
-        Logger().debugStream() << "ExecuteEffects Targets after: ";
-        for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
-            Logger().debugStream() << " ... " << (*t_it)->Dump();
-        // END DEBUG
+        if (GetOptionsDB().Get<bool>("verbose-logging")) {
+            Logger().debugStream() << "ExecuteEffects Targets after: ";
+            for (Effect::TargetSet::const_iterator t_it = targets.begin(); t_it != targets.end(); ++t_it)
+                Logger().debugStream() << " ... " << (*t_it)->Dump();
+        }
 
         // if this EffectsGroup belongs to a stacking group, add the objects just affected by it to executed_nonstacking_effects
         if (!effects_group->StackingGroup().empty()) {
