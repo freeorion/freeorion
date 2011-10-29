@@ -2704,13 +2704,13 @@ ANCIENT_RUINS_DEPLETED_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_DEPLETED_SPECIAL_DESC
-This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, tripling research on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).
+This planet holds the ruins of an unknown, advanced ancient race. Research is tripled on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).  A valuable discovery has already been made here.
 
 ANCIENT_RUINS_SPECIAL
 Ancient Ruins
 
 ANCIENT_RUINS_SPECIAL_DESCRIPTION
-This planet holds the ruins of an advanced ancient race, who have been forgotten in the history books, tripling research on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).  The first empire with the tech Xenoarchaeological Restoration to possess this planet receives one free ultra-rare tech or uncovers an ultra-rare building or ship.
+This planet holds the ruins of an unknown, advanced ancient race. Research is tripled on the planet and increasing research on Research-focused planets throughout the empire by one twentieth (non-stacking).  The first empire with the tech Xenoarchaeology to possess this planet receives one free advanced tech or uncovers a powerful building or ship.
 
 MINERALS_SPECIAL
 Mineral Rich
@@ -3987,8 +3987,15 @@ While traditional computers have nearly unfathomable intelligence and computatio
 LRN_XENOARCH
 Xenoarchaeology
 
+XENOARCH_SHORT_DESC
+Allows discoveries from Ruins
+
 LRN_XENOARCH_DESC
+'''Allows discoveries from Ancient Ruins.
+
 The contemporary empires, races and single-star civilizations are not the first or only beings to have lived in this galaxy.  Remains, ruins and rumours of the ancients may be found on deserted planets and lifeless asteroids, or drifting in open space.  Finding and deciphering such clues holds great potential to reveal secrets, teach lessons, or give warnings of ancient knowledge.
+
+It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology.  Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost.  By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.'''
 
 LRN_GRAVITONICS
 Gravitonics
@@ -4587,6 +4594,9 @@ DEF_GARRISON_4_DESC
 # Tech Application Names & Descriptions #
 #########################################
 
+VICTORY_SHORT_DESC
+Brings Victory!
+
 DOES_NOTHING_SHORT_DESC
 Useless: Does Nothing
 
@@ -4834,15 +4844,6 @@ Solar Manipulation
 
 LRN_SOLAR_MAN_DESC
 Different star types not only have their own distinct attributes and opportunities for exploitation, but also tend to give rise to a particular planet type.  Often, a star of a particular type will give a desired bonus, but will almost certainly be devoid of any desirable planets, or will not be present in an opportune location in the galaxy.  By manipulating the high-energy reactions within a star's core, it would be possible to either reverse or accelerate the natural processes within the star, allowing it to be changed to an entirely different type at need.
-
-LRN_XENOARCH_RESTORE
-Xenoarchaeological Restoration
-
-LRN_XENOARCH_RESTORE_DESC
-It is often exceedingly difficult and dangerous to decipher the clues left by ancient civilizations in the form of highly advanced technology.  Mistreatment of the technology or accidental activation can cause the technology itself and/or the archaeologists extracting the technology to be lost.  By containing the technology safely within a force field and probing its depths via non-local field manipulation, it is possible to safely recover and unlock the mysteries of ancient technology.
-
-XENOARCH_SHORT_DESC
-Allows discoveries from Ruins
 
 LRN_DISTRIB_THOUGHT
 Distributed Thought Computing
@@ -6389,7 +6390,7 @@ Robotic Hull
 SH_ROBOTIC_DESC
 '''This hull is completely automated and functions under the principals of Military Robotic Control.  Like the standard hull, it has four external slots and one internal slot.  It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
 
-In addition to a Basic Shipyard an an orbital Drydock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
+In addition to a Basic Shipyard and an orbital Drydock, either a Robotic Processing Unit or a Nanorobotic Processing Unit is required at the planet where it is constructed.'''
 
 SH_SPATIAL_FLUX
 Spatial Flux Hull
