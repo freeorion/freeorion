@@ -1140,7 +1140,8 @@ namespace {
         }
     };
 }
-EmpireColorSelector::EmpireColorSelector(GG::Y h) : 
+
+EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     CUIDropDownList(GG::X0, GG::Y0, COLOR_SELECTOR_WIDTH, h - 8, 12 * h)
 {
     const std::vector<GG::Clr>& colors = EmpireColors();
@@ -1329,7 +1330,8 @@ void ProductionInfoPanel::Render()
     glEnable(GL_TEXTURE_2D);
 }
 
-void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress, double points_to_underfunded_projects, int queue_size)
+void ProductionInfoPanel::Reset(double total_points, double total_queue_cost, int projects_in_progress,
+                                double points_to_underfunded_projects, int queue_size)
 {
     double wasted_points = total_queue_cost < total_points ? total_points - total_queue_cost : 0.0;
     *m_total_points << static_cast<int>(total_points);
@@ -1360,12 +1362,12 @@ void ProductionInfoPanel::Draw(GG::Clr clr, bool fill)
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
-MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, int turns_completed, double partially_complete_turn,
-                                           const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color) :
+MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, double turns_completed,
+                                           const GG::Clr& bar_color, const GG::Clr& background,
+                                           const GG::Clr& outline_color) :
     Control(GG::X0, GG::Y0, w, h, GG::Flags<GG::WndFlag>()),
     m_total_turns(total_turns),
     m_turns_completed(turns_completed),
-    m_partially_complete_turn(partially_complete_turn),
     m_bar_color(bar_color),
     m_background(background),
     m_outline_color(outline_color)
@@ -1374,115 +1376,31 @@ MultiTurnProgressBar::MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, in
 void MultiTurnProgressBar::Render()
 {
     GG::Pt ul = UpperLeft(), lr = LowerRight();
-    GG::Y h = Height();
-    const GG::X_d TURN_SEGMENT_WIDTH = Width() / static_cast<double>(m_total_turns);
-    glDisable(GL_TEXTURE_2D);
-    glColor(m_background);
-    if (m_partially_complete_turn && m_turns_completed == m_total_turns - 1) {
-        GG::BeginScissorClipping(GG::Pt(lr.x - TURN_SEGMENT_WIDTH, ul.y),
-                                 GG::Pt(lr.x, lr.y - m_partially_complete_turn * h));
-        glBegin(GL_POLYGON);
-        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
-        glEnd();
-        GG::EndScissorClipping();
-        GG::BeginScissorClipping(GG::Pt(lr.x - TURN_SEGMENT_WIDTH,
-                                        lr.y - m_partially_complete_turn * h),
-                                 lr);
-        glColor(m_bar_color);
-        glBegin(GL_POLYGON);
-        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
-        glEnd();
-        GG::EndScissorClipping();
-        glColor(m_background);
-    } else {
-        glBegin(GL_POLYGON);
-        RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
-        glEnd();
-    }
-    glBegin(GL_QUADS);
-    if (m_turns_completed != m_total_turns - 1) {
-        glVertex(lr.x - TURN_SEGMENT_WIDTH, ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
-        glVertex(lr.x - TURN_SEGMENT_WIDTH, lr.y);
-    }
-    if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
-    }
-    glColor(m_bar_color);
-    if (0 < m_turns_completed && m_turns_completed < m_total_turns - 1) {
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y - h * m_partially_complete_turn);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y - h * m_partially_complete_turn);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * (m_turns_completed + 1), lr.y);
-    }
-    if (m_turns_completed) {
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH, ul.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH, lr.y);
-        glVertex(ul.x + TURN_SEGMENT_WIDTH * m_turns_completed, lr.y);
-    }
-    glEnd();
-    if (m_partially_complete_turn && !m_turns_completed) {
-        GG::BeginScissorClipping(GG::Pt(ul.x, lr.y - m_partially_complete_turn * h),
-                                 GG::Pt(ul.x + TURN_SEGMENT_WIDTH, lr.y));
-        glBegin(GL_POLYGON);
-        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
-        glEnd();
-        GG::EndScissorClipping();
-        GG::BeginScissorClipping(ul,
-                                 GG::Pt(ul.x + TURN_SEGMENT_WIDTH,
-                                        lr.y - m_partially_complete_turn * h));
-        glColor(m_background);
-        glBegin(GL_POLYGON);
-        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
-        glEnd();
-        GG::EndScissorClipping();
-    } else {
-        if (!m_turns_completed)
-            glColor(m_background);
-        glBegin(GL_POLYGON);
-        LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
-        glEnd();
-    }
-    glColor(m_outline_color);
-    glBegin(GL_LINES);
-    for (GG::X_d x = ul.x + TURN_SEGMENT_WIDTH; x < lr.x - 1.0e-5; x += TURN_SEGMENT_WIDTH) {
-        glVertex(x, ul.y);
-        glVertex(x, lr.y);
-    }
-    glEnd();
-    glEnable(GL_LINE_SMOOTH);
-    glBegin(GL_LINE_LOOP);
-    LeftEndVertices(ul.x, ul.y, ul.x + TURN_SEGMENT_WIDTH, lr.y);
-    RightEndVertices(lr.x - TURN_SEGMENT_WIDTH, ul.y, lr.x, lr.y);
-    glEnd();
-    glDisable(GL_LINE_SMOOTH);
+    bool segmented = true;
+    if (Width() / m_total_turns < 3)
+        segmented = false;
 
-    glEnable(GL_TEXTURE_2D);
-}
-
-void MultiTurnProgressBar::LeftEndVertices(GG::X x1, GG::Y y1, GG::X_d x2, GG::Y y2)
-{
-    glVertex(x2, y1);
-    glVertex(x1 + 5, y1);
-    glVertex(x1, y1 + 4);
-    glVertex(x1, y2 - 4);
-    glVertex(x1 + 5, y2);
-    glVertex(x2, y2);
-}
-
-void MultiTurnProgressBar::RightEndVertices(GG::X_d x1, GG::Y y1, GG::X x2, GG::Y y2)
-{
-    glVertex(x1, y2);
-    glVertex(x2 - 5, y2);
-    glVertex(x2, y2 - 4);
-    glVertex(x2, y1 + 4);
-    glVertex(x2 - 5, y1);
-    glVertex(x1, y1);
+    // draw background over whole area
+    FlatRectangle(ul, lr, m_background, m_outline_color, 2);
+    // draw completed portion bar
+    GG::X completed_bar_width(std::max(1.0, Value(Width() * m_turns_completed / m_total_turns)));
+    if (completed_bar_width > 3) {
+        GG::Pt bar_lr(ul.x + completed_bar_width, lr.y);
+        FlatRectangle(ul, bar_lr, m_bar_color, m_outline_color, 2);
+    }
+    // draw segment separators
+    if (segmented) {
+        glColor(m_outline_color);
+        glDisable(GL_TEXTURE_2D);
+        glBegin(GL_LINES);
+        for (int n = 1; n < m_total_turns; ++n) {
+            GG::X separator_x = ul.x + Width() * n / m_total_turns;
+            glVertex(separator_x, ul.y);
+            glVertex(separator_x, lr.y);
+        }
+        glEnd();
+        glEnable(GL_TEXTURE_2D);
+    }
 }
 
 //////////////////////////////////////////////////
@@ -1572,9 +1490,7 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(GG::X x, GG::Y y, GG::X w, 
     GG::Control(x, y, w, h, flags),
     m_graphics(subtextures),
     m_styles(styles)
-{
-    Init();
-}
+{ Init(); }
 
 MultiTextureStaticGraphic::MultiTextureStaticGraphic() :
     m_graphics(),

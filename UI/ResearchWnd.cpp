@@ -77,7 +77,7 @@ namespace {
         GG::Control* panel = new QueueTechPanel(w, tech_name,
                                                 allocated_rp, turns_left,
                                                 static_cast<int>(progress / per_turn_cost),
-                                                std::fmod(progress, per_turn_cost));
+                                                std::fmod(progress, per_turn_cost) / per_turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -140,7 +140,8 @@ namespace {
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime() : 1,
-                                                  turns_completed, partially_complete_turn, ClientUI::TechWndProgressBarColor(),
+                                                  turns_completed + partially_complete_turn,
+                                                  ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 

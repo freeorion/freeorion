@@ -535,7 +535,7 @@ class MultiTurnProgressBar : public GG::Control
 public:
     /** \name Structors */ //@{
     /** ctor */
-    MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, int turns_completed, double partially_complete_turn,
+    MultiTurnProgressBar(GG::X w, GG::Y h, int total_turns, double turns_completed,
                          const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color);
     //@}
 
@@ -544,12 +544,8 @@ public:
     //@}
 
 private:
-    void LeftEndVertices(GG::X x1, GG::Y y1, GG::X_d x2, GG::Y y2);
-    void RightEndVertices(GG::X_d x1, GG::Y y1, GG::X x2, GG::Y y2);
-
     int     m_total_turns;
-    int     m_turns_completed;
-    double  m_partially_complete_turn;
+    double  m_turns_completed;
     GG::Clr m_bar_color;
     GG::Clr m_background;
     GG::Clr m_outline_color;

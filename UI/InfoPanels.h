@@ -226,9 +226,12 @@ private:
 /** Represents and allows some user interaction with a building */
 class BuildingIndicator : public GG::Wnd {
 public:
-    BuildingIndicator(GG::X w, int building_id);            ///< constructor for use when building is completed, shown without progress bar
-    BuildingIndicator(GG::X w, const BuildingType& type, int turns_left, int turns_completed,
-                      double partial_turn);                 ///< constructor for use when building is partially complete, to show progress bar
+    /** Constructor for use when building is completed, shown without progress 
+      * bar. */
+    BuildingIndicator(GG::X w, int building_id);
+    /** Constructor for use when building is partially complete, to show
+      * progress bar. */
+    BuildingIndicator(GG::X w, const BuildingType& type, int turns_left, double turns_completed);
 
     /** \name Mutators */ //@{
     virtual void    Render();
