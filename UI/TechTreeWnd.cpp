@@ -37,8 +37,8 @@ namespace {
     const GG::Y PROGRESS_PANEL_HEIGHT(18);
     const GG::X PROGRESS_PANEL_LEFT_EXTRUSION(21);
     const GG::Y PROGRESS_PANEL_BOTTOM_EXTRUSION(9);
-    const int MAIN_PANEL_CORNER_RADIUS = 5;
-    const int PROGRESS_PANEL_CORNER_RADIUS = 5;
+    const int   MAIN_PANEL_CORNER_RADIUS = 5;
+    const int   PROGRESS_PANEL_CORNER_RADIUS = 5;
 
     const GG::X THEORY_TECH_PANEL_LAYOUT_WIDTH = 250 + PROGRESS_PANEL_LEFT_EXTRUSION;
     const GG::Y THEORY_TECH_PANEL_LAYOUT_HEIGHT = 50 + PROGRESS_PANEL_BOTTOM_EXTRUSION;
@@ -50,7 +50,7 @@ namespace {
     const GG::X TECH_PANEL_LAYOUT_WIDTH = THEORY_TECH_PANEL_LAYOUT_WIDTH;
     const GG::Y TECH_PANEL_LAYOUT_HEIGHT = THEORY_TECH_PANEL_LAYOUT_HEIGHT - PROGRESS_PANEL_BOTTOM_EXTRUSION;
 
-    const int    HORIZONTAL_LINE_LENGTH = 12;
+    const int   HORIZONTAL_LINE_LENGTH = 12;
     const float OUTER_LINE_THICKNESS = 1.5;
     const float ARC_THICKNESS = 3.0;
 
@@ -925,8 +925,8 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
     // progress text box
     GG::Rect progress_panel = ProgressPanelRect(UpperLeft(), LowerRight());
-    m_progress_text = new GG::TextControl(static_cast<GG::X>(progress_panel.ul.x - PROGRESS_PANEL_LEFT_EXTRUSION),
-                                          static_cast<GG::Y>(progress_panel.ul.y - PROGRESS_PANEL_BOTTOM_EXTRUSION),
+    m_progress_text = new GG::TextControl(static_cast<GG::X>(progress_panel.ul.x),
+                                          static_cast<GG::Y>(progress_panel.ul.y),
                                           progress_panel.Width(), progress_panel.Height(),
                                           "Progress Panel", font, m_text_and_border_color);
 
