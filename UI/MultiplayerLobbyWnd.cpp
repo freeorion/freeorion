@@ -64,7 +64,7 @@ namespace {
                 GG::DropDownList::Row(),
                 type(Networking::INVALID_CLIENT_TYPE)
             {
-                push_back(UserString("NO_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                push_back(UserString("NO_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
             }
             TypeRow(Networking::ClientType type_, bool show_add_drop = false) :
                 GG::DropDownList::Row(GG::X1, GG::Y1, "PlayerTypeSelectorRow"),
@@ -73,21 +73,21 @@ namespace {
                 switch (type) {
                 case Networking::CLIENT_TYPE_AI_PLAYER:
                     if (show_add_drop)
-                        push_back(UserString("ADD_AI_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                        push_back(UserString("ADD_AI_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                     else
-                        push_back(UserString("AI_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                        push_back(UserString("AI_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                     break;
                 case Networking::CLIENT_TYPE_HUMAN_OBSERVER:
-                    push_back(UserString("OBSERVER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    push_back(UserString("OBSERVER"), ClientUI::GetFont(), ClientUI::TextColor());
                     break;
                 case Networking::CLIENT_TYPE_HUMAN_PLAYER:
-                    push_back(UserString("HUMAN_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                    push_back(UserString("HUMAN_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                     break;
                 default:
                     if (show_add_drop)
-                        push_back(UserString("DROP_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                        push_back(UserString("DROP_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                     else
-                        push_back(UserString("NO_PLAYER"), ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                        push_back(UserString("NO_PLAYER"), ClientUI::GetFont(), ClientUI::TextColor());
                 }
             }
 
@@ -183,7 +183,7 @@ namespace {
                 GG::Connect(type_drop->TypeChangedSignal,           &NewGamePlayerRow::PlayerTypeChanged,   this);
 
             // player name text
-            push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            push_back(player_data.m_player_name, ClientUI::GetFont(), ClientUI::TextColor());
 
             if (player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
                 // observers don't need to pick an empire or species
@@ -256,7 +256,7 @@ namespace {
                 GG::Connect(type_drop->TypeChangedSignal,           &LoadGamePlayerRow::PlayerTypeChanged,   this);
 
             // player name text
-            push_back(player_data.m_player_name, ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+            push_back(player_data.m_player_name, ClientUI::GetFont(), ClientUI::TextColor());
 
             // droplist to select empire
             m_empire_list = new CUIDropDownList(GG::X0, GG::Y0, EMPIRE_NAME_WIDTH, PLAYER_ROW_HEIGHT, 5 * PLAYER_ROW_HEIGHT);
@@ -289,7 +289,7 @@ namespace {
 
             // original empire player name from saved game
             push_back(save_game_empire_it != m_save_game_empire_data.end() ? save_game_empire_it->second.m_player_name : "",
-                      ClientUI::Font(), ClientUI::Pts(), ClientUI::TextColor());
+                      ClientUI::GetFont(), ClientUI::TextColor());
 
             m_color_selector->Disable();
 
