@@ -394,8 +394,6 @@ void FleetButton::PlayFleetButtonOpenSound() {
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.fleet-button-click"), true);
 }
 
-
-
 /////////////////////
 // Free Functions
 /////////////////////

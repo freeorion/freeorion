@@ -408,5 +408,4 @@ void PartlyRoundedRect(const GG::Pt& ul, const GG::Pt& lr, int radius, bool ur_r
         glVertex(lr.x, ul.y + radius);
         glEnd();
     }
-
 }
