@@ -3,23 +3,25 @@ Fleet
     ships = [
         "SD_COLONY_SHIP"
     ]
-    
-Fleet
-    name = "FN_SCOUT_FLEET"
-    ships = [
-        "SD_SCOUT"
-        "SD_SCOUT"
-    ]
 
 Fleet
     name = "FN_INVASION_FLEET"
     ships = [
-        "SD_TROOP_SHIP"
-        "SD_TROOP_SHIP"
-        "SD_TROOP_SHIP"
         "SD_MARK1"
+        "SD_TROOP_SHIP"
+        "SD_TROOP_SHIP"
+        "SD_TROOP_SHIP"
         ]
-        
+
+Fleet
+    name = "FN_SCOUT_FLEET"
+    ships = "SD_SCOUT"
+
+Fleet
+    name = "FN_SCOUT_FLEET"
+    ships = "SD_SCOUT"
+
+
 /* Uncomment this to have an overpowered fleet at the start for testing.
 
 Fleet
@@ -32,7 +34,7 @@ Fleet
     ]
 */
 
-/* //Uncomment this to test tame monsters.
+/* //Uncomment this to test tame monsters. ( other changes required)
 
 Fleet
     name = "FN_BATTLE_FLEET"
