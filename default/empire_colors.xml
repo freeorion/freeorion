@@ -1,29 +1,31 @@
 <?xml version="1.0"?>
+<!-- The Different formatting of the following colors is just to show that different methods are possible. -->
 <XMLDoc>
-<GG::Clr hex="00FF00"/>
-<GG::Clr hex="0000FFFF"/>
-<GG::Clr>
+<GG::Clr hex="00FF00"/>  <!-- Pure Green -->
+<GG::Clr hex="0000FFFF"/> <!-- Pure Blue -->
+<GG::Clr hex="FF00FFFF"/> <!-- Pure Magenta -->
+<GG::Clr> <!-- Pure Yellow -->
    <red>255</red>
    <green>255</green>
    <blue>0</blue>
    <alpha>255</alpha>
 </GG::Clr>
-<GG::Clr hex="FF00FFFF"/>
-<GG::Clr>
+<GG::Clr>   <!-- Pure Cyan -->
    <red>0</red>
    <green>255</green>
    <blue>255</blue>
    <alpha>255</alpha>
 </GG::Clr>
-<GG::Clr hex="FF8C00"/>
-<GG::Clr hex="7200B3"/>
-<GG::Clr hex="5E7800"/>
-<GG::Clr hex="1193FF"/>
-<GG::Clr hex="990075"/>
-<GG::Clr hex="6C5E00"/>
-<GG::Clr hex="B070FF"/>
-<GG::Clr hex="9DFF00"/>
-<GG::Clr hex="964700"/>
+<GG::Clr hex="800000"/> <!-- Dark Red -->
+<GG::Clr hex="FF8C00"/> <!-- Orange -->
+<GG::Clr hex="7200B3"/> <!-- Purple -->
+<GG::Clr hex="5E7800"/> <!-- Olive -->
+<GG::Clr hex="1193FF"/> <!-- Sky Blue -->
+<GG::Clr hex="990075"/> <!-- Dark Magenta -->
+<GG::Clr hex="9DFF00"/> <!-- Yellow/Green -->
+<GG::Clr hex="B070FF"/> <!-- Light Purple/Magenta -->
+<GG::Clr hex="6C5E00"/> <!-- Khaki -->
+<GG::Clr hex="964700"/> <!-- Orange/Brown -->
 <GG::Clr hex="005548"/>
 <GG::Clr hex="FF96AC"/>
 <GG::Clr hex="8793FF"/>
