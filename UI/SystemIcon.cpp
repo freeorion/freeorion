@@ -171,7 +171,9 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_system_id(system_id),
     m_tiny_graphic(0),
     m_selection_indicator(0),
+    m_tiny_selection_indicator(0),
     m_mouseover_indicator(0),
+    m_tiny_mouseover_indicator(0),
     m_selected(false),
     m_colored_name(0),
     m_showing_name(false)
@@ -194,15 +196,9 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
         m_tiny_texture = m_disc_texture;
     }
 
-    Init();
-}
-
-void SystemIcon::Init() {
-    // everything is resized by SizeMove
-    const int DEFAULT_SIZE = 10;
-
     if (m_tiny_texture)
-        m_tiny_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, m_tiny_texture->Width(), m_tiny_texture->Height(), m_tiny_texture);
+        m_tiny_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, m_tiny_texture->Width(), m_tiny_texture->Height(),
+                                               m_tiny_texture);
     AttachChild(m_tiny_graphic);
     m_tiny_graphic->Hide();
 
@@ -232,7 +228,18 @@ void SystemIcon::Init() {
 
     // mouseover indicator graphic
     boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
-    m_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, GG::X(DEFAULT_SIZE), GG::Y(DEFAULT_SIZE), mouseover_texture, GG::GRAPHIC_FITGRAPHIC);
+    texture_width = mouseover_texture->DefaultWidth();
+    texture_height = mouseover_texture->DefaultHeight();
+    m_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, texture_width, texture_height,
+                                                  mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+
+    // tiny mouseover indicator graphic
+    boost::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
+    texture_width = tiny_mouseover_texture->DefaultWidth();
+    texture_height = tiny_mouseover_texture->DefaultHeight();
+    m_tiny_mouseover_indicator = new GG::StaticGraphic(GG::X0, GG::Y0, texture_width,
+                                                       texture_height, tiny_mouseover_texture,
+                                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
 
     Refresh();
 }
@@ -243,6 +250,7 @@ SystemIcon::~SystemIcon()
     delete m_selection_indicator;
     delete m_tiny_selection_indicator;
     delete m_mouseover_indicator;
+    delete m_tiny_mouseover_indicator;
     delete m_colored_name;
 }
 
@@ -368,7 +376,7 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 {
     Wnd::SizeMove(ul, lr);
 
-    const bool USE_TINY_GRAPHICS = lr.x - ul.x < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
+    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
 
     // tiny graphic?
@@ -412,11 +420,25 @@ void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
         m_selection_indicator->Hide();
     }
 
-    // mouseover attached / detach / show / hide done by MouseEnter and MouseLeave
-    if (m_mouseover_indicator) {
+    const bool USE_TINY_MOUSEOVER_INDICATOR = Value(Width()) < m_tiny_mouseover_indicator->Width();
+
+    // normal mouseover indicator - attach / detach / show / hide done by MouseEnter and MouseLeave
+    if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         GG::Pt mouse_ind_ul(static_cast<GG::X>(middle.x - SEL_IND_SIZE.x / 2.0),
                             static_cast<GG::Y>(middle.y - SEL_IND_SIZE.y / 2.0));
         m_mouseover_indicator->SizeMove(mouse_ind_ul, mouse_ind_ul + SEL_IND_SIZE);
+    } else if (m_mouseover_indicator) {
+        DetachChild(m_mouseover_indicator);
+    }
+
+    // tiny mouseover indicator - attach / detach / show / hide done by MouseEnter and MouseLeave
+    if (m_tiny_mouseover_indicator && USE_TINY_MOUSEOVER_INDICATOR) {
+        GG::Pt tiny_mouse_ind_size = m_tiny_mouseover_indicator->Size();
+        GG::Pt tiny_mouse_ind_ul(static_cast<GG::X>(middle.x - tiny_mouse_ind_size.x / 2.0),
+                                 static_cast<GG::Y>(middle.y - tiny_mouse_ind_size.y / 2.0));
+        m_tiny_mouseover_indicator->SizeMove(tiny_mouse_ind_ul, tiny_mouse_ind_ul + tiny_mouse_ind_size);
+    } else if (m_tiny_mouseover_indicator) {
+        DetachChild(m_tiny_mouseover_indicator);
     }
 
     Refresh();
@@ -459,10 +481,19 @@ void SystemIcon::RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 
 void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 {
+    const bool USE_TINY_MOUSEOVER_INDICATOR = Value(Width()) < m_tiny_mouseover_indicator->Width();
     // indicate mouseover
-    if (m_mouseover_indicator) {
+    if (m_mouseover_indicator && !USE_TINY_MOUSEOVER_INDICATOR) {
         AttachChild(m_mouseover_indicator);
         MoveChildUp(m_mouseover_indicator);
+    } else if (m_mouseover_indicator) {
+        DetachChild(m_mouseover_indicator);
+    }
+    if (m_tiny_mouseover_indicator && USE_TINY_MOUSEOVER_INDICATOR) {
+        AttachChild(m_tiny_mouseover_indicator);
+        MoveChildUp(m_tiny_mouseover_indicator);
+    } else if (m_tiny_mouseover_indicator) {
+        DetachChild(m_tiny_mouseover_indicator);
     }
 
     // show system name if not by default
@@ -479,6 +510,8 @@ void SystemIcon::MouseLeave()
     // un-indicate mouseover
     if (m_mouseover_indicator)
         DetachChild(m_mouseover_indicator);
+    if (m_tiny_mouseover_indicator)
+        DetachChild(m_tiny_mouseover_indicator);
 
     // hide name if not showing by default
     if (!m_showing_name)
