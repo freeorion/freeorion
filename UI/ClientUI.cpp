@@ -54,10 +54,6 @@ namespace fs = boost::filesystem;
 fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
 fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
-std::string ClientUI::Font()                    { return GetOptionsDB().Get<std::string>("UI.font"); }
-std::string ClientUI::BoldFont()                { return GetOptionsDB().Get<std::string>("UI.font-bold"); }
-std::string ClientUI::TitleFont()               { return GetOptionsDB().Get<std::string>("UI.title-font"); }
-
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
 
@@ -694,19 +690,45 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
 
 boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/)
 {
-    try {
-        return GG::GUI::GetGUI()->GetFont(Font(), pts, RequiredCharsets().begin(), RequiredCharsets().end());
-    } catch (const GG::Font::BadFile&) {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font"),
-                                          pts, RequiredCharsets().begin(), RequiredCharsets().end());
-    }
+     try {
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+     } catch (...) {
+         try {
+            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font"),
+                                              pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        } catch (...) {
+             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+        }
+    } 
 }
 
 boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/)
-{ return GG::GUI::GetGUI()->GetFont(BoldFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+{ 
+    try {
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font-bold"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+    } catch (...) {
+        try {
+             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font-bold"),
+                                               pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        } catch (...) {
+             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+        }
+    }
+}
 
 boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/)
-{ return GG::GUI::GetGUI()->GetFont(TitleFont(), pts, RequiredCharsets().begin(), RequiredCharsets().end()); }
+{ 
+    try {
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.title-font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+    } catch (...) {
+        try {
+            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.title-font"),
+                                              pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        } catch (...) {
+             return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
+        }
+   }
+}
 
 ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap)
 {

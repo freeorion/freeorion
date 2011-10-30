@@ -1,4 +1,4 @@
-v0.3.17 + SVN - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+v0.4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 New Features / Improvements:
  ~ Further reduced turn processing times.
@@ -29,6 +29,7 @@ Graphics:
  ~ Made AI empires choose more distinctive colors.
  ~ Made structure meter icon distinct from health meter icon.
  ~ Added icons for some ship parts.
+ ~ Added animated system selection indicators.
 
 GUI:
  ~ Sorted techs alphabetically in encyclopedia index.
@@ -43,7 +44,7 @@ Bugs:
  ~ Fixed tamed monsters wandering off on their own initiative.
  ~ Fixed some crash bugs related to the Psychic Domination tech.
  ~ Fixed bug where the tech tree view reset every time a tech was added or removed from the queue.
-
+ ~ Fixed / prevented crashes when font files are missing.
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 

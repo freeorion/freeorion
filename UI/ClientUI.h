@@ -101,37 +101,36 @@ public:
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
 
-    /** shows a message dialog box with the given message; if \a play_alert_sound is true, and UI sound effects are
-        currently enabled, the default alert sound will be played as the message box opens */
+    /** Shows a message dialog box with the given message; if
+      * \a play_alert_sound is true, and UI sound effects are currently enabled,
+      * the default alert sound will be played as the message box opens */
     static void MessageBox(const std::string& message, bool play_alert_sound = false);
 
-    /** Loads the requested texture from file \a name; mipmap textures are generated if \a mipmap is true; loads default
-        missing.png if name isn't found. */
+    /** Loads the requested texture from file \a name; mipmap textures are
+      * generated if \a mipmap is true; loads default missing.png if name isn't
+      * found. */
     static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
-    /** Returns the default font in the specified point size.  Uses Font() as
-        the font filename, and provides Unicode character sets based on the
-        contents of the stringtable in use. */
+    /** Returns the default font in the specified point size.  Uses "UI.font"
+      * option setting as the font filename, and provides Unicode character sets
+      * based on the contents of the stringtable in use. */
     static boost::shared_ptr<GG::Font> GetFont(int pts = Pts());
 
-    /** Returns the default font in the specified point size.  Uses BoldFont()
-        as the font filename, and provides Unicode character sets based on the
-        contents of the stringtable in use. */
+    /** Returns the default font in the specified point size.  Uses
+      * "UI.font-bold" option setting as the font filename, and provides
+      * Unicode character sets based on the contents of the stringtable in use. */
     static boost::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
-        TitleFont() as the font filename, and provides Unicode character sets
-        based on the contents of the stringtable in use. */
+      * "UI.title-font" option setting as the font filename, and provides
+      * Unicode character sets based on the contents of the stringtable in use. */
     static boost::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
 
     //!@{
     static boost::filesystem::path ArtDir();    //!< directory holding artwork
     static boost::filesystem::path SoundDir();  //!< directory holding sound and music
 
-    static std::string  Font();                 //!< The default font to use
-    static std::string  BoldFont();             //!< The default bold font to use
     static int          Pts();                  //!< default point size
-    static std::string  TitleFont();            //!< The default font to use for the window title
     static int          TitlePts();             //!< default point size to use for window title
 
     static GG::Clr      TextColor();            //!< color of UI text
