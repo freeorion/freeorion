@@ -1088,6 +1088,11 @@ void FleetDataPanel::Refresh()
         m_fleet_icon = new MultiTextureStaticGraphic(GG::X0, GG::Y0, DATA_PANEL_ICON_SPACE.x, ClientHeight(), icons, styles);
         AttachChild(m_fleet_icon);
 
+        if (Empire* empire = Empires().Lookup(fleet->Owner()))
+            m_fleet_icon->SetColor(empire->Color());
+        else if (fleet->Unowned() && fleet->HasMonsters())
+            m_fleet_icon->SetColor(GG::CLR_RED);
+
         // set stat icon values
         for (std::vector<std::pair<std::string, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
              it != m_stat_icons.end(); ++it)
