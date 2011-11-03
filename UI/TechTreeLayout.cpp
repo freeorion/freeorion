@@ -429,11 +429,11 @@ bool TechTreeLayout::Node::Wobble(Column & column) {
     int direction = (dist > 0)?+1:-1;
     double improvement = 0;
     //try to find free space arround optimal position
-    int nextfree = column.NextFree((int)(m_row+dist+0.5), this);
+    int nextfree = column.NextFree(static_cast<int>(m_row+dist+0.5), this);
     //check if that space is better
     new_dist = CalculateFamilyDistance(nextfree);
     improvement = std::abs(dist) - std::abs(new_dist);
-    if (improvement > 0) {
+    if (improvement > 0.5) {
         if(column.Move(nextfree , this) ) {
             //std::cout << m_name << ":" << dist << " -> " << new_dist <<"\n";
             return true;
@@ -577,7 +577,7 @@ void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat )
             count++;
         }
     }
-    if ((int)row_index.size() < m_depth + 1) row_index.resize(m_depth + 1);
+    if (static_cast<int>(row_index.size()) < m_depth + 1) row_index.resize(m_depth + 1);
     if (count != 0) {
         row_index[m_depth].PlaceNextFree(index / count, this);
     } else {
@@ -589,7 +589,7 @@ void TechTreeLayout::Node::DoLayout( std::vector<Column> & row_index, bool cat )
     for(int i = m_children.size(); i --> 0; ) {
         n = m_children[i];
         while (n->m_place_holder) {
-            if ((int)row_index.size() < n->m_depth + 1) row_index.resize(n->m_depth + 1);
+            if (static_cast<int>(row_index.size()) < n->m_depth + 1) row_index.resize(n->m_depth + 1);
             row_index[n->m_depth].PlaceNextFree(m_row, n);
             n = n->m_child;
         }
