@@ -176,11 +176,18 @@ double PopCenter::NextTurnHealthGrowth() const
     double health = CurrentMeterValue(METER_HEALTH);
     double target_health = CurrentMeterValue(METER_TARGET_HEALTH);
 
-    // health rises or falls 1.0 towards target health
-    if (health < target_health)
-        return std::min(health + 1.0, target_health) - health;
-    else
+    if (health < target_health) {
+        if (health < 20.0 && m_allocated_food >= this->CurrentMeterValue(METER_FOOD_CONSUMPTION)) {
+            // when fully fed, instantly recover to stable health level (20), or target health, whichever is less
+            return std::min(std::max(health + 1.0, 20.0), target_health) - health;
+        } else {
+            // increase +1.0 per turn toward target
+            return std::min(health + 1.0, target_health) - health;
+        }
+    } else {
+        // decrease 1.0 per turn toward target
         return std::max(health - 1.0, target_health) - health;
+    }
 }
 
 void PopCenter::PopCenterResetTargetMaxUnpairedMeters()

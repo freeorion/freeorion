@@ -45,6 +45,7 @@ Bugs:
  ~ Fixed some crash bugs related to the Psychic Domination tech.
  ~ Fixed bug where the tech tree view reset every time a tech was added or removed from the queue.
  ~ Fixed / prevented crashes when font files are missing.
+ ~ Fixed misplaced text on tech tree tech panels.
 
 v0.3.17 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
