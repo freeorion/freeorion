@@ -615,8 +615,8 @@ void TechTreeLayout::Node::CreateEdges( double x_margin, double column_width, do
         //draw line until a real tech is reached
         while (next->m_place_holder) {
             //horizontal line bypassing the placeholder
-            edge->AddPoint(next->m_x - 2 * x_margin, next->m_y + row_height / 2);
-            edge->AddPoint(next->m_x + m_width + x_margin, next->m_y + row_height / 2);
+            edge->AddPoint(next->m_x - 2 * x_margin, next->m_y);
+            edge->AddPoint(next->m_x + m_width + x_margin, next->m_y);
             next = next->m_child;
         }
         //to, line end
