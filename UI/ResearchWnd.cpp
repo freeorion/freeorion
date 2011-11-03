@@ -19,7 +19,6 @@
 
 namespace {
     const GG::X RESEARCH_INFO_AND_QUEUE_WIDTH(250);
-    const double PI = 3.141594;
     const float OUTER_LINE_THICKNESS = 2.0f;
 
     //////////////////////////////////////////////////
@@ -27,7 +26,7 @@ namespace {
     //////////////////////////////////////////////////
     struct QueueRow : GG::ListBox::Row
     {
-        QueueRow(GG::X w, const std::string& tech_name_, double allocated_rp, int turns_left);
+        QueueRow(GG::X w, const ResearchQueue::Element& queue_element);
         std::string tech_name;
     };
 
@@ -37,7 +36,7 @@ namespace {
     class QueueTechPanel : public GG::Control {
     public:
         QueueTechPanel(GG::X w, const std::string& tech_name, double allocated_rp,
-                       int turns_left, int turns_completed, double partially_complete_turn);
+                       int turns_left, double turns_completed);
         virtual void Render();
 
     private:
@@ -51,20 +50,17 @@ namespace {
         MultiTurnProgressBar*   m_progress_bar;
         bool                    m_in_progress;
         int                     m_total_turns;
-        int                     m_turns_completed;
-        double                  m_partially_complete_turn;
+        double                  m_turns_completed;
     };
 
     //////////////////////////////////////////////////
     // QueueRow implementation
     //////////////////////////////////////////////////
-    QueueRow::QueueRow(GG::X w, const std::string& tech_name_, double allocated_rp, int turns_left) :
+    QueueRow::QueueRow(GG::X w, const ResearchQueue::Element& queue_element) :
         GG::ListBox::Row(),
-        tech_name(tech_name_)
+        tech_name(queue_element.name)
     {
         const Empire* empire = Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
-
-        // this space intentionally left blank to line up with ProductionWnd's QueueRow implementation
 
         const Tech* tech = GetTech(tech_name);
         double per_turn_cost = tech ? tech->PerTurnCost() : 1;
@@ -74,10 +70,8 @@ namespace {
         if (progress == -1.0)
             progress = 0.0;
 
-        GG::Control* panel = new QueueTechPanel(w, tech_name,
-                                                allocated_rp, turns_left,
-                                                static_cast<int>(progress / per_turn_cost),
-                                                std::fmod(progress, per_turn_cost) / per_turn_cost);
+        GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
+                                                queue_element.turns_left, progress / per_turn_cost);
         Resize(panel->Size());
         push_back(panel);
 
@@ -87,15 +81,13 @@ namespace {
     //////////////////////////////////////////////////
     // QueueTechPanel implementation
     //////////////////////////////////////////////////
-    QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name,
-                                   double turn_spending, int turns_left,
-                                   int turns_completed, double partially_complete_turn) :
+    QueueTechPanel::QueueTechPanel(GG::X w, const std::string& tech_name, double turn_spending,
+                                   int turns_left, double turns_completed) :
         GG::Control(GG::X0, GG::Y0, w, GG::Y(10), GG::Flags<GG::WndFlag>()),
         m_tech_name(tech_name),
         m_in_progress(turn_spending),
         m_total_turns(1),
-        m_turns_completed(turns_completed),
-        m_partially_complete_turn(partially_complete_turn)
+        m_turns_completed(turns_completed)
     {
         const int MARGIN = 2;
 
@@ -140,8 +132,7 @@ namespace {
         top += m_name_text->Height();    // not sure why I need two margins here... otherwise the progress bar appears over the bottom of the text
 
         m_progress_bar = new MultiTurnProgressBar(METER_WIDTH, METER_HEIGHT, tech ? tech->ResearchTime() : 1,
-                                                  turns_completed + partially_complete_turn,
-                                                  ClientUI::TechWndProgressBarColor(),
+                                                  turns_completed, ClientUI::TechWndProgressBarColor(),
                                                   ClientUI::TechWndProgressBarBackgroundColor(), clr);
         m_progress_bar->MoveTo(GG::Pt(left, top));
 
@@ -304,9 +295,8 @@ void ResearchWnd::UpdateQueue()
     m_queue_lb->Clear();
     const GG::X QUEUE_WIDTH = m_queue_lb->Width() - 8 - 14;
 
-    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, it->name, it->allocated_rp, it->turns_left));
-    }
+    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it)
+        m_queue_lb->Insert(new QueueRow(QUEUE_WIDTH, *it));
 
     if (!m_queue_lb->Empty())
         m_queue_lb->BringRowIntoView(--m_queue_lb->end());
