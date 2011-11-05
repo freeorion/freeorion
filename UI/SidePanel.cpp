@@ -1154,7 +1154,7 @@ void SidePanel::PlanetPanel::Refresh()
 //    bool could_colonize = colonizable && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool could_colonize = !populated && visible && !being_colonized && OwnedColonyShipsInSystem(client_empire_id, SidePanel::SystemID());
     bool being_invaded = planet->IsAboutToBeInvaded();
-    bool invadable = !mine && vulnerable && habitable && visible && !being_invaded && !invasion_ships.empty();
+    bool invadable = !mine && vulnerable && populated && visible && !being_invaded && !invasion_ships.empty();
 
 
     DetachChild(m_invade_button);
