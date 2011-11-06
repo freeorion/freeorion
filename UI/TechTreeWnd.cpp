@@ -1244,8 +1244,8 @@ void TechTreeWnd::LayoutPanel::Render()
     GG::Clr researchable_half_alpha_selected = GG::LightColor(researchable_half_alpha);
     GG::Clr unresearchable_half_alpha_selected = GG::LightColor(unresearchable_half_alpha);
     for (std::map<TechStatus, std::vector<DependencyArcsMap::const_iterator> >::const_iterator it = selected_arcs.begin();
-         it != selected_arcs.end();
-         ++it) {
+         it != selected_arcs.end(); ++it)
+    {
         GG::Clr arc_color;
         switch (it->first) {
         case TS_COMPLETE:       arc_color = known_half_alpha_selected; break;
@@ -1253,9 +1253,8 @@ void TechTreeWnd::LayoutPanel::Render()
         default:                arc_color = unresearchable_half_alpha_selected; break;
         }
         glColor(arc_color);
-        for (unsigned int i = 0; i < it->second.size(); ++i) {
+        for (unsigned int i = 0; i < it->second.size(); ++i)
             DrawArc(it->second[i], arc_color, false);
-        }
     }
 
     // now retrace the arc with a normal-width, full-alpha line
@@ -1295,7 +1294,7 @@ void TechTreeWnd::LayoutPanel::Render()
             DrawArc(it->second[i], arc_color, true);
         }
     }
-   
+
     glEnable(GL_TEXTURE_2D);
     EndClipping();
 
@@ -1415,24 +1414,25 @@ void TechTreeWnd::LayoutPanel::ShowTech(const std::string& tech_name)
 void TechTreeWnd::LayoutPanel::CenterOnTech(const std::string& tech_name)
 {
     std::map<std::string, TechPanel*>::const_iterator it = m_techs.find(tech_name);
-    if (it != m_techs.end()) {
-        TechPanel* tech_panel = it->second;
-        GG::Pt center_point = tech_panel->RelativeUpperLeft() + GG::Pt(tech_panel->Width() / 2, tech_panel->Height() / 2);
-        GG::Pt client_size = ClientSize();
-        m_hscroll->ScrollTo(Value(center_point.x - client_size.x / 2));
-        GG::SignalScroll(*m_hscroll, true);
-        m_vscroll->ScrollTo(Value(center_point.y - client_size.y / 2));
-        GG::SignalScroll(*m_vscroll, true);
-    } else {
-        Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name << " due to lack of such a tech panel";
+    if (it == m_techs.end()) {
+        Logger().debugStream() << "TechTreeWnd::LayoutPanel::CenterOnTech couldn't centre on " << tech_name
+                               << " due to lack of such a tech panel";
+        return;
     }
+
+    TechPanel* tech_panel = it->second;
+    GG::Pt center_point = tech_panel->UpperLeft();
+    m_hscroll->ScrollTo(Value(center_point.x));
+    GG::SignalScroll(*m_hscroll, true);
+    m_vscroll->ScrollTo(Value(center_point.y));
+    GG::SignalScroll(*m_vscroll, true);
 }
 
 void TechTreeWnd::LayoutPanel::DoZoom(const GG::Pt & p) const
 {
     glPushMatrix();
     //center to panel
-    glTranslated(Value(Width()/2.0),Value(Height()/2.0),0);
+    glTranslated(Value(Width()/2.0), Value(Height()/2.0), 0);
     //zoom
     glScaled(m_scale, m_scale, 1);
     //translate to actual scroll position
