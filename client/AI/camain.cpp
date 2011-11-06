@@ -1,5 +1,6 @@
 #include "AIClientApp.h"
 
+#include "../../parse/Parse.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 
@@ -9,6 +10,8 @@ int main(int argc, char* argv[])
 
     try {
         GetOptionsDB().SetFromCommandLine(argc, argv);
+
+        parse::init();
 
         AIClientApp g_app(argc, argv);
 

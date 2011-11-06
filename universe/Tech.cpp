@@ -1,8 +1,7 @@
 #include "Tech.h"
 
 #include "Effect.h"
-#include "../universe/Parser.h"
-#include "../universe/ParserUtil.h"
+#include "../parse/Parse.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
@@ -104,9 +103,6 @@ namespace {
 
         return next_techs[min_index];
     }
-
-    const phoenix::function<store_tech_impl> store_tech_;
-    const phoenix::function<store_category_impl> store_category_;
 }
 
 
@@ -403,33 +399,9 @@ TechManager::TechManager()
 
     s_instance = this;
 
-    std::string file_name = "techs.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-
     std::set<std::string> categories_seen_in_techs;
 
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*(
-                            tech_p[store_tech_(var(m_techs), var(categories_seen_in_techs), arg1)] |
-                            category_p[store_category_(var(m_categories), arg1)]
-                          )]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::techs(GetResourceDir() / "techs.txt", m_techs, m_categories, categories_seen_in_techs);
 
     std::set<std::string> empty_defined_categories;
     for (std::map<std::string, TechCategory*>::iterator map_it = m_categories.begin(); map_it != m_categories.end(); ++map_it) {

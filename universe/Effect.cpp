@@ -38,7 +38,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ("Current" + meter_str) == var->PropertyName()[0];
+                        adobe::name_t(("Current" + meter_str).c_str()) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -49,7 +49,7 @@ namespace {
                     if (!meter_str.empty())
                         meter_str[0] = std::toupper(meter_str[0]);
                     retval.get<0>() = var->PropertyName().size() == 1 &&
-                        ("Current" + meter_str) == var->PropertyName()[0];
+                        adobe::name_t(("Current" + meter_str).c_str()) == var->PropertyName()[0];
                     retval.get<1>() = op->GetOpType();
                     retval.get<2>() = constant->Value();
                     return retval;
@@ -205,6 +205,14 @@ namespace {
         retval.reserve(RESERVE_SET_SIZE);
         for (Condition::ObjectSet::const_iterator it = object_set.begin(); it != object_set.end(); ++it)
             retval.push_back(const_cast<UniverseObject*>(*it));
+        return retval;
+    }
+
+    std::vector<adobe::name_t> TargetOwnerVec()
+    {
+        std::vector<adobe::name_t> retval(2);
+        retval[0] = Target_name;
+        retval[1] = Owner_name;
         return retval;
     }
 }
@@ -792,7 +800,7 @@ std::string SetShipPartMeter::Dump() const
 // SetEmpireMeter                                        //
 ///////////////////////////////////////////////////////////
 SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner")),
+    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec())),
     m_meter(meter),
     m_value(value)
 {}
@@ -859,7 +867,7 @@ std::string SetEmpireMeter::Dump() const
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
 SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
-    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner")),
+    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec())),
     m_stockpile(stockpile),
     m_value(value)
 {}
@@ -929,7 +937,7 @@ std::string SetEmpireStockpile::Dump() const
 // SetEmpireCapital                                      //
 ///////////////////////////////////////////////////////////
 SetEmpireCapital::SetEmpireCapital() :
-    m_empire_id(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, "Target.Owner"))
+    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
 {}
 
 SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id) :
@@ -944,7 +952,7 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const
     int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
-    if (empire)
+    if (!empire)
         return;
 
     const Planet* planet = universe_object_cast<const Planet*>(context.effect_target);

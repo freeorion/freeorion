@@ -1,0 +1,2 @@
+Fleet  Name = "Foo 0"  Ships = "Foo"
+Fleet  Name = "Foo 1"  Ships = [ "Foo" "Foo" ]

@@ -141,7 +141,7 @@ struct TechCategory {
     given a set of currently-known techs. */
 class TechManager
 {
-private:
+public:
     struct CategoryIndex {};
     struct NameIndex {};
     typedef boost::multi_index_container<
@@ -166,7 +166,6 @@ private:
         >
     > TechContainer;
 
-public:
     /** iterator that runs over techs within a category */
     typedef TechContainer::index<CategoryIndex>::type::const_iterator category_iterator;
 

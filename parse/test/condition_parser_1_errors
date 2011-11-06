@@ -1,0 +1,280 @@
+OwnedBy Affiliation
+OwnedBy Affiliation =
+OwnedBy Affiliation = EnemyOf Empire
+OwnedBy Affiliation = EnemyOf Empire =
+OwnedBy Affiliation = EnemyOf Empire = Source
+OwnedBy Affiliation = EnemyOf Empire = Source .
+OwnedBy Affiliation = EnemyOf Empire = Source . Planet
+OwnedBy Affiliation = EnemyOf Empire = Source . Planet .
+OwnedBy Affiliation = EnemyOf Source
+OwnedBy Affiliation = EnemyOf Source .
+OwnedBy Affiliation = EnemyOf Source . Planet
+OwnedBy Affiliation = EnemyOf Source . Planet .
+OwnedBy EnemyOf Empire
+OwnedBy EnemyOf Empire =
+OwnedBy EnemyOf Empire = Source
+OwnedBy EnemyOf Empire = Source .
+OwnedBy EnemyOf Empire = Source . Planet
+OwnedBy EnemyOf Empire = Source . Planet .
+OwnedBy EnemyOf Source
+OwnedBy EnemyOf Source .
+OwnedBy EnemyOf Source . Planet
+OwnedBy EnemyOf Source . Planet .
+Homeworld Name
+Homeworld Name =
+Homeworld Name = [
+Homeworld Name = [ "Homeworld Foo"
+Homeworld Name = [ "Homeworld Foo" "Homeworld Bar"
+Homeworld [
+Homeworld [ "Homeworld Foo"
+Homeworld [ "Homeworld Foo" "Homeworld Bar"
+Building Name
+Building Name =
+Building Name = [
+Building Name = [ "Building Foo"
+Building Name = [ "Building Foo" "Building Bar"
+Building [
+Building [ "Building Foo"
+Building [ "Building Foo" "Building Bar"
+Species Name
+Species Name =
+Species Name = [
+Species Name = [ "Species Foo"
+Species Name = [ "Species Foo" "Species Bar"
+Species [
+Species [ "Species Foo"
+Species [ "Species Foo" "Species Bar"
+FocusType Type
+FocusType Type =
+FocusType Type = [
+FocusType Type = [ "Focus Foo"
+FocusType Type = [ "Focus Foo" "Focus Bar"
+FocusType [
+FocusType [ "Focus Foo"
+FocusType [ "Focus Foo" "Focus Bar"
+Planet Type
+Planet Type =
+Planet Type = [
+Planet Type = [ Swamp
+Planet Type = [ Swamp Toxic
+Planet [
+Planet [ Swamp
+Planet [ Swamp Toxic
+Planet Size
+Planet Size =
+Planet Size = [
+Planet Size = [ Small
+Planet Size = [ Small Medium
+Planet [ Small
+Planet [ Small Medium
+Planet Environment
+Planet Environment =
+Planet Environment = [
+Planet Environment = [ Adequate
+Planet Environment = [ Adequate Good
+Planet [ Adequate
+Planet [ Adequate Good
+ObjectType
+ObjectType Type
+ObjectType Type =
+TargetPopulation Low
+TargetPopulation Low =
+TargetPopulation Low = 1 High
+TargetPopulation Low = 1 High =
+TargetPopulation 1 High
+TargetPopulation 1 High =
+TargetHealth Low
+TargetHealth Low =
+TargetHealth Low = 1 High
+TargetHealth Low = 1 High =
+TargetHealth 1 High
+TargetHealth 1 High =
+TargetFarming Low
+TargetFarming Low =
+TargetFarming Low = 1 High
+TargetFarming Low = 1 High =
+TargetFarming 1 High
+TargetFarming 1 High =
+TargetIndustry Low
+TargetIndustry Low =
+TargetIndustry Low = 1 High
+TargetIndustry Low = 1 High =
+TargetIndustry 1 High
+TargetIndustry 1 High =
+TargetResearch Low
+TargetResearch Low =
+TargetResearch Low = 1 High
+TargetResearch Low = 1 High =
+TargetResearch 1 High
+TargetResearch 1 High =
+TargetTrade Low
+TargetTrade Low =
+TargetTrade Low = 1 High
+TargetTrade Low = 1 High =
+TargetTrade 1 High
+TargetTrade 1 High =
+TargetMining Low
+TargetMining Low =
+TargetMining Low = 1 High
+TargetMining Low = 1 High =
+TargetMining 1 High
+TargetMining 1 High =
+TargetConstruction Low
+TargetConstruction Low =
+TargetConstruction Low = 1 High
+TargetConstruction Low = 1 High =
+TargetConstruction 1 High
+TargetConstruction 1 High =
+MaxFuel Low
+MaxFuel Low =
+MaxFuel Low = 1 High
+MaxFuel Low = 1 High =
+MaxFuel 1 High
+MaxFuel 1 High =
+MaxShield Low
+MaxShield Low =
+MaxShield Low = 1 High
+MaxShield Low = 1 High =
+MaxShield 1 High
+MaxShield 1 High =
+MaxStructure Low
+MaxStructure Low =
+MaxStructure Low = 1 High
+MaxStructure Low = 1 High =
+MaxStructure 1 High
+MaxStructure 1 High =
+MaxDefense Low
+MaxDefense Low =
+MaxDefense Low = 1 High
+MaxDefense Low = 1 High =
+MaxDefense 1 High
+MaxDefense 1 High =
+MaxTroops Low
+MaxTroops Low =
+MaxTroops Low = 1 High
+MaxTroops Low = 1 High =
+MaxTroops 1 High
+MaxTroops 1 High =
+Population Low
+Population Low =
+Population Low = 1 High
+Population Low = 1 High =
+Population 1 High
+Population 1 High =
+Health Low
+Health Low =
+Health Low = 1 High
+Health Low = 1 High =
+Health 1 High
+Health 1 High =
+Farming Low
+Farming Low =
+Farming Low = 1 High
+Farming Low = 1 High =
+Farming 1 High
+Farming 1 High =
+Industry Low
+Industry Low =
+Industry Low = 1 High
+Industry Low = 1 High =
+Industry 1 High
+Industry 1 High =
+Research Low
+Research Low =
+Research Low = 1 High
+Research Low = 1 High =
+Research 1 High
+Research 1 High =
+Trade Low
+Trade Low =
+Trade Low = 1 High
+Trade Low = 1 High =
+Trade 1 High
+Trade 1 High =
+Mining Low
+Mining Low =
+Mining Low = 1 High
+Mining Low = 1 High =
+Mining 1 High
+Mining 1 High =
+Construction Low
+Construction Low =
+Construction Low = 1 High
+Construction Low = 1 High =
+Construction 1 High
+Construction 1 High =
+Fuel Low
+Fuel Low =
+Fuel Low = 1 High
+Fuel Low = 1 High =
+Fuel 1 High
+Fuel 1 High =
+Shield Low
+Shield Low =
+Shield Low = 1 High
+Shield Low = 1 High =
+Shield 1 High
+Shield 1 High =
+Structure Low
+Structure Low =
+Structure Low = 1 High
+Structure Low = 1 High =
+Structure 1 High
+Structure 1 High =
+Defense Low
+Defense Low =
+Defense Low = 1 High
+Defense Low = 1 High =
+Defense 1 High
+Defense 1 High =
+Troops Low
+Troops Low =
+Troops Low = 1 High
+Troops Low = 1 High =
+Troops 1 High
+Troops 1 High =
+FoodConsumption Low
+FoodConsumption Low =
+FoodConsumption Low = 1 High
+FoodConsumption Low = 1 High =
+FoodConsumption 1 High
+FoodConsumption 1 High =
+Supply Low
+Supply Low =
+Supply Low = 1 High
+Supply Low = 1 High =
+Supply 1 High
+Supply 1 High =
+Stealth Low
+Stealth Low =
+Stealth Low = 1 High
+Stealth Low = 1 High =
+Stealth 1 High
+Stealth 1 High =
+Detection Low
+Detection Low =
+Detection Low = 1 High
+Detection Low = 1 High =
+Detection 1 High
+Detection 1 High =
+BattleSpeed Low
+BattleSpeed Low =
+BattleSpeed Low = 1 High
+BattleSpeed Low = 1 High =
+BattleSpeed 1 High
+BattleSpeed 1 High =
+StarlaneSpeed Low
+StarlaneSpeed Low =
+StarlaneSpeed Low = 1 High
+StarlaneSpeed Low = 1 High =
+StarlaneSpeed 1 High
+StarlaneSpeed 1 High =
+And
+And [
+And [ All
+And [ All All
+Or
+Or [
+Or [ All
+Or [ All All
+Not

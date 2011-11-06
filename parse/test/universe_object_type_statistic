@@ -1,0 +1,12 @@
+Mode  Property = Fleet.ObjectType  Condition = All
+Mode  Property = Fleet.ObjectType  All
+Mode  Fleet.ObjectType  Condition = All
+Mode  Fleet.ObjectType  All
+Mode  Property = Planet.ObjectType  Condition = All
+Mode  Property = Planet.ObjectType  All
+Mode  Planet.ObjectType  Condition = All
+Mode  Planet.ObjectType  All
+Mode  Property = System.ObjectType  Condition = All
+Mode  Property = System.ObjectType  All
+Mode  System.ObjectType  Condition = All
+Mode  System.ObjectType  All

@@ -8,6 +8,7 @@
 #endif
 
 #include "HumanClientApp.h"
+#include "../../parse/Parse.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Version.h"
@@ -240,6 +241,8 @@ int mainSetupAndRunOgre()
         viewport->setBackgroundColour(ColourValue(0, 0, 0));
 
         //EntityRenderer entity_renderer(scene_manager);
+
+        parse::init();
 
         HumanClientApp app(root, window, scene_manager, camera, viewport, (GetRootDataDir() / "OISInput.cfg").string());
 

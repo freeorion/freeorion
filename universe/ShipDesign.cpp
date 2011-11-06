@@ -4,9 +4,9 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
-#include "ParserUtil.h"
 #include "Condition.h"
 #include "Effect.h"
 #include "ValueRef.h"
@@ -24,51 +24,6 @@ namespace {
 }
 
 namespace {
-    struct store_ship_design_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::map<std::string, ShipDesign*>& ship_designs, const T& ship_design) const {
-            if (ship_designs.find(ship_design->Name(false)) != ship_designs.end()) {
-                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + ship_design->Name(false);
-                throw std::runtime_error(error_str.c_str());
-            }
-            ship_designs[ship_design->Name(false)] = ship_design;
-        }
-    };
-
-    const phoenix::function<store_ship_design_impl> store_ship_design_;
-
-    struct store_part_type_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::map<std::string, PartType*>& part_types, const T& part_type) const {
-            if (part_types.find(part_type->Name()) != part_types.end()) {
-                std::string error_str = "ERROR: More than one ship part in ship_parts.txt has the name " + part_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-            part_types[part_type->Name()] = part_type;
-        }
-    };
-
-    const phoenix::function<store_part_type_impl> store_part_type_;
-
-    struct store_hull_type_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::map<std::string, HullType*>& hull_types, const T& hull_type) const {
-            if (hull_types.find(hull_type->Name()) != hull_types.end()) {
-                std::string error_str = "ERROR: More than one ship hull in ship_hulls.txt has the name " + hull_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-            hull_types[hull_type->Name()] = hull_type;
-        }
-    };
-
-    const phoenix::function<store_hull_type_impl> store_hull_type_;
-
     struct PartTypeStringVisitor :
         public boost::static_visitor<>
     {
@@ -103,7 +58,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_REFERENCE, "Value"),
+                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_name)),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -121,7 +76,7 @@ namespace {
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
-                new ValueRef::Variable<double>(ValueRef::EFFECT_TARGET_REFERENCE, "Value"),
+                new ValueRef::Variable<double>(std::vector<adobe::name_t>(1, Value_name)),
                 new ValueRef::Constant<double>(increase)
             );
         return EffectsGroupPtr(
@@ -233,29 +188,10 @@ PartTypeManager* PartTypeManager::s_instance = 0;
 PartTypeManager::PartTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
+
     s_instance = this;
 
-    std::string file_name = "ship_parts.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*part_p[store_part_type_(var(m_parts), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::ship_parts(GetResourceDir() / "ship_parts.txt", m_parts);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Part Types:";
@@ -815,29 +751,10 @@ HullTypeManager* HullTypeManager::s_instance = 0;
 HullTypeManager::HullTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
+
     s_instance = this;
 
-    std::string file_name = "ship_hulls.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*hull_p[store_hull_type_(var(m_hulls), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::ship_hulls(GetResourceDir() / "ship_hulls.txt", m_hulls);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Hull Types:";
@@ -1473,52 +1390,9 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     Logger().debugStream() << "Initializing PredefinedShipDesignManager";
 
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    std::string input;
-    parse_info<const char*> result;
+    parse::ship_designs(GetResourceDir() / "premade_ship_designs.txt", m_ship_designs);
 
-
-    // load start of game ship designs
-    std::string designs_file_name = "premade_ship_designs.txt";
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / designs_file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << designs_file_name;
-        return;
-    }
-
-    result =
-        parse(input.c_str(),
-              as_lower_d[*ship_design_p[store_ship_design_(var(m_ship_designs), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
-
-
-    // Load space monster ship designs
-    std::string monsters_file_name = "space_monsters.txt";
-
-    boost::filesystem::ifstream ifs2(GetResourceDir() / monsters_file_name);
-    if (ifs2) {
-        std::getline(ifs2, input, '\0');
-        ifs2.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << monsters_file_name;
-        return;
-    }
-
-    result =
-        parse(input.c_str(),
-              as_lower_d[*ship_design_p[store_ship_design_(var(m_monster_designs), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::ship_designs(GetResourceDir() / "space_monsters.txt", m_monster_designs);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Predefined Ship Designs:";

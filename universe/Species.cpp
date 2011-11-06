@@ -1,8 +1,8 @@
 #include "Species.h"
 
-#include "ParserUtil.h"
 #include "Effect.h"
 #include "Condition.h"
+#include "../parse/Parse.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
@@ -12,25 +12,6 @@
 std::string DumpIndent();
 
 extern int g_indent;
-
-namespace {
-    struct store_species_impl
-    {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::map<std::string, Species*>& species_map, const T& species) const
-        {
-            if (species_map.find(species->Name()) != species_map.end()) {
-                std::string error_str = "ERROR: More than one species in species.txt has the name " + species->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-            species_map[species->Name()] = species;
-        }
-    };
-
-    const phoenix::function<store_species_impl> store_species_;
-}
 
 
 /////////////////////////////////////////////////
@@ -345,27 +326,7 @@ SpeciesManager::SpeciesManager() {
 
     s_instance = this;
 
-    std::string file_name = "species.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*species_p[store_species_(var(m_species), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::species(GetResourceDir() / "species.txt", m_species);
 }
 
 SpeciesManager::~SpeciesManager() {

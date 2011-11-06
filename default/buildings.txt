@@ -781,29 +781,6 @@ BuildingType
     graphic = "icons/building/blackhole.png"
 
 BuildingType
-    name = "BLD_SOL_ACCEL"
-    description = "BLD_SOL_ACCEL_DESC"
-    buildcost = 800
-    buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = [
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Not Star type = BlackHole
-                Not Star type = Red
-                Not Star type = Neutron
-            ]
-            effects = SetStarType Target.System.StarType + 1
-
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = Destroy
-    ]
-    graphic = "icons/building/miniature_sun.png"
-
-BuildingType
     name = "BLD_SOL_ORB_GEN"
     description = "BLD_SOL_ORB_GEN_DESC"
     buildcost = 750
@@ -951,9 +928,7 @@ BuildingType
     description = "BLD_CONC_CAMP_DESC"
     buildcost = 50
     buildtime = 1
-    location = And [
-        OwnedBy TheEmpire Source.Owner
-    ]
+    location = OwnedBy TheEmpire Source.Owner
     effectsgroups = [
         EffectsGroup
             scope = Contains Source
@@ -1085,29 +1060,6 @@ BuildingType
             ]
             activation = Source
             effects = AddSpecial "RESONANT_MOON_SPECIAL"
-    graphic = ""
-
-BuildingType
-    name = "BLD_SOL_REJUV"
-    description = "BLD_SOL_REJUV_DESC"
-    buildcost = 800
-    buildtime = 3
-    location = OwnedBy TheEmpire Source.Owner
-    effectsgroups = [
-        EffectsGroup
-            scope = Contains Source
-            activation = And [
-                Not Star type = BlackHole
-                Not Star type = Blue
-                Not Star type = Neutron
-            ]
-            effects = SetStarType Target.System.StarType - 1
-
-        EffectsGroup
-            scope = Source
-            activation = Source
-            effects = Destroy
-    ]
     graphic = ""
 
 BuildingType

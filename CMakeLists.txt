@@ -15,7 +15,7 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTO
 include(Config)
 include(Util)
 
-set(MINIMUM_BOOST_VERSION 1.44.0)
+set(MINIMUM_BOOST_VERSION 1.47.0)
 set(MINIMUM_BOOST_COMPONENTS date_time filesystem serialization signals system thread)
 
 set(BOOST_SIGNALS_NAMESPACE "signals" CACHE STRING
@@ -112,112 +112,154 @@ set(LC_ALL $ENV{tmpLC_ALL})
 ########################################
 # Build common code library            #
 ########################################
-# TODO: Figure out why this kills the cmake configuration step for CMake 2.6.4
-# Linux on Suse 11.1, and how it might be fixed/contained.
-#project(freeorion_lib)
-#
 include_directories(${CMAKE_SOURCE_DIR} log4cpp)
 include_directories(${CMAKE_SOURCE_DIR} UI/ogdf)
-#
-#if (FREEORION_RELEASE)
-#    add_definitions(-DFREEORION_RELEASE)
-#endif ()
-#
-#set(THIS_LIB_SOURCES
-#    combat/Combat.cpp
-#    combat/CombatOrder.cpp
-#    combat/OpenSteer/AsteroidBeltObstacle.cpp
-#    combat/OpenSteer/CombatFighter.cpp
-#    combat/OpenSteer/CombatObject.cpp
-#    combat/OpenSteer/CombatShip.cpp
-#    combat/OpenSteer/Missile.cpp
-#    combat/OpenSteer/Obstacle.cpp
-#    combat/OpenSteer/PathingEngine.cpp
-#    combat/OpenSteer/SimpleVehicle.cpp
-#    combat/OpenSteer/Vec3.cpp
-#    combat/OpenSteer/Vec3Utilities.cpp
-#    Empire/Empire.cpp
-#    Empire/EmpireManager.cpp
-#    Empire/ResourcePool.cpp
-#    network/Message.cpp
-#    network/MessageQueue.cpp
-#    network/Networking.cpp
-#    UI/StringTable.cpp
-#    universe/Building.cpp
-#    universe/Condition.cpp
-#    universe/ConditionParser1.cpp
-#    universe/ConditionParser2.cpp
-#    universe/ConditionParser3.cpp
-#    universe/ConditionParser.cpp
-#    universe/Effect.cpp
-#    universe/EffectAccounting.cpp
-#    universe/EffectParser.cpp
-#    universe/Enums.cpp
-#    universe/Fleet.cpp
-#    universe/Meter.cpp
-#    universe/ObjectMap.cpp
-#    universe/ParserUtil.cpp
-#    universe/Planet.cpp
-#    universe/PopCenter.cpp
-#    universe/Predicates.cpp
-#    universe/ResourceCenter.cpp
-#    universe/Ship.cpp
-#    universe/ShipDesign.cpp
-#    universe/Special.cpp
-#    universe/System.cpp
-#    universe/Tech.cpp
-#    universe/TopLevelParsers.cpp
-#    universe/UniverseObject.cpp
-#    universe/ValueRef.cpp
-#    universe/ValueRefParser.cpp
-#    util/DataTable.cpp
-#    util/GZStream.cpp
-#    util/MultiplayerCommon.cpp
-#    util/OptionsDB.cpp
-#    util/Order.cpp
-#    util/OrderSet.cpp
-#    util/Process.cpp
-#    util/Random.cpp
-#    util/Serialize.cpp
-#    util/SitRepEntry.cpp
-#    util/VarText.cpp
-#    util/binreloc.c
-#    util/Directories.cpp
-#    util/XMLDoc.cpp
-#    log4cpp/src/Appender.cpp
-#    log4cpp/src/AppenderSkeleton.cpp
-#    log4cpp/src/BasicLayout.cpp
-#    log4cpp/src/Category.cpp
-#    log4cpp/src/CategoryStream.cpp
-#    log4cpp/src/Configurator.cpp
-#    log4cpp/src/FactoryParams.cpp
-#    log4cpp/src/FileAppender.cpp
-#    log4cpp/src/HierarchyMaintainer.cpp
-#    log4cpp/src/LayoutAppender.cpp
-#    log4cpp/src/Localtime.cpp
-#    log4cpp/src/LoggingEvent.cpp
-#    log4cpp/src/NDC.cpp
-#    log4cpp/src/PatternLayout.cpp
-#    log4cpp/src/Priority.cpp
-#    log4cpp/src/StringUtil.cpp
-#    log4cpp/src/TimeStamp.cpp
-#    ${CMAKE_BINARY_DIR}/util/Version.cpp
-#)
-#
-#if (WIN32)
-#    list(APPEND THIS_LIB_SOURCES log4cpp/src/MSThreads.cpp)
-#else ()
-#    list(APPEND THIS_LIB_SOURCES log4cpp/src/PThreads.cpp)
-#endif ()
-#
-#set(BUILD_STATIC_TMP ${BUILD_STATIC})
-#set(BUILD_SHARED_TMP ${BUILD_SHARED})
-#set(BUILD_STATIC ON)
-#set(BUILD_SHARED OFF)
-#set(THIS_LIB_LINK_LIBS ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
-#library_all_variants(freeorion_lib)
-#set(BUILD_STATIC ${BUILD_STATIC_TMP})
-#set(BUILD_SHARED ${BUILD_SHARED_TMP})
+
+add_definitions(-DADOBE_STD_SERIALIZATION)
+
+if (FREEORION_RELEASE)
+    add_definitions(-DFREEORION_RELEASE)
+endif ()
+
+set(BUILD_STATIC_TMP ${BUILD_STATIC})
+set(BUILD_SHARED_TMP ${BUILD_SHARED})
+set(BUILD_STATIC ON)
+set(BUILD_SHARED OFF)
+
+set(THIS_LIB_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
+
+set(THIS_LIB_SOURCES
+    combat/CombatOrder.cpp
+    combat/OpenSteer/AsteroidBeltObstacle.cpp
+    combat/OpenSteer/CombatFighter.cpp
+    combat/OpenSteer/CombatObject.cpp
+    combat/OpenSteer/CombatShip.cpp
+    combat/OpenSteer/Missile.cpp
+    combat/OpenSteer/Obstacle.cpp
+    combat/OpenSteer/PathingEngine.cpp
+    combat/OpenSteer/SimpleVehicle.cpp
+    combat/OpenSteer/Vec3.cpp
+    combat/OpenSteer/Vec3Utilities.cpp
+    Empire/Empire.cpp
+    Empire/EmpireManager.cpp
+    Empire/ResourcePool.cpp
+    network/Message.cpp
+    network/MessageQueue.cpp
+    network/Networking.cpp
+    UI/StringTable.cpp
+    universe/Building.cpp
+    universe/Condition.cpp
+    universe/Effect.cpp
+    universe/EffectAccounting.cpp
+    universe/Enums.cpp
+    universe/Fleet.cpp
+    universe/Meter.cpp
+    universe/Names.cpp
+    universe/ObjectMap.cpp
+    universe/Planet.cpp
+    universe/PopCenter.cpp
+    universe/Predicates.cpp
+    universe/ResourceCenter.cpp
+    universe/Ship.cpp
+    universe/ShipDesign.cpp
+    universe/Special.cpp
+    universe/Species.cpp
+    universe/System.cpp
+    universe/Tech.cpp
+    universe/UniverseObject.cpp
+    universe/ValueRef.cpp
+    util/DataTable.cpp
+    util/GZStream.cpp
+    util/Math.cpp
+    util/MultiplayerCommon.cpp
+    util/OptionsDB.cpp
+    util/Order.cpp
+    util/OrderSet.cpp
+    util/Process.cpp
+    util/Random.cpp
+    util/SerializeEmpire.cpp
+    util/SerializeMultiplayerCommon.cpp
+    util/SerializeOrderSet.cpp
+    util/SerializePathingEngine.cpp
+    util/SerializeUniverse.cpp
+    util/SitRepEntry.cpp
+    util/binreloc.c
+    util/Directories.cpp
+    util/XMLDoc.cpp
+    log4cpp/src/Appender.cpp
+    log4cpp/src/AppenderSkeleton.cpp
+    log4cpp/src/BasicLayout.cpp
+    log4cpp/src/Category.cpp
+    log4cpp/src/CategoryStream.cpp
+    log4cpp/src/Configurator.cpp
+    log4cpp/src/FactoryParams.cpp
+    log4cpp/src/FileAppender.cpp
+    log4cpp/src/HierarchyMaintainer.cpp
+    log4cpp/src/LayoutAppender.cpp
+    log4cpp/src/Localtime.cpp
+    log4cpp/src/LoggingEvent.cpp
+    log4cpp/src/NDC.cpp
+    log4cpp/src/PatternLayout.cpp
+    log4cpp/src/Priority.cpp
+    log4cpp/src/StringUtil.cpp
+    log4cpp/src/TimeStamp.cpp
+    ${CMAKE_BINARY_DIR}/util/Version.cpp
+)
+
+if (WIN32)
+    list(APPEND THIS_LIB_SOURCES log4cpp/src/MSThreads.cpp)
+else ()
+    list(APPEND THIS_LIB_SOURCES log4cpp/src/PThreads.cpp)
+endif ()
+
+library_all_variants(core)
+
+set(BUILD_DEBUG_TMP ${BUILD_DEBUG})
+set(BUILD_RELEASE_TMP ${BUILD_RELEASE})
+set(BUILD_DEBUG OFF)
+set(BUILD_RELEASE ON)
+
+set(THIS_LIB_SOURCES
+    ../parse/Lexer.cpp
+    ../parse/ReportParseError.cpp
+    ../parse/Int.cpp
+    ../parse/Double.cpp
+    ../parse/Label.cpp
+    ../parse/EnumParser.cpp
+    ../parse/IntValueRefParser.cpp
+    ../parse/DoubleValueRefParser.cpp
+    ../parse/StringValueRefParser.cpp
+    ../parse/PlanetSizeValueRefParser.cpp
+    ../parse/PlanetTypeValueRefParser.cpp
+    ../parse/PlanetEnvironmentValueRefParser.cpp
+    ../parse/UniverseObjectTypeValueRefParser.cpp
+    ../parse/StarTypeValueRefParser.cpp
+    ../parse/ConditionParser.cpp
+    ../parse/ConditionParser1.cpp
+    ../parse/ConditionParser2.cpp
+    ../parse/ConditionParser3.cpp
+    ../parse/EffectParser.cpp
+    ../parse/Parse.cpp
+    ../parse/BuildingsParser.cpp
+    ../parse/SpecialsParser.cpp
+    ../parse/SpeciesParser.cpp
+    ../parse/TechsParser.cpp
+    ../parse/ItemsParser.cpp
+    ../parse/ShipPartsParser.cpp
+    ../parse/ShipHullsParser.cpp
+    ../parse/ShipDesignsParser.cpp
+    ../parse/FleetPlansParser.cpp
+    ../parse/MonsterFleetPlansParser.cpp
+    ../parse/AlignmentsParser.cpp
+)
+
+library_all_variants(parse)
+
+set(BUILD_DEBUG ${BUILD_DEBUG_TMP})
+set(BUILD_RELEASE ${BUILD_RELEASE_TMP})
+
+set(BUILD_STATIC ${BUILD_STATIC_TMP})
+set(BUILD_SHARED ${BUILD_SHARED_TMP})
 
 
 # This macro is an internal utility macro that builds a particular variant of
@@ -332,6 +374,13 @@ endmacro ()
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
+
+option(BUILD_PARSER_TESTS "Controls generation of parser unit tests." OFF)
+
+if (BUILD_PARSER_TESTS)
+    enable_testing()
+    add_subdirectory(parse)
+endif ()
 
 ########################################
 # Win32 SDK-only steps                 #

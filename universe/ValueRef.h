@@ -3,9 +3,12 @@
 #define _ValueRef_h_
 
 #include "Enums.h"
-#include "ValueRefFwd.h"
 #include "Condition.h"
+#include "Names.h"
+#include "ValueRefFwd.h"
 #include "../util/MultiplayerCommon.h"
+
+#include <GG/adobe/name.hpp>
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/format.hpp>
@@ -60,10 +63,6 @@ struct ScriptingContext {
     const UniverseObject*   condition_local_candidate;
     const boost::any        current_value;
 };
-
-namespace detail {
-    std::vector<std::string> TokenizeDottedReference(const std::string& str);
-}
 
 /** The base class for all ValueRef classes.  This class provides the public
   * interface for a ValueRef expression tree. */
@@ -125,13 +124,10 @@ private:
 template <class T>
 struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
 {
-    /** basic ctor.  If \a ref_type is true, the field corresponding to
-      * \a property_name is read from the \a source parameter of Eval;
-      * otherwise, the same field is read from Eval's \a target parameter. */
-    Variable(ReferenceType ref_type, const std::string& property_name);
+    Variable(const std::vector<adobe::name_t>& property_name);
 
-    ReferenceType                   GetReferenceType() const;
-    const std::vector<std::string>& PropertyName() const;
+    ReferenceType                     GetReferenceType() const;
+    const std::vector<adobe::name_t>& PropertyName() const;
 
     virtual T                       Eval(const ScriptingContext& context) const;
 
@@ -143,11 +139,11 @@ struct ValueRef::Variable : public ValueRef::ValueRefBase<T>
     virtual std::string             Dump() const;
 
 protected:
-    Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
+    Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name);
 
 private:
     ReferenceType                   m_ref_type;
-    std::vector<std::string>        m_property_name;
+    std::vector<adobe::name_t>      m_property_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -162,7 +158,7 @@ private:
 template <class T>
 struct ValueRef::Statistic : public ValueRef::Variable<T>
 {
-    Statistic(const std::string& property_name,
+    Statistic(const std::vector<adobe::name_t>& property_name,
               StatisticType stat_type,
               const Condition::ConditionBase* sampling_condition);
 
@@ -179,10 +175,6 @@ struct ValueRef::Statistic : public ValueRef::Variable<T>
     virtual std::string             Dump() const;
 
 protected:
-    Statistic(const std::vector<std::string>& property_name,
-              StatisticType stat_type,
-              const Condition::ConditionBase* sampling_condition);
-
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void    GetConditionMatches(const ScriptingContext& context,
                                 Condition::ObjectSet& condition_targets,
@@ -290,7 +282,7 @@ private:
 std::string DumpIndent();
 
 namespace ValueRef {
-    std::string ReconstructName(const std::vector<std::string>& property_name,
+    std::string ReconstructName(const std::vector<adobe::name_t>& property_name,
                                 ReferenceType ref_type);
 }
 
@@ -370,13 +362,27 @@ void ValueRef::Constant<T>::serialize(Archive& ar, const unsigned int version)
 // Variable                                              //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::string& property_name) :
-    m_ref_type(ref_type),
-    m_property_name(::detail::TokenizeDottedReference(property_name))
-{}
+ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name) :
+    m_ref_type(),
+    m_property_name(property_name.begin(), property_name.end())
+{
+    assert(!property_name.empty());
+    adobe::name_t ref_type_name = property_name.front();
+    if (ref_type_name == CurrentTurn_name) {
+        m_ref_type = NON_OBJECT_REFERENCE;
+    } else if (ref_type_name == Source_name) {
+        m_ref_type = SOURCE_REFERENCE;
+    } else if (ref_type_name == Value_name || ref_type_name == Value_name) {
+        m_ref_type = EFFECT_TARGET_REFERENCE;
+    } else if (ref_type_name == LocalCandidate_name) {
+        m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
+    } else if (ref_type_name == RootCandidate_name) {
+        m_ref_type = CONDITION_ROOT_CANDIDATE_REFERENCE;
+    }
+}
 
 template <class T>
-ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<std::string>& property_name) :
+ValueRef::Variable<T>::Variable(ReferenceType ref_type, const std::vector<adobe::name_t>& property_name) :
     m_ref_type(ref_type),
     m_property_name(property_name)
 {}
@@ -386,7 +392,7 @@ ValueRef::ReferenceType ValueRef::Variable<T>::GetReferenceType() const
 { return m_ref_type; }
 
 template <class T>
-const std::vector<std::string>& ValueRef::Variable<T>::PropertyName() const
+const std::vector<adobe::name_t>& ValueRef::Variable<T>::PropertyName() const
 { return m_property_name; }
 
 template <class T>
@@ -414,7 +420,7 @@ std::string ValueRef::Variable<T>::Description() const
     default:                                    formatter % "???";                                  break;
     }
     for (unsigned int i = 0; i < m_property_name.size(); ++i)
-        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(m_property_name[i]));
+        formatter % UserString("DESC_VAR_" + boost::to_upper_copy(std::string(m_property_name[i].c_str())));
     return boost::io::str(formatter);
 }
 
@@ -450,34 +456,36 @@ template <class Archive>
 void ValueRef::Variable<T>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
-        & BOOST_SERIALIZATION_NVP(m_ref_type)
-        & BOOST_SERIALIZATION_NVP(m_property_name);
+        & BOOST_SERIALIZATION_NVP(m_ref_type);
+
+    std::vector<std::string> property_name(m_property_name.size());
+
+    if (Archive::is_saving) {
+        for (std::size_t i = 0; i < property_name.size(); ++i) {
+            property_name[i] = m_property_name[i].c_str();
+        }
+    }
+
+    ar  & BOOST_SERIALIZATION_NVP(property_name);
+
+    if (Archive::is_loading) {
+        for (std::size_t i = 0; i < property_name.size(); ++i) {
+            m_property_name[i] = adobe::name_t(property_name[i].c_str());
+        }
+    }
 }
 
 ///////////////////////////////////////////////////////////
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-ValueRef::Statistic<T>::Statistic(const std::string& property_name,
+ValueRef::Statistic<T>::Statistic(const std::vector<adobe::name_t>& property_name,
                                   StatisticType stat_type,
                                   const Condition::ConditionBase* sampling_condition) :
     Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition)
-{
-    //Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(" << property_name << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
-}
-
-template <class T>
-ValueRef::Statistic<T>::Statistic(const std::vector<std::string>& property_name,
-                                  StatisticType stat_type,
-                                  const Condition::ConditionBase* sampling_condition) :
-    Variable<T>(ValueRef::NON_OBJECT_REFERENCE, property_name),
-    m_stat_type(stat_type),
-    m_sampling_condition(sampling_condition)
-{
-    //Logger().debugStream() << "ValueRef::Statistic<T>::Statistic(??." << property_name.back() << ", " << stat_type << ", " << sampling_condition->Dump() << ")";
-}
+{}
 
 template <class T>
 ValueRef::StatisticType ValueRef::Statistic<T>::GetStatisticType() const

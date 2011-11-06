@@ -1,0 +1,1883 @@
+Number  Condition = All
+Number  All
+
+Sum  Property = Fleet.Owner  Condition = All
+Sum  Property = Fleet.Owner  All
+Sum  Fleet.Owner  Condition = All
+Sum  Fleet.Owner  All
+Sum  Property = Fleet.ID  Condition = All
+Sum  Property = Fleet.ID  All
+Sum  Fleet.ID  Condition = All
+Sum  Fleet.ID  All
+Sum  Property = Fleet.CreationTurn  Condition = All
+Sum  Property = Fleet.CreationTurn  All
+Sum  Fleet.CreationTurn  Condition = All
+Sum  Fleet.CreationTurn  All
+Sum  Property = Fleet.Age  Condition = All
+Sum  Property = Fleet.Age  All
+Sum  Fleet.Age  Condition = All
+Sum  Fleet.Age  All
+Sum  Property = Fleet.ProducedByEmpireID  Condition = All
+Sum  Property = Fleet.ProducedByEmpireID  All
+Sum  Fleet.ProducedByEmpireID  Condition = All
+Sum  Fleet.ProducedByEmpireID  All
+Sum  Property = Fleet.DesignID  Condition = All
+Sum  Property = Fleet.DesignID  All
+Sum  Fleet.DesignID  Condition = All
+Sum  Fleet.DesignID  All
+Sum  Property = Fleet.FleetID  Condition = All
+Sum  Property = Fleet.FleetID  All
+Sum  Fleet.FleetID  Condition = All
+Sum  Fleet.FleetID  All
+Sum  Property = Fleet.PlanetID  Condition = All
+Sum  Property = Fleet.PlanetID  All
+Sum  Fleet.PlanetID  Condition = All
+Sum  Fleet.PlanetID  All
+Sum  Property = Fleet.SystemID  Condition = All
+Sum  Property = Fleet.SystemID  All
+Sum  Fleet.SystemID  Condition = All
+Sum  Fleet.SystemID  All
+Sum  Property = Fleet.FinalDestinationID  Condition = All
+Sum  Property = Fleet.FinalDestinationID  All
+Sum  Fleet.FinalDestinationID  Condition = All
+Sum  Fleet.FinalDestinationID  All
+Sum  Property = Fleet.NextSystemID  Condition = All
+Sum  Property = Fleet.NextSystemID  All
+Sum  Fleet.NextSystemID  Condition = All
+Sum  Fleet.NextSystemID  All
+Sum  Property = Fleet.PreviousSystemID  Condition = All
+Sum  Property = Fleet.PreviousSystemID  All
+Sum  Fleet.PreviousSystemID  Condition = All
+Sum  Fleet.PreviousSystemID  All
+Sum  Property = Fleet.NumShips  Condition = All
+Sum  Property = Fleet.NumShips  All
+Sum  Fleet.NumShips  Condition = All
+Sum  Fleet.NumShips  All
+Sum  Property = Planet.Owner  Condition = All
+Sum  Property = Planet.Owner  All
+Sum  Planet.Owner  Condition = All
+Sum  Planet.Owner  All
+Sum  Property = Planet.ID  Condition = All
+Sum  Property = Planet.ID  All
+Sum  Planet.ID  Condition = All
+Sum  Planet.ID  All
+Sum  Property = Planet.CreationTurn  Condition = All
+Sum  Property = Planet.CreationTurn  All
+Sum  Planet.CreationTurn  Condition = All
+Sum  Planet.CreationTurn  All
+Sum  Property = Planet.Age  Condition = All
+Sum  Property = Planet.Age  All
+Sum  Planet.Age  Condition = All
+Sum  Planet.Age  All
+Sum  Property = Planet.ProducedByEmpireID  Condition = All
+Sum  Property = Planet.ProducedByEmpireID  All
+Sum  Planet.ProducedByEmpireID  Condition = All
+Sum  Planet.ProducedByEmpireID  All
+Sum  Property = Planet.DesignID  Condition = All
+Sum  Property = Planet.DesignID  All
+Sum  Planet.DesignID  Condition = All
+Sum  Planet.DesignID  All
+Sum  Property = Planet.FleetID  Condition = All
+Sum  Property = Planet.FleetID  All
+Sum  Planet.FleetID  Condition = All
+Sum  Planet.FleetID  All
+Sum  Property = Planet.PlanetID  Condition = All
+Sum  Property = Planet.PlanetID  All
+Sum  Planet.PlanetID  Condition = All
+Sum  Planet.PlanetID  All
+Sum  Property = Planet.SystemID  Condition = All
+Sum  Property = Planet.SystemID  All
+Sum  Planet.SystemID  Condition = All
+Sum  Planet.SystemID  All
+Sum  Property = Planet.FinalDestinationID  Condition = All
+Sum  Property = Planet.FinalDestinationID  All
+Sum  Planet.FinalDestinationID  Condition = All
+Sum  Planet.FinalDestinationID  All
+Sum  Property = Planet.NextSystemID  Condition = All
+Sum  Property = Planet.NextSystemID  All
+Sum  Planet.NextSystemID  Condition = All
+Sum  Planet.NextSystemID  All
+Sum  Property = Planet.PreviousSystemID  Condition = All
+Sum  Property = Planet.PreviousSystemID  All
+Sum  Planet.PreviousSystemID  Condition = All
+Sum  Planet.PreviousSystemID  All
+Sum  Property = Planet.NumShips  Condition = All
+Sum  Property = Planet.NumShips  All
+Sum  Planet.NumShips  Condition = All
+Sum  Planet.NumShips  All
+Sum  Property = System.Owner  Condition = All
+Sum  Property = System.Owner  All
+Sum  System.Owner  Condition = All
+Sum  System.Owner  All
+Sum  Property = System.ID  Condition = All
+Sum  Property = System.ID  All
+Sum  System.ID  Condition = All
+Sum  System.ID  All
+Sum  Property = System.CreationTurn  Condition = All
+Sum  Property = System.CreationTurn  All
+Sum  System.CreationTurn  Condition = All
+Sum  System.CreationTurn  All
+Sum  Property = System.Age  Condition = All
+Sum  Property = System.Age  All
+Sum  System.Age  Condition = All
+Sum  System.Age  All
+Sum  Property = System.ProducedByEmpireID  Condition = All
+Sum  Property = System.ProducedByEmpireID  All
+Sum  System.ProducedByEmpireID  Condition = All
+Sum  System.ProducedByEmpireID  All
+Sum  Property = System.DesignID  Condition = All
+Sum  Property = System.DesignID  All
+Sum  System.DesignID  Condition = All
+Sum  System.DesignID  All
+Sum  Property = System.FleetID  Condition = All
+Sum  Property = System.FleetID  All
+Sum  System.FleetID  Condition = All
+Sum  System.FleetID  All
+Sum  Property = System.PlanetID  Condition = All
+Sum  Property = System.PlanetID  All
+Sum  System.PlanetID  Condition = All
+Sum  System.PlanetID  All
+Sum  Property = System.SystemID  Condition = All
+Sum  Property = System.SystemID  All
+Sum  System.SystemID  Condition = All
+Sum  System.SystemID  All
+Sum  Property = System.FinalDestinationID  Condition = All
+Sum  Property = System.FinalDestinationID  All
+Sum  System.FinalDestinationID  Condition = All
+Sum  System.FinalDestinationID  All
+Sum  Property = System.NextSystemID  Condition = All
+Sum  Property = System.NextSystemID  All
+Sum  System.NextSystemID  Condition = All
+Sum  System.NextSystemID  All
+Sum  Property = System.PreviousSystemID  Condition = All
+Sum  Property = System.PreviousSystemID  All
+Sum  System.PreviousSystemID  Condition = All
+Sum  System.PreviousSystemID  All
+Sum  Property = System.NumShips  Condition = All
+Sum  Property = System.NumShips  All
+Sum  System.NumShips  Condition = All
+Sum  System.NumShips  All
+Sum  Property = Owner  Condition = All
+Sum  Property = Owner  All
+Sum  Owner  Condition = All
+Sum  Owner  All
+Sum  Property = ID  Condition = All
+Sum  Property = ID  All
+Sum  ID  Condition = All
+Sum  ID  All
+Sum  Property = CreationTurn  Condition = All
+Sum  Property = CreationTurn  All
+Sum  CreationTurn  Condition = All
+Sum  CreationTurn  All
+Sum  Property = Age  Condition = All
+Sum  Property = Age  All
+Sum  Age  Condition = All
+Sum  Age  All
+Sum  Property = ProducedByEmpireID  Condition = All
+Sum  Property = ProducedByEmpireID  All
+Sum  ProducedByEmpireID  Condition = All
+Sum  ProducedByEmpireID  All
+Sum  Property = DesignID  Condition = All
+Sum  Property = DesignID  All
+Sum  DesignID  Condition = All
+Sum  DesignID  All
+Sum  Property = FleetID  Condition = All
+Sum  Property = FleetID  All
+Sum  FleetID  Condition = All
+Sum  FleetID  All
+Sum  Property = PlanetID  Condition = All
+Sum  Property = PlanetID  All
+Sum  PlanetID  Condition = All
+Sum  PlanetID  All
+Sum  Property = SystemID  Condition = All
+Sum  Property = SystemID  All
+Sum  SystemID  Condition = All
+Sum  SystemID  All
+Sum  Property = FinalDestinationID  Condition = All
+Sum  Property = FinalDestinationID  All
+Sum  FinalDestinationID  Condition = All
+Sum  FinalDestinationID  All
+Sum  Property = NextSystemID  Condition = All
+Sum  Property = NextSystemID  All
+Sum  NextSystemID  Condition = All
+Sum  NextSystemID  All
+Sum  Property = PreviousSystemID  Condition = All
+Sum  Property = PreviousSystemID  All
+Sum  PreviousSystemID  Condition = All
+Sum  PreviousSystemID  All
+Sum  Property = NumShips  Condition = All
+Sum  Property = NumShips  All
+Sum  NumShips  Condition = All
+Sum  NumShips  All
+
+Mean  Property = Fleet.Owner  Condition = All
+Mean  Property = Fleet.Owner  All
+Mean  Fleet.Owner  Condition = All
+Mean  Fleet.Owner  All
+Mean  Property = Fleet.ID  Condition = All
+Mean  Property = Fleet.ID  All
+Mean  Fleet.ID  Condition = All
+Mean  Fleet.ID  All
+Mean  Property = Fleet.CreationTurn  Condition = All
+Mean  Property = Fleet.CreationTurn  All
+Mean  Fleet.CreationTurn  Condition = All
+Mean  Fleet.CreationTurn  All
+Mean  Property = Fleet.Age  Condition = All
+Mean  Property = Fleet.Age  All
+Mean  Fleet.Age  Condition = All
+Mean  Fleet.Age  All
+Mean  Property = Fleet.ProducedByEmpireID  Condition = All
+Mean  Property = Fleet.ProducedByEmpireID  All
+Mean  Fleet.ProducedByEmpireID  Condition = All
+Mean  Fleet.ProducedByEmpireID  All
+Mean  Property = Fleet.DesignID  Condition = All
+Mean  Property = Fleet.DesignID  All
+Mean  Fleet.DesignID  Condition = All
+Mean  Fleet.DesignID  All
+Mean  Property = Fleet.FleetID  Condition = All
+Mean  Property = Fleet.FleetID  All
+Mean  Fleet.FleetID  Condition = All
+Mean  Fleet.FleetID  All
+Mean  Property = Fleet.PlanetID  Condition = All
+Mean  Property = Fleet.PlanetID  All
+Mean  Fleet.PlanetID  Condition = All
+Mean  Fleet.PlanetID  All
+Mean  Property = Fleet.SystemID  Condition = All
+Mean  Property = Fleet.SystemID  All
+Mean  Fleet.SystemID  Condition = All
+Mean  Fleet.SystemID  All
+Mean  Property = Fleet.FinalDestinationID  Condition = All
+Mean  Property = Fleet.FinalDestinationID  All
+Mean  Fleet.FinalDestinationID  Condition = All
+Mean  Fleet.FinalDestinationID  All
+Mean  Property = Fleet.NextSystemID  Condition = All
+Mean  Property = Fleet.NextSystemID  All
+Mean  Fleet.NextSystemID  Condition = All
+Mean  Fleet.NextSystemID  All
+Mean  Property = Fleet.PreviousSystemID  Condition = All
+Mean  Property = Fleet.PreviousSystemID  All
+Mean  Fleet.PreviousSystemID  Condition = All
+Mean  Fleet.PreviousSystemID  All
+Mean  Property = Fleet.NumShips  Condition = All
+Mean  Property = Fleet.NumShips  All
+Mean  Fleet.NumShips  Condition = All
+Mean  Fleet.NumShips  All
+Mean  Property = Planet.Owner  Condition = All
+Mean  Property = Planet.Owner  All
+Mean  Planet.Owner  Condition = All
+Mean  Planet.Owner  All
+Mean  Property = Planet.ID  Condition = All
+Mean  Property = Planet.ID  All
+Mean  Planet.ID  Condition = All
+Mean  Planet.ID  All
+Mean  Property = Planet.CreationTurn  Condition = All
+Mean  Property = Planet.CreationTurn  All
+Mean  Planet.CreationTurn  Condition = All
+Mean  Planet.CreationTurn  All
+Mean  Property = Planet.Age  Condition = All
+Mean  Property = Planet.Age  All
+Mean  Planet.Age  Condition = All
+Mean  Planet.Age  All
+Mean  Property = Planet.ProducedByEmpireID  Condition = All
+Mean  Property = Planet.ProducedByEmpireID  All
+Mean  Planet.ProducedByEmpireID  Condition = All
+Mean  Planet.ProducedByEmpireID  All
+Mean  Property = Planet.DesignID  Condition = All
+Mean  Property = Planet.DesignID  All
+Mean  Planet.DesignID  Condition = All
+Mean  Planet.DesignID  All
+Mean  Property = Planet.FleetID  Condition = All
+Mean  Property = Planet.FleetID  All
+Mean  Planet.FleetID  Condition = All
+Mean  Planet.FleetID  All
+Mean  Property = Planet.PlanetID  Condition = All
+Mean  Property = Planet.PlanetID  All
+Mean  Planet.PlanetID  Condition = All
+Mean  Planet.PlanetID  All
+Mean  Property = Planet.SystemID  Condition = All
+Mean  Property = Planet.SystemID  All
+Mean  Planet.SystemID  Condition = All
+Mean  Planet.SystemID  All
+Mean  Property = Planet.FinalDestinationID  Condition = All
+Mean  Property = Planet.FinalDestinationID  All
+Mean  Planet.FinalDestinationID  Condition = All
+Mean  Planet.FinalDestinationID  All
+Mean  Property = Planet.NextSystemID  Condition = All
+Mean  Property = Planet.NextSystemID  All
+Mean  Planet.NextSystemID  Condition = All
+Mean  Planet.NextSystemID  All
+Mean  Property = Planet.PreviousSystemID  Condition = All
+Mean  Property = Planet.PreviousSystemID  All
+Mean  Planet.PreviousSystemID  Condition = All
+Mean  Planet.PreviousSystemID  All
+Mean  Property = Planet.NumShips  Condition = All
+Mean  Property = Planet.NumShips  All
+Mean  Planet.NumShips  Condition = All
+Mean  Planet.NumShips  All
+Mean  Property = System.Owner  Condition = All
+Mean  Property = System.Owner  All
+Mean  System.Owner  Condition = All
+Mean  System.Owner  All
+Mean  Property = System.ID  Condition = All
+Mean  Property = System.ID  All
+Mean  System.ID  Condition = All
+Mean  System.ID  All
+Mean  Property = System.CreationTurn  Condition = All
+Mean  Property = System.CreationTurn  All
+Mean  System.CreationTurn  Condition = All
+Mean  System.CreationTurn  All
+Mean  Property = System.Age  Condition = All
+Mean  Property = System.Age  All
+Mean  System.Age  Condition = All
+Mean  System.Age  All
+Mean  Property = System.ProducedByEmpireID  Condition = All
+Mean  Property = System.ProducedByEmpireID  All
+Mean  System.ProducedByEmpireID  Condition = All
+Mean  System.ProducedByEmpireID  All
+Mean  Property = System.DesignID  Condition = All
+Mean  Property = System.DesignID  All
+Mean  System.DesignID  Condition = All
+Mean  System.DesignID  All
+Mean  Property = System.FleetID  Condition = All
+Mean  Property = System.FleetID  All
+Mean  System.FleetID  Condition = All
+Mean  System.FleetID  All
+Mean  Property = System.PlanetID  Condition = All
+Mean  Property = System.PlanetID  All
+Mean  System.PlanetID  Condition = All
+Mean  System.PlanetID  All
+Mean  Property = System.SystemID  Condition = All
+Mean  Property = System.SystemID  All
+Mean  System.SystemID  Condition = All
+Mean  System.SystemID  All
+Mean  Property = System.FinalDestinationID  Condition = All
+Mean  Property = System.FinalDestinationID  All
+Mean  System.FinalDestinationID  Condition = All
+Mean  System.FinalDestinationID  All
+Mean  Property = System.NextSystemID  Condition = All
+Mean  Property = System.NextSystemID  All
+Mean  System.NextSystemID  Condition = All
+Mean  System.NextSystemID  All
+Mean  Property = System.PreviousSystemID  Condition = All
+Mean  Property = System.PreviousSystemID  All
+Mean  System.PreviousSystemID  Condition = All
+Mean  System.PreviousSystemID  All
+Mean  Property = System.NumShips  Condition = All
+Mean  Property = System.NumShips  All
+Mean  System.NumShips  Condition = All
+Mean  System.NumShips  All
+Mean  Property = Owner  Condition = All
+Mean  Property = Owner  All
+Mean  Owner  Condition = All
+Mean  Owner  All
+Mean  Property = ID  Condition = All
+Mean  Property = ID  All
+Mean  ID  Condition = All
+Mean  ID  All
+Mean  Property = CreationTurn  Condition = All
+Mean  Property = CreationTurn  All
+Mean  CreationTurn  Condition = All
+Mean  CreationTurn  All
+Mean  Property = Age  Condition = All
+Mean  Property = Age  All
+Mean  Age  Condition = All
+Mean  Age  All
+Mean  Property = ProducedByEmpireID  Condition = All
+Mean  Property = ProducedByEmpireID  All
+Mean  ProducedByEmpireID  Condition = All
+Mean  ProducedByEmpireID  All
+Mean  Property = DesignID  Condition = All
+Mean  Property = DesignID  All
+Mean  DesignID  Condition = All
+Mean  DesignID  All
+Mean  Property = FleetID  Condition = All
+Mean  Property = FleetID  All
+Mean  FleetID  Condition = All
+Mean  FleetID  All
+Mean  Property = PlanetID  Condition = All
+Mean  Property = PlanetID  All
+Mean  PlanetID  Condition = All
+Mean  PlanetID  All
+Mean  Property = SystemID  Condition = All
+Mean  Property = SystemID  All
+Mean  SystemID  Condition = All
+Mean  SystemID  All
+Mean  Property = FinalDestinationID  Condition = All
+Mean  Property = FinalDestinationID  All
+Mean  FinalDestinationID  Condition = All
+Mean  FinalDestinationID  All
+Mean  Property = NextSystemID  Condition = All
+Mean  Property = NextSystemID  All
+Mean  NextSystemID  Condition = All
+Mean  NextSystemID  All
+Mean  Property = PreviousSystemID  Condition = All
+Mean  Property = PreviousSystemID  All
+Mean  PreviousSystemID  Condition = All
+Mean  PreviousSystemID  All
+Mean  Property = NumShips  Condition = All
+Mean  Property = NumShips  All
+Mean  NumShips  Condition = All
+Mean  NumShips  All
+
+RMS  Property = Fleet.Owner  Condition = All
+RMS  Property = Fleet.Owner  All
+RMS  Fleet.Owner  Condition = All
+RMS  Fleet.Owner  All
+RMS  Property = Fleet.ID  Condition = All
+RMS  Property = Fleet.ID  All
+RMS  Fleet.ID  Condition = All
+RMS  Fleet.ID  All
+RMS  Property = Fleet.CreationTurn  Condition = All
+RMS  Property = Fleet.CreationTurn  All
+RMS  Fleet.CreationTurn  Condition = All
+RMS  Fleet.CreationTurn  All
+RMS  Property = Fleet.Age  Condition = All
+RMS  Property = Fleet.Age  All
+RMS  Fleet.Age  Condition = All
+RMS  Fleet.Age  All
+RMS  Property = Fleet.ProducedByEmpireID  Condition = All
+RMS  Property = Fleet.ProducedByEmpireID  All
+RMS  Fleet.ProducedByEmpireID  Condition = All
+RMS  Fleet.ProducedByEmpireID  All
+RMS  Property = Fleet.DesignID  Condition = All
+RMS  Property = Fleet.DesignID  All
+RMS  Fleet.DesignID  Condition = All
+RMS  Fleet.DesignID  All
+RMS  Property = Fleet.FleetID  Condition = All
+RMS  Property = Fleet.FleetID  All
+RMS  Fleet.FleetID  Condition = All
+RMS  Fleet.FleetID  All
+RMS  Property = Fleet.PlanetID  Condition = All
+RMS  Property = Fleet.PlanetID  All
+RMS  Fleet.PlanetID  Condition = All
+RMS  Fleet.PlanetID  All
+RMS  Property = Fleet.SystemID  Condition = All
+RMS  Property = Fleet.SystemID  All
+RMS  Fleet.SystemID  Condition = All
+RMS  Fleet.SystemID  All
+RMS  Property = Fleet.FinalDestinationID  Condition = All
+RMS  Property = Fleet.FinalDestinationID  All
+RMS  Fleet.FinalDestinationID  Condition = All
+RMS  Fleet.FinalDestinationID  All
+RMS  Property = Fleet.NextSystemID  Condition = All
+RMS  Property = Fleet.NextSystemID  All
+RMS  Fleet.NextSystemID  Condition = All
+RMS  Fleet.NextSystemID  All
+RMS  Property = Fleet.PreviousSystemID  Condition = All
+RMS  Property = Fleet.PreviousSystemID  All
+RMS  Fleet.PreviousSystemID  Condition = All
+RMS  Fleet.PreviousSystemID  All
+RMS  Property = Fleet.NumShips  Condition = All
+RMS  Property = Fleet.NumShips  All
+RMS  Fleet.NumShips  Condition = All
+RMS  Fleet.NumShips  All
+RMS  Property = Planet.Owner  Condition = All
+RMS  Property = Planet.Owner  All
+RMS  Planet.Owner  Condition = All
+RMS  Planet.Owner  All
+RMS  Property = Planet.ID  Condition = All
+RMS  Property = Planet.ID  All
+RMS  Planet.ID  Condition = All
+RMS  Planet.ID  All
+RMS  Property = Planet.CreationTurn  Condition = All
+RMS  Property = Planet.CreationTurn  All
+RMS  Planet.CreationTurn  Condition = All
+RMS  Planet.CreationTurn  All
+RMS  Property = Planet.Age  Condition = All
+RMS  Property = Planet.Age  All
+RMS  Planet.Age  Condition = All
+RMS  Planet.Age  All
+RMS  Property = Planet.ProducedByEmpireID  Condition = All
+RMS  Property = Planet.ProducedByEmpireID  All
+RMS  Planet.ProducedByEmpireID  Condition = All
+RMS  Planet.ProducedByEmpireID  All
+RMS  Property = Planet.DesignID  Condition = All
+RMS  Property = Planet.DesignID  All
+RMS  Planet.DesignID  Condition = All
+RMS  Planet.DesignID  All
+RMS  Property = Planet.FleetID  Condition = All
+RMS  Property = Planet.FleetID  All
+RMS  Planet.FleetID  Condition = All
+RMS  Planet.FleetID  All
+RMS  Property = Planet.PlanetID  Condition = All
+RMS  Property = Planet.PlanetID  All
+RMS  Planet.PlanetID  Condition = All
+RMS  Planet.PlanetID  All
+RMS  Property = Planet.SystemID  Condition = All
+RMS  Property = Planet.SystemID  All
+RMS  Planet.SystemID  Condition = All
+RMS  Planet.SystemID  All
+RMS  Property = Planet.FinalDestinationID  Condition = All
+RMS  Property = Planet.FinalDestinationID  All
+RMS  Planet.FinalDestinationID  Condition = All
+RMS  Planet.FinalDestinationID  All
+RMS  Property = Planet.NextSystemID  Condition = All
+RMS  Property = Planet.NextSystemID  All
+RMS  Planet.NextSystemID  Condition = All
+RMS  Planet.NextSystemID  All
+RMS  Property = Planet.PreviousSystemID  Condition = All
+RMS  Property = Planet.PreviousSystemID  All
+RMS  Planet.PreviousSystemID  Condition = All
+RMS  Planet.PreviousSystemID  All
+RMS  Property = Planet.NumShips  Condition = All
+RMS  Property = Planet.NumShips  All
+RMS  Planet.NumShips  Condition = All
+RMS  Planet.NumShips  All
+RMS  Property = System.Owner  Condition = All
+RMS  Property = System.Owner  All
+RMS  System.Owner  Condition = All
+RMS  System.Owner  All
+RMS  Property = System.ID  Condition = All
+RMS  Property = System.ID  All
+RMS  System.ID  Condition = All
+RMS  System.ID  All
+RMS  Property = System.CreationTurn  Condition = All
+RMS  Property = System.CreationTurn  All
+RMS  System.CreationTurn  Condition = All
+RMS  System.CreationTurn  All
+RMS  Property = System.Age  Condition = All
+RMS  Property = System.Age  All
+RMS  System.Age  Condition = All
+RMS  System.Age  All
+RMS  Property = System.ProducedByEmpireID  Condition = All
+RMS  Property = System.ProducedByEmpireID  All
+RMS  System.ProducedByEmpireID  Condition = All
+RMS  System.ProducedByEmpireID  All
+RMS  Property = System.DesignID  Condition = All
+RMS  Property = System.DesignID  All
+RMS  System.DesignID  Condition = All
+RMS  System.DesignID  All
+RMS  Property = System.FleetID  Condition = All
+RMS  Property = System.FleetID  All
+RMS  System.FleetID  Condition = All
+RMS  System.FleetID  All
+RMS  Property = System.PlanetID  Condition = All
+RMS  Property = System.PlanetID  All
+RMS  System.PlanetID  Condition = All
+RMS  System.PlanetID  All
+RMS  Property = System.SystemID  Condition = All
+RMS  Property = System.SystemID  All
+RMS  System.SystemID  Condition = All
+RMS  System.SystemID  All
+RMS  Property = System.FinalDestinationID  Condition = All
+RMS  Property = System.FinalDestinationID  All
+RMS  System.FinalDestinationID  Condition = All
+RMS  System.FinalDestinationID  All
+RMS  Property = System.NextSystemID  Condition = All
+RMS  Property = System.NextSystemID  All
+RMS  System.NextSystemID  Condition = All
+RMS  System.NextSystemID  All
+RMS  Property = System.PreviousSystemID  Condition = All
+RMS  Property = System.PreviousSystemID  All
+RMS  System.PreviousSystemID  Condition = All
+RMS  System.PreviousSystemID  All
+RMS  Property = System.NumShips  Condition = All
+RMS  Property = System.NumShips  All
+RMS  System.NumShips  Condition = All
+RMS  System.NumShips  All
+RMS  Property = Owner  Condition = All
+RMS  Property = Owner  All
+RMS  Owner  Condition = All
+RMS  Owner  All
+RMS  Property = ID  Condition = All
+RMS  Property = ID  All
+RMS  ID  Condition = All
+RMS  ID  All
+RMS  Property = CreationTurn  Condition = All
+RMS  Property = CreationTurn  All
+RMS  CreationTurn  Condition = All
+RMS  CreationTurn  All
+RMS  Property = Age  Condition = All
+RMS  Property = Age  All
+RMS  Age  Condition = All
+RMS  Age  All
+RMS  Property = ProducedByEmpireID  Condition = All
+RMS  Property = ProducedByEmpireID  All
+RMS  ProducedByEmpireID  Condition = All
+RMS  ProducedByEmpireID  All
+RMS  Property = DesignID  Condition = All
+RMS  Property = DesignID  All
+RMS  DesignID  Condition = All
+RMS  DesignID  All
+RMS  Property = FleetID  Condition = All
+RMS  Property = FleetID  All
+RMS  FleetID  Condition = All
+RMS  FleetID  All
+RMS  Property = PlanetID  Condition = All
+RMS  Property = PlanetID  All
+RMS  PlanetID  Condition = All
+RMS  PlanetID  All
+RMS  Property = SystemID  Condition = All
+RMS  Property = SystemID  All
+RMS  SystemID  Condition = All
+RMS  SystemID  All
+RMS  Property = FinalDestinationID  Condition = All
+RMS  Property = FinalDestinationID  All
+RMS  FinalDestinationID  Condition = All
+RMS  FinalDestinationID  All
+RMS  Property = NextSystemID  Condition = All
+RMS  Property = NextSystemID  All
+RMS  NextSystemID  Condition = All
+RMS  NextSystemID  All
+RMS  Property = PreviousSystemID  Condition = All
+RMS  Property = PreviousSystemID  All
+RMS  PreviousSystemID  Condition = All
+RMS  PreviousSystemID  All
+RMS  Property = NumShips  Condition = All
+RMS  Property = NumShips  All
+RMS  NumShips  Condition = All
+RMS  NumShips  All
+
+Mode  Property = Fleet.Owner  Condition = All
+Mode  Property = Fleet.Owner  All
+Mode  Fleet.Owner  Condition = All
+Mode  Fleet.Owner  All
+Mode  Property = Fleet.ID  Condition = All
+Mode  Property = Fleet.ID  All
+Mode  Fleet.ID  Condition = All
+Mode  Fleet.ID  All
+Mode  Property = Fleet.CreationTurn  Condition = All
+Mode  Property = Fleet.CreationTurn  All
+Mode  Fleet.CreationTurn  Condition = All
+Mode  Fleet.CreationTurn  All
+Mode  Property = Fleet.Age  Condition = All
+Mode  Property = Fleet.Age  All
+Mode  Fleet.Age  Condition = All
+Mode  Fleet.Age  All
+Mode  Property = Fleet.ProducedByEmpireID  Condition = All
+Mode  Property = Fleet.ProducedByEmpireID  All
+Mode  Fleet.ProducedByEmpireID  Condition = All
+Mode  Fleet.ProducedByEmpireID  All
+Mode  Property = Fleet.DesignID  Condition = All
+Mode  Property = Fleet.DesignID  All
+Mode  Fleet.DesignID  Condition = All
+Mode  Fleet.DesignID  All
+Mode  Property = Fleet.FleetID  Condition = All
+Mode  Property = Fleet.FleetID  All
+Mode  Fleet.FleetID  Condition = All
+Mode  Fleet.FleetID  All
+Mode  Property = Fleet.PlanetID  Condition = All
+Mode  Property = Fleet.PlanetID  All
+Mode  Fleet.PlanetID  Condition = All
+Mode  Fleet.PlanetID  All
+Mode  Property = Fleet.SystemID  Condition = All
+Mode  Property = Fleet.SystemID  All
+Mode  Fleet.SystemID  Condition = All
+Mode  Fleet.SystemID  All
+Mode  Property = Fleet.FinalDestinationID  Condition = All
+Mode  Property = Fleet.FinalDestinationID  All
+Mode  Fleet.FinalDestinationID  Condition = All
+Mode  Fleet.FinalDestinationID  All
+Mode  Property = Fleet.NextSystemID  Condition = All
+Mode  Property = Fleet.NextSystemID  All
+Mode  Fleet.NextSystemID  Condition = All
+Mode  Fleet.NextSystemID  All
+Mode  Property = Fleet.PreviousSystemID  Condition = All
+Mode  Property = Fleet.PreviousSystemID  All
+Mode  Fleet.PreviousSystemID  Condition = All
+Mode  Fleet.PreviousSystemID  All
+Mode  Property = Fleet.NumShips  Condition = All
+Mode  Property = Fleet.NumShips  All
+Mode  Fleet.NumShips  Condition = All
+Mode  Fleet.NumShips  All
+Mode  Property = Planet.Owner  Condition = All
+Mode  Property = Planet.Owner  All
+Mode  Planet.Owner  Condition = All
+Mode  Planet.Owner  All
+Mode  Property = Planet.ID  Condition = All
+Mode  Property = Planet.ID  All
+Mode  Planet.ID  Condition = All
+Mode  Planet.ID  All
+Mode  Property = Planet.CreationTurn  Condition = All
+Mode  Property = Planet.CreationTurn  All
+Mode  Planet.CreationTurn  Condition = All
+Mode  Planet.CreationTurn  All
+Mode  Property = Planet.Age  Condition = All
+Mode  Property = Planet.Age  All
+Mode  Planet.Age  Condition = All
+Mode  Planet.Age  All
+Mode  Property = Planet.ProducedByEmpireID  Condition = All
+Mode  Property = Planet.ProducedByEmpireID  All
+Mode  Planet.ProducedByEmpireID  Condition = All
+Mode  Planet.ProducedByEmpireID  All
+Mode  Property = Planet.DesignID  Condition = All
+Mode  Property = Planet.DesignID  All
+Mode  Planet.DesignID  Condition = All
+Mode  Planet.DesignID  All
+Mode  Property = Planet.FleetID  Condition = All
+Mode  Property = Planet.FleetID  All
+Mode  Planet.FleetID  Condition = All
+Mode  Planet.FleetID  All
+Mode  Property = Planet.PlanetID  Condition = All
+Mode  Property = Planet.PlanetID  All
+Mode  Planet.PlanetID  Condition = All
+Mode  Planet.PlanetID  All
+Mode  Property = Planet.SystemID  Condition = All
+Mode  Property = Planet.SystemID  All
+Mode  Planet.SystemID  Condition = All
+Mode  Planet.SystemID  All
+Mode  Property = Planet.FinalDestinationID  Condition = All
+Mode  Property = Planet.FinalDestinationID  All
+Mode  Planet.FinalDestinationID  Condition = All
+Mode  Planet.FinalDestinationID  All
+Mode  Property = Planet.NextSystemID  Condition = All
+Mode  Property = Planet.NextSystemID  All
+Mode  Planet.NextSystemID  Condition = All
+Mode  Planet.NextSystemID  All
+Mode  Property = Planet.PreviousSystemID  Condition = All
+Mode  Property = Planet.PreviousSystemID  All
+Mode  Planet.PreviousSystemID  Condition = All
+Mode  Planet.PreviousSystemID  All
+Mode  Property = Planet.NumShips  Condition = All
+Mode  Property = Planet.NumShips  All
+Mode  Planet.NumShips  Condition = All
+Mode  Planet.NumShips  All
+Mode  Property = System.Owner  Condition = All
+Mode  Property = System.Owner  All
+Mode  System.Owner  Condition = All
+Mode  System.Owner  All
+Mode  Property = System.ID  Condition = All
+Mode  Property = System.ID  All
+Mode  System.ID  Condition = All
+Mode  System.ID  All
+Mode  Property = System.CreationTurn  Condition = All
+Mode  Property = System.CreationTurn  All
+Mode  System.CreationTurn  Condition = All
+Mode  System.CreationTurn  All
+Mode  Property = System.Age  Condition = All
+Mode  Property = System.Age  All
+Mode  System.Age  Condition = All
+Mode  System.Age  All
+Mode  Property = System.ProducedByEmpireID  Condition = All
+Mode  Property = System.ProducedByEmpireID  All
+Mode  System.ProducedByEmpireID  Condition = All
+Mode  System.ProducedByEmpireID  All
+Mode  Property = System.DesignID  Condition = All
+Mode  Property = System.DesignID  All
+Mode  System.DesignID  Condition = All
+Mode  System.DesignID  All
+Mode  Property = System.FleetID  Condition = All
+Mode  Property = System.FleetID  All
+Mode  System.FleetID  Condition = All
+Mode  System.FleetID  All
+Mode  Property = System.PlanetID  Condition = All
+Mode  Property = System.PlanetID  All
+Mode  System.PlanetID  Condition = All
+Mode  System.PlanetID  All
+Mode  Property = System.SystemID  Condition = All
+Mode  Property = System.SystemID  All
+Mode  System.SystemID  Condition = All
+Mode  System.SystemID  All
+Mode  Property = System.FinalDestinationID  Condition = All
+Mode  Property = System.FinalDestinationID  All
+Mode  System.FinalDestinationID  Condition = All
+Mode  System.FinalDestinationID  All
+Mode  Property = System.NextSystemID  Condition = All
+Mode  Property = System.NextSystemID  All
+Mode  System.NextSystemID  Condition = All
+Mode  System.NextSystemID  All
+Mode  Property = System.PreviousSystemID  Condition = All
+Mode  Property = System.PreviousSystemID  All
+Mode  System.PreviousSystemID  Condition = All
+Mode  System.PreviousSystemID  All
+Mode  Property = System.NumShips  Condition = All
+Mode  Property = System.NumShips  All
+Mode  System.NumShips  Condition = All
+Mode  System.NumShips  All
+Mode  Property = Owner  Condition = All
+Mode  Property = Owner  All
+Mode  Owner  Condition = All
+Mode  Owner  All
+Mode  Property = ID  Condition = All
+Mode  Property = ID  All
+Mode  ID  Condition = All
+Mode  ID  All
+Mode  Property = CreationTurn  Condition = All
+Mode  Property = CreationTurn  All
+Mode  CreationTurn  Condition = All
+Mode  CreationTurn  All
+Mode  Property = Age  Condition = All
+Mode  Property = Age  All
+Mode  Age  Condition = All
+Mode  Age  All
+Mode  Property = ProducedByEmpireID  Condition = All
+Mode  Property = ProducedByEmpireID  All
+Mode  ProducedByEmpireID  Condition = All
+Mode  ProducedByEmpireID  All
+Mode  Property = DesignID  Condition = All
+Mode  Property = DesignID  All
+Mode  DesignID  Condition = All
+Mode  DesignID  All
+Mode  Property = FleetID  Condition = All
+Mode  Property = FleetID  All
+Mode  FleetID  Condition = All
+Mode  FleetID  All
+Mode  Property = PlanetID  Condition = All
+Mode  Property = PlanetID  All
+Mode  PlanetID  Condition = All
+Mode  PlanetID  All
+Mode  Property = SystemID  Condition = All
+Mode  Property = SystemID  All
+Mode  SystemID  Condition = All
+Mode  SystemID  All
+Mode  Property = FinalDestinationID  Condition = All
+Mode  Property = FinalDestinationID  All
+Mode  FinalDestinationID  Condition = All
+Mode  FinalDestinationID  All
+Mode  Property = NextSystemID  Condition = All
+Mode  Property = NextSystemID  All
+Mode  NextSystemID  Condition = All
+Mode  NextSystemID  All
+Mode  Property = PreviousSystemID  Condition = All
+Mode  Property = PreviousSystemID  All
+Mode  PreviousSystemID  Condition = All
+Mode  PreviousSystemID  All
+Mode  Property = NumShips  Condition = All
+Mode  Property = NumShips  All
+Mode  NumShips  Condition = All
+Mode  NumShips  All
+
+Max  Property = Fleet.Owner  Condition = All
+Max  Property = Fleet.Owner  All
+Max  Fleet.Owner  Condition = All
+Max  Fleet.Owner  All
+Max  Property = Fleet.ID  Condition = All
+Max  Property = Fleet.ID  All
+Max  Fleet.ID  Condition = All
+Max  Fleet.ID  All
+Max  Property = Fleet.CreationTurn  Condition = All
+Max  Property = Fleet.CreationTurn  All
+Max  Fleet.CreationTurn  Condition = All
+Max  Fleet.CreationTurn  All
+Max  Property = Fleet.Age  Condition = All
+Max  Property = Fleet.Age  All
+Max  Fleet.Age  Condition = All
+Max  Fleet.Age  All
+Max  Property = Fleet.ProducedByEmpireID  Condition = All
+Max  Property = Fleet.ProducedByEmpireID  All
+Max  Fleet.ProducedByEmpireID  Condition = All
+Max  Fleet.ProducedByEmpireID  All
+Max  Property = Fleet.DesignID  Condition = All
+Max  Property = Fleet.DesignID  All
+Max  Fleet.DesignID  Condition = All
+Max  Fleet.DesignID  All
+Max  Property = Fleet.FleetID  Condition = All
+Max  Property = Fleet.FleetID  All
+Max  Fleet.FleetID  Condition = All
+Max  Fleet.FleetID  All
+Max  Property = Fleet.PlanetID  Condition = All
+Max  Property = Fleet.PlanetID  All
+Max  Fleet.PlanetID  Condition = All
+Max  Fleet.PlanetID  All
+Max  Property = Fleet.SystemID  Condition = All
+Max  Property = Fleet.SystemID  All
+Max  Fleet.SystemID  Condition = All
+Max  Fleet.SystemID  All
+Max  Property = Fleet.FinalDestinationID  Condition = All
+Max  Property = Fleet.FinalDestinationID  All
+Max  Fleet.FinalDestinationID  Condition = All
+Max  Fleet.FinalDestinationID  All
+Max  Property = Fleet.NextSystemID  Condition = All
+Max  Property = Fleet.NextSystemID  All
+Max  Fleet.NextSystemID  Condition = All
+Max  Fleet.NextSystemID  All
+Max  Property = Fleet.PreviousSystemID  Condition = All
+Max  Property = Fleet.PreviousSystemID  All
+Max  Fleet.PreviousSystemID  Condition = All
+Max  Fleet.PreviousSystemID  All
+Max  Property = Fleet.NumShips  Condition = All
+Max  Property = Fleet.NumShips  All
+Max  Fleet.NumShips  Condition = All
+Max  Fleet.NumShips  All
+Max  Property = Planet.Owner  Condition = All
+Max  Property = Planet.Owner  All
+Max  Planet.Owner  Condition = All
+Max  Planet.Owner  All
+Max  Property = Planet.ID  Condition = All
+Max  Property = Planet.ID  All
+Max  Planet.ID  Condition = All
+Max  Planet.ID  All
+Max  Property = Planet.CreationTurn  Condition = All
+Max  Property = Planet.CreationTurn  All
+Max  Planet.CreationTurn  Condition = All
+Max  Planet.CreationTurn  All
+Max  Property = Planet.Age  Condition = All
+Max  Property = Planet.Age  All
+Max  Planet.Age  Condition = All
+Max  Planet.Age  All
+Max  Property = Planet.ProducedByEmpireID  Condition = All
+Max  Property = Planet.ProducedByEmpireID  All
+Max  Planet.ProducedByEmpireID  Condition = All
+Max  Planet.ProducedByEmpireID  All
+Max  Property = Planet.DesignID  Condition = All
+Max  Property = Planet.DesignID  All
+Max  Planet.DesignID  Condition = All
+Max  Planet.DesignID  All
+Max  Property = Planet.FleetID  Condition = All
+Max  Property = Planet.FleetID  All
+Max  Planet.FleetID  Condition = All
+Max  Planet.FleetID  All
+Max  Property = Planet.PlanetID  Condition = All
+Max  Property = Planet.PlanetID  All
+Max  Planet.PlanetID  Condition = All
+Max  Planet.PlanetID  All
+Max  Property = Planet.SystemID  Condition = All
+Max  Property = Planet.SystemID  All
+Max  Planet.SystemID  Condition = All
+Max  Planet.SystemID  All
+Max  Property = Planet.FinalDestinationID  Condition = All
+Max  Property = Planet.FinalDestinationID  All
+Max  Planet.FinalDestinationID  Condition = All
+Max  Planet.FinalDestinationID  All
+Max  Property = Planet.NextSystemID  Condition = All
+Max  Property = Planet.NextSystemID  All
+Max  Planet.NextSystemID  Condition = All
+Max  Planet.NextSystemID  All
+Max  Property = Planet.PreviousSystemID  Condition = All
+Max  Property = Planet.PreviousSystemID  All
+Max  Planet.PreviousSystemID  Condition = All
+Max  Planet.PreviousSystemID  All
+Max  Property = Planet.NumShips  Condition = All
+Max  Property = Planet.NumShips  All
+Max  Planet.NumShips  Condition = All
+Max  Planet.NumShips  All
+Max  Property = System.Owner  Condition = All
+Max  Property = System.Owner  All
+Max  System.Owner  Condition = All
+Max  System.Owner  All
+Max  Property = System.ID  Condition = All
+Max  Property = System.ID  All
+Max  System.ID  Condition = All
+Max  System.ID  All
+Max  Property = System.CreationTurn  Condition = All
+Max  Property = System.CreationTurn  All
+Max  System.CreationTurn  Condition = All
+Max  System.CreationTurn  All
+Max  Property = System.Age  Condition = All
+Max  Property = System.Age  All
+Max  System.Age  Condition = All
+Max  System.Age  All
+Max  Property = System.ProducedByEmpireID  Condition = All
+Max  Property = System.ProducedByEmpireID  All
+Max  System.ProducedByEmpireID  Condition = All
+Max  System.ProducedByEmpireID  All
+Max  Property = System.DesignID  Condition = All
+Max  Property = System.DesignID  All
+Max  System.DesignID  Condition = All
+Max  System.DesignID  All
+Max  Property = System.FleetID  Condition = All
+Max  Property = System.FleetID  All
+Max  System.FleetID  Condition = All
+Max  System.FleetID  All
+Max  Property = System.PlanetID  Condition = All
+Max  Property = System.PlanetID  All
+Max  System.PlanetID  Condition = All
+Max  System.PlanetID  All
+Max  Property = System.SystemID  Condition = All
+Max  Property = System.SystemID  All
+Max  System.SystemID  Condition = All
+Max  System.SystemID  All
+Max  Property = System.FinalDestinationID  Condition = All
+Max  Property = System.FinalDestinationID  All
+Max  System.FinalDestinationID  Condition = All
+Max  System.FinalDestinationID  All
+Max  Property = System.NextSystemID  Condition = All
+Max  Property = System.NextSystemID  All
+Max  System.NextSystemID  Condition = All
+Max  System.NextSystemID  All
+Max  Property = System.PreviousSystemID  Condition = All
+Max  Property = System.PreviousSystemID  All
+Max  System.PreviousSystemID  Condition = All
+Max  System.PreviousSystemID  All
+Max  Property = System.NumShips  Condition = All
+Max  Property = System.NumShips  All
+Max  System.NumShips  Condition = All
+Max  System.NumShips  All
+Max  Property = Owner  Condition = All
+Max  Property = Owner  All
+Max  Owner  Condition = All
+Max  Owner  All
+Max  Property = ID  Condition = All
+Max  Property = ID  All
+Max  ID  Condition = All
+Max  ID  All
+Max  Property = CreationTurn  Condition = All
+Max  Property = CreationTurn  All
+Max  CreationTurn  Condition = All
+Max  CreationTurn  All
+Max  Property = Age  Condition = All
+Max  Property = Age  All
+Max  Age  Condition = All
+Max  Age  All
+Max  Property = ProducedByEmpireID  Condition = All
+Max  Property = ProducedByEmpireID  All
+Max  ProducedByEmpireID  Condition = All
+Max  ProducedByEmpireID  All
+Max  Property = DesignID  Condition = All
+Max  Property = DesignID  All
+Max  DesignID  Condition = All
+Max  DesignID  All
+Max  Property = FleetID  Condition = All
+Max  Property = FleetID  All
+Max  FleetID  Condition = All
+Max  FleetID  All
+Max  Property = PlanetID  Condition = All
+Max  Property = PlanetID  All
+Max  PlanetID  Condition = All
+Max  PlanetID  All
+Max  Property = SystemID  Condition = All
+Max  Property = SystemID  All
+Max  SystemID  Condition = All
+Max  SystemID  All
+Max  Property = FinalDestinationID  Condition = All
+Max  Property = FinalDestinationID  All
+Max  FinalDestinationID  Condition = All
+Max  FinalDestinationID  All
+Max  Property = NextSystemID  Condition = All
+Max  Property = NextSystemID  All
+Max  NextSystemID  Condition = All
+Max  NextSystemID  All
+Max  Property = PreviousSystemID  Condition = All
+Max  Property = PreviousSystemID  All
+Max  PreviousSystemID  Condition = All
+Max  PreviousSystemID  All
+Max  Property = NumShips  Condition = All
+Max  Property = NumShips  All
+Max  NumShips  Condition = All
+Max  NumShips  All
+
+Min  Property = Fleet.Owner  Condition = All
+Min  Property = Fleet.Owner  All
+Min  Fleet.Owner  Condition = All
+Min  Fleet.Owner  All
+Min  Property = Fleet.ID  Condition = All
+Min  Property = Fleet.ID  All
+Min  Fleet.ID  Condition = All
+Min  Fleet.ID  All
+Min  Property = Fleet.CreationTurn  Condition = All
+Min  Property = Fleet.CreationTurn  All
+Min  Fleet.CreationTurn  Condition = All
+Min  Fleet.CreationTurn  All
+Min  Property = Fleet.Age  Condition = All
+Min  Property = Fleet.Age  All
+Min  Fleet.Age  Condition = All
+Min  Fleet.Age  All
+Min  Property = Fleet.ProducedByEmpireID  Condition = All
+Min  Property = Fleet.ProducedByEmpireID  All
+Min  Fleet.ProducedByEmpireID  Condition = All
+Min  Fleet.ProducedByEmpireID  All
+Min  Property = Fleet.DesignID  Condition = All
+Min  Property = Fleet.DesignID  All
+Min  Fleet.DesignID  Condition = All
+Min  Fleet.DesignID  All
+Min  Property = Fleet.FleetID  Condition = All
+Min  Property = Fleet.FleetID  All
+Min  Fleet.FleetID  Condition = All
+Min  Fleet.FleetID  All
+Min  Property = Fleet.PlanetID  Condition = All
+Min  Property = Fleet.PlanetID  All
+Min  Fleet.PlanetID  Condition = All
+Min  Fleet.PlanetID  All
+Min  Property = Fleet.SystemID  Condition = All
+Min  Property = Fleet.SystemID  All
+Min  Fleet.SystemID  Condition = All
+Min  Fleet.SystemID  All
+Min  Property = Fleet.FinalDestinationID  Condition = All
+Min  Property = Fleet.FinalDestinationID  All
+Min  Fleet.FinalDestinationID  Condition = All
+Min  Fleet.FinalDestinationID  All
+Min  Property = Fleet.NextSystemID  Condition = All
+Min  Property = Fleet.NextSystemID  All
+Min  Fleet.NextSystemID  Condition = All
+Min  Fleet.NextSystemID  All
+Min  Property = Fleet.PreviousSystemID  Condition = All
+Min  Property = Fleet.PreviousSystemID  All
+Min  Fleet.PreviousSystemID  Condition = All
+Min  Fleet.PreviousSystemID  All
+Min  Property = Fleet.NumShips  Condition = All
+Min  Property = Fleet.NumShips  All
+Min  Fleet.NumShips  Condition = All
+Min  Fleet.NumShips  All
+Min  Property = Planet.Owner  Condition = All
+Min  Property = Planet.Owner  All
+Min  Planet.Owner  Condition = All
+Min  Planet.Owner  All
+Min  Property = Planet.ID  Condition = All
+Min  Property = Planet.ID  All
+Min  Planet.ID  Condition = All
+Min  Planet.ID  All
+Min  Property = Planet.CreationTurn  Condition = All
+Min  Property = Planet.CreationTurn  All
+Min  Planet.CreationTurn  Condition = All
+Min  Planet.CreationTurn  All
+Min  Property = Planet.Age  Condition = All
+Min  Property = Planet.Age  All
+Min  Planet.Age  Condition = All
+Min  Planet.Age  All
+Min  Property = Planet.ProducedByEmpireID  Condition = All
+Min  Property = Planet.ProducedByEmpireID  All
+Min  Planet.ProducedByEmpireID  Condition = All
+Min  Planet.ProducedByEmpireID  All
+Min  Property = Planet.DesignID  Condition = All
+Min  Property = Planet.DesignID  All
+Min  Planet.DesignID  Condition = All
+Min  Planet.DesignID  All
+Min  Property = Planet.FleetID  Condition = All
+Min  Property = Planet.FleetID  All
+Min  Planet.FleetID  Condition = All
+Min  Planet.FleetID  All
+Min  Property = Planet.PlanetID  Condition = All
+Min  Property = Planet.PlanetID  All
+Min  Planet.PlanetID  Condition = All
+Min  Planet.PlanetID  All
+Min  Property = Planet.SystemID  Condition = All
+Min  Property = Planet.SystemID  All
+Min  Planet.SystemID  Condition = All
+Min  Planet.SystemID  All
+Min  Property = Planet.FinalDestinationID  Condition = All
+Min  Property = Planet.FinalDestinationID  All
+Min  Planet.FinalDestinationID  Condition = All
+Min  Planet.FinalDestinationID  All
+Min  Property = Planet.NextSystemID  Condition = All
+Min  Property = Planet.NextSystemID  All
+Min  Planet.NextSystemID  Condition = All
+Min  Planet.NextSystemID  All
+Min  Property = Planet.PreviousSystemID  Condition = All
+Min  Property = Planet.PreviousSystemID  All
+Min  Planet.PreviousSystemID  Condition = All
+Min  Planet.PreviousSystemID  All
+Min  Property = Planet.NumShips  Condition = All
+Min  Property = Planet.NumShips  All
+Min  Planet.NumShips  Condition = All
+Min  Planet.NumShips  All
+Min  Property = System.Owner  Condition = All
+Min  Property = System.Owner  All
+Min  System.Owner  Condition = All
+Min  System.Owner  All
+Min  Property = System.ID  Condition = All
+Min  Property = System.ID  All
+Min  System.ID  Condition = All
+Min  System.ID  All
+Min  Property = System.CreationTurn  Condition = All
+Min  Property = System.CreationTurn  All
+Min  System.CreationTurn  Condition = All
+Min  System.CreationTurn  All
+Min  Property = System.Age  Condition = All
+Min  Property = System.Age  All
+Min  System.Age  Condition = All
+Min  System.Age  All
+Min  Property = System.ProducedByEmpireID  Condition = All
+Min  Property = System.ProducedByEmpireID  All
+Min  System.ProducedByEmpireID  Condition = All
+Min  System.ProducedByEmpireID  All
+Min  Property = System.DesignID  Condition = All
+Min  Property = System.DesignID  All
+Min  System.DesignID  Condition = All
+Min  System.DesignID  All
+Min  Property = System.FleetID  Condition = All
+Min  Property = System.FleetID  All
+Min  System.FleetID  Condition = All
+Min  System.FleetID  All
+Min  Property = System.PlanetID  Condition = All
+Min  Property = System.PlanetID  All
+Min  System.PlanetID  Condition = All
+Min  System.PlanetID  All
+Min  Property = System.SystemID  Condition = All
+Min  Property = System.SystemID  All
+Min  System.SystemID  Condition = All
+Min  System.SystemID  All
+Min  Property = System.FinalDestinationID  Condition = All
+Min  Property = System.FinalDestinationID  All
+Min  System.FinalDestinationID  Condition = All
+Min  System.FinalDestinationID  All
+Min  Property = System.NextSystemID  Condition = All
+Min  Property = System.NextSystemID  All
+Min  System.NextSystemID  Condition = All
+Min  System.NextSystemID  All
+Min  Property = System.PreviousSystemID  Condition = All
+Min  Property = System.PreviousSystemID  All
+Min  System.PreviousSystemID  Condition = All
+Min  System.PreviousSystemID  All
+Min  Property = System.NumShips  Condition = All
+Min  Property = System.NumShips  All
+Min  System.NumShips  Condition = All
+Min  System.NumShips  All
+Min  Property = Owner  Condition = All
+Min  Property = Owner  All
+Min  Owner  Condition = All
+Min  Owner  All
+Min  Property = ID  Condition = All
+Min  Property = ID  All
+Min  ID  Condition = All
+Min  ID  All
+Min  Property = CreationTurn  Condition = All
+Min  Property = CreationTurn  All
+Min  CreationTurn  Condition = All
+Min  CreationTurn  All
+Min  Property = Age  Condition = All
+Min  Property = Age  All
+Min  Age  Condition = All
+Min  Age  All
+Min  Property = ProducedByEmpireID  Condition = All
+Min  Property = ProducedByEmpireID  All
+Min  ProducedByEmpireID  Condition = All
+Min  ProducedByEmpireID  All
+Min  Property = DesignID  Condition = All
+Min  Property = DesignID  All
+Min  DesignID  Condition = All
+Min  DesignID  All
+Min  Property = FleetID  Condition = All
+Min  Property = FleetID  All
+Min  FleetID  Condition = All
+Min  FleetID  All
+Min  Property = PlanetID  Condition = All
+Min  Property = PlanetID  All
+Min  PlanetID  Condition = All
+Min  PlanetID  All
+Min  Property = SystemID  Condition = All
+Min  Property = SystemID  All
+Min  SystemID  Condition = All
+Min  SystemID  All
+Min  Property = FinalDestinationID  Condition = All
+Min  Property = FinalDestinationID  All
+Min  FinalDestinationID  Condition = All
+Min  FinalDestinationID  All
+Min  Property = NextSystemID  Condition = All
+Min  Property = NextSystemID  All
+Min  NextSystemID  Condition = All
+Min  NextSystemID  All
+Min  Property = PreviousSystemID  Condition = All
+Min  Property = PreviousSystemID  All
+Min  PreviousSystemID  Condition = All
+Min  PreviousSystemID  All
+Min  Property = NumShips  Condition = All
+Min  Property = NumShips  All
+Min  NumShips  Condition = All
+Min  NumShips  All
+
+Spread  Property = Fleet.Owner  Condition = All
+Spread  Property = Fleet.Owner  All
+Spread  Fleet.Owner  Condition = All
+Spread  Fleet.Owner  All
+Spread  Property = Fleet.ID  Condition = All
+Spread  Property = Fleet.ID  All
+Spread  Fleet.ID  Condition = All
+Spread  Fleet.ID  All
+Spread  Property = Fleet.CreationTurn  Condition = All
+Spread  Property = Fleet.CreationTurn  All
+Spread  Fleet.CreationTurn  Condition = All
+Spread  Fleet.CreationTurn  All
+Spread  Property = Fleet.Age  Condition = All
+Spread  Property = Fleet.Age  All
+Spread  Fleet.Age  Condition = All
+Spread  Fleet.Age  All
+Spread  Property = Fleet.ProducedByEmpireID  Condition = All
+Spread  Property = Fleet.ProducedByEmpireID  All
+Spread  Fleet.ProducedByEmpireID  Condition = All
+Spread  Fleet.ProducedByEmpireID  All
+Spread  Property = Fleet.DesignID  Condition = All
+Spread  Property = Fleet.DesignID  All
+Spread  Fleet.DesignID  Condition = All
+Spread  Fleet.DesignID  All
+Spread  Property = Fleet.FleetID  Condition = All
+Spread  Property = Fleet.FleetID  All
+Spread  Fleet.FleetID  Condition = All
+Spread  Fleet.FleetID  All
+Spread  Property = Fleet.PlanetID  Condition = All
+Spread  Property = Fleet.PlanetID  All
+Spread  Fleet.PlanetID  Condition = All
+Spread  Fleet.PlanetID  All
+Spread  Property = Fleet.SystemID  Condition = All
+Spread  Property = Fleet.SystemID  All
+Spread  Fleet.SystemID  Condition = All
+Spread  Fleet.SystemID  All
+Spread  Property = Fleet.FinalDestinationID  Condition = All
+Spread  Property = Fleet.FinalDestinationID  All
+Spread  Fleet.FinalDestinationID  Condition = All
+Spread  Fleet.FinalDestinationID  All
+Spread  Property = Fleet.NextSystemID  Condition = All
+Spread  Property = Fleet.NextSystemID  All
+Spread  Fleet.NextSystemID  Condition = All
+Spread  Fleet.NextSystemID  All
+Spread  Property = Fleet.PreviousSystemID  Condition = All
+Spread  Property = Fleet.PreviousSystemID  All
+Spread  Fleet.PreviousSystemID  Condition = All
+Spread  Fleet.PreviousSystemID  All
+Spread  Property = Fleet.NumShips  Condition = All
+Spread  Property = Fleet.NumShips  All
+Spread  Fleet.NumShips  Condition = All
+Spread  Fleet.NumShips  All
+Spread  Property = Planet.Owner  Condition = All
+Spread  Property = Planet.Owner  All
+Spread  Planet.Owner  Condition = All
+Spread  Planet.Owner  All
+Spread  Property = Planet.ID  Condition = All
+Spread  Property = Planet.ID  All
+Spread  Planet.ID  Condition = All
+Spread  Planet.ID  All
+Spread  Property = Planet.CreationTurn  Condition = All
+Spread  Property = Planet.CreationTurn  All
+Spread  Planet.CreationTurn  Condition = All
+Spread  Planet.CreationTurn  All
+Spread  Property = Planet.Age  Condition = All
+Spread  Property = Planet.Age  All
+Spread  Planet.Age  Condition = All
+Spread  Planet.Age  All
+Spread  Property = Planet.ProducedByEmpireID  Condition = All
+Spread  Property = Planet.ProducedByEmpireID  All
+Spread  Planet.ProducedByEmpireID  Condition = All
+Spread  Planet.ProducedByEmpireID  All
+Spread  Property = Planet.DesignID  Condition = All
+Spread  Property = Planet.DesignID  All
+Spread  Planet.DesignID  Condition = All
+Spread  Planet.DesignID  All
+Spread  Property = Planet.FleetID  Condition = All
+Spread  Property = Planet.FleetID  All
+Spread  Planet.FleetID  Condition = All
+Spread  Planet.FleetID  All
+Spread  Property = Planet.PlanetID  Condition = All
+Spread  Property = Planet.PlanetID  All
+Spread  Planet.PlanetID  Condition = All
+Spread  Planet.PlanetID  All
+Spread  Property = Planet.SystemID  Condition = All
+Spread  Property = Planet.SystemID  All
+Spread  Planet.SystemID  Condition = All
+Spread  Planet.SystemID  All
+Spread  Property = Planet.FinalDestinationID  Condition = All
+Spread  Property = Planet.FinalDestinationID  All
+Spread  Planet.FinalDestinationID  Condition = All
+Spread  Planet.FinalDestinationID  All
+Spread  Property = Planet.NextSystemID  Condition = All
+Spread  Property = Planet.NextSystemID  All
+Spread  Planet.NextSystemID  Condition = All
+Spread  Planet.NextSystemID  All
+Spread  Property = Planet.PreviousSystemID  Condition = All
+Spread  Property = Planet.PreviousSystemID  All
+Spread  Planet.PreviousSystemID  Condition = All
+Spread  Planet.PreviousSystemID  All
+Spread  Property = Planet.NumShips  Condition = All
+Spread  Property = Planet.NumShips  All
+Spread  Planet.NumShips  Condition = All
+Spread  Planet.NumShips  All
+Spread  Property = System.Owner  Condition = All
+Spread  Property = System.Owner  All
+Spread  System.Owner  Condition = All
+Spread  System.Owner  All
+Spread  Property = System.ID  Condition = All
+Spread  Property = System.ID  All
+Spread  System.ID  Condition = All
+Spread  System.ID  All
+Spread  Property = System.CreationTurn  Condition = All
+Spread  Property = System.CreationTurn  All
+Spread  System.CreationTurn  Condition = All
+Spread  System.CreationTurn  All
+Spread  Property = System.Age  Condition = All
+Spread  Property = System.Age  All
+Spread  System.Age  Condition = All
+Spread  System.Age  All
+Spread  Property = System.ProducedByEmpireID  Condition = All
+Spread  Property = System.ProducedByEmpireID  All
+Spread  System.ProducedByEmpireID  Condition = All
+Spread  System.ProducedByEmpireID  All
+Spread  Property = System.DesignID  Condition = All
+Spread  Property = System.DesignID  All
+Spread  System.DesignID  Condition = All
+Spread  System.DesignID  All
+Spread  Property = System.FleetID  Condition = All
+Spread  Property = System.FleetID  All
+Spread  System.FleetID  Condition = All
+Spread  System.FleetID  All
+Spread  Property = System.PlanetID  Condition = All
+Spread  Property = System.PlanetID  All
+Spread  System.PlanetID  Condition = All
+Spread  System.PlanetID  All
+Spread  Property = System.SystemID  Condition = All
+Spread  Property = System.SystemID  All
+Spread  System.SystemID  Condition = All
+Spread  System.SystemID  All
+Spread  Property = System.FinalDestinationID  Condition = All
+Spread  Property = System.FinalDestinationID  All
+Spread  System.FinalDestinationID  Condition = All
+Spread  System.FinalDestinationID  All
+Spread  Property = System.NextSystemID  Condition = All
+Spread  Property = System.NextSystemID  All
+Spread  System.NextSystemID  Condition = All
+Spread  System.NextSystemID  All
+Spread  Property = System.PreviousSystemID  Condition = All
+Spread  Property = System.PreviousSystemID  All
+Spread  System.PreviousSystemID  Condition = All
+Spread  System.PreviousSystemID  All
+Spread  Property = System.NumShips  Condition = All
+Spread  Property = System.NumShips  All
+Spread  System.NumShips  Condition = All
+Spread  System.NumShips  All
+Spread  Property = Owner  Condition = All
+Spread  Property = Owner  All
+Spread  Owner  Condition = All
+Spread  Owner  All
+Spread  Property = ID  Condition = All
+Spread  Property = ID  All
+Spread  ID  Condition = All
+Spread  ID  All
+Spread  Property = CreationTurn  Condition = All
+Spread  Property = CreationTurn  All
+Spread  CreationTurn  Condition = All
+Spread  CreationTurn  All
+Spread  Property = Age  Condition = All
+Spread  Property = Age  All
+Spread  Age  Condition = All
+Spread  Age  All
+Spread  Property = ProducedByEmpireID  Condition = All
+Spread  Property = ProducedByEmpireID  All
+Spread  ProducedByEmpireID  Condition = All
+Spread  ProducedByEmpireID  All
+Spread  Property = DesignID  Condition = All
+Spread  Property = DesignID  All
+Spread  DesignID  Condition = All
+Spread  DesignID  All
+Spread  Property = FleetID  Condition = All
+Spread  Property = FleetID  All
+Spread  FleetID  Condition = All
+Spread  FleetID  All
+Spread  Property = PlanetID  Condition = All
+Spread  Property = PlanetID  All
+Spread  PlanetID  Condition = All
+Spread  PlanetID  All
+Spread  Property = SystemID  Condition = All
+Spread  Property = SystemID  All
+Spread  SystemID  Condition = All
+Spread  SystemID  All
+Spread  Property = FinalDestinationID  Condition = All
+Spread  Property = FinalDestinationID  All
+Spread  FinalDestinationID  Condition = All
+Spread  FinalDestinationID  All
+Spread  Property = NextSystemID  Condition = All
+Spread  Property = NextSystemID  All
+Spread  NextSystemID  Condition = All
+Spread  NextSystemID  All
+Spread  Property = PreviousSystemID  Condition = All
+Spread  Property = PreviousSystemID  All
+Spread  PreviousSystemID  Condition = All
+Spread  PreviousSystemID  All
+Spread  Property = NumShips  Condition = All
+Spread  Property = NumShips  All
+Spread  NumShips  Condition = All
+Spread  NumShips  All
+
+StDev  Property = Fleet.Owner  Condition = All
+StDev  Property = Fleet.Owner  All
+StDev  Fleet.Owner  Condition = All
+StDev  Fleet.Owner  All
+StDev  Property = Fleet.ID  Condition = All
+StDev  Property = Fleet.ID  All
+StDev  Fleet.ID  Condition = All
+StDev  Fleet.ID  All
+StDev  Property = Fleet.CreationTurn  Condition = All
+StDev  Property = Fleet.CreationTurn  All
+StDev  Fleet.CreationTurn  Condition = All
+StDev  Fleet.CreationTurn  All
+StDev  Property = Fleet.Age  Condition = All
+StDev  Property = Fleet.Age  All
+StDev  Fleet.Age  Condition = All
+StDev  Fleet.Age  All
+StDev  Property = Fleet.ProducedByEmpireID  Condition = All
+StDev  Property = Fleet.ProducedByEmpireID  All
+StDev  Fleet.ProducedByEmpireID  Condition = All
+StDev  Fleet.ProducedByEmpireID  All
+StDev  Property = Fleet.DesignID  Condition = All
+StDev  Property = Fleet.DesignID  All
+StDev  Fleet.DesignID  Condition = All
+StDev  Fleet.DesignID  All
+StDev  Property = Fleet.FleetID  Condition = All
+StDev  Property = Fleet.FleetID  All
+StDev  Fleet.FleetID  Condition = All
+StDev  Fleet.FleetID  All
+StDev  Property = Fleet.PlanetID  Condition = All
+StDev  Property = Fleet.PlanetID  All
+StDev  Fleet.PlanetID  Condition = All
+StDev  Fleet.PlanetID  All
+StDev  Property = Fleet.SystemID  Condition = All
+StDev  Property = Fleet.SystemID  All
+StDev  Fleet.SystemID  Condition = All
+StDev  Fleet.SystemID  All
+StDev  Property = Fleet.FinalDestinationID  Condition = All
+StDev  Property = Fleet.FinalDestinationID  All
+StDev  Fleet.FinalDestinationID  Condition = All
+StDev  Fleet.FinalDestinationID  All
+StDev  Property = Fleet.NextSystemID  Condition = All
+StDev  Property = Fleet.NextSystemID  All
+StDev  Fleet.NextSystemID  Condition = All
+StDev  Fleet.NextSystemID  All
+StDev  Property = Fleet.PreviousSystemID  Condition = All
+StDev  Property = Fleet.PreviousSystemID  All
+StDev  Fleet.PreviousSystemID  Condition = All
+StDev  Fleet.PreviousSystemID  All
+StDev  Property = Fleet.NumShips  Condition = All
+StDev  Property = Fleet.NumShips  All
+StDev  Fleet.NumShips  Condition = All
+StDev  Fleet.NumShips  All
+StDev  Property = Planet.Owner  Condition = All
+StDev  Property = Planet.Owner  All
+StDev  Planet.Owner  Condition = All
+StDev  Planet.Owner  All
+StDev  Property = Planet.ID  Condition = All
+StDev  Property = Planet.ID  All
+StDev  Planet.ID  Condition = All
+StDev  Planet.ID  All
+StDev  Property = Planet.CreationTurn  Condition = All
+StDev  Property = Planet.CreationTurn  All
+StDev  Planet.CreationTurn  Condition = All
+StDev  Planet.CreationTurn  All
+StDev  Property = Planet.Age  Condition = All
+StDev  Property = Planet.Age  All
+StDev  Planet.Age  Condition = All
+StDev  Planet.Age  All
+StDev  Property = Planet.ProducedByEmpireID  Condition = All
+StDev  Property = Planet.ProducedByEmpireID  All
+StDev  Planet.ProducedByEmpireID  Condition = All
+StDev  Planet.ProducedByEmpireID  All
+StDev  Property = Planet.DesignID  Condition = All
+StDev  Property = Planet.DesignID  All
+StDev  Planet.DesignID  Condition = All
+StDev  Planet.DesignID  All
+StDev  Property = Planet.FleetID  Condition = All
+StDev  Property = Planet.FleetID  All
+StDev  Planet.FleetID  Condition = All
+StDev  Planet.FleetID  All
+StDev  Property = Planet.PlanetID  Condition = All
+StDev  Property = Planet.PlanetID  All
+StDev  Planet.PlanetID  Condition = All
+StDev  Planet.PlanetID  All
+StDev  Property = Planet.SystemID  Condition = All
+StDev  Property = Planet.SystemID  All
+StDev  Planet.SystemID  Condition = All
+StDev  Planet.SystemID  All
+StDev  Property = Planet.FinalDestinationID  Condition = All
+StDev  Property = Planet.FinalDestinationID  All
+StDev  Planet.FinalDestinationID  Condition = All
+StDev  Planet.FinalDestinationID  All
+StDev  Property = Planet.NextSystemID  Condition = All
+StDev  Property = Planet.NextSystemID  All
+StDev  Planet.NextSystemID  Condition = All
+StDev  Planet.NextSystemID  All
+StDev  Property = Planet.PreviousSystemID  Condition = All
+StDev  Property = Planet.PreviousSystemID  All
+StDev  Planet.PreviousSystemID  Condition = All
+StDev  Planet.PreviousSystemID  All
+StDev  Property = Planet.NumShips  Condition = All
+StDev  Property = Planet.NumShips  All
+StDev  Planet.NumShips  Condition = All
+StDev  Planet.NumShips  All
+StDev  Property = System.Owner  Condition = All
+StDev  Property = System.Owner  All
+StDev  System.Owner  Condition = All
+StDev  System.Owner  All
+StDev  Property = System.ID  Condition = All
+StDev  Property = System.ID  All
+StDev  System.ID  Condition = All
+StDev  System.ID  All
+StDev  Property = System.CreationTurn  Condition = All
+StDev  Property = System.CreationTurn  All
+StDev  System.CreationTurn  Condition = All
+StDev  System.CreationTurn  All
+StDev  Property = System.Age  Condition = All
+StDev  Property = System.Age  All
+StDev  System.Age  Condition = All
+StDev  System.Age  All
+StDev  Property = System.ProducedByEmpireID  Condition = All
+StDev  Property = System.ProducedByEmpireID  All
+StDev  System.ProducedByEmpireID  Condition = All
+StDev  System.ProducedByEmpireID  All
+StDev  Property = System.DesignID  Condition = All
+StDev  Property = System.DesignID  All
+StDev  System.DesignID  Condition = All
+StDev  System.DesignID  All
+StDev  Property = System.FleetID  Condition = All
+StDev  Property = System.FleetID  All
+StDev  System.FleetID  Condition = All
+StDev  System.FleetID  All
+StDev  Property = System.PlanetID  Condition = All
+StDev  Property = System.PlanetID  All
+StDev  System.PlanetID  Condition = All
+StDev  System.PlanetID  All
+StDev  Property = System.SystemID  Condition = All
+StDev  Property = System.SystemID  All
+StDev  System.SystemID  Condition = All
+StDev  System.SystemID  All
+StDev  Property = System.FinalDestinationID  Condition = All
+StDev  Property = System.FinalDestinationID  All
+StDev  System.FinalDestinationID  Condition = All
+StDev  System.FinalDestinationID  All
+StDev  Property = System.NextSystemID  Condition = All
+StDev  Property = System.NextSystemID  All
+StDev  System.NextSystemID  Condition = All
+StDev  System.NextSystemID  All
+StDev  Property = System.PreviousSystemID  Condition = All
+StDev  Property = System.PreviousSystemID  All
+StDev  System.PreviousSystemID  Condition = All
+StDev  System.PreviousSystemID  All
+StDev  Property = System.NumShips  Condition = All
+StDev  Property = System.NumShips  All
+StDev  System.NumShips  Condition = All
+StDev  System.NumShips  All
+StDev  Property = Owner  Condition = All
+StDev  Property = Owner  All
+StDev  Owner  Condition = All
+StDev  Owner  All
+StDev  Property = ID  Condition = All
+StDev  Property = ID  All
+StDev  ID  Condition = All
+StDev  ID  All
+StDev  Property = CreationTurn  Condition = All
+StDev  Property = CreationTurn  All
+StDev  CreationTurn  Condition = All
+StDev  CreationTurn  All
+StDev  Property = Age  Condition = All
+StDev  Property = Age  All
+StDev  Age  Condition = All
+StDev  Age  All
+StDev  Property = ProducedByEmpireID  Condition = All
+StDev  Property = ProducedByEmpireID  All
+StDev  ProducedByEmpireID  Condition = All
+StDev  ProducedByEmpireID  All
+StDev  Property = DesignID  Condition = All
+StDev  Property = DesignID  All
+StDev  DesignID  Condition = All
+StDev  DesignID  All
+StDev  Property = FleetID  Condition = All
+StDev  Property = FleetID  All
+StDev  FleetID  Condition = All
+StDev  FleetID  All
+StDev  Property = PlanetID  Condition = All
+StDev  Property = PlanetID  All
+StDev  PlanetID  Condition = All
+StDev  PlanetID  All
+StDev  Property = SystemID  Condition = All
+StDev  Property = SystemID  All
+StDev  SystemID  Condition = All
+StDev  SystemID  All
+StDev  Property = FinalDestinationID  Condition = All
+StDev  Property = FinalDestinationID  All
+StDev  FinalDestinationID  Condition = All
+StDev  FinalDestinationID  All
+StDev  Property = NextSystemID  Condition = All
+StDev  Property = NextSystemID  All
+StDev  NextSystemID  Condition = All
+StDev  NextSystemID  All
+StDev  Property = PreviousSystemID  Condition = All
+StDev  Property = PreviousSystemID  All
+StDev  PreviousSystemID  Condition = All
+StDev  PreviousSystemID  All
+StDev  Property = NumShips  Condition = All
+StDev  Property = NumShips  All
+StDev  NumShips  Condition = All
+StDev  NumShips  All
+
+Product  Property = Fleet.Owner  Condition = All
+Product  Property = Fleet.Owner  All
+Product  Fleet.Owner  Condition = All
+Product  Fleet.Owner  All
+Product  Property = Fleet.ID  Condition = All
+Product  Property = Fleet.ID  All
+Product  Fleet.ID  Condition = All
+Product  Fleet.ID  All
+Product  Property = Fleet.CreationTurn  Condition = All
+Product  Property = Fleet.CreationTurn  All
+Product  Fleet.CreationTurn  Condition = All
+Product  Fleet.CreationTurn  All
+Product  Property = Fleet.Age  Condition = All
+Product  Property = Fleet.Age  All
+Product  Fleet.Age  Condition = All
+Product  Fleet.Age  All
+Product  Property = Fleet.ProducedByEmpireID  Condition = All
+Product  Property = Fleet.ProducedByEmpireID  All
+Product  Fleet.ProducedByEmpireID  Condition = All
+Product  Fleet.ProducedByEmpireID  All
+Product  Property = Fleet.DesignID  Condition = All
+Product  Property = Fleet.DesignID  All
+Product  Fleet.DesignID  Condition = All
+Product  Fleet.DesignID  All
+Product  Property = Fleet.FleetID  Condition = All
+Product  Property = Fleet.FleetID  All
+Product  Fleet.FleetID  Condition = All
+Product  Fleet.FleetID  All
+Product  Property = Fleet.PlanetID  Condition = All
+Product  Property = Fleet.PlanetID  All
+Product  Fleet.PlanetID  Condition = All
+Product  Fleet.PlanetID  All
+Product  Property = Fleet.SystemID  Condition = All
+Product  Property = Fleet.SystemID  All
+Product  Fleet.SystemID  Condition = All
+Product  Fleet.SystemID  All
+Product  Property = Fleet.FinalDestinationID  Condition = All
+Product  Property = Fleet.FinalDestinationID  All
+Product  Fleet.FinalDestinationID  Condition = All
+Product  Fleet.FinalDestinationID  All
+Product  Property = Fleet.NextSystemID  Condition = All
+Product  Property = Fleet.NextSystemID  All
+Product  Fleet.NextSystemID  Condition = All
+Product  Fleet.NextSystemID  All
+Product  Property = Fleet.PreviousSystemID  Condition = All
+Product  Property = Fleet.PreviousSystemID  All
+Product  Fleet.PreviousSystemID  Condition = All
+Product  Fleet.PreviousSystemID  All
+Product  Property = Fleet.NumShips  Condition = All
+Product  Property = Fleet.NumShips  All
+Product  Fleet.NumShips  Condition = All
+Product  Fleet.NumShips  All
+Product  Property = Planet.Owner  Condition = All
+Product  Property = Planet.Owner  All
+Product  Planet.Owner  Condition = All
+Product  Planet.Owner  All
+Product  Property = Planet.ID  Condition = All
+Product  Property = Planet.ID  All
+Product  Planet.ID  Condition = All
+Product  Planet.ID  All
+Product  Property = Planet.CreationTurn  Condition = All
+Product  Property = Planet.CreationTurn  All
+Product  Planet.CreationTurn  Condition = All
+Product  Planet.CreationTurn  All
+Product  Property = Planet.Age  Condition = All
+Product  Property = Planet.Age  All
+Product  Planet.Age  Condition = All
+Product  Planet.Age  All
+Product  Property = Planet.ProducedByEmpireID  Condition = All
+Product  Property = Planet.ProducedByEmpireID  All
+Product  Planet.ProducedByEmpireID  Condition = All
+Product  Planet.ProducedByEmpireID  All
+Product  Property = Planet.DesignID  Condition = All
+Product  Property = Planet.DesignID  All
+Product  Planet.DesignID  Condition = All
+Product  Planet.DesignID  All
+Product  Property = Planet.FleetID  Condition = All
+Product  Property = Planet.FleetID  All
+Product  Planet.FleetID  Condition = All
+Product  Planet.FleetID  All
+Product  Property = Planet.PlanetID  Condition = All
+Product  Property = Planet.PlanetID  All
+Product  Planet.PlanetID  Condition = All
+Product  Planet.PlanetID  All
+Product  Property = Planet.SystemID  Condition = All
+Product  Property = Planet.SystemID  All
+Product  Planet.SystemID  Condition = All
+Product  Planet.SystemID  All
+Product  Property = Planet.FinalDestinationID  Condition = All
+Product  Property = Planet.FinalDestinationID  All
+Product  Planet.FinalDestinationID  Condition = All
+Product  Planet.FinalDestinationID  All
+Product  Property = Planet.NextSystemID  Condition = All
+Product  Property = Planet.NextSystemID  All
+Product  Planet.NextSystemID  Condition = All
+Product  Planet.NextSystemID  All
+Product  Property = Planet.PreviousSystemID  Condition = All
+Product  Property = Planet.PreviousSystemID  All
+Product  Planet.PreviousSystemID  Condition = All
+Product  Planet.PreviousSystemID  All
+Product  Property = Planet.NumShips  Condition = All
+Product  Property = Planet.NumShips  All
+Product  Planet.NumShips  Condition = All
+Product  Planet.NumShips  All
+Product  Property = System.Owner  Condition = All
+Product  Property = System.Owner  All
+Product  System.Owner  Condition = All
+Product  System.Owner  All
+Product  Property = System.ID  Condition = All
+Product  Property = System.ID  All
+Product  System.ID  Condition = All
+Product  System.ID  All
+Product  Property = System.CreationTurn  Condition = All
+Product  Property = System.CreationTurn  All
+Product  System.CreationTurn  Condition = All
+Product  System.CreationTurn  All
+Product  Property = System.Age  Condition = All
+Product  Property = System.Age  All
+Product  System.Age  Condition = All
+Product  System.Age  All
+Product  Property = System.ProducedByEmpireID  Condition = All
+Product  Property = System.ProducedByEmpireID  All
+Product  System.ProducedByEmpireID  Condition = All
+Product  System.ProducedByEmpireID  All
+Product  Property = System.DesignID  Condition = All
+Product  Property = System.DesignID  All
+Product  System.DesignID  Condition = All
+Product  System.DesignID  All
+Product  Property = System.FleetID  Condition = All
+Product  Property = System.FleetID  All
+Product  System.FleetID  Condition = All
+Product  System.FleetID  All
+Product  Property = System.PlanetID  Condition = All
+Product  Property = System.PlanetID  All
+Product  System.PlanetID  Condition = All
+Product  System.PlanetID  All
+Product  Property = System.SystemID  Condition = All
+Product  Property = System.SystemID  All
+Product  System.SystemID  Condition = All
+Product  System.SystemID  All
+Product  Property = System.FinalDestinationID  Condition = All
+Product  Property = System.FinalDestinationID  All
+Product  System.FinalDestinationID  Condition = All
+Product  System.FinalDestinationID  All
+Product  Property = System.NextSystemID  Condition = All
+Product  Property = System.NextSystemID  All
+Product  System.NextSystemID  Condition = All
+Product  System.NextSystemID  All
+Product  Property = System.PreviousSystemID  Condition = All
+Product  Property = System.PreviousSystemID  All
+Product  System.PreviousSystemID  Condition = All
+Product  System.PreviousSystemID  All
+Product  Property = System.NumShips  Condition = All
+Product  Property = System.NumShips  All
+Product  System.NumShips  Condition = All
+Product  System.NumShips  All
+Product  Property = Owner  Condition = All
+Product  Property = Owner  All
+Product  Owner  Condition = All
+Product  Owner  All
+Product  Property = ID  Condition = All
+Product  Property = ID  All
+Product  ID  Condition = All
+Product  ID  All
+Product  Property = CreationTurn  Condition = All
+Product  Property = CreationTurn  All
+Product  CreationTurn  Condition = All
+Product  CreationTurn  All
+Product  Property = Age  Condition = All
+Product  Property = Age  All
+Product  Age  Condition = All
+Product  Age  All
+Product  Property = ProducedByEmpireID  Condition = All
+Product  Property = ProducedByEmpireID  All
+Product  ProducedByEmpireID  Condition = All
+Product  ProducedByEmpireID  All
+Product  Property = DesignID  Condition = All
+Product  Property = DesignID  All
+Product  DesignID  Condition = All
+Product  DesignID  All
+Product  Property = FleetID  Condition = All
+Product  Property = FleetID  All
+Product  FleetID  Condition = All
+Product  FleetID  All
+Product  Property = PlanetID  Condition = All
+Product  Property = PlanetID  All
+Product  PlanetID  Condition = All
+Product  PlanetID  All
+Product  Property = SystemID  Condition = All
+Product  Property = SystemID  All
+Product  SystemID  Condition = All
+Product  SystemID  All
+Product  Property = FinalDestinationID  Condition = All
+Product  Property = FinalDestinationID  All
+Product  FinalDestinationID  Condition = All
+Product  FinalDestinationID  All
+Product  Property = NextSystemID  Condition = All
+Product  Property = NextSystemID  All
+Product  NextSystemID  Condition = All
+Product  NextSystemID  All
+Product  Property = PreviousSystemID  Condition = All
+Product  Property = PreviousSystemID  All
+Product  PreviousSystemID  Condition = All
+Product  PreviousSystemID  All
+Product  Property = NumShips  Condition = All
+Product  Property = NumShips  All
+Product  NumShips  Condition = All
+Product  NumShips  All

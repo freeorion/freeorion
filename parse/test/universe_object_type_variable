@@ -1,0 +1,16 @@
+Source.ObjectType
+Target.ObjectType
+Source.System.ObjectType
+Target.System.ObjectType
+Source.Planet.ObjectType
+Target.Planet.ObjectType
+Source.Fleet.ObjectType
+Target.Fleet.ObjectType
+LocalCandidate.ObjectType
+RootCandidate.ObjectType
+LocalCandidate.System.ObjectType
+RootCandidate.System.ObjectType
+LocalCandidate.Planet.ObjectType
+RootCandidate.Planet.ObjectType
+LocalCandidate.Fleet.ObjectType
+RootCandidate.Fleet.ObjectType

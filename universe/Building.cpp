@@ -6,11 +6,10 @@
 #include "Predicates.h"
 #include "Universe.h"
 #include "Enums.h"
-#include "Parser.h"
-#include "ParserUtil.h"
 #include "ValueRef.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
+#include "../parse/Parse.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/AppInterface.h"
@@ -24,23 +23,6 @@ extern int g_indent;
 
 namespace {
     const bool CHEAP_AND_FAST_BUILDING_PRODUCTION = false;    // makes all buildings cost 1 PP and take 1 turn to build
-}
-
-namespace {
-    struct store_building_type_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::map<std::string, BuildingType*>& building_types, const T& building_type) const {
-            if (building_types.find(building_type->Name()) != building_types.end()) {
-                std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-            building_types[building_type->Name()] = building_type;
-        }
-    };
-
-    const phoenix::function<store_building_type_impl> store_building_type_;
 }
 
 /////////////////////////////////////////////////
@@ -344,27 +326,7 @@ BuildingTypeManager::BuildingTypeManager()
 
     s_instance = this;
 
-    std::string file_name = "buildings.txt";
-    std::string input;
-
-    boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-    if (ifs) {
-        std::getline(ifs, input, '\0');
-        ifs.close();
-    } else {
-        Logger().errorStream() << "Unable to open data file " << file_name;
-        return;
-    }
-
-    using namespace boost::spirit::classic;
-    using namespace phoenix;
-    parse_info<const char*> result =
-        parse(input.c_str(),
-              as_lower_d[*building_type_p[store_building_type_(var(m_building_types), arg1)]]
-              >> end_p,
-              skip_p);
-    if (!result.full)
-        ReportError(input.c_str(), result);
+    parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
 }
 
 BuildingTypeManager::~BuildingTypeManager()

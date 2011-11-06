@@ -1,5 +1,6 @@
 #include "Empire.h"
 
+#include "../parse/Parse.h"
 #include "../util/Directories.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/Random.h"
@@ -15,8 +16,6 @@
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
 #include "../universe/UniverseObject.h"
-#include "../universe/Parser.h"
-#include "../universe/ParserUtil.h"
 #include "ResourcePool.h"
 #include "EmpireManager.h"
 
@@ -911,21 +910,6 @@ const std::string& Alignment::Graphic() const
 
 
 namespace {
-    ParamLabel effectsgroups_label("effectsgroups");
-
-    struct store_alignment_impl
-    {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::vector<Alignment>& alignments, const T& alignment) const
-        {
-            alignments.push_back(alignment);
-        }
-    };
-
-    const phoenix::function<store_alignment_impl> store_alignment_;
-
     class AlignmentManager {
     public:
         /** \name Accessors */ //@{
@@ -964,31 +948,7 @@ namespace {
 
         Logger().debugStream() << "Initializing AlignmentManager";
 
-        std::string file_name = "alignments.txt";
-        std::string input;
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            std::getline(ifs, input, '\0');
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-            return;
-        }
-
-        using namespace boost::spirit::classic;
-        using namespace phoenix;
-        parse_info<const char*> result =
-            parse(input.c_str(),
-                  as_lower_d[*alignment_p[store_alignment_(var(m_alignments), arg1)]
-                             >> !(str_p("alignmenteffects")
-                                  >> effectsgroups_label >> *effects_group_vec_p[var(m_effects_groups) = arg1]
-                                 )
-                  ]
-                  >> end_p,
-                  skip_p);
-        if (!result.full)
-            ReportError(input.c_str(), result);
+        parse::alignments(GetResourceDir() / "alignments.txt", m_alignments, m_effects_groups);
 
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             Logger().debugStream() << "Alignments:";

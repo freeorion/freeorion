@@ -8,6 +8,8 @@
 #include <GG/Clr.h>
 #endif
 
+#include <boost/serialization/access.hpp>
+
 #include <map>
 #include <set>
 #include <string>

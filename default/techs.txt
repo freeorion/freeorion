@@ -36,7 +36,6 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 10
     researchturns = 1
-    prerequisites = []
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     effectsgroups =
         EffectsGroup
@@ -54,7 +53,6 @@ Tech
     researchcost = 20
     researchturns = 2
     prerequisites = "DEF_ROOT_DEFENSE"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -71,7 +69,6 @@ Tech
     researchcost = 50
     researchturns = 5
     prerequisites = "DEF_GARRISON_1"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -88,7 +85,6 @@ Tech
     researchcost = 150
     researchturns = 8
     prerequisites = "DEF_GARRISON_2"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -105,7 +101,6 @@ Tech
     researchcost = 400
     researchturns = 15
     prerequisites = "DEF_GARRISON_3"
-    unlock = []
     effectsgroups =
         EffectsGroup
             scope = OwnedBy TheEmpire Source.Owner
@@ -120,7 +115,6 @@ Tech
     category = "SHIPS_CATEGORY"
     researchcost = 10
     researchturns = 1
-    prerequisites = []
     unlock = [
         Item type = ShipPart name = "SR_WEAPON_1"
         Item type = ShipPart name = "GT_TROOP_POD"

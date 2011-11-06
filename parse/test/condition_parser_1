@@ -1,0 +1,179 @@
+All
+Source
+RootCandidate
+Target
+Stationary
+Capital
+Monster
+Armed
+OwnedBy  Affiliation = EnemyOf  Empire = Source.Planet.Owner
+OwnedBy  Affiliation = EnemyOf  Source.Planet.Owner
+OwnedBy  EnemyOf  Empire = Source.Planet.Owner
+OwnedBy  EnemyOf  Source.Planet.Owner
+OwnedBy  Affiliation = EnemyOf
+OwnedBy  EnemyOf
+Homeworld  Name = "Homeworld Foo"
+Homeworld  "Homeworld Foo"
+Homeworld  Name = [ "Homeworld Foo" "Homeworld Bar" ]
+Homeworld  [ "Homeworld Foo" "Homeworld Bar" ]
+Homeworld
+Building  Name = "Building Foo"
+Building  "Building Foo"
+Building  Name = [ "Building Foo" "Building Bar" ]
+Building  [ "Building Foo" "Building Bar" ]
+Species Name = "Species Foo"
+Species  "Species Foo"
+Species Name = [ "Species Foo" "Species Bar" ]
+Species  [ "Species Foo" "Species Bar" ]
+Species
+Focus  Type = "Focus Foo"
+Focus  "Focus Foo"
+Focus  Type = [ "Focus Foo" "Focus Bar" ]
+Focus  [ "Focus Foo" "Focus Bar" ]
+Focus
+Planet  Type = Swamp
+Planet  Swamp
+Planet  Type = [ Swamp Toxic ]
+Planet  [ Swamp Toxic ]
+Planet  Size = Small
+Planet  Small
+Planet  Size = [ Small Medium ]
+Planet  [ Small Medium ]
+Planet  Environment = Adequate
+Planet  Adequate
+Planet  Environment = [ Adequate Good ]
+Planet  [ Adequate Good ]
+Ship
+ObjectType  Type = Ship
+ObjectType  Ship
+TargetPopulation  Low = 1  High = 2
+TargetPopulation  Low = 1  2
+TargetPopulation  1  High = 2
+TargetPopulation  1  2
+TargetHealth  Low = 1  High = 2
+TargetHealth  Low = 1  2
+TargetHealth  1  High = 2
+TargetHealth  1  2
+TargetFarming  Low = 1  High = 2
+TargetFarming  Low = 1  2
+TargetFarming  1  High = 2
+TargetFarming  1  2
+TargetIndustry  Low = 1  High = 2
+TargetIndustry  Low = 1  2
+TargetIndustry  1  High = 2
+TargetIndustry  1  2
+TargetResearch  Low = 1  High = 2
+TargetResearch  Low = 1  2
+TargetResearch  1  High = 2
+TargetResearch  1  2
+TargetTrade  Low = 1  High = 2
+TargetTrade  Low = 1  2
+TargetTrade  1  High = 2
+TargetTrade  1  2
+TargetMining  Low = 1  High = 2
+TargetMining  Low = 1  2
+TargetMining  1  High = 2
+TargetMining  1  2
+TargetConstruction  Low = 1  High = 2
+TargetConstruction  Low = 1  2
+TargetConstruction  1  High = 2
+TargetConstruction  1  2
+MaxFuel  Low = 1  High = 2
+MaxFuel  Low = 1  2
+MaxFuel  1  High = 2
+MaxFuel  1  2
+MaxShield  Low = 1  High = 2
+MaxShield  Low = 1  2
+MaxShield  1  High = 2
+MaxShield  1  2
+MaxStructure  Low = 1  High = 2
+MaxStructure  Low = 1  2
+MaxStructure  1  High = 2
+MaxStructure  1  2
+MaxDefense  Low = 1  High = 2
+MaxDefense  Low = 1  2
+MaxDefense  1  High = 2
+MaxDefense  1  2
+MaxTroops  Low = 1  High = 2
+MaxTroops  Low = 1  2
+MaxTroops  1  High = 2
+MaxTroops  1  2
+Population  Low = 1  High = 2
+Population  Low = 1  2
+Population  1  High = 2
+Population  1  2
+Health  Low = 1  High = 2
+Health  Low = 1  2
+Health  1  High = 2
+Health  1  2
+Farming  Low = 1  High = 2
+Farming  Low = 1  2
+Farming  1  High = 2
+Farming  1  2
+Industry  Low = 1  High = 2
+Industry  Low = 1  2
+Industry  1  High = 2
+Industry  1  2
+Research  Low = 1  High = 2
+Research  Low = 1  2
+Research  1  High = 2
+Research  1  2
+Trade  Low = 1  High = 2
+Trade  Low = 1  2
+Trade  1  High = 2
+Trade  1  2
+Mining  Low = 1  High = 2
+Mining  Low = 1  2
+Mining  1  High = 2
+Mining  1  2
+Construction  Low = 1  High = 2
+Construction  Low = 1  2
+Construction  1  High = 2
+Construction  1  2
+Fuel  Low = 1  High = 2
+Fuel  Low = 1  2
+Fuel  1  High = 2
+Fuel  1  2
+Shield  Low = 1  High = 2
+Shield  Low = 1  2
+Shield  1  High = 2
+Shield  1  2
+Structure  Low = 1  High = 2
+Structure  Low = 1  2
+Structure  1  High = 2
+Structure  1  2
+Defense  Low = 1  High = 2
+Defense  Low = 1  2
+Defense  1  High = 2
+Defense  1  2
+Troops  Low = 1  High = 2
+Troops  Low = 1  2
+Troops  1  High = 2
+Troops  1  2
+FoodConsumption  Low = 1  High = 2
+FoodConsumption  Low = 1  2
+FoodConsumption  1  High = 2
+FoodConsumption  1  2
+Supply  Low = 1  High = 2
+Supply  Low = 1  2
+Supply  1  High = 2
+Supply  1  2
+Stealth  Low = 1  High = 2
+Stealth  Low = 1  2
+Stealth  1  High = 2
+Stealth  1  2
+Detection  Low = 1  High = 2
+Detection  Low = 1  2
+Detection  1  High = 2
+Detection  1  2
+BattleSpeed  Low = 1  High = 2
+BattleSpeed  Low = 1  2
+BattleSpeed  1  High = 2
+BattleSpeed  1  2
+StarlaneSpeed  Low = 1  High = 2
+StarlaneSpeed  Low = 1  2
+StarlaneSpeed  1  High = 2
+StarlaneSpeed  1  2
+And  [ All All ]
+Or [ All All ]
+Not All

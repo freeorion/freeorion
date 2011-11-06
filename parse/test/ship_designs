@@ -1,0 +1,2 @@
+ShipDesign  Name = "Foo 0"  Description = "Bar"  Hull = "Foo"  Parts = "Foo"  Graphic = "Baz"  Model = "Baz"
+ShipDesign  Name = "Foo 1"  Description = "Bar"  Hull = "Foo"  Parts = [ "Foo" "Foo" ]  Graphic = "Baz"  Model = "Baz"

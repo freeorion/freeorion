@@ -19,6 +19,7 @@ namespace ValueRef {
     template <class T> struct Variable;
     template <class T> struct Statistic;
     enum StatisticType {
+        INVALID_STATISTIC_TYPE = -1,
         COUNT,  // returns the number of objects matching the condition
         SUM,    // returns the sum of the property values of all objects matching the condition
         MEAN,   // returns the mean of the property values of all objects matching the condition

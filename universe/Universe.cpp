@@ -6,6 +6,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/Random.h"
+#include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "Building.h"
@@ -19,12 +20,11 @@
 #include "Predicates.h"
 #include "Special.h"
 #include "Species.h"
-#include "Parser.h"
-#include "ParserUtil.h"
 #include "Condition.h"
 #include "ValueRef.h"
 
-
+#include <boost/algorithm/string/classification.hpp>
+#include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/breadth_first_search.hpp>
@@ -2939,15 +2939,6 @@ const Condition::ConditionBase* MonsterFleetPlan::Location() const
 // FleetPlanManager //
 //////////////////////
 namespace {
-    struct store_fleet_plan_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::vector<FleetPlan*>& fleet_plans, const T& fleet_plan) const
-        { fleet_plans.push_back(fleet_plan); }
-    };
-    const phoenix::function<store_fleet_plan_impl> store_fleet_plan_;
-
     class FleetPlanManager {
     public:
         typedef std::vector<FleetPlan*>::const_iterator iterator;
@@ -2979,27 +2970,7 @@ namespace {
 
         Logger().debugStream() << "Initializing FleetPlanManager";
 
-        std::string file_name = "starting_fleets.txt";
-        std::string input;
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            std::getline(ifs, input, '\0');
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-            return;
-        }
-
-        using namespace boost::spirit::classic;
-        using namespace phoenix;
-        parse_info<const char*> result =
-            parse(input.c_str(),
-                  as_lower_d[*fleet_plan_p[store_fleet_plan_(var(m_plans), arg1)]]
-                  >> end_p,
-                  skip_p);
-        if (!result.full)
-            ReportError(input.c_str(), result);
+        parse::fleet_plans(GetResourceDir() / "starting_fleets.txt", m_plans);
 
 #ifdef OUTPUT_PLANS_LIST
         Logger().debugStream() << "Starting Fleet Plans:";
@@ -3024,15 +2995,6 @@ namespace {
 // MonsterFleetPlanManager //
 /////////////////////////////
 namespace {
-    struct store_monster_fleet_plan_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::vector<MonsterFleetPlan*>& fleet_plans, const T& fleet_plan) const
-        { fleet_plans.push_back(fleet_plan); }
-    };
-    const phoenix::function<store_monster_fleet_plan_impl> store_monster_fleet_plan_;
-
     class MonsterFleetPlanManager {
     public:
         typedef std::vector<MonsterFleetPlan*>::const_iterator iterator;
@@ -3066,27 +3028,7 @@ namespace {
 
         Logger().debugStream() << "Initializing MonsterFleetPlanManager";
 
-        std::string file_name = "space_monster_spawn_fleets.txt";
-        std::string input;
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            std::getline(ifs, input, '\0');
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-            return;
-        }
-
-        using namespace boost::spirit::classic;
-        using namespace phoenix;
-        parse_info<const char*> result =
-            parse(input.c_str(),
-                  as_lower_d[*monster_fleet_plan_p[store_monster_fleet_plan_(var(m_plans), arg1)]]
-                  >> end_p,
-                  skip_p);
-        if (!result.full)
-            ReportError(input.c_str(), result);
+        parse::monster_fleet_plans(GetResourceDir() / "space_monster_spawn_fleets.txt", m_plans);
 
 //#ifdef OUTPUT_PLANS_LIST
         Logger().debugStream() << "Starting Monster Fleet Plans:";
@@ -3111,15 +3053,6 @@ namespace {
 // ItemSpecManager         //
 /////////////////////////////
 namespace {
-    struct store_item_spec_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::vector<ItemSpec>& item_specs, const T& item_spec) const
-        { item_specs.push_back(item_spec); }
-    };
-    const phoenix::function<store_item_spec_impl> store_item_spec_;
-
     class ItemSpecManager {
     public:
         typedef std::vector<ItemSpec>::const_iterator iterator;
@@ -3154,27 +3087,7 @@ namespace {
 
         Logger().debugStream() << "Initializing ItemSpecManager";
 
-        std::string file_name = "preunlocked_items.txt";
-        std::string input;
-
-        boost::filesystem::ifstream ifs(GetResourceDir() / file_name);
-        if (ifs) {
-            std::getline(ifs, input, '\0');
-            ifs.close();
-        } else {
-            Logger().errorStream() << "Unable to open data file " << file_name;
-            return;
-        }
-
-        using namespace boost::spirit::classic;
-        using namespace phoenix;
-        parse_info<const char*> result =
-            parse(input.c_str(),
-                  as_lower_d[*item_spec_p[store_item_spec_(var(m_items), arg1)]]
-                  >> end_p,
-                  skip_p);
-        if (!result.full)
-            ReportError(input.c_str(), result);
+        parse::items(GetResourceDir() / "preunlocked_items.txt", m_items);
 
 #ifdef OUTPUT_ITEM_SPECS_LIST
         Logger().debugStream() << "Starting Unlocked Item Specs:";
@@ -4509,15 +4422,6 @@ void Universe::NamePlanets()
 }
 
 namespace {
-    struct store_name_impl {
-        template <class T1, class T2>
-        struct result {typedef void type;};
-        template <class T>
-        void operator()(std::vector<std::string>& names, const T& name) const
-        { names.push_back(name); }
-    };
-    const phoenix::function<store_name_impl> store_name_;
-
     /** Reads list of strings from file, surrounded by enclosing quotes. */
     void LoadNames(std::vector<std::string>& names, const std::string& file_name) {
         names.clear();
@@ -4529,15 +4433,14 @@ namespace {
         } else {
             Logger().errorStream() << "Unable to open data file " << file_name;
         }
-        using namespace boost::spirit::classic;
-        using namespace phoenix;
-        parse_info<const char*> result =
-            parse(input.c_str(),
-                  *name_p[store_name_(var(names), arg1)]
-                  >> end_p,
-                  skip_p);
-        if (!result.full)
-            ReportError(input.c_str(), result);
+        using namespace boost::algorithm;
+        split(names, input, is_any_of("\"\n"), token_compress_on);
+        for (std::size_t i = 0; i < names.size(); ) {
+            if (names[i].empty())
+                names.erase(names.begin() + i);
+            else
+                ++i;
+        }
     }
 };
 

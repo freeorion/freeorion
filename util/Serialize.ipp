@@ -34,3 +34,18 @@ BOOST_STATIC_ASSERT(sizeof(double) == 8);
 // architectures.  So, don't use longs -- use long longs instead if you need
 // something bigger than an int for some reason.
 //BOOST_STATIC_ASSERT(sizeof(long) == 4);
+
+#include <GG/Clr.h>
+
+namespace boost { namespace serialization {
+
+    template <class Archive>
+    void serialize(Archive& ar, GG::Clr& clr, const unsigned int version)
+    {
+        ar  & BOOST_SERIALIZATION_NVP(clr.r)
+            & BOOST_SERIALIZATION_NVP(clr.g)
+            & BOOST_SERIALIZATION_NVP(clr.b)
+            & BOOST_SERIALIZATION_NVP(clr.a);
+    }
+
+} }

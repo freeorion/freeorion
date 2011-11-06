@@ -1,5 +1,6 @@
 #include "ServerApp.h"
 
+#include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../util/XMLDoc.h"
@@ -29,6 +30,8 @@ int main(int argc, char* argv[])
             GetOptionsDB().GetUsage(std::cerr);
             return 0;
         }
+
+        parse::init();
 
         ServerApp g_app;
         g_app(); // Calls ServerApp::Run() to run app (intialization and main process loop)
