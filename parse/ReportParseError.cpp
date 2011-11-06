@@ -1,5 +1,7 @@
 #include "ReportParseError.h"
 
+#include "../util/AppInterface.h"
+
 #include <boost/algorithm/string/classification.hpp>
 
 
@@ -90,7 +92,7 @@ void parse::detail::pretty_print(std::ostream& os, boost::spirit::info const& wh
 }
 
 void parse::detail::default_send_error_string(const std::string& str)
-{ std::cerr << str; }
+{ Logger().errorStream() << str; }
 
 const char* parse::detail::s_filename = 0;
 parse::text_iterator* parse::detail::s_text_it = 0;
