@@ -79,7 +79,6 @@
     <ClInclude Include="..\..\GG\GG\utf8\core.h" />
     <ClInclude Include="..\..\GG\GG\utf8\unchecked.h" />
     <ClInclude Include="..\..\GG\GG\Wnd.h" />
-    <ClInclude Include="..\..\GG\GG\WndEditor.h" />
     <ClInclude Include="..\..\GG\GG\WndEvent.h" />
     <ClInclude Include="..\..\GG\GG\ZList.h" />
   </ItemGroup>
@@ -117,7 +116,6 @@
     <ClCompile Include="..\..\GG\src\Timer.cpp" />
     <ClCompile Include="..\..\GG\src\UnicodeCharsets.cpp" />
     <ClCompile Include="..\..\GG\src\Wnd.cpp" />
-    <ClCompile Include="..\..\GG\src\WndEditor.cpp" />
     <ClCompile Include="..\..\GG\src\WndEvent.cpp" />
     <ClCompile Include="..\..\GG\src\ZList.cpp" />
   </ItemGroup>

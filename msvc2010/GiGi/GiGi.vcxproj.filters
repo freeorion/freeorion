@@ -59,9 +59,6 @@
     <ClInclude Include="..\..\GG\GG\Wnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\GG\GG\WndEditor.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\GG\GG\WndEvent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -269,9 +266,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\Wnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\WndEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\GG\src\WndEvent.cpp">

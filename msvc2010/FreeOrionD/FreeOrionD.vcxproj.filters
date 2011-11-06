@@ -66,6 +66,12 @@
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{f6fc2133-2664-41ed-9036-7f2676f38740}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\parse">
+      <UniqueIdentifier>{3aa40cd4-5d9d-4ab8-9f91-cfc2f4d03e1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parse">
+      <UniqueIdentifier>{653ef1a2-5aea-49d3-bc35-bdc903839efc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\combat\CombatOrder.h">
@@ -161,9 +167,6 @@
     <ClInclude Include="..\..\network\ServerNetworking.h">
       <Filter>Header Files\network</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\universe\ValueRefParser.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\universe\Building.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
@@ -183,12 +186,6 @@
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Meter.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\Parser.h">
-      <Filter>Header Files\universe</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\universe\ParserUtil.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
     <ClInclude Include="..\..\universe\Planet.h">
@@ -310,6 +307,48 @@
     </ClInclude>
     <ClInclude Include="..\..\universe\EffectAccounting.h">
       <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Names.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EnumParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Int.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Label.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Lexer.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Parse.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ParseImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ReportParseError.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ValueRefParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParserImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Double.h">
+      <Filter>Header Files\parse</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -618,28 +657,13 @@
     <ClCompile Include="..\..\universe\ValueRef.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ValueRefParser.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\Building.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Condition.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ConditionParser.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ConditionParser1.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ConditionParser2.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\Effect.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\EffectParser.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Enums.cpp">
@@ -649,9 +673,6 @@
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Meter.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ParserUtil.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\Planet.cpp">
@@ -684,9 +705,6 @@
     <ClCompile Include="..\..\universe\Tech.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\TopLevelParsers.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\Universe.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
@@ -708,14 +726,107 @@
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ConditionParser3.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\universe\ObjectMap.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
     <ClCompile Include="..\..\universe\EffectAccounting.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Names.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\EnumParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\FleetPlansParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\Int.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\IntValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ItemsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\Label.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\Lexer.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\Parse.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\PlanetEnvironmentValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ReportParseError.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ShipDesignsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ShipHullsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ShipPartsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\SpecialsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\SpeciesParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\StringValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\TechsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\AlignmentsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\BuildingsParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser1.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser2.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\ConditionParser3.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\Double.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\parse\EffectParser.cpp">
+      <Filter>Source Files\parse</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
