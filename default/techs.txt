@@ -791,8 +791,8 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENOGEN_ADAPT"
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_GENETICS"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = SetTargetPopulation Value + 3
@@ -804,8 +804,8 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENOGEN_ADAPT"
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_GENETICS"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = SetTargetPopulation Value + 6
@@ -817,8 +817,8 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENOGEN_ADAPT"
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_GENETICS"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = SetTargetPopulation Value + 9
@@ -830,8 +830,8 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENOGEN_ADAPT"
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_GENETICS"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = SetTargetPopulation Value + 12
@@ -843,8 +843,8 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENOGEN_ADAPT"
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_GENETICS"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = SetTargetPopulation Value + 15
@@ -910,7 +910,7 @@ Tech
                 Planet environment = Poor
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -925,7 +925,7 @@ Tech
                 Planet environment = Poor
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -940,7 +940,7 @@ Tech
                 Planet environment = Poor
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -955,7 +955,7 @@ Tech
                 Planet environment = Poor
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -970,7 +970,7 @@ Tech
                 Planet environment = Poor
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -985,7 +985,7 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -1000,7 +1000,7 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -1015,7 +1015,7 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -1030,7 +1030,7 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
@@ -1045,7 +1045,7 @@ Tech
                 Planet environment = Adequate
             ]
             activation = And [
-                Not OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                Not OwnerHasTech "GRO_XENO_HYBRIDS"
                 Not OwnerHasTech "GRO_CYBORG"
             ]
             effects = [
