@@ -277,8 +277,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Tiny
@@ -290,7 +290,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Tiny
@@ -310,8 +310,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Small
@@ -323,7 +323,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Small
@@ -343,8 +343,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Medium
@@ -356,7 +356,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Medium
@@ -376,8 +376,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Large
@@ -389,7 +389,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Large
@@ -409,8 +409,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Huge
@@ -422,7 +422,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Huge
@@ -443,8 +443,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Tiny
@@ -457,7 +457,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Tiny
@@ -479,8 +479,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Small
@@ -493,7 +493,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Small
@@ -515,8 +515,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Medium
@@ -529,7 +529,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Medium
@@ -551,8 +551,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Large
@@ -565,7 +565,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Large
@@ -587,8 +587,8 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENOGEN_ADAPT"
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_GENETICS"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Huge
@@ -601,7 +601,7 @@ Special
             scope = Source
             activation = And [
                 Or [
-                    OwnerHasTech "GRO_XENO_SYMBIOGEN"
+                    OwnerHasTech "GRO_XENO_HYBRIDS"
                     OwnerHasTech "GRO_CYBORG"
                 ]
                 Planet size = Huge

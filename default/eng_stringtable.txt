@@ -4082,7 +4082,9 @@ GRO_GENETIC_ENG
 Genetic Engineering
 
 GRO_GENETIC_ENG_DESC
-'''Increases farming on good worlds by the population and on adequate worlds by half of the population
+'''Increases target farming on Good planets with the Farming focus by the planet's population, and on Adequate planets with the Farming focus by one half of the planet's population.
+
+High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.
 
 The palette of genetics is as varied as the forms of life from which it borrows.  Genes may be removed, copied and reinserted into genomes to create transgenic organisms with combinations of traits not existent or possible in nature.  As well, genes may be altered prior to reinsertion, by altering the base codes directly, allowing entirely new genes to be created.  Techniques are limited, however, to small modifications of existing genes that are available for study.'''
 
@@ -4322,7 +4324,11 @@ CON_CONTGRAV_ARCH
 Controlled Gravity Architecture
 
 CON_CONTGRAV_ARCH_DESC
-By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.
+'''Increases the resource supply range of all colonies by 1.
+
+By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.
+
+By fully controlling the orientation and strength of gravitational forces acting upon and existent within a structure, designs may simultaneously exhibit the freedom of weightlessness and the utility of having a defined up and down.  The structure itself, and the local environments it seeks to provide, may take any shape in space, extending to great lengths, looping about itself, and making arbitrary interconnections.  Simultaneously, local environments within may be infused with a useful tug, which may vary from or be entirely different from immediately adjacent areas.  Such versatility permits great new functional designs for social, manufacturing or other uses.'''
 
 CON_GAL_INFRA
 Galactic Infrastructure
@@ -4732,25 +4738,11 @@ Stargate
 CON_STARGATE_DESC
 Particularly in more expansive empires, the need to move ships to a specific defensive location in great haste often exceeds the feasibility.  By creating a warp between two or more points in space-time, it can be made possible to move ships even across an entire empire at need, allowing new offensive and defensive strategies.
 
-CON_GRAVITY_WELLS
-Controlled gravity wells
-
-CON_GRAVITY_WELLS_DESC
-'''Increases the resource supply range of all colonies by 1.
-
-By installing a massive null gravity generator at a planet's core, it becomes possible to turn a planet's gravity on or off like a light switch, but in a narrow well. The planet's industry then gains all the benefits of low-G and zero-G, but without the drawbacks. Reverse gravity wells can also be created, making space launches cost practically nothing.'''
-
 CON_ART_PLANET
 Artificial Planet
 
 CON_ART_PLANET_DESC
 Gas giants and asteroid belts offer unique opportunities and resources, not only as sites for acquiring valuable - and on occasion extremely rare - resources, but as raw materials in and of themselves for the production of artificial planets.  Such planets would offer new centres for production in previously empty or entirely occupied systems.  In addition, various key features of the planet can be modified or added during the construction process, potentially allowing the planets size and environment to be specified, or certain planet specials to be added.
-
-CON_ART_MOON
-Artificial Moon
-
-CON_ART_MOON_DESC
-Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period.  Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.
 
 CON_PALACE_EXCLUDE
 Palace Excluder
@@ -4763,14 +4755,6 @@ Industrial Farming
 
 GRO_INDUSTRY_FARM_DESC
 Traditional, simple farming methods are sufficient for small, locally self-sufficient populations without significant limits on available space or time.  With greater specialization of more advanced societies however, fewer farmers must feed many more workers from much greater distances away, including even interstellar food shipment for fledgling colonies or major industrial centres.  This dependency on interstellar shipping routes makes industrial worlds extremely vulnerable to blockade by enemy forces.  By gradually adapting factories and adding supplementary infrastructure over a long period of time, waste matter and energy can be used to grow food with no extra cost, allowing industrial planets a small supply of food in great need.
-
-GRO_SELF_ROTATING_CROPS
-Self-Rotating Crops
-
-GRO_SELF_ROTATING_CROPS_DESC
-'''Increases target farming on Good planets with the Farming focus by the planet's population, and on Adequate planets with the Farming focus by one half of the planet's population.
-
-High-intensity farming output benefits from a thorough understanding of the environment and application of this knowledge in custom-tailoring crops via genetic modification.  Self-rotating crops may be grown continually, without the traditional need to alternate to soil rejuvenating - but less productive - plants every few growing seasons.'''
 
 GRO_GENOME_BANK
 Genome Bank
@@ -5929,7 +5913,9 @@ Artificial Moon
 BLD_ART_MOON_DESC
 '''Forms an artificial moon with 1:1 orbital period - rotational period resonance.  This allows the construction of special buildings which may only be built on a resonant moon.
 
-This cannot be constructed at a Gas Giant or Asteroid Belt.'''
+This cannot be constructed at a Gas Giant or Asteroid Belt.
+
+Though natural satellites are relatively commonplace occurrences amongst planetary bodies, it is truly rare to find a moon with an orbital period equal to that of its rotational period.  Such a satellite would have one side constantly facing away from the planet, allowing the construction of massive installations - which under normal circumstances would be easily visible from the planet's surface - to be constructed with total secrecy, completely invisible to the unsuspecting populace on the planet below.'''
 
 BLD_SOL_REJUV
 Solar Rejuvenator
