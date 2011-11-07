@@ -1,5 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-
 #include "ParseImpl.h"
 #include "Label.h"
 
@@ -48,14 +46,20 @@ namespace {
                 qi::_d_type _d;
                 qi::_e_type _e;
                 qi::_r1_type _r1;
+                qi::_r2_type _r2;
+                qi::_r3_type _r3;
                 using phoenix::new_;
                 using phoenix::push_back;
 
-                design
+                design_prefix
                     =    tok.ShipDesign_
-                    >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _b = _1 ]
-                    >    parse::label(Hull_name)        > tok.string [ _c = _1 ]
+                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                    >    parse::label(Hull_name)        > tok.string [ _r3 = _1 ]
+                    ;
+
+                design
+                    =    design_prefix(_a, _b, _c)
                     >    parse::label(Parts_name)
                     >    (
                               '[' > +tok.string [ push_back(_d, _1) ] > ']'
@@ -69,14 +73,22 @@ namespace {
                     =   +design(_r1)
                     ;
 
+                design_prefix.name("ShipDesign");
                 design.name("ShipDesign");
 
 #if DEBUG_PARSERS
+                debug(design_prefix);
                 debug(design);
 #endif
 
                 qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
             }
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::string&, std::string&, std::string&),
+            parse::skipper_type
+        > design_prefix_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -97,6 +109,7 @@ namespace {
             parse::skipper_type
         > start_rule;
 
+        design_prefix_rule design_prefix;
         design_rule design;
         start_rule start;
     };

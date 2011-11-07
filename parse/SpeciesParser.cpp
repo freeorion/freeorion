@@ -1,5 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-
 #include "ParseImpl.h"
 #include "Label.h"
 #include "../universe/Species.h"
@@ -71,6 +69,18 @@ namespace {
                     >    parse::label(Graphic_name)     > tok.string [ _val = construct<FocusType>(_a, _b, _c, _1) ]
                     ;
 
+                foci
+                    =    parse::label(Foci_name)
+                    >>   (
+                              '[' > +focus_type [ push_back(_r1, _1) ] > ']'
+                          |   focus_type [ push_back(_r1, _1) ]
+                         )
+                    ;
+
+                effects
+                    =    parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _r1 = _1 ]
+                    ;
+
                 environment_map_element
                     =    parse::label(Type_name)        >> parse::enum_parser<PlanetType>() [ _a = _1 ]
                     >    parse::label(Environment_name) >  parse::enum_parser<PlanetEnvironment>()
@@ -82,6 +92,10 @@ namespace {
                     |    environment_map_element [ insert(_val, _1) ]
                     ;
 
+                environments
+                    =    parse::label(Environments_name) >> environment_map [ _r1 = _1 ]
+                    ;
+
                 species
                     =    tok.Species_
                     >    parse::label(Name_name)        > tok.string [ _a = _1 ]
@@ -89,21 +103,9 @@ namespace {
                     >   -tok.Playable_ [ _c = true ]
                     >   -tok.CanProduceShips_ [ _d = true ]
                     >   -tok.CanColonize_ [ _e = true ]
-                    >   -(
-                              parse::label(Foci_name)
-                          >>  (
-                                   '[' > +focus_type [ push_back(_f, _1) ] > ']'
-                               |   focus_type [ push_back(_f, _1) ]
-                              )
-                         )
-                    >   -(
-                              parse::label(EffectsGroups_name)
-                          >>  parse::detail::effects_group_parser() [ _g = _1 ]
-                         )
-                    >   -(
-                              parse::label(Environments_name)
-                          >>  environment_map [ _h = _1 ]
-                         )
+                    >   -foci(_f)
+                    >   -effects(_g)
+                    >   -environments(_h)
                     >    parse::label(Graphic_name) > tok.string [ insert_species(_r1, new_<Species>(_a, _b, _f, _h, _g, _c, _d, _e, _1)) ]
                     ;
 
@@ -112,15 +114,21 @@ namespace {
                     ;
 
                 focus_type.name("Focus");
+                foci.name("Foci");
+                effects.name("EffectsGroups");
                 environment_map_element.name("Type = <type> Environment = <env>");
                 environment_map.name("Environments");
+                environments.name("Environments");
                 species.name("Species");
                 start.name("start");
 
 #if DEBUG_PARSERS
                 debug(focus_type);
+                debug(foci);
+                debug(effects);
                 debug(environment_map_element);
                 debug(environment_map);
+                debug(environments);
                 debug(species);
                 debug(start);
 #endif
@@ -141,6 +149,18 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
+            void (std::vector<FocusType>&),
+            parse::skipper_type
+        > foci_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&),
+            parse::skipper_type
+        > effects_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
             std::pair<PlanetType, PlanetEnvironment> (),
             qi::locals<PlanetType>,
             parse::skipper_type
@@ -151,6 +171,12 @@ namespace {
             std::map<PlanetType, PlanetEnvironment> (),
             parse::skipper_type
         > environment_map_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::map<PlanetType, PlanetEnvironment>&),
+            parse::skipper_type
+        > environments_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -174,9 +200,12 @@ namespace {
             parse::skipper_type
         > start_rule;
 
+        foci_rule foci;
         focus_type_rule focus_type;
+        effects_rule effects;
         environment_map_element_rule environment_map_element;
         environment_map_rule environment_map;
+        environments_rule environments;
         species_rule species;
         start_rule start;
     };

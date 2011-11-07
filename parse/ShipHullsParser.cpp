@@ -1,4 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
 #define PHOENIX_LIMIT 11
 
 #include "Double.h"
@@ -60,6 +59,7 @@ namespace {
                 qi::_h_type _h;
                 qi::_i_type _i;
                 qi::_r1_type _r1;
+                qi::_r2_type _r2;
                 qi::_val_type _val;
                 qi::eps_type eps;
                 qi::lit_type lit;
@@ -67,15 +67,15 @@ namespace {
                 using phoenix::new_;
                 using phoenix::push_back;
 
-                slot
-                    =    tok.Slot_
-                    >    parse::label(Type_name) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
-                    >    parse::label(Position_name)
-                    >    '('
-                    >    parse::double_ [ _b = _1 ]
-                    >    ','
-                    >    parse::double_ [ _c = _1 ]
-                    >    lit(')') [ _val = construct<HullType::Slot>(_a, _b, _c) ]
+                hull_prefix
+                    =    tok.Hull_
+                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                    ;
+
+                cost
+                    =    parse::label(BuildCost_name) > parse::double_ [ _r1 = _1 ]
+                    >    parse::label(BuildTime_name) > parse::int_ [ _r2 = _1 ]
                     ;
 
                 hull_stats
@@ -86,29 +86,40 @@ namespace {
                     >    parse::label(Structure_name)     > parse::double_ [ _val = construct<HullTypeStats>(_a, _b, _c, _d, _1) ]
                     ;
 
+                producible
+                    =    tok.Unproducible_ [ _val = false ]
+                    |    tok.Producible_ [ _val = true ]
+                    |    eps [ _val = true ]
+                    ;
+
+                slot
+                    =    tok.Slot_
+                    >    parse::label(Type_name) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
+                    >    parse::label(Position_name)
+                    >    '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
+                         [ _val = construct<HullType::Slot>(_a, _b, _c) ]
+                    ;
+
+                slots
+                    =    parse::label(Slots_name)
+                    >>   (
+                              '[' > +slot [ push_back(_r1, _1) ] > ']'
+                          |   slot [ push_back(_r1, _1) ]
+                         )
+                    ;
+
+                location
+                    =    parse::label(Location_name) >> parse::detail::condition_parser [ _r1 = _1 ]
+                    |    eps [ _r1 = new_<Condition::All>() ]
+                    ;
+
                 hull
-                    =    tok.Hull_
-                    >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _b = _1 ]
+                    =    hull_prefix(_a, _b)
                     >    hull_stats [ _c = _1 ]
-                    >    parse::label(BuildCost_name)   > parse::double_ [ _d = _1 ]
-                    >    parse::label(BuildTime_name)   > parse::int_ [ _e = _1 ]
-                    >    (
-                              tok.Unproducible_ [ _f = false ]
-                          |   tok.Producible_ [ _f = true ]
-                          |   eps [ _f = true ]
-                         )
-                    >   -(
-                              parse::label(Slots_name)
-                          >>  (
-                                   '[' > +slot [ push_back(_g, _1) ] > ']'
-                               |   slot [ push_back(_g, _1) ]
-                              )
-                         )
-                    >    (
-                              parse::label(Location_name) >> parse::detail::condition_parser [ _h = _1 ]
-                          |   eps [ _h = new_<Condition::All>() ]
-                         )
+                    >    cost(_d, _e)
+                    >    producible [ _f = _1 ]
+                    >   -slots(_g)
+                    >    location(_h)
                     >   -(
                               parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _i = _1 ]
                          )
@@ -119,18 +130,58 @@ namespace {
                     =   +hull(_r1)
                     ;
 
-                slot.name("Slot");
+                hull_prefix.name("Hull");
+                cost.name("build cost");
                 hull_stats.name("Hull stats");
+                producible.name("Producible or Unproducible");
+                slot.name("Slot");
+                slots.name("Slots");
+                location.name("Location");
                 hull.name("Hull");
 
 #if DEBUG_PARSERS
-                debug(slot);
+                debug(hull_prefix);
+                debug(cost);
                 debug(hull_stats);
+                debug(producible);
+                debug(slot);
+                debug(slots);
+                debug(location);
                 debug(hull);
 #endif
 
                 qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
             }
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::string&, std::string&),
+            parse::skipper_type
+        > hull_prefix_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (double&, int&),
+            parse::skipper_type
+        > cost_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            HullTypeStats (),
+            qi::locals<
+                double,
+                double,
+                double,
+                double
+            >,
+            parse::skipper_type
+        > hull_stats_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            bool (),
+            parse::skipper_type
+        > producible_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -145,15 +196,15 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            HullTypeStats (),
-            qi::locals<
-                double,
-                double,
-                double,
-                double
-            >,
+            void (std::vector<HullType::Slot>&),
             parse::skipper_type
-        > hull_stats_rule;
+        > slots_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (Condition::ConditionBase*&),
+            parse::skipper_type
+        > location_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -178,8 +229,13 @@ namespace {
             parse::skipper_type
         > start_rule;
 
-        slot_rule slot;
+        hull_prefix_rule hull_prefix;
+        cost_rule cost;
         hull_stats_rule hull_stats;
+        producible_rule producible;
+        slot_rule slot;
+        slots_rule slots;
+        location_rule location;
         hull_rule hull;
         start_rule start;
     };

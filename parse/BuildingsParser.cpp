@@ -1,5 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
@@ -54,21 +52,32 @@ namespace {
                 qi::_g_type _g;
                 qi::_h_type _h;
                 qi::_r1_type _r1;
+                qi::_r2_type _r2;
                 qi::_val_type _val;
                 qi::eps_type eps;
                 using phoenix::new_;
 
-                building_type
+                building_prefix
                     =    tok.BuildingType_
-                    >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _b = _1 ]
-                    >    parse::label(BuildCost_name)   > parse::double_ [ _c = _1 ]
-                    >    parse::label(BuildTime_name)   > parse::int_ [ _d = _1 ]
-                    >    (
-                             tok.Unproducible_ [ _e = false ]
-                          |  tok.Producible_ [ _e = true ]
-                          |  eps [ _e = true ]
-                         )
+                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                    ;
+
+                cost
+                    =    parse::label(BuildCost_name)   > parse::double_ [ _r1 = _1 ]
+                    >    parse::label(BuildTime_name)   > parse::int_ [ _r2 = _1 ]
+                    ;
+
+                producible
+                    =    tok.Unproducible_ [ _val = false ]
+                    |    tok.Producible_ [ _val = true ]
+                    |    eps [ _val = true ]
+                    ;
+
+                building_type
+                    =    building_prefix(_a, _b)
+                    >    cost(_c, _d)
+                    >    producible [ _e = _1 ]
                     >    parse::label(Location_name) > parse::detail::condition_parser [ _f = _1 ]
                     >    (
                               parse::label(CaptureResult_name) >> parse::enum_parser<CaptureResult>() [ _g = _1 ]
@@ -82,14 +91,38 @@ namespace {
                     =   +building_type(_r1)
                     ;
 
+                building_prefix.name("BuildingType");
+                cost.name("cost");
+                producible.name("Producible or Unproducible");
                 building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
+                debug(building_prefix);
+                debug(cost);
+                debug(producible);
                 debug(building_type);
 #endif
 
                 qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
             }
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::string&, std::string&),
+            parse::skipper_type
+        > building_prefix_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (double&, int&),
+            parse::skipper_type
+        > cost_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            bool (),
+            parse::skipper_type
+        > producible_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -113,6 +146,9 @@ namespace {
             parse::skipper_type
         > start_rule;
 
+        building_prefix_rule building_prefix;
+        cost_rule cost;
+        producible_rule producible;
         building_type_rule building_type;
         start_rule start;
     };

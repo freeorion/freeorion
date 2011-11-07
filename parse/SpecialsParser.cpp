@@ -1,5 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
@@ -53,22 +51,31 @@ namespace {
                 qi::_f_type _f;
                 qi::_g_type _g;
                 qi::_r1_type _r1;
+                qi::_r2_type _r2;
                 qi::_val_type _val;
                 qi::eps_type eps;
                 using phoenix::new_;
 
-                special
+                special_prefix
                     =    tok.Special_
-                    >    parse::label(Name_name)        > tok.string [ _a = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _b = _1 ]
-                    >    (
-                              parse::label(SpawnRate_name)  >> parse::double_ [ _c = _1 ]
-                          |   eps [ _c = 1.0 ]
+                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                    ;
+
+                spawn
+                    =    (
+                              parse::label(SpawnRate_name)  >> parse::double_ [ _r1 = _1 ]
+                          |   eps [ _r1 = 1.0 ]
                          )
                     >    (
-                              parse::label(SpawnLimit_name) >> parse::int_ [ _d = _1 ]
-                          |   eps [ _d = 9999 ]
+                              parse::label(SpawnLimit_name) >> parse::int_ [ _r2 = _1 ]
+                          |   eps [ _r2 = 9999 ]
                          )
+                    ;
+
+                special
+                    =    special_prefix(_a, _b)
+                    >    spawn(_c, _d)
                     >   -(
                               parse::label(Location_name)      >> parse::detail::condition_parser [ _e = _1 ]
                          )
@@ -82,14 +89,30 @@ namespace {
                     =   +special(_r1)
                     ;
 
+                special_prefix.name("Special");
                 special.name("Special");
+                spawn.name("SpawnRate and SpawnLimit");
 
 #if DEBUG_PARSERS
+                debug(special_prefix);
+                debug(spawn);
                 debug(special);
 #endif
 
                 qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
             }
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (std::string&, std::string&),
+            parse::skipper_type
+        > special_prefix_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            void (double&, int&),
+            parse::skipper_type
+        > spawn_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -111,6 +134,9 @@ namespace {
             parse::skipper_type
         > start_rule;
 
+
+        special_prefix_rule special_prefix;
+        spawn_rule spawn;
         special_rule special;
         start_rule start;
     };

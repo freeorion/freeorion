@@ -1,5 +1,3 @@
-#define FUSION_MAX_VECTOR_SIZE 20
-
 #include "Double.h"
 #include "Int.h"
 #include "Label.h"
@@ -81,7 +79,8 @@ namespace {
                 qi::_g_type _g;
                 qi::_h_type _h;
                 qi::_r1_type _r1;
-                qi::_r1_type _r2;
+                qi::_r2_type _r2;
+                qi::_r3_type _r3;
                 qi::_val_type _val;
                 qi::eps_type eps;
                 using phoenix::construct;
@@ -89,10 +88,14 @@ namespace {
                 using phoenix::new_;
                 using phoenix::push_back;
 
+                tech_info_name_desc
+                    =    parse::label(Name_name)              > tok.string [ _r1 = _1 ]
+                    >    parse::label(Description_name)       > tok.string [ _r2 = _1 ]
+                    >    parse::label(Short_Description_name) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
+                    ;
+
                 tech_info
-                    =    parse::label(Name_name)              > tok.string [ _a = _1 ]
-                    >    parse::label(Description_name)       > tok.string [ _b = _1 ]
-                    >    parse::label(Short_Description_name) > tok.string [ _c = _1 ] // TODO: Get rid of underscore.
+                    =    tech_info_name_desc(_a, _b, _c)
                     >>  -(
                               parse::label(TechType_name) >> parse::enum_parser<TechType>() [ _d = _1 ]
                           |   eps [ _d = TT_THEORY ]
@@ -114,28 +117,32 @@ namespace {
                          [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _d, _f, _g, _h) ]
                     ;
 
+                prerequisites
+                    =     parse::label(Prerequisites_name)
+                    >>   (
+                              '[' > +tok.string [ insert(_r1, _1) ] > ']'
+                          |   tok.string [ insert(_r1, _1) ]
+                         )
+                    ;
+
+                unlocks
+                    =    parse::label(Unlock_name)
+                    >>   (
+                              '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
+                          |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                         )
+                    ;
+
                 tech
                     =    (
                               tok.Tech_
-                         >    tech_info [ _a = _1 ]
-                         >   -(
-                                   parse::label(Prerequisites_name)
-                               >>  (
-                                        '[' > +tok.string [ insert(_b, _1) ] > ']'
-                                    |   tok.string [ insert(_b, _1) ]
-                                   )
-                              )
-                         >   -(
-                                   parse::label(Unlock_name)
-                               >>  (
-                                        '[' > +parse::detail::item_spec_parser() [ push_back(_c, _1) ] > ']'
-                                    |   parse::detail::item_spec_parser() [ push_back(_c, _1) ]
-                                   )
-                              )
-                         >   -(
+                          >   tech_info [ _a = _1 ]
+                          >  -prerequisites(_b)
+                          >  -unlocks(_c)
+                          >  -(
                                    parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _d = _1 ]
                               )
-                         >   -(
+                          >  -(
                                    parse::label(Graphic_name) >> tok.string [ _e = _1 ]
                               )
                          )
@@ -156,20 +163,31 @@ namespace {
                          )
                     ;
 
+                tech_info_name_desc.name("tech name");
                 tech_info.name("Tech info");
+                prerequisites.name("Prerequisites");
+                unlocks.name("Unlock");
                 tech.name("Tech");
                 category.name("Category");
                 start.name("start");
 
 #if DEBUG_PARSERS
+                debug(tech_info_name_desc);
                 debug(tech_info);
+                debug(prerequisites);
+                debug(unlocks);
                 debug(tech);
                 debug(category);
-                debug(start);
 #endif
 
                 qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
             }
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Tech::TechInfo (std::string&, std::string&, std::string&),
+            parse::skipper_type
+        > tech_info_name_desc_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -186,6 +204,18 @@ namespace {
             >,
             parse::skipper_type
         > tech_info_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Tech::TechInfo (std::set<std::string>&),
+            parse::skipper_type
+        > prerequisites_rule;
+
+        typedef boost::spirit::qi::rule<
+            parse::token_iterator,
+            Tech::TechInfo (std::vector<ItemSpec>&),
+            parse::skipper_type
+        > unlocks_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -216,7 +246,10 @@ namespace {
             parse::skipper_type
         > start_rule;
 
+        tech_info_name_desc_rule tech_info_name_desc;
         tech_info_rule tech_info;
+        prerequisites_rule prerequisites;
+        unlocks_rule unlocks;
         tech_rule tech;
         category_rule category;
         start_rule start;
