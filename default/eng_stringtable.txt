@@ -3988,7 +3988,11 @@ LRN_ARTIF_MINDS
 Artificial Minds
 
 LRN_ARTIF_MINDS_DESC
-While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.
+'''Increases target research on all planets by 5.
+
+By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility.  Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.
+
+While traditional computers have nearly unfathomable intelligence and computational abilities, they lack the essential qualities of self-awareness, consciousness or sentience.  With the development of true artificial minds, these qualities may be synthesized, modified and altered.  These investigations open new avenues of research into cognitive sciences and novel metaparadigms.'''
 
 LRN_XENOARCH
 Xenoarchaeology
@@ -4224,13 +4228,19 @@ PRO_ORBITAL_GEN
 Orbital Generation
 
 PRO_ORBITAL_GEN_DESC
-Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.
+'''Once troublesome gravity well problems are overcome, gas giants offer a unique opportunity to harvest usable energy quickly and efficiently.  Methods which take advantage of the high density atmosphere and belt-zone circulation allow a significant amount of energy to be easily accrued and transported for use in nearby planets.
+
+Low orbit of planetary bodies provides numerous benefits for power generation compared to planetary surfaces.  Direct exposure to nearby solar radiation without atmospheric attenuation, and the orders of magnitude larger structures that may be assembled in microgravity to collect it are significant advantages.  The resulting power may be used in orbit, or may be beamed to the planet to support surface industry.  As well, new mechanisms of energy conversion become available in orbit, including planetary magnetic field coupling, orbital momentum exchange, and frictional heating with planetary atmospheres, which are uniquely beneficial for specialized applications.'''
 
 PRO_SENTIENT_AUTOMATION
 Sentient Automation
 
 PRO_SENTIENT_AUTOMATION_DESC
-As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.
+'''Increases target industry on all planets by 5.
+
+By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility.  These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.
+
+As equipment becomes increasingly automated, it becomes capable of fully replicating and maintaining itself without outside support, other than its required raw materials and a requested, or suggested, final product to produce.  When controlled by an artificial mind, the entire system can learn, plan, react, and adapt autonomously, and can do so without the cumbersome inefficiencies traditionally required to house and employ workers.'''
 
 PRO_INTSTEL_COPRO
 Interstellar Co-Production
@@ -4252,7 +4262,9 @@ PRO_SINGULAR_GEN
 Singularity Generation
 
 PRO_SINGULAR_GEN_DESC
-As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.
+'''Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains.  By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
+
+As matter is drawn towards a singularity by the intense spacetime curvature, or gravitational field, the matter forms an accretion disk and is greatly compressed and heated.  High energy radiation emitted from the disk may be captured and harnessed for power generation.  The event horizon of the singularity itself also emits radiation due to the annihilation of virtual particle-antiparticle pairs that form in its vicinity.  This method of power generation is significantly more delicate and unstable than the accretion disk method, but can produce an even greater output.'''
 
 PRO_ENERGY_CONV
 Energy Conversion
@@ -4843,14 +4855,6 @@ LRN_DISTRIB_THOUGHT_DESC
 
 The average citizen literally wastes his mind away, one of the finest computing devices in the universe. By tapping into the idle brain cycles of a sufficiently large population through a network of simple cybernetic transceivers, the research centers of a world can gain access to cheap and plentiful raw computing power.'''
 
-LRN_AUTOLAB_I
-Basic Autolabs
-
-LRN_AUTOLAB_I_DESC
-'''Increases target research on all planets by 5.
-
-By automatically inputting all data discovered by active researchers into a single automatic data processing network, data can be analyzed and new data obtained by an entirely automated research facility.  Each planet can contain such structures regardless of the population's occupations, giving a bonus to research on all worlds.'''
-
 LRN_STELLAR_TOMOGRAPHY
 Stellar Tomography
 
@@ -4902,14 +4906,6 @@ Due to the order in which effects groups are processed, the Ancient Ruins specia
 MIND_CONTROL_SHORT_DESC
 Allows Mind Control
 
-PRO_AUTOFACTORY_I
-Basic Autofactories
-
-PRO_AUTOFACTORY_I_DESC
-'''Increases target industry on all planets by 5.
-
-By producing automated factories that operate without direct supervision, it is possible to increase industrial output in an entirely automated facility.  These factories can be built and maintained on any planet, regardless of focus, providing a bonus to industry on all worlds.'''
-
 PRO_HEAVY_MINING_I
 Heavy Mining Processors
 
@@ -4932,12 +4928,6 @@ PRO_ORBITAL_MINE_DESC
 
 On solid, habitable planets, traditional bulk surface mining is effective and relatively efficient.  For gas giants and terrestrial planets that are unable to support a sizable population however, the ability to extract usable minerals with space-based facilities is far more practical.  A primary challenge to this method is overcoming the planetary gravity well, but once this is accomplished, vast new sources of minerals become available.  As well, specialized resources on uninhabitable planets become accessible for the first time.'''
 
-PRO_GAS_GIANT_GEN
-Gas Giant Generation
-
-PRO_GAS_GIANT_GEN_DESC
-Once troublesome gravity well problems are overcome, gas giants offer a unique opportunity to harvest usable energy quickly and efficiently.  Methods which take advantage of the high density atmosphere and belt-zone circulation allow a significant amount of energy to be easily accrued and transported for use in nearby planets.
-
 PRO_SOL_ORB_GEN
 Solar Orbital Generation
 
@@ -4957,12 +4947,6 @@ Replication
 
 PRO_MATENG_REPLIC_DESC
 Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals.  By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.
-
-PRO_BLACK_HOLE_POW_GEN
-Black Hole Power Generator
-
-PRO_BLACK_HOLE_POW_GEN_DESC
-Harnessing energy from a black hole is significantly more dangerous than harnessing energy from a regular star, but also has potential for significantly greater gains.  By building a generator designed to tap into the energy of particle-antiparticle collisions on the event horizon of a singularity, tremendous benefits to industry may be obtained.
 
 PRO_NEUTRONIUM_FAC
 Neutronium Facilities
