@@ -29,7 +29,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -531,7 +531,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -543,7 +543,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -1046,7 +1046,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -1058,7 +1058,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -1561,7 +1561,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -1573,7 +1573,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -2070,7 +2070,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -2082,7 +2082,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -2585,7 +2585,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -2597,7 +2597,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -3100,7 +3100,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -3112,7 +3112,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -3576,7 +3576,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -4079,7 +4079,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -4091,7 +4091,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -4556,7 +4556,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -5059,7 +5059,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -5071,7 +5071,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -5538,7 +5538,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -6031,7 +6031,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -6043,7 +6043,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -6546,7 +6546,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -6558,7 +6558,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -7061,7 +7061,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -7073,7 +7073,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -7576,7 +7576,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -7588,7 +7588,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -8094,7 +8094,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -8106,7 +8106,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -8568,7 +8568,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -9074,7 +9074,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -9086,7 +9086,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -9593,7 +9593,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -9605,7 +9605,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -10112,7 +10112,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -10124,7 +10124,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -10642,7 +10642,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -10654,7 +10654,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -11157,7 +11157,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -11169,7 +11169,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -11672,7 +11672,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -11684,7 +11684,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -12187,7 +12187,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -12199,7 +12199,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -12702,7 +12702,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -12714,7 +12714,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -13217,7 +13217,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -13229,7 +13229,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -13732,7 +13732,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -13744,7 +13744,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -14247,7 +14247,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -14259,7 +14259,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"
@@ -14763,7 +14763,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_farming.png"
@@ -14775,7 +14775,7 @@ Species
                 Contains Building "BLD_REPLICATORS"
                 And [
                    Contains Building "BLD_TRANSFORMER"
-                   OwnerHasTech "PRO_MATENG_REPLIC"
+                   OwnerHasTech "PRO_ENERGY_CONV"
                 ]
             ]
             graphic = "icons/focus/replic_mining.png"

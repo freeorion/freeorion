@@ -4270,7 +4270,9 @@ PRO_ENERGY_CONV
 Energy Conversion
 
 PRO_ENERGY_CONV_DESC
-At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
+'''At appropriate scales and under specific conditions, matter-energy becomes a unified phenomenon.  Applied at larger scales, complete control over the structure of matter and the dynamics of energy becomes possible, as does the interchange between the two.  Transmutation and replication, at limited scales, become possible.   However, despite the enormous rest mass energy equivalence of matter, converting directly to energy for bulk power generation is generally less effective than comparatively simple fusion generation.
+
+Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals.  By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.'''
 
 PRO_ZERO_GEN
 Zero-Point Generation
@@ -4942,12 +4944,6 @@ PRO_INDUSTRY_CENTER_I_DESC
 
 Facility's large cost and build time, as well as significant future range growth potential, require strong planning to produce in location with ideal future utility.  Industrial Centers come with large up-front cost, in both production resources and time, but with great opportunity for possible expansion.  This makes them ideal for long-term strategies, but unattractive for empires planning on a quick victory.'''
 
-PRO_MATENG_REPLIC
-Replication
-
-PRO_MATENG_REPLIC_DESC
-Previous production techniques were essentially ways to avoid or remove particularly vexing problems with manipulation of matter.  None of these techniques fundamentally changed the basic method however, which was to assemble larger objects out of supplied materials, be they prefabricated subsections, or raw minerals.  By converting pure energy directly into the desired material object, the need for supplied materials such as minerals or food can become greatly reduced in times of necessity.
-
 PRO_NEUTRONIUM_FAC
 Neutronium Facilities
 
@@ -5299,18 +5295,6 @@ Distortion Modulator
 SHP_DIST_MOD_DESC
 All objects with mass cause a curvature in space-time due to gravitational effects.  Other forces such as the electromagnetic force have similar geometric effects.  By indiscriminately amplifying these effects in a localized area, space-time distortion caused by ships can easily be distinguished from background electromagnetic and gravitational radiation.
 
-SHP_ROBO_HULL
-Robotic Hull
-
-SHP_ROBO_HULL_DESC
-This hull is completely automated and functions under the principals of Military Robotic Control.  Like the standard hull, it has four external slots and one internal slot.  It is faster than the standard hull, and will have its structure restored between combats, but has a lower max structure.
-
-SHP_SPACE_FLUX_HULL
-Spatial Flux Hull
-
-SHP_SPACE_FLUX_HULL_DESC
-This tiny hull is capable of immense speed due to the power of the Spatial Flux Drive.  It has only two external slots however, and it's max structure is low.  Stealth is fairly high, but it receives a large stealth penalty for movement both in combat and on the galaxy map.
-
 SHP_SELFGRAV_HULL
 Self-Gravitating Hull
 
@@ -5353,35 +5337,11 @@ Plasma Torpedo
 SHP_PLASMA_TORP_DESC
 A fast, long-range missile with excellent stealth, powered by the Trans-Spatial Drive and armed with a devastatingly powerful plasma warhead.
 
-SHP_AST_HULL
-Asteroid Hull
-
-SHP_AST_HULL_DESC
-This hull is constructed from an average-sized asteroid.  A bit roomier than the standard hull, it has four external slots and two internal slots.  Speed and structure are relatively low, but it is fairly inexpensive to build.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_SMALL_AST_HULL
-Small Asteroid Hull
-
-SHP_SMALL_AST_HULL_DESC
-This hull is constructed from a very small asteroid.  It has only a single external slot and a single internal slot.  Speed is very good, but structure is quite low.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_HEAVY_AST_HULL
-Heavy Asteroid Hull
-
-SHP_HEAVY_AST_HULL_DESC
-This hull is constructed from a gigantic asteroid, and has six external slots and three internal slots.  Speed is very low, but structure is moderately high.  This hull gets a large bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
 SHP_CAMO_AST_HULL
 Camouflage Asteroid Hull
 
 SHP_CAMO_AST_HULL_DESC
 This hull is designed to look exactly like a real asteroid.  It has four internal slots, but no external slots.  Structure is average, but speed is fairly low.  This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
-
-SHP_CAMO_AST_PARTS
-Camouflage Asteroid Parts
-
-SHP_CAMO_AST_PARTS_DESC
-This camouflage asteroid hull is able to make use of camouflage asteroid parts on it's exterior, although it must be made much smaller to compensate and avoid losing it's stealth bonus.  It has a single external slot and a single internal slot.  Speed is average, but structure is quite low.  This hull gets a tremendous bonus to stealth on the galaxy map when it is in a system with an asteroid belt, and in combat when it is hiding in an asteroid belt.
 
 SHP_MINIAST_SWARM
 Mini-Asteroid Swarm
@@ -5478,12 +5438,6 @@ Biobombers
 
 SHP_BIOBOMBER_DESC
 Living bombers designed to target ships and planets.  Far more effective than regular bombers.  This part can only be built if there is a Competitive Maturation Chamber and a Bioneural Modification Unit somewhere in the empire or an ally's empire.
-
-SHP_COMP_ENRG_HULL
-Compressed Energy Hull
-
-SHP_COMP_ENRG_HULL_DESC
-This fast hull is comprised entirely of compressed energy and has a single external slot.  Structure is low, but stealth and speed are very high.  This hull requires a great deal of energy to construct and can only be built at a system with a star of type White, Blue or Black Hole.
 
 SHP_PLANET_STEALTH_MOD
 Planet Stealth Modifier
