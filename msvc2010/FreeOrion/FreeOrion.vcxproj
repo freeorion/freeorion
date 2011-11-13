@@ -309,6 +309,9 @@
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
+    <ClCompile Include="..\..\GG\src\adobe\memory.cpp" />
+    <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
+    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
     <ClCompile Include="..\..\log4cpp\src\Appender.cpp" />
     <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp" />
     <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp" />

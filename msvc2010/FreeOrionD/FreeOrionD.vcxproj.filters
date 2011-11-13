@@ -828,5 +828,14 @@
     <ClCompile Include="..\..\parse\EffectParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\GG\src\adobe\name.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\GG\src\adobe\memory.cpp">
+      <Filter>Source Files\parse</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
