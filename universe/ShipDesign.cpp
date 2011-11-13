@@ -355,6 +355,9 @@ PartType::PartType(
     m_location(location),
     m_effects(),
     m_graphic(graphic)
+{ Init(effects); }
+
+void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
 {
     switch (m_class) {
     case PC_SHORT_RANGE:

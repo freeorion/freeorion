@@ -257,19 +257,13 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 }
 
 ProductionWnd::~ProductionWnd()
-{
-    m_empire_connection.disconnect();
-}
+{ m_empire_connection.disconnect(); }
 
 bool ProductionWnd::InWindow(const GG::Pt& pt) const
-{
-    return m_production_info_panel->InWindow(pt) || m_queue_lb->InWindow(pt) || m_build_designator_wnd->InWindow(pt);
-}
+{ return m_production_info_panel->InWindow(pt) || m_queue_lb->InWindow(pt) || m_build_designator_wnd->InWindow(pt); }
 
 bool ProductionWnd::InClient(const GG::Pt& pt) const
-{
-    return m_production_info_panel->InClient(pt) || m_queue_lb->InClient(pt) || m_build_designator_wnd->InClient(pt);
-}
+{ return m_production_info_panel->InClient(pt) || m_queue_lb->InClient(pt) || m_build_designator_wnd->InClient(pt); }
 
 void ProductionWnd::Render()
 {}
@@ -310,35 +304,22 @@ void ProductionWnd::Update()
 }
 
 void ProductionWnd::ShowBuildingTypeInEncyclopedia(const std::string& building_type)
-{
-    m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(building_type);
-}
+{ m_build_designator_wnd->ShowBuildingTypeInEncyclopedia(building_type); }
 
 void ProductionWnd::ShowShipDesignInEncyclopedia(int design_id)
-{
-    m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id);
-}
+{ m_build_designator_wnd->ShowShipDesignInEncyclopedia(design_id); }
 
 void ProductionWnd::CenterOnBuild(int queue_idx)
-{
-    m_build_designator_wnd->CenterOnBuild(queue_idx);
-}
+{ m_build_designator_wnd->CenterOnBuild(queue_idx); }
 
 void ProductionWnd::SelectPlanet(int planet_id)
-{
-    //std::cout << "ProductionWnd::SelectPlanet(" << planet_id << ")" << std::endl;
-    m_build_designator_wnd->SelectPlanet(planet_id);
-}
+{ m_build_designator_wnd->SelectPlanet(planet_id); }
 
 void ProductionWnd::SelectDefaultPlanet()
-{
-    m_build_designator_wnd->SelectDefaultPlanet();
-}
+{ m_build_designator_wnd->SelectDefaultPlanet(); }
 
 void ProductionWnd::SelectSystem(int system_id)
-{
-    m_build_designator_wnd->SelectSystem(system_id);
-}
+{ m_build_designator_wnd->SelectSystem(system_id); }
 
 void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 {
@@ -349,9 +330,7 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position)
 }
 
 void ProductionWnd::Sanitize()
-{
-    m_build_designator_wnd->Clear();
-}
+{ m_build_designator_wnd->Clear(); }
 
 void ProductionWnd::ProductionQueueChangedSlot()
 {
@@ -410,9 +389,7 @@ void ProductionWnd::AddBuildToQueueSlot(BuildType build_type, int design_id, int
 }
 
 void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity)
-{
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true)));
-}
+{ HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(HumanClientApp::GetApp()->EmpireID(), queue_idx, quantity, true))); }
 
 void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 {
@@ -423,16 +400,10 @@ void ProductionWnd::QueueItemDeletedSlot(GG::ListBox::iterator it)
 }
 
 void ProductionWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt)
-{
-    //std::cout << "ProductionWnd::QueueItemClickedSlot" << std::endl;
-    m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it));
-}
+{ m_build_designator_wnd->CenterOnBuild(std::distance(m_queue_lb->begin(), it)); }
 
 void ProductionWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it)
-{
-    //std::cout << "ProductionWnd::QueueItemDoubleClickedSlot" << std::endl;
-    m_queue_lb->ErasedSignal(it);
-}
+{ m_queue_lb->ErasedSignal(it); }
 
 void ProductionWnd::EnableOrderIssuing(bool enable/* = true*/)
 {
