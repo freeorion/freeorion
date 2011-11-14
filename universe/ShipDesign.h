@@ -162,7 +162,7 @@ public:
     //@}
 
 private:
-    void                    Init();
+    void                    Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects);
 
     std::string         m_name;
     std::string         m_description;
