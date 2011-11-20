@@ -10,7 +10,7 @@
 
 class Universe;
 class UniverseObject;
-class UniverseObjectVisitor;
+struct UniverseObjectVisitor;
 
 extern const int ALL_EMPIRES;
 
