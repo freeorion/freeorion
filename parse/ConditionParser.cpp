@@ -2,11 +2,8 @@
 
 
 namespace parse {
-
     namespace detail {
-
         condition_parser_rule condition_parser;
-
     }
 
     condition_parser_rule& condition_parser()
@@ -26,5 +23,4 @@ namespace parse {
         }
         return detail::condition_parser;
     }
-
 }

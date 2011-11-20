@@ -19,54 +19,53 @@ namespace std {
 #endif
 
 namespace {
-
     struct effects_group_rules
     {
         effects_group_rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_a_type _a;
-                qi::_b_type _b;
-                qi::_c_type _c;
-                qi::_d_type _d;
-                qi::_val_type _val;
-                qi::lit_type lit;
-                using phoenix::construct;
-                using phoenix::new_;
-                using phoenix::push_back;
+            qi::_1_type _1;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_val_type _val;
+            qi::lit_type lit;
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
 
-                effects_group
-                    =    tok.EffectsGroup_
-                    >>   parse::label(Scope_name) > parse::detail::condition_parser [ _a = _1 ]
-                    >>  -(
-                              parse::label(Activation_name) >> parse::detail::condition_parser [ _b = _1 ]
-                         )
-                    >>  -(
-                              parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
-                         )
-                    >>   parse::label(Effects_name)
-                    >>   (
-                              '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
-                          |   parse::effect_parser() [ push_back(_d, _1) ]
-                         )
-                         [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _c) ]
-                    ;
+            effects_group
+                =    tok.EffectsGroup_
+                >>   parse::label(Scope_name) > parse::detail::condition_parser [ _a = _1 ]
+                >>  -(
+                            parse::label(Activation_name) >> parse::detail::condition_parser [ _b = _1 ]
+                        )
+                >>  -(
+                            parse::label(StackingGroup_name) >> tok.string [ _c = _1 ]
+                        )
+                >>   parse::label(Effects_name)
+                >>   (
+                            '[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']'
+                        |   parse::effect_parser() [ push_back(_d, _1) ]
+                        )
+                        [ _val = new_<Effect::EffectsGroup>(_a, _b, _d, _c) ]
+                ;
 
-                start
-                    =    '[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ] > ']'
-                    |    effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ]
-                    ;
+            start
+                =    '[' > +effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ] > ']'
+                |    effects_group [ push_back(_val, construct<boost::shared_ptr<const Effect::EffectsGroup> >(_1)) ]
+                ;
 
-                effects_group.name("EffectsGroup");
-                start.name("EffectsGroups");
+            effects_group.name("EffectsGroup");
+            start.name("EffectsGroups");
 
 #if DEBUG_PARSERS
-                debug(effects_group);
-                debug(start);
+            debug(effects_group);
+            debug(start);
 #endif
-            }
+        }
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -87,43 +86,43 @@ namespace {
     struct color_parser_rules
     {
         color_parser_rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_a_type _a;
-                qi::_b_type _b;
-                qi::_c_type _c;
-                qi::_pass_type _pass;
-                qi::_val_type _val;
-                qi::eps_type eps;
-                qi::uint_type uint_;
-                using phoenix::construct;
-                using phoenix::if_;
+            qi::_1_type _1;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_pass_type _pass;
+            qi::_val_type _val;
+            qi::eps_type eps;
+            qi::uint_type uint_;
+            using phoenix::construct;
+            using phoenix::if_;
 
-                channel
-                    =    tok.int_ [ _val = _1, _pass = 0 < _1 && _1 <= 255 ]
-                    ;
+            channel
+                =    tok.int_ [ _val = _1, _pass = 0 < _1 && _1 <= 255 ]
+                ;
 
-                start
-                    =    '(' > channel [ _a = _1 ]
-                    >    ',' > channel [ _b = _1 ]
-                    >    ',' > channel [ _c = _1 ]
-                    >>   (
-                              ',' > channel [ construct<GG::Clr>(_a, _b, _c, _1) ]
-                          |   eps [ construct<GG::Clr>(_a, _b, _c, 255) ]
-                         )
-                    >    ')'
-                    ;
+            start
+                =    '(' > channel [ _a = _1 ]
+                >    ',' > channel [ _b = _1 ]
+                >    ',' > channel [ _c = _1 ]
+                >>   (
+                            ',' > channel [ construct<GG::Clr>(_a, _b, _c, _1) ]
+                        |   eps [ construct<GG::Clr>(_a, _b, _c, 255) ]
+                        )
+                >    ')'
+                ;
 
-                channel.name("colour channel (0 to 255)");
-                start.name("Colour");
+            channel.name("colour channel (0 to 255)");
+            start.name("Colour");
 
 #if DEBUG_PARSERS
-                debug(channel);
-                debug(start);
+            debug(channel);
+            debug(start);
 #endif
-            }
+        }
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -138,34 +137,32 @@ namespace {
     struct item_spec_parser_rules
     {
         item_spec_parser_rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_a_type _a;
-                qi::_val_type _val;
-                using phoenix::construct;
+            qi::_1_type _1;
+            qi::_a_type _a;
+            qi::_val_type _val;
+            using phoenix::construct;
 
-                start
-                    =    tok.Item_
-                    >    parse::label(Type_name) > parse::enum_parser<UnlockableItemType>() [ _a = _1 ]
-                    >    parse::label(Name_name) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
-                    ;
+            start
+                =    tok.Item_
+                >    parse::label(Type_name) > parse::enum_parser<UnlockableItemType>() [ _a = _1 ]
+                >    parse::label(Name_name) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+                ;
 
-                start.name("ItemSpec");
+            start.name("ItemSpec");
 
 #if DEBUG_PARSERS
-                debug(start);
+            debug(start);
 #endif
-            }
+        }
 
         parse::detail::item_spec_parser_rule start;
     };
-
 }
 
 namespace parse {
-
     void init()
     {
         const lexer& tok = lexer::instance();
@@ -199,7 +196,6 @@ namespace parse {
     }
 
     namespace detail {
-
         effects_group_rule& effects_group_parser()
         {
             static effects_group_rules rules;
@@ -246,7 +242,5 @@ namespace parse {
             parse::detail::s_filename = filename.c_str();
             it = l.begin(first, last);
         }
-
     }
-
 }

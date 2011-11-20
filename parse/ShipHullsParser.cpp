@@ -22,7 +22,6 @@ namespace std {
 #endif
 
 namespace {
-
     struct insert_
     {
         template <typename Arg1, typename Arg2>
@@ -30,128 +29,128 @@ namespace {
         { typedef void type; };
 
         void operator()(std::map<std::string, HullType*>& hulls, HullType* hull) const
-            {
-                if (!hulls.insert(std::make_pair(hull->Name(), hull)).second) {
-                    std::string error_str = "ERROR: More than one ship hull in ship_hulls.txt has the name " + hull->Name();
-                    throw std::runtime_error(error_str.c_str());
-                }
+        {
+            if (!hulls.insert(std::make_pair(hull->Name(), hull)).second) {
+                std::string error_str = "ERROR: More than one ship hull in ship_hulls.txt has the name " + hull->Name();
+                throw std::runtime_error(error_str.c_str());
             }
+        }
     };
     const boost::phoenix::function<insert_> insert;
 
     struct rules
     {
         rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_2_type _2;
-                qi::_3_type _3;
-                qi::_4_type _4;
-                qi::_a_type _a;
-                qi::_b_type _b;
-                qi::_c_type _c;
-                qi::_d_type _d;
-                qi::_e_type _e;
-                qi::_f_type _f;
-                qi::_g_type _g;
-                qi::_h_type _h;
-                qi::_i_type _i;
-                qi::_r1_type _r1;
-                qi::_r2_type _r2;
-                qi::_val_type _val;
-                qi::eps_type eps;
-                qi::lit_type lit;
-                using phoenix::construct;
-                using phoenix::new_;
-                using phoenix::push_back;
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
+            qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
+            qi::_i_type _i;
+            qi::_r1_type _r1;
+            qi::_r2_type _r2;
+            qi::_val_type _val;
+            qi::eps_type eps;
+            qi::lit_type lit;
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
 
-                hull_prefix
-                    =    tok.Hull_
-                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
-                    ;
+            hull_prefix
+                =    tok.Hull_
+                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                ;
 
-                cost
-                    =    parse::label(BuildCost_name) > parse::double_ [ _r1 = _1 ]
-                    >    parse::label(BuildTime_name) > parse::int_ [ _r2 = _1 ]
-                    ;
+            cost
+                =    parse::label(BuildCost_name) > parse::double_ [ _r1 = _1 ]
+                >    parse::label(BuildTime_name) > parse::int_ [ _r2 = _1 ]
+                ;
 
-                hull_stats
-                    =    parse::label(Speed_name)         > parse::double_ [ _a = _1 ]
-                    >    parse::label(StarlaneSpeed_name) > parse::double_ [ _b = _1 ]
-                    >    parse::label(Fuel_name)          > parse::double_ [ _c = _1 ]
-                    >    parse::label(Stealth_name)       > parse::double_ [ _d = _1 ]
-                    >    parse::label(Structure_name)     > parse::double_ [ _val = construct<HullTypeStats>(_a, _b, _c, _d, _1) ]
-                    ;
+            hull_stats
+                =    parse::label(Speed_name)         > parse::double_ [ _a = _1 ]
+                >    parse::label(StarlaneSpeed_name) > parse::double_ [ _b = _1 ]
+                >    parse::label(Fuel_name)          > parse::double_ [ _c = _1 ]
+                >    parse::label(Stealth_name)       > parse::double_ [ _d = _1 ]
+                >    parse::label(Structure_name)     > parse::double_ [ _val = construct<HullTypeStats>(_c, _a, _b, _d, _1) ]
+                ;
 
-                producible
-                    =    tok.Unproducible_ [ _val = false ]
-                    |    tok.Producible_ [ _val = true ]
-                    |    eps [ _val = true ]
-                    ;
+            producible
+                =    tok.Unproducible_ [ _val = false ]
+                |    tok.Producible_ [ _val = true ]
+                |    eps [ _val = true ]
+                ;
 
-                slot
-                    =    tok.Slot_
-                    >    parse::label(Type_name) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
-                    >    parse::label(Position_name)
-                    >    '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
-                         [ _val = construct<HullType::Slot>(_a, _b, _c) ]
-                    ;
+            slot
+                =    tok.Slot_
+                >    parse::label(Type_name) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
+                >    parse::label(Position_name)
+                >    '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
+                        [ _val = construct<HullType::Slot>(_a, _b, _c) ]
+                ;
 
-                slots
-                    =    parse::label(Slots_name)
-                    >>   (
-                              '[' > +slot [ push_back(_r1, _1) ] > ']'
-                          |   slot [ push_back(_r1, _1) ]
-                         )
-                    ;
+            slots
+                =    parse::label(Slots_name)
+                >>   (
+                        '[' > +slot [ push_back(_r1, _1) ] > ']'
+                        |   slot [ push_back(_r1, _1) ]
+                     )
+                ;
 
-                location
-                    =    parse::label(Location_name) >> parse::detail::condition_parser [ _r1 = _1 ]
-                    |    eps [ _r1 = new_<Condition::All>() ]
-                    ;
+            location
+                =    parse::label(Location_name) >> parse::detail::condition_parser [ _r1 = _1 ]
+                |    eps [ _r1 = new_<Condition::All>() ]
+                ;
 
-                hull
-                    =    hull_prefix(_a, _b)
-                    >    hull_stats [ _c = _1 ]
-                    >    cost(_d, _e)
-                    >    producible [ _f = _1 ]
-                    >   -slots(_g)
-                    >    location(_h)
-                    >   -(
-                              parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _i = _1 ]
-                         )
-                    >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
-                    ;
+            hull
+                =    hull_prefix(_a, _b)
+                >    hull_stats [ _c = _1 ]
+                >    cost(_d, _e)
+                >    producible [ _f = _1 ]
+                >   -slots(_g)
+                >    location(_h)
+                >   -(
+                        parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _i = _1 ]
+                     )
+                >    parse::label(Graphic_name) > tok.string [ insert(_r1, new_<HullType>(_a, _b, _c, _d, _e, _f, _g, _h, _i, _1)) ]
+                ;
 
-                start
-                    =   +hull(_r1)
-                    ;
+            start
+                =   +hull(_r1)
+                ;
 
-                hull_prefix.name("Hull");
-                cost.name("build cost");
-                hull_stats.name("Hull stats");
-                producible.name("Producible or Unproducible");
-                slot.name("Slot");
-                slots.name("Slots");
-                location.name("Location");
-                hull.name("Hull");
+            hull_prefix.name("Hull");
+            cost.name("build cost");
+            hull_stats.name("Hull stats");
+            producible.name("Producible or Unproducible");
+            slot.name("Slot");
+            slots.name("Slots");
+            location.name("Location");
+            hull.name("Hull");
 
 #if DEBUG_PARSERS
-                debug(hull_prefix);
-                debug(cost);
-                debug(hull_stats);
-                debug(producible);
-                debug(slot);
-                debug(slots);
-                debug(location);
-                debug(hull);
+            debug(hull_prefix);
+            debug(cost);
+            debug(hull_stats);
+            debug(producible);
+            debug(slot);
+            debug(slots);
+            debug(location);
+            debug(hull);
 #endif
 
-                qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
-            }
+            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+        }
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,

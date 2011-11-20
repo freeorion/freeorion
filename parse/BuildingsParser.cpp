@@ -16,7 +16,6 @@ namespace std {
 #endif
 
 namespace {
-
     struct insert_
     {
         template <typename Arg1, typename Arg2>
@@ -24,87 +23,87 @@ namespace {
         { typedef void type; };
 
         void operator()(std::map<std::string, BuildingType*>& building_types, BuildingType* building_type) const
-            {
-                if (!building_types.insert(std::make_pair(building_type->Name(), building_type)).second) {
-                    std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
-                    throw std::runtime_error(error_str.c_str());
-                }
+        {
+            if (!building_types.insert(std::make_pair(building_type->Name(), building_type)).second) {
+                std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
+                throw std::runtime_error(error_str.c_str());
             }
+        }
     };
     const boost::phoenix::function<insert_> insert;
 
     struct rules
     {
         rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_2_type _2;
-                qi::_3_type _3;
-                qi::_4_type _4;
-                qi::_a_type _a;
-                qi::_b_type _b;
-                qi::_c_type _c;
-                qi::_d_type _d;
-                qi::_e_type _e;
-                qi::_f_type _f;
-                qi::_g_type _g;
-                qi::_h_type _h;
-                qi::_r1_type _r1;
-                qi::_r2_type _r2;
-                qi::_val_type _val;
-                qi::eps_type eps;
-                using phoenix::new_;
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
+            qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
+            qi::_r1_type _r1;
+            qi::_r2_type _r2;
+            qi::_val_type _val;
+            qi::eps_type eps;
+            using phoenix::new_;
 
-                building_prefix
-                    =    tok.BuildingType_
-                    >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
-                    >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
-                    ;
+            building_prefix
+                =    tok.BuildingType_
+                >    parse::label(Name_name)        > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_name) > tok.string [ _r2 = _1 ]
+                ;
 
-                cost
-                    =    parse::label(BuildCost_name)   > parse::double_ [ _r1 = _1 ]
-                    >    parse::label(BuildTime_name)   > parse::int_ [ _r2 = _1 ]
-                    ;
+            cost
+                =    parse::label(BuildCost_name)   > parse::double_ [ _r1 = _1 ]
+                >    parse::label(BuildTime_name)   > parse::int_ [ _r2 = _1 ]
+                ;
 
-                producible
-                    =    tok.Unproducible_ [ _val = false ]
-                    |    tok.Producible_ [ _val = true ]
-                    |    eps [ _val = true ]
-                    ;
+            producible
+                =    tok.Unproducible_ [ _val = false ]
+                |    tok.Producible_ [ _val = true ]
+                |    eps [ _val = true ]
+                ;
 
-                building_type
-                    =    building_prefix(_a, _b)
-                    >    cost(_c, _d)
-                    >    producible [ _e = _1 ]
-                    >    parse::label(Location_name) > parse::detail::condition_parser [ _f = _1 ]
-                    >    (
-                              parse::label(CaptureResult_name) >> parse::enum_parser<CaptureResult>() [ _g = _1 ]
-                          |   eps [ _g = CR_CAPTURE ]
-                         )
-                    >    parse::label(EffectsGroups_name) > -parse::detail::effects_group_parser() [ _h = _1 ]
-                    >    parse::label(Graphic_name)       >  tok.string [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _g, _f, _h, _1)) ]
-                    ;
+            building_type
+                =    building_prefix(_a, _b)
+                >    cost(_c, _d)
+                >    producible [ _e = _1 ]
+                >    parse::label(Location_name) > parse::detail::condition_parser [ _f = _1 ]
+                >    (
+                            parse::label(CaptureResult_name) >> parse::enum_parser<CaptureResult>() [ _g = _1 ]
+                        |   eps [ _g = CR_CAPTURE ]
+                        )
+                >    parse::label(EffectsGroups_name) > -parse::detail::effects_group_parser() [ _h = _1 ]
+                >    parse::label(Graphic_name)       >  tok.string [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _e, _g, _f, _h, _1)) ]
+                ;
 
-                start
-                    =   +building_type(_r1)
-                    ;
+            start
+                =   +building_type(_r1)
+                ;
 
-                building_prefix.name("BuildingType");
-                cost.name("cost");
-                producible.name("Producible or Unproducible");
-                building_type.name("BuildingType");
+            building_prefix.name("BuildingType");
+            cost.name("cost");
+            producible.name("Producible or Unproducible");
+            building_type.name("BuildingType");
 
 #if DEBUG_PARSERS
-                debug(building_prefix);
-                debug(cost);
-                debug(producible);
-                debug(building_type);
+            debug(building_prefix);
+            debug(cost);
+            debug(producible);
+            debug(building_type);
 #endif
 
-                qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
-            }
+            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+        }
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
