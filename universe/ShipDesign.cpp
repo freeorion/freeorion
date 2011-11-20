@@ -324,39 +324,6 @@ FighterStats::FighterStats(CombatFighterType type,
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
-PartType::PartType() :
-    m_name("invalid part type"),
-    m_description("indescribable"),
-    m_class(INVALID_SHIP_PART_CLASS),
-    m_stats(1.0),
-    m_production_cost(1.0),
-    m_production_time(1),
-    m_mountable_slot_types(),
-    m_location(0),
-    m_effects(),
-    m_graphic("")
-{}
-
-PartType::PartType(
-    const std::string& name, const std::string& description,
-    ShipPartClass part_class, const PartTypeStats& stats, double production_cost, int production_time,
-    bool producible, std::vector<ShipSlotType> mountable_slot_types,
-    const Condition::ConditionBase* location,
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-    const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_class(part_class),
-    m_stats(stats),
-    m_production_cost(production_cost),
-    m_production_time(production_time),
-    m_producible(producible),
-    m_mountable_slot_types(mountable_slot_types),
-    m_location(location),
-    m_effects(),
-    m_graphic(graphic)
-{ Init(effects); }
-
 void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects)
 {
     switch (m_class) {
@@ -468,28 +435,11 @@ void PartType::Init(const std::vector<boost::shared_ptr<const Effect::EffectsGro
 PartType::~PartType()
 { delete m_location; }
 
-const std::string& PartType::Name() const {
-    return m_name;
-}
-
-const std::string& PartType::Description() const
-{
-    return m_description;
-}
-
 std::string PartType::StatDescription() const
 {
     std::string retval;
     boost::apply_visitor(DescriptionVisitor(m_class, retval), m_stats);
     return retval;
-}
-
-ShipPartClass PartType::Class() const {
-    return m_class;
-}
-
-const PartTypeStats& PartType::Stats() const {
-    return m_stats;
 }
 
 bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
@@ -499,30 +449,6 @@ bool PartType::CanMountInSlotType(ShipSlotType slot_type) const {
         if (*it == slot_type)
             return true;
     return false;
-}
-
-double PartType::ProductionCost() const {
-    return m_production_cost;
-}
-
-int PartType::ProductionTime() const {
-    return m_production_time;
-}
-
-bool PartType::Producible() const {
-    return m_producible;
-}
-
-const std::string& PartType::Graphic() const {
-    return m_graphic;
-}
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& PartType::Effects() const {
-    return m_effects;
-}
-
-const Condition::ConditionBase* PartType::Location() const {
-    return m_location;
 }
 
 
@@ -550,30 +476,6 @@ HullTypeStats::HullTypeStats(double fuel, double battle_speed, double starlane_s
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
-
-// HullType::Slot
-HullType::Slot::Slot() :
-    type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5) {}
-HullType::Slot::Slot(ShipSlotType slot_type, double x_, double y_) :
-    type(slot_type), x(x_), y(y_) {}
-
-// HullType
-HullType::HullType() :
-    m_name("generic hull type"),
-    m_description("indescribable"),
-    m_battle_speed(1.0),
-    m_starlane_speed(1.0),
-    m_fuel(0.0),
-    m_stealth(0.0),
-    m_structure(0.0),
-    m_production_cost(1.0),
-    m_production_time(1),
-    m_slots(),
-    m_location(0),
-    m_effects(),
-    m_graphic("")
-{}
-
 HullType::HullType(const std::string& name, const std::string& description,
                    double fuel, double battle_speed, double starlane_speed,
                    double stealth, double structure,
@@ -650,14 +552,6 @@ HullType::HullType(const std::string& name, const std::string& description,
 HullType::~HullType()
 { delete m_location; }
 
-const std::string& HullType::Name() const {
-    return m_name;
-}
-
-const std::string& HullType::Description() const {
-    return m_description;
-}
-
 std::string HullType::StatDescription() const {
     std::string retval = 
         str(FlexibleFormat(UserString("HULL_DESC"))
@@ -668,80 +562,12 @@ std::string HullType::StatDescription() const {
     return retval;
 }
 
-double HullType::BattleSpeed() const {
-    return m_battle_speed;
-}
-
-double HullType::StarlaneSpeed() const {
-    return m_starlane_speed;
-}
-
-double HullType::Fuel() const {
-    return m_fuel;
-}
-
-double HullType::Stealth() const {
-    return m_stealth;
-}
-
-double HullType::Structure() const {
-    return m_structure;
-}
-
-double HullType::Shields() const {
-    return 0.0; // as of this writing, hulls don't have a shields stat
-}
-
-double HullType::ColonyCapacity() const {
-    return 0.0; // as of this writing, hulls don't have colonist capacity
-}
-
-double HullType::TroopCapacity() const {
-    return 0.0; // as of this writing, hulls don't have troop capacity
-}
-
-double HullType::Detection() const {
-    return 0.0; // as of this writing, hulls don't have detection ability
-}
-
-double HullType::ProductionCost() const {
-    return m_production_cost;
-}
-
-int HullType::ProductionTime() const {
-    return m_production_time;
-}
-
-bool HullType::Producible() const {
-    return m_producible;
-}
-
-unsigned int HullType::NumSlots() const {
-    return m_slots.size();
-}
-
 unsigned int HullType::NumSlots(ShipSlotType slot_type) const {
     unsigned int count = 0;
     for (std::vector<Slot>::const_iterator it = m_slots.begin(); it != m_slots.end(); ++it)
         if (it->type == slot_type)
             ++count;
     return count;
-}
-
-const std::vector<HullType::Slot>& HullType::Slots() const {
-    return m_slots;
-}
-
-const Condition::ConditionBase* HullType::Location() const {
-    return m_location;
-}
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& HullType::Effects() const {
-    return m_effects;
-}
-
-const std::string& HullType::Graphic() const {
-    return m_graphic;
 }
 
 
@@ -784,13 +610,11 @@ const HullTypeManager& HullTypeManager::GetHullTypeManager() {
     return manager;
 }
 
-HullTypeManager::iterator HullTypeManager::begin() const {
-    return m_hulls.begin();
-}
+HullTypeManager::iterator HullTypeManager::begin() const
+{ return m_hulls.begin(); }
 
-HullTypeManager::iterator HullTypeManager::end() const {
-    return m_hulls.end();
-}
+HullTypeManager::iterator HullTypeManager::end() const
+{ return m_hulls.end(); }
 
 
 ////////////////////////////////////////////////
@@ -886,10 +710,6 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description, 
     BuildStatCaches();
 }
 
-int ShipDesign::ID() const {
-    return m_id;
-}
-
 const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
@@ -904,26 +724,6 @@ const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */)
         return m_description;
 }
 
-int ShipDesign::DesignedByEmpire() const {
-    return m_designed_by_empire_id;
-}
-
-void ShipDesign::SetID(int id) {
-    m_id = id;
-}
-
-void ShipDesign::Rename(const std::string& name) {
-    m_name = name;
-}
-
-const std::string& ShipDesign::Graphic() const {
-    return m_graphic;
-}
-
-int ShipDesign::DesignedOnTurn() const {
-    return m_designed_on_turn;
-}
-
 double ShipDesign::ProductionCost() const {
     if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
         return m_production_cost;
@@ -931,9 +731,8 @@ double ShipDesign::ProductionCost() const {
         return 1.0;
 }
 
-double ShipDesign::PerTurnCost() const {
-    return ProductionCost() / std::max(1, ProductionTime());
-}
+double ShipDesign::PerTurnCost() const
+{ return ProductionCost() / std::max(1, ProductionTime()); }
 
 int ShipDesign::ProductionTime() const {
     if (!CHEAP_AND_FAST_SHIP_PRODUCTION)
@@ -942,78 +741,6 @@ int ShipDesign::ProductionTime() const {
         return 1;
 }
 
-bool ShipDesign::Producible() const {
-    return m_producible;
-}
-
-double ShipDesign::StarlaneSpeed() const
-{ return m_starlane_speed; }
-
-double ShipDesign::BattleSpeed() const
-{ return m_battle_speed; }
-
-double ShipDesign::Structure() const
-{ return m_structure; }
-
-double ShipDesign::Shields() const
-{ return m_shields; }
-
-double ShipDesign::Fuel() const
-{ return m_fuel; }
-
-double ShipDesign::Detection() const
-{ return m_detection; }
-
-double ShipDesign::ColonyCapacity() const
-{ return m_colony_capacity; }
-
-double ShipDesign::TroopCapacity() const
-{ return m_troop_capacity; }
-
-double ShipDesign::Stealth() const
-{ return m_stealth; }
-
-const std::multimap<double, const PartType*>& ShipDesign::SRWeapons() const
-{ return m_SR_weapons; }
-
-const std::multimap<double, const PartType*>& ShipDesign::LRWeapons() const
-{ return m_LR_weapons; }
-
-const std::multimap<double, const PartType*>& ShipDesign::PDWeapons() const
-{ return m_PD_weapons; }
-
-const std::vector<const PartType*>& ShipDesign::FWeapons() const
-{ return m_F_weapons; }
-
-double ShipDesign::MinSRRange() const
-{ return m_min_SR_range; }
-
-double ShipDesign::MaxSRRange() const
-{ return m_max_SR_range; }
-
-double ShipDesign::MinLRRange() const
-{ return m_min_LR_range; }
-
-double ShipDesign::MaxLRRange() const
-{ return m_max_LR_range; }
-
-double ShipDesign::MinPDRange() const
-{ return m_min_PD_range; }
-
-double ShipDesign::MaxPDRange() const
-{ return m_max_PD_range; }
-
-double ShipDesign::MinWeaponRange() const
-{ return m_min_weapon_range; }
-
-double ShipDesign::MaxWeaponRange() const
-{ return m_max_weapon_range; }
-
-double ShipDesign::MinNonPDWeaponRange() const
-{ return m_min_non_PD_weapon_range; }
-
-double ShipDesign::MaxNonPDWeaponRange() const
-{ return m_max_non_PD_weapon_range; }
 
 //// TEMPORARY
 double ShipDesign::Defense() const {
@@ -1050,34 +777,6 @@ double ShipDesign::Attack() const {
 }
 //// END TEMPORARY
 
-bool ShipDesign::CanColonize() const {
-    return (m_colony_capacity > 0.0);
-}
-
-bool ShipDesign::HasTroops() const {
-    return (m_troop_capacity > 0.0);
-}
-
-bool ShipDesign::IsArmed() const {
-    return m_is_armed;
-}
-
-bool ShipDesign::IsMonster() const {
-    return m_is_monster;
-}
-
-const std::string& ShipDesign::Hull() const {
-    return m_hull;
-}
-
-const HullType* ShipDesign::GetHull() const {
-    return GetHullTypeManager().GetHullType(m_hull);
-}
-
-const std::vector<std::string>& ShipDesign::Parts() const {
-    return m_parts;
-}
-
 std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
     std::vector<std::string> retval;
 
@@ -1094,10 +793,6 @@ std::vector<std::string> ShipDesign::Parts(ShipSlotType slot_type) const {
             retval.push_back(m_parts[i]);
 
     return retval;
-}
-
-const std::string& ShipDesign::Model() const {
-    return m_3D_model;
 }
 
 bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
@@ -1188,6 +883,9 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     return true;
 }
 
+void ShipDesign::SetID(int id)
+{ m_id = id; }
+
 bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::string>& parts) {
     // ensure hull type exists and has exactly enough slots for passed parts
     const HullType* hull_type = GetHullTypeManager().GetHullType(hull);
@@ -1226,10 +924,6 @@ bool ShipDesign::ValidDesign(const std::string& hull, const std::vector<std::str
     }
 
     return true;
-}
-
-bool ShipDesign::ValidDesign(const ShipDesign& design) {
-    return ValidDesign(design.m_hull, design.m_parts);
 }
 
 void ShipDesign::BuildStatCaches()
