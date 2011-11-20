@@ -18,7 +18,7 @@
 #include <set>
 
 
-class FighterStats;
+struct FighterStats;
 
 class PathingEngine
 {
