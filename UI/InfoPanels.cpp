@@ -1721,20 +1721,15 @@ void BuildingsPanel::Update()
         int location = elem.location;
         if (location != plt->ID()) continue;    // don't show buildings located elsewhere
 
-        const BuildingType* building_type = GetBuildingType(elem.item.name);
+        double total_cost;
+        int total_turns;
+        boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(type, elem.item.name);
 
-        double turn_cost;
-        int turns;
-        boost::tie(turn_cost, turns) = empire->ProductionCostAndTime(type, elem.item.name);
+        double progress = std::max(0.0, empire->ProductionStatus(queue_index));
+        double turns_completed = std::min<double>(total_turns, progress / total_cost);
 
-        double progress = empire->ProductionStatus(queue_index);
-        if (progress == -1.0) progress = 0.0;
-
-        double partial_turn = std::fmod(progress, turn_cost) / turn_cost;
-        int turns_completed = static_cast<int>(progress / turn_cost);
-
-        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), *building_type,
-                                                       turns, turns_completed);
+        BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
+                                                       total_cost, turns_completed);
         m_building_indicators.push_back(ind);
     }
 }
@@ -1860,8 +1855,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     Refresh();
 }
 
-BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turns,
-                                     double turns_completed) :
+BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type, int turns, double turns_completed) :
     Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_graphic(0),
     m_scrap_indicator(0),
@@ -1869,11 +1863,14 @@ BuildingIndicator::BuildingIndicator(GG::X w, const BuildingType &type, int turn
     m_building_id(UniverseObject::INVALID_OBJECT_ID),
     m_order_issuing_enabled(true)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(type.Name());
+    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingTexture(building_type);
+
+    const BuildingType* type = GetBuildingType(building_type);
+    const std::string& desc = type ? type->Description() : "";
 
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(texture, UserString(type.Name()),
-                                                                                UserString(type.Description()))));
+    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        new IconTextBrowseWnd(texture, UserString(building_type), UserString(desc))));
 
     m_graphic = new GG::StaticGraphic(GG::X0, GG::Y0, w, GG::Y(Value(w)), texture,
                                       GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
