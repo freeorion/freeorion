@@ -17,37 +17,6 @@ extern int g_indent;
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////
-FocusType::FocusType() :
-    m_name(),
-    m_description(),
-    m_location(),
-    m_graphic()
-{}
-
-FocusType::FocusType(const std::string& name, const std::string& description,
-                     const Condition::ConditionBase* location, const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_location(location),
-    m_graphic(graphic)
-{}
-
-const std::string& FocusType::Name() const {
-    return m_name;
-}
-
-const std::string& FocusType::Description() const {
-    return m_description;
-}
-
-const Condition::ConditionBase* FocusType::Location() const {
-    return m_location.get();
-}
-
-const std::string& FocusType::Graphic() const {
-    return m_graphic;
-}
-
 std::string FocusType::Dump() const {
     std::string retval = DumpIndent() + "FocusType\n";
     ++g_indent;
@@ -65,35 +34,6 @@ std::string FocusType::Dump() const {
 /////////////////////////////////////////////////
 // Species                                     //
 /////////////////////////////////////////////////
-Species::Species(const std::string& name, const std::string& description,
-                 const std::vector<FocusType>& foci,
-                 const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                 bool playable, bool can_colonize, bool can_produce_ships,
-                 const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_foci(foci),
-    m_planet_environments(planet_environments),
-    m_effects(effects),
-    m_playable(playable),
-    m_can_colonize(can_colonize),
-    m_can_produce_ships(can_produce_ships),
-    m_graphic(graphic)
-{}
-
-const std::string& Species::Name() const {
-    return m_name;
-}
-
-const std::string& Species::Description() const {
-    return m_description;
-}
-
-const std::set<int>& Species::Homeworlds() const {
-    return m_homeworlds;
-}
-
 namespace {
     std::string PlanetTypeToString(PlanetType type) {
         switch (type) {
@@ -179,19 +119,6 @@ std::string Species::Dump() const {
     retval += DumpIndent() + "graphic = \"" + m_graphic + "\"\n";
     --g_indent;
     return retval;
-}
-
-const std::vector<FocusType>& Species::Foci() const
-{
-    return m_foci;
-}
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Species::Effects() const {
-    return m_effects;
-}
-
-const std::map<PlanetType, PlanetEnvironment>& Species::PlanetEnvironments() const {
-    return m_planet_environments;
 }
 
 PlanetEnvironment Species::GetPlanetEnvironment(PlanetType planet_type) const {
@@ -280,9 +207,8 @@ bool Species::CanColonize() const
 bool Species::CanProduceShips() const
 { return m_can_produce_ships; }
 
-const std::string& Species::Graphic() const {
-    return m_graphic;
-}
+const std::string& Species::Graphic() const
+{ return m_graphic; }
 
 void Species::AddHomeworld(int homeworld_id) {
     if (!GetMainObjectMap().Object(homeworld_id))
@@ -350,33 +276,26 @@ SpeciesManager& SpeciesManager::GetSpeciesManager() {
     return manager;
 }
 
-SpeciesManager::iterator SpeciesManager::begin() const {
-    return m_species.begin();
-}
+SpeciesManager::iterator SpeciesManager::begin() const
+{ return m_species.begin(); }
 
-SpeciesManager::iterator SpeciesManager::end() const {
-    return m_species.end();
-}
+SpeciesManager::iterator SpeciesManager::end() const
+{ return m_species.end(); }
 
-SpeciesManager::playable_iterator SpeciesManager::playable_begin() const {
-    return playable_iterator(PlayableSpecies(), m_species.begin(), m_species.end());
-}
+SpeciesManager::playable_iterator SpeciesManager::playable_begin() const
+{ return playable_iterator(PlayableSpecies(), m_species.begin(), m_species.end()); }
 
-SpeciesManager::playable_iterator SpeciesManager::playable_end() const {
-    return playable_iterator(PlayableSpecies(), m_species.end(), m_species.end());
-}
+SpeciesManager::playable_iterator SpeciesManager::playable_end() const
+{ return playable_iterator(PlayableSpecies(), m_species.end(), m_species.end()); }
 
-bool SpeciesManager::empty() const {
-    return m_species.empty();
-}
+bool SpeciesManager::empty() const
+{ return m_species.empty(); }
 
-int SpeciesManager::NumSpecies() const {
-    return m_species.size();
-}
+int SpeciesManager::NumSpecies() const
+{ return m_species.size(); }
 
-int SpeciesManager::NumPlayableSpecies() const {
-    return std::distance(playable_begin(), playable_end());
-}
+int SpeciesManager::NumPlayableSpecies() const
+{ return std::distance(playable_begin(), playable_end()); }
 
 namespace {
     const std::string EMPTY_STRING;
@@ -436,10 +355,8 @@ std::map<std::string, std::set<int> > SpeciesManager::GetSpeciesHomeworldsMap(in
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
 ///////////////////////////////////////////////////////////
-SpeciesManager& GetSpeciesManager() {
-    return SpeciesManager::GetSpeciesManager();
-}
+SpeciesManager& GetSpeciesManager()
+{ return SpeciesManager::GetSpeciesManager(); }
 
-const Species* GetSpecies(const std::string& name) {
-    return GetSpeciesManager().GetSpecies(name);
-}
+const Species* GetSpecies(const std::string& name)
+{ return GetSpeciesManager().GetSpecies(name); }

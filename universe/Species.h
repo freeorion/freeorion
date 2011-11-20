@@ -4,6 +4,7 @@
 
 #include "Enums.h"
 #include "Universe.h"
+#include "Condition.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -14,9 +15,6 @@
 #include <map>
 #include <set>
 
-namespace Condition {
-    struct ConditionBase;
-}
 namespace Effect {
     class EffectsGroup;
 }
@@ -32,16 +30,27 @@ class FocusType
 public:
     /** \name Structors */ //@{
     /** default ctor */
-    FocusType();
+    FocusType() :
+        m_name(),
+        m_description(),
+        m_location(),
+        m_graphic()
+    {}
     /** basic ctor */
-    FocusType(const std::string& name, const std::string& description, const Condition::ConditionBase* location, const std::string& graphic);
+    FocusType(const std::string& name, const std::string& description,
+              const Condition::ConditionBase* location, const std::string& graphic) :
+        m_name(name),
+        m_description(description),
+        m_location(location),
+        m_graphic(graphic)
+    {}
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const;       ///< returns the name for this focus type
-    const std::string&              Description() const;///< returns a text description of this focus type
-    const Condition::ConditionBase* Location() const;   ///< returns the condition that determines whether an UniverseObject can use this FocusType
-    const std::string&              Graphic() const;    ///< returns the name of the grapic file for this focus type
+    const std::string&              Name() const        { return m_name; }          ///< returns the name for this focus type
+    const std::string&              Description() const { return m_description; }   ///< returns a text description of this focus type
+    const Condition::ConditionBase* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
+    const std::string&              Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
     std::string                     Dump() const;       ///< returns a data file format representation of this object
     //@}
 
@@ -67,21 +76,29 @@ public:
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
             bool playable, bool can_colonize, bool can_produce_ships,
-            const std::string& graphic);
+            const std::string& graphic) :
+        m_name(name),
+        m_description(description),
+        m_foci(foci),
+        m_planet_environments(planet_environments),
+        m_effects(effects),
+        m_playable(playable),
+        m_can_colonize(can_colonize),
+        m_can_produce_ships(can_produce_ships),
+        m_graphic(graphic)
+    {}
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const;       ///< returns the unique name for this type of species
-    const std::string&              Description() const;///< returns a text description of this type of species
-    const std::set<int>&            Homeworlds() const; ///< returns the ids of objects that are homeworlds for this species
-    std::string                     Dump() const;       ///< returns a data file format representation of this object
-    const std::vector<FocusType>&   Foci() const;       ///< returns the focus types this species can use, indexed by name
-    const std::map<PlanetType, PlanetEnvironment>&
-                                    PlanetEnvironments() const;                                 ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
+    const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of species
+    const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of species
+    const std::set<int>&            Homeworlds() const  { return m_homeworlds; }    ///< returns the ids of objects that are homeworlds for this species
+    std::string                     Dump() const;                                   ///< returns a data file format representation of this object
+    const std::vector<FocusType>&   Foci() const        { return m_foci; }          ///< returns the focus types this species can use, indexed by name
+    const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;         ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                    Effects() const;        ///< returns the EffectsGroups that encapsulate the effects that species of this type have
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const { return m_effects; }    ///< returns the EffectsGroups that encapsulate the effects that species of this type have
     bool                            Playable() const;       ///< returns whether this species is a suitable starting species for players
     bool                            CanColonize() const;    ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const;///< returns whether this species can produce ships
