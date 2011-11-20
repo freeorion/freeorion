@@ -566,11 +566,19 @@ class FleetPlan
 {
 public:
     FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-              bool lookup_name_userstring = false);
-    FleetPlan();
-    virtual ~FleetPlan();
+              bool lookup_name_userstring = false) :
+        m_name(fleet_name),
+        m_ship_designs(ship_design_names),
+        m_name_in_stringtable(lookup_name_userstring)
+    {}
+    FleetPlan() :
+        m_name(""),
+        m_ship_designs(),
+        m_name_in_stringtable(false)
+    {}
+    virtual ~FleetPlan() {};
     const std::string&              Name() const;
-    const std::vector<std::string>& ShipDesigns() const;
+    const std::vector<std::string>& ShipDesigns() const { return m_ship_designs; }
 protected:
     std::string                     m_name;
     std::vector<std::string>        m_ship_designs;
@@ -584,12 +592,22 @@ class MonsterFleetPlan : public FleetPlan
 public:
     MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
                      double spawn_rate = 1.0, int spawn_limit = 9999, const Condition::ConditionBase* location = 0,
-                     bool lookup_name_userstring = false);
-    MonsterFleetPlan();
+                     bool lookup_name_userstring = false) :
+        FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
+        m_spawn_rate(spawn_rate),
+        m_spawn_limit(spawn_limit),
+        m_location(location)
+    {}
+    MonsterFleetPlan() :
+        FleetPlan(),
+        m_spawn_rate(1.0),
+        m_spawn_limit(9999),
+        m_location(0)
+    {}
     virtual ~MonsterFleetPlan();
-    double                          SpawnRate() const;
-    int                             SpawnLimit() const;
-    const Condition::ConditionBase* Location() const;
+    double                          SpawnRate() const   { return m_spawn_rate; }
+    int                             SpawnLimit() const  { return m_spawn_limit; }
+    const Condition::ConditionBase* Location() const    { return m_location; }
 protected:
     double                          m_spawn_rate;
     int                             m_spawn_limit;

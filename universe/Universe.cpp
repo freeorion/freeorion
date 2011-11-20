@@ -2875,22 +2875,6 @@ namespace Delauney {
 ////////////////////////////////////////
 // FleetPlan                          //
 ////////////////////////////////////////
-FleetPlan::FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                     bool lookup_name_userstring) :
-    m_name(fleet_name),
-    m_ship_designs(ship_design_names),
-    m_name_in_stringtable(lookup_name_userstring)
-{}
-
-FleetPlan::FleetPlan() :
-    m_name(""),
-    m_ship_designs(),
-    m_name_in_stringtable(false)
-{}
-
-FleetPlan::~FleetPlan()
-{}
-
 const std::string& FleetPlan::Name() const
 {
     if (m_name_in_stringtable)
@@ -2899,40 +2883,12 @@ const std::string& FleetPlan::Name() const
         return m_name;
 }
 
-const std::vector<std::string>& FleetPlan::ShipDesigns() const
-{ return m_ship_designs; }
-
 
 ////////////////////////////////////////
-// MonsterFleetPlan                   //
+// FleetPlan                          //
 ////////////////////////////////////////
-MonsterFleetPlan::MonsterFleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
-                                   double spawn_rate, int spawn_limit, const Condition::ConditionBase* location,
-                                   bool lookup_name_userstring) :
-    FleetPlan(fleet_name, ship_design_names, lookup_name_userstring),
-    m_spawn_rate(spawn_rate),
-    m_spawn_limit(spawn_limit),
-    m_location(location)
-{}
-
-MonsterFleetPlan::MonsterFleetPlan() :
-    FleetPlan(),
-    m_spawn_rate(1.0),
-    m_spawn_limit(9999),
-    m_location(0)
-{}
-
 MonsterFleetPlan::~MonsterFleetPlan()
 { delete m_location; }
-
-double MonsterFleetPlan::SpawnRate() const
-{ return m_spawn_rate; }
-
-int MonsterFleetPlan::SpawnLimit() const
-{ return m_spawn_limit; }
-
-const Condition::ConditionBase* MonsterFleetPlan::Location() const
-{ return m_location; }
 
 
 //////////////////////
