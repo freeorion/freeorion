@@ -55,36 +55,65 @@ public:
          bool researchable,
          const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-         const std::string& graphic);
+         const std::string& graphic) :
+        m_name(name),
+        m_description(description),
+        m_short_description(short_description),
+        m_category(category),
+        m_type(type),
+        m_research_cost(research_cost),
+        m_research_turns(research_turns),
+        m_researchable(researchable),
+        m_effects(effects),
+        m_prerequisites(prerequisites),
+        m_unlocked_items(unlocked_items),
+        m_graphic(graphic)
+    {}
 
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
     Tech(const TechInfo& tech_info,
          const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-         const std::string& graphic);
+         const std::string& graphic) :
+        m_name(tech_info.name),
+        m_description(tech_info.description),
+        m_short_description(tech_info.short_description),
+        m_category(tech_info.category),
+        m_type(tech_info.type),
+        m_research_cost(tech_info.research_cost),
+        m_research_turns(tech_info.research_turns),
+        m_researchable(tech_info.researchable),
+        m_effects(effects),
+        m_prerequisites(prerequisites),
+        m_unlocked_items(unlocked_items),
+        m_graphic(graphic)
+    {}
     //@}
 
+
     /** \name Accessors */ //@{
-    const std::string&  Name() const;               //!< returns name of this tech
-    const std::string&  Description() const;        //!< Returns the text description of this tech
-    const std::string&  ShortDescription() const;   //!< Returns the single-line short text description of this tech
+    const std::string&  Name() const                { return m_name; }              //!< returns name of this tech
+    const std::string&  Description() const         { return m_description; }       //!< Returns the text description of this tech
+    const std::string&  ShortDescription() const    { return m_short_description; } //!< Returns the single-line short text description of this tech
     std::string         Dump() const;               //!< Returns a data file format representation of this object
-    TechType            Type() const;               //!< Returns the type (theory/application/refinement) of this tech
-    const std::string&  Category() const;           //!< retursn the name of the category to which this tech belongs
+    TechType            Type() const                { return m_type; }              //!< Returns the type (theory/application/refinement) of this tech
+    const std::string&  Category() const            { return m_category; }          //!< retursn the name of the category to which this tech belongs
     double              ResearchCost() const;       //!< returns the total research cost in RPs required to research this tech
     double              PerTurnCost() const;        //!< returns the maximum number of RPs per turn allowed to be spent on researching this tech
     int                 ResearchTime() const;       //!< returns the number of turns required to research this tech, if ResearchCost() RPs are spent per turn
-    bool                Researchable() const;       //!< returns whether this tech is researchable by players and appears on the tech tree
+    bool                Researchable() const        { return m_researchable; }      //!< returns whether this tech is researchable by players and appears on the tech tree
 
-    /** returns the effects that are applied to the discovering empire's capital when this tech is researched;
-        not all techs have effects, in which case this returns 0 */
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&  Effects() const;
+    /** returns the effects that are applied to the discovering empire's capital
+      * when this tech is researched; not all techs have effects, in which case
+      * this returns 0 */
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&  Effects() const
+    { return m_effects; }
 
-    const std::set<std::string>&    Prerequisites() const;  //!< returns the set of names of all techs required before this one can be researched
-    const std::string&              Graphic() const;        //!< returns the name of the grapic file for this tech
-    const std::vector<ItemSpec>&    UnlockedItems() const;  //!< returns the set all items that are unlocked by researching this tech
-    const std::set<std::string>&    UnlockedTechs() const;  //!< returns the set of names of all techs for which this one is a prerequisite
+    const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }   //!< returns the set of names of all techs required before this one can be researched
+    const std::string&              Graphic() const { return m_graphic; }               //!< returns the name of the grapic file for this tech
+    const std::vector<ItemSpec>&    UnlockedItems() const { return m_unlocked_items; }  //!< returns the set all items that are unlocked by researching this tech
+    const std::set<std::string>&    UnlockedTechs() const { return m_unlocked_techs; }  //!< returns the set of names of all techs for which this one is a prerequisite
     //@}
 
 private:
@@ -117,11 +146,15 @@ private:
   * (UIT_SHIP_PART, "Death Ray")). */
 struct ItemSpec
 {
-    ItemSpec();                 ///< default ctor
-    ItemSpec(UnlockableItemType type_, const std::string& name_); ///< basic ctor
-
+    ItemSpec() :
+        type(INVALID_UNLOCKABLE_ITEM_TYPE),
+        name("")
+    {}
+    ItemSpec(UnlockableItemType type_, const std::string& name_) :
+        type(type_),
+        name(name_)
+    {}
     std::string Dump() const;   ///< returns a data file format representation of this object
-
     UnlockableItemType type;    ///< the kind of item this is
     std::string        name;    ///< the exact item this is
 };
@@ -129,8 +162,17 @@ struct ItemSpec
 
 /** specifies a category of techs, with associated \a name, \a graphic (icon), and \a colour.*/
 struct TechCategory {
-    TechCategory();         ///< default ctor
-    TechCategory(const std::string& name_, const std::string& graphic_, const GG::Clr& colour_);    ///< basic ctor
+    TechCategory() :
+        name(""),
+        graphic(""),
+        colour(GG::Clr(255, 255, 255, 255))
+    {}
+    TechCategory(const std::string& name_, const std::string& graphic_,
+                 const GG::Clr& colour_):
+        name(name_),
+        graphic(graphic_),
+        colour(colour_)
+    {}
     std::string name;       ///< name of category
     std::string graphic;    ///< icon that represents catetegory
     GG::Clr     colour;     ///< colour associatied with category

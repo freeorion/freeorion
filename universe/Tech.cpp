@@ -109,52 +109,6 @@ namespace {
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
 ///////////////////////////////////////////////////////////
-Tech::Tech(const std::string& name, const std::string& description, const std::string& short_description,
-           const std::string& category, TechType type, double research_cost, int research_turns,
-           bool researchable, const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-           const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_short_description(short_description),
-    m_category(category),
-    m_type(type),
-    m_research_cost(research_cost),
-    m_research_turns(research_turns),
-    m_researchable(researchable),
-    m_effects(effects),
-    m_prerequisites(prerequisites),
-    m_unlocked_items(unlocked_items),
-    m_graphic(graphic)
-{}
-
-Tech::Tech(const TechInfo& tech_info,
-           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-           const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
-           const std::string& graphic) :
-    m_name(tech_info.name),
-    m_description(tech_info.description),
-    m_short_description(tech_info.short_description),
-    m_category(tech_info.category),
-    m_type(tech_info.type),
-    m_research_cost(tech_info.research_cost),
-    m_research_turns(tech_info.research_turns),
-    m_researchable(tech_info.researchable),
-    m_effects(effects),
-    m_prerequisites(prerequisites),
-    m_unlocked_items(unlocked_items),
-    m_graphic(graphic)
-{}
-
-const std::string& Tech::Name() const
-{ return m_name; }
-
-const std::string& Tech::Description() const
-{ return m_description; }
-
-const std::string& Tech::ShortDescription() const
-{ return m_short_description; }
-
 std::string Tech::Dump() const
 {
     using boost::lexical_cast;
@@ -224,12 +178,6 @@ std::string Tech::Dump() const
     return retval;
 }
 
-TechType Tech::Type() const
-{ return m_type; }
-
-const std::string& Tech::Category() const
-{ return m_category; }
-
 double Tech::ResearchCost() const
 {
     if (!CHEAP_AND_FAST_TECH_RESEARCH)
@@ -249,38 +197,11 @@ int Tech::ResearchTime() const
         return 1;
 }
 
-bool Tech::Researchable() const
-{ return m_researchable; }
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Tech::Effects() const
-{ return m_effects; }
-
-const std::set<std::string>& Tech::Prerequisites() const
-{ return m_prerequisites; }
-
-const std::string& Tech::Graphic() const
-{ return m_graphic; }
-
-const std::vector<ItemSpec>& Tech::UnlockedItems() const
-{ return m_unlocked_items; }
-
-const std::set<std::string>& Tech::UnlockedTechs() const
-{ return m_unlocked_techs; }
 
 
 ///////////////////////////////////////////////////////////
 // ItemSpec                                        //
 ///////////////////////////////////////////////////////////
-ItemSpec::ItemSpec() :
-    type(INVALID_UNLOCKABLE_ITEM_TYPE),
-    name("")
-{}
-
-ItemSpec::ItemSpec(UnlockableItemType type_, const std::string& name_) :
-    type(type_),
-    name(name_)
-{}
-
 std::string ItemSpec::Dump() const
 {
     std::string retval = "Item type = ";
@@ -295,21 +216,6 @@ std::string ItemSpec::Dump() const
     retval += " name = \"" + name + "\"\n";
     return retval;
 }
-
-///////////////////////////////////////////////////////////
-// TechCategory                               //
-///////////////////////////////////////////////////////////
-TechCategory::TechCategory() :
-    name(""),
-    graphic(""),
-    colour(GG::Clr(255, 255, 255, 255))
-{}
-
-TechCategory::TechCategory(const std::string& name_, const std::string& graphic_, const GG::Clr& colour_) :
-    name(name_),
-    graphic(graphic_),
-    colour(colour_)
-{}
 
 
 ///////////////////////////////////////////////////////////
