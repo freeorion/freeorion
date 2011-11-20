@@ -7,7 +7,7 @@
 #include <boost/spirit/include/qi.hpp>
 
 namespace Condition {
-    class ConditionBase;
+    struct ConditionBase;
 }
 
 namespace parse {
