@@ -161,41 +161,8 @@ void Building::SetOrderedScrapped(bool b)
 /////////////////////////////////////////////////
 // BuildingType                                //
 /////////////////////////////////////////////////
-BuildingType::BuildingType() :
-    m_name(""),
-    m_description(""),
-    m_production_cost(0.0),
-    m_production_time(0),
-    m_capture_result(CR_DESTROY),
-    m_location(0),
-    m_effects(0),
-    m_graphic("")
-{}
-
-BuildingType::BuildingType(const std::string& name, const std::string& description,
-                           double production_cost, int production_time, bool producible,
-                           CaptureResult capture_result, const Condition::ConditionBase* location,
-                           const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                           const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_production_cost(production_cost),
-    m_production_time(production_time),
-    m_producible(producible),
-    m_capture_result(capture_result),
-    m_location(location),
-    m_effects(effects),
-    m_graphic(graphic)
-{}
-
 BuildingType::~BuildingType()
 { delete m_location; }
-
-const std::string& BuildingType::Name() const
-{ return m_name; }
-
-const std::string& BuildingType::Description() const
-{ return m_description; }
 
 std::string BuildingType::Dump() const
 {

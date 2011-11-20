@@ -74,21 +74,41 @@ class BuildingType
 {
 public:
     /** \name Structors */ //@{
-    BuildingType(); ///< default ctor
+    /** default ctor */
+    BuildingType() :
+        m_name(""),
+        m_description(""),
+        m_production_cost(0.0),
+        m_production_time(0),
+        m_capture_result(CR_DESTROY),
+        m_location(0),
+        m_effects(0),
+        m_graphic("")
+    {};
 
     /** basic ctor */
     BuildingType(const std::string& name, const std::string& description,
                  double production_cost, int production_time, bool producible,
                  CaptureResult capture_result, const Condition::ConditionBase* location,
                  const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects,
-                 const std::string& graphic);
+                 const std::string& graphic) :
+        m_name(name),
+        m_description(description),
+        m_production_cost(production_cost),
+        m_production_time(production_time),
+        m_producible(producible),
+        m_capture_result(capture_result),
+        m_location(location),
+        m_effects(effects),
+        m_graphic(graphic)
+    {}
 
     ~BuildingType(); ///< dtor
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const;                   ///< returns the unique name for this type of building
-    const std::string&              Description() const;            ///< returns a text description of this type of building
+    const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of building
+    const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of building
     std::string                     Dump() const;                   ///< returns a data file format representation of this object
     double                          ProductionCost() const;         ///< returns the number of production points required to build this building
     double                          PerTurnCost() const;            ///< returns the maximum number of production points per turn that can be spend on this building
