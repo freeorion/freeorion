@@ -66,9 +66,6 @@ struct Condition::ConditionBase::MatchHelper
     const ScriptingContext& m_parent_context;
 };
 
-Condition::ConditionBase::ConditionBase()
-{}
-
 Condition::ConditionBase::~ConditionBase()
 {}
 
@@ -676,9 +673,6 @@ std::string Condition::SortedNumberOf::Dump() const
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-Condition::All::All()
-{}
-
 void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     if (search_domain == NON_MATCHES) {
@@ -706,17 +700,6 @@ std::string Condition::All::Dump() const
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
-Condition::EmpireAffiliation::EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id,
-                                                EmpireAffiliationType affiliation) :
-    m_empire_id(empire_id),
-    m_affiliation(affiliation)
-{}
-
-Condition::EmpireAffiliation::EmpireAffiliation(EmpireAffiliationType affiliation) :
-   m_empire_id(0),
-   m_affiliation(affiliation)
-{}
-
 Condition::EmpireAffiliation::~EmpireAffiliation()
 {
     if (m_empire_id)
@@ -843,9 +826,6 @@ bool Condition::EmpireAffiliation::Match(const ScriptingContext& local_context) 
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
-Condition::Source::Source()
-{}
-
 std::string Condition::Source::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_SOURCE";
@@ -869,9 +849,6 @@ bool Condition::Source::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
-Condition::RootCandidate::RootCandidate()
-{}
-
 std::string Condition::RootCandidate::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_ROOT_CANDIDATE";
@@ -893,9 +870,6 @@ bool Condition::RootCandidate::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // Target                                                //
 ///////////////////////////////////////////////////////////
-Condition::Target::Target()
-{}
-
 std::string Condition::Target::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_TARGET";
@@ -917,14 +891,6 @@ bool Condition::Target::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Homeworld                                             //
 ///////////////////////////////////////////////////////////
-Condition::Homeworld::Homeworld() :
-    m_names()
-{/* Logger().debugStream() << "Homeworld::Homeworld()";*/}
-
-Condition::Homeworld::Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
-    m_names(names)
-{/* Logger().debugStream() << "Homeworld::Homeworld(" << names.size() << ")"; */}
-
 Condition::Homeworld::~Homeworld()
 {
     for (unsigned int i = 0; i < m_names.size(); ++i)
@@ -1125,9 +1091,6 @@ bool Condition::Homeworld::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Capital                                               //
 ///////////////////////////////////////////////////////////
-Condition::Capital::Capital()
-{}
-
 std::string Condition::Capital::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_CAPITAL";
@@ -1160,9 +1123,6 @@ bool Condition::Capital::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
-Condition::Monster::Monster()
-{}
-
 std::string Condition::Monster::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_MONSTER";
@@ -1192,9 +1152,6 @@ bool Condition::Monster::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
-Condition::Armed::Armed()
-{}
-
 std::string Condition::Armed::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_ARMED";
@@ -1224,14 +1181,8 @@ bool Condition::Armed::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Type                                                  //
 ///////////////////////////////////////////////////////////
-Condition::Type::Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
-    m_type(type)
-{}
-
 Condition::Type::~Type()
-{
-    delete m_type;
-}
+{ delete m_type; }
 
 namespace {
     struct TypeSimpleMatch
@@ -1292,14 +1243,10 @@ void Condition::Type::Eval(const ScriptingContext& parent_context, ObjectSet& ma
 }
 
 bool Condition::Type::RootCandidateInvariant() const
-{
-    return m_type->RootCandidateInvariant();
-}
+{ return m_type->RootCandidateInvariant(); }
 
 bool Condition::Type::TargetInvariant() const
-{
-    return m_type->TargetInvariant();
-}
+{ return m_type->TargetInvariant(); }
 
 std::string Condition::Type::Description(bool negated/* = false*/) const
 {
@@ -1346,10 +1293,6 @@ bool Condition::Type::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
-Condition::Building::Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
-    m_names(names)
-{}
-
 Condition::Building::~Building()
 {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -2154,9 +2097,6 @@ bool Condition::ObjectID::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetType                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetType::PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
-    m_types(types){}
-
 Condition::PlanetType::~PlanetType()
 {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -2313,10 +2253,6 @@ bool Condition::PlanetType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetSize                                            //
 ///////////////////////////////////////////////////////////
-Condition::PlanetSize::PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
-    m_sizes(sizes)
-{}
-
 Condition::PlanetSize::~PlanetSize()
 {
     for (unsigned int i = 0; i < m_sizes.size(); ++i) {
@@ -2476,10 +2412,6 @@ bool Condition::PlanetSize::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // PlanetEnvironment                                     //
 ///////////////////////////////////////////////////////////
-Condition::PlanetEnvironment::PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
-    m_environments(environments)
-{}
-
 Condition::PlanetEnvironment::~PlanetEnvironment()
 {
     for (unsigned int i = 0; i < m_environments.size(); ++i) {
@@ -2640,14 +2572,6 @@ bool Condition::PlanetEnvironment::Match(const ScriptingContext& local_context) 
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
-Condition::Species::Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
-    m_names(names)
-{}
-
-Condition::Species::Species() :
-    m_names()
-{}
-
 Condition::Species::~Species()
 {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -2830,10 +2754,6 @@ bool Condition::Species::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
-Condition::FocusType::FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
-    m_names(names)
-{}
-
 Condition::FocusType::~FocusType()
 {
     for (unsigned int i = 0; i < m_names.size(); ++i) {
@@ -3700,12 +3620,6 @@ bool Condition::Chance::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // MeterValue                                            //
 ///////////////////////////////////////////////////////////
-Condition::MeterValue::MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
-    m_meter(meter),
-    m_low(low),
-    m_high(high)
-{}
-
 Condition::MeterValue::~MeterValue()
 {
     delete m_low;
@@ -4893,9 +4807,6 @@ bool Condition::ExploredByEmpire::Match(const ScriptingContext& local_context) c
 ///////////////////////////////////////////////////////////
 // Stationary                                      //
 ///////////////////////////////////////////////////////////
-Condition::Stationary::Stationary()
-{}
-
 std::string Condition::Stationary::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_STATIONARY";
@@ -5191,10 +5102,6 @@ std::string Condition::ResourceSupplyConnectedByEmpire::Dump() const
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
-Condition::And::And(const std::vector<const ConditionBase*>& operands) :
-    m_operands(operands)
-{ assert(!m_operands.empty()); }
-
 Condition::And::~And()
 {
     for (unsigned int i = 0; i < m_operands.size(); ++i)
@@ -5289,10 +5196,6 @@ std::string Condition::And::Dump() const
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
-Condition::Or::Or(const std::vector<const ConditionBase*>& operands) :
-    m_operands(operands)
-{ assert(!m_operands.empty()); }
-
 Condition::Or::~Or()
 {
     for (unsigned int i = 0; i < m_operands.size(); ++i)
@@ -5388,10 +5291,6 @@ std::string Condition::Or::Dump() const
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
-Condition::Not::Not(const ConditionBase* operand) :
-    m_operand(operand)
-{ assert(m_operand); }
-
 Condition::Not::~Not()
 { delete m_operand; }
 

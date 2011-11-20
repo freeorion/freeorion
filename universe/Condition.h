@@ -87,7 +87,7 @@ namespace Condition {
 /** The base class for all Conditions. */
 struct Condition::ConditionBase
 {
-    ConditionBase();
+    ConditionBase() {};
     virtual ~ConditionBase();
     virtual void        Eval(const ScriptingContext& parent_context,
                              Condition::ObjectSet& matches,
@@ -221,7 +221,7 @@ private:
 /** Matches all objects. */
 struct Condition::All : public Condition::ConditionBase
 {
-    All();
+    All() {}
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
@@ -241,8 +241,14 @@ struct Condition::All : public Condition::ConditionBase
   * \a affilitation with Empire \a empire_id. */
 struct Condition::EmpireAffiliation : public Condition::ConditionBase
 {
-    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation);
-    EmpireAffiliation(EmpireAffiliationType affiliation);
+    EmpireAffiliation(const ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
+        m_empire_id(empire_id),
+        m_affiliation(affiliation)
+    {}
+    EmpireAffiliation(EmpireAffiliationType affiliation) :
+       m_empire_id(0),
+       m_affiliation(affiliation)
+    {}
     virtual ~EmpireAffiliation();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
@@ -267,7 +273,7 @@ private:
 /** Matches the source object only. */
 struct Condition::Source : public Condition::ConditionBase
 {
-    Source();
+    Source() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -287,7 +293,7 @@ private:
   * subcondition in order to evaluate the outer condition. */
 struct Condition::RootCandidate : public Condition::ConditionBase
 {
-    RootCandidate();
+    RootCandidate() {};
     virtual bool        RootCandidateInvariant() const { return false; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -307,7 +313,7 @@ private:
 /** Matches the target of an effect being executed. */
 struct Condition::Target : public Condition::ConditionBase
 {
-    Target();
+    Target() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return false; }
     virtual std::string Description(bool negated = false) const;
@@ -326,8 +332,12 @@ private:
   * any species in the current game Universe. */
 struct Condition::Homeworld : public Condition::ConditionBase
 {
-    Homeworld();
-    Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    Homeworld() :
+        m_names()
+    {}
+    Homeworld(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        m_names(names)
+    {}
     virtual ~Homeworld();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -351,7 +361,7 @@ private:
 /** Matches planets that are an empire's capital. */
 struct Condition::Capital : public Condition::ConditionBase
 {
-    Capital();
+    Capital() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -368,7 +378,7 @@ private:
 /** Matches space monsters. */
 struct Condition::Monster : public Condition::ConditionBase
 {
-    Monster();
+    Monster() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -385,7 +395,7 @@ private:
 /** Matches armed ships and monsters. */
 struct Condition::Armed : public Condition::ConditionBase
 {
-    Armed();
+    Armed() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -402,7 +412,9 @@ private:
 /** Matches all objects that are of UniverseObjectType \a type. */
 struct Condition::Type : public Condition::ConditionBase
 {
-    Type(const ValueRef::ValueRefBase<UniverseObjectType>* type);
+    Type(const ValueRef::ValueRefBase<UniverseObjectType>* type) :
+        m_type(type)
+    {}
     virtual ~Type();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -427,7 +439,9 @@ private:
   * in \a names. */
 struct Condition::Building : public Condition::ConditionBase
 {
-    Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    Building(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        m_names(names)
+    {}
     virtual ~Building();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -606,7 +620,9 @@ private:
   * matched. */
 struct Condition::PlanetType : public Condition::ConditionBase
 {
-    PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types);
+    PlanetType(const std::vector<const ValueRef::ValueRefBase< ::PlanetType>*>& types) :
+        m_types(types)
+    {}
     virtual ~PlanetType();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -632,7 +648,9 @@ private:
   * matched. */
 struct Condition::PlanetSize : public Condition::ConditionBase
 {
-    PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes);
+    PlanetSize(const std::vector<const ValueRef::ValueRefBase< ::PlanetSize>*>& sizes) :
+        m_sizes(sizes)
+    {}
     virtual ~PlanetSize();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -657,7 +675,9 @@ private:
     Building objects which are on matching planets are also matched. */
 struct Condition::PlanetEnvironment : public Condition::ConditionBase
 {
-    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments);
+    PlanetEnvironment(const std::vector<const ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments) :
+        m_environments(environments)
+    {}
     virtual ~PlanetEnvironment();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -683,8 +703,12 @@ private:
   * matched. */
 struct Condition::Species : public Condition::ConditionBase
 {
-    Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
-    Species();
+    Species(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        m_names(names)
+    {}
+    Species() :
+        m_names()
+    {}
     virtual ~Species();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -708,7 +732,9 @@ private:
 /** Matches all ProdCenter objects that have one of the FocusTypes in \a foci. */
 struct Condition::FocusType : public Condition::ConditionBase
 {
-    FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names);
+    FocusType(const std::vector<const ValueRef::ValueRefBase<std::string>*>& names) :
+        m_names(names)
+    {}
     virtual ~FocusType();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -923,7 +949,11 @@ private:
   * value is >= \a low and < \a high. */
 struct Condition::MeterValue : public Condition::ConditionBase
 {
-    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
+    MeterValue(MeterType meter, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
+        m_meter(meter),
+        m_low(low),
+        m_high(high)
+    {}
     virtual ~MeterValue();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1155,7 +1185,7 @@ private:
   * turn, or were located somewhere else last turn...? */
 struct Condition::Stationary : public Condition::ConditionBase
 {
-    Stationary();
+    Stationary() {};
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -1224,7 +1254,9 @@ private:
 /** Matches all objects that match every Condition in \a operands. */
 struct Condition::And : public Condition::ConditionBase
 {
-    And(const std::vector<const ConditionBase*>& operands);
+    And(const std::vector<const ConditionBase*>& operands) :
+        m_operands(operands)
+    {}
     virtual ~And();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1246,7 +1278,9 @@ private:
 /** Matches all objects that match at least one Condition in \a operands. */
 struct Condition::Or : public Condition::ConditionBase
 {
-    Or(const std::vector<const ConditionBase*>& operands);
+    Or(const std::vector<const ConditionBase*>& operands) :
+        m_operands(operands)
+    {}
     virtual ~Or();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1268,7 +1302,9 @@ private:
 /** Matches all objects that do not match the Condition \a operand. */
 struct Condition::Not : public Condition::ConditionBase
 {
-    Not(const ConditionBase* operand);
+    Not(const ConditionBase* operand) :
+        m_operand(operand)
+    {}
     virtual ~Not();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1321,9 +1357,7 @@ void Condition::SortedNumberOf::serialize(Archive& ar, const unsigned int versio
 
 template <class Archive>
 void Condition::All::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int version)
@@ -1335,21 +1369,15 @@ void Condition::EmpireAffiliation::serialize(Archive& ar, const unsigned int ver
 
 template <class Archive>
 void Condition::Source::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::RootCandidate::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::Target::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
@@ -1360,21 +1388,15 @@ void Condition::Homeworld::serialize(Archive& ar, const unsigned int version)
 
 template <class Archive>
 void Condition::Capital::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::Monster::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::Armed::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase);
-}
+{ ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase); }
 
 template <class Archive>
 void Condition::Type::serialize(Archive& ar, const unsigned int version)
