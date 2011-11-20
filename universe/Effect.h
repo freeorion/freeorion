@@ -74,7 +74,13 @@ public:
     };
 
     EffectsGroup(const Condition::ConditionBase* scope, const Condition::ConditionBase* activation,
-                 const std::vector<EffectBase*>& effects, const std::string& stacking_group = "");
+                 const std::vector<EffectBase*>& effects, const std::string& stacking_group = "") :
+        m_scope(scope),
+        m_activation(activation),
+        m_stacking_group(stacking_group),
+        m_explicit_description(""), // TODO: Get this from stringtable when available
+        m_effects(effects)
+    {}
     virtual ~EffectsGroup();
 
     void    GetTargetSet(int source_id, TargetSet& targets) const;
