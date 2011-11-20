@@ -30,21 +30,29 @@ public:
             const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             const Condition::ConditionBase* location = 0,
-            const std::string& graphic = "");
+            const std::string& graphic = "") :
+        m_name(name),
+        m_description(description),
+        m_effects(effects),
+        m_spawn_rate(spawn_rate),
+        m_spawn_limit(spawn_limit),
+        m_location(location),
+        m_graphic(graphic)
+    {}
 
     ~Special();
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const;       ///< returns the unique name for this type of special
-    const std::string&              Description() const;///< returns a text description of this type of special
+    const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of special
+    const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of special
     std::string                     Dump() const;       ///< returns a data file format representation of this object
-    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                    Effects() const;    ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
-    double                          SpawnRate() const;
-    int                             SpawnLimit() const;
-    const Condition::ConditionBase* Location() const;   ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
-    const std::string&              Graphic() const;    ///< returns the name of the grapic file for this special
+    const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Effects() const
+    { return m_effects; }                               ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
+    double                          SpawnRate() const   { return m_spawn_rate; }
+    int                             SpawnLimit() const  { return m_spawn_limit; }
+    const Condition::ConditionBase* Location() const    { return m_location; }      ///< returns the condition that determines whether an UniverseObject can have this special applied during universe creation
+    const std::string&              Graphic() const     { return m_graphic; };      ///< returns the name of the grapic file for this special
     //@}
 
 private:

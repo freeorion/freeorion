@@ -47,28 +47,8 @@ namespace {
 /////////////////////////////////////////////////
 // Special                                     //
 /////////////////////////////////////////////////
-Special::Special(const std::string& name, const std::string& description,
-                 const std::vector<boost::shared_ptr<const Effect::EffectsGroup> > effects,
-                 double spawn_rate, int spawn_limit,
-                 const Condition::ConditionBase* location,
-                 const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_effects(effects),
-    m_spawn_rate(spawn_rate),
-    m_spawn_limit(spawn_limit),
-    m_location(location),
-    m_graphic(graphic)
-{}
-
 Special::~Special()
 { delete m_location; }
-
-const std::string& Special::Name() const
-{ return m_name; }
-
-const std::string& Special::Description() const
-{ return m_description; }
 
 std::string Special::Dump() const
 {
@@ -100,21 +80,6 @@ std::string Special::Dump() const
     --g_indent;
     return retval;
 }
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& Special::Effects() const
-{ return m_effects; }
-
-double Special::SpawnRate() const
-{ return m_spawn_rate; }
-
-int Special::SpawnLimit() const
-{ return m_spawn_limit; }
-
-const Condition::ConditionBase* Special::Location() const
-{ return m_location; }
-
-const std::string& Special::Graphic() const
-{ return m_graphic; }
 
 const Special* GetSpecial(const std::string& name)
 { return GetSpecialManager().GetSpecial(name); }
