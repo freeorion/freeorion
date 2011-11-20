@@ -887,18 +887,6 @@ void ProductionQueue::clear()
 ////////////////
 // Alignments //
 ////////////////
-Alignment::Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
-    m_name(name),
-    m_description(description),
-    m_graphic(graphic)
-{}
-
-Alignment::Alignment() :
-    m_name(),
-    m_description(),
-    m_graphic()
-{}
-
 const std::string& Alignment::Name() const
 { return m_name; }
 
