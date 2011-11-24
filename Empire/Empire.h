@@ -21,12 +21,12 @@ class Meter;
 class Alignment
 {
 public:
-    Alignment::Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
+    Alignment(const std::string& name, const std::string& description, const std::string& graphic) :
         m_name(name),
         m_description(description),
         m_graphic(graphic)
     {}
-    Alignment::Alignment() :
+    Alignment() :
         m_name(),
         m_description(),
         m_graphic()
