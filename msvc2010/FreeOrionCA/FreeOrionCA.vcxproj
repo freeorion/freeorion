@@ -24,7 +24,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -62,8 +62,8 @@
       <WarningLevel>Level3</WarningLevel>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <Optimization>Full</Optimization>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
-      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_47/;../../GG/;../../../include/Python27/;../../../include/zlib/</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>
@@ -71,17 +71,24 @@
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
       <DisableSpecificWarnings>4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311;4091</DisableSpecificWarnings>
+      <CompileAsManaged>false</CompileAsManaged>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <DebugInformationFormat>OldStyle</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../FreeOrionCA.exe</OutputFile>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>python27.lib;boost_python-vc100-mt-1_47.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Parsers.lib;log4cpp.lib;python27.lib;boost_python-vc100-mt-1_47.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -116,26 +123,10 @@
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
     <ClInclude Include="..\..\GG\GG\Clr.h" />
     <ClInclude Include="..\..\GG\GG\Exception.h" />
-    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h" />
-    <ClInclude Include="..\..\log4cpp\log4cpp\config.h" />
-    <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h" />
     <ClInclude Include="..\..\network\ClientNetworking.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\parse\ConditionParser.h" />
-    <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
-    <ClInclude Include="..\..\parse\Double.h" />
-    <ClInclude Include="..\..\parse\EffectParser.h" />
-    <ClInclude Include="..\..\parse\EnumParser.h" />
-    <ClInclude Include="..\..\parse\Int.h" />
-    <ClInclude Include="..\..\parse\Label.h" />
-    <ClInclude Include="..\..\parse\Lexer.h" />
-    <ClInclude Include="..\..\parse\Parse.h" />
-    <ClInclude Include="..\..\parse\ParseImpl.h" />
-    <ClInclude Include="..\..\parse\ReportParseError.h" />
-    <ClInclude Include="..\..\parse\ValueRefParser.h" />
-    <ClInclude Include="..\..\parse\ValueRefParserImpl.h" />
     <ClInclude Include="..\..\python\PythonSetWrapper.h" />
     <ClInclude Include="..\..\python\PythonWrappers.h" />
     <ClInclude Include="..\..\UI\StringTable.h" />
@@ -206,62 +197,10 @@
     <ClCompile Include="..\..\Empire\Empire.cpp" />
     <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\memory.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp" />
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\Appender.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\Category.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\CategoryStream.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\Configurator.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\Localtime.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\LoggingEvent.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\NDC.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\PatternLayout.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\Priority.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp" />
-    <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
-    <ClCompile Include="..\..\parse\AlignmentsParser.cpp" />
-    <ClCompile Include="..\..\parse\BuildingsParser.cpp" />
-    <ClCompile Include="..\..\parse\ConditionParser.cpp" />
-    <ClCompile Include="..\..\parse\ConditionParser1.cpp" />
-    <ClCompile Include="..\..\parse\ConditionParser2.cpp" />
-    <ClCompile Include="..\..\parse\ConditionParser3.cpp" />
-    <ClCompile Include="..\..\parse\Double.cpp" />
-    <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\EffectParser.cpp" />
-    <ClCompile Include="..\..\parse\EnumParser.cpp" />
-    <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
-    <ClCompile Include="..\..\parse\Int.cpp" />
-    <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\ItemsParser.cpp" />
-    <ClCompile Include="..\..\parse\Label.cpp" />
-    <ClCompile Include="..\..\parse\Lexer.cpp" />
-    <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp" />
-    <ClCompile Include="..\..\parse\Parse.cpp" />
-    <ClCompile Include="..\..\parse\PlanetEnvironmentValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\ReportParseError.cpp" />
-    <ClCompile Include="..\..\parse\ShipDesignsParser.cpp" />
-    <ClCompile Include="..\..\parse\ShipHullsParser.cpp" />
-    <ClCompile Include="..\..\parse\ShipPartsParser.cpp" />
-    <ClCompile Include="..\..\parse\SpecialsParser.cpp" />
-    <ClCompile Include="..\..\parse\SpeciesParser.cpp" />
-    <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
-    <ClCompile Include="..\..\parse\TechsParser.cpp" />
-    <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
     <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
@@ -310,49 +249,6 @@
     <ClCompile Include="..\..\util\XMLDoc.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Appender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Category.hh" />
-    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Configurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Export.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Filter.hh" />
-    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh" />
-    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Layout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\NDC.hh" />
-    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Portability.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Priority.hh" />
-    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh" />
-    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh" />
-    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh" />
-    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh" />
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh" />
-    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh" />
     <None Include="..\..\util\Serialize.ipp" />
     <None Include="..\..\util\SerializeUniverseExports.ipp" />
   </ItemGroup>

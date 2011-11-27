@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\log4cpp">
+      <UniqueIdentifier>{60f10951-0e33-4d84-98e8-ee2eaae3c326}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log4cpp\threading">
+      <UniqueIdentifier>{17a19df3-a8fc-4247-9953-52107ce26780}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log4cpp">
+      <UniqueIdentifier>{0e397813-a511-4f21-97c1-f9bf6f3cab03}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Appender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Category.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Configurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Export.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Filter.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Layout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NDC.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Portability.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Priority.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\src\Localtime.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\src\StringUtil.hh">
+      <Filter>Header Files\log4cpp</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh">
+      <Filter>Header Files\log4cpp\threading</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\config.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h">
+      <Filter>Header Files\log4cpp</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\log4cpp\src\Appender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Category.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\CategoryStream.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Configurator.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Localtime.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\LoggingEvent.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\NDC.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\PatternLayout.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Priority.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -21,9 +21,6 @@
     <Filter Include="Header Files\Empire">
       <UniqueIdentifier>{5803563c-6e51-45f6-a92c-6c92b4c8d7dd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\log4cpp">
-      <UniqueIdentifier>{48d651e4-6cba-473a-a70c-170a4216e515}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\network">
       <UniqueIdentifier>{30e38b6e-c2c3-438a-b48e-01114c5df836}</UniqueIdentifier>
     </Filter>
@@ -45,9 +42,6 @@
     <Filter Include="Header Files\combat\OpenSteer">
       <UniqueIdentifier>{063af849-79d6-4b90-8bf7-4628033fe6c0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\log4cpp\threading">
-      <UniqueIdentifier>{d84565aa-f922-43d4-bf87-6a75725d8768}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\AI">
       <UniqueIdentifier>{c3ab409d-1113-4558-985e-22ced3ae2a29}</UniqueIdentifier>
     </Filter>
@@ -66,9 +60,6 @@
     <Filter Include="Source Files\Empire">
       <UniqueIdentifier>{9c600fea-32b7-4611-a3ea-c363bb8e61ba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\log4cpp">
-      <UniqueIdentifier>{6cbcc55a-8399-4ec6-b26e-7b857a2408ab}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\network">
       <UniqueIdentifier>{0de6ad2e-dcac-40fb-93fb-19267615fa87}</UniqueIdentifier>
     </Filter>
@@ -86,12 +77,6 @@
     </Filter>
     <Filter Include="Header Files\GG">
       <UniqueIdentifier>{7e48aed2-0a7f-45a6-8c82-c1d7a143dfa7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\parse">
-      <UniqueIdentifier>{24f9bbd5-8ffb-4493-9a36-f41a55d2651d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\parse">
-      <UniqueIdentifier>{b5184729-d73c-4d70-b041-723a491b6a02}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,15 +166,6 @@
     </ClInclude>
     <ClInclude Include="..\..\Empire\ResourcePool.h">
       <Filter>Header Files\Empire</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log4cpp\log4cpp\convenience.h">
-      <Filter>Header Files\log4cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h">
-      <Filter>Header Files\log4cpp</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\log4cpp\log4cpp\config.h">
-      <Filter>Header Files\log4cpp</Filter>
     </ClInclude>
     <ClInclude Include="..\..\network\ClientNetworking.h">
       <Filter>Header Files\network</Filter>
@@ -350,45 +326,6 @@
     <ClInclude Include="..\..\universe\Names.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\Double.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\EffectParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\EnumParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Int.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Label.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Lexer.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Parse.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ParseImpl.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ReportParseError.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ValueRefParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ConditionParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\ConditionParserImpl.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\AI\ReferenceAI.cpp">
@@ -441,60 +378,6 @@
     </ClCompile>
     <ClCompile Include="..\..\Empire\Empire.cpp">
       <Filter>Source Files\Empire</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\MSThreads.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\NDC.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\PatternLayout.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\Appender.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\AppenderSkeleton.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\BasicLayout.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\Category.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\CategoryStream.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\Configurator.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\Localtime.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\LoggingEvent.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\StringUtil.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp">
-      <Filter>Source Files\log4cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\log4cpp\src\Priority.cpp">
-      <Filter>Source Files\log4cpp</Filter>
     </ClCompile>
     <ClCompile Include="..\..\network\ClientNetworking.cpp">
       <Filter>Source Files\network</Filter>
@@ -658,239 +541,8 @@
     <ClCompile Include="..\..\universe\Names.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\ConditionParser2.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ConditionParser3.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Double.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\EffectParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\EnumParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\FleetPlansParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Int.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\IntValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ItemsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Label.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Lexer.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Parse.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\PlanetEnvironmentValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\PlanetSizeValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\PlanetTypeValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ReportParseError.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ShipDesignsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ShipHullsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ShipPartsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\SpecialsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\SpeciesParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\StarTypeValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\StringValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\TechsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\AlignmentsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\BuildingsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ConditionParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\ConditionParser1.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\name.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\string_pool.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\GG\src\adobe\memory.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\log4cpp\log4cpp\Filter.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\FileAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\FactoryParams.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Export.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Configurator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\CategoryStream.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Category.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\BufferingAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\BasicLayout.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\BasicConfigurator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\AppenderSkeleton.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\AppendersFactory.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Appender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Win32DebugAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluatorFactory.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\TriggeringEventEvaluator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\TimeStamp.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\SyslogAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\StringQueueAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\SimpleLayout.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\SimpleConfigurator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\RollingFileAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\RemoteSyslogAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\PropertyConfigurator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Priority.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Portability.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\PatternLayout.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\PassThroughLayout.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\OstreamAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\NTEventLogAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\NDC.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Manipulator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\LoggingEvent.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\LevelEvaluator.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\LayoutsFactory.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\LayoutAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\Layout.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\IdsaAppender.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\HierarchyMaintainer.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\FixedContextCategory.hh">
-      <Filter>Header Files\log4cpp</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\threading\MSThreads.hh">
-      <Filter>Header Files\log4cpp\threading</Filter>
-    </None>
-    <None Include="..\..\log4cpp\log4cpp\threading\Threading.hh">
-      <Filter>Header Files\log4cpp\threading</Filter>
-    </None>
     <None Include="..\..\util\Serialize.ipp">
       <Filter>Source Files\util</Filter>
     </None>
