@@ -419,31 +419,31 @@ private:
 
     struct GraphImpl;
 
-    /** Clears \a effects_targets_map, and then populates with all
+    /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
-    void    GetEffectsAndTargets(Effect::TargetsCausesMap& effects_targets_map);
+    void    GetEffectsAndTargets(Effect::TargetsCauses& targets_causes);
 
-    /** Removes entries in \a effects_targets_map about effects groups acting
+    /** Removes entries in \a targets_causes about effects groups acting
       * on objects in \a target_objects, and then repopulates for EffectsGroups
       * that act on at least one of the objects in \a target_objects. */
-    void    GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects);
+    void    GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects);
 
     /** Used by GetEffectsAndTargets to process a vector of effects groups.
       * Stores target set of specified \a effects_groups and \a source_object_id
-      * in \a targets_causes_map 
+      * in \a targets_causes
       * NOTE: this method will modify target_objects temporarily, but restore
       * its contents before returning. */
     void    StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                  int source_object_id, EffectsCauseType effect_cause_type,
                                                  const std::string& specific_cause_name,
-                                                 Effect::TargetSet& target_objects, Effect::TargetsCausesMap& targets_causes_map);
+                                                 Effect::TargetSet& target_objects, Effect::TargetsCauses& targets_causes);
 
     /** Executes all effects.  For use on server when processing turns.
       * If \a only_meter_effects is true, then only SetMeter effects are
       * executed.  This is useful on server or clients to update meter
       * values after the rest of effects (including non-meter effects) have
       * been executed. */
-    void    ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map,
+    void    ExecuteEffects(const Effect::TargetsCauses& targets_causes,
                            bool update_effect_accounting, bool only_meter_effects = false);
 
     /** Does actual updating of meter estimates after the public function have

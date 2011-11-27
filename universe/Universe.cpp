@@ -817,8 +817,8 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
     // cache all activation and scoping condition results before applying
     // Effects, since the application of these Effects may affect the activation
     // and scoping evaluations
-    Effect::TargetsCausesMap targets_causes_map;
-    GetEffectsAndTargets(targets_causes_map, object_ids);
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes, object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so that max/target/unpaired meter
@@ -830,7 +830,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters()
         it->second->ResetPairedActiveMeters();
     }
 
-    ExecuteEffects(targets_causes_map, true);
+    ExecuteEffects(targets_causes, true);
 
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
@@ -842,8 +842,8 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 {
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    Effect::TargetsCausesMap targets_causes_map;
-    GetEffectsAndTargets(targets_causes_map, object_ids);
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes, object_ids);
 
     std::vector<UniverseObject*> objects = m_objects.FindObjects(object_ids);
 
@@ -857,7 +857,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
         (*it)->ResetPairedActiveMeters();
     }
 
-    ExecuteEffects(targets_causes_map, true, true);
+    ExecuteEffects(targets_causes, true, true);
 
     for (std::vector<UniverseObject*>::iterator it = objects.begin(); it != objects.end(); ++it) {
         (*it)->ClampMeters();  // clamp max, target and unpaired meters to [DEFAULT_VALUE, LARGE_VALUE] and active meters with max meters to [DEFAULT_VALUE, max]
@@ -1011,11 +1011,11 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec)
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
-    Effect::TargetsCausesMap targets_causes_map;
-    GetEffectsAndTargets(targets_causes_map, objects_vec);
+    Effect::TargetsCauses targets_causes;
+    GetEffectsAndTargets(targets_causes, objects_vec);
 
     // Apply and record effect meter adjustments
-    ExecuteEffects(targets_causes_map, true, true);
+    ExecuteEffects(targets_causes, true, true);
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "UpdateMeterEstimatesImpl after executing effects";
@@ -1087,15 +1087,15 @@ void Universe::BackPropegateObjectMeters(const std::vector<int>& object_ids)
 void Universe::BackPropegateObjectMeters()
 { BackPropegateObjectMeters(m_objects.FindObjectIDs()); }
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map)
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes)
 {
-    targets_causes_map.clear();
+    targets_causes.clear();
 
     std::vector<int> all_objects = m_objects.FindObjectIDs();
-    GetEffectsAndTargets(targets_causes_map, all_objects);
+    GetEffectsAndTargets(targets_causes, all_objects);
 }
 
-void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map, const std::vector<int>& target_objects)
+void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const std::vector<int>& target_objects)
 {
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets;
@@ -1120,7 +1120,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
             continue;
         }
         StoreTargetsAndCausesOfEffectsGroups(species->Effects(), it->first, ECT_SPECIES, species_name,
-                                             all_potential_targets, targets_causes_map);
+                                             all_potential_targets, targets_causes);
     }
 
     // 1) EffectsGroups from Specials
@@ -1136,7 +1136,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
             }
 
             StoreTargetsAndCausesOfEffectsGroups(special->Effects(), source_object_id, ECT_SPECIAL, special->Name(),
-                                                 all_potential_targets, targets_causes_map);
+                                                 all_potential_targets, targets_causes);
         }
     }
 
@@ -1149,7 +1149,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
             if (!tech) continue;
 
             StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitalID(), ECT_TECH, tech->Name(),
-                                                 all_potential_targets, targets_causes_map);
+                                                 all_potential_targets, targets_causes);
         }
     }
 
@@ -1169,7 +1169,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
         }
 
         StoreTargetsAndCausesOfEffectsGroups(building_type->Effects(), building->ID(), ECT_BUILDING, building_type->Name(),
-                                             all_potential_targets, targets_causes_map);
+                                             all_potential_targets, targets_causes);
     }
 
     // 4) EffectsGroups from Ship Hull and Ship Parts
@@ -1193,7 +1193,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
         }
 
         StoreTargetsAndCausesOfEffectsGroups(hull_type->Effects(), ship->ID(), ECT_SHIP_HULL, hull_type->Name(),
-                                             all_potential_targets, targets_causes_map);
+                                             all_potential_targets, targets_causes);
 
         const std::vector<std::string>& parts = ship_design->Parts();
         for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
@@ -1206,7 +1206,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
                 continue;
             }
             StoreTargetsAndCausesOfEffectsGroups(part_type->Effects(), ship->ID(), ECT_SHIP_PART, part_type->Name(),
-                                                 all_potential_targets, targets_causes_map);
+                                                 all_potential_targets, targets_causes);
         }
     }
 }
@@ -1214,7 +1214,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCausesMap& targets_causes_map
 void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups,
                                                     int source_object_id, EffectsCauseType effect_cause_type,
                                                     const std::string& specific_cause_name,
-                                                    Effect::TargetSet& target_objects, Effect::TargetsCausesMap& targets_causes_map)
+                                                    Effect::TargetSet& target_objects, Effect::TargetsCauses& targets_causes)
 {
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         Logger().debugStream() << "Universe::StoreTargetsAndCausesOfEffectsGroups( , source id: " << source_object_id << ", , specific cause: " << specific_cause_name << ", , )";
@@ -1254,7 +1254,7 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
         Effect::TargetsAndCause target_and_cause(target_set, effect_cause);
 
         // store effect cause and targets info in map, indexed by sourced effects group
-        targets_causes_map.insert(std::make_pair(sourced_effects_group, target_and_cause));
+        targets_causes.push_back(std::make_pair(sourced_effects_group, target_and_cause));
 
         // restore target_objects by moving objects back from targets to target_objects
         // this should be cheaper than doing a full copy because target_set is usually small
@@ -1262,14 +1262,14 @@ void Universe::StoreTargetsAndCausesOfEffectsGroups(const std::vector<boost::sha
     }
 }
 
-void Universe::ExecuteEffects(const Effect::TargetsCausesMap& targets_causes_map, bool update_effect_accounting,
+void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes, bool update_effect_accounting,
                               bool only_meter_effects/* = false*/)
 {
     m_marked_destroyed.clear();
     m_marked_for_victory.clear();
     std::map<std::string, Effect::TargetSet> executed_nonstacking_effects;
 
-    for (Effect::TargetsCausesMap::const_iterator targets_it = targets_causes_map.begin(); targets_it != targets_causes_map.end(); ++targets_it) {
+    for (Effect::TargetsCauses::const_iterator targets_it = targets_causes.begin(); targets_it != targets_causes.end(); ++targets_it) {
         const UniverseObject* source = GetObject(targets_it->first.source_object_id);
         ScopedTimer update_timer("Universe::ExecuteEffects execute one effects group (source " +
                                  (source ? source->Name() : "No Source!") +

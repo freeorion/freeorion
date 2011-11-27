@@ -71,7 +71,7 @@ namespace Effect {
       * same effectsgroup.  This is useful when a Ship has multiple copies
       * of the same effects group due to having multiple copies of the same
       * ship part in its design. */
-    typedef std::multimap<SourcedEffectsGroup, TargetsAndCause> TargetsCausesMap;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
 }
 
 #endif
