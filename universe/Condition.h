@@ -135,7 +135,11 @@ private:
   * or may not themselves match the condition. */
 struct Condition::Number : public Condition::ConditionBase
 {
-    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition);
+    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition) :
+        m_low(low),
+        m_high(high),
+        m_condition(condition)
+    {}
     virtual ~Number();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -159,7 +163,10 @@ private:
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct Condition::Turn : public Condition::ConditionBase
 {
-    Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
+    Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+        m_low(low),
+        m_high(high)
+    {}
     virtual ~Turn();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -193,15 +200,24 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase
 {
     /** Sorts randomly, without considering a sort key. */
     SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                   const ConditionBase* condition);
+                   const ConditionBase* condition) :
+        m_number(number),
+        m_sort_key(0),
+        m_sorting_method(Condition::SORT_RANDOM),
+        m_condition(condition)
+    {}
 
     /** Sorts according to the specified method, based on the key values
       * evaluated for each object. */
     SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
                    const ValueRef::ValueRefBase<double>* sort_key_ref,
                    SortingMethod sorting_method,
-                   const ConditionBase* condition);
-
+                   const ConditionBase* condition) :
+        m_number(number),
+        m_sort_key(sort_key_ref),
+        m_sorting_method(sorting_method),
+        m_condition(condition)
+    {}
     virtual ~SortedNumberOf();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
@@ -465,9 +481,17 @@ private:
 /** Matches all objects that have an attached Special named \a name. */
 struct Condition::HasSpecial : public Condition::ConditionBase
 {
-    HasSpecial(const std::string& name);
+    HasSpecial(const std::string& name) :
+        m_name(name),
+        m_since_turn_low(0),
+        m_since_turn_high(0)
+    {}
     HasSpecial(const std::string& name, const ValueRef::ValueRefBase<int>* since_turn_low,
-               const ValueRef::ValueRefBase<int>* since_turn_high);
+               const ValueRef::ValueRefBase<int>* since_turn_high) :
+        m_name(name),
+        m_since_turn_low(since_turn_low),
+        m_since_turn_high(since_turn_high)
+    {}
     virtual ~HasSpecial();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -493,7 +517,10 @@ private:
 /** Matches all objects that were created on turns within the specified range. */
 struct Condition::CreatedOnTurn : public Condition::ConditionBase
 {
-    CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high);
+    CreatedOnTurn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
+        m_low(low),
+        m_high(high)
+    {}
     virtual ~CreatedOnTurn();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -520,7 +547,9 @@ private:
   * Buildings), and Fleets (which contain Ships). */
 struct Condition::Contains : public Condition::ConditionBase
 {
-    Contains(const ConditionBase* condition);
+    Contains(const ConditionBase* condition) :
+        m_condition(condition)
+    {}
     virtual ~Contains();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -546,7 +575,9 @@ private:
   * Buildings), and Fleets (which contain Ships). */
 struct Condition::ContainedBy : public Condition::ConditionBase
 {
-    ContainedBy(const ConditionBase* condition);
+    ContainedBy(const ConditionBase* condition) :
+        m_condition(condition)
+    {}
     virtual ~ContainedBy();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -570,7 +601,9 @@ private:
 /** Matches all objects that are in the system with the indicated \a system_id */
 struct Condition::InSystem : public Condition::ConditionBase
 {
-    InSystem(const ValueRef::ValueRefBase<int>* system_id);
+    InSystem(const ValueRef::ValueRefBase<int>* system_id) :
+        m_system_id(system_id)
+    {}
     virtual ~InSystem();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -594,7 +627,9 @@ private:
 /** Matches the object with the id \a object_id */
 struct Condition::ObjectID : public Condition::ConditionBase
 {
-    ObjectID(const ValueRef::ValueRefBase<int>* object_id);
+    ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
+        m_object_id(object_id)
+    {}
     virtual ~ObjectID();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -759,7 +794,9 @@ private:
     in matching Systems are also matched (Ships, Fleets, Buildings, Planets, etc.). */
 struct Condition::StarType : public Condition::ConditionBase
 {
-    StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types);
+    StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
+        m_types(types)
+    {}
     virtual ~StarType();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -783,7 +820,9 @@ private:
 /** Matches all ships whose ShipDesign has the hull specified by \a name. */
 struct Condition::DesignHasHull : public Condition::ConditionBase
 {
-    DesignHasHull(const std::string& name);
+    DesignHasHull(const std::string& name) :
+        m_name(name)
+    {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -803,7 +842,12 @@ private:
   * part specified by \a name. */
 struct Condition::DesignHasPart : public Condition::ConditionBase
 {
-    DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const std::string& name);
+    DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
+                  const std::string& name) :
+        m_low(low),
+        m_high(high),
+        m_name(name)
+    {}
     virtual ~DesignHasPart();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -830,7 +874,12 @@ private:
   * the specified \a part_class */
 struct Condition::DesignHasPartClass : public Condition::ConditionBase
 {
-    DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, ShipPartClass part_class);
+    DesignHasPartClass(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
+                       ShipPartClass part_class) :
+        m_low(low),
+        m_high(high),
+        m_class(part_class)
+    {}
     ~DesignHasPartClass();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -857,7 +906,9 @@ private:
   * \a name */
 struct Condition::PredefinedShipDesign : public Condition::ConditionBase
 {
-    PredefinedShipDesign(const std::string& name);
+    PredefinedShipDesign(const std::string& name) :
+        m_name(name)
+    {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -876,7 +927,9 @@ private:
 /** Matches ships whose design id \a id. */
 struct Condition::NumberedShipDesign : public Condition::ConditionBase
 {
-    NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id);
+    NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
+        m_design_id(design_id)
+    {}
     virtual ~NumberedShipDesign();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -900,7 +953,9 @@ private:
 /** Matches ships or buildings produced by the empire with id \a empire_id.*/
 struct Condition::ProducedByEmpire : public Condition::ConditionBase
 {
-    ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        m_empire_id(empire_id)
+    {}
     virtual ~ProducedByEmpire();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -924,7 +979,9 @@ private:
 /** Matches a given object with a linearly distributed probability of \a chance. */
 struct Condition::Chance : public Condition::ConditionBase
 {
-    Chance(const ValueRef::ValueRefBase<double>* chance);
+    Chance(const ValueRef::ValueRefBase<double>* chance) :
+        m_chance(chance)
+    {}
     virtual ~Chance();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -980,7 +1037,12 @@ private:
   * \a stockpile is between \a low and \a high, inclusive. */
 struct Condition::EmpireStockpileValue : public Condition::ConditionBase
 {
-    EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high);
+    EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low,
+                         const ValueRef::ValueRefBase<double>* high) :
+        m_stockpile(stockpile),
+        m_low(low),
+        m_high(high)
+    {}
     virtual ~EmpireStockpileValue();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1006,7 +1068,9 @@ private:
 /** Matches all objects that have a single owner who has tech \a tech_name. */
 struct Condition::OwnerHasTech : public Condition::ConditionBase
 {
-    OwnerHasTech(const std::string& name);
+    OwnerHasTech(const std::string& name) :
+        m_name(name)
+    {}
     virtual bool        RootCandidateInvariant() const { return true; }
     virtual bool        TargetInvariant() const { return true; }
     virtual std::string Description(bool negated = false) const;
@@ -1025,7 +1089,9 @@ private:
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct Condition::VisibleToEmpire : public Condition::ConditionBase
 {
-    VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        m_empire_id(empire_id)
+    {}
     virtual ~VisibleToEmpire();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1052,7 +1118,10 @@ private:
   * relatively few matches. */
 struct Condition::WithinDistance : public Condition::ConditionBase
 {
-    WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition);
+    WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
+        m_distance(distance),
+        m_condition(condition)
+    {}
     virtual ~WithinDistance();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1080,7 +1149,10 @@ private:
   * relatively few matches. */
 struct Condition::WithinStarlaneJumps : public Condition::ConditionBase
 {
-    WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition);
+    WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
+        m_jumps(jumps),
+        m_condition(condition)
+    {}
     virtual ~WithinStarlaneJumps();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1110,7 +1182,9 @@ private:
   * to an existing lane. */
 struct Condition::CanAddStarlaneConnection :  Condition::ConditionBase
 {
-    CanAddStarlaneConnection(const ConditionBase* condition);
+    CanAddStarlaneConnection(const ConditionBase* condition) :
+        m_condition(condition)
+    {}
     virtual ~CanAddStarlaneConnection();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1139,7 +1213,9 @@ private:
   * end of the lane. */
 struct Condition::CanRemoveStarlaneConnection :  Condition::ConditionBase
 {
-    CanRemoveStarlaneConnection(const ConditionBase* condition);
+    CanRemoveStarlaneConnection(const ConditionBase* condition) :
+        m_condition(condition)
+    {}
     virtual ~CanRemoveStarlaneConnection();
     virtual bool        RootCandidateInvariant() const;
     virtual bool        TargetInvariant() const;
@@ -1160,7 +1236,9 @@ private:
   * in \a empire_ids. */
 struct Condition::ExploredByEmpire : public Condition::ConditionBase
 {
-    ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        m_empire_id(empire_id)
+    {}
     virtual ~ExploredByEmpire();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1203,7 +1281,9 @@ private:
   * empire with id \a empire_id */
 struct Condition::FleetSupplyableByEmpire : public Condition::ConditionBase
 {
-    FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id);
+    FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
+        m_empire_id(empire_id)
+    {}
     virtual ~FleetSupplyableByEmpire();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
@@ -1229,7 +1309,10 @@ private:
   * network of the empire with id \a empire_id */
 struct Condition::ResourceSupplyConnectedByEmpire : public Condition::ConditionBase
 {
-    ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition);
+    ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id, const ConditionBase* condition) :
+        m_empire_id(empire_id),
+        m_condition(condition)
+    {}
     virtual ~ResourceSupplyConnectedByEmpire();
     virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
                              Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;

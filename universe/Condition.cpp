@@ -87,12 +87,6 @@ bool Condition::ConditionBase::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Condition::Number::Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition) :
-    m_low(low),
-    m_high(high),
-    m_condition(condition)
-{}
-
 Condition::Number::~Number()
 {
     delete m_low;
@@ -187,11 +181,6 @@ bool Condition::Number::TargetInvariant() const
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Condition::Turn::Turn(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high) :
-    m_low(low),
-    m_high(high)
-{}
-
 Condition::Turn::~Turn()
 {
     delete m_low;
@@ -303,24 +292,6 @@ bool Condition::Turn::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
-Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(0),
-    m_sorting_method(Condition::SORT_RANDOM),
-    m_condition(condition)
-{}
-
-Condition::SortedNumberOf::SortedNumberOf(const ValueRef::ValueRefBase<int>* number,
-                                          const ValueRef::ValueRefBase<double>* sort_key,
-                                          SortingMethod sorting_method,
-                                          const ConditionBase* condition) :
-    m_number(number),
-    m_sort_key(sort_key),
-    m_sorting_method(sorting_method),
-    m_condition(condition)
-{}
-
 Condition::SortedNumberOf::~SortedNumberOf()
 {
     delete m_number;
@@ -693,9 +664,7 @@ std::string Condition::All::Description(bool negated/* = false*/) const
 }
 
 std::string Condition::All::Dump() const
-{
-    return DumpIndent() + "All\n";
-}
+{ return DumpIndent() + "All\n"; }
 
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
@@ -1447,20 +1416,6 @@ bool Condition::Building::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // HasSpecial                                            //
 ///////////////////////////////////////////////////////////
-Condition::HasSpecial::HasSpecial(const std::string& name) :
-    m_name(name),
-    m_since_turn_low(0),
-    m_since_turn_high(0)
-{}
-
-Condition::HasSpecial::HasSpecial(const std::string& name,
-                                  const ValueRef::ValueRefBase<int>* since_turn_low,
-                                  const ValueRef::ValueRefBase<int>* since_turn_high) :
-    m_name(name),
-    m_since_turn_low(since_turn_low),
-    m_since_turn_high(since_turn_high)
-{}
-
 Condition::HasSpecial::~HasSpecial()
 {
     delete m_since_turn_low;
@@ -1583,12 +1538,6 @@ bool Condition::HasSpecial::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
 ///////////////////////////////////////////////////////////
-Condition::CreatedOnTurn::CreatedOnTurn(const ValueRef::ValueRefBase<int>* low,
-                                        const ValueRef::ValueRefBase<int>* high) :
-    m_low(low),
-    m_high(high)
-{}
-
 Condition::CreatedOnTurn::~CreatedOnTurn()
 {
     delete m_low;
@@ -1683,10 +1632,6 @@ bool Condition::CreatedOnTurn::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // Contains                                              //
 ///////////////////////////////////////////////////////////
-Condition::Contains::Contains(const ConditionBase* condition) :
-    m_condition(condition)
-{}
-
 Condition::Contains::~Contains()
 {
     delete m_condition;
@@ -1799,10 +1744,6 @@ bool Condition::Contains::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
-Condition::ContainedBy::ContainedBy(const ConditionBase* condition) :
-    m_condition(condition)
-{}
-
 Condition::ContainedBy::~ContainedBy()
 {
     delete m_condition;
@@ -1915,10 +1856,6 @@ bool Condition::ContainedBy::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // InSystem                                              //
 ///////////////////////////////////////////////////////////
-Condition::InSystem::InSystem(const ValueRef::ValueRefBase<int>* system_id) :
-    m_system_id(system_id)
-{}
-
 Condition::InSystem::~InSystem()
 { delete m_system_id; }
 
@@ -2009,10 +1946,6 @@ bool Condition::InSystem::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
-Condition::ObjectID::ObjectID(const ValueRef::ValueRefBase<int>* object_id) :
-    m_object_id(object_id)
-{}
-
 Condition::ObjectID::~ObjectID()
 { delete m_object_id; }
 
@@ -2911,10 +2844,6 @@ bool Condition::FocusType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
-Condition::StarType::StarType(const std::vector<const ValueRef::ValueRefBase< ::StarType>*>& types) :
-    m_types(types)
-{}
-
 Condition::StarType::~StarType()
 {
     for (unsigned int i = 0; i < m_types.size(); ++i) {
@@ -3058,10 +2987,6 @@ bool Condition::StarType::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasHull::DesignHasHull(const std::string& name) :
-    m_name(name)
-{}
-
 std::string Condition::DesignHasHull::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_DESIGN_HAS_HULL";
@@ -3092,12 +3017,6 @@ bool Condition::DesignHasHull::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // DesignHasPart                                         //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasPart::DesignHasPart(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const std::string& name) :
-    m_low(low),
-    m_high(high),
-    m_name(name)
-{}
-
 Condition::DesignHasPart::~DesignHasPart()
 {
     delete m_low;
@@ -3202,14 +3121,6 @@ bool Condition::DesignHasPart::Match(const ScriptingContext& local_context) cons
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
-Condition::DesignHasPartClass::DesignHasPartClass(const ValueRef::ValueRefBase<int>* low,
-                                                  const ValueRef::ValueRefBase<int>* high,
-                                                  ShipPartClass part_class) :
-    m_low(low),
-    m_high(high),
-    m_class(part_class)
-{}
-
 Condition::DesignHasPartClass::~DesignHasPartClass()
 {
     delete m_low;
@@ -3318,10 +3229,6 @@ bool Condition::DesignHasPartClass::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                         //
 ///////////////////////////////////////////////////////////
-Condition::PredefinedShipDesign::PredefinedShipDesign(const std::string& name) :
-    m_name(name)
-{}
-
 std::string Condition::PredefinedShipDesign::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_PREDEFINED_SHIP_DESIGN";
@@ -3363,10 +3270,6 @@ bool Condition::PredefinedShipDesign::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                      //
 ///////////////////////////////////////////////////////////
-Condition::NumberedShipDesign::NumberedShipDesign(const ValueRef::ValueRefBase<int>* design_id) :
-    m_design_id(design_id)
-{}
-
 Condition::NumberedShipDesign::~NumberedShipDesign()
 {
     delete m_design_id;
@@ -3450,10 +3353,6 @@ bool Condition::NumberedShipDesign::Match(const ScriptingContext& local_context)
 ///////////////////////////////////////////////////////////
 // ProducedByEmpire                                      //
 ///////////////////////////////////////////////////////////
-Condition::ProducedByEmpire::ProducedByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
 Condition::ProducedByEmpire::~ProducedByEmpire()
 {
     delete m_empire_id;
@@ -3544,10 +3443,6 @@ bool Condition::ProducedByEmpire::Match(const ScriptingContext& local_context) c
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
-Condition::Chance::Chance(const ValueRef::ValueRefBase<double>* chance) :
-    m_chance(chance)
-{}
-
 Condition::Chance::~Chance()
 {
     delete m_chance;
@@ -3766,12 +3661,6 @@ bool Condition::MeterValue::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
-Condition::EmpireStockpileValue::EmpireStockpileValue(ResourceType stockpile, const ValueRef::ValueRefBase<double>* low, const ValueRef::ValueRefBase<double>* high) :
-    m_stockpile(stockpile),
-    m_low(low),
-    m_high(high)
-{}
-
 Condition::EmpireStockpileValue::~EmpireStockpileValue()
 {
     delete m_low;
@@ -3884,10 +3773,6 @@ bool Condition::EmpireStockpileValue::Match(const ScriptingContext& local_contex
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
-Condition::OwnerHasTech::OwnerHasTech(const std::string& name) :
-    m_name(name)
-{}
-
 std::string Condition::OwnerHasTech::Description(bool negated/* = false*/) const
 {
     std::string description_str = "DESC_OWNER_HAS_TECH";
@@ -3921,10 +3806,6 @@ bool Condition::OwnerHasTech::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
-Condition::VisibleToEmpire::VisibleToEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
 Condition::VisibleToEmpire::~VisibleToEmpire()
 {
     delete m_empire_id;
@@ -4011,11 +3892,6 @@ bool Condition::VisibleToEmpire::Match(const ScriptingContext& local_context) co
 ///////////////////////////////////////////////////////////
 // WithinDistance                                        //
 ///////////////////////////////////////////////////////////
-Condition::WithinDistance::WithinDistance(const ValueRef::ValueRefBase<double>* distance, const ConditionBase* condition) :
-    m_distance(distance),
-    m_condition(condition)
-{}
-
 Condition::WithinDistance::~WithinDistance()
 {
     delete m_distance;
@@ -4139,11 +4015,6 @@ bool Condition::WithinDistance::Match(const ScriptingContext& local_context) con
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
-Condition::WithinStarlaneJumps::WithinStarlaneJumps(const ValueRef::ValueRefBase<int>* jumps, const ConditionBase* condition) :
-    m_jumps(jumps),
-    m_condition(condition)
-{}
-
 Condition::WithinStarlaneJumps::~WithinStarlaneJumps()
 {
     delete m_jumps;
@@ -4360,10 +4231,6 @@ bool Condition::WithinStarlaneJumps::Match(const ScriptingContext& local_context
 ///////////////////////////////////////////////////////////
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
-Condition::CanAddStarlaneConnection::CanAddStarlaneConnection(const ConditionBase* condition) :
-    m_condition(condition)
-{}
-
 Condition::CanAddStarlaneConnection::~CanAddStarlaneConnection()
 {
     delete m_condition;
@@ -4600,10 +4467,6 @@ namespace {
     }
 }
 
-Condition::CanRemoveStarlaneConnection::CanRemoveStarlaneConnection(const ConditionBase* condition) :
-    m_condition(condition)
-{}
-
 Condition::CanRemoveStarlaneConnection::~CanRemoveStarlaneConnection()
 {
     delete m_condition;
@@ -4714,10 +4577,6 @@ bool Condition::CanRemoveStarlaneConnection::Match(const ScriptingContext& local
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
-Condition::ExploredByEmpire::ExploredByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
 Condition::ExploredByEmpire::~ExploredByEmpire()
 {
     delete m_empire_id;
@@ -4854,10 +4713,6 @@ bool Condition::Stationary::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // FleetSupplyableByEmpire                               //
 ///////////////////////////////////////////////////////////
-Condition::FleetSupplyableByEmpire::FleetSupplyableByEmpire(const ValueRef::ValueRefBase<int>* empire_id) :
-    m_empire_id(empire_id)
-{}
-
 Condition::FleetSupplyableByEmpire::~FleetSupplyableByEmpire()
 {
     delete m_empire_id;
@@ -4950,12 +4805,6 @@ bool Condition::FleetSupplyableByEmpire::Match(const ScriptingContext& local_con
 ///////////////////////////////////////////////////////////
 // ResourceSupplyConnectedByEmpire                       //
 ///////////////////////////////////////////////////////////
-Condition::ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(const ValueRef::ValueRefBase<int>* empire_id,
-                                                                            const ConditionBase* condition) :
-    m_empire_id(empire_id),
-    m_condition(condition)
-{}
-
 Condition::ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire()
 {
     delete m_empire_id;
