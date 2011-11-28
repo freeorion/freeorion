@@ -128,7 +128,21 @@
     <ClCompile Include="..\..\parse\StringValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\TechsParser.cpp" />
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp" />
-    <ClCompile Include="..\..\universe\Names.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\parse\ConditionParser.h" />
+    <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
+    <ClInclude Include="..\..\parse\Double.h" />
+    <ClInclude Include="..\..\parse\EffectParser.h" />
+    <ClInclude Include="..\..\parse\EnumParser.h" />
+    <ClInclude Include="..\..\parse\Int.h" />
+    <ClInclude Include="..\..\parse\Label.h" />
+    <ClInclude Include="..\..\parse\Lexer.h" />
+    <ClInclude Include="..\..\parse\Parse.h" />
+    <ClInclude Include="..\..\parse\ParseImpl.h" />
+    <ClInclude Include="..\..\parse\ReportParseError.h" />
+    <ClInclude Include="..\..\parse\ValueRefParser.h" />
+    <ClInclude Include="..\..\parse\ValueRefParserImpl.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

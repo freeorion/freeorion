@@ -214,7 +214,6 @@
     <None Include="..\..\log4cpp\src\StringUtil.hh">
       <FileType>Document</FileType>
     </None>
-    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\log4cpp\log4cpp\config-win32.h" />

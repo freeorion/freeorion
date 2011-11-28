@@ -12,8 +12,8 @@
     <Filter Include="Source Files\parse">
       <UniqueIdentifier>{75d24163-deb9-408c-9659-e28b7bddde67}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\universe">
-      <UniqueIdentifier>{dcef8bfc-9460-4188-9d3c-66407ac5b7ba}</UniqueIdentifier>
+    <Filter Include="Header Files\parse">
+      <UniqueIdentifier>{89466642-7734-480c-ab15-5146bdcc8962}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -119,8 +119,46 @@
     <ClCompile Include="..\..\parse\UniverseObjectTypeValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\Names.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\parse\ConditionParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ValueRefParserImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ConditionParserImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Double.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EffectParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\EnumParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Int.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Label.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Lexer.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\Parse.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ParseImpl.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ReportParseError.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\parse\ValueRefParser.h">
+      <Filter>Header Files\parse</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

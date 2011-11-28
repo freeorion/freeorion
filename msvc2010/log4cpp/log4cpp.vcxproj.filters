@@ -24,7 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
     <None Include="..\..\log4cpp\log4cpp\AbortAppender.hh">
       <Filter>Header Files\log4cpp</Filter>
     </None>
