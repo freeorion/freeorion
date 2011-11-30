@@ -413,7 +413,7 @@ ValueRef::Variable<T>::Variable(const std::vector<adobe::name_t>& property_name)
         m_ref_type = NON_OBJECT_REFERENCE;
     } else if (ref_type_name == Source_name) {
         m_ref_type = SOURCE_REFERENCE;
-    } else if (ref_type_name == Value_name || ref_type_name == Value_name) {
+    } else if (ref_type_name == Value_name || ref_type_name == Target_name) {
         m_ref_type = EFFECT_TARGET_REFERENCE;
     } else if (ref_type_name == LocalCandidate_name) {
         m_ref_type = CONDITION_LOCAL_CANDIDATE_REFERENCE;
