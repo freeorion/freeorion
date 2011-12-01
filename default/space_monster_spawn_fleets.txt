@@ -1,5 +1,5 @@
 MonsterFleet
-    name = "FN_SINGLE_KRILL"
+    name = "SM_KRILL_1"
     ships = [
         "SM_KRILL_1"
     ]
