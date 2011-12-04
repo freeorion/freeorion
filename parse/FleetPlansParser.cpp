@@ -37,7 +37,7 @@ namespace {
                             '[' > +tok.string [ push_back(_b, _1) ] > ']'
                         |   tok.string [ push_back(_b, _1) ]
                         )
-                        [ push_back(_r1, new_<FleetPlan>(_a, _b)) ]
+                        [ push_back(_r1, new_<FleetPlan>(_a, _b, true)) ]
                 ;
 
             start
