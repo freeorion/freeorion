@@ -58,6 +58,7 @@ Ankaa
 Ankh
 Ansuz
 Antares
+Applejack
 Arcturus
 Ariel
 Arkab
@@ -131,6 +132,7 @@ Cassiopeiae
 Castor
 Cebalrai
 Celaeno
+Celestia
 Centauri
 Chadwick
 Chandrasekhar
@@ -200,6 +202,7 @@ Fehu
 Felix
 Fetter
 Finisterre
+Fluttershy
 Fomalhaut
 Fowler
 Frack
@@ -439,6 +442,7 @@ Peel
 Pell
 Penrose
 Penzias
+Persephone
 Perth
 Phact
 Phad
@@ -446,6 +450,7 @@ Phecda
 Pherkad
 Piazzi
 Pickering
+Pinkie
 Piscium
 Plato
 Pleione
@@ -465,8 +470,10 @@ Pulcherrima
 Puppis
 Pyrrus
 Ragnarok
+Rainbow
 Ran
 Rangi
+Rarity
 Ras
 Rasalgethi
 Rastaban
@@ -580,12 +587,14 @@ Tombstone
 Tork
 Tradamere
 Trantor
+Trixie
 Troas
 Trondheim
 Trophy
 Troy
 Turbin
 Tusk
+Twilight
 Tycho
 Typhon
 Tyr
@@ -622,6 +631,7 @@ Whipple
 Wilson
 Winter
 Wolf
+Wonderbolt
 Wraith
 Wunjo
 Xanadu
@@ -637,6 +647,7 @@ Yuggoth
 Zaniah
 Zaurak
 Zavijava
+Zecora
 Zen
 Zomg
 Zosma
