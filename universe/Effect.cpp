@@ -1358,10 +1358,12 @@ void CreateShip::Execute(const ScriptingContext& context) const
     Empire* empire(0);  // not const Empire* so that empire::NewShipName can be called
     if (m_empire_id) {
         empire_id = m_empire_id->Eval(context);
-        empire = Empires().Lookup(empire_id);
-        if (!empire) {
-            Logger().errorStream() << "CreateShip::Execute couldn't get empire with id " << empire_id;
-            return;
+        if (empire_id != ALL_EMPIRES) {
+            empire = Empires().Lookup(empire_id);
+            if (!empire) {
+                Logger().errorStream() << "CreateShip::Execute couldn't get empire with id " << empire_id;
+                return;
+            }
         }
     }
 
