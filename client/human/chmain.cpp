@@ -188,6 +188,11 @@ int mainSetupAndRunOgre()
 
         root = new Root((GetRootDataDir() / "ogre_plugins.cfg").string());
 
+        // this line is needed on some Linux systems which otherwise will crash with
+        // errors about GLX_icon.png being missing.
+        Ogre::ResourceGroupManager::getSingleton().addResourceLocation((ClientUI::ArtDir() / ".").string(),
+                                                                       "FileSystem", "General");
+
 #if defined(OGRE_STATIC_LIB)
         octree_plugin = new Ogre::OctreePlugin;
         particle_fx_plugin = new Ogre::ParticleFXPlugin;
