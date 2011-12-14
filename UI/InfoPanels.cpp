@@ -263,11 +263,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     meters.push_back(std::make_pair(METER_FOOD_CONSUMPTION, INVALID_METER_TYPE));
 
     // attach and show meter bars and large resource indicators
-    GG::Y top = UpperLeft().y;
-
     m_multi_icon_value_indicator =  new MultiIconValueIndicator(Width() - 2*EDGE_PAD,   m_popcenter_id, meters);
     m_multi_meter_status_bar =      new MultiMeterStatusBar(Width() - 2*EDGE_PAD,       m_popcenter_id, meters);
-
 
     // determine if this panel has been created yet.
     std::map<int, bool>::iterator it = s_expanded_map.find(m_popcenter_id);
@@ -387,8 +384,6 @@ void PopulationPanel::Render()
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
@@ -433,19 +428,6 @@ void PopulationPanel::Update()
         Logger().errorStream() << "PopulationPanel::Update couldn't get PopCenter or couldn't get UniverseObject";
         return;
     }
-
-    enum OWNERSHIP {OS_NONE, OS_FOREIGN, OS_SELF} owner = OS_NONE;
-
-    // determine ownership    
-    if (obj->Unowned())
-        owner = OS_NONE;  // uninhabited
-    else {
-        if (!obj->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            owner = OS_FOREIGN; // inhabited by other empire
-        else
-            owner = OS_SELF; // inhabited by this empire (and possibly other empires)
-    }
-
 
     // meter bar displays and stat icons
     m_multi_meter_status_bar->Update();
@@ -712,8 +694,6 @@ void ResourcePanel::Render()
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
@@ -1069,8 +1049,6 @@ void MilitaryPanel::Render()
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
@@ -1620,8 +1598,6 @@ void BuildingsPanel::Render()
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
@@ -1889,8 +1865,6 @@ void BuildingIndicator::Render()
     // copied from CUIWnd
     GG::Pt ul = UpperLeft();
     GG::Pt lr = LowerRight();
-    GG::Pt cl_ul = ClientUpperLeft();
-    GG::Pt cl_lr = ClientLowerRight();
 
     // use GL to draw the lines
     glDisable(GL_TEXTURE_2D);
