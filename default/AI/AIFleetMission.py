@@ -38,7 +38,6 @@ class AIFleetMission(AIAbstractMission):
             aiTargets = self.getAITargets(aiFleetMissionType)
             for aiTarget in aiTargets:
                 result.extend(aiTarget.getRequiredSystemAITargets())
-
         return result
 
     def getVisitingSystemAITargets(self):
@@ -79,6 +78,8 @@ class AIFleetMission(AIAbstractMission):
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_OUTPOST, fleetAITarget, aiTarget)
         elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_COLONISATION:
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_COLONISE, fleetAITarget, aiTarget)
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
+            result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_INVADE, fleetAITarget, aiTarget)
         # TODO: implement other mission types
 
         return result
@@ -110,8 +111,18 @@ class AIFleetMission(AIAbstractMission):
                 planet = universe.getPlanet(aiTarget.getTargetID())
                 if planet.unowned:
                     return True
-
-        # TODO: implement other mission types            
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
+            universe = fo.getUniverse()
+            fleet = universe.getFleet(self.getAITargetID())
+            if not fleet.hasTroopShips:
+                return False
+            if aiTarget.getAITargetType() == AITargetType.TARGET_PLANET:
+                planet = universe.getPlanet(aiTarget.getTargetID())
+                planetPopulation = planet.currentMeterValue(fo.meterType.population)
+                if not planet.unowned or planetPopulation > 0:
+                    return True
+        # TODO: implement other mission types
+            
         return False
 
     def cleanInvalidAITargets(self):
@@ -192,7 +203,6 @@ class AIFleetMission(AIAbstractMission):
             return AITarget.AITarget(AITargetType.TARGET_SYSTEM, systemID)
         else:
             return AITarget.AITarget(AITargetType.TARGET_SYSTEM, fleet.nextSystemID)
-
 
 def getFleetIDsFromAIFleetMissions(aiFleetMissions):
     result = []

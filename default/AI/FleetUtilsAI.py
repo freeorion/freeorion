@@ -25,7 +25,6 @@ def fleetHasShipWithRole(fleetID, shipRole):
     fleet = universe.getFleet(fleetID)
 
     if fleet == None: return False
-
     for shipID in fleet.shipIDs:
 
         ship = universe.getShip(shipID)
@@ -130,8 +129,10 @@ def assessFleetRole(fleetID):
         return AIFleetMissionType.FLEET_MISSION_EXPLORATION
     if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION:
         return AIFleetMissionType.FLEET_MISSION_COLONISATION
-    if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST: # added 12/10 rk
+    if favouriteRole == AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST:
         return AIFleetMissionType.FLEET_MISSION_OUTPOST
+    if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_INVASION:
+        return AIFleetMissionType.FLEET_MISSION_INVASION
     if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
         return AIFleetMissionType.FLEET_MISSION_ATTACK
 
@@ -145,16 +146,19 @@ def assessShipRole(shipID):
     ship = universe.getShip(shipID)
 
     if ship.canColonize:
-	# look for the CO_OUTPOST_MOD added 12/10 rk
-	if ship.design.parts.__contains__("CO_OUTPOST_MOD"):
-	    # print ">> assessShipRole Outpost Ship:" + str(shipID)
-	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
-	if ship.design.parts.__contains__("CO_COLONY_POD"):
-	    # print ">> assessShipRole Colony Ship:" + str(shipID)
-	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
-	if ship.design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
-	    # print ">> assessShipRole SuspAnim Ship:" + str(shipID)
-	    return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+        # look for the CO_OUTPOST_MOD
+        if ship.design.parts.__contains__("CO_OUTPOST_MOD"):
+            # print ">> assessShipRole Outpost Ship:" + str(shipID)
+            return AIShipRoleType.SHIP_ROLE_CIVILIAN_OUTPOST
+        if ship.design.parts.__contains__("CO_COLONY_POD"):
+            # print ">> assessShipRole Colony Ship:" + str(shipID)
+            return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+        if ship.design.parts.__contains__("CO_SUSPEND_ANIM_POD"):
+            # print ">> assessShipRole SuspAnim Ship:" + str(shipID)
+            return AIShipRoleType.SHIP_ROLE_CIVILIAN_COLONISATION
+    elif ship.canInvade:
+        if ship.design.parts.__contains__("GT_TROOP_POD"):
+            return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
     elif ship.isArmed:
         return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
     else:
@@ -167,9 +171,10 @@ def generateAIFleetOrdersForAIFleetMissions():
 
     print "Exploration fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
     print "Colonisation fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
-    print "Outpost fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)) # added 12/10 rk
+    print "Outpost fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST))
     print "Attack fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
     print "Defend fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
+    print "Invasion fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
     print ""
     print "Explored systems  :"
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
@@ -186,6 +191,11 @@ def generateAIFleetOrdersForAIFleetMissions():
     colonisationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     for colonisationAIFleetMission in colonisationAIFleetMissions:
         print "    " + str(colonisationAIFleetMission)
+
+    print "Invasion targets: fleetID[MissionType]:{TargetType:targetID}"
+    invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_INVASION])
+    for invasionAIFleetMission in invasionAIFleetMissions:
+        print "    " + str(invasionAIFleetMission)
 
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
@@ -216,3 +226,4 @@ def printSystems(systemIDs):
             print "    name:" + system.name + " id:" + str(systemID) + suppliedSystem
         else:
             print "    name:??? id:" + str(systemID) + suppliedSystem
+

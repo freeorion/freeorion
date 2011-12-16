@@ -27,24 +27,24 @@ class AIPriorityType(object):
     PRIORITY_PRODUCTION_EXPLORATION = 5
     PRIORITY_PRODUCTION_OUTPOST = 6
     PRIORITY_PRODUCTION_COLONISATION = 7
-    PRIORITY_PRODUCTION_MILITARY = 8
-    PRIORITY_PRODUCTION_BUILDINGS = 9
-    PRIORITY_RESEARCH_LEARNING = 10
-    PRIORITY_RESEARCH_GROWTH = 11
-    PRIORITY_RESEARCH_PRODUCTION = 12
-    PRIORITY_RESEARCH_CONSTRUCTION = 13
-    PRIORITY_RESEARCH_ECONOMICS = 14
-    PRIORITY_RESEARCH_SHIPS = 15
+    PRIORITY_PRODUCTION_INVASION = 8
+    PRIORITY_PRODUCTION_MILITARY = 9
+    PRIORITY_PRODUCTION_BUILDINGS = 10
+    PRIORITY_RESEARCH_LEARNING = 11
+    PRIORITY_RESEARCH_GROWTH = 12
+    PRIORITY_RESEARCH_PRODUCTION = 13
+    PRIORITY_RESEARCH_CONSTRUCTION = 14
+    PRIORITY_RESEARCH_ECONOMICS = 15
+    PRIORITY_RESEARCH_SHIPS = 16
 
 def getAIPriorityResourceTypes():
     return __getInterval(0, 4)
 def getAIPriorityProductionTypes():
-    return __getInterval(5, 9)
+    return __getInterval(5, 10)
 def getAIPriorityResearchTypes():
-    return __getInterval(10, 15)
+    return __getInterval(11, 16)
 def getAIPriorityTypes():
-    return __getInterval(0, 15)
-
+    return __getInterval(0, 16)
 
 class AIExplorableSystemType(object):
     EXPLORABLE_SYSTEM_INVALID = -1
@@ -55,11 +55,10 @@ class AIExplorableSystemType(object):
 def getAIExplorableSystemTypes():
     return __getInterval(0, 2)
 
-
 class AIFleetMissionType(object):
     FLEET_MISSION_INVALID = -1
     FLEET_MISSION_EXPLORATION = 0
-    FLEET_MISSION_OUTPOST = 1  # added 12/10 rk
+    FLEET_MISSION_OUTPOST = 1
     FLEET_MISSION_COLONISATION = 2
     FLEET_MISSION_SPLIT_FLEET = 3
     FLEET_MISSION_MERGE_FLEET = 4
@@ -67,10 +66,11 @@ class AIFleetMissionType(object):
     FLEET_MISSION_ATTACK = 6
     FLEET_MISSION_DEFEND = 7
     FLEET_MISSION_LAST_STAND = 8
+    FLEET_MISSION_INVASION = 9
+    FLEET_MISSION_MILITARY = 10 
 
 def getAIFleetMissionTypes():
-    return __getInterval(0, 8) # updated 12/10 rk
-
+    return __getInterval(0, 10)
 
 class AIFleetOrderType(object):
     ORDER_INVALID = -1
@@ -83,10 +83,10 @@ class AIFleetOrderType(object):
     ORDER_COLONISE = 6
     ORDER_ATACK = 7
     ORDER_DEFEND = 8
+    ORDER_INVADE = 9
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 8)
-
+    return __getInterval(0, 9)
 
 class AIShipRoleType(object):
     SHIP_ROLE_INVALID = -1
@@ -96,11 +96,11 @@ class AIShipRoleType(object):
     SHIP_ROLE_MILITARY_POINTDEFENSE = 3
     SHIP_ROLE_CIVILIAN_EXPLORATION = 4
     SHIP_ROLE_CIVILIAN_COLONISATION = 5
-    SHIP_ROLE_CIVILIAN_OUTPOST = 6  # added 12/10 rk
+    SHIP_ROLE_CIVILIAN_OUTPOST = 6
+    SHIP_ROLE_MILITARY_INVASION = 7
 
 def getAIShipRolesTypes():
-    return __getInterval(0, 6)  # updated 12/10 rk
-
+    return __getInterval(0, 7)
 
 class AITargetType(object):
     TARGET_INVALID = -1
@@ -116,7 +116,6 @@ class AITargetType(object):
 def getAITargetTypes():
     return __getInterval(0, 7)
 
-
 class AIProductionDemandType(object):
     PRODUCTION_DEMAND_INVALID = -1
     PRODUCTION_DEMAND_SHIP = 0
@@ -124,7 +123,6 @@ class AIProductionDemandType(object):
 
 def getAIProductionDemandTypes():
     return __getInterval(0, 1)
-
 
 class AIProductionRequirementType(object):
     PRODUCTION_REQUIREMENT_INVALID = -1
@@ -139,7 +137,6 @@ class AIProductionRequirementType(object):
 def getAIProductionRequirementTypes():
     return __getInterval(0, 6)
 
-
 class AIResearchRequirementType(object):
     RESEARCH_REQUIREMENT_INVALID = -1
     RESEARCH_REQUIREMENT_THEORY = 0
@@ -150,7 +147,6 @@ class AIResearchRequirementType(object):
 def getAIResearchRequirementTypes():
     return __getInterval(0, 3)
 
-
 class AIMissionType(object):
     MISSION_INVALID = -1
     FLEET_MISSION = 0
@@ -160,7 +156,6 @@ class AIMissionType(object):
 
 def getAIMissionTypes():
     return __getInterval(0, 3)
-
 
 class AIEmpireWarMissionType(object):
     EMPIRE_WAR_MISSION_INVALID = -1
@@ -173,7 +168,6 @@ class AIEmpireWarMissionType(object):
 def getAIEmpireWarMissionTypes():
     return __getInterval(0, 4)
 
-
 class AIDemandType(object):
     DEMAND_INVALID = -1
     DEMAND_RESOURCE = 0
@@ -182,7 +176,6 @@ class AIDemandType(object):
 
 def getAIDemandTypes():
     return __getInterval(0, 2)
-
 
 class AIFocusType(object):
     FOCUS_FARMING = "FOCUS_FARMING"

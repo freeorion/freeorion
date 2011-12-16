@@ -11,6 +11,9 @@ colonisablePlanetIDs = []  # TODO: move into AIstate
 colonisableOutpostIDs = []  # TODO: move into AIstate
 colonyFleetIDs = []
 outpostFleetIDs = []
+invasionFleetIDs = []
+opponentPlanetIDs = []
+militaryFleetIDs = []
 
 # AIstate class
 class AIstate(object):

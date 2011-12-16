@@ -1,5 +1,4 @@
 import freeOrionAIInterface as fo
-
 def getPlanetsInSystemsIDs(systemIDs):
     "creates a list with all planets known to the empire"
 
@@ -28,3 +27,11 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
             result.append(planetID)
 
     return result
+
+def getCapitalID():
+    "return planet id of empire capital"
+
+    empire = fo.getEmpire()
+    capitalID = empire.capitalID
+
+    return capitalID
