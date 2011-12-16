@@ -101,7 +101,7 @@ namespace {
             using phoenix::if_;
 
             channel
-                =    tok.int_ [ _val = _1, _pass = 0 < _1 && _1 <= 255 ]
+                =    tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ]
                 ;
 
             start
@@ -109,9 +109,9 @@ namespace {
                 >    ',' > channel [ _b = _1 ]
                 >    ',' > channel [ _c = _1 ]
                 >>   (
-                            ',' > channel [ construct<GG::Clr>(_a, _b, _c, _1) ]
-                        |   eps [ construct<GG::Clr>(_a, _b, _c, 255) ]
-                        )
+                        ',' > channel [ construct<GG::Clr>(_a, _b, _c, _1) ]
+                        |         eps [ construct<GG::Clr>(_a, _b, _c, phoenix::val(255)) ]
+                     )
                 >    ')'
                 ;
 

@@ -29,18 +29,18 @@ namespace {
         { typedef void type; };
 
         void operator()(TechManager::TechContainer& techs, Tech* tech) const
-            {
-                g_categories_seen->insert(tech->Category());
-                if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
-                    std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
-                    throw std::runtime_error(error_str.c_str());
-                }
-                if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
-                    std::string error_str = "ERROR: Tech " + tech->Name() + " depends on itself!";
-                    throw std::runtime_error(error_str.c_str());
-                }
-                techs.insert(tech);
+        {
+            g_categories_seen->insert(tech->Category());
+            if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
+                std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
+                throw std::runtime_error(error_str.c_str());
             }
+            if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
+                std::string error_str = "ERROR: Tech " + tech->Name() + " depends on itself!";
+                throw std::runtime_error(error_str.c_str());
+            }
+            techs.insert(tech);
+        }
     };
     const boost::phoenix::function<insert_tech_> insert_tech;
 
@@ -51,137 +51,137 @@ namespace {
         { typedef void type; };
 
         void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const
-            {
-                if (!categories.insert(std::make_pair(category->name, category)).second) {
-                    std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
-                    throw std::runtime_error(error_str.c_str());
-                }
+        {
+            if (!categories.insert(std::make_pair(category->name, category)).second) {
+                std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
+                throw std::runtime_error(error_str.c_str());
             }
+        }
     };
     const boost::phoenix::function<insert_category_> insert_category;
 
     struct rules
     {
         rules()
-            {
-                const parse::lexer& tok = parse::lexer::instance();
+        {
+            const parse::lexer& tok = parse::lexer::instance();
 
-                qi::_1_type _1;
-                qi::_2_type _2;
-                qi::_3_type _3;
-                qi::_4_type _4;
-                qi::_a_type _a;
-                qi::_b_type _b;
-                qi::_c_type _c;
-                qi::_d_type _d;
-                qi::_e_type _e;
-                qi::_f_type _f;
-                qi::_g_type _g;
-                qi::_h_type _h;
-                qi::_r1_type _r1;
-                qi::_r2_type _r2;
-                qi::_r3_type _r3;
-                qi::_val_type _val;
-                qi::eps_type eps;
-                using phoenix::construct;
-                using phoenix::insert;
-                using phoenix::new_;
-                using phoenix::push_back;
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
+            qi::_e_type _e;
+            qi::_f_type _f;
+            qi::_g_type _g;
+            qi::_h_type _h;
+            qi::_r1_type _r1;
+            qi::_r2_type _r2;
+            qi::_r3_type _r3;
+            qi::_val_type _val;
+            qi::eps_type eps;
+            using phoenix::construct;
+            using phoenix::insert;
+            using phoenix::new_;
+            using phoenix::push_back;
 
-                tech_info_name_desc
-                    =    parse::label(Name_name)              > tok.string [ _r1 = _1 ]
-                    >    parse::label(Description_name)       > tok.string [ _r2 = _1 ]
-                    >    parse::label(Short_Description_name) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
-                    ;
+            tech_info_name_desc
+                =    parse::label(Name_name)              > tok.string [ _r1 = _1 ]
+                >    parse::label(Description_name)       > tok.string [ _r2 = _1 ]
+                >    parse::label(Short_Description_name) > tok.string [ _r3 = _1 ] // TODO: Get rid of underscore.
+                ;
 
-                tech_info
-                    =    tech_info_name_desc(_a, _b, _c)
-                    >>  -(
-                              parse::label(TechType_name) >> parse::enum_parser<TechType>() [ _d = _1 ]
-                          |   eps [ _d = TT_THEORY ]
-                         )
-                    >    parse::label(Category_name)          > tok.string [ _e = _1 ]
-                    >>   (
-                              parse::label(ResearchCost_name) >> parse::double_ [ _f = _1 ]
-                          |   eps [ _f = 1.0 ]
-                         )
-                    >>   (
-                              parse::label(ResearchTurns_name) >> parse::int_ [ _g = _1 ]
-                          |   eps [ _g = 1 ]
-                         )
-                    >>   (
-                              tok.Unresearchable_ [ _h = false ]
-                          |   tok.Researchable_ [ _h = true ]
-                          |   eps [ _h = true ]
-                         )
-                         [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _d, _f, _g, _h) ]
-                    ;
+            tech_info
+                =    tech_info_name_desc(_a, _b, _c)
+                >>  -(
+                            parse::label(TechType_name) >> parse::enum_parser<TechType>() [ _d = _1 ]
+                        |   eps [ _d = TT_THEORY ]
+                     )
+                >    parse::label(Category_name)          > tok.string [ _e = _1 ]
+                >>   (
+                            parse::label(ResearchCost_name) >> parse::double_ [ _f = _1 ]
+                        |   eps [ _f = 1.0 ]
+                        )
+                >>   (
+                            parse::label(ResearchTurns_name) >> parse::int_ [ _g = _1 ]
+                        |   eps [ _g = 1 ]
+                     )
+                >>   (
+                            tok.Unresearchable_ [ _h = false ]
+                        |   tok.Researchable_ [ _h = true ]
+                        |   eps [ _h = true ]
+                     )
+                     [ _val = construct<Tech::TechInfo>(_a, _b, _c, _e, _d, _f, _g, _h) ]
+                ;
 
-                prerequisites
-                    =     parse::label(Prerequisites_name)
-                    >>   (
-                              '[' > +tok.string [ insert(_r1, _1) ] > ']'
-                          |   tok.string [ insert(_r1, _1) ]
-                         )
-                    ;
+            prerequisites
+                =     parse::label(Prerequisites_name)
+                >>   (
+                            '[' > +tok.string [ insert(_r1, _1) ] > ']'
+                        |   tok.string [ insert(_r1, _1) ]
+                     )
+                ;
 
-                unlocks
-                    =    parse::label(Unlock_name)
-                    >>   (
-                              '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
-                          |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
-                         )
-                    ;
+            unlocks
+                =    parse::label(Unlock_name)
+                >>   (
+                            '[' > +parse::detail::item_spec_parser() [ push_back(_r1, _1) ] > ']'
+                        |   parse::detail::item_spec_parser() [ push_back(_r1, _1) ]
+                     )
+                ;
 
-                tech
-                    =    (
-                              tok.Tech_
-                          >   tech_info [ _a = _1 ]
-                          >  -prerequisites(_b)
-                          >  -unlocks(_c)
-                          >  -(
-                                   parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _d = _1 ]
-                              )
-                          >  -(
-                                   parse::label(Graphic_name) >> tok.string [ _e = _1 ]
-                              )
-                         )
-                         [ insert_tech(_r1, new_<Tech>(_a, _d, _b, _c, _e)) ]
-                    ;
+            tech
+                =    (
+                            tok.Tech_
+                        >   tech_info [ _a = _1 ]
+                        >  -prerequisites(_b)
+                        >  -unlocks(_c)
+                        >  -(
+                                parse::label(EffectsGroups_name) >> parse::detail::effects_group_parser() [ _d = _1 ]
+                            )
+                        >  -(
+                                parse::label(Graphic_name) >> tok.string [ _e = _1 ]
+                            )
+                     )
+                     [ insert_tech(_r1, new_<Tech>(_a, _d, _b, _c, _e)) ]
+                ;
 
-                category
-                    =    tok.Category_
-                    >    parse::label(Name_name)    > tok.string [ _a = _1 ]
-                    >    parse::label(Graphic_name) > tok.string [ _b = _1 ]
-                    >    parse::label(Colour_name)  > parse::detail::color_parser() [ insert_category(_r1, new_<TechCategory>(_a, _b, _1)) ]
-                    ;
+            category
+                =    tok.Category_
+                >    parse::label(Name_name)    > tok.string [ _a = _1 ]
+                >    parse::label(Graphic_name) > tok.string [ _b = _1 ]
+                >    parse::label(Colour_name)  > parse::detail::color_parser() [ insert_category(_r1, new_<TechCategory>(_a, _b, _1)) ]
+                ;
 
-                start
-                    =   +(
-                              tech(_r1)
-                          |   category(phoenix::ref(*g_categories)) // TODO: Using _r2 here as I would like to do seems to give GCC 4.6 fits.
-                         )
-                    ;
+            start
+                =   +(
+                            tech(_r1)
+                        |   category(phoenix::ref(*g_categories)) // TODO: Using _r2 here as I would like to do seems to give GCC 4.6 fits.
+                     )
+                ;
 
-                tech_info_name_desc.name("tech name");
-                tech_info.name("Tech info");
-                prerequisites.name("Prerequisites");
-                unlocks.name("Unlock");
-                tech.name("Tech");
-                category.name("Category");
-                start.name("start");
+            tech_info_name_desc.name("tech name");
+            tech_info.name("Tech info");
+            prerequisites.name("Prerequisites");
+            unlocks.name("Unlock");
+            tech.name("Tech");
+            category.name("Category");
+            start.name("start");
 
 #if DEBUG_PARSERS
-                debug(tech_info_name_desc);
-                debug(tech_info);
-                debug(prerequisites);
-                debug(unlocks);
-                debug(tech);
-                debug(category);
+            debug(tech_info_name_desc);
+            debug(tech_info);
+            debug(prerequisites);
+            debug(unlocks);
+            debug(tech);
+            debug(category);
 #endif
 
-                qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
-            }
+            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+        }
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -254,11 +254,9 @@ namespace {
         category_rule category;
         start_rule start;
     };
-
 }
 
 namespace parse {
-
     bool techs(const boost::filesystem::path& path,
                TechManager::TechContainer& techs_,
                std::map<std::string, TechCategory*>& categories,
@@ -268,5 +266,4 @@ namespace parse {
         g_categories = &categories;
         return detail::parse_file<rules, TechManager::TechContainer>(path, techs_);
     }
-
 }
