@@ -516,12 +516,17 @@ namespace AIInterface {
             Logger().errorStream() << "AIInterface::IssueInvadeOrder : no planet with passed planet_id";
             return 0;
         }
-        if (planet->Unowned()) {
-            Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is not colonized";
-            return 0;
-        }
-        if (planet->OwnedBy(empire_id)) {
-            Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is owned by this empire so cannot be invaded";
+        bool owned_by_invader = planet->OwnedBy(empire_id);
+        bool populated = planet->CurrentMeterValue(METER_POPULATION) > 0.;
+        bool visible = GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) >= VIS_PARTIAL_VISIBILITY;
+        bool vulnerable = planet->CurrentMeterValue(METER_SHIELD) <= 0.;
+        bool being_invaded = planet->IsAboutToBeInvaded();
+        bool invadable = !owned_by_invader && vulnerable && populated && visible && !being_invaded;
+        if (!invadable) {
+            Logger().errorStream() << "AIInterface::IssueInvadeOrder : planet with passed planet_id is "
+                                   << "not invadable due to one or more of: owned by invader empire, "
+                                   << "not visible to invader empire, has shields above zero, "
+                                   << "or is already being invaded.";
             return 0;
         }
 
