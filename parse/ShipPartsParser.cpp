@@ -1,4 +1,5 @@
 #define PHOENIX_LIMIT 11
+#define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
 #include "Double.h"
 #include "EnumParser.h"
