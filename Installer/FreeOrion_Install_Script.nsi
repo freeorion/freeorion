@@ -2,7 +2,7 @@
 
 ; HM NIS Edit Wizard helper defines
 !define PRODUCT_NAME "FreeOrion"
-!define PRODUCT_VERSION "0.3.17"
+!define PRODUCT_VERSION "0.3.17plus_test"
 !define PRODUCT_PUBLISHER "FreeOrion Community"
 !define PRODUCT_WEB_SITE "http://www.freeorion.org"
 !define PRODUCT_DIR_REGKEY "Software\Microsoft\Windows\CurrentVersion\App Paths\${PRODUCT_NAME}"
@@ -44,7 +44,7 @@ SetCompressor bzip2
 ; MUI end ------
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
-OutFile "..\..\FreeOrion-0.3.17-Setup.exe"
+OutFile "..\..\FreeOrion-0.3.17plus-Test-Setup.exe"
 InstallDir "$PROGRAMFILES\FreeOrion"
 InstallDirRegKey HKLM "${PRODUCT_DIR_REGKEY}" ""
 ShowInstDetails show
@@ -60,14 +60,14 @@ Section "MainSection" SEC01
   Delete "$INSTDIR\vcredist_x86.exe"
 
   File "..\alut.dll"
-  File "..\boost_date_time-vc100-mt-1_46_1.dll"
-  File "..\boost_filesystem-vc100-mt-1_46_1.dll"
-  File "..\boost_python-vc100-mt-1_46_1.dll"
-  File "..\boost_regex-vc100-mt-1_46_1.dll"
-  File "..\boost_serialization-vc100-mt-1_46_1.dll"
-  File "..\boost_signals-vc100-mt-1_46_1.dll"
-  File "..\boost_system-vc100-mt-1_46_1.dll"
-  File "..\boost_thread-vc100-mt-1_46_1.dll"
+  File "..\boost_date_time-vc100-mt-1_47.dll"
+  File "..\boost_filesystem-vc100-mt-1_47.dll"
+  File "..\boost_python-vc100-mt-1_47.dll"
+  File "..\boost_regex-vc100-mt-1_47.dll"
+  File "..\boost_serialization-vc100-mt-1_47.dll"
+  File "..\boost_signals-vc100-mt-1_47.dll"
+  File "..\boost_system-vc100-mt-1_47.dll"
+  File "..\boost_thread-vc100-mt-1_47.dll"
   File "..\FreeImage.dll"
   File "..\GiGi.dll"
   File "..\GiGiOgre.dll"
@@ -137,14 +137,14 @@ Section Uninstall
   SetShellVarContext all
 
   Delete "$INSTDIR\alut.dll"
-  Delete "$INSTDIR\boost_date_time-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_filesystem-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_python-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_regex-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_serialization-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_signals-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_system-vc100-mt-1_46_1.dll"
-  Delete "$INSTDIR\boost_thread-vc100-mt-1_46_1.dll"
+  Delete "$INSTDIR\boost_date_time-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_filesystem-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_python-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_regex-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_serialization-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_signals-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_system-vc100-mt-1_47.dll"
+  Delete "$INSTDIR\boost_thread-vc100-mt-1_47.dll"
   Delete "$INSTDIR\FreeImage.dll"
   Delete "$INSTDIR\GiGi.dll"
   Delete "$INSTDIR\GiGiOgre.dll"
