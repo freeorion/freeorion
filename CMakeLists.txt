@@ -8,7 +8,7 @@ set(CMAKE_VERBOSE_MAKEFILE false)
 ########################################
 project(FreeOrion)
 
-set(FREEORION_VERSION 0.3.15)
+set(FREEORION_VERSION 0.3.17)
 set(FREEORION_RELEASE false)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
@@ -83,6 +83,14 @@ else ()
     message(FATAL_ERROR "GiGi library not found.")
 endif ()
 
+find_package(OpenGL REQUIRED)
+if(OPENGL_FOUND)
+    include_directories(${OPENGL_INCLUDE_DIR})
+else()
+    message(FATAL_ERROR "OpenGL library not found.")
+endif()
+
+
 find_package(Subversion)
 set(svn_revision_number ???)
 set(tmpLANG $ENV{LANG})
@@ -126,7 +134,7 @@ set(BUILD_SHARED_TMP ${BUILD_SHARED})
 set(BUILD_STATIC ON)
 set(BUILD_SHARED OFF)
 
-set(THIS_LIB_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES})
+set(THIS_LIB_LINK_LIBS ${GIGI_GIGI_LIBRARY} ${Boost_LIBRARIES} ${ZLIB_LIBRARIES} ${OPENGL_LIBRARIES})
 
 set(THIS_LIB_SOURCES
     combat/CombatOrder.cpp
@@ -478,7 +486,7 @@ if (BUILD_SDK)
 else ()
     install(
         DIRECTORY default
-        DESTINATION default
+        DESTINATION .
         COMPONENT COMPONENT_FREEORION_DATA
         PATTERN ".svn" EXCLUDE
         PATTERN "*~" EXCLUDE
