@@ -137,6 +137,10 @@ namespace {
     }
 }
 
+#ifdef FREEORION_MACOSX
+#include <stdlib.h>
+#endif
+
 void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup_data)
 {
     // check if AI clients are needed for given setup data
@@ -157,6 +161,15 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
 
     if (!need_AIs)
         return;
+
+#ifdef FREEORION_MACOSX
+    // On OSX set environment variable DYLD_LIBRARY_PATH to python framework folder
+    // bundled with app, so the dynamic linker uses the bundled python library.
+    // Otherwise the dynamic linker will look for a correct python lib in system
+    // paths, and if it can't find it, throw an error and terminate!
+    // Setting environment variable here, spawned child processes will inherit it.
+    setenv("DYLD_LIBRARY_PATH", GetPythonHome().string().c_str(), 1);
+#endif
 
     // binary / executable to run for AI clients
     const std::string AI_CLIENT_EXE = AIClientExe();
