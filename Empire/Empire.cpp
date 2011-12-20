@@ -2149,6 +2149,9 @@ void Empire::AddTech(const std::string& name)
     if (!tech)
         Logger().errorStream() << "Empire::AddTech given and invalid tech: " << name;;
     m_techs.insert(name);
+    const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
+    for (unsigned int i = 0; i < unlocked_items.size(); ++i)
+        UnlockItem(unlocked_items[i]);  // potential infinite if a tech (in)directly unlocks itself?
 }
 
 void Empire::UnlockItem(const ItemSpec& item)
@@ -2395,10 +2398,7 @@ void Empire::CheckResearchProgress()
         double& progress = m_research_progress[it->name];
         progress += it->allocated_rp;
         if (tech->ResearchCost() - EPSILON <= progress) {
-            m_techs.insert(it->name);
-            const std::vector<ItemSpec>& unlocked_items = tech->UnlockedItems();
-            for (unsigned int i = 0; i < unlocked_items.size(); ++i)
-                UnlockItem(unlocked_items[i]);
+            AddTech(it->name);
             AddSitRepEntry(CreateTechResearchedSitRep(it->name));
             // TODO: create unlocked item sitreps?
             m_research_progress.erase(it->name);
