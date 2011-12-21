@@ -18,7 +18,13 @@ class Building : public UniverseObject
 {
 public:
     /** \name Structors */ //@{
-    Building();                                                         ///< default ctor
+    Building() :
+        UniverseObject(),
+        m_building_type(""),
+        m_planet_id(INVALID_OBJECT_ID),
+        m_ordered_scrapped(false),
+        m_produced_by_empire_id(ALL_EMPIRES)
+    {}
     Building(int empire_id, const std::string& building_type,
              int produced_by_empire_id = ALL_EMPIRES);                  ///< basic ctor
 
@@ -26,7 +32,7 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string         Dump() const;
 
     /** returns the BuildingType object for this building, specific to the
@@ -34,9 +40,9 @@ public:
       * one owner) */
     const BuildingType*     GetBuildingType() const;
 
-    const std::string&      BuildingTypeName() const;           ///< returns the name of the BuildingType object for this building
-    int                     PlanetID() const;                   ///< returns the ID number of the planet this building is on
-    int                     ProducedByEmpireID() const;         ///< returns the empire ID of the empire that produced this building
+    const std::string&      BuildingTypeName() const    { return m_building_type; };        ///< returns the name of the BuildingType object for this building
+    int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
+    int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -107,18 +113,18 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&              Name() const        { return m_name; }          ///< returns the unique name for this type of building
-    const std::string&              Description() const { return m_description; }   ///< returns a text description of this type of building
+    const std::string&              Name() const            { return m_name; }          ///< returns the unique name for this type of building
+    const std::string&              Description() const     { return m_description; }   ///< returns a text description of this type of building
     std::string                     Dump() const;                   ///< returns a data file format representation of this object
     double                          ProductionCost() const;         ///< returns the number of production points required to build this building
     double                          PerTurnCost() const;            ///< returns the maximum number of production points per turn that can be spend on this building
     int                             ProductionTime() const;         ///< returns the number of turns required to build this building
-    bool                            Producible() const;             ///< returns whether this building type is producible by players and appears on the production screen
-    double                          MaintenanceCost() const;        ///< returns the number of monetary points required per turn to operate this building
-    const Condition::ConditionBase* Location() const;               ///< returns the condition that determines the locations where this building can be produced
+    bool                            Producible() const      { return m_producible; }    ///< returns whether this building type is producible by players and appears on the production screen
+    double                          MaintenanceCost() const { return 0.0; }             ///< returns the number of monetary points required per turn to operate this building
+    const Condition::ConditionBase* Location() const        { return m_location; }      ///< returns the condition that determines the locations where this building can be produced
     const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >&
-                                    Effects() const;                ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
-    const std::string&              Graphic() const;                ///< returns the name of the grapic file for this building type
+                                    Effects() const         { return m_effects; }       ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+    const std::string&              Graphic() const         { return m_graphic; }       ///< returns the name of the grapic file for this building type
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
 
     /** returns CaptureResult for empire with ID \a to_empire_id capturing from
@@ -127,7 +133,8 @@ public:
       * \a as_production_item is false) or which is the location of a Production
       * Queue BuildItem for a building of this type (otherwise) */
     CaptureResult                   GetCaptureResult(int from_empire_id, int to_empire_id,
-                                                     int location_id, bool as_production_item) const;
+                                                     int location_id, bool as_production_item) const
+    { return m_capture_result; }
     //@}
 
 private:
@@ -154,10 +161,10 @@ public:
     const BuildingType*         GetBuildingType(const std::string& name) const;
 
     /** iterator to the first building type */
-    iterator                    begin() const;
+    iterator                    begin() const   { return m_building_types.begin(); }
 
     /** iterator to the last + 1th building type */
-    iterator                    end() const;
+    iterator                    end() const     { return m_building_types.end(); }
 
     /** returns the instance of this singleton class; you should use the free
       * function GetBuildingTypeManager() instead */

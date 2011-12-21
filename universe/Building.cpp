@@ -28,15 +28,8 @@ namespace {
 /////////////////////////////////////////////////
 // Building                                    //
 /////////////////////////////////////////////////
-Building::Building() :
-    UniverseObject(),
-    m_building_type(""),
-    m_planet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false),
-    m_produced_by_empire_id(ALL_EMPIRES)
-{}
-
-Building::Building(int empire_id, const std::string& building_type, int produced_by_empire_id/* = ALL_EMPIRES*/) :
+Building::Building(int empire_id, const std::string& building_type,
+                   int produced_by_empire_id/* = ALL_EMPIRES*/) :
     UniverseObject(),
     m_building_type(building_type),
     m_planet_id(INVALID_OBJECT_ID),
@@ -53,8 +46,7 @@ Building::Building(int empire_id, const std::string& building_type, int produced
     UniverseObject::Init();
 }
 
-Building* Building::Clone(int empire_id) const
-{
+Building* Building::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -65,8 +57,7 @@ Building* Building::Clone(int empire_id) const
     return retval;
 }
 
-void Building::Copy(const UniverseObject* copied_object, int empire_id)
-{
+void Building::Copy(const UniverseObject* copied_object, int empire_id) {
     if (copied_object == this)
         return;
     const Building* copied_building = universe_object_cast<Building*>(copied_object);
@@ -106,27 +97,16 @@ std::string Building::Dump() const
 const BuildingType* Building::GetBuildingType() const
 { return ::GetBuildingType(m_building_type); }
 
-const std::string& Building::BuildingTypeName() const
-{ return m_building_type; }
-
-int Building::PlanetID() const
-{ return m_planet_id; }
-
-int Building::ProducedByEmpireID() const
-{ return m_produced_by_empire_id; }
-
 UniverseObject* Building::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Building* const>(this)); }
 
-void Building::SetPlanetID(int planet_id)
-{
+void Building::SetPlanetID(int planet_id) {
     if (Planet* planet = GetObject<Planet>(m_planet_id))
         planet->RemoveBuilding(this->ID());
     m_planet_id = planet_id;
 }
 
-void Building::MoveTo(double x, double y)
-{
+void Building::MoveTo(double x, double y) {
     //Logger().debugStream() << "Building::MoveTo(" << x << ", " << y << ")";
     UniverseObject::MoveTo(x, y);
 
@@ -135,8 +115,7 @@ void Building::MoveTo(double x, double y)
         planet->RemoveBuilding(this->ID());
 }
 
-void Building::ResetTargetMaxUnpairedMeters()
-{
+void Building::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     // give buildings base stealth slightly above 0, so that they can't be seen from a distance without high detection ability
@@ -144,14 +123,12 @@ void Building::ResetTargetMaxUnpairedMeters()
         stealth->AddToCurrent(0.01);
 }
 
-void Building::Reset()
-{
+void Building::Reset() {
     SetOwner(ALL_EMPIRES);
     m_ordered_scrapped = false;
 }
 
-void Building::SetOrderedScrapped(bool b)
-{
+void Building::SetOrderedScrapped(bool b) {
     bool initial_status = m_ordered_scrapped;
     if (b == initial_status) return;
     m_ordered_scrapped = b;
@@ -164,8 +141,7 @@ void Building::SetOrderedScrapped(bool b)
 BuildingType::~BuildingType()
 { delete m_location; }
 
-std::string BuildingType::Dump() const
-{
+std::string BuildingType::Dump() const {
     using boost::lexical_cast;
 
     std::string retval = DumpIndent() + "BuildingType\n";
@@ -198,8 +174,7 @@ std::string BuildingType::Dump() const
     return retval;
 }
 
-double BuildingType::ProductionCost() const
-{
+double BuildingType::ProductionCost() const {
     if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
         return m_production_cost;
     else
@@ -209,28 +184,12 @@ double BuildingType::ProductionCost() const
 double BuildingType::PerTurnCost() const
 { return ProductionCost() / std::max(1, ProductionTime()); }
 
-int BuildingType::ProductionTime() const
-{
+int BuildingType::ProductionTime() const {
     if (!CHEAP_AND_FAST_BUILDING_PRODUCTION)
         return m_production_time;
     else
         return 1;
 }
-
-bool BuildingType::Producible() const
-{ return m_producible; }
-
-double BuildingType::MaintenanceCost() const
-{ return 0.0; }
-
-const Condition::ConditionBase* BuildingType::Location() const
-{ return m_location; }
-
-const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& BuildingType::Effects() const
-{ return m_effects; }
-
-const std::string& BuildingType::Graphic() const
-{ return m_graphic; }
 
 bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     const ObjectMap& objects = GetMainObjectMap();
@@ -276,18 +235,13 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     return !matched_targets.empty();
 }
 
-CaptureResult BuildingType::GetCaptureResult(int from_empire_id, int to_empire_id,
-                                             int location_id, bool as_production_item) const
-{ return m_capture_result; }
-
 /////////////////////////////////////////////////
 // BuildingTypeManager                         //
 /////////////////////////////////////////////////
 // static(s)
 BuildingTypeManager* BuildingTypeManager::s_instance = 0;
 
-BuildingTypeManager::BuildingTypeManager()
-{
+BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
@@ -296,31 +250,21 @@ BuildingTypeManager::BuildingTypeManager()
     parse::buildings(GetResourceDir() / "buildings.txt", m_building_types);
 }
 
-BuildingTypeManager::~BuildingTypeManager()
-{
-    for (std::map<std::string, BuildingType*>::iterator it = m_building_types.begin(); it != m_building_types.end(); ++it) {
-        delete it->second;
-    }
+BuildingTypeManager::~BuildingTypeManager() {
+    for (std::map<std::string, BuildingType*>::iterator it = m_building_types.begin();
+         it != m_building_types.end(); ++it)
+    { delete it->second; }
 }
 
-const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const
-{
+const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
     std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
     return it != m_building_types.end() ? it->second : 0;
 }
 
-BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager()
-{
+BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
     static BuildingTypeManager manager;
     return manager;
 }
-
-BuildingTypeManager::iterator BuildingTypeManager::begin() const
-{ return m_building_types.begin(); }
-
-BuildingTypeManager::iterator BuildingTypeManager::end() const
-{ return m_building_types.end(); }
-
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //
