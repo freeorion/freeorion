@@ -42,6 +42,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Parsers", "Parsers\Parsers.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "log4cpp", "log4cpp\log4cpp.vcxproj", "{DFF7D1E4-1A95-407A-B84C-AB57A20A9485}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Universe", "Universe\Universe.vcxproj", "{72746EEC-410C-4272-988F-835DC2665FDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -80,6 +82,10 @@ Global
 		{DFF7D1E4-1A95-407A-B84C-AB57A20A9485}.Debug|Win32.Build.0 = Debug|Win32
 		{DFF7D1E4-1A95-407A-B84C-AB57A20A9485}.Release|Win32.ActiveCfg = Release|Win32
 		{DFF7D1E4-1A95-407A-B84C-AB57A20A9485}.Release|Win32.Build.0 = Release|Win32
+		{72746EEC-410C-4272-988F-835DC2665FDB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{72746EEC-410C-4272-988F-835DC2665FDB}.Debug|Win32.Build.0 = Debug|Win32
+		{72746EEC-410C-4272-988F-835DC2665FDB}.Release|Win32.ActiveCfg = Release|Win32
+		{72746EEC-410C-4272-988F-835DC2665FDB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

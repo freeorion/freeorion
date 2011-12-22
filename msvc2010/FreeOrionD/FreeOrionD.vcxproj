@@ -85,7 +85,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../FreeOrionD.exe</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Parsers.lib;log4cpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Universe.lib;Parsers.lib;log4cpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -197,28 +197,7 @@
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
     <ClCompile Include="..\..\UI\StringTable.cpp" />
-    <ClCompile Include="..\..\universe\Building.cpp" />
-    <ClCompile Include="..\..\universe\Condition.cpp" />
-    <ClCompile Include="..\..\universe\Effect.cpp" />
-    <ClCompile Include="..\..\universe\EffectAccounting.cpp" />
-    <ClCompile Include="..\..\universe\Enums.cpp" />
-    <ClCompile Include="..\..\universe\Fleet.cpp" />
-    <ClCompile Include="..\..\universe\Meter.cpp" />
-    <ClCompile Include="..\..\universe\Names.cpp" />
-    <ClCompile Include="..\..\universe\ObjectMap.cpp" />
-    <ClCompile Include="..\..\universe\Planet.cpp" />
-    <ClCompile Include="..\..\universe\PopCenter.cpp" />
-    <ClCompile Include="..\..\universe\Predicates.cpp" />
-    <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
-    <ClCompile Include="..\..\universe\Ship.cpp" />
-    <ClCompile Include="..\..\universe\ShipDesign.cpp" />
-    <ClCompile Include="..\..\universe\Special.cpp" />
-    <ClCompile Include="..\..\universe\Species.cpp" />
-    <ClCompile Include="..\..\universe\System.cpp" />
-    <ClCompile Include="..\..\universe\Tech.cpp" />
-    <ClCompile Include="..\..\universe\Universe.cpp" />
-    <ClCompile Include="..\..\universe\UniverseObject.cpp" />
-    <ClCompile Include="..\..\universe\ValueRef.cpp" />
+    <ClCompile Include="..\..\universe\UniverseServer.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\DataTable.cpp" />
     <ClCompile Include="..\..\util\Directories.cpp" />

@@ -18,7 +18,6 @@ set(THIS_EXE_SOURCES
     ../../python/PythonUniverseWrapper.cpp
     ../../python/PythonEmpireWrapper.cpp
     ../../python/PythonLoggingWrapper.cpp
-    ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
 )

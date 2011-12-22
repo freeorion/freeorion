@@ -120,7 +120,6 @@ set(THIS_EXE_SOURCES
     ../../UI/PagedGeometry/TreeLoader3D.cpp
     ../../UI/PagedGeometry/WindBatchedGeometry.cpp
     ../../UI/PagedGeometry/WindBatchPage.cpp
-    ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
 )

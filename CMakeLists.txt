@@ -174,6 +174,7 @@ set(THIS_LIB_SOURCES
     universe/Species.cpp
     universe/System.cpp
     universe/Tech.cpp
+    universe/Universe.cpp
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/DataTable.cpp

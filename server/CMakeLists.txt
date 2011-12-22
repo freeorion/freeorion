@@ -12,7 +12,7 @@ set(THIS_EXE_SOURCES
     ../server/ServerApp.cpp
     ../server/ServerFSM.cpp
     ../server/dmain.cpp
-    ../universe/Universe.cpp
+    ../universe/UniverseServer.cpp
     ../util/AppInterface.cpp
     ../util/VarText.cpp
 )

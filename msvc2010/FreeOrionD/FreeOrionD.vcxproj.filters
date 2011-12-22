@@ -408,63 +408,6 @@
     <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ValueRef.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Building.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Condition.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Effect.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Enums.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Fleet.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Meter.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Planet.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\PopCenter.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Predicates.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Ship.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\ShipDesign.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Special.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Species.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\System.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Tech.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Universe.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\UniverseObject.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
@@ -480,13 +423,7 @@
     <ClCompile Include="..\..\server\dmain.cpp">
       <Filter>Source Files\server</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\universe\ObjectMap.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\EffectAccounting.cpp">
-      <Filter>Source Files\universe</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\universe\Names.cpp">
+    <ClCompile Include="..\..\universe\UniverseServer.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>

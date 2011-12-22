@@ -85,8 +85,8 @@ public:
 
     /** \name Accessors */ //@{
     /** Returns objects in this Universe. */
-    const ObjectMap&        Objects() const;
-    ObjectMap&              Objects();
+    const ObjectMap&        Objects() const { return m_objects; }
+    ObjectMap&              Objects()       { return m_objects; }
 
     /** Returns latest known state of objects for the Empire with
       * id \a empire_id or the true / complete state of all objects in this
@@ -351,11 +351,11 @@ public:
 
     /** Generates an object ID for a future object. Usually used by the server
       * to service new ID requests. */
-    int             GenerateObjectID();
+    int             GenerateObjectID() { return ++m_last_allocated_object_id; }
 
     /** Generates design ID for a new (ship) design. Usually used by the
       * server to service new ID requests. */
-    int             GenerateDesignID();
+    int             GenerateDesignID() { return ++m_last_allocated_design_id; }
 
     typedef std::vector<std::vector<std::set<System*> > > AdjacencyGrid;
 
