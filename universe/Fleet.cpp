@@ -26,17 +26,6 @@ const int Fleet::ETA_UNKNOWN = (1 << 30);
 const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
 const int Fleet::ETA_NEVER = (1 << 30) - 2;
 
-Fleet::Fleet() :
-    UniverseObject(),
-    m_moving_to(INVALID_OBJECT_ID),
-    m_speed(0.0),
-    m_prev_system(INVALID_OBJECT_ID),
-    m_next_system(INVALID_OBJECT_ID),
-    m_travel_distance(0.0),
-    m_arrived_this_turn(false),
-    m_arrival_starlane(INVALID_OBJECT_ID)
-{}
-
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     UniverseObject(name, x, y),
     m_moving_to(INVALID_OBJECT_ID),
@@ -51,8 +40,7 @@ Fleet::Fleet(const std::string& name, double x, double y, int owner) :
     SetOwner(owner);
 }
 
-Fleet* Fleet::Clone(int empire_id) const
-{
+Fleet* Fleet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -63,8 +51,7 @@ Fleet* Fleet::Clone(int empire_id) const
     return retval;
 }
 
-void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
-{
+void Fleet::Copy(const UniverseObject* copied_object, int empire_id) {
     if (copied_object == this)
         return;
     const Fleet* copied_fleet = universe_object_cast<Fleet*>(copied_object);
@@ -125,8 +112,7 @@ void Fleet::Copy(const UniverseObject* copied_object, int empire_id)
 const std::string& Fleet::TypeName() const
 { return UserString("FLEET"); }
 
-std::string Fleet::Dump() const
-{
+std::string Fleet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " moving to: " << m_moving_to
@@ -141,17 +127,7 @@ std::string Fleet::Dump() const
     return os.str();
 }
 
-Fleet::const_iterator Fleet::begin() const
-{ return m_ships.begin(); }
-
-Fleet::const_iterator Fleet::end() const
-{ return m_ships.end(); }
-
-const std::set<int>& Fleet::ShipIDs() const
-{ return m_ships; }
-
-const std::string& Fleet::PublicName(int empire_id) const
-{
+const std::string& Fleet::PublicName(int empire_id) const {
     // Disclose real fleet name only to fleet owners. Rationale: a player might become suspicious if the incoming
     // foreign fleet is called "Decoy"
     if (Universe::ALL_OBJECTS_VISIBLE || empire_id == ALL_EMPIRES || OwnedBy(empire_id))
@@ -164,8 +140,7 @@ const std::string& Fleet::PublicName(int empire_id) const
         return UserString("FW_FOREIGN_FLEET");
 }
 
-const std::list<int>& Fleet::TravelRoute() const
-{
+const std::list<int>& Fleet::TravelRoute() const {
     CalculateRoute();
     //Logger().debugStream() << "fleet travel route: ";
     //for (std::list<int>::const_iterator it = m_travel_route.begin(); it != m_travel_route.end(); ++it)
@@ -176,8 +151,7 @@ const std::list<int>& Fleet::TravelRoute() const
 std::list<MovePathNode> Fleet::MovePath() const
 { return MovePath(TravelRoute()); }
 
-std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
-{
+std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const {
     std::list<MovePathNode> retval;
 
     if (route.empty())
@@ -422,8 +396,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route) const
 std::pair<int, int> Fleet::ETA() const
 { return ETA(MovePath()); }
 
-std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
-{
+std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
     // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
     if (move_path.empty())
         return std::make_pair(ETA_UNKNOWN, ETA_UNKNOWN);
@@ -448,8 +421,7 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const
     return std::make_pair(last_stop_eta, first_stop_eta);
 }
 
-double Fleet::Fuel() const
-{
+double Fleet::Fuel() const {
     if (NumShips() < 1)
         return 0.0;
 
@@ -478,8 +450,7 @@ double Fleet::Fuel() const
     return fuel;
 }
 
-double Fleet::MaxFuel() const
-{
+double Fleet::MaxFuel() const {
     if (NumShips() < 1)
         return 0.0;
 
@@ -509,29 +480,7 @@ double Fleet::MaxFuel() const
     return max_fuel;
 }
 
-int Fleet::FinalDestinationID() const
-{ return m_moving_to; }
-
-int Fleet::PreviousSystemID() const
-{ return m_prev_system; }
-
-int Fleet::NextSystemID() const
-{ return m_next_system; }
-
-double Fleet::Speed() const
-{
-    //Logger().debugStream() << "Fleet " << this->Name() << " has speed: " << m_speed;
-    return m_speed;
-}
-
-bool Fleet::CanChangeDirectionEnRoute() const
-{
-    // TODO: enable this code when technologies or other factors to allow a fleet to turn around in mid-flight, without completing its current leg
-    return false;
-}
-
-bool Fleet::HasMonsters() const
-{
+bool Fleet::HasMonsters() const {
     const ObjectMap& objects = GetMainObjectMap();
     for (Fleet::const_iterator it = begin(); it != end(); it++) {
         if (const Ship* ship = objects.Object<Ship>(*it))
@@ -541,8 +490,7 @@ bool Fleet::HasMonsters() const
     return false;
 }
 
-bool Fleet::HasArmedShips() const
-{
+bool Fleet::HasArmedShips() const {
     const ObjectMap& objects = GetMainObjectMap();
     for (Fleet::const_iterator it = begin(); it != end(); it++) {
         if (const Ship* ship = objects.Object<Ship>(*it))
@@ -552,8 +500,7 @@ bool Fleet::HasArmedShips() const
     return false;
 }
 
-bool Fleet::HasColonyShips() const
-{
+bool Fleet::HasColonyShips() const {
     const ObjectMap& objects = GetMainObjectMap();
     for (Fleet::const_iterator it = begin(); it != end(); it++)
         if (const Ship* ship = objects.Object<Ship>(*it))
@@ -562,8 +509,7 @@ bool Fleet::HasColonyShips() const
     return false;
 }
 
-bool Fleet::HasTroopShips() const
-{
+bool Fleet::HasTroopShips() const {
     const ObjectMap& objects = GetMainObjectMap();
     for (Fleet::const_iterator it = begin(); it != end(); it++)
         if (const Ship* ship = objects.Object<Ship>(*it))
@@ -572,17 +518,10 @@ bool Fleet::HasTroopShips() const
     return false;
 }
 
-int Fleet::NumShips() const
-{ return m_ships.size(); }
-
-bool Fleet::Empty() const
-{ return m_ships.empty(); }
-
 bool Fleet::Contains(int object_id) const
 { return m_ships.find(object_id) != m_ships.end(); }
 
-std::vector<UniverseObject*> Fleet::FindObjects() const
-{
+std::vector<UniverseObject*> Fleet::FindObjects() const {
     ObjectMap& objects = GetMainObjectMap();
     std::vector<UniverseObject*> retval;
     // add ships in this fleet
@@ -592,30 +531,21 @@ std::vector<UniverseObject*> Fleet::FindObjects() const
     return retval;
 }
 
-std::vector<int> Fleet::FindObjectIDs() const
-{
+std::vector<int> Fleet::FindObjectIDs() const {
     std::vector<int> retval;
     // add ships in this fleet
     std::copy(m_ships.begin(), m_ships.end(), std::back_inserter(retval));
     return retval;
 }
 
-bool Fleet::UnknownRoute() const
-{
+bool Fleet::UnknownRoute() const {
     return m_travel_route.size() == 1 && m_travel_route.front() == UniverseObject::INVALID_OBJECT_ID;
 }
-
-bool Fleet::ArrivedThisTurn() const
-{ return m_arrived_this_turn; }
-
-int Fleet::ArrivalStarlane() const
-{ return m_arrival_starlane; }
 
 UniverseObject* Fleet::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<Fleet* const>(this)); }
 
-void Fleet::SetRoute(const std::list<int>& route)
-{
+void Fleet::SetRoute(const std::list<int>& route) {
     if (route.empty())
         throw std::invalid_argument("Fleet::SetRoute() : Attempted to set an empty route.");
 
@@ -688,8 +618,7 @@ void Fleet::SetRoute(const std::list<int>& route)
     StateChangedSignal();
 }
 
-void Fleet::AddShip(int ship_id)
-{
+void Fleet::AddShip(int ship_id) {
     if (this->Contains(ship_id)) {
         Logger().debugStream() << "Fleet::AddShip this fleet '" << this->Name() << "' already contained ship '" << ship_id << "'";
         return;
@@ -723,8 +652,7 @@ void Fleet::AddShip(int ship_id)
     StateChangedSignal();
 }
 
-bool Fleet::RemoveShip(int ship)
-{
+bool Fleet::RemoveShip(int ship) {
     //std::cout << "Fleet::RemoveShip" << std::endl;
     iterator it = m_ships.find(ship);
     if (it != m_ships.end()) {
@@ -736,8 +664,7 @@ bool Fleet::RemoveShip(int ship)
     return false;
 }
 
-void Fleet::SetSystem(int sys)
-{
+void Fleet::SetSystem(int sys) {
     //Logger().debugStream() << "Fleet::SetSystem(int sys)";
     UniverseObject::SetSystem(sys);
     ObjectMap& objects = GetMainObjectMap();
@@ -746,8 +673,7 @@ void Fleet::SetSystem(int sys)
             obj->SetSystem(sys);
 }
 
-void Fleet::MoveTo(double x, double y)
-{
+void Fleet::MoveTo(double x, double y) {
     //Logger().debugStream() << "Fleet::MoveTo(double x, double y)";
     // move fleet itself
     UniverseObject::MoveTo(x, y);
@@ -758,14 +684,12 @@ void Fleet::MoveTo(double x, double y)
             obj->UniverseObject::MoveTo(x, y);
 }
 
-void Fleet::SetNextAndPreviousSystems(int next, int prev)
-{
+void Fleet::SetNextAndPreviousSystems(int next, int prev) {
     m_prev_system = prev;
     m_next_system = next;
 }
 
-void Fleet::MovementPhase()
-{
+void Fleet::MovementPhase() {
     //Logger().debugStream() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
     m_arrived_this_turn = false;
@@ -926,14 +850,7 @@ void Fleet::MovementPhase()
     }
 }
 
-Fleet::iterator Fleet::begin()
-{ return m_ships.begin(); }
-
-Fleet::iterator Fleet::end()
-{ return m_ships.end(); }
-
-void Fleet::ResetTargetMaxUnpairedMeters()
-{
+void Fleet::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     // give fleets base stealth very high, so that they can (almost?) never be
@@ -945,8 +862,7 @@ void Fleet::ResetTargetMaxUnpairedMeters()
     }
 }
 
-void Fleet::CalculateRoute() const
-{
+void Fleet::CalculateRoute() const {
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = GetMainObjectMap();
 
@@ -1084,8 +1000,7 @@ void Fleet::CalculateRoute() const
     }
 }
 
-void Fleet::RecalculateFleetSpeed()
-{
+void Fleet::RecalculateFleetSpeed() {
     if ((m_ships.empty())) {
         m_speed = 0.0;
         return;
@@ -1107,8 +1022,7 @@ void Fleet::RecalculateFleetSpeed()
         m_speed = 0.0;
 }
 
-void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system)
-{
+void Fleet::ShortenRouteToEndAtSystem(std::list<int>& travel_route, int last_system) {
     std::list<int>::iterator visible_end_it;
     if (last_system != m_moving_to) {
         visible_end_it = std::find(m_travel_route.begin(), m_travel_route.end(), last_system);
@@ -1143,8 +1057,7 @@ std::string Fleet::GenerateFleetName(const std::vector<int>& ship_ids, int new_f
     return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(new_fleet_id));
 }
 
-Fleet::ShipIDSet Fleet::VisibleContainedObjects(int empire_id) const
-{
+Fleet::ShipIDSet Fleet::VisibleContainedObjects(int empire_id) const {
     ShipIDSet retval;
     const Universe& universe = GetUniverse();
     for (ShipIDSet::const_iterator it = m_ships.begin(); it != m_ships.end(); ++it) {

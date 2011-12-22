@@ -26,12 +26,12 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual const std::string&  TypeName() const;           ///< returns user-readable string indicating the type of UniverseObject this is
+    virtual const std::string&  TypeName() const;   ///< returns user-readable string indicating the type of UniverseObject this is
 
-    const ShipDesign*           Design() const;             ///< returns the design of the ship, containing engine type, weapons, etc.
-    int                         DesignID() const;           ///< returns the design id of the ship
-    int                         FleetID() const;            ///< returns the ID of the fleet the ship is residing in
-    int                         ProducedByEmpireID() const; ///< returns the empire ID of the empire that produced this ship
+    const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
+    int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
+    int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
+    int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
 
     virtual const std::string&  PublicName(int empire_id) const;
     virtual std::string         Dump() const;
@@ -40,19 +40,19 @@ public:
     bool                        IsArmed() const;
     bool                        CanColonize() const;
     bool                        HasTroops() const;
-    const std::string&          SpeciesName() const;
+    const std::string&          SpeciesName() const         { return m_species_name; }
     double                      Speed() const;
 
-    const ConsumablesMap&       Fighters() const;
-    const ConsumablesMap&       Missiles() const;
+    const ConsumablesMap&       Fighters() const            { return m_fighters; }
+    const ConsumablesMap&       Missiles() const            { return m_missiles; }
 
     virtual UniverseObject*     Accept(const UniverseObjectVisitor& visitor) const;
 
     virtual double              NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
-    bool                        OrderedScrapped() const;        ///< returns true iff this ship has been ordered scrapped, or false otherwise
-    int                         OrderedColonizePlanet() const;  ///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
-    int                         OrderedInvadePlanet() const;    ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
+    bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
+    int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
+    int                         OrderedInvadePlanet() const     { return m_ordered_invade_planet_id; }  ///< returns the ID of the planet this ship has been ordered to invade with ground troops, or INVALID_OBJECT_ID if this ship hasn't been ordered to invade a planet
 
     const Meter*                GetMeter(MeterType type, const std::string& part_name) const; ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     //@}

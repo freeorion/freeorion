@@ -29,7 +29,16 @@ public:
     typedef ShipIDSet::const_iterator   const_iterator;                 ///< a const iterator to the ships in the fleet
 
     /** \name Structors */ //@{
-    Fleet();                                                            ///< default ctor
+    Fleet() :
+        UniverseObject(),
+        m_moving_to(INVALID_OBJECT_ID),
+        m_speed(0.0),
+        m_prev_system(INVALID_OBJECT_ID),
+        m_next_system(INVALID_OBJECT_ID),
+        m_travel_distance(0.0),
+        m_arrived_this_turn(false),
+        m_arrival_starlane(INVALID_OBJECT_ID)
+    {}
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
     virtual Fleet*                      Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
@@ -39,10 +48,10 @@ public:
     virtual const std::string&          TypeName() const;                   ///< returns user-readable string indicating the type of UniverseObject this is
     virtual std::string                 Dump() const;
 
-    const_iterator                      begin() const;                      ///< returns the begin const_iterator for the ships in the fleet
-    const_iterator                      end() const;                        ///< returns the end const_iterator for the ships in the fleet
+    const_iterator                      begin() const       { return m_ships.begin(); } ///< returns the begin const_iterator for the ships in the fleet
+    const_iterator                      end() const         { return m_ships.end(); }   ///< returns the end const_iterator for the ships in the fleet
 
-    const std::set<int>&                ShipIDs() const;                    ///< returns set of IDs of ships in fleet.
+    const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
 
     virtual const std::string&          PublicName(int empire_id) const;
 
@@ -60,17 +69,17 @@ public:
     std::pair<int, int>                 ETA(const std::list<MovePathNode>& move_path) const;    ///< Returns the number of turns which must elapse before the fleet arrives at the final destination and next system in the spepcified \a move_path
     double                              Fuel() const;                       ///< Returns effective amount of fuel this fleet has, which is the least of the amounts of fuel that the ships have
     double                              MaxFuel() const;                    ///< Returns effective maximum amount of fuel this fleet has, which is the least of the max amounts of fuel that the ships can have
-    int                                 FinalDestinationID() const;         ///< Returns ID of system that this fleet is moving to.
-    int                                 PreviousSystemID() const;           ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
-    int                                 NextSystemID() const;               ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
-    double                              Speed() const;                      ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
-    bool                                CanChangeDirectionEnRoute() const;  ///< Returns true iff this fleet can change its direction while in interstellar space.
+    int                                 FinalDestinationID() const          { return m_moving_to; }     ///< Returns ID of system that this fleet is moving to.
+    int                                 PreviousSystemID() const            { return m_prev_system; }   ///< Returns ID of system that this fleet is moving away from as it moves to its destination.
+    int                                 NextSystemID() const                { return m_next_system; }   ///< Returns ID of system that this fleet is moving to next as it moves to its destination.
+    double                              Speed() const                       { return m_speed; }         ///< Returns speed of fleet. (Should be equal to speed of slowest ship in fleet, unless in future the calculation of fleet speed changes.)
+    bool                                CanChangeDirectionEnRoute() const   { return false; }           ///< Returns true iff this fleet can change its direction while in interstellar space.
     bool                                HasMonsters() const;                ///< returns true iff this fleet contains monster ships.
     bool                                HasArmedShips() const;              ///< Returns true if there is at least one armed ship in the fleet.
     bool                                HasColonyShips() const;             ///< Returns true if there is at least one colony ship in the fleet.
     bool                                HasTroopShips() const;              ///< Returns true if there is at least one troop ship in the fleet.
-    int                                 NumShips() const;                   ///< Returns number of ships in fleet.
-    bool                                Empty() const;                      ///< Returns true if fleet contains no ships, false otherwise.
+    int                                 NumShips() const                    { return m_ships.size(); }  ///< Returns number of ships in fleet.
+    bool                                Empty() const                       { return m_ships.empty(); } ///< Returns true if fleet contains no ships, false otherwise.
     virtual bool                        Contains(int object_id) const;      ///< Returns true iff this Fleet contains a ship with ID \a id.
     virtual std::vector<UniverseObject*>FindObjects() const;                ///< returns objects contained within this fleet
     virtual std::vector<int>            FindObjectIDs() const;              ///< returns ids of objects contained within this fleet
@@ -82,11 +91,11 @@ public:
     bool                                UnknownRoute() const;
 
     /** Returns true iff this fleet arrived at its current System this turn. */
-    bool                                ArrivedThisTurn() const;
+    bool                                ArrivedThisTurn() const             { return m_arrived_this_turn; }
 
     /** Returns the ID of the starlane that this fleet arrived on.  The value
         returned is undefined if ArrivedThisTurn() does not return true. */
-    int                                 ArrivalStarlane() const;
+    int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
 
     virtual UniverseObject*             Accept(const UniverseObjectVisitor& visitor) const;
     //@}
@@ -102,8 +111,8 @@ public:
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     bool                    RemoveShip(int ship);                           ///< removes the ship from the fleet. Returns false if no ship with ID \a id was found.
 
-    iterator                begin();                                        ///< returns the begin iterator for the ships in the fleet
-    iterator                end();                                          ///< returns the end iterator for the ships in the fleet
+    iterator                begin() { return m_ships.begin(); }             ///< returns the begin iterator for the ships in the fleet
+    iterator                end()   { return m_ships.end(); }               ///< returns the end iterator for the ships in the fleet
 
     virtual void            SetSystem(int sys);
     virtual void            MoveTo(double x, double y);

@@ -36,7 +36,8 @@ Ship::Ship() :
     m_produced_by_empire_id(ALL_EMPIRES)
 {}
 
-Ship::Ship(int empire_id, int design_id, const std::string& species_name, int produced_by_empire_id/* = ALL_EMPIRES*/) :
+Ship::Ship(int empire_id, int design_id, const std::string& species_name,
+           int produced_by_empire_id/* = ALL_EMPIRES*/) :
     m_design_id(design_id),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
@@ -119,8 +120,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name, int pr
     }
 }
 
-Ship* Ship::Clone(int empire_id) const
-{
+Ship* Ship::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -131,8 +131,7 @@ Ship* Ship::Clone(int empire_id) const
     return retval;
 }
 
-void Ship::Copy(const UniverseObject* copied_object, int empire_id)
-{
+void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
     if (copied_object == this)
         return;
     const Ship* copied_ship = universe_object_cast<Ship*>(copied_object);
@@ -172,12 +171,9 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id)
 }
 
 const std::string& Ship::TypeName() const
-{
-    return UserString("SHIP");
-}
+{ return UserString("SHIP"); }
 
-std::string Ship::Dump() const
-{
+std::string Ship::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " design id: " << m_design_id
@@ -215,19 +211,6 @@ std::string Ship::Dump() const
 
 const ShipDesign* Ship::Design() const {
     return GetShipDesign(m_design_id);
-}
-
-int Ship::DesignID() const {
-    return m_design_id;
-}
-
-int Ship::FleetID() const {
-    return m_fleet_id;
-}
-
-int Ship::ProducedByEmpireID() const
-{
-    return m_produced_by_empire_id;
 }
 
 bool Ship::IsMonster() const {
@@ -269,24 +252,12 @@ bool Ship::HasTroops() const {
     return design && design->HasTroops();
 }
 
-const std::string& Ship::SpeciesName() const {
-    return m_species_name;
-}
-
 double Ship::Speed() const {
     const ShipDesign* design = Design();
     if (design)
         return design->StarlaneSpeed();
     else
         return false;
-}
-
-const Ship::ConsumablesMap& Ship::Fighters() const {
-    return m_fighters;
-}
-
-const Ship::ConsumablesMap& Ship::Missiles() const {
-    return m_missiles;
 }
 
 const std::string& Ship::PublicName(int empire_id) const {
@@ -321,26 +292,15 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
     return UniverseObject::NextTurnCurrentMeterValue(type);
 }
 
-bool Ship::OrderedScrapped() const
-{ return m_ordered_scrapped; }
-
-int Ship::OrderedColonizePlanet() const
-{ return m_ordered_colonize_planet_id; }
-
-int Ship::OrderedInvadePlanet() const
-{ return m_ordered_invade_planet_id; }
-
 const Meter* Ship::GetMeter(MeterType type, const std::string& part_name) const
 { return const_cast<Ship*>(this)->GetMeter(type, part_name); }
 
-void Ship::SetFleetID(int fleet_id)
-{
+void Ship::SetFleetID(int fleet_id) {
     m_fleet_id = fleet_id;
     StateChangedSignal();
 }
 
-void Ship::Resupply()
-{
+void Ship::Resupply() {
     Meter* fuel_meter = UniverseObject::GetMeter(METER_FUEL);
     const Meter* max_fuel_meter = UniverseObject::GetMeter(METER_MAX_FUEL);
     if (!fuel_meter || !max_fuel_meter) {
@@ -369,8 +329,7 @@ void Ship::Resupply()
     }
 }
 
-void Ship::AddFighters(const std::string& part_name, std::size_t n)
-{
+void Ship::AddFighters(const std::string& part_name, std::size_t n) {
     const PartType* part_type = GetPartType(part_name);
     if (!part_type) return;
     assert(m_fighters[part_name].second + n <=
@@ -379,27 +338,23 @@ void Ship::AddFighters(const std::string& part_name, std::size_t n)
     m_fighters[part_name].second += n;
 }
 
-void Ship::RemoveFighters(const std::string& part_name, std::size_t n)
-{
+void Ship::RemoveFighters(const std::string& part_name, std::size_t n) {
     assert(m_fighters[part_name].second < n);
     m_fighters[part_name].second -= n;
 }
 
-void Ship::RemoveMissiles(const std::string& part_name, std::size_t n)
-{
+void Ship::RemoveMissiles(const std::string& part_name, std::size_t n) {
     assert(m_missiles[part_name].second < n);
     m_missiles[part_name].second -= n;
 }
 
-void Ship::SetSpecies(const std::string& species_name)
-{
+void Ship::SetSpecies(const std::string& species_name) {
     if (!GetSpecies(species_name))
         Logger().errorStream() << "Ship::SetSpecies couldn't get species with name " << species_name;
     m_species_name = species_name;
 }
 
-void Ship::MoveTo(double x, double y)
-{
+void Ship::MoveTo(double x, double y) {
     UniverseObject::MoveTo(x, y);
 
     // if ship is being moved away from its fleet, remove from the fleet.  otherwise, keep ship in fleet.
@@ -409,8 +364,7 @@ void Ship::MoveTo(double x, double y)
     }
 }
 
-void Ship::SetOrderedScrapped(bool b)
-{
+void Ship::SetOrderedScrapped(bool b) {
     if (b == m_ordered_scrapped) return;
     m_ordered_scrapped = b;
     StateChangedSignal();
@@ -420,8 +374,7 @@ void Ship::SetOrderedScrapped(bool b)
     }
 }
 
-void Ship::SetColonizePlanet(int planet_id)
-{
+void Ship::SetColonizePlanet(int planet_id) {
     if (planet_id == m_ordered_colonize_planet_id) return;
     m_ordered_colonize_planet_id = planet_id;
     StateChangedSignal();
@@ -431,13 +384,11 @@ void Ship::SetColonizePlanet(int planet_id)
     }
 }
 
-void Ship::ClearColonizePlanet()
-{
+void Ship::ClearColonizePlanet() {
     SetColonizePlanet(INVALID_OBJECT_ID);
 }
 
-void Ship::SetInvadePlanet(int planet_id)
-{
+void Ship::SetInvadePlanet(int planet_id) {
     if (planet_id == m_ordered_invade_planet_id) return;
     m_ordered_invade_planet_id = planet_id;
     StateChangedSignal();
@@ -447,13 +398,11 @@ void Ship::SetInvadePlanet(int planet_id)
     }
 }
 
-void Ship::ClearInvadePlanet()
-{
+void Ship::ClearInvadePlanet() {
     SetInvadePlanet(INVALID_OBJECT_ID);
 }
 
-Meter* Ship::GetMeter(MeterType type, const std::string& part_name)
-{
+Meter* Ship::GetMeter(MeterType type, const std::string& part_name) {
     Meter* retval = 0;
     PartMeters::iterator it = m_part_meters.find(std::make_pair(type, part_name));
     if (it != m_part_meters.end())
@@ -461,8 +410,7 @@ Meter* Ship::GetMeter(MeterType type, const std::string& part_name)
     return retval;
 }
 
-void Ship::ResetTargetMaxUnpairedMeters()
-{
+void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     UniverseObject::GetMeter(METER_MAX_FUEL)->ResetCurrent();
@@ -477,8 +425,7 @@ void Ship::ResetTargetMaxUnpairedMeters()
         it->second.ResetCurrent();
 }
 
-void Ship::ClampMeters()
-{
+void Ship::ClampMeters() {
     UniverseObject::ClampMeters();
 
     UniverseObject::GetMeter(METER_MAX_FUEL)->ClampCurrentToRange();
