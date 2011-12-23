@@ -85,6 +85,8 @@ protected:
     virtual void    ResetTargetMaxUnpairedMeters();
 
 private:
+    virtual void    PopGrowthProductionResearchPhase();
+
     typedef std::map<std::pair<MeterType, std::string>, Meter> PartMeters;
 
     virtual void    ClampMeters();

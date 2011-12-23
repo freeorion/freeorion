@@ -288,6 +288,9 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //} else if (type == METER_SUPPLY) {
     //    // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
     //}
+    if (type == METER_SHIELD)
+        return std::min(UniverseObject::GetMeter(METER_SHIELD)->Current() + 1.0,
+                        UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
 
     return UniverseObject::NextTurnCurrentMeterValue(type);
 }
@@ -423,6 +426,14 @@ void Ship::ResetTargetMaxUnpairedMeters() {
 
     for (PartMeters::iterator it = m_part_meters.begin(); it != m_part_meters.end(); ++it)
         it->second.ResetCurrent();
+}
+
+void Ship::PopGrowthProductionResearchPhase() {
+    UniverseObject::PopGrowthProductionResearchPhase();
+
+    UniverseObject::GetMeter(METER_SHIELD)->SetCurrent(Ship::NextTurnCurrentMeterValue(METER_SHIELD));
+
+    StateChangedSignal();
 }
 
 void Ship::ClampMeters() {
