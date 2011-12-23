@@ -1108,6 +1108,23 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     Logger().debugStream() << "Universe::GetEffectsAndTargets for TECHS";
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
+        int source_id = empire->CapitalID();
+        if (source_id == UniverseObject::INVALID_OBJECT_ID) {
+            // find alternate object owned by this empire to act as source
+            // first try to get a planet
+            std::vector<int> empire_planets = m_objects.FindObjectIDs(OwnedVisitor<Planet>(empire->EmpireID()));
+            if (!empire_planets.empty()) {
+                source_id = *empire_planets.begin();
+            } else {
+                // if no planet, use any owned object
+                std::vector<int> empire_objects = m_objects.FindObjectIDs(OwnedVisitor<UniverseObject>(empire->EmpireID()));
+                if (!empire_objects.empty()) {
+                    source_id = *empire_objects.begin();
+                } else {
+                    continue;   // can't do techs for this empire
+                }
+            }
+        }
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
