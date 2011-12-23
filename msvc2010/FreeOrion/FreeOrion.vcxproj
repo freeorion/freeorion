@@ -84,7 +84,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Universe.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <LinkStatus>
       </LinkStatus>
@@ -311,28 +311,6 @@
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
     <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
-    <ClCompile Include="..\..\universe\Building.cpp" />
-    <ClCompile Include="..\..\universe\Condition.cpp" />
-    <ClCompile Include="..\..\universe\Effect.cpp" />
-    <ClCompile Include="..\..\universe\EffectAccounting.cpp" />
-    <ClCompile Include="..\..\universe\Enums.cpp" />
-    <ClCompile Include="..\..\universe\Fleet.cpp" />
-    <ClCompile Include="..\..\universe\Meter.cpp" />
-    <ClCompile Include="..\..\universe\Names.cpp" />
-    <ClCompile Include="..\..\universe\ObjectMap.cpp" />
-    <ClCompile Include="..\..\universe\Planet.cpp" />
-    <ClCompile Include="..\..\universe\PopCenter.cpp" />
-    <ClCompile Include="..\..\universe\Predicates.cpp" />
-    <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
-    <ClCompile Include="..\..\universe\Ship.cpp" />
-    <ClCompile Include="..\..\universe\ShipDesign.cpp" />
-    <ClCompile Include="..\..\universe\Special.cpp" />
-    <ClCompile Include="..\..\universe\Species.cpp" />
-    <ClCompile Include="..\..\universe\System.cpp" />
-    <ClCompile Include="..\..\universe\Tech.cpp" />
-    <ClCompile Include="..\..\universe\Universe.cpp" />
-    <ClCompile Include="..\..\universe\UniverseObject.cpp" />
-    <ClCompile Include="..\..\universe\ValueRef.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\DataTable.cpp" />
     <ClCompile Include="..\..\util\Directories.cpp" />
