@@ -1109,7 +1109,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
     for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
         const Empire* empire = it->second;
         int source_id = empire->CapitalID();
-        if (source_id == UniverseObject::INVALID_OBJECT_ID) {
+        const UniverseObject* source = m_objects.Object(source_id);
+        if (source_id == UniverseObject::INVALID_OBJECT_ID ||
+            !source ||
+            !source->Unowned() ||
+            !source->OwnedBy(empire->EmpireID()))
+        {
             // find alternate object owned by this empire to act as source
             // first try to get a planet
             std::vector<int> empire_planets = m_objects.FindObjectIDs(OwnedVisitor<Planet>(empire->EmpireID()));
@@ -1129,7 +1134,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes, const
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
 
-            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), empire->CapitalID(), ECT_TECH, tech->Name(),
+            StoreTargetsAndCausesOfEffectsGroups(tech->Effects(), source_id, ECT_TECH, tech->Name(),
                                                  all_potential_targets, targets_causes);
         }
     }
