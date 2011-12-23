@@ -22,8 +22,7 @@ namespace {
     // high tilt is arbitrarily taken to mean 35 degrees or more
     const double HIGH_TILT_THERSHOLD = 35.0;
 
-    double SizeRotationFactor(PlanetSize size)
-    {
+    double SizeRotationFactor(PlanetSize size) {
         switch (size) {
         case SZ_TINY:     return 1.5;
         case SZ_SMALL:    return 1.25;
@@ -103,8 +102,7 @@ Planet::Planet(PlanetType type, PlanetSize size) :
         m_rotational_period = -m_rotational_period;
 }
 
-Planet* Planet::Clone(int empire_id) const
-{
+Planet* Planet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -115,8 +113,7 @@ Planet* Planet::Clone(int empire_id) const
     return retval;
 }
 
-void Planet::Copy(const UniverseObject* copied_object, int empire_id)
-{
+void Planet::Copy(const UniverseObject* copied_object, int empire_id) {
     if (copied_object == this)
         return;
     const Planet* copied_planet = universe_object_cast<Planet*>(copied_object);
@@ -161,12 +158,9 @@ void Planet::Copy(const UniverseObject* copied_object, int empire_id)
 }
 
 const std::string& Planet::TypeName() const
-{
-    return UserString("PLANET");
-}
+{ return UserString("PLANET"); }
 
-std::string Planet::Dump() const
-{
+std::string Planet::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << PopCenter::Dump();
@@ -201,8 +195,7 @@ void Planet::Init() {
     AddMeter(METER_DETECTION);
 }
 
-PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const
-{
+PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const {
     const Species* species = 0;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
@@ -219,8 +212,7 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
     return species->GetPlanetEnvironment(m_type);
 }
 
-PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name/* = ""*/) const
-{
+PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name/* = ""*/) const {
     const Species* species = 0;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
@@ -255,8 +247,7 @@ Degree Planet::AxialTilt() const
 double Planet::AvailableTrade() const
 { return m_available_trade; }
 
-double Planet::BuildingCosts() const
-{
+double Planet::BuildingCosts() const {
     double retval = 0.0;
     const ObjectMap& objects = GetMainObjectMap();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
@@ -270,12 +261,9 @@ double Planet::BuildingCosts() const
 }
 
 bool Planet::Contains(int object_id) const
-{
-    return m_buildings.find(object_id) != m_buildings.end();
-}
+{ return m_buildings.find(object_id) != m_buildings.end(); }
 
-std::vector<UniverseObject*> Planet::FindObjects() const
-{
+std::vector<UniverseObject*> Planet::FindObjects() const {
     ObjectMap& objects = GetMainObjectMap();
     std::vector<UniverseObject*> retval;
     // add buildings on this planet
@@ -284,8 +272,7 @@ std::vector<UniverseObject*> Planet::FindObjects() const
     return retval;
 }
 
-std::vector<int> Planet::FindObjectIDs() const
-{
+std::vector<int> Planet::FindObjectIDs() const {
     std::vector<int> retval;
     // add buildings on this planet
     std::copy(m_buildings.begin(), m_buildings.end(), std::back_inserter(retval));
@@ -293,20 +280,16 @@ std::vector<int> Planet::FindObjectIDs() const
 }
 
 UniverseObject* Planet::Accept(const UniverseObjectVisitor& visitor) const
-{
-    return visitor.Visit(const_cast<Planet* const>(this));
-}
+{ return visitor.Visit(const_cast<Planet* const>(this)); }
 
 Meter* Planet::GetMeter(MeterType type)
-{return UniverseObject::GetMeter(type);}
+{ return UniverseObject::GetMeter(type); }
 
 const Meter* Planet::GetMeter(MeterType type) const
-{return UniverseObject::GetMeter(type);}
+{ return UniverseObject::GetMeter(type); }
 
 double Planet::CurrentMeterValue(MeterType type) const
-{
-    return UniverseObject::CurrentMeterValue(type);
-}
+{ return UniverseObject::CurrentMeterValue(type); }
 
 double Planet::NextTurnCurrentMeterValue(MeterType type) const
 {
@@ -336,6 +319,7 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
     case METER_SHIELD:  max_meter_type = METER_MAX_SHIELD;  break;
     case METER_TROOPS:  max_meter_type = METER_MAX_TROOPS;  break;
     case METER_DEFENSE: max_meter_type = METER_MAX_DEFENSE; break;
+        break;
     default:
         return UniverseObject::NextTurnCurrentMeterValue(type);
     }
@@ -361,8 +345,7 @@ double Planet::NextTurnCurrentMeterValue(MeterType type) const
     return std::min(current_meter_value + 1.0, max_meter_value);
 }
 
-std::vector<std::string> Planet::AvailableFoci() const
-{
+std::vector<std::string> Planet::AvailableFoci() const {
     std::vector<std::string> retval;
     ScriptingContext context(this);
     if (const Species* species = GetSpecies(this->SpeciesName())) {
@@ -384,8 +367,7 @@ std::vector<std::string> Planet::AvailableFoci() const
     return retval;
 }
 
-const std::string& Planet::FocusIcon(const std::string& focus_name) const
-{
+const std::string& Planet::FocusIcon(const std::string& focus_name) const {
     if (const Species* species = GetSpecies(this->SpeciesName())) {
         const std::vector<FocusType>& foci = species->Foci();
         for (std::vector<FocusType>::const_iterator it = foci.begin(); it != foci.end(); ++it) {
@@ -397,8 +379,7 @@ const std::string& Planet::FocusIcon(const std::string& focus_name) const
     return EMPTY_STRING;
 }
 
-void Planet::SetType(PlanetType type)
-{
+void Planet::SetType(PlanetType type) {
     if (type <= INVALID_PLANET_TYPE)
         type = PT_SWAMP;
     if (NUM_PLANET_TYPES <= type)
@@ -407,8 +388,7 @@ void Planet::SetType(PlanetType type)
     StateChangedSignal();
 }
 
-void Planet::SetSize(PlanetSize size)
-{
+void Planet::SetSize(PlanetSize size) {
     if (size <= SZ_NOWORLD)
         size = SZ_TINY;
     if (NUM_PLANET_SIZES <= size)
@@ -417,8 +397,7 @@ void Planet::SetSize(PlanetSize size)
     StateChangedSignal();
 }
 
-void Planet::SetOrbitalPeriod(unsigned int orbit)
-{
+void Planet::SetOrbitalPeriod(unsigned int orbit) {
     assert(orbit < 10);
     const double THIRD_ORBIT_PERIOD = 4;
     const double THIRD_ORBIT_RADIUS = OrbitalRadius(2);
@@ -433,14 +412,12 @@ void Planet::SetOrbitalPeriod(unsigned int orbit)
 void Planet::SetRotationalPeriod(Day days)
 { m_rotational_period = days; }
 
-void Planet::SetHighAxialTilt()
-{
+void Planet::SetHighAxialTilt() {
     const double MAX_TILT = 90.0;
     m_axial_tilt = HIGH_TILT_THERSHOLD + RandZeroToOne() * (MAX_TILT - HIGH_TILT_THERSHOLD);
 }
 
-void Planet::AddBuilding(int building_id)
-{
+void Planet::AddBuilding(int building_id) {
     if (this->Contains(building_id)) {
         Logger().debugStream() << "Planet::AddBuilding this planet " << this->Name() << " already contained building " << building_id;
         return;
@@ -462,8 +439,7 @@ void Planet::AddBuilding(int building_id)
     StateChangedSignal();
 }
 
-bool Planet::RemoveBuilding(int building_id)
-{
+bool Planet::RemoveBuilding(int building_id) {
     if (m_buildings.find(building_id) != m_buildings.end()) {
         m_buildings.erase(building_id);
         StateChangedSignal();
@@ -473,12 +449,9 @@ bool Planet::RemoveBuilding(int building_id)
 }
 
 void Planet::SetAvailableTrade(double trade)
-{
-    m_available_trade = trade;
-}
+{ m_available_trade = trade; }
 
-void Planet::Reset()
-{
+void Planet::Reset() {
     // remove owner
     SetOwner(ALL_EMPIRES);
 
@@ -508,8 +481,7 @@ void Planet::Reset()
     m_is_about_to_be_invaded = false;
 }
 
-void Planet::Conquer(int conquerer)
-{
+void Planet::Conquer(int conquerer) {
     if (conquerer == ALL_EMPIRES)
         return;
 
@@ -555,8 +527,7 @@ void Planet::Conquer(int conquerer)
     SetOwner(conquerer);
 }
 
-void Planet::SetIsAboutToBeColonized(bool b)
-{
+void Planet::SetIsAboutToBeColonized(bool b) {
     bool initial_status = m_is_about_to_be_colonized;
     if (b == initial_status) return;
     m_is_about_to_be_colonized = b;
@@ -564,12 +535,9 @@ void Planet::SetIsAboutToBeColonized(bool b)
 }
 
 void Planet::ResetIsAboutToBeColonized()
-{
-    SetIsAboutToBeColonized(false);
-}
+{ SetIsAboutToBeColonized(false); }
 
-void Planet::SetIsAboutToBeInvaded(bool b)
-{
+void Planet::SetIsAboutToBeInvaded(bool b) {
     bool initial_status = m_is_about_to_be_invaded;
     if (b == initial_status) return;
     m_is_about_to_be_invaded = b;
@@ -577,15 +545,12 @@ void Planet::SetIsAboutToBeInvaded(bool b)
 }
 
 void Planet::ResetIsAboutToBeInvaded()
-{
-    SetIsAboutToBeInvaded(false);
-}
+{ SetIsAboutToBeInvaded(false); }
 
 void Planet::SetLastTurnAttackedByShip(int turn)
-{m_last_turn_attacked_by_ship = turn;}
+{ m_last_turn_attacked_by_ship = turn; }
 
-void Planet::SetSystem(int sys)
-{
+void Planet::SetSystem(int sys) {
     //Logger().debugStream() << "Planet::MoveTo(UniverseObject* object)";
     UniverseObject::SetSystem(sys);
     ObjectMap& objects = GetMainObjectMap();
@@ -599,8 +564,7 @@ void Planet::SetSystem(int sys)
     }
 }
 
-void Planet::MoveTo(double x, double y)
-{
+void Planet::MoveTo(double x, double y) {
     //Logger().debugStream() << "Planet::MoveTo(double x, double y)";
     // move planet itself
     UniverseObject::MoveTo(x, y);
@@ -616,8 +580,7 @@ void Planet::MoveTo(double x, double y)
     }
 }
 
-void Planet::PopGrowthProductionResearchPhase()
-{
+void Planet::PopGrowthProductionResearchPhase() {
     UniverseObject::PopGrowthProductionResearchPhase();
 
     // do not do production if planet was just conquered
@@ -639,17 +602,16 @@ void Planet::PopGrowthProductionResearchPhase()
         // reset planet to empty and unowned
         Reset();
 
-    } else if (LastTurnAttackedByShip() < CurrentTurn()) {
-        GetMeter(METER_SHIELD)->AddToCurrent(1.0);
-        GetMeter(METER_DEFENSE)->AddToCurrent(1.0);
-        GetMeter(METER_TROOPS)->AddToCurrent(1.0);
+    } else {
+        GetMeter(METER_SHIELD)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
+        GetMeter(METER_DEFENSE)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
+        GetMeter(METER_TROOPS)->SetCurrent(Planet::NextTurnCurrentMeterValue(METER_SHIELD));
     }
 
     StateChangedSignal();
 }
 
-void Planet::ResetTargetMaxUnpairedMeters()
-{
+void Planet::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
     ResourceCenterResetTargetMaxUnpairedMeters();
     PopCenterResetTargetMaxUnpairedMeters();
@@ -668,8 +630,7 @@ void Planet::ResetTargetMaxUnpairedMeters()
     GetMeter(METER_DETECTION)->ResetCurrent();
 }
 
-void Planet::ClampMeters()
-{
+void Planet::ClampMeters() {
     UniverseObject::ClampMeters();
     ResourceCenterClampMeters();
     PopCenterClampMeters();
@@ -685,8 +646,7 @@ void Planet::ClampMeters()
     UniverseObject::GetMeter(METER_SUPPLY)->ClampCurrentToRange();
 }
 
-std::set<int> Planet::VisibleContainedObjects(int empire_id) const
-{
+std::set<int> Planet::VisibleContainedObjects(int empire_id) const {
     std::set<int> retval;
     const Universe& universe = GetUniverse();
     for (std::set<int>::const_iterator it = m_buildings.begin(); it != m_buildings.end(); ++it) {
@@ -699,8 +659,7 @@ std::set<int> Planet::VisibleContainedObjects(int empire_id) const
 
 // free functions
 
-double PlanetRadius(PlanetSize size)
-{
+double PlanetRadius(PlanetSize size) {
     double retval = 0.0;
     switch (size) {
     case INVALID_PLANET_SIZE: retval = 0.0; break;
