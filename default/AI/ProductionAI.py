@@ -1,9 +1,8 @@
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
-from EnumsAI import AIExplorableSystemType, AIPriorityType, getAIPriorityResourceTypes, getAIPriorityProductionTypes, AIFocusType, AIFleetMissionType
+from EnumsAI import AIExplorableSystemType, AIPriorityType, getAIPriorityResourceTypes, getAIPriorityProductionTypes, AIFocusType
 import PlanetUtilsAI
 import AIstate
-from FleetUtilsAI import extractFleetIDsWithoutMissionTypes, getEmpireFleetIDsByRole
 
 def generateProductionOrders():
     "generate production orders"
@@ -19,18 +18,6 @@ def generateProductionOrders():
 
     wastedPP = totalPP - totalPPSpent
     print "  Wasted Production Points:          " + str(wastedPP)
-    print ""
-
-    colonisablePlanetIDs = AIstate.colonisablePlanetIDs
-    for element in colonisablePlanetIDs:
-        print "  Colonizable Planet ID, Score:             " + str(element)
-
-    colonyFleetIDs = getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
-    for element in colonyFleetIDs:
-        print "  Colony Fleet ID:                          " + str(element)
-
-    numColonyFleets = len(extractFleetIDsWithoutMissionTypes(colonyFleetIDs))
-    print "  Number of Colony Fleets Without Missions: " + str(numColonyFleets)
     print ""
 
     print "Possible building types to build:"
@@ -78,27 +65,27 @@ def generateProductionOrders():
             colonyShipName = "Colony Ship"
             outpostShipName = "Outpost Ship"
             troopShipName = "Troop Ship"
-            if topPriority == 5 and shipDesign.name(True) == explorationShipName:
+            if topPriority == 6 and shipDesign.name(True) == explorationShipName:
                 # exploration ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 6 and shipDesign.canColonize and shipDesign.name(True) == outpostShipName:
+            elif topPriority == 7 and shipDesign.canColonize and shipDesign.name(True) == outpostShipName:
                 # outpost ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 7 and shipDesign.canColonize and shipDesign.name(True) == colonyShipName:
+            elif topPriority == 8 and shipDesign.canColonize and shipDesign.name(True) == colonyShipName:
                 # colony ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 8 and shipDesign.name(True) == troopShipName:
+            elif topPriority == 9 and shipDesign.canInvade and shipDesign.name(True) == troopShipName:
                 # troop ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)
                 fo.issueEnqueueShipProductionOrder(shipDesignID, locationIDs[0])
-            elif topPriority == 9 and shipDesign.isArmed:
+            elif topPriority == 10 and shipDesign.isArmed:
                 # military ship
                 print ""
                 print "adding new ship to production queue: " + shipDesign.name(True)

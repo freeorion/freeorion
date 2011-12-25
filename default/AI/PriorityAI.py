@@ -14,6 +14,13 @@ def calculatePriorities():
     ColonisationAI.getColonyFleets() # sets AIstate.colonisablePlanetIDs and AIstate.outpostPlanetIDs
     InvasionAI.getInvasionFleets() # sets AIstate.opponentPlanetIDs
 
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, 10)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_CONSTRUCTION, 0)
+
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_EXPLORATION, calculateExplorationPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, calculateOutpostPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, calculateColonisationPriority())
@@ -21,18 +28,13 @@ def calculatePriorities():
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY, 20)
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS, 25)
 
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, 10)
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
-
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_LEARNING, calculateLearningPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_GROWTH, calculateGrowthPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_PRODUCTION, calculateTechsProductionPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_CONSTRUCTION, calculateConstructionPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_ECONOMICS, 0)
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_SHIPS, calculateShipsPriority())
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_DEFENSE, 0)
 
     # foAI.foAIstate.printPriorities()
 
@@ -93,10 +95,10 @@ def calculateColonisationPriority():
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
     colonisationPriority = 100 * (numColonisablePlanetIDs - numColonyships) / numColonisablePlanetIDs
 
-    print ""
-    print "Number of Colony Ships        : " + str(numColonyships)
-    print "Number of Colonisable planets : " + str(numColonisablePlanetIDs)
-    print "Priority for colony ships     : " + str(colonisationPriority)
+    # print ""
+    # print "Number of Colony Ships        : " + str(numColonyships)
+    # print "Number of Colonisable planets : " + str(numColonisablePlanetIDs)
+    # print "Priority for colony ships     : " + str(colonisationPriority)
 
     if colonisationPriority < 0: return 0
 
@@ -107,17 +109,17 @@ def calculateOutpostPriority():
 
     numOutpostPlanetIDs = len(AIstate.colonisableOutpostIDs)
     completedTechs = getCompletedTechs()
-    if numOutpostPlanetIDs == 0 or not 'GRO_HABITATION_DOMES' in completedTechs:
+    if numOutpostPlanetIDs == 0 or not 'GRO_ENV_ENCAPSUL' in completedTechs:
         return 0
 
     outpostShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
     numOutpostShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(outpostShipIDs))
     outpostPriority = 101 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
 
-    print ""
-    print "Number of Outpost Ships       : " + str(numOutpostShips)
-    print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
-    print "Priority for outpost ships    : " + str(outpostPriority)
+    # print ""
+    # print "Number of Outpost Ships       : " + str(numOutpostShips)
+    # print "Number of Colonisable outposts: " + str(numOutpostPlanetIDs)
+    # print "Priority for outpost ships    : " + str(outpostPriority)
 
     if outpostPriority < 0: return 0
 
@@ -133,10 +135,10 @@ def calculateInvasionPriority():
     numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
     invasionPriority = 105 * (numOpponentPlanetIDs - numTroopShips) / numOpponentPlanetIDs
 
-    print ""
-    print "Number of Troop Ships     : " + str(numTroopShips)
-    print "Number of Opponent Planets: " + str(numOpponentPlanetIDs)
-    print "Priority for Troop Ships  : " + str(invasionPriority)
+    # print ""
+    # print "Number of Troop Ships Without Missions: " + str(numTroopShips)
+    # print "Number of Opponent Planets:             " + str(numOpponentPlanetIDs)
+    # print "Priority for Troop Ships  :             " + str(invasionPriority)
 
     if invasionPriority < 0: return 0
 
@@ -218,34 +220,34 @@ def calculateGrowthPriority():
     "calculates the demand for techs growth category"
 
     productionPriority = calculateTopProductionQueuePriority()
-    if productionPriority == 7:
+    if productionPriority == 8:
         return 70
-    elif productionPriority != 7:
+    elif productionPriority != 8:
         return 0
 
 def calculateTechsProductionPriority():
     "calculates the demand for techs production category"
 
     productionPriority = calculateTopProductionQueuePriority()
-    if productionPriority == 6 or productionPriority == 8:
+    if productionPriority == 7 or productionPriority == 9:
         return 60
-    elif productionPriority != 6 or productionPriority != 8:
+    elif productionPriority != 7 or productionPriority != 9:
         return 0
 
 def calculateConstructionPriority():
     "calculates the demand for techs construction category"
 
     productionPriority = calculateTopProductionQueuePriority()
-    if productionPriority == 5 or productionPriority == 10:
+    if productionPriority == 6 or productionPriority == 11:
         return 80
-    elif productionPriority != 5 or productionPriority != 10:
+    elif productionPriority != 6 or productionPriority != 11:
         return 30
 
 def calculateShipsPriority():
     "calculates the demand for techs ships category"
 
     productionPriority = calculateTopProductionQueuePriority()
-    if productionPriority == 9:
+    if productionPriority == 10:
         return 90
-    elif productionPriority != 9:
+    elif productionPriority != 10:
         return 0

@@ -20,23 +20,36 @@ def getInvasionFleets():
     fleetSupplyableSystemIDs = empire.fleetSupplyableSystemIDs
     fleetSupplyablePlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(fleetSupplyableSystemIDs)
 
-    # get competitor planets    
-    allOwnedPlanetIDs = getAllOwnedPlanetIDs(universe.planetIDs)
-    print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
+    # get competitor planets
+    exploredSystemIDs = empire.exploredSystemIDs
+    exploredPlanetIDs = PlanetUtilsAI.getPlanetsInSystemsIDs(exploredSystemIDs)
+
+    allOwnedPlanetIDs = PlanetUtilsAI.getAllOwnedPlanetIDs(exploredPlanetIDs)
+    # print "All Owned and Populated PlanetIDs: " + str(allOwnedPlanetIDs)
 
     empireOwnedPlanetIDs = PlanetUtilsAI.getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
-    print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
-
-    invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
-    print "Invasion Targeted PlanetIDs:       " + str(invasionTargetedPlanetIDs)
+    # print "Empire Owned PlanetIDs:            " + str(empireOwnedPlanetIDs)
 
     competitorPlanetIDs = list(set(allOwnedPlanetIDs) - set(empireOwnedPlanetIDs))
     print "Competitor PlanetIDs:              " + str(competitorPlanetIDs)
 
-    planetIDs = list(set(competitorPlanetIDs) - set(invasionTargetedPlanetIDs))
-    print "Evaluated PlanetIDs:               " + str(planetIDs)
+    print ""
+    invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
+    print "Invasion Targeted PlanetIDs:       " + str(invasionTargetedPlanetIDs)
 
-    evaluatedPlanets = assignInvasionValues(planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire)
+    invasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
+    if not invasionFleetIDs:
+        print "Available Invasion Fleets:           0"
+    else:
+        print "Invasion FleetIDs:                 " + str(FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
+ 
+    numInvasionFleets = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(invasionFleetIDs))
+    print "Invasion Fleets Without Missions:    " + str(numInvasionFleets)
+
+    evaluatedPlanetIDs = list(set(competitorPlanetIDs) - set(invasionTargetedPlanetIDs))
+    # print "Evaluated PlanetIDs:               " + str(evaluatedPlanetIDs)
+
+    evaluatedPlanets = assignInvasionValues(evaluatedPlanetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, fleetSupplyablePlanetIDs, empire)
 
     sortedPlanets = evaluatedPlanets.items()
     sortedPlanets.sort(lambda x, y: cmp(x[1], y[1]), reverse=True)
@@ -50,11 +63,9 @@ def getInvasionFleets():
     AIstate.opponentPlanetIDs = sortedPlanets
 
 def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
-    "return list of Empire owned or being invaded planets"
+    "return list of being invaded planets"
 
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
-    empireID = empire.empireID
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([missionType])
 
     targetedPlanets = []
@@ -68,19 +79,6 @@ def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
                 targetedPlanets.append(planetID)
 
         return targetedPlanets
-
-def getAllOwnedPlanetIDs(planetIDs):
-    "return list of owned planetIDs"
-
-    universe = fo.getUniverse()
-    allOwnedPlanetIDs = []
-    for planetID in planetIDs:
-        planet = universe.getPlanet(planetID)
-        planetPopulation = planet.currentMeterValue(fo.meterType.population)
-        if not planet.unowned or planetPopulation > 0:
-            allOwnedPlanetIDs.append(planetID)
-
-    return allOwnedPlanetIDs
 
 def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empire):
     "creates a dictionary that takes planetIDs as key and their invasion score as value"

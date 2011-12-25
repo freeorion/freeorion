@@ -1,4 +1,3 @@
-# TechsListsAI module is utilized by ResearchAI module
 # AI can not currently add new building types to production queue
 # AI can not currently design or build custom ships
 # individual techs are to be removed from unusable list as AI programming progresses
@@ -9,18 +8,16 @@ def unusableTechsList():
     unusableTechs = [
 
         'CON_ART_HEAVENLY',
-        'CON_ART_MOON',
         'CON_ART_PLANET',
 	'CON_CONC_CAMP',
 	'CON_FRC_ENRG_CAMO',
 	'CON_INFRA_ECOL',
-	'CON_MEGALITH',
-	'CON_ORGANIC_STRC',
+        'CON_ORGANIC_STRC',
 	'CON_PLANET_DRIVE',
         'CON_SPACE_ELEVATOR',
         'CON_STARGATE',
 	'CON_TRANS_ARCH',
-	'CON_TRANS_STRC',
+        'DEF_LIGHTHOUSE',
         'GRO_BIOTERROR',
         'GRO_GENOME_BANK',
 	'GRO_GAIA_TRANS',
@@ -30,8 +27,7 @@ def unusableTechsList():
 	'GRO_SUSPENDED_ANIMATION',
 	'GRO_TERRAFORM',
         'LRN_ART_BLACK_HOLE',
-	'LRN_COLLECTIVE_NET',
-	'LRN_ENCLAVE_VOID',
+        'LRN_ENCLAVE_VOID',
 	'LRN_GATEWAY_VOID',
 	'LRN_MIND_VOID',
         'LRN_OBSERVATORY_I',
@@ -42,38 +38,29 @@ def unusableTechsList():
         'LRN_TRANSCEND',
 	'LRN_UNIF_CONC',
 	'LRN_XENOARCH',
-        'LRN_XENOARCH_RESTORE',
-	'PRO_BLACK_HOLE_POW_GEN',
-	'PRO_ENERGY_CONV',
+        'PRO_ENERGY_CONV',
 	'PRO_ENVIRO_MINING',
-	'PRO_GAS_GIANT_GEN',
-	'PRO_HEAVY_MINING_I',
-	'PRO_HYPER_DAM',
-	'PRO_INDUSTRY_CENTER_I',
+        'PRO_HEAVY_MINING_I',
+        'PRO_INDUSTRY_CENTER_I',
 	'PRO_INDUSTRY_CENTER_II',
 	'PRO_INDUSTRY_CENTER_III',
-	'PRO_MATENG_REPLIC',
-	'PRO_NEUTRONIUM_EXTRACTION',
+        'PRO_NEUTRONIUM_EXTRACTION',
         'PRO_NDIM_ASSMB',
 	'PRO_ORBITAL_GEN',
         'PRO_ORBITAL_MINE',
         'PRO_SINGULAR_GEN',
 	'PRO_SOL_ORB_GEN',
         'PRO_ZERO_GEN',
-	'SHP_AGREG_AST_HULL',
-	'SHP_ANTIMAT_TORP',
+        'SHP_ANTIMAT_TORP',
 	'SHP_ANTIMATTER_TANK',
-	'SHP_AST_HULL',
-	'SHP_ASTEROID_HULLS',
+        'SHP_ASTEROID_HULLS',
 	'SHP_ASTEROID_REFORM',
         'SHP_BIOADAPT_HULL',
         'SHP_BIOBOMBER',
         'SHP_BIOINTERCEPTOR',
         'SHP_BIONEUR_SPEC',
 	'SHP_BOMBER',
-	'SHP_CAMO_AST_HULL',
-	'SHP_CAMO_AST_PARTS',
-	'SHP_COMP_ENRG_HULL',
+        'SHP_CAMO_AST_HULL',
         'SHP_CONT_BIOADAPT',
         'SHP_CONT_SYMB',
 	'SHP_CONTGRAV_MAINT',
@@ -83,18 +70,15 @@ def unusableTechsList():
 	'SHP_DEFLECTOR',
 	'SHP_DEUTERIUM_TANK',
 	'SHP_DIST_MOD',
+        'SHP_DOMESTIC_MONSTER',
         'SHP_ENDOMORPH_HULL',
         'SHP_ENDOSYMB_HULL',
 	'SHP_ENRG_BOUND_MAN',
-	'SHP_FLEET_LOGISTICS',
-	'SHP_FRAC_ENRG_HULL',
-	'SHP_FRC_ENRG_COMP',
+        'SHP_FRC_ENRG_COMP',
         'SHP_HAB_MEGAFAUN',
-	'SHP_HEAVY_AST_HULL',
-	'SHP_INTERCEPTOR',
+        'SHP_INTERCEPTOR',
 	'SHP_LEAD_PLATE',
-        'SHP_LIGHTHOUSE',
-	'SHP_LOGISTICS_FAC',
+        'SHP_LOGISTICS_FAC',
 	'SHP_MASS_DRIVER',
 	'SHP_MASSPROP_SPEC',
 	'SHP_MIDCOMB_LOG',
@@ -105,9 +89,10 @@ def unusableTechsList():
         'SHP_MULTICELL_CAST',
         'SHP_MULTISPEC_SHIELD',
 	'SHP_NANOROBO_HULL',
-	'SHP_NANOROBO_MAINT',
-	'SHP_NEUTRONIUM_PLATE',
-	'SHP_NEUTRONIUM_PLATE_NUC_MIS',
+        'SHP_NANOROBO_MAINT',
+        'SHP_NEUTRON_SCANNER',
+        'SHP_NEUTRONIUM_PLATE',
+        'SHP_NEUTRONIUM_PLATE_NUC_MIS',
 	'SHP_NEUTRONIUM_PLATE_SPEC_MIS',
 	'SHP_NUCLEAR_MISSILE',
         'SHP_ORG_HULL',
@@ -116,26 +101,38 @@ def unusableTechsList():
         'SHP_PLASMA_TORP',
 	'SHP_PULSE_LASER',
         'SHP_PROTOPLASM_HULL',
-	'SHP_QUANT_ENRG_HULL',
-	'SHP_QUANT_ENRG_MAG',
+        'SHP_QUANT_ENRG_MAG',
+        'SHP_RADAR',
         'SHP_RAVEN_HULL',
 	'SHP_RECON_FIGHT',
-	'SHP_ROBO_HULL',
-	'SHP_ROCK_PLATE',
-	'SHP_SCAT_AST_HULL',
-	'SHP_SELFGRAV_HULL',
+        'SHP_ROCK_PLATE',
+   	'SHP_SCAT_AST_HULL',
+        'SHP_SELFGRAV_HULL',
+        'SHP_SENSORS',
         'SHP_SENT_HULL',
-	'SHP_SMALL_AST_HULL',
-	'SHP_SOLAR_CONT',
-	'SHP_SOLAR_HULL',
-	'SHP_SPACE_FLUX_DRIVE',
-	'SHP_SPACE_FLUX_HULL',
-	'SHP_SPECTRAL_MISSILE',
+        'SHP_SOLAR_CONT',
+        'SHP_SPACE_FLUX_DRIVE',
+        'SHP_SPECTRAL_MISSILE',
         'SHP_STAT_MULTICELL_HULL',
         'SHP_SYMB_HULL',
         'SHP_TITAN_HULL',
 	'SHP_TRANSSPACE_DRIVE',
         'SHP_TRANSSPACE_HULL',
+        'SHP_WEAPON_3',
+        'SHP_WEAPON_4',
+        'SHP_WEAPON_5',
+        'SHP_WEAPON_6',
+        'SHP_WEAPON_7',
+        'SHP_WEAPON_8',
+        'SHP_WEAPON_9',
+        'SHP_WEAPON_10',
+        'SHP_WEAPON_11',
+        'SHP_WEAPON_12',
+        'SHP_WEAPON_13',
+        'SHP_WEAPON_14',
+        'SHP_WEAPON_15',
+        'SHP_WEAPON_16',
+        'SHP_WEAPON_17',
         'SHP_ZORTRIUM_PLATE']
 
     return unusableTechs
@@ -146,8 +143,7 @@ def primaryLearningTechsList():
     primaryLearningTechs = [
 
         'LRN_ALGO_ELEGANCE',
-        'LRN_ARTIF_MINDS',
-	'LRN_AUTOLAB_I']
+        'LRN_ARTIF_MINDS']
 
     return primaryLearningTechs
 
@@ -156,9 +152,8 @@ def primaryGroTechsList():
 
     primaryGroTechs = [
 
-        'GRO_ENV_ENCAPSUL',
-        'GRO_HABITATION_DOMES']
-
+        'GRO_ENV_ENCAPSUL']
+ 
     return primaryGroTechs
 
 def primaryShipsTechsList():
@@ -166,9 +161,6 @@ def primaryShipsTechsList():
 
     primaryShipsTechs = [
 
-        'SHP_GAL_EXPLO',
-        'SHP_SPACE_TACTICS',
-        'SHP_SPACE_WEAPON',
-	'SHP_ION_CANNON']
+        'SHP_WEAPON_2']
 
     return primaryShipsTechs
