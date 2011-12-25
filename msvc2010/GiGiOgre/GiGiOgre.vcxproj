@@ -81,7 +81,7 @@
       <SubSystem>Console</SubSystem>
       <LinkStatus>
       </LinkStatus>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

@@ -91,7 +91,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <IgnoreSpecificDefaultLibraries>LIBCMT; LIBCPMT</IgnoreSpecificDefaultLibraries>
-      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
