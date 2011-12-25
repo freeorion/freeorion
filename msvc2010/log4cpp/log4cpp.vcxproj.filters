@@ -226,5 +226,8 @@
     <ClCompile Include="..\..\log4cpp\src\TimeStamp.cpp">
       <Filter>Source Files\log4cpp</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\log4cpp\src\Filter.cpp">
+      <Filter>Source Files\log4cpp</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

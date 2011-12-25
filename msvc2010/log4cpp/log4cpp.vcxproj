@@ -22,9 +22,9 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -62,7 +62,7 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;LOG4CPP_HAS_DLL;LOG4CPP_BUILD_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../../log4cpp/</AdditionalIncludeDirectories>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
@@ -73,6 +73,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../log4cpp.dll</OutputFile>
+      <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
     <Lib>
       <LinkTimeCodeGeneration>false</LinkTimeCodeGeneration>
@@ -229,6 +230,7 @@
     <ClCompile Include="..\..\log4cpp\src\Configurator.cpp" />
     <ClCompile Include="..\..\log4cpp\src\FactoryParams.cpp" />
     <ClCompile Include="..\..\log4cpp\src\FileAppender.cpp" />
+    <ClCompile Include="..\..\log4cpp\src\Filter.cpp" />
     <ClCompile Include="..\..\log4cpp\src\HierarchyMaintainer.cpp" />
     <ClCompile Include="..\..\log4cpp\src\LayoutAppender.cpp" />
     <ClCompile Include="..\..\log4cpp\src\Localtime.cpp" />
