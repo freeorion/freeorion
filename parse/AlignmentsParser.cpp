@@ -82,7 +82,6 @@ namespace {
 }
 
 namespace parse {
-
     bool alignments(const boost::filesystem::path& path,
                     std::vector<Alignment>& alignments_,
                     std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups)
@@ -90,5 +89,4 @@ namespace parse {
         g_effects_groups = &effects_groups;
         return detail::parse_file<rules, std::vector<Alignment> >(path, alignments_);
     }
-
 }

@@ -151,12 +151,9 @@ namespace {
         building_type_rule building_type;
         start_rule start;
     };
-
 }
 
 namespace parse {
-
     bool buildings(const boost::filesystem::path& path, std::map<std::string, BuildingType*>& building_types)
     { return detail::parse_file<rules, std::map<std::string, BuildingType*> >(path, building_types); }
-
 }
