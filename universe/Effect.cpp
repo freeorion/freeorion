@@ -26,8 +26,7 @@ extern int g_indent;
 
 namespace {
     boost::tuple<bool, ValueRef::OpType, double>
-    SimpleMeterModification(MeterType meter, const ValueRef::ValueRefBase<double>* ref)
-    {
+    SimpleMeterModification(MeterType meter, const ValueRef::ValueRefBase<double>* ref) {
         boost::tuple<bool, ValueRef::OpType, double> retval(false, ValueRef::PLUS, 0.0);
         if (const ValueRef::Operation<double>* op = dynamic_cast<const ValueRef::Operation<double>*>(ref)) {
             if (!op->LHS() || !op->RHS())
@@ -220,8 +219,7 @@ namespace {
 ///////////////////////////////////////////////////////////
 // EffectsGroup                                          //
 ///////////////////////////////////////////////////////////
-EffectsGroup::~EffectsGroup()
-{
+EffectsGroup::~EffectsGroup() {
     delete m_scope;
     delete m_activation;
     for (unsigned int i = 0; i < m_effects.size(); ++i) {
@@ -229,14 +227,12 @@ EffectsGroup::~EffectsGroup()
     }
 }
 
-void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const
-{
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, const TargetSet& potential_targets) const {
     TargetSet copy_of_potential_targets(potential_targets);
     GetTargetSet(source_id, targets, copy_of_potential_targets);
 }
 
-void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const
-{
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& potential_targets) const {
     typedef Condition::ObjectSet ObjectSet;
     targets.clear();
 
@@ -280,8 +276,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets, TargetSet& po
                   *static_cast<ObjectSet *>(static_cast<void *>(&potential_targets)));
 }
 
-void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
-{
+void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const {
     ObjectMap& objects = GetUniverse().Objects();
     TargetSet potential_targets;
     potential_targets.reserve(RESERVE_SET_SIZE);
@@ -290,8 +285,7 @@ void EffectsGroup::GetTargetSet(int source_id, TargetSet& targets) const
     GetTargetSet(source_id, targets, potential_targets);
 }
 
-void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
-{
+void EffectsGroup::Execute(int source_id, const TargetSet& targets) const {
     UniverseObject* source = GetObject(source_id);
 
     // execute effects on targets
@@ -307,8 +301,7 @@ void EffectsGroup::Execute(int source_id, const TargetSet& targets) const
     }
 }
 
-void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
-{
+void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
     const UniverseObject* source = GetObject(source_id);
     const TargetSet& targets = targets_and_cause.target_set;
 
@@ -355,8 +348,7 @@ void EffectsGroup::Execute(int source_id, const TargetsAndCause& targets_and_cau
     }
 }
 
-void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) const
-{
+void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) const {
     const UniverseObject* source = GetObject(source_id);
 
     // execute effects on targets
@@ -382,8 +374,7 @@ void EffectsGroup::ExecuteSetMeter(int source_id, const TargetSet& targets) cons
     }
 }
 
-void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const
-{
+void EffectsGroup::ExecuteSetMeter(int source_id, const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const {
     const UniverseObject* source = GetObject(source_id);
 
     // execute effects on targets
@@ -432,8 +423,7 @@ const std::string& EffectsGroup::StackingGroup() const
 const std::vector<EffectBase*>& EffectsGroup::EffectsList() const
 { return m_effects; }
 
-EffectsGroup::Description EffectsGroup::GetDescription() const
-{
+EffectsGroup::Description EffectsGroup::GetDescription() const {
     Description retval;
     if (dynamic_cast<const Condition::Source*>(m_scope))
         retval.scope_description = UserString("DESC_EFFECTS_GROUP_SELF_SCOPE");
@@ -451,8 +441,7 @@ EffectsGroup::Description EffectsGroup::GetDescription() const
     return retval;
 }
 
-std::string EffectsGroup::DescriptionString() const
-{
+std::string EffectsGroup::DescriptionString() const {
     if (!m_explicit_description.empty()) {
         return UserString(m_explicit_description);
     } else {
@@ -470,8 +459,7 @@ std::string EffectsGroup::DescriptionString() const
     }
 }
 
-std::string EffectsGroup::Dump() const
-{
+std::string EffectsGroup::Dump() const {
     std::string retval = DumpIndent() + "EffectsGroup\n";
     ++g_indent;
     retval += DumpIndent() + "scope =\n";
@@ -508,8 +496,7 @@ std::string EffectsGroup::Dump() const
 ///////////////////////////////////////////////////////////
 // EffectsDescription function                           //
 ///////////////////////////////////////////////////////////
-std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups)
-{
+std::string EffectsDescription(const std::vector<boost::shared_ptr<const Effect::EffectsGroup> >& effects_groups) {
     std::stringstream retval;
     if (effects_groups.size() == 1) {
         retval << str(FlexibleFormat(UserString("DESC_EFFECTS_GROUP_EFFECTS_GROUP_DESC")) % effects_groups[0]->DescriptionString());
@@ -540,8 +527,7 @@ SetMeter::SetMeter(MeterType meter, const ValueRef::ValueRefBase<double>* value)
 SetMeter::~SetMeter()
 { delete m_value; }
 
-void SetMeter::Execute(const ScriptingContext& context) const
-{
+void SetMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
     Meter* m = context.effect_target->GetMeter(m_meter);
@@ -552,8 +538,7 @@ void SetMeter::Execute(const ScriptingContext& context) const
     m->SetCurrent(val);
 }
 
-std::string SetMeter::Description() const
-{
+std::string SetMeter::Description() const {
     bool simple;
     ValueRef::OpType op;
     double const_operand;
@@ -578,8 +563,7 @@ std::string SetMeter::Description() const
     }
 }
 
-std::string SetMeter::Dump() const
-{
+std::string SetMeter::Dump() const {
     std::string retval = DumpIndent() + "Set";
     switch (m_meter) {
     case METER_TARGET_POPULATION:   retval += "TargetPopulation"; break;
@@ -672,8 +656,7 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
 SetShipPartMeter::~SetShipPartMeter()
 { delete m_value; }
 
-void SetShipPartMeter::Execute(const ScriptingContext& context) const
-{
+void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().debugStream() << "SetShipPartMeter::Execute passed null target pointer";
         return;
@@ -717,8 +700,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string SetShipPartMeter::Description() const
-{
+std::string SetShipPartMeter::Description() const {
     std::string value_str = ValueRef::ConstantExpr(m_value) ?
                                 lexical_cast<std::string>(m_value->Eval()) :
                                 m_value->Description();
@@ -750,8 +732,7 @@ std::string SetShipPartMeter::Description() const
     }
 }
 
-std::string SetShipPartMeter::Dump() const
-{
+std::string SetShipPartMeter::Dump() const {
     std::string retval = DumpIndent();
     switch (m_meter) {
         case METER_DAMAGE:              retval += "SetDamage";              break;
@@ -802,14 +783,12 @@ SetEmpireMeter::SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, con
     m_value(value)
 {}
 
-SetEmpireMeter::~SetEmpireMeter()
-{
+SetEmpireMeter::~SetEmpireMeter() {
     delete m_empire_id;
     delete m_value;
 }
 
-void SetEmpireMeter::Execute(const ScriptingContext& context) const
-{
+void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
@@ -829,8 +808,7 @@ void SetEmpireMeter::Execute(const ScriptingContext& context) const
     meter->SetCurrent(value);
 }
 
-std::string SetEmpireMeter::Description() const
-{
+std::string SetEmpireMeter::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -869,14 +847,12 @@ SetEmpireStockpile::SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire
     m_value(value)
 {}
 
-SetEmpireStockpile::~SetEmpireStockpile()
-{
+SetEmpireStockpile::~SetEmpireStockpile() {
     delete m_empire_id;
     delete m_value;
 }
 
-void SetEmpireStockpile::Execute(const ScriptingContext& context) const
-{
+void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
@@ -889,8 +865,7 @@ void SetEmpireStockpile::Execute(const ScriptingContext& context) const
     empire->SetResourceStockpile(m_stockpile, value);
 }
 
-std::string SetEmpireStockpile::Description() const
-{
+std::string SetEmpireStockpile::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -910,8 +885,7 @@ std::string SetEmpireStockpile::Description() const
                % empire_str);
 }
 
-std::string SetEmpireStockpile::Dump() const
-{
+std::string SetEmpireStockpile::Dump() const {
     std::string retval = DumpIndent();
     switch (m_stockpile) {
     case RE_FOOD:       retval += "SetEmpireFoodStockpile"; break;
@@ -938,8 +912,7 @@ SetEmpireCapital::SetEmpireCapital(const ValueRef::ValueRefBase<int>* empire_id)
 SetEmpireCapital::~SetEmpireCapital()
 { delete m_empire_id; }
 
-void SetEmpireCapital::Execute(const ScriptingContext& context) const
-{
+void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
 
     Empire* empire = Empires().Lookup(empire_id);
@@ -953,8 +926,7 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const
     empire->SetCapitalID(planet->ID());
 }
 
-std::string SetEmpireCapital::Description() const
-{
+std::string SetEmpireCapital::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -981,8 +953,7 @@ SetPlanetType::SetPlanetType(const ValueRef::ValueRefBase<PlanetType>* type) :
 SetPlanetType::~SetPlanetType()
 { delete m_type; }
 
-void SetPlanetType::Execute(const ScriptingContext& context) const
-{
+void SetPlanetType::Execute(const ScriptingContext& context) const {
     if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
         PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
         p->SetType(type);
@@ -997,8 +968,7 @@ void SetPlanetType::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string SetPlanetType::Description() const
-{
+std::string SetPlanetType::Description() const {
     std::string value_str = ValueRef::ConstantExpr(m_type) ?
                                 UserString(lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
@@ -1019,8 +989,7 @@ SetPlanetSize::SetPlanetSize(const ValueRef::ValueRefBase<PlanetSize>* size) :
 SetPlanetSize::~SetPlanetSize()
 { delete m_size; }
 
-void SetPlanetSize::Execute(const ScriptingContext& context) const
-{
+void SetPlanetSize::Execute(const ScriptingContext& context) const {
     if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
         PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
         p->SetSize(size);
@@ -1033,8 +1002,7 @@ void SetPlanetSize::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string SetPlanetSize::Description() const
-{
+std::string SetPlanetSize::Description() const {
     std::string value_str = ValueRef::ConstantExpr(m_size) ?
                                 UserString(lexical_cast<std::string>(m_size->Eval())) :
                                 m_size->Description();
@@ -1055,8 +1023,7 @@ SetSpecies::SetSpecies(const ValueRef::ValueRefBase<std::string>* species) :
 SetSpecies::~SetSpecies()
 { delete m_species_name; }
 
-void SetSpecies::Execute(const ScriptingContext& context) const
-{
+void SetSpecies::Execute(const ScriptingContext& context) const {
     if (Planet* p = universe_object_cast<Planet*>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, p->SpeciesName()));
         p->SetSpecies(species_name);
@@ -1066,8 +1033,7 @@ void SetSpecies::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string SetSpecies::Description() const
-{
+std::string SetSpecies::Description() const {
     std::string value_str = ValueRef::ConstantExpr(m_species_name) ?
                                 UserString(m_species_name->Eval()) :
                                 m_species_name->Description();
@@ -1088,8 +1054,7 @@ SetOwner::SetOwner(const ValueRef::ValueRefBase<int>* empire_id) :
 SetOwner::~SetOwner()
 { delete m_empire_id; }
 
-void SetOwner::Execute(const ScriptingContext& context) const
-{
+void SetOwner::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
     if (!context.effect_target)
         return;
@@ -1124,8 +1089,7 @@ void SetOwner::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string SetOwner::Description() const
-{
+std::string SetOwner::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -1150,14 +1114,12 @@ CreatePlanet::CreatePlanet(const ValueRef::ValueRefBase<PlanetType>* type, const
     m_size(size)
 {}
 
-CreatePlanet::~CreatePlanet()
-{
+CreatePlanet::~CreatePlanet() {
     delete m_type;
     delete m_size;
 }
 
-void CreatePlanet::Execute(const ScriptingContext& context) const
-{
+void CreatePlanet::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "CreatePlanet::Execute passed no target object";
         return;
@@ -1201,8 +1163,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const
     location->Insert(planet, orbit);
 }
 
-std::string CreatePlanet::Description() const
-{
+std::string CreatePlanet::Description() const {
     std::string type_str = ValueRef::ConstantExpr(m_type) ?
                                 UserString(lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
@@ -1229,8 +1190,7 @@ CreateBuilding::CreateBuilding(const ValueRef::ValueRefBase<std::string>* buildi
 CreateBuilding::~CreateBuilding()
 { delete m_building_type_name; }
 
-void CreateBuilding::Execute(const ScriptingContext& context) const
-{
+void CreateBuilding::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "CreateBuilding::Execute passed no target object";
         return;
@@ -1265,8 +1225,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const
     building->SetOwner(location->Owner());
 }
 
-std::string CreateBuilding::Description() const
-{
+std::string CreateBuilding::Description() const {
     std::string type_str = ValueRef::ConstantExpr(m_building_type_name) ?
                                 UserString(lexical_cast<std::string>(m_building_type_name->Eval())) :
                                 m_building_type_name->Description();
@@ -1314,15 +1273,13 @@ CreateShip::CreateShip(const std::string& predefined_ship_design_name) :
     m_species_name(0)   // ...
 {}
 
-CreateShip::~CreateShip()
-{
+CreateShip::~CreateShip() {
     delete m_design_id;
     delete m_empire_id;
     delete m_species_name;
 }
 
-void CreateShip::Execute(const ScriptingContext& context) const
-{
+void CreateShip::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "CreateShip::Execute passed null target";
         return;
@@ -1408,12 +1365,12 @@ void CreateShip::Execute(const ScriptingContext& context) const
     int new_ship_id = GetNewObjectID();
     GetUniverse().InsertID(ship, new_ship_id);
 
+    GetUniverse().SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
 
     CreateNewFleet(system, ship);
 }
 
-std::string CreateShip::Description() const
-{
+std::string CreateShip::Description() const {
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -1452,8 +1409,7 @@ std::string CreateShip::Description() const
                    % design_str);
 }
 
-std::string CreateShip::Dump() const
-{
+std::string CreateShip::Dump() const {
     std::string retval;
     if (m_design_id)
         retval = DumpIndent() + "CreateShip design_id = " + m_design_id->Dump();
@@ -1474,8 +1430,7 @@ std::string CreateShip::Dump() const
 Destroy::Destroy()
 {}
 
-void Destroy::Execute(const ScriptingContext& context) const
-{
+void Destroy::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "Destroy::Execute passed no target object";
         return;
@@ -1497,8 +1452,7 @@ AddSpecial::AddSpecial(const std::string& name) :
     m_name(name)
 {}
 
-void AddSpecial::Execute(const ScriptingContext& context) const
-{
+void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "AddSpecial::Execute passed no target object";
         return;
@@ -1520,8 +1474,7 @@ RemoveSpecial::RemoveSpecial(const std::string& name) :
     m_name(name)
 {}
 
-void RemoveSpecial::Execute(const ScriptingContext& context) const
-{
+void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "RemoveSpecial::Execute pass no target object.";
         return;

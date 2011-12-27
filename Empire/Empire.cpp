@@ -1083,14 +1083,12 @@ double Empire::ResearchStatus(const std::string& name) const
 const std::set<std::string>& Empire::AvailableTechs() const
 { return m_techs; }
 
-bool Empire::TechResearched(const std::string& name) const
-{
+bool Empire::TechResearched(const std::string& name) const {
     Empire::TechItr item = m_techs.find(name);
     return item != m_techs.end();
 }
 
-TechStatus Empire::GetTechStatus(const std::string& name) const
-{
+TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
     if (ResearchableTech(name)) return TS_RESEARCHABLE;
     return TS_UNRESEARCHABLE;
@@ -1105,8 +1103,7 @@ bool Empire::BuildingTypeAvailable(const std::string& name) const
 const std::set<int>& Empire::ShipDesigns() const
 { return m_ship_designs; }
 
-std::set<int> Empire::AvailableShipDesigns() const
-{
+std::set<int> Empire::AvailableShipDesigns() const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
     for (ShipDesignItr it = m_ship_designs.begin(); it != m_ship_designs.end(); ++it) {
@@ -1116,8 +1113,7 @@ std::set<int> Empire::AvailableShipDesigns() const
     return retval;
 }
 
-bool Empire::ShipDesignAvailable(int ship_design_id) const
-{
+bool Empire::ShipDesignAvailable(int ship_design_id) const {
     // if design isn't kept by this empire, it can't be built.
     if (!ShipDesignKept(ship_design_id))
         return false;   //   The empire needs to issue a ShipDesignOrder to add this design id to its kept designs
@@ -1163,8 +1159,7 @@ const ProductionQueue& Empire::GetProductionQueue() const
 double Empire::ProductionStatus(int i) const
 { return (0 <= i && i < static_cast<int>(m_production_progress.size())) ? m_production_progress[i] : -1.0; }
 
-std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const
-{
+std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::string name) const {
     switch (build_type) {
     case BT_BUILDING: {
         const BuildingType* building_type = GetBuildingType(name);
@@ -1178,8 +1173,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, std::
     return std::make_pair(-1.0, -1);
 }
 
-std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int design_id) const
-{
+std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int design_id) const {
     switch (build_type) {
     case BT_SHIP: {
         const ShipDesign* ship_design = GetShipDesign(design_id);
@@ -1193,8 +1187,7 @@ std::pair<double, int> Empire::ProductionCostAndTime(BuildType build_type, int d
     return std::make_pair(-1.0, -1);
 }
 
-std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const
-{
+std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::ProductionItem& item) const {
     if (item.build_type == BT_BUILDING)
         return ProductionCostAndTime(BT_BUILDING, item.name);
     else if (item.build_type == BT_SHIP)
@@ -1205,12 +1198,9 @@ std::pair<double, int> Empire::ProductionCostAndTime(const ProductionQueue::Prod
 }
 
 bool Empire::HasExploredSystem(int ID) const
-{
-    return (m_explored_systems.find(ID) != m_explored_systems.end());
-}
+{ return (m_explored_systems.find(ID) != m_explored_systems.end()); }
 
-bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const
-{
+bool Empire::BuildableItem(BuildType build_type, const std::string& name, int location) const {
     // special case to check for ships being passed with names, not design ids
     if (build_type == BT_SHIP)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_SHIP with a name, but ship designs are tracked by number");
@@ -1238,8 +1228,7 @@ bool Empire::BuildableItem(BuildType build_type, const std::string& name, int lo
     }
 }
 
-bool Empire::BuildableItem(BuildType build_type, int design_id, int location) const
-{
+bool Empire::BuildableItem(BuildType build_type, int design_id, int location) const {
     // special case to check for buildings being passed with ids, not names
     if (build_type == BT_BUILDING)
         throw std::invalid_argument("Empire::BuildableItem was passed BuildType BT_BUILDING with a design id number, but these types are tracked by name");
@@ -1269,8 +1258,7 @@ bool Empire::BuildableItem(BuildType build_type, int design_id, int location) co
     }
 }
 
-bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int location) const
-{
+bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int location) const {
     if (item.build_type == BT_BUILDING)
         return BuildableItem(item.build_type, item.name, location);
     else if (item.build_type == BT_SHIP)
@@ -1283,8 +1271,7 @@ bool Empire::BuildableItem(const ProductionQueue::ProductionItem& item, int loca
 int Empire::NumSitRepEntries() const
 { return m_sitrep_entries.size(); }
 
-void Empire::EliminationCleanup()
-{
+void Empire::EliminationCleanup() {
     // some Empire data not cleared when eliminating since it might be useful
     // to remember later, and having it doesn't hurt anything (as opposed to
     // the production queue that might actually cause some problems if left
@@ -1320,8 +1307,7 @@ void Empire::EliminationCleanup()
     m_supply_unobstructed_systems.clear();
 }
 
-void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects)
-{
+void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_fleet_supply_system_ranges.clear();
     m_resource_supply_system_ranges.clear();
@@ -1375,8 +1361,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects)
     }
 }
 
-void Empire::UpdateSystemSupplyRanges()
-{
+void Empire::UpdateSystemSupplyRanges() {
     const Universe& universe = GetUniverse();
     const ObjectMap& empire_known_objects = universe.EmpireKnownObjects(this->EmpireID());
 
@@ -1410,8 +1395,7 @@ void Empire::UpdateSupplyUnobstructedSystems() {
     UpdateSupplyUnobstructedSystems(known_systems_set);
 }
 
-void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
-{
+void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems) {
     m_supply_unobstructed_systems.clear();
 
     // get systems with historically at least partial visibility
@@ -1466,8 +1450,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 void Empire::UpdateFleetSupply()
 { UpdateFleetSupply(this->KnownStarlanes()); }
 
-void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes)
-{
+void Empire::UpdateFleetSupply(const std::map<int, std::set<int> >& starlanes) {
     //std::cout << "Empire::UpdateFleetSupply for empire " << this->Name() << std::endl;
 
     m_fleet_supplyable_system_ids.clear();

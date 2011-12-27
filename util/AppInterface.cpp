@@ -11,9 +11,6 @@
 # endif
 #endif
 
-#include "../util/MultiplayerCommon.h"
-
-
 const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;

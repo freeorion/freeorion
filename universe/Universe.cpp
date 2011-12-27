@@ -1363,8 +1363,7 @@ namespace {
     }
 }
 
-void Universe::UpdateEmpireObjectVisibilities()
-{
+void Universe::UpdateEmpireObjectVisibilities() {
     //Logger().debugStream() << "Universe::UpdateEmpireObjectVisibilities()";
 
     // ensure Universe knows empires have knowledge of designs the empire is specifically remembering
@@ -1780,13 +1779,13 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
     m_empire_known_destroyed_object_ids[empire_id].insert(object_id);
 }
 
-void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
-{
+void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id) {
     if (ship_design_id == ShipDesign::INVALID_DESIGN_ID) {
         Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called with INVALID_DESIGN_ID";
         return;
     }
-
+    if (empire_id == ALL_EMPIRES)
+        return;
     if (!Empires().Lookup(empire_id))
         Logger().errorStream() << "SetEmpireKnowledgeOfShipDesign called for invalid empire id: " << empire_id;
 
