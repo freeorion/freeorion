@@ -254,8 +254,7 @@ namespace {
 /////////////////////////////////////////////////////
 // Free Function(s)
 /////////////////////////////////////////////////////
-const std::vector<GG::Clr>& EmpireColors()
-{
+const std::vector<GG::Clr>& EmpireColors() {
     static std::vector<GG::Clr> colors;
     if (colors.empty()) {
         XMLDoc doc;
@@ -286,8 +285,7 @@ const std::vector<GG::Clr>& EmpireColors()
     return colors;
 }
 
-XMLElement ClrToXML(const GG::Clr& clr)
-{
+XMLElement ClrToXML(const GG::Clr& clr) {
     XMLElement retval("GG::Clr");
     retval.AppendChild(XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
     retval.AppendChild(XMLElement("green", boost::lexical_cast<std::string>(static_cast<int>(clr.g))));
@@ -296,8 +294,7 @@ XMLElement ClrToXML(const GG::Clr& clr)
     return retval;
 }
 
-GG::Clr XMLToClr(const XMLElement& clr)
-{
+GG::Clr XMLToClr(const XMLElement& clr) {
     GG::Clr retval = GG::Clr(0, 0, 0, 255);
     if (clr.ContainsAttribute("hex")) {
         // get colour components as a single string representing three pairs of hex digits
@@ -336,8 +333,7 @@ GG::Clr XMLToClr(const XMLElement& clr)
     return retval;
 }
 
-int PriorityValue(const std::string& name)
-{
+int PriorityValue(const std::string& name) {
     static std::map<std::string, int> priority_map;
     static bool init = false;
     if (!init) {
@@ -356,8 +352,7 @@ int PriorityValue(const std::string& name)
     return priority_map[name];
 }
 
-const std::string& UserString(const std::string& str)
-{
+const std::string& UserString(const std::string& str) {
     const StringTable_& string_table = GetStringTable();
     if (string_table.StringExists(str))
         return GetStringTable().String(str);
@@ -371,8 +366,7 @@ boost::format FlexibleFormat(const std::string &string_to_format) {
     return retval;
 }
 
-std::string RomanNumber(unsigned int n)
-{
+std::string RomanNumber(unsigned int n) {
     //letter pattern (N) and the associated values (V)
     static const std::string  N[] = { "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
     static const unsigned int V[] = {1000,  900, 500,  400, 100,   90,  50,   40,  10,    9,   5,    4,   1};
@@ -403,10 +397,8 @@ std::string RomanNumber(unsigned int n)
     return retval;
 }
 
-const std::string& Language() 
-{
-    return GetStringTable().Language();
-}
+const std::string& Language()
+{ return GetStringTable().Language(); }
 
 #ifndef FREEORION_WIN32
 void Sleep(int ms)
@@ -425,87 +417,24 @@ void Sleep(int ms)
 
 
 /////////////////////////////////////////////////////
-// GalaxySetupData
-/////////////////////////////////////////////////////
-GalaxySetupData::GalaxySetupData():
-    m_size(100),
-    m_shape(SPIRAL_2),
-    m_age(GALAXY_SETUP_MEDIUM),
-    m_starlane_freq(GALAXY_SETUP_MEDIUM),
-    m_planet_density(GALAXY_SETUP_MEDIUM),
-    m_specials_freq(GALAXY_SETUP_MEDIUM),
-    m_monster_freq(GALAXY_SETUP_MEDIUM),
-    m_native_freq(GALAXY_SETUP_MEDIUM)
-{}
-
-
-/////////////////////////////////////////////////////
-// SaveGameEmpireData
-/////////////////////////////////////////////////////
-SaveGameEmpireData::SaveGameEmpireData() :
-    m_empire_id(ALL_EMPIRES),
-    m_empire_name(),
-    m_player_name(),
-    m_color()
-{}
-
-SaveGameEmpireData::SaveGameEmpireData(int empire_id, const std::string& empire_name,
-                                       const std::string& player_name, const GG::Clr& colour) :
-    m_empire_id(empire_id),
-    m_empire_name(empire_name),
-    m_player_name(player_name),
-    m_color(colour)
-{}
-
-
-/////////////////////////////////////////////////////
 // PlayerSetupData
 /////////////////////////////////////////////////////
-PlayerSetupData::PlayerSetupData() :
-    m_player_name(),
-    m_empire_name(),
-    m_empire_color(GG::Clr(0, 0, 0, 0)),
-    m_starting_species_name(),
-    m_save_game_empire_id(ALL_EMPIRES),
-    m_client_type(Networking::INVALID_CLIENT_TYPE)
-{}
-
-bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
-{
-    return
-        lhs.m_client_type == rhs.m_client_type &&
-        lhs.m_empire_color == rhs.m_empire_color &&
-        lhs.m_empire_name == rhs.m_empire_name &&
-        lhs.m_player_name == rhs.m_player_name &&
-        lhs.m_save_game_empire_id == rhs.m_save_game_empire_id &&
-        lhs.m_starting_species_name == rhs.m_starting_species_name;
+bool operator==(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
+    return  lhs.m_client_type == rhs.m_client_type &&
+            lhs.m_empire_color == rhs.m_empire_color &&
+            lhs.m_empire_name == rhs.m_empire_name &&
+            lhs.m_player_name == rhs.m_player_name &&
+            lhs.m_save_game_empire_id == rhs.m_save_game_empire_id &&
+            lhs.m_starting_species_name == rhs.m_starting_species_name;
 }
 
 bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 { return !(lhs == rhs); }
 
 
-/////////////////////////////////////////////////////
-// SinglePlayerSetupData
-/////////////////////////////////////////////////////
-SinglePlayerSetupData::SinglePlayerSetupData():
-    m_new_game(true),
-    m_filename(),
-    m_players()
-{}
-
-
 ////////////////////////////////////////////////////
 // MultiplayerLobbyData
 /////////////////////////////////////////////////////
-MultiplayerLobbyData::MultiplayerLobbyData() :
-    m_new_game(true),
-    m_save_file_index(-1),
-    m_players(),
-    m_save_games(),
-    m_save_game_empire_data()
-{}
-
 MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
     m_new_game(true),
     m_save_file_index(-1),
@@ -547,31 +476,8 @@ MultiplayerLobbyData::MultiplayerLobbyData(bool build_save_game_list) :
 
 
 ////////////////////////////////////////////////
-// PlayerInfo
-////////////////////////////////////////////////
-PlayerInfo::PlayerInfo() :
-    name(""),
-    empire_id(ALL_EMPIRES),
-    client_type(Networking::INVALID_CLIENT_TYPE),
-    host(false)
-{}
-
-PlayerInfo::PlayerInfo(const std::string& player_name_, int empire_id_, Networking::ClientType client_type_, bool host_) :
-    name(player_name_),
-    empire_id(empire_id_),
-    client_type(client_type_),
-    host(host_)
-{}
-
-
-////////////////////////////////////////////////
 // CombatData
 ////////////////////////////////////////////////
-CombatData::CombatData() :
-    m_combat_turn_number(0),
-    m_system(0)
-{}
-
 CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups) :
     m_combat_turn_number(0),
     m_system(system)
@@ -659,28 +565,6 @@ CombatData::CombatData(System* system, std::map<int, std::vector<CombatSetupGrou
 ////////////////////////////////////////////////
 // CombatSetupRegion
 ////////////////////////////////////////////////
-CombatSetupRegion::CombatSetupRegion() :
-    m_type(RING),
-    m_radius_begin(),
-    m_radius_end(),
-    m_centroid(),
-    m_radial_axis(),
-    m_tangent_axis(),
-    m_theta_begin(),
-    m_theta_end()
-{}
-
-CombatSetupRegion::CombatSetupRegion(float radius_begin, float radius_end) :
-    m_type(RING),
-    m_radius_begin(radius_begin),
-    m_radius_end(radius_end),
-    m_centroid(),
-    m_radial_axis(),
-    m_tangent_axis(),
-    m_theta_begin(),
-    m_theta_end()
-{}
-
 CombatSetupRegion::CombatSetupRegion(float centroid_x, float centroid_y, float radius) :
     m_type(ELLIPSE),
     m_radius_begin(),
@@ -759,10 +643,3 @@ bool PointInRegion(double point[2], const CombatSetupRegion& region)
     }
     return retval;
 }
-
-////////////////////////////////////////////////
-// CombatSetupGroup
-////////////////////////////////////////////////
-CombatSetupGroup::CombatSetupGroup() :
-    m_allow(false)
-{}

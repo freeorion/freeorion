@@ -57,7 +57,16 @@ void Sleep(int ms);
 struct GalaxySetupData
 {
     /** \name Structors */ //@{
-    GalaxySetupData(); ///< default ctor.
+    GalaxySetupData() :
+        m_size(100),
+        m_shape(SPIRAL_2),
+        m_age(GALAXY_SETUP_MEDIUM),
+        m_starlane_freq(GALAXY_SETUP_MEDIUM),
+        m_planet_density(GALAXY_SETUP_MEDIUM),
+        m_specials_freq(GALAXY_SETUP_MEDIUM),
+        m_monster_freq(GALAXY_SETUP_MEDIUM),
+        m_native_freq(GALAXY_SETUP_MEDIUM)
+    {}
     //@}
 
     int                 m_size;
@@ -93,8 +102,19 @@ private:
 struct SaveGameEmpireData
 {
     /** \name Structors */ //@{
-    SaveGameEmpireData(); ///< default ctor.
-    SaveGameEmpireData(int empire_id, const std::string& empire_name, const std::string& player_name, const GG::Clr& colour);
+    SaveGameEmpireData() :
+        m_empire_id(ALL_EMPIRES),
+        m_empire_name(),
+        m_player_name(),
+        m_color()
+    {}
+    SaveGameEmpireData(int empire_id, const std::string& empire_name,
+                       const std::string& player_name, const GG::Clr& colour) :
+        m_empire_id(empire_id),
+        m_empire_name(empire_name),
+        m_player_name(player_name),
+        m_color(colour)
+    {}
     //@}
 
     int         m_empire_id;
@@ -113,7 +133,14 @@ private:
 struct PlayerSetupData
 {
     /** \name Structors */ //@{
-    PlayerSetupData(); ///< default ctor.
+    PlayerSetupData() :
+        m_player_name(),
+        m_empire_name(),
+        m_empire_color(GG::Clr(0, 0, 0, 0)),
+        m_starting_species_name(),
+        m_save_game_empire_id(ALL_EMPIRES),
+        m_client_type(Networking::INVALID_CLIENT_TYPE)
+    {}
     //@}
 
     std::string             m_player_name;          ///< the player's name
@@ -142,7 +169,11 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs);
 struct SinglePlayerSetupData : public GalaxySetupData
 {
     /** \name Structors */ //@{
-    SinglePlayerSetupData(); ///< default ctor.
+    SinglePlayerSetupData():
+        m_new_game(true),
+        m_filename(),
+        m_players()
+    {}
     //@}
 
     bool                                m_new_game;
@@ -159,7 +190,13 @@ private:
 struct MultiplayerLobbyData : public GalaxySetupData
 {
     /** \name Structors */ //@{
-    MultiplayerLobbyData(); ///< Default ctor.
+    MultiplayerLobbyData() :
+        m_new_game(true),
+        m_save_file_index(-1),
+        m_players(),
+        m_save_games(),
+        m_save_game_empire_data()
+    {}
     explicit MultiplayerLobbyData(bool build_save_game_list); ///< Basic ctor.
     //@}
 
@@ -179,8 +216,19 @@ private:
 /** Information about one player that other players are informed of.  Assembled by server and sent to players. */
 struct PlayerInfo
 {
-    PlayerInfo();   ///< default ctor
-    PlayerInfo(const std::string& player_name_, int empire_id_, Networking::ClientType client_type_, bool host_);
+    PlayerInfo() :
+        name(""),
+        empire_id(ALL_EMPIRES),
+        client_type(Networking::INVALID_CLIENT_TYPE),
+        host(false)
+    {}
+    PlayerInfo(const std::string& player_name_, int empire_id_,
+               Networking::ClientType client_type_, bool host_) :
+        name(player_name_),
+        empire_id(empire_id_),
+        client_type(client_type_),
+        host(host_)
+    {}
 
     std::string             name;           ///< name of this player (not the same as the empire name)
     int                     empire_id;      ///< id of the player's empire
@@ -198,7 +246,10 @@ struct CombatSetupGroup;
     round of combat. */
 struct CombatData
 {
-    CombatData();
+    CombatData() :
+        m_combat_turn_number(0),
+        m_system(0)
+    {}
     CombatData(System* system, std::map<int, std::vector<CombatSetupGroup> >& setup_groups);
 
     unsigned int m_combat_turn_number;
@@ -225,8 +276,26 @@ struct CombatSetupRegion
         PARTIAL_ELLIPSE ///< An angular portion of an ellipse.
     };
 
-    CombatSetupRegion();
-    CombatSetupRegion(float radius_begin, float radius_end);
+    CombatSetupRegion() :
+        m_type(RING),
+        m_radius_begin(),
+        m_radius_end(),
+        m_centroid(),
+        m_radial_axis(),
+        m_tangent_axis(),
+        m_theta_begin(),
+        m_theta_end()
+    {}
+    CombatSetupRegion(float radius_begin, float radius_end) :
+        m_type(RING),
+        m_radius_begin(radius_begin),
+        m_radius_end(radius_end),
+        m_centroid(),
+        m_radial_axis(),
+        m_tangent_axis(),
+        m_theta_begin(),
+        m_theta_end()
+    {}
     CombatSetupRegion(float centroid_x, float centroid_y, float radius);
     CombatSetupRegion(float centroid_x, float centroid_y, float radial_axis, float tangent_axis);
     CombatSetupRegion(float centroid_x, float centroid_y, float radial_axis, float tangent_axis,
@@ -252,7 +321,9 @@ bool PointInRegion(double point[2], const CombatSetupRegion& region);
 /** A group of ships and a description of where they may be placed. */
 struct CombatSetupGroup
 {
-    CombatSetupGroup();
+    CombatSetupGroup() :
+        m_allow(false)
+    {}
 
     std::set<int> m_ships;                    ///< The ships in this group.
     std::vector<CombatSetupRegion> m_regions; ///< The regions the ships are/are not allowed in.
