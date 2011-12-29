@@ -254,7 +254,7 @@ Hull
             OwnedBy TheEmpire Source.Owner
         ]
         Contains And [
-            Building "BLD_ORBITAL_DRYDOCK"
+            Building "BLD_SHIPYARD_ORBITAL_DRYDOCK"
             OwnedBy TheEmpire Source.Owner
         ]
         OwnedBy TheEmpire Source.Owner
