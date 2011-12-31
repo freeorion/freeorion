@@ -14,6 +14,7 @@ BOOST_CLASS_EXPORT(Planet)
 BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
+BOOST_CLASS_VERSION(Ship, 1)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -163,6 +164,9 @@ void Ship::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_part_meters)
         & BOOST_SERIALIZATION_NVP(m_species_name)
         & BOOST_SERIALIZATION_NVP(m_produced_by_empire_id);
+    if (version >= 1) {
+        ar  & BOOST_SERIALIZATION_NVP(m_last_turn_active_in_combat);
+    }
 }
 
 template

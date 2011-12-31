@@ -259,6 +259,9 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
+        attacker->SetLastTurnActiveInCombat(CurrentTurn());
+        target->SetLastTurnActiveInCombat(CurrentTurn());
+        
         Logger().debugStream() << "after AttackShipShip: attacker: " << attacker->Dump() << "\ntarget: " << target->Dump();
     }
 
@@ -302,6 +305,7 @@ namespace {
             Logger().debugStream() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " construction damage to Planet " << target->Name() << " (" << target->ID() << ")";
         }
 
+        attacker->SetLastTurnActiveInCombat(CurrentTurn());
         target->SetLastTurnAttackedByShip(CurrentTurn());
 
         Logger().debugStream() << "after AttackShipPlanet: ship: " << attacker->Dump() << "\nplanet: " << target->Dump();
@@ -339,6 +343,8 @@ namespace {
             target_structure->AddToCurrent(-structure_damage);
             Logger().debugStream() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << structure_damage << " structure damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
+
+        target->SetLastTurnActiveInCombat(CurrentTurn());
 
         Logger().debugStream() << "after AttackPlanetShip: planet: " << attacker->Dump() << "\nship: " << target->Dump();
     }

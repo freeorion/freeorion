@@ -33,6 +33,7 @@ Ship::Ship() :
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
+    m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_produced_by_empire_id(ALL_EMPIRES)
 {}
 
@@ -43,6 +44,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
     m_ordered_invade_planet_id(INVALID_OBJECT_ID),
+    m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id)
 {
@@ -163,6 +165,7 @@ void Ship::Copy(const UniverseObject* copied_object, int empire_id) {
                 this->m_ordered_scrapped =          copied_ship->m_ordered_scrapped;
                 this->m_ordered_colonize_planet_id= copied_ship->m_ordered_colonize_planet_id;
                 this->m_ordered_invade_planet_id  = copied_ship->m_ordered_invade_planet_id;
+                this->m_last_turn_active_in_combat= copied_ship->m_last_turn_active_in_combat;
                 this->m_part_meters =               copied_ship->m_part_meters;
                 this->m_produced_by_empire_id =     copied_ship->m_produced_by_empire_id;
             }
@@ -288,9 +291,14 @@ double Ship::NextTurnCurrentMeterValue(MeterType type) const {
     //} else if (type == METER_SUPPLY) {
     //    // todo: consider fleet passing through or being in a supplied system, which replenishes supplies
     //}
-    if (type == METER_SHIELD)
-        return std::min(UniverseObject::GetMeter(METER_SHIELD)->Current() + 1.0,
-                        UniverseObject::GetMeter(METER_MAX_SHIELD)->Current());
+    if (type == METER_SHIELD) {
+        if (m_last_turn_active_in_combat >= CurrentTurn())
+            return std::max(0.0,
+                            std::min(UniverseObject::GetMeter(METER_SHIELD)->Current(),
+                                     UniverseObject::GetMeter(METER_MAX_SHIELD)->Current()));
+        else
+            return UniverseObject::GetMeter(METER_MAX_SHIELD)->Current();
+    }
 
     return UniverseObject::NextTurnCurrentMeterValue(type);
 }
