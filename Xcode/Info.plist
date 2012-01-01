@@ -19,8 +19,8 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleVersion</key>
-	<string>0.3.15</string>
+	<string>0.3.17</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.3.15</string>
+	<string>0.3.17</string>
 </dict>
 </plist>
