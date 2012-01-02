@@ -45,6 +45,9 @@
     <Filter Include="Source Files\universe">
       <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\UI">
+      <UniqueIdentifier>{2c0697bd-b739-459f-8520-f33b04d59489}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\util\Serialize.ipp">
@@ -428,6 +431,9 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\UniverseObject.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\UI\StringTable.cpp">
+      <Filter>Source Files\UI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

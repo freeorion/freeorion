@@ -57,9 +57,6 @@
     <Filter Include="Source Files\util">
       <UniqueIdentifier>{1e982752-0e28-4beb-ad8f-7e5c43d6142a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\UI">
-      <UniqueIdentifier>{2ac9143c-6b49-411d-a724-8b31af1afd06}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\python">
       <UniqueIdentifier>{2ab2cfda-27b9-4be9-a9ce-9e5b1cec2e28}</UniqueIdentifier>
     </Filter>
@@ -336,9 +333,6 @@
     </ClCompile>
     <ClCompile Include="..\..\util\AppInterface.cpp">
       <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\UI\StringTable.cpp">
-      <Filter>Source Files\UI</Filter>
     </ClCompile>
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp">
       <Filter>Source Files\python</Filter>

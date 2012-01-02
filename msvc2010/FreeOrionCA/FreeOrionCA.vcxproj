@@ -189,7 +189,6 @@
     <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
     <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
-    <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\VarText.cpp" />
   </ItemGroup>

@@ -289,7 +289,6 @@
     <ClCompile Include="..\..\UI\SidePanel.cpp" />
     <ClCompile Include="..\..\UI\SitRepPanel.cpp" />
     <ClCompile Include="..\..\UI\Sound.cpp" />
-    <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\UI\SystemIcon.cpp" />
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />

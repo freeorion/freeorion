@@ -538,9 +538,6 @@
     <ClCompile Include="..\..\UI\Sound.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\UI\StringTable.cpp">
-      <Filter>Source Files\UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\UI\SystemIcon.cpp">
       <Filter>Source Files\UI</Filter>
     </ClCompile>

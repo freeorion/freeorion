@@ -173,6 +173,7 @@
     <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
     <ClCompile Include="..\..\network\MessageQueue.cpp" />
     <ClCompile Include="..\..\network\Networking.cpp" />
+    <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\universe\Building.cpp" />
     <ClCompile Include="..\..\universe\Condition.cpp" />
     <ClCompile Include="..\..\universe\Effect.cpp" />

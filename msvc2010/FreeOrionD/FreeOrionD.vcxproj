@@ -177,7 +177,6 @@
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
     <ClCompile Include="..\..\server\ServerApp.cpp" />
     <ClCompile Include="..\..\server\ServerFSM.cpp" />
-    <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\universe\UniverseServer.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />

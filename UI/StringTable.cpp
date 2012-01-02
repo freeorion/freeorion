@@ -26,19 +26,15 @@ StringTable_::~StringTable_()
 {}
 
 bool StringTable_::StringExists(const std::string& index) const
-{
-    return m_strings.find(index) != m_strings.end();
-}
+{ return m_strings.find(index) != m_strings.end(); }
 
-const std::string& StringTable_::operator[] (const std::string& index) const
-{
+const std::string& StringTable_::operator[] (const std::string& index) const {
     static std::string error_retval;
     std::map<std::string, std::string>::const_iterator it = m_strings.find(index);
     return it == m_strings.end() ? error_retval = S_ERROR_STRING + index : it->second;
 }
 
-void StringTable_::Load()
-{
+void StringTable_::Load() {
     std::ifstream ifs(m_filename.c_str());
     std::string file_contents;
 
