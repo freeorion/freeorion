@@ -16,6 +16,7 @@ set(THIS_EXE_SOURCES
     ../../server/SaveLoad.cpp
     ../../server/ServerApp.cpp
     ../../server/ServerFSM.cpp
+    ../../universe/UniverseServer.cpp
     ../../universe/Universe.cpp
     ../../util/AppInterface.cpp
     ../../util/VarText.cpp
