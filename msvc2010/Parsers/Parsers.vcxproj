@@ -69,7 +69,7 @@
       <CompileAsManaged>false</CompileAsManaged>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <DisableSpecificWarnings>4275; 4244; 4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>

@@ -120,7 +120,7 @@
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <DisableSpecificWarnings>4275; 4244; 4251</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
