@@ -158,7 +158,7 @@ std::string ValueRef::ReconstructName(const std::vector<adobe::name_t>& property
     default:                                            retval = "?????";           break;
     }
 
-    for (std::size_t i = 0; i < property_name.size(); ++i) {
+    for (std::size_t i = 1; i < property_name.size(); ++i) {
         if (!retval.empty())
             retval += '.';
         retval += property_name[i].c_str();
