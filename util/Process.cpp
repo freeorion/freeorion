@@ -4,32 +4,22 @@
 
 #include <stdexcept>
 
-
-
 Process::Process() :
     m_empty(true)
-{
-}
+{}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
     m_impl(new ProcessImpl(cmd, argv)), 
     m_empty(false)
-{
-}
+{}
 
 void Process::Kill()
-{
-    if (m_impl)
-        m_impl->Kill();
-}
+{ if (m_impl) m_impl->Kill(); }
 
 void Process::RequestTermination()
-{
-    m_impl.reset();
-}
+{ m_impl.reset(); }
 
-void Process::Free()
-{
+void Process::Free() {
     if (m_impl)
         m_impl->Free();
 }
@@ -67,13 +57,9 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 }
 
 Process::ProcessImpl::~ProcessImpl()
-{
-    if (!m_free)
-        Kill();
-}
+{ if (!m_free) Kill(); }
 
-void Process::ProcessImpl::Kill()
-{
+void Process::ProcessImpl::Kill() {
     if (!TerminateProcess(m_process_info.hProcess, 0)) {
         std::string err_str;
         DWORD err = GetLastError();
@@ -124,19 +110,12 @@ Process::ProcessImpl::ProcessImpl(const std::string& cmd, const std::vector<std:
 }
 
 Process::ProcessImpl::~ProcessImpl()
-{
-    if (!m_free)
-        Kill();
-}
+{ if (!m_free) Kill(); }
 
 void Process::ProcessImpl::Kill()
-{
-    kill(m_process_id, SIGHUP);
-}
+{ kill(m_process_id, SIGHUP); }
 
 #endif
 
 void Process::ProcessImpl::Free()
-{
-    m_free = true;
-}
+{ m_free = true; }
