@@ -2178,7 +2178,10 @@ Hull
             stackinggroup = "MONSTER_FLEET_MOVE_STACK"
             effects = SetDestination destination = And [
                 System
-                Not Contains Source
+                Not Contains Or [
+                    Source
+                    Capital
+                ]
                 WithinStarlaneJumps 1 Source
             ]
         EffectsGroup
