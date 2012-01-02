@@ -34,7 +34,12 @@ def getInvasionFleets():
     print "Competitor PlanetIDs:              " + str(competitorPlanetIDs)
 
     print ""
+    print "Invasion Targeted SystemIDs:       " + str(AIstate.invasionTargetedSystemIDs)
     invasionTargetedPlanetIDs = getInvasionTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_INVASION, empireID)
+    allInvasionTargetedSystemIDs = PlanetUtilsAI.getSystems(invasionTargetedPlanetIDs)
+ 
+    # export invasion targeted systems for other AI modules
+    AIstate.invasionTargetedSystemIDs = allInvasionTargetedSystemIDs
     print "Invasion Targeted PlanetIDs:       " + str(invasionTargetedPlanetIDs)
 
     invasionFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
@@ -78,7 +83,7 @@ def getInvasionTargetedPlanetIDs(planetIDs, missionType, empireID):
             if invasionAIFleetMission.hasTarget(missionType, aiTarget):
                 targetedPlanets.append(planetID)
 
-        return targetedPlanets
+    return targetedPlanets
 
 def assignInvasionValues(planetIDs, missionType, fleetSupplyablePlanetIDs, empire):
     "creates a dictionary that takes planetIDs as key and their invasion score as value"
@@ -128,7 +133,7 @@ def sendInvasionFleets(invasionFleetIDs, evaluatedPlanets, missionType):
 
     i = 0
 
-    for planetID_value_pair in evaluatedPlanets:
+    for planetID_value_pair in evaluatedPlanets: # evaluatedPlanets is a dictionary
         if i >= len(invasionFleetIDs): return
 
         fleetID = invasionFleetIDs[i]

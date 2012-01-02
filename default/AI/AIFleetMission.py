@@ -80,6 +80,8 @@ class AIFleetMission(AIAbstractMission):
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_COLONISE, fleetAITarget, aiTarget)
         elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_INVASION:
             result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_INVADE, fleetAITarget, aiTarget)
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MILITARY:
+            result = AIFleetOrder.AIFleetOrder(AIFleetOrderType.ORDER_MILITARY, fleetAITarget, aiTarget)
         # TODO: implement other mission types
 
         return result
@@ -87,7 +89,6 @@ class AIFleetMission(AIAbstractMission):
     def isValidFleetMissionAITarget(self, aiFleetMissionType, aiTarget):
         if aiTarget.isValid() == False:
             return False
-
         if aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_EXPLORATION:
             if aiTarget.getAITargetType() == AITargetType.TARGET_SYSTEM:
                 empire = fo.getEmpire()
@@ -121,8 +122,15 @@ class AIFleetMission(AIAbstractMission):
                 planetPopulation = planet.currentMeterValue(fo.meterType.population)
                 if not planet.unowned or planetPopulation > 0:
                     return True
+        elif aiFleetMissionType == AIFleetMissionType.FLEET_MISSION_MILITARY:
+            universe = fo.getUniverse()
+            fleet = universe.getFleet(self.getAITargetID())
+            if not fleet.hasArmedShips:
+                return False
+            if aiTarget.getAITargetType() == AITargetType.TARGET_SYSTEM:
+                return True
         # TODO: implement other mission types
-            
+
         return False
 
     def cleanInvalidAITargets(self):

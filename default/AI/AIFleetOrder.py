@@ -106,6 +106,22 @@ class AIFleetOrder(object):
                     planetPopulation = planet.currentMeterValue(fo.meterType.population)
                     if not planet.unowned or planetPopulation > 0:
                         targetAITargetTypeValid = True
+                # military
+                elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
+                    # with ship
+                    if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                        ship = universe.getShip(self.getSourceAITarget().getTargetID())
+                        if ship.isArmed:
+                            sourceAITargetTypeValid = True
+                # with fleet
+                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
+                    if fleet.hasArmedShips:
+                        sourceAITargetTypeValid = True
+                # military system
+                if AITargetType.TARGET_SYSTEM == self.getTargetAITarget().getAITargetType():
+                    system = universe.getSystem(self.getTargetAITarget().getTargetID())
+                    targetAITargetTypeValid = True
             # move
             elif AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType():
                 # with fleet
@@ -212,6 +228,24 @@ class AIFleetOrder(object):
             if (ship != None) and (fleet.systemID == planet.systemID) and ship.canInvade:
                 return True
             return False
+        # military
+        elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
+            fleetID = None
+            shipID = None
+            if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                shipID = self.getSourceAITarget().getTargetID()
+                ship = universe.getShip(shipID)
+                fleetID = ship.fleetID
+            elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                fleetID = self.getSourceAITarget().getTargetID()
+                shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY)
+
+            ship = universe.getShip(shipID)
+            fleet = universe.getFleet(fleetID)
+            system = universe.getSystem(self.getTargetAITarget().getTargetID())
+            if (ship != None) and (fleet.systemID == system.systemID) and ship.isArmed:
+                return True
+            return False
         # split fleet            
         elif AIFleetOrderType.ORDER_SPLIT_FLEET == self.getAIFleetOrderType():
             fleet = universe.getFleet(self.getSourceAITarget().getTargetID())
@@ -256,6 +290,16 @@ class AIFleetOrder(object):
                     shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY_INVASION)
 
                 fo.issueInvadeOrder(shipID, self.getTargetAITarget().getTargetID())
+            # military
+            elif AIFleetOrderType.ORDER_MILITARY == self.getAIFleetOrderType():
+                shipID = None
+                if AITargetType.TARGET_SHIP == self.getSourceAITarget().getAITargetType():
+                    shipID = self.getSourceAITarget().getTargetID()
+                elif AITargetType.TARGET_FLEET == self.getSourceAITarget().getAITargetType():
+                    fleetID = self.getSourceAITarget().getTargetID()
+                    shipID = FleetUtilsAI.getShipIDWithRole(fleetID, AIShipRoleType.SHIP_ROLE_MILITARY)
+
+                fo.issueFleetMoveOrder(fleetID, self.getTargetAITarget().getTargetID())
             # move or resupply
             elif (AIFleetOrderType.ORDER_MOVE == self.getAIFleetOrderType()) or (AIFleetOrderType.ORDER_RESUPPLY == self.getAIFleetOrderType()):
                 fleetID = self.getSourceAITarget().getTargetID()
@@ -269,6 +313,7 @@ class AIFleetOrder(object):
 
                 fo.issueNewFleetOrder(str(shipID), shipID)
                 self.__setExecutionCompleted()
+            # attack
             elif (AIFleetOrderType.ORDER_ATACK == self.getAIFleetOrderType()):
                 fleetID = self.getSourceAITarget().getTargetID()
                 systemID = self.getTargetAITarget().getRequiredSystemAITargets()[0].getTargetID()

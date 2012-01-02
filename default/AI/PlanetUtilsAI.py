@@ -1,9 +1,9 @@
 import freeOrionAIInterface as fo
+
 def getPlanetsInSystemsIDs(systemIDs):
     "return list of planets in systems"
 
     universe = fo.getUniverse()
-
     planetIDs = []
 
     for systemID in systemIDs:
@@ -18,7 +18,6 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
     "return list of planets owned by empireID"
 
     universe = fo.getUniverse()
-
     result = []
 
     for planetID in planetIDs:
@@ -29,10 +28,9 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
     return result
 
 def getAllOwnedPlanetIDs(planetIDs):
-    "return list of all owned planetIDs"
+    "return list of all owned and populated planetIDs"
 
     universe = fo.getUniverse()
-
     allOwnedPlanetIDs = []
 
     for planetID in planetIDs:
@@ -43,7 +41,49 @@ def getAllOwnedPlanetIDs(planetIDs):
 
     return allOwnedPlanetIDs
 
-def getCapitalID():
+def getAllPopulatedSystemIDs(planetIDs):
+    "return list of all populated systemIDs"
+
+    universe = fo.getUniverse()
+    allPopulatedSystemIDs = []
+
+    for planetID in planetIDs:
+        planet = universe.getPlanet(planetID)
+        systemID = planet.systemID
+
+        allPopulatedSystemIDs.append(systemID)
+
+    return allPopulatedSystemIDs
+
+def getSystemsOccupiedByEmpire(planetIDs, empireID):
+    "return list of systems occupied by empireID"
+
+    universe = fo.getUniverse()
+    occupiedSystemIDs = []
+
+    for planetID in planetIDs:
+        planet = universe.getPlanet(planetID)
+        systemID = planet.systemID
+
+        occupiedSystemIDs.append(systemID)
+
+    return occupiedSystemIDs
+
+def getSystems(planetIDs):
+    "return list of systems containing planetIDs"
+
+    universe = fo.getUniverse()
+    systemIDs = []
+
+    for planetID in planetIDs:
+        planet = universe.getPlanet(planetID)
+        systemID = planet.systemID
+
+        systemIDs.append(systemID)
+
+    return systemIDs
+
+def getCapitalID(): # to be deleted after update of ResourcesAI module
     "return planetID of empire capital"
 
     empire = fo.getEmpire()

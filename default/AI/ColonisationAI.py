@@ -46,7 +46,12 @@ def getColonyFleets():
     print "Unpopulated PlanetIDs:             " + str(unpopulatedPlanetIDs)
 
     print ""
+    print "Colony Targeted SystemIDs:         " + str(AIstate.colonyTargetedSystemIDs)
     colonyTargetedPlanetIDs = getColonyTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_COLONISATION, empireID)
+    allColonyTargetedSystemIDs = PlanetUtilsAI.getSystems(colonyTargetedPlanetIDs)
+
+    # export colony targeted systems for other AI modules
+    AIstate.colonyTargetedSystemIDs = allColonyTargetedSystemIDs
     print "Colony Targeted PlanetIDs:         " + str(colonyTargetedPlanetIDs)
 
     colonyFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
@@ -59,7 +64,12 @@ def getColonyFleets():
     print "Colony Fleets Without Missions:      " + str(numColonyFleets)
 
     print ""
+    print "Outpost Targeted SystemIDs:        " + str(AIstate.outpostTargetedSystemIDs)
     outpostTargetedPlanetIDs = getOutpostTargetedPlanetIDs(universe.planetIDs, AIFleetMissionType.FLEET_MISSION_OUTPOST, empireID)
+    allOutpostTargetedSystemIDs = PlanetUtilsAI.getSystems(outpostTargetedPlanetIDs)
+
+    # export outpost targeted systems for other AI modules
+    AIstate.outpostTargetedSystemIDs = allOutpostTargetedSystemIDs
     print "Outpost Targeted PlanetIDs:        " + str(outpostTargetedPlanetIDs)
 
     outpostFleetIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)

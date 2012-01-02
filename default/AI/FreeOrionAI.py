@@ -9,6 +9,7 @@ import ResearchAI
 import ProductionAI
 import ResourcesAI
 import InvasionAI
+import MilitaryAI
 
 # AIstate
 foAIstate = None
@@ -97,9 +98,12 @@ def handleChatMessage(senderID, messageText):
 # at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
 # and can be sent to the server for processing.
 def generateOrders():
+    universe = fo.getUniverse()
     empire = fo.getEmpire()
-    print "Empire:  " + empire.name + " TURN: " + str(fo.currentTurn())
-    print "Capital: " + str(empire.capitalID)
+    planetID = empire.capitalID
+    planet = universe.getPlanet(planetID)
+    print "EmpireID:    " + str(empire.empireID) + " Name: " + empire.name + " Turn: " + str(fo.currentTurn())
+    print "CapitalID: " + str(planetID) + " Name: " + planet.name + " Species: " + planet.speciesName 
 
     # turn cleanup
     splitFleet()
@@ -115,6 +119,7 @@ def generateOrders():
     ExplorationAI.assignScoutsToExploreSystems()
     ColonisationAI.assignColonyFleetsToColonise()
     InvasionAI.assignInvasionFleetsToInvade()
+    MilitaryAI.assignMilitaryFleetsToSystems()
     FleetUtilsAI.generateAIFleetOrdersForAIFleetMissions()
     FleetUtilsAI.issueAIFleetOrdersForAIFleetMissions()
     ResearchAI.generateResearchOrders()

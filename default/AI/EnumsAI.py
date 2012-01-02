@@ -86,9 +86,10 @@ class AIFleetOrderType(object):
     ORDER_ATACK = 7
     ORDER_DEFEND = 8
     ORDER_INVADE = 9
+    ORDER_MILITARY = 10
 
 def getAIFleetOrderTypes():
-    return __getInterval(0, 9)
+    return __getInterval(0, 10)
 
 class AIShipRoleType(object):
     SHIP_ROLE_INVALID = -1
@@ -100,9 +101,10 @@ class AIShipRoleType(object):
     SHIP_ROLE_CIVILIAN_COLONISATION = 5
     SHIP_ROLE_CIVILIAN_OUTPOST = 6
     SHIP_ROLE_MILITARY_INVASION = 7
+    SHIP_ROLE_MILITARY = 8
 
 def getAIShipRolesTypes():
-    return __getInterval(0, 7)
+    return __getInterval(0, 8)
 
 class AITargetType(object):
     TARGET_INVALID = -1

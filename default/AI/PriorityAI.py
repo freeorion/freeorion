@@ -1,18 +1,20 @@
+import freeOrionAIInterface as fo
 from EnumsAI import AIPriorityType, AIFleetMissionType, AIExplorableSystemType, getAIPriorityProductionTypes
 import AIstate
 import ColonisationAI
 import EnumsAI
 import FleetUtilsAI
 import FreeOrionAI as foAI
-import freeOrionAIInterface as fo
 from ResearchAI import getCompletedTechs
 import InvasionAI 
+import MilitaryAI
 
 def calculatePriorities():
     "calculates the priorities of the AI player"    
 
     ColonisationAI.getColonyFleets() # sets AIstate.colonisablePlanetIDs and AIstate.outpostPlanetIDs
-    InvasionAI.getInvasionFleets() # sets AIstate.opponentPlanetIDs
+    InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
+    MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
 
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
@@ -25,7 +27,7 @@ def calculatePriorities():
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_OUTPOST, calculateOutpostPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION, calculateColonisationPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_INVASION, calculateInvasionPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY, 20)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY, calculateMilitaryPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_PRODUCTION_BUILDINGS, 25)
 
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESEARCH_LEARNING, calculateLearningPriority())
@@ -64,6 +66,30 @@ def calculateFoodPriority():
 
     return foodPriority
 
+def calculateMineralsPriority():
+    "calculates the demand for minerals by industry"
+
+    empire = fo.getEmpire()
+
+    # get current minerals and industry production
+    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
+    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
+    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
+    industryProduction = empire.resourceProduction(fo.resourceType.industry)
+    mineralsTarget = 10 * industryProduction
+
+    mineralsPriority = (mineralsTarget - mineralsStockpile) / mineralsTarget * 99
+
+    print ""
+    print "Minerals Production:        " + str(mineralsProduction)
+    print "Size of Minerals Stockpile: " + str(mineralsStockpile)
+    print "Target Minerals Stockpile:  " + str(mineralsTarget)
+    # print "Minerals Production Turns:  " + str(mineralsTurns)
+    # print "industry production  : " + str(industryProduction)
+    print "Priority for Minerals:      " + str(mineralsPriority)
+
+    return mineralsPriority
+
 def calculateExplorationPriority():
     "calculates the demand for scouts by unexplored systems"
 
@@ -74,7 +100,7 @@ def calculateExplorationPriority():
 
     if (numUnexploredSystems == 0) or (numScouts >= 2): return 0
 
-    explorationPriority = 100 * (numUnexploredSystems - numScouts) / numUnexploredSystems
+    explorationPriority = 95 * (numUnexploredSystems - numScouts) / numUnexploredSystems
 
     print ""
     print "Number of Scouts            : " + str(numScouts)
@@ -93,7 +119,7 @@ def calculateColonisationPriority():
 
     colonyshipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION)
     numColonyships = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(colonyshipIDs))
-    colonisationPriority = 100 * (numColonisablePlanetIDs - numColonyships) / numColonisablePlanetIDs
+    colonisationPriority = 101 * (numColonisablePlanetIDs - numColonyships) / numColonisablePlanetIDs
 
     # print ""
     # print "Number of Colony Ships        : " + str(numColonyships)
@@ -114,7 +140,7 @@ def calculateOutpostPriority():
 
     outpostShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST)
     numOutpostShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(outpostShipIDs))
-    outpostPriority = 101 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
+    outpostPriority = 102 * (numOutpostPlanetIDs - numOutpostShips) / numOutpostPlanetIDs
 
     # print ""
     # print "Number of Outpost Ships       : " + str(numOutpostShips)
@@ -133,7 +159,7 @@ def calculateInvasionPriority():
 
     troopShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION)
     numTroopShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(troopShipIDs))
-    invasionPriority = 105 * (numOpponentPlanetIDs - numTroopShips) / numOpponentPlanetIDs
+    invasionPriority = 110 * (numOpponentPlanetIDs - numTroopShips) / numOpponentPlanetIDs
 
     # print ""
     # print "Number of Troop Ships Without Missions: " + str(numTroopShips)
@@ -144,29 +170,24 @@ def calculateInvasionPriority():
 
     return invasionPriority
 
-def calculateMineralsPriority():
-    "calculates the demand for minerals by industry"
+def calculateMilitaryPriority():
+    "calculates the demand for military ships by military targeted systems"
 
-    empire = fo.getEmpire()
+    numMilitaryTargetedSystemIDs = len(AIstate.militaryTargetedSystemIDs)
+    militaryShipIDs = FleetUtilsAI.getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY)
+    numMilitaryShips = len(FleetUtilsAI.extractFleetIDsWithoutMissionTypes(militaryShipIDs))
 
-    # get current minerals and industry production
-    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
-    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
-    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
-    industryProduction = empire.resourceProduction(fo.resourceType.industry)
-    mineralsTarget = 10 * industryProduction    
+    # build one more military ship than military targeted systems
+    militaryPriority = 100 * ((numMilitaryTargetedSystemIDs +2) - numMilitaryShips) / (numMilitaryTargetedSystemIDs + 1)
 
-    mineralsPriority = (mineralsTarget - mineralsStockpile) / mineralsTarget * 99    
+    # print ""
+    # print "Number of Military Ships Without Missions: " + str(numMilitaryShips)
+    # print "Number of Military Targeted Systems: " + str(numMilitaryTargetedSystemIDs)
+    # print "Priority for Military Ships: " + str(militaryPriority)
 
-    print ""
-    print "Minerals Production:        " + str(mineralsProduction)
-    print "Size of Minerals Stockpile: " + str(mineralsStockpile)
-    print "Target Minerals Stockpile:  " + str(mineralsTarget)
-    # print "Minerals Production Turns:  " + str(mineralsTurns)
-    # print "industry production  : " + str(industryProduction)    
-    print "Priority for Minerals:      " + str(mineralsPriority)
+    if militaryPriority < 0: return 0
 
-    return mineralsPriority
+    return militaryPriority
 
 def calculateIndustryPriority():
     "calculates the demand for industry"

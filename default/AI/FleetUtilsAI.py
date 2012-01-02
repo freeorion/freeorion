@@ -26,7 +26,6 @@ def fleetHasShipWithRole(fleetID, shipRole):
 
     if fleet == None: return False
     for shipID in fleet.shipIDs:
-
         ship = universe.getShip(shipID)
         if (foAI.foAIstate.getShipRole(ship.design.id) == shipRole):
             return True
@@ -135,6 +134,8 @@ def assessFleetRole(fleetID):
         return AIFleetMissionType.FLEET_MISSION_INVASION
     if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK:
         return AIFleetMissionType.FLEET_MISSION_ATTACK
+    if favouriteRole == AIShipRoleType.SHIP_ROLE_MILITARY:
+        return AIFleetMissionType.FLEET_MISSION_MILITARY
 
     return AIShipRoleType.SHIP_ROLE_INVALID
 
@@ -160,7 +161,7 @@ def assessShipRole(shipID):
         if ship.design.parts.__contains__("GT_TROOP_POD"):
             return AIShipRoleType.SHIP_ROLE_MILITARY_INVASION
     elif ship.isArmed:
-        return AIShipRoleType.SHIP_ROLE_MILITARY_ATTACK
+        return AIShipRoleType.SHIP_ROLE_MILITARY
     else:
         return AIShipRoleType.SHIP_ROLE_CIVILIAN_EXPLORATION
 
@@ -169,12 +170,15 @@ def assessShipRole(shipID):
 def generateAIFleetOrdersForAIFleetMissions():
     "generates fleet orders from targets"
 
-    print "Exploration fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
-    print "Colonisation fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
-    print "Outpost fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST))
-    print "Attack fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
-    print "Defend fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
-    print "Invasion fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
+    print ""
+    print "Exploration Fleets : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_EXPLORATION))
+    print "Colonization Fleets: " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_COLONISATION))
+    print "Outpost Fleets     : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_OUTPOST))
+    print "Attack Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_ATTACK))
+    print "Defend Fleets      : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_DEFEND))
+    print "Invasion Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_INVASION))
+    print "Military Fleets    : " + str(getEmpireFleetIDsByRole(AIFleetMissionType.FLEET_MISSION_MILITARY))
+
     print ""
     print "Explored systems  :"
     printSystems(foAI.foAIstate.getExplorableSystems(AIExplorableSystemType.EXPLORABLE_SYSTEM_EXPLORED))
@@ -187,7 +191,7 @@ def generateAIFleetOrdersForAIFleetMissions():
     for explorationAIFleetMission in explorationAIFleetMissions:
         print "    " + str(explorationAIFleetMission)
 
-    print "Colonisation targets: fleetID[MissionType]:{TargetType:targetID}"
+    print "Colonization targets: fleetID[MissionType]:{TargetType:targetID}"
     colonisationAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_COLONISATION])
     for colonisationAIFleetMission in colonisationAIFleetMissions:
         print "    " + str(colonisationAIFleetMission)
@@ -196,6 +200,11 @@ def generateAIFleetOrdersForAIFleetMissions():
     invasionAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_INVASION])
     for invasionAIFleetMission in invasionAIFleetMissions:
         print "    " + str(invasionAIFleetMission)
+
+    print "Military targets: fleetID[MissionType]:{TargetType:targetID}"
+    militaryAIFleetMissions = foAI.foAIstate.getAIFleetMissionsWithAnyMissionTypes([AIFleetMissionType.FLEET_MISSION_MILITARY])
+    for militaryAIFleetMission in militaryAIFleetMissions:
+        print "    " + str(militaryAIFleetMission)
 
     aiFleetMissions = foAI.foAIstate.getAllAIFleetMissions()
     for aiFleetMission in aiFleetMissions:
