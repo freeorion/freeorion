@@ -101,6 +101,10 @@ public:
 
     PlanetEnvironment           EnvironmentForSpecies(const std::string& species_name = "") const;
     PlanetType                  NextBetterPlanetTypeForSpecies(const std::string& species_name = "") const;
+    PlanetType                  ClockwiseNextPlanetType() const;
+    PlanetType                  CounterClockwiseNextPlanetType() const;
+    PlanetSize                  NextLargerPlanetSize() const;
+    PlanetSize                  NextSmallerPlanetSize() const;
 
     Year                        OrbitalPeriod() const;
     Radian                      InitialOrbitalPosition() const;

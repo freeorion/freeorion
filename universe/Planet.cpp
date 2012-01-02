@@ -229,6 +229,70 @@ PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_nam
     return species->NextBetterPlanetType(m_type);
 }
 
+namespace {
+    PlanetType LoopPlanetTypeIncrement(PlanetType initial_type, int step) {
+        // avoid too large steps that would mess up enum arithmatic
+        if (std::abs(step) >= PT_ASTEROIDS) {
+            Logger().debugStream() << "LoopPlanetTypeIncrement giving too large step: " << step;
+            return initial_type;
+        }
+        // some types can't be terraformed
+        if (initial_type == PT_GASGIANT)
+            return PT_GASGIANT;
+        if (initial_type == PT_ASTEROIDS)
+            return PT_ASTEROIDS;
+        if (initial_type == INVALID_PLANET_TYPE)
+            return INVALID_PLANET_TYPE;
+        if (initial_type == NUM_PLANET_TYPES)
+            return NUM_PLANET_TYPES;
+        // calculate next planet type, accounting for loop arounds
+        PlanetType new_type(PlanetType(initial_type + step));
+        if (new_type >= PT_ASTEROIDS)
+            new_type = PlanetType(new_type - PT_ASTEROIDS);
+        else if (new_type <= INVALID_PLANET_TYPE)
+            new_type = PlanetType(new_type + PT_ASTEROIDS);
+        return new_type;
+    }
+}
+
+PlanetType Planet::ClockwiseNextPlanetType() const
+{ return LoopPlanetTypeIncrement(m_type, 1); }
+
+PlanetType Planet::CounterClockwiseNextPlanetType() const
+{ return LoopPlanetTypeIncrement(m_type, -1); }
+
+namespace {
+    PlanetSize LoopPlanetSizeIncrement(PlanetSize initial_size, int step) {
+        // avoid too large steps that would mess up enum arithmatic
+        if (std::abs(step) >= SZ_ASTEROIDS) {
+            Logger().debugStream() << "LoopPlanetSizeIncrement giving too large step: " << step;
+            return initial_size;
+        }
+        // some types can't be terraformed
+        if (initial_size == SZ_GASGIANT)
+            return SZ_GASGIANT;
+        if (initial_size == SZ_ASTEROIDS)
+            return SZ_ASTEROIDS;
+        if (initial_size == INVALID_PLANET_SIZE)
+            return INVALID_PLANET_SIZE;
+        if (initial_size == NUM_PLANET_SIZES)
+            return NUM_PLANET_SIZES;
+        // calculate next planet size, accounting for loop arounds
+        PlanetSize new_type(PlanetSize(initial_size + step));
+        if (new_type >= SZ_ASTEROIDS)
+            new_type = PlanetSize(new_type - SZ_ASTEROIDS);
+        else if (new_type <= INVALID_PLANET_SIZE)
+            new_type = PlanetSize(new_type + SZ_ASTEROIDS);
+        return new_type;
+    }
+}
+
+PlanetSize Planet::NextLargerPlanetSize() const
+{ return LoopPlanetSizeIncrement(m_size, 1); }
+
+PlanetSize Planet::NextSmallerPlanetSize() const
+{ return LoopPlanetSizeIncrement(m_size, -1); }
+
 Year Planet::OrbitalPeriod() const
 { return m_orbital_period; }
 
