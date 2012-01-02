@@ -262,36 +262,33 @@ PlanetType Planet::CounterClockwiseNextPlanetType() const
 { return LoopPlanetTypeIncrement(m_type, -1); }
 
 namespace {
-    PlanetSize LoopPlanetSizeIncrement(PlanetSize initial_size, int step) {
-        // avoid too large steps that would mess up enum arithmatic
-        if (std::abs(step) >= SZ_ASTEROIDS) {
-            Logger().debugStream() << "LoopPlanetSizeIncrement giving too large step: " << step;
-            return initial_size;
-        }
-        // some types can't be terraformed
+    PlanetSize PlanetSizeIncrement(PlanetSize initial_size, int step) {
+        // some sizes don't have meaningful increments
         if (initial_size == SZ_GASGIANT)
             return SZ_GASGIANT;
         if (initial_size == SZ_ASTEROIDS)
             return SZ_ASTEROIDS;
+        if (initial_size == SZ_NOWORLD)
+            return SZ_NOWORLD;
         if (initial_size == INVALID_PLANET_SIZE)
             return INVALID_PLANET_SIZE;
         if (initial_size == NUM_PLANET_SIZES)
             return NUM_PLANET_SIZES;
-        // calculate next planet size, accounting for loop arounds
+        // calculate next planet size
         PlanetSize new_type(PlanetSize(initial_size + step));
-        if (new_type >= SZ_ASTEROIDS)
-            new_type = PlanetSize(new_type - SZ_ASTEROIDS);
-        else if (new_type <= INVALID_PLANET_SIZE)
-            new_type = PlanetSize(new_type + SZ_ASTEROIDS);
+        if (new_type >= SZ_HUGE)
+            return SZ_HUGE;
+        if (new_type <= SZ_TINY)
+            return SZ_TINY;
         return new_type;
     }
 }
 
 PlanetSize Planet::NextLargerPlanetSize() const
-{ return LoopPlanetSizeIncrement(m_size, 1); }
+{ return PlanetSizeIncrement(m_size, 1); }
 
 PlanetSize Planet::NextSmallerPlanetSize() const
-{ return LoopPlanetSizeIncrement(m_size, -1); }
+{ return PlanetSizeIncrement(m_size, -1); }
 
 Year Planet::OrbitalPeriod() const
 { return m_orbital_period; }

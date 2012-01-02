@@ -304,14 +304,21 @@ namespace ValueRef {
 
         IF_CURRENT_VALUE(PlanetSize)
 
+        const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        if (!object) {
+            Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
+            return INVALID_PLANET_SIZE;
+        }
+
         if (property_name == PlanetSize_name) {
-            const UniverseObject* object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
-            if (!object) {
-                Logger().errorStream() << "Variable<PlanetSize>::Eval unable to follow reference: " << ReconstructName(m_property_name, m_ref_type);
-                return INVALID_PLANET_SIZE;
-            }
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->Size();
+        } else if (property_name == NextLargerPlanetSize_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->NextLargerPlanetSize();
+        } else if (property_name == NextSmallerPlanetSize_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->NextSmallerPlanetSize();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetSize value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetSize.");
         }
@@ -337,6 +344,12 @@ namespace ValueRef {
         } else if (property_name == NextBetterPlanetType_name) {
             if (const Planet* p = universe_object_cast<const Planet*>(object))
                 return p->NextBetterPlanetTypeForSpecies();
+        } else if (property_name == ClockwiseNextPlanetType_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->ClockwiseNextPlanetType();
+        } else if (property_name == CounterClockwiseNextPlanetType_name) {
+            if (const Planet* p = universe_object_cast<const Planet*>(object))
+                return p->CounterClockwiseNextPlanetType();
         } else {
             throw std::runtime_error("Attempted to read a non-PlanetType value \"" + ReconstructName(m_property_name, m_ref_type) + "\" using a ValueRef of type PlanetType.");
         }

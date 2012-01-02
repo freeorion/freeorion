@@ -156,6 +156,10 @@
     (Name)                                      \
     (Neutron)                                   \
     (NextBetterPlanetType)                      \
+    (ClockwiseNextPlanetType)                   \
+    (CounterClockwiseNextPlanetType)            \
+    (NextLargerPlanetSize)                      \
+    (NextSmallerPlanetSize)                     \
     (NextSystemID)                              \
     (NoStar)                                    \
     (Not)                                       \
