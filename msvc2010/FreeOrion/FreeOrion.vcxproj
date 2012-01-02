@@ -84,7 +84,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>../../../lib/;../../../lib/bullet/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Universe.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;GiGi.lib;GiGiOgre.lib;OgreMain.lib;opengl32.lib;glu32.lib;libpng.lib;jpeg.lib;BulletCollision.lib;LinearMath.lib;glew32.lib;OpenAL32.lib;zlib.lib;ALut.lib;libvorbisfile.lib;Psapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <OutputFile>../../FreeOrion.exe</OutputFile>
       <LinkStatus>
       </LinkStatus>
@@ -232,7 +232,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\FreeOrion.ico" />
-    <None Include="..\..\util\Serialize.ipp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\client\ClientApp.cpp" />
@@ -240,24 +239,8 @@
     <ClCompile Include="..\..\client\human\chmain.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientApp.cpp" />
     <ClCompile Include="..\..\client\human\HumanClientFSM.cpp" />
-    <ClCompile Include="..\..\combat\CombatOrder.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp" />
-    <ClCompile Include="..\..\Empire\Empire.cpp" />
-    <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
-    <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
     <ClCompile Include="..\..\network\ClientNetworking.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
-    <ClCompile Include="..\..\network\MessageQueue.cpp" />
-    <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\UI\About.cpp" />
     <ClCompile Include="..\..\UI\BuildDesignatorWnd.cpp" />
     <ClCompile Include="..\..\UI\ChatWnd.cpp" />
@@ -312,27 +295,8 @@
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
     <ClCompile Include="..\..\UI\TurnProgressWnd.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
-    <ClCompile Include="..\..\util\DataTable.cpp" />
-    <ClCompile Include="..\..\util\Directories.cpp" />
-    <ClCompile Include="..\..\util\GZStream.cpp" />
-    <ClCompile Include="..\..\util\Math.cpp" />
-    <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
-    <ClCompile Include="..\..\util\OptionsDB.cpp" />
-    <ClCompile Include="..\..\util\Order.cpp" />
-    <ClCompile Include="..\..\util\OrderSet.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
-    <ClCompile Include="..\..\util\Random.cpp" />
-    <ClCompile Include="..\..\util\SerializeEmpire.cpp" />
-    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />
-    <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
-    <ClCompile Include="..\..\util\SerializePathingEngine.cpp" />
-    <ClCompile Include="..\..\util\SerializeUniverse.cpp" />
-    <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\VarText.cpp" />
-    <ClCompile Include="..\..\util\XMLDoc.cpp" />
-    <ClCompile Include="..\src\Version.cpp">
-      <DebugInformationFormat Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">OldStyle</DebugInformationFormat>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="FreeOrion.rc">

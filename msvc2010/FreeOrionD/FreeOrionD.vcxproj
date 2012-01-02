@@ -85,7 +85,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <OutputFile>../../FreeOrionD.exe</OutputFile>
       <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Universe.lib;Parsers.lib;log4cpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -170,27 +170,8 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\util\Serialize.ipp" />
-    <None Include="..\..\util\SerializeUniverseExports.ipp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\combat\CombatOrder.cpp" />
     <ClCompile Include="..\..\combat\CombatSystem.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp" />
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp" />
-    <ClCompile Include="..\..\Empire\Empire.cpp" />
-    <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
-    <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
     <ClCompile Include="..\..\network\Message.cpp" />
-    <ClCompile Include="..\..\network\Networking.cpp" />
     <ClCompile Include="..\..\network\ServerNetworking.cpp" />
     <ClCompile Include="..\..\server\dmain.cpp" />
     <ClCompile Include="..\..\server\SaveLoad.cpp" />
@@ -199,24 +180,8 @@
     <ClCompile Include="..\..\UI\StringTable.cpp" />
     <ClCompile Include="..\..\universe\UniverseServer.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
-    <ClCompile Include="..\..\util\DataTable.cpp" />
-    <ClCompile Include="..\..\util\Directories.cpp" />
-    <ClCompile Include="..\..\util\GZStream.cpp" />
-    <ClCompile Include="..\..\util\Math.cpp" />
-    <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
-    <ClCompile Include="..\..\util\OptionsDB.cpp" />
-    <ClCompile Include="..\..\util\Order.cpp" />
-    <ClCompile Include="..\..\util\OrderSet.cpp" />
     <ClCompile Include="..\..\util\Process.cpp" />
-    <ClCompile Include="..\..\util\Random.cpp" />
-    <ClCompile Include="..\..\util\SerializeEmpire.cpp" />
-    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />
-    <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
-    <ClCompile Include="..\..\util\SerializePathingEngine.cpp" />
-    <ClCompile Include="..\..\util\SerializeUniverse.cpp" />
-    <ClCompile Include="..\..\util\SitRepEntry.cpp" />
     <ClCompile Include="..\..\util\VarText.cpp" />
-    <ClCompile Include="..\..\util\XMLDoc.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

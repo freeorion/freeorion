@@ -30,15 +30,6 @@
     <Filter Include="Header Files\util">
       <UniqueIdentifier>{d2f5dbff-1284-42b2-967e-0b1e7e4070ca}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\combat">
-      <UniqueIdentifier>{1643048c-a8f5-4911-b02f-834f5ea39cd7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\combat\OpenSteer">
-      <UniqueIdentifier>{9272621f-5537-4732-a4d2-233f78d41542}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Empire">
-      <UniqueIdentifier>{b1b9d665-2b6f-44ab-a502-b60011e5f3b6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\network">
       <UniqueIdentifier>{88999d0a-94bc-43cc-a21c-ce4ef5fd65a4}</UniqueIdentifier>
     </Filter>
@@ -56,6 +47,9 @@
     </Filter>
     <Filter Include="Source Files\UI">
       <UniqueIdentifier>{f6fc2133-2664-41ed-9036-7f2676f38740}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{0217b945-9379-4b0b-a21d-4bdb2a6699cf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -289,123 +283,16 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\util\Serialize.ipp">
-      <Filter>Source Files\util</Filter>
-    </None>
-    <None Include="..\..\util\SerializeUniverseExports.ipp">
-      <Filter>Source Files\util</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\combat\CombatSystem.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\CombatOrder.cpp">
-      <Filter>Source Files\combat</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp">
-      <Filter>Source Files\combat\OpenSteer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Empire\ResourcePool.cpp">
-      <Filter>Source Files\Empire</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Empire\Empire.cpp">
-      <Filter>Source Files\Empire</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\Empire\EmpireManager.cpp">
-      <Filter>Source Files\Empire</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\network\Networking.cpp">
-      <Filter>Source Files\network</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\network\ServerNetworking.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
     <ClCompile Include="..\..\network\Message.cpp">
       <Filter>Source Files\network</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\OptionsDB.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Order.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\OrderSet.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Process.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Random.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SerializePathingEngine.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\SitRepEntry.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\util\VarText.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\util\XMLDoc.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\util\AppInterface.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\DataTable.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Directories.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\GZStream.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\Math.cpp">
-      <Filter>Source Files\util</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
       <Filter>Source Files\util</Filter>
     </ClCompile>
     <ClCompile Include="..\..\server\ServerFSM.cpp">
@@ -425,6 +312,12 @@
     </ClCompile>
     <ClCompile Include="..\..\universe\UniverseServer.cpp">
       <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Process.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatSystem.cpp">
+      <Filter>Source Files\combat</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

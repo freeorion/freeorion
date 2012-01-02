@@ -11,18 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{77E8E74E-F581-4850-A4C6-A088564DF9A7}</ProjectGuid>
+    <ProjectGuid>{BEDF460A-EAE9-4E20-AFB2-2C8434051150}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>FreeOrionCA</RootNamespace>
+    <RootNamespace>Common</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
@@ -37,11 +37,7 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LinkIncremental>true</LinkIncremental>
-  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
     <OutDir>../../</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -50,10 +46,10 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -64,40 +60,31 @@
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;FREEORION_BUILD_AI;FREEORION_WIN32;GiGi_EXPORTS;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../Boost/include/boost_1_47/;../../GG/;../../../include/Python27/;../../../include/zlib/</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;FREEORION_WIN32;_DLL;BOOST_ALL_DYN_LINK;_CRT_SECURE_NO_DEPRECATE;_SCL_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>../../log4cpp/;../../../include/;../../../include/zlib/;../../../Boost/include/boost_1_47/;../../GG/</AdditionalIncludeDirectories>
+      <CompileAsManaged>false</CompileAsManaged>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
       <PrecompiledHeaderFile>
       </PrecompiledHeaderFile>
       <PrecompiledHeaderOutputFile>
       </PrecompiledHeaderOutputFile>
-      <DisableSpecificWarnings>4099;4251;4800;4267;4275;4244;4101;4258;4996;4312;4311;4091;4351</DisableSpecificWarnings>
-      <CompileAsManaged>false</CompileAsManaged>
-      <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <WholeProgramOptimization>true</WholeProgramOptimization>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <DisableSpecificWarnings>4275;4244;4251;4351</DisableSpecificWarnings>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <OutputFile>../../FreeOrionCA.exe</OutputFile>
-      <AdditionalLibraryDirectories>../../../lib/;../../../Boost/lib/;../../</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Common.lib;Parsers.lib;log4cpp.lib;python27.lib;boost_python-vc100-mt-1_47.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <RandomizedBaseAddress>false</RandomizedBaseAddress>
-      <LinkErrorReporting>SendErrorReport</LinkErrorReporting>
-      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\AI\AIInterface.h" />
-    <ClInclude Include="..\..\AI\PythonAI.h" />
-    <ClInclude Include="..\..\AI\ReferenceAI.h" />
-    <ClInclude Include="..\..\client\AI\AIClientApp.h" />
-    <ClInclude Include="..\..\client\ClientApp.h" />
-    <ClInclude Include="..\..\client\ClientFSMEvents.h" />
+    <None Include="..\..\util\Serialize.ipp">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="..\..\combat\CombatOrder.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h" />
     <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h" />
@@ -121,15 +108,9 @@
     <ClInclude Include="..\..\Empire\Empire.h" />
     <ClInclude Include="..\..\Empire\EmpireManager.h" />
     <ClInclude Include="..\..\Empire\ResourcePool.h" />
-    <ClInclude Include="..\..\GG\GG\Clr.h" />
-    <ClInclude Include="..\..\GG\GG\Exception.h" />
-    <ClInclude Include="..\..\network\ClientNetworking.h" />
     <ClInclude Include="..\..\network\Message.h" />
     <ClInclude Include="..\..\network\MessageQueue.h" />
     <ClInclude Include="..\..\network\Networking.h" />
-    <ClInclude Include="..\..\python\PythonSetWrapper.h" />
-    <ClInclude Include="..\..\python\PythonWrappers.h" />
-    <ClInclude Include="..\..\UI\StringTable.h" />
     <ClInclude Include="..\..\universe\Building.h" />
     <ClInclude Include="..\..\universe\Condition.h" />
     <ClInclude Include="..\..\universe\Effect.h" />
@@ -176,22 +157,61 @@
     <ClInclude Include="..\..\util\XMLObjectFactory.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\AI\AIInterface.cpp" />
-    <ClCompile Include="..\..\AI\PythonAI.cpp" />
-    <ClCompile Include="..\..\AI\ReferenceAI.cpp" />
-    <ClCompile Include="..\..\client\AI\AIClientApp.cpp" />
-    <ClCompile Include="..\..\client\AI\camain.cpp" />
-    <ClCompile Include="..\..\client\ClientApp.cpp" />
-    <ClCompile Include="..\..\client\ClientFSMEvents.cpp" />
-    <ClCompile Include="..\..\network\ClientNetworking.cpp" />
-    <ClCompile Include="..\..\network\Message.cpp" />
-    <ClCompile Include="..\..\python\PythonEmpireWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonEnumWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonLoggingWrapper.cpp" />
-    <ClCompile Include="..\..\python\PythonUniverseWrapper.cpp" />
-    <ClCompile Include="..\..\UI\StringTable.cpp" />
-    <ClCompile Include="..\..\util\AppInterface.cpp" />
-    <ClCompile Include="..\..\util\VarText.cpp" />
+    <ClCompile Include="..\..\combat\CombatOrder.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp" />
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp" />
+    <ClCompile Include="..\..\Empire\Empire.cpp" />
+    <ClCompile Include="..\..\Empire\EmpireManager.cpp" />
+    <ClCompile Include="..\..\Empire\ResourcePool.cpp" />
+    <ClCompile Include="..\..\network\MessageQueue.cpp" />
+    <ClCompile Include="..\..\network\Networking.cpp" />
+    <ClCompile Include="..\..\universe\Building.cpp" />
+    <ClCompile Include="..\..\universe\Condition.cpp" />
+    <ClCompile Include="..\..\universe\Effect.cpp" />
+    <ClCompile Include="..\..\universe\EffectAccounting.cpp" />
+    <ClCompile Include="..\..\universe\Enums.cpp" />
+    <ClCompile Include="..\..\universe\Fleet.cpp" />
+    <ClCompile Include="..\..\universe\Meter.cpp" />
+    <ClCompile Include="..\..\universe\Names.cpp" />
+    <ClCompile Include="..\..\universe\ObjectMap.cpp" />
+    <ClCompile Include="..\..\universe\Planet.cpp" />
+    <ClCompile Include="..\..\universe\PopCenter.cpp" />
+    <ClCompile Include="..\..\universe\Predicates.cpp" />
+    <ClCompile Include="..\..\universe\ResourceCenter.cpp" />
+    <ClCompile Include="..\..\universe\Ship.cpp" />
+    <ClCompile Include="..\..\universe\ShipDesign.cpp" />
+    <ClCompile Include="..\..\universe\Special.cpp" />
+    <ClCompile Include="..\..\universe\Species.cpp" />
+    <ClCompile Include="..\..\universe\System.cpp" />
+    <ClCompile Include="..\..\universe\Tech.cpp" />
+    <ClCompile Include="..\..\universe\Universe.cpp" />
+    <ClCompile Include="..\..\universe\UniverseObject.cpp" />
+    <ClCompile Include="..\..\universe\ValueRef.cpp" />
+    <ClCompile Include="..\..\util\DataTable.cpp" />
+    <ClCompile Include="..\..\util\Directories.cpp" />
+    <ClCompile Include="..\..\util\GZStream.cpp" />
+    <ClCompile Include="..\..\util\Math.cpp" />
+    <ClCompile Include="..\..\util\MultiplayerCommon.cpp" />
+    <ClCompile Include="..\..\util\OptionsDB.cpp" />
+    <ClCompile Include="..\..\util\Order.cpp" />
+    <ClCompile Include="..\..\util\OrderSet.cpp" />
+    <ClCompile Include="..\..\util\Random.cpp" />
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp" />
+    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp" />
+    <ClCompile Include="..\..\util\SerializeOrderSet.cpp" />
+    <ClCompile Include="..\..\util\SerializePathingEngine.cpp" />
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp" />
+    <ClCompile Include="..\..\util\SitRepEntry.cpp" />
+    <ClCompile Include="..\..\util\XMLDoc.cpp" />
+    <ClCompile Include="..\src\Version.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

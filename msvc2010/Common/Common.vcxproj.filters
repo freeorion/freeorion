@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\network">
+      <UniqueIdentifier>{142c3274-1cab-42d6-a86c-e59ea78eb237}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Empire">
+      <UniqueIdentifier>{12515875-a210-4dcd-bb6d-d3670862478b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat">
+      <UniqueIdentifier>{764c47ba-1d26-4f9e-a713-5fe40180a278}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\combat\OpenSteer">
+      <UniqueIdentifier>{9e28af39-5c58-4c6c-94e3-318775ae1f1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\universe">
+      <UniqueIdentifier>{43f4183a-a57b-41e7-ba41-dcd67de4ce56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\network">
+      <UniqueIdentifier>{160a68fb-39f9-46df-a415-704ffec1d678}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\util">
+      <UniqueIdentifier>{cf92b189-673f-4409-a849-7cf498468f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat">
+      <UniqueIdentifier>{b769d59e-1a03-4c55-9bdd-cfa42e506283}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\combat\OpenSteer">
+      <UniqueIdentifier>{01f1236b-c5b2-4cc1-a46e-2b9eb714a0f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Empire">
+      <UniqueIdentifier>{329c410c-9729-4f42-9a1f-09106fff80a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\util">
+      <UniqueIdentifier>{8288356b-fc09-4aef-992b-9ecf8963f7f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\universe">
+      <UniqueIdentifier>{150b0529-eaa2-4ad3-b805-488bc11d1d6e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\util\Serialize.ipp">
+      <Filter>Source Files\util</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\network\Message.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\MessageQueue.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\network\Networking.h">
+      <Filter>Header Files\network</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\Empire.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\EmpireManager.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Empire\ResourcePool.h">
+      <Filter>Header Files\Empire</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\CombatOrder.h">
+      <Filter>Header Files\combat</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AbstractVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatFighter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatObject.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\CombatShip.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\LocalSpace.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Missile.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Obstacle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngine.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\PathingEngineFwd.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Proximity.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\ProximityDatabase.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SimpleVehicle.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\StandardTypes.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\SteerLibrary.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\UnusedParameter.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\combat\OpenSteer\Vec3Utilities.h">
+      <Filter>Header Files\combat\OpenSteer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Building.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Condition.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Effect.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\EffectAccounting.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Enums.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Fleet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\InhibitableSignal.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Meter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Names.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ObjectMap.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Planet.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\PopCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Predicates.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ResourceCenter.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Ship.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ShipDesign.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Special.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Species.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\System.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Tech.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\Universe.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\UniverseObject.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRef.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\universe\ValueRefFwd.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\AppInterface.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\binreloc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\DataTable.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Directories.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GLStateComparator.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\GZStream.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Math.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\MultiplayerCommon.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionsDB.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OptionValidators.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Order.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\OrderSet.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Process.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Random.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Serialize.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\SitRepEntry.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\VarText.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\Version.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLDoc.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\util\XMLObjectFactory.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\network\MessageQueue.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\network\Networking.cpp">
+      <Filter>Source Files\network</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\DataTable.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Directories.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\GZStream.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Math.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\MultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OptionsDB.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Order.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\OrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\Random.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeEmpire.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeMultiplayerCommon.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeOrderSet.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializePathingEngine.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SerializeUniverse.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\SitRepEntry.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\util\XMLDoc.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Version.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\CombatOrder.cpp">
+      <Filter>Source Files\combat</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\AsteroidBeltObstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatFighter.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatObject.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\CombatShip.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Missile.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Obstacle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\PathingEngine.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\SimpleVehicle.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\combat\OpenSteer\Vec3Utilities.cpp">
+      <Filter>Source Files\combat\OpenSteer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\Empire.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\EmpireManager.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Empire\ResourcePool.cpp">
+      <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Building.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ValueRef.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Condition.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Effect.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\EffectAccounting.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Enums.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Fleet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Meter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Names.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ObjectMap.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Planet.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\PopCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Predicates.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ResourceCenter.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Ship.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\ShipDesign.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Special.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Species.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\System.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Tech.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Universe.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\UniverseObject.cpp">
+      <Filter>Source Files\universe</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
