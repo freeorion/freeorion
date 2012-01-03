@@ -181,14 +181,12 @@ bool Condition::Number::TargetInvariant() const
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////
-Condition::Turn::~Turn()
-{
+Condition::Turn::~Turn() {
     delete m_low;
     delete m_high;
 }
 
-void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
-{
+void Condition::Turn::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const {
     // if ValueRef for low or high range limits depend on local candidate, then
     // they must be evaluated per-candidate.
     // if there already is a root candidate, then this condition's parameters
@@ -232,8 +230,7 @@ bool Condition::Turn::RootCandidateInvariant() const
 bool Condition::Turn::TargetInvariant() const
 { return (!m_low || m_low->TargetInvariant()) && (!m_high || m_high->TargetInvariant()); }
 
-std::string Condition::Turn::Description(bool negated/* = false*/) const
-{
+std::string Condition::Turn::Description(bool negated/* = false*/) const {
     std::string low_str;
     if (m_low)
         low_str = (ValueRef::ConstantExpr(m_low) ?
@@ -270,8 +267,7 @@ std::string Condition::Turn::Description(bool negated/* = false*/) const
         return UserString(description_str);
 }
 
-std::string Condition::Turn::Dump() const
-{
+std::string Condition::Turn::Dump() const {
     std::string retval = DumpIndent() + "Turn";
     if (m_low)
         retval += " low = " + m_low->Dump();
@@ -281,8 +277,7 @@ std::string Condition::Turn::Dump() const
     return retval;
 }
 
-bool Condition::Turn::Match(const ScriptingContext& local_context) const
-{
+bool Condition::Turn::Match(const ScriptingContext& local_context) const {
     double low = (m_low ? std::max(0, m_low->Eval(local_context)) : 0);
     double high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
     int turn = CurrentTurn();
@@ -292,8 +287,7 @@ bool Condition::Turn::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // SortedNumberOf                                        //
 ///////////////////////////////////////////////////////////
-Condition::SortedNumberOf::~SortedNumberOf()
-{
+Condition::SortedNumberOf::~SortedNumberOf() {
     delete m_number;
     delete m_sort_key;
     delete m_condition;
@@ -565,8 +559,7 @@ void Condition::SortedNumberOf::Eval(const ScriptingContext& parent_context, Con
     }
 }
 
-std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const
-{
+std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) const {
     std::string number_str = ValueRef::ConstantExpr(m_number) ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
 
     if (m_sorting_method == SORT_RANDOM) {
@@ -612,8 +605,7 @@ std::string Condition::SortedNumberOf::Description(bool negated/* = false*/) con
     }
 }
 
-std::string Condition::SortedNumberOf::Dump() const
-{
+std::string Condition::SortedNumberOf::Dump() const {
     std::string retval = DumpIndent();
     switch (m_sorting_method) {
     case SORT_RANDOM:

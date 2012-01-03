@@ -65,8 +65,7 @@ System::System(const System& rhs) :
     m_last_turn_battle_here(rhs.m_last_turn_battle_here)
 {}
 
-System* System::Clone(int empire_id) const
-{
+System* System::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
@@ -77,8 +76,7 @@ System* System::Clone(int empire_id) const
     return retval;
 }
 
-void System::Copy(const UniverseObject* copied_object, int empire_id)
-{
+void System::Copy(const UniverseObject* copied_object, int empire_id) {
     if (copied_object == this)
         return;
     const System* copied_system = universe_object_cast<System*>(copied_object);
@@ -137,8 +135,7 @@ void System::Copy(const UniverseObject* copied_object, int empire_id)
 const std::string& System::TypeName() const
 { return UserString("SYSTEM"); }
 
-std::string System::Dump() const
-{
+std::string System::Dump() const {
     std::stringstream os;
     os << UniverseObject::Dump();
     os << " star type: " << UserString(GG::GetEnumMap<StarType>().FromEnum(m_star))
@@ -162,8 +159,7 @@ std::string System::Dump() const
     return os.str();
 }
 
-const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const
-{
+const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and_none/* = false*/) const {
     static const std::string EMPTY_STRING;
     if (!this)
         return EMPTY_STRING;
@@ -206,17 +202,13 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
     return this->PublicName(empire_id);
 }
 
-StarType System::GetStarType() const
+StarType System::NextOlderStarType() const
 { return m_star; }
 
-int System::Orbits() const
-{ return m_orbits; }
+StarType System::NextYoungerStarType() const
+{ return m_star; }
 
-const std::set<int>& System::ControllingEmpireIDs() const
-{ return m_empires_with_planets_here; }
-
-int System::NumStarlanes() const
-{
+int System::NumStarlanes() const {
     int retval = 0;
     for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
         if (!it->second)
@@ -225,8 +217,7 @@ int System::NumStarlanes() const
     return retval;
 }
 
-int System::NumWormholes() const
-{
+int System::NumWormholes() const {
     int retval = 0;
     for (const_lane_iterator it = begin_lanes(); it != end_lanes(); ++it) {
         if (it->second)
@@ -235,20 +226,17 @@ int System::NumWormholes() const
     return retval;
 }
 
-bool System::HasStarlaneTo(int id) const
-{
+bool System::HasStarlaneTo(int id) const {
     const_lane_iterator it = m_starlanes_wormholes.find(id);
     return (it == m_starlanes_wormholes.end() ? false : it->second == false);
 }
 
-bool System::HasWormholeTo(int id) const
-{
+bool System::HasWormholeTo(int id) const {
     const_lane_iterator it = m_starlanes_wormholes.find(id);
     return (it == m_starlanes_wormholes.end() ? false : it->second == true);
 }
 
-int System::SystemID() const
-{
+int System::SystemID() const {
     // Systems don't have a valid UniverseObject::m_system_id since it is never set by inserting them into (another) system.
     // When new systems are created, it's also not set because UniverseObject are created without a valid id number, and only
     // get one when being inserted into the Universe.  Universe::Insert overloads could check what is being inserted, but
@@ -256,8 +244,7 @@ int System::SystemID() const
     return this->ID();
 }
 
-std::vector<int> System::FindObjectIDs() const
-{
+std::vector<int> System::FindObjectIDs() const {
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
@@ -270,8 +257,7 @@ std::vector<int> System::FindObjectIDs() const
     return retval;
 }
 
-std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) const
-{
+std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) const {
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
@@ -285,8 +271,7 @@ std::vector<int> System::FindObjectIDs(const UniverseObjectVisitor& visitor) con
     return retval;
 }
 
-std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const
-{
+std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVisitor& visitor) const {
     const ObjectMap& objects = GetMainObjectMap();
     std::vector<int> retval;
     std::pair<ObjectMultimap::const_iterator, ObjectMultimap::const_iterator> range = m_objects.equal_range(orbit);
@@ -301,14 +286,7 @@ std::vector<int> System::FindObjectIDsInOrbit(int orbit, const UniverseObjectVis
     return retval;
 }
 
-System::const_orbit_iterator System::begin() const
-{ return m_objects.begin(); }
-
-System::const_orbit_iterator System::end() const
-{ return m_objects.end(); }
-
-bool System::Contains(int object_id) const
-{
+bool System::Contains(int object_id) const {
     // checks if this system object thinks it contains an object with the
     // indicated ID.  does not check if there exists such an object or whether
     // that object thinks it is in this system
@@ -330,17 +308,13 @@ System::const_lane_iterator System::begin_lanes() const
 System::const_lane_iterator System::end_lanes() const
 { return m_starlanes_wormholes.end(); }
 
-int System::LastTurnBattleHere() const
-{return m_last_turn_battle_here;}
-
 UniverseObject* System::Accept(const UniverseObjectVisitor& visitor) const
 { return visitor.Visit(const_cast<System* const>(this)); }
 
 int System::Insert(UniverseObject* obj)
 { return Insert(obj, -1); }
 
-int System::Insert(UniverseObject* obj, int orbit)
-{
+int System::Insert(UniverseObject* obj, int orbit) {
     if (!obj) {
         Logger().errorStream() << "System::Insert() : Attempted to place a null object in a System";
         return -1;
@@ -409,8 +383,7 @@ int System::Insert(UniverseObject* obj, int orbit)
     return orbit;
 }
 
-int System::Insert(int obj_id, int orbit)
-{
+int System::Insert(int obj_id, int orbit) {
     if (orbit < -1)
         throw std::invalid_argument("System::Insert() : Attempted to place an object in an orbit less than -1");
     UniverseObject* object = GetMainObjectMap().Object(obj_id);
@@ -420,8 +393,7 @@ int System::Insert(int obj_id, int orbit)
     return Insert(object, orbit);
 }
 
-void System::Remove(UniverseObject* obj)
-{
+void System::Remove(UniverseObject* obj) {
     //Logger().debugStream() << "System::Remove( " << obj->Name() << " )";
     //Logger().debugStream() << "..objects in system: ";
     //for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
@@ -488,16 +460,14 @@ void System::Remove(UniverseObject* obj)
 void System::Remove(int id)
 { Remove(GetMainObjectMap().Object(id)); }
 
-void System::SetStarType(StarType type)
-{
+void System::SetStarType(StarType type) {
     m_star = type;
     if (m_star <= INVALID_STAR_TYPE || NUM_STAR_TYPES <= m_star)
         Logger().errorStream() << "System::SetStarType set star type to " << boost::lexical_cast<std::string>(type);
     StateChangedSignal();
 }
 
-void System::AddStarlane(int id)
-{
+void System::AddStarlane(int id) {
     if (!HasStarlaneTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
@@ -506,16 +476,14 @@ void System::AddStarlane(int id)
     }
 }
 
-void System::AddWormhole(int id)
-{
+void System::AddWormhole(int id) {
     if (!HasWormholeTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = true;
         StateChangedSignal();
     }
 }
 
-bool System::RemoveStarlane(int id)
-{
+bool System::RemoveStarlane(int id) {
     bool retval = false;
     if (retval = HasStarlaneTo(id)) {
         m_starlanes_wormholes.erase(id);
@@ -524,8 +492,7 @@ bool System::RemoveStarlane(int id)
     return retval;
 }
 
-bool System::RemoveWormhole(int id)
-{
+bool System::RemoveWormhole(int id) {
     bool retval = false;
     if (retval = HasWormholeTo(id)) {
         m_starlanes_wormholes.erase(id);
@@ -534,8 +501,7 @@ bool System::RemoveWormhole(int id)
     return retval;
 }
 
-void System::UpdateOwnership()
-{
+void System::UpdateOwnership() {
     m_empires_with_planets_here.clear();
     for (ObjectMultimap::iterator it = m_objects.begin(); it != m_objects.end(); ++it)
         if (Planet* planet = GetMainObjectMap().Object<Planet>(it->second))
@@ -546,8 +512,7 @@ void System::UpdateOwnership()
 void System::SetLastTurnBattleHere(int turn)
 { m_last_turn_battle_here = turn; }
 
-void System::ResetTargetMaxUnpairedMeters()
-{
+void System::ResetTargetMaxUnpairedMeters() {
     UniverseObject::ResetTargetMaxUnpairedMeters();
 
     // give systems base stealth slightly above zero, so that they can't be
@@ -558,12 +523,6 @@ void System::ResetTargetMaxUnpairedMeters()
     }
 }
 
-System::orbit_iterator System::begin()
-{ return m_objects.begin(); }
-
-System::orbit_iterator System::end()
-{ return m_objects.end(); }
-
 std::pair<System::orbit_iterator, System::orbit_iterator> System::orbit_range(int o)
 { return m_objects.equal_range(o); }
 
@@ -573,8 +532,7 @@ std::pair<System::orbit_iterator, System::orbit_iterator> System::non_orbit_rang
 bool System::OrbitOccupied(int orbit) const 
 { return (m_objects.find(orbit) != m_objects.end()); }
 
-std::set<int> System::FreeOrbits() const
-{
+std::set<int> System::FreeOrbits() const {
     std::set<int> occupied;
     for (const_orbit_iterator it = begin(); it != end(); ++it)
         occupied.insert(it->first);
@@ -594,8 +552,7 @@ System::lane_iterator System::end_lanes()
 System::StarlaneMap System::StarlanesWormholes() const
 { return m_starlanes_wormholes; }
 
-System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
-{
+System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const {
     if (empire_id == ALL_EMPIRES)
         return m_starlanes_wormholes;
 
@@ -676,8 +633,7 @@ System::StarlaneMap System::VisibleStarlanesWormholes(int empire_id) const
     return retval;
 }
 
-System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const
-{
+System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const {
     ObjectMultimap retval;
     const Universe& universe = GetUniverse();
     for (ObjectMultimap::const_iterator it = m_objects.begin(); it != m_objects.end(); ++it) {
@@ -688,7 +644,6 @@ System::ObjectMultimap System::VisibleContainedObjects(int empire_id) const
     return retval;
 }
 
-
 // free functions
 
 double SystemRadius()
@@ -697,8 +652,7 @@ double SystemRadius()
 double StarRadius()
 { return 80.0; }
 
-double OrbitalRadius(unsigned int orbit)
-{
+double OrbitalRadius(unsigned int orbit) {
     assert(orbit < 10);
     return (SystemRadius() - 50.0) / 10 * (orbit + 1) - 20.0;
 }
@@ -712,8 +666,7 @@ double StarlaneEntranceRadialAxis()
 double StarlaneEntranceTangentAxis()
 { return 80.0; }
 
-double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
-{
+double StarlaneEntranceOrbitalPosition(int from_system, int to_system) {
     const ObjectMap& objects = GetMainObjectMap();
     const System* system_1 = objects.Object<System>(from_system);
     const System* system_2 = objects.Object<System>(to_system);
@@ -724,8 +677,7 @@ double StarlaneEntranceOrbitalPosition(int from_system, int to_system)
     return std::atan2(system_2->Y() - system_1->Y(), system_2->X() - system_1->X());
 }
 
-bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system)
-{
+bool PointInStarlaneEllipse(double x, double y, int from_system, int to_system) {
     double rads = StarlaneEntranceOrbitalPosition(from_system, to_system);
     double ellipse_x = StarlaneEntranceOrbitalRadius() * std::cos(rads);
     double ellipse_y = StarlaneEntranceOrbitalRadius() * std::sin(rads);

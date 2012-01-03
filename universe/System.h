@@ -70,10 +70,13 @@ public:
       * the name based on ownership. */
     const std::string&      ApparentName(int empire_id, bool blank_unexplored_and_none = false) const;
 
-    StarType                GetStarType() const;                        ///< returns the type of star for this system
-    int                     Orbits() const;                             ///< returns the number of orbits in this system
+    StarType                GetStarType() const             { return m_star; }  ///< returns the type of star for this system
+    StarType                NextOlderStarType() const;
+    StarType                NextYoungerStarType() const;
 
-    const std::set<int>&    ControllingEmpireIDs() const;               ///< returns empires which control planets in this system (may be empty)
+    int                     Orbits() const                  { return m_orbits; }///< returns the number of orbits in this system
+
+    const std::set<int>&    ControllingEmpireIDs() const    { return m_empires_with_planets_here; } ///< returns empires which control planets in this system (may be empty)
 
     int                     NumStarlanes() const;                       ///< returns the number of starlanes from this system to other systems
     int                     NumWormholes() const;                       ///< returns the number of wormholes from this system to other systems
@@ -96,8 +99,8 @@ public:
 
     virtual bool            Contains(int object_id) const;              ///< returns true if object with id \a object_id is in this system
 
-    const_orbit_iterator    begin() const;                              ///< begin iterator for all system objects
-    const_orbit_iterator    end() const;                                ///< end iterator for all system objects
+    const_orbit_iterator    begin() const               { return m_objects.begin(); }   ///< begin iterator for all system objects
+    const_orbit_iterator    end() const                 { return m_objects.end(); }     ///< end iterator for all system objects
 
     std::pair<const_orbit_iterator, const_orbit_iterator>
                             orbit_range(int o) const;                   ///< returns begin and end iterators for all system objects in orbit
@@ -118,7 +121,7 @@ public:
       * wormhole (true)*/
     StarlaneMap             VisibleStarlanesWormholes(int empire_id) const;
 
-    int                     LastTurnBattleHere() const;
+    int                     LastTurnBattleHere() const  { return m_last_turn_battle_here; }
 
     virtual UniverseObject* Accept(const UniverseObjectVisitor& visitor) const;
 
@@ -165,8 +168,8 @@ public:
 
     void                    SetLastTurnBattleHere(int turn);///< Sets the last turn there was a battle at this sytem
 
-    orbit_iterator          begin();                        ///< begin iterator for all system objects
-    orbit_iterator          end();                          ///< end iterator for all system objects
+    orbit_iterator          begin()                     { return m_objects.begin(); }   ///< begin iterator for all system objects
+    orbit_iterator          end()                       { return m_objects.end(); }     ///< end iterator for all system objects
 
     std::pair<orbit_iterator, orbit_iterator>
                             orbit_range(int o);             ///< returns begin and end iterators for all system objects in orbit \a o
