@@ -34,7 +34,8 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  GetText() const;
+    const std::string&  GetText() const;    //!< Returns text generated after substituting all variables.
+    bool                Validate() const;   //!< Does text generation succeed without any errors occurring?
     //@}
 
     /** \name Mutators */ //@{
@@ -71,6 +72,7 @@ protected:
     bool                m_stringtable_lookup_flag;  ///< should the template string be looked up in the stringtable prior to substitution for variables?
     XMLElement          m_variables;                ///< the data about variables to be substitued into the template string to render the VarText
     mutable std::string m_text;                     ///< the user-readable rendered text with substitutions made
+    mutable bool        m_validated;                ///< did vartext generation succeed without problems?
 
 private:
     friend class boost::serialization::access;

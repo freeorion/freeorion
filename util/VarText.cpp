@@ -35,15 +35,14 @@ namespace {
 
     /** Converts (first, last) to a string, looks up its value in the Universe,
       * then appends this to the end of a std::string. */
-    struct SubstituteAndAppend
-    {
-        SubstituteAndAppend(const XMLElement& variables, std::string& str) :
+    struct SubstituteAndAppend {
+        SubstituteAndAppend(const XMLElement& variables, std::string& str, bool& valid) :
             m_variables(variables),
-            m_str(str)
+            m_str(str),
+            m_valid(valid)
         {}
 
-        void operator()(const char* first, const char* last) const
-        {
+        void operator()(const char* first, const char* last) const {
             const ObjectMap& objects = GetMainObjectMap();
 
             std::string token(first, last);
@@ -57,6 +56,7 @@ namespace {
             // look up child
             if (!m_variables.ContainsChild(token)) {
                 m_str += UserString("ERROR");
+                m_valid = false;
                 return;
             }
 
@@ -86,12 +86,14 @@ namespace {
                 } catch (const std::exception&) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for object ID.";
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 const UniverseObject* obj = objects.Object(object_id);
                 if (!obj) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get object with ID " << object_id;
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
 
@@ -110,6 +112,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetTech(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -119,6 +122,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetBuildingType(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -128,6 +132,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetHullType(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -137,6 +142,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetPartType(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -146,6 +152,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetSpecial(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -155,6 +162,7 @@ namespace {
                 std::string name = token_elem.Attribute("value");
                 if (!GetSpecies(name)) {
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + UserString(name) + close_tag;
@@ -167,12 +175,14 @@ namespace {
                 } catch (const std::exception&) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for ship design ID.";
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 const ShipDesign* design = GetShipDesign(design_id);
                 if (!design) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get ship design with ID " << design_id;
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + design->Name() + close_tag;
@@ -184,6 +194,7 @@ namespace {
                 if (!design) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get predefined ship design with name " << design_name;
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + design->Name() + close_tag;
@@ -196,33 +207,33 @@ namespace {
                 } catch (const std::exception&) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't cast \"" << token_elem.Attribute("value") << "\" to int for empire ID.";
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 const Empire* empire = Empires().Lookup(empire_id);
                 if (!empire) {
                     Logger().errorStream() << "SubstituteAndAppend couldn't get empire with ID " << empire_id;
                     m_str += UserString("ERROR");
+                    m_valid = false;
                     return;
                 }
                 m_str += open_tag + empire->Name() + close_tag;
             }
         }
 
-        const XMLElement&  m_variables;
-        std::string&       m_str;
+        const XMLElement&   m_variables;
+        std::string&        m_str;
+        bool&               m_valid;
     };
 
     // sticks a sequence of characters onto the end of a std::string
-    struct StringAppend
-    {
+    struct StringAppend {
         StringAppend(std::string& str) :
             m_str(str)
         {}
 
         void operator()(const char* first, const char* last) const
-        {
-            m_str += std::string(first, last);
-        }
+        { m_str += std::string(first, last); }
         std::string& m_str;
     };
 }
@@ -252,43 +263,47 @@ VarText::VarText() :
     m_template_string(""),
     m_stringtable_lookup_flag(false),
     m_variables(),
-    m_text()
+    m_text(),
+    m_validated(false)
 {}
 
 VarText::VarText(const std::string& template_string, bool stringtable_lookup_template/* = true*/) :
     m_template_string(template_string),
     m_stringtable_lookup_flag(stringtable_lookup_template),
     m_variables(),
-    m_text()
+    m_text(),
+    m_validated(false)
 {}
 
-const std::string& VarText::GetText() const
-{
+const std::string& VarText::GetText() const {
     if (m_text.empty())
         GenerateVarText();
-
     return m_text;
 }
 
-void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup_template/* = true*/)
-{
+bool VarText::Validate() const {
+    if (m_text.empty())
+        GenerateVarText();
+    return m_validated;
+}
+
+void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup_template/* = true*/) {
     m_text = text;
     m_stringtable_lookup_flag = stringtable_lookup_template;
 }
 
-void VarText::AddVariable(const std::string& tag, const std::string& data)
-{
+void VarText::AddVariable(const std::string& tag, const std::string& data) {
     XMLElement elem(tag);
     elem.SetAttribute("value", data);
     m_variables.AppendChild(elem);
 }
 
-void VarText::GenerateVarText() const
-{
+void VarText::GenerateVarText() const {
     // generate a string complete with substituted variables and hyperlinks
     // the procedure here is to replace any tokens within %% with variables of
     // the same name in the SitRep XML data
     m_text.clear();
+    m_validated = true;
     if (m_template_string.empty())
         return;
 
@@ -298,7 +313,7 @@ void VarText::GenerateVarText() const
     // set up parser
     using namespace boost::spirit::classic;
     rule<> token = *(anychar_p - space_p - END_VAR.c_str());
-    rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, m_text)] >> END_VAR.c_str();
+    rule<> var = START_VAR.c_str() >> token[SubstituteAndAppend(m_variables, m_text, m_validated)] >> END_VAR.c_str();
     rule<> non_var = anychar_p - START_VAR.c_str();
 
     // parse and substitute variables

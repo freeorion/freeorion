@@ -71,7 +71,8 @@ SitRepPanel::SitRepPanel(GG::X x, GG::Y y, GG::X w, GG::Y h) :
     Hide();
 }
 
-void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point,
+                            GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {
     case GG::GGK_RETURN:
@@ -86,8 +87,7 @@ void SitRepPanel::KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Fla
     }
 }
 
-void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-{
+void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Pt old_size = GG::Wnd::LowerRight() - GG::Wnd::UpperLeft();
 
     CUIWnd::SizeMove(ul, lr);
@@ -97,17 +97,12 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 void SitRepPanel::OnClose()
-{
-    Hide();
-}
+{ Hide(); }
 
 void SitRepPanel::CloseClicked()
-{
-    ClosingSignal();
-}
+{ ClosingSignal(); }
 
-void SitRepPanel::Update()
-{
+void SitRepPanel::Update() {
     m_sitreps_lb->Clear();
 
     Empire *empire = HumanClientApp::GetApp()->Empires().Lookup(HumanClientApp::GetApp()->EmpireID());
@@ -120,6 +115,8 @@ void SitRepPanel::Update()
 
     // loop through sitreps and display
     for (Empire::SitRepItr sitrep_it = empire->SitRepBegin(); sitrep_it != empire->SitRepEnd(); ++sitrep_it) {
+        if (!(*sitrep_it)->Validate())
+            continue;
         LinkText* link_text = new LinkText(GG::X0, GG::Y0, width, (*sitrep_it)->GetText() + " ", font, format, ClientUI::TextColor());
         GG::Connect(link_text->LinkClickedSignal,       &HandleLinkClick);
         GG::Connect(link_text->LinkDoubleClickedSignal, &HandleLinkClick);
