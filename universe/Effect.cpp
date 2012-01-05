@@ -207,8 +207,7 @@ namespace {
         return retval;
     }
 
-    std::vector<adobe::name_t> TargetOwnerVec()
-    {
+    std::vector<adobe::name_t> TargetOwnerVec() {
         std::vector<adobe::name_t> retval(2);
         retval[0] = Target_name;
         retval[1] = Owner_name;
@@ -835,13 +834,16 @@ std::string SetEmpireMeter::Dump() const
 ///////////////////////////////////////////////////////////
 // SetEmpireStockpile                                    //
 ///////////////////////////////////////////////////////////
-SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
+SetEmpireStockpile::SetEmpireStockpile(ResourceType stockpile,
+                                       const ValueRef::ValueRefBase<double>* value) :
     m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec())),
     m_stockpile(stockpile),
     m_value(value)
 {}
 
-SetEmpireStockpile::SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id, ResourceType stockpile, const ValueRef::ValueRefBase<double>* value) :
+SetEmpireStockpile::SetEmpireStockpile(const ValueRef::ValueRefBase<int>* empire_id,
+                                       ResourceType stockpile,
+                                       const ValueRef::ValueRefBase<double>* value) :
     m_empire_id(empire_id),
     m_stockpile(stockpile),
     m_value(value)
@@ -1945,48 +1947,50 @@ std::string Victory::Dump() const
 
 
 ///////////////////////////////////////////////////////////
-// SetTechAvailability                                   //
+// SetEmpireTechProgress                                 //
 ///////////////////////////////////////////////////////////
-SetTechAvailability::SetTechAvailability(const std::string& tech_name, const ValueRef::ValueRefBase<int>* empire_id, bool available, bool include_tech) :
+SetEmpireTechProgress::SetEmpireTechProgress(const std::string& tech_name,
+                          ValueRef::ValueRefBase<double>* research_progress) :
     m_tech_name(tech_name),
-    m_empire_id(empire_id),
-    m_available(available),
-    m_include_tech(include_tech)
+    m_research_progress(research_progress),
+    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
 {}
 
-SetTechAvailability::~SetTechAvailability()
-{ delete m_empire_id; }
+SetEmpireTechProgress::SetEmpireTechProgress(const std::string& tech_name,
+                          ValueRef::ValueRefBase<double>* research_progress,
+                          const ValueRef::ValueRefBase<int>* empire_id) :
+    m_tech_name(tech_name),
+    m_research_progress(research_progress),
+    m_empire_id(empire_id)
+{}
 
-void SetTechAvailability::Execute(const ScriptingContext& context) const
-{
+SetEmpireTechProgress::~SetEmpireTechProgress() {
+    delete m_research_progress;
+    delete m_empire_id;
+}
+
+void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
+    if (!m_empire_id) return;
     Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
     if (!empire) return;
 
     const Tech* tech = GetTech(m_tech_name);
     if (!tech) {
-        Logger().errorStream() << "SetTechAvailability::Execute couldn't get tech with name " << m_tech_name;
+        Logger().errorStream() << "SetEmpireTechProgress::Execute couldn't get tech with name " << m_tech_name;
         return;
     }
 
-    const std::vector<ItemSpec>& items = tech->UnlockedItems();
-    for (unsigned int i = 0; i < items.size(); ++i) {
-        if (m_available)
-            empire->UnlockItem(items[i]);
-        else
-            empire->LockItem(items[i]);
-    }
+    double progress = 0.0;
+    if (m_research_progress)
+        progress = m_research_progress->Eval(context);
 
-    if (m_include_tech) {
-        if (m_available)
-            empire->AddTech(m_tech_name);
-        else
-            empire->RemoveTech(m_tech_name);
-    }
+    empire->SetTechResearchProgress(m_tech_name, progress);
 }
 
-std::string SetTechAvailability::Description() const
-{
-    std::string affected = str(FlexibleFormat(UserString(m_include_tech ? "DESC_TECH_AND_ITEMS_AFFECTED" : "DESC_ITEMS_ONLY_AFFECTED")) % UserString(m_tech_name));
+std::string SetEmpireTechProgress::Description() const {
+    std::string progress_str = ValueRef::ConstantExpr(m_research_progress) ?
+                                lexical_cast<std::string>(m_research_progress->Eval()) :
+                                m_research_progress->Description();
     std::string empire_str;
     if (m_empire_id) {
         if (ValueRef::ConstantExpr(m_empire_id)) {
@@ -1996,26 +2000,72 @@ std::string SetTechAvailability::Description() const
             empire_str = m_empire_id->Description();
         }
     }
-    return str(FlexibleFormat(UserString(m_available ? "DESC_SET_TECH_AVAIL" : "DESC_SET_TECH_UNAVAIL"))
-               % affected
-               % empire_str);
+    return str(FlexibleFormat(UserString("DESC_SET_EMPIRE_TECH_PROGRESS"))
+                % UserString(m_tech_name)
+                % progress_str
+                % empire_str);
 }
 
-std::string SetTechAvailability::Dump() const
-{
-    std::string retval = DumpIndent();
-    if (m_available && m_include_tech)
-        retval += "GiveTechToOwner";
-    if (!m_available && m_include_tech)
-        retval += "RevokeTechFromOwner";
-    if (m_available && !m_include_tech)
-        retval += "UnlockTechItemsForOwner";
-    if (!m_available && !m_include_tech)
-        retval += "LockTechItemsForOwner";
+std::string SetEmpireTechProgress::Dump() const {
+    std::string retval = "SetEmpireTechProgress name = \"" + m_tech_name + "\"";
+    if (m_research_progress)
+        retval += " progress = " + m_research_progress->Dump();
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump() + "\n";
+    return retval;
+}
 
-    retval += " name = \"" + m_tech_name + "\""
-            + " empire = " + m_empire_id->Dump() + "\n";
 
+///////////////////////////////////////////////////////////
+// GiveEmpireTech                                        //
+///////////////////////////////////////////////////////////
+GiveEmpireTech::GiveEmpireTech(const std::string& tech_name) :
+    m_tech_name(tech_name),
+    m_empire_id(new ValueRef::Variable<int>(TargetOwnerVec()))
+{}
+
+GiveEmpireTech::GiveEmpireTech(const std::string& tech_name,
+                               const ValueRef::ValueRefBase<int>* empire_id) :
+    m_tech_name(tech_name),
+    m_empire_id(empire_id)
+{}
+
+GiveEmpireTech::~GiveEmpireTech()
+{ delete m_empire_id; }
+
+void GiveEmpireTech::Execute(const ScriptingContext& context) const {
+    if (!m_empire_id) return;
+    Empire* empire = Empires().Lookup(m_empire_id->Eval(context));
+    if (!empire) return;
+
+    const Tech* tech = GetTech(m_tech_name);
+    if (!tech) {
+        Logger().errorStream() << "GiveEmpireTech::Execute couldn't get tech with name " << m_tech_name;
+        return;
+    }
+
+    empire->AddTech(m_tech_name);
+}
+
+std::string GiveEmpireTech::Description() const {
+    std::string empire_str;
+    if (m_empire_id) {
+        if (ValueRef::ConstantExpr(m_empire_id)) {
+            if (const Empire* empire = Empires().Lookup(m_empire_id->Eval()))
+                empire_str = empire->Name();
+        } else {
+            empire_str = m_empire_id->Description();
+        }
+    }
+    return str(FlexibleFormat(UserString("DESC_GIVE_EMPIRE_TECH"))
+                % UserString(m_tech_name)
+                % empire_str);
+}
+
+std::string GiveEmpireTech::Dump() const {
+    std::string retval = "GiveEmpireTech name = \"" + m_tech_name + "\"";
+    if (m_empire_id)
+        retval += " empire = " + m_empire_id->Dump() + "\n";
     return retval;
 }
 

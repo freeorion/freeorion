@@ -66,11 +66,11 @@ namespace {
 
             set_ship_part_meter
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   (
+                >>  (
                             set_ship_part_meter_suffix_1(_a) [ _val = _1 ]
                         |   set_ship_part_meter_suffix_2(_a) [ _val = _1 ]
                         |   set_ship_part_meter_suffix_3(_a) [ _val = _1 ]
-                        )
+                    )
                 ;
 
             set_ship_part_meter_suffix_1
@@ -93,42 +93,42 @@ namespace {
 
             set_empire_meter_1
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Empire_name) >> int_value_ref [ _a = _1 ]
-                >    parse::label(Meter_name)  >  tok.string [ _b = _1 ]
-                >    parse::label(Value_name)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _b, _1) ]
+                >>   parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
+                >    parse::label(Meter_name)  >  tok.string [ _a = _1 ]
+                >    parse::label(Value_name)  >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Meter_name) >> tok.string [ _b = _1 ]
-                >    parse::label(Value_name) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_b, _1) ]
+                >>   parse::label(Meter_name) >> tok.string [ _a = _1 ]
+                >    parse::label(Value_name) >  double_value_ref [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
             set_empire_stockpile
-                =    (
+                =   (
                             tok.SetEmpireFoodStockpile_ [ _a = RE_FOOD ]
                         |   tok.SetEmpireMineralStockpile_ [ _a = RE_MINERALS ]
                         |   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
+                    )
+                >>  (
+                        (
+                            parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
+                        >>  parse::label(Value_name)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                >>   (
-                            (
-                                parse::label(Empire_name) >> int_value_ref [ _b = _1 ]
-                            >>  parse::label(Value_name)  >> double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
-                            )
-                        |   (
-                                parse::label(Value_name)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
-                            )
+                    |   (
+                            parse::label(Value_name)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ]
                         )
+                    )
                 ;
 
             set_empire_capital
                 =    tok.SetEmpireCapital_
-                >>   (
-                            (
-                                parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
-                            )
-                        |   eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                >>  (
+                        (
+                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ]
                         )
+                    |   eps [ _val = new_<Effect::SetEmpireCapital>() ]
+                    )
                 ;
 
             set_planet_type
@@ -153,8 +153,8 @@ namespace {
 
             create_planet
                 =    tok.CreatePlanet_
-                >    parse::label(Type_name)     > planet_type_value_ref [ _a = _1 ]
-                >    parse::label(Endpoint_name) > planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]  // TODO: Shouldn't this be PlanetSize?
+                >    parse::label(Type_name)        > planet_type_value_ref [ _a = _1 ]
+                >    parse::label(PlanetSize_name)  > planet_size_value_ref [ new_<Effect::CreatePlanet>(_a, _1) ]
                 ;
 
             create_building
@@ -231,41 +231,49 @@ namespace {
                 >    parse::label(Type_name) > star_type_value_ref [ _val = new_<Effect::SetStarType>(_1) ]
                 ;
 
-            std::vector<adobe::name_t> target_owner_vec(2);
-            target_owner_vec[0] = Target_name;
-            target_owner_vec[1] = Owner_name;
-
-            set_tech_availability
-                =    (
-                            tok.GiveTechToOwner_ [ _a = true, _b = true ]
-                        |   tok.RevokeTechFromOwner_ [ _a = false, _b = true ]
-                        |   tok.UnlockTechItemsForOwner_ [ _a = true, _b = false ]
-                        |   tok.LockTechItemsForOwner_ [ _a = false, _b = false ]
+            give_empire_tech
+                =    tok.GiveEmpireTech_
+                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+                >>   (
+                        (
+                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GiveEmpireTech>(_a, _1) ]
                         )
-                >    parse::label(Name_name) > tok.string
-                        [ _val = new_<Effect::SetTechAvailability>(_1, new_<ValueRef::Variable<int> >(target_owner_vec), _a, _b) ]
+                     |  eps [ _val = new_<Effect::GiveEmpireTech>(_a) ]
+                     )
+                ;
+
+            set_empire_tech_progress
+                =    tok.SetEmpireTechProgress_
+                >>   parse::label(Name_name) >>     tok.string [ _a = _1 ]
+                >>   parse::label(Progress_name) >> double_value_ref [ _b = _1 ]
+                >>   (
+                        (
+                            parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ]
+                        )
+                     |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
+                     )
                 ;
 
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
                 >    parse::label(Message_name) > tok.string [ _a = _1 ]
-                >>  -(
-                            parse::label(Parameters_name) >> string_and_string_ref_vector [ _b = _1 ]
-                        )
-                >>   (
+                >> -(
+                        parse::label(Parameters_name) >> string_and_string_ref_vector [ _b = _1 ]
+                    )
+                >>  (
+                        (
                             (
-                                (
-                                    parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _c = _1 ]
-                                |   eps [ _c = AFFIL_SELF ]
-                                )
-                            >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _1, _c) ]
-                            )
-                        |   (
                                 parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _c = _1 ]
-                            |   eps [ _c = AFFIL_ANY ]
+                            |   eps [ _c = AFFIL_SELF ]
                             )
-                            [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c) ]
+                        >>  parse::label(Empire_name) >> int_value_ref [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _1, _c) ]
                         )
+                    |   (
+                            parse::label(Affiliation_name) >> parse::enum_parser<EmpireAffiliationType>() [ _c = _1 ]
+                        |   eps [ _c = AFFIL_ANY ]
+                        )
+                        [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c) ]
+                    )
                 ;
 
             string_and_string_ref // TODO: Try to make this simpler.
@@ -304,7 +312,8 @@ namespace {
                 |    add_starlanes
                 |    remove_starlanes
                 |    set_star_type
-                |    set_tech_availability
+                |    give_empire_tech
+                |    set_empire_tech_progress
                 |    generate_sitrep_message
                 ;
 
@@ -320,10 +329,10 @@ namespace {
             set_owner.name("SetOwner");
             create_planet.name("CreatePlanet");
             create_building.name("CreateBuilding");
-            create_ship_1.name("CreateShip (int DesignID");
+            create_ship_1.name("CreateShip (int DesignID)");
             create_ship_2.name("CreateShip (empire and species)");
             create_ship_3.name("CreateShip (string DesignName and empire)");
-            create_ship_4.name("CreateShip (string DesignName  only)");
+            create_ship_4.name("CreateShip (string DesignName only)");
             move_to.name("MoveTo");
             set_destination.name("SetDestination");
             destroy.name("Destroy");
@@ -333,7 +342,8 @@ namespace {
             add_starlanes.name("AddStarlanes");
             remove_starlanes.name("RemoveStarlanes");
             set_star_type.name("SetStarType");
-            set_tech_availability.name("SetTechAvailability");
+            give_empire_tech.name("GiveEmpireTech");
+            set_empire_tech_progress.name("SetEmpireTechProgress");
             generate_sitrep_message.name("GenerateSitrepMessage");
 
 #if DEBUG_PARSER
@@ -362,7 +372,8 @@ namespace {
             debug(add_starlanes);
             debug(remove_starlanes);
             debug(set_star_type);
-            debug(set_tech_availability);
+            debug(give_empire_tech);
+            debug(set_empire_tech_progress);
             debug(generate_sitrep_message);
 #endif
         }
@@ -376,13 +387,6 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            Effect::EffectBase* (),
-            qi::locals<MeterType>,
-            parse::skipper_type
-        > set_ship_part_meter_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
             Effect::EffectBase* (MeterType),
             qi::locals<
                 ShipPartClass,
@@ -392,16 +396,6 @@ namespace {
             >,
             parse::skipper_type
         > set_ship_part_meter_suffix_rule;
-
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Effect::EffectBase* (),
-            qi::locals<
-                ValueRef::ValueRefBase<int>*,
-                std::string
-            >,
-            parse::skipper_type
-        > set_empire_meter_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -429,17 +423,17 @@ namespace {
                 ValueRef::ValueRefBase<int>*
             >,
             parse::skipper_type
-        > create_ship_rule;
+        > string_and_intref_and_intref_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
             Effect::EffectBase* (),
             qi::locals<
-                bool,
-                bool
+                std::string,
+                ValueRef::ValueRefBase<double>*
             >,
             parse::skipper_type
-        > set_tech_availability_rule;
+        > string_and_doubleref_rule;
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
@@ -467,39 +461,40 @@ namespace {
             parse::skipper_type
         > string_and_string_ref_vector_rule;
 
-        set_meter_rule set_meter;
-        set_ship_part_meter_rule set_ship_part_meter;
-        set_empire_meter_rule set_empire_meter_1;
-        set_empire_meter_rule set_empire_meter_2;
-        set_ship_part_meter_suffix_rule set_ship_part_meter_suffix_1;
-        set_ship_part_meter_suffix_rule set_ship_part_meter_suffix_2;
-        set_ship_part_meter_suffix_rule set_ship_part_meter_suffix_3;
-        set_empire_stockpile_rule set_empire_stockpile;
-        parse::effect_parser_rule set_empire_capital;
-        parse::effect_parser_rule set_planet_type;
-        parse::effect_parser_rule set_planet_size;
-        parse::effect_parser_rule set_species;
-        parse::effect_parser_rule set_owner;
-        create_planet_rule create_planet;
-        parse::effect_parser_rule create_building;
-        create_ship_rule create_ship_1;
-        create_ship_rule create_ship_2;
-        create_ship_rule create_ship_3;
-        create_ship_rule create_ship_4;
-        parse::effect_parser_rule move_to;
-        parse::effect_parser_rule set_destination;
-        parse::effect_parser_rule destroy;
-        parse::effect_parser_rule victory;
-        parse::effect_parser_rule add_special;
-        parse::effect_parser_rule remove_special;
-        parse::effect_parser_rule add_starlanes;
-        parse::effect_parser_rule remove_starlanes;
-        parse::effect_parser_rule set_star_type;
-        set_tech_availability_rule set_tech_availability;
-        generate_sitrep_message_rule generate_sitrep_message;
-        string_and_string_ref_rule string_and_string_ref;
-        string_and_string_ref_vector_rule string_and_string_ref_vector;
-        parse::effect_parser_rule start;
+        set_meter_rule                      set_meter;
+        set_meter_rule                      set_ship_part_meter;
+        string_and_intref_and_intref_rule   set_empire_meter_1;
+        string_and_intref_and_intref_rule   set_empire_meter_2;
+        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_1;
+        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_2;
+        set_ship_part_meter_suffix_rule     set_ship_part_meter_suffix_3;
+        set_empire_stockpile_rule           set_empire_stockpile;
+        parse::effect_parser_rule           set_empire_capital;
+        parse::effect_parser_rule           set_planet_type;
+        parse::effect_parser_rule           set_planet_size;
+        parse::effect_parser_rule           set_species;
+        parse::effect_parser_rule           set_owner;
+        create_planet_rule                  create_planet;
+        parse::effect_parser_rule           create_building;
+        string_and_intref_and_intref_rule   create_ship_1;
+        string_and_intref_and_intref_rule   create_ship_2;
+        string_and_intref_and_intref_rule   create_ship_3;
+        string_and_intref_and_intref_rule   create_ship_4;
+        parse::effect_parser_rule           move_to;
+        parse::effect_parser_rule           set_destination;
+        parse::effect_parser_rule           destroy;
+        parse::effect_parser_rule           victory;
+        parse::effect_parser_rule           add_special;
+        parse::effect_parser_rule           remove_special;
+        parse::effect_parser_rule           add_starlanes;
+        parse::effect_parser_rule           remove_starlanes;
+        parse::effect_parser_rule           set_star_type;
+        string_and_intref_and_intref_rule   give_empire_tech;
+        string_and_doubleref_rule           set_empire_tech_progress;
+        generate_sitrep_message_rule        generate_sitrep_message;
+        string_and_string_ref_rule          string_and_string_ref;
+        string_and_string_ref_vector_rule   string_and_string_ref_vector;
+        parse::effect_parser_rule           start;
     };
 }
 

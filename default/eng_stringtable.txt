@@ -3527,19 +3527,11 @@ Causes the object's owner to win the game
 DESC_GENERATE_SITREP
 Generates a SitRep message for empire %1%
 
-# SetTechAvailability
+DESC_SET_EMPIRE_TECH_PROGRESS
+Sets the research progress of tech %1% to %2% for empire %3%
 
-DESC_TECH_AND_ITEMS_AFFECTED
-%1% and all the items it unlocks
-
-DESC_ITEMS_ONLY_AFFECTED
-the items unlocked by the %1% tech
-
-DESC_SET_TECH_AVAIL
-Makes %1% available to empire %2%
-
-DESC_SET_TECH_UNAVAIL
-Makes %1% unavailable to empire %2%
+DESC_GIVE_EMPIRE_TECH
+Gives tech %1% to empire %2%
 
 
 # Object Creation

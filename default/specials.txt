@@ -174,7 +174,7 @@ Special
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveTechToOwner "SHP_PLANET_CLOAK"
+                GiveEmpireTech "SHP_PLANET_CLOAK" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     parameters = [
@@ -193,7 +193,7 @@ Special
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveTechToOwner "SHP_DEATH_RAY"
+                GiveEmpireTech "SHP_DEATH_RAY" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     parameters = [
@@ -211,7 +211,7 @@ Special
             ]
             stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
             effects = [
-                GiveTechToOwner "SHP_MULTISPEC_SHIELD"
+                GiveEmpireTech "SHP_MULTISPEC_SHIELD" empire = Target.Owner
                 GenerateSitRepMessage
                     message = "EFFECT_ANCIENT_TECH"
                     parameters = [

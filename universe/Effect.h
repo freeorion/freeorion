@@ -41,7 +41,8 @@ namespace Effect {
     class AddStarlanes;
     class RemoveStarlanes;
     class SetStarType;
-    class SetTechAvailability;
+    class SetEmpireTechProgress;
+    class GiveEmpireTech;
     class MoveTo;
     class Victory;
     class GenerateSitRepMessage;
@@ -622,35 +623,53 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Sets the availability of tech \a tech_name to empire \a empire_id.  If
-  * \a include_tech is true, the tech is fully available, just as if it were
-  * researched normally; otherwise, only the items that the tech includes are
-  * made available.  Note that this means this Effect is intended also to
-  * be used to unlock buildings, ships, etc.  The tech and/or its items are
-  * made available if \a available is true, or unavailable otherwise. */
-class Effect::SetTechAvailability : public Effect::EffectBase
+/** Sets whether an empire has researched at tech, and how much research
+  * progress towards that tech has been completed. */
+class Effect::SetEmpireTechProgress : public Effect::EffectBase
 {
 public:
-    SetTechAvailability(const std::string& tech_name,
-                        const ValueRef::ValueRefBase<int>* empire_id,
-                        bool available,
-                        bool include_tech);
-    virtual ~SetTechAvailability();
+    SetEmpireTechProgress(const std::string& tech_name,
+                          ValueRef::ValueRefBase<double>* research_progress);
+    SetEmpireTechProgress(const std::string& tech_name,
+                          ValueRef::ValueRefBase<double>* research_progress,
+                          const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~SetEmpireTechProgress();
 
     virtual void        Execute(const ScriptingContext& context) const;
     virtual std::string Description() const;
     virtual std::string Dump() const;
 
 private:
-    std::string                        m_tech_name;
-    const ValueRef::ValueRefBase<int>* m_empire_id;
-    bool                               m_available;
-    bool                               m_include_tech;
+    std::string                         m_tech_name;
+    ValueRef::ValueRefBase<double>*     m_research_progress;
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+class Effect::GiveEmpireTech : public Effect::EffectBase
+{
+public:
+    GiveEmpireTech(const std::string& tech_name);
+    GiveEmpireTech(const std::string& tech_name,
+                   const ValueRef::ValueRefBase<int>* empire_id);
+    virtual ~GiveEmpireTech();
+
+    virtual void        Execute(const ScriptingContext& context) const;
+    virtual std::string Description() const;
+    virtual std::string Dump() const;
+
+private:
+    std::string                         m_tech_name;
+    const ValueRef::ValueRefBase<int>*  m_empire_id;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 
 /** Generates a sitrep message for the empire with id \a recipient_empire_id.
   * The message text is the user string specified in \a message_string with
@@ -861,14 +880,22 @@ void Effect::Victory::serialize(Archive& ar, const unsigned int version)
 }
 
 template <class Archive>
-void Effect::SetTechAvailability::serialize(Archive& ar, const unsigned int version)
+void Effect::SetEmpireTechProgress::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
         & BOOST_SERIALIZATION_NVP(m_tech_name)
-        & BOOST_SERIALIZATION_NVP(m_empire_id)
-        & BOOST_SERIALIZATION_NVP(m_available)
-        & BOOST_SERIALIZATION_NVP(m_include_tech);
+        & BOOST_SERIALIZATION_NVP(m_research_progress)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
 }
+
+template <class Archive>
+void Effect::GiveEmpireTech::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(EffectBase)
+        & BOOST_SERIALIZATION_NVP(m_tech_name)
+        & BOOST_SERIALIZATION_NVP(m_empire_id);
+}
+
 
 template <class Archive>
 void Effect::GenerateSitRepMessage::serialize(Archive& ar, const unsigned int version)

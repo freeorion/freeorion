@@ -103,7 +103,7 @@
     (Fuel)                                      \
     (GasGiant)                                  \
     (GenerateSitrepMessage)                     \
-    (GiveTechToOwner)                           \
+    (GiveEmpireTech)                            \
     (Good)                                      \
     (Graphic)                                   \
     (HasSpecial)                                \
@@ -128,7 +128,6 @@
     (LaunchRate)                                \
     (LocalCandidate)                            \
     (Location)                                  \
-    (LockTechItemsForOwner)                     \
     (Low)                                       \
     (Max)                                       \
     (MaxDefense)                                \
@@ -204,6 +203,7 @@
     (Producible)                                \
     (Product)                                   \
     (ProductionCenter)                          \
+    (Progress)                                  \
     (Property)                                  \
     (Radiated)                                  \
     (Random)                                    \
@@ -220,7 +220,6 @@
     (ResourceSupplyConnected)                   \
     (ResupplyableBy)                            \
     (Retain)                                    \
-    (RevokeTechFromOwner)                       \
     (RMS)                                       \
     (ROF)                                       \
     (RootCandidate)                             \
@@ -238,6 +237,7 @@
     (SetEmpireFoodStockpile)                    \
     (SetEmpireMeter)                            \
     (SetEmpireMineralStockpile)                 \
+    (SetEmpireTechProgress)                     \
     (SetEmpireTradeStockpile)                   \
     (SetFarming)                                \
     (SetFighterWeaponRange)                     \
@@ -338,7 +338,6 @@
     (Type)                                      \
     (Uninhabitable)                             \
     (Unlock)                                    \
-    (UnlockTechItemsForOwner)                   \
     (Unproducible)                              \
     (Unresearchable)                            \
     (Value)                                     \
