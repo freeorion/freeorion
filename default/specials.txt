@@ -168,25 +168,6 @@ Special
         EffectsGroup
             scope = Source
             activation = And [
-                Random probability = .33
-                NotOwnerHasTech "SHP_PLANET_CLOAK"
-                OwnerHasTech "LRN_XENOARCH"
-            ]
-            stackinggroup = "ANCIENT_RUINS_TECH_UNLOCK"
-            effects = [
-                GiveEmpireTech "SHP_PLANET_CLOAK" empire = Target.Owner
-                GenerateSitRepMessage
-                    message = "EFFECT_ANCIENT_TECH"
-                    parameters = [
-                        tag = "planet" data = Source.ID
-                        tag = "tech" data = "SHP_PLANET_CLOAK"
-                    ]
-                    empire = Source.Owner
-            ]
-
-        EffectsGroup
-            scope = Source
-            activation = And [
                 Random probability = .50
                 NotOwnerHasTech "SHP_DEATH_RAY"
                 OwnerHasTech "LRN_XENOARCH"
