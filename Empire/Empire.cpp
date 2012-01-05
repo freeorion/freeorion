@@ -408,14 +408,12 @@ void ResearchQueue::push_back(const std::string& tech_name)
 void ResearchQueue::insert(iterator it, const std::string& tech_name)
 { m_queue.insert(it, Element(tech_name, 0.0, -1)); }
 
-void ResearchQueue::erase(iterator it)
-{
+void ResearchQueue::erase(iterator it) {
     assert(it != end());
     m_queue.erase(it);
 }
 
-ResearchQueue::iterator ResearchQueue::find(const std::string& tech_name)
-{
+ResearchQueue::iterator ResearchQueue::find(const std::string& tech_name) {
     for (iterator it = begin(); it != end(); ++it) {
         if (it->name == tech_name)
             return it;
@@ -429,8 +427,7 @@ ResearchQueue::iterator ResearchQueue::begin()
 ResearchQueue::iterator ResearchQueue::end()
 { return m_queue.end(); }
 
-ResearchQueue::iterator ResearchQueue::UnderfundedProject()
-{
+ResearchQueue::iterator ResearchQueue::UnderfundedProject() {
     for (iterator it = begin(); it != end(); ++it) {
         if (const Tech* tech = GetTech(it->name)) {
             if (it->allocated_rp &&
@@ -445,8 +442,7 @@ ResearchQueue::iterator ResearchQueue::UnderfundedProject()
     return end();
 }
 
-void ResearchQueue::clear()
-{
+void ResearchQueue::clear() {
     m_queue.clear();
     m_projects_in_progress = 0;
     m_total_RPs_spent = 0;
@@ -1049,8 +1045,7 @@ Meter* Empire::GetMeter(const std::string& name)
         return 0;
 }
 
-const Meter* Empire::GetMeter(const std::string& name) const
-{
+const Meter* Empire::GetMeter(const std::string& name) const {
     std::map<std::string, Meter>::const_iterator it = m_meters.find(name);
     if (it != m_meters.end())
         return &(it->second);
@@ -1058,8 +1053,7 @@ const Meter* Empire::GetMeter(const std::string& name) const
         return 0;
 }
 
-bool Empire::ResearchableTech(const std::string& name) const
-{
+bool Empire::ResearchableTech(const std::string& name) const {
     const Tech* tech = GetTech(name);
     if (!tech)
         return false;
@@ -1074,19 +1068,16 @@ bool Empire::ResearchableTech(const std::string& name) const
 const ResearchQueue& Empire::GetResearchQueue() const
 { return m_research_queue; }
 
-double Empire::ResearchStatus(const std::string& name) const
-{
+double Empire::ResearchProgress(const std::string& name) const {
     std::map<std::string, double>::const_iterator it = m_research_progress.find(name);
-    return (it == m_research_progress.end()) ? -1.0 : it->second;
+    return (it == m_research_progress.end()) ? 0.0 : it->second;
 }
 
 const std::set<std::string>& Empire::AvailableTechs() const
 { return m_techs; }
 
-bool Empire::TechResearched(const std::string& name) const {
-    Empire::TechItr item = m_techs.find(name);
-    return item != m_techs.end();
-}
+bool Empire::TechResearched(const std::string& name) const
+{ return m_techs.find(name) != m_techs.end(); }
 
 TechStatus Empire::GetTechStatus(const std::string& name) const {
     if (TechResearched(name)) return TS_COMPLETE;
@@ -1969,13 +1960,35 @@ void Empire::PlaceTechInQueue(const std::string& name, int pos/* = -1*/)
     m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
 }
 
-void Empire::RemoveTechFromQueue(const std::string& name)
-{
+void Empire::RemoveTechFromQueue(const std::string& name) {
     ResearchQueue::iterator it = m_research_queue.find(name);
     if (it != m_research_queue.end()) {
         m_research_queue.erase(it);
         m_research_queue.Update(this, m_resource_pools[RE_RESEARCH]->TotalAvailable(), m_research_progress);
     }
+}
+
+void Empire::SetTechResearchProgress(const std::string& name, double progress) {
+    const Tech* tech = GetTech(name);
+    if (tech) {
+        Logger().errorStream() << "Empire::SetTechResearchProgress no such tech as: " << name;
+        return;
+    }
+    if (TechResearched(name))
+        return; // can't affect already-researched tech
+
+    // set progress
+    double clamped_progress = std::min(tech->ResearchCost(), std::max(0.0, progress));
+    m_research_progress[name] = clamped_progress;
+
+    // if tech is complete, ensure it is on the queue, so it will be researched next turn
+    if (clamped_progress >= tech->ResearchCost() &&
+        m_research_queue.find(name) == m_research_queue.end())
+    {
+        m_research_queue.push_back(name);
+    }
+
+    // don't just give tech to empire, as another effect might reduce its progress before end of turn
 }
 
 void Empire::PlaceBuildInQueue(BuildType build_type, const std::string& name, int number, int location, int pos/* = -1*/)

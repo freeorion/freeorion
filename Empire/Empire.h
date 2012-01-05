@@ -297,7 +297,7 @@ public:
 
     bool                    ResearchableTech(const std::string& name) const;        ///< Returns true iff \a name is a tech that has not been researched, and has no unresearched prerequisites.
     const                   ResearchQueue& GetResearchQueue() const;                ///< Returns the queue of techs being or queued to be researched.
-    double                  ResearchStatus(const std::string& name) const;          ///< Returns the RPs spent towards tech \a name if it has partial research progress, -1.0 if it is unresearched or already available.
+    double                  ResearchProgress(const std::string& name) const;          ///< Returns the RPs spent towards tech \a name if it has partial research progress, or 0.0 if it is already researched.
     bool                    TechResearched(const std::string& name) const;          ///< Returns true iff this tech has been completely researched.
     TechStatus              GetTechStatus(const std::string& name) const;           ///< Returns the status (researchable, researched, unresearchable) for this tech for this
 
@@ -396,9 +396,12 @@ public:
       * action is taken. */
     void                    PlaceTechInQueue(const std::string& name, int pos = -1);
 
-    /** Removes \a tech from the research queue, if it is in the research
-      * queue already. */
+    /** Removes tech with \a name from the research queue, if it is in the
+      * research queue already. */
     void                    RemoveTechFromQueue(const std::string& name);
+
+    /** Sets research progress of tech with \a name to \a progress. */
+    void                    SetTechResearchProgress(const std::string& name, double progress);
 
     /** Adds the indicated build to the production queue, placing it before
       * position \a pos.  If \a pos < 0 or queue.size() <= pos, the build is

@@ -65,10 +65,10 @@ namespace {
         const Tech* tech = GetTech(tech_name);
         double per_turn_cost = tech ? tech->PerTurnCost() : 1;
         double progress = 0.0;
-        if (empire && tech)
-            progress = empire->ResearchStatus(tech_name);
-        if (progress == -1.0)
-            progress = 0.0;
+        if (empire && empire->TechResearched(tech_name))
+            progress = tech->ResearchCost();
+        else if (empire)
+            progress = empire->ResearchProgress(tech_name);
 
         GG::Control* panel = new QueueTechPanel(w, tech_name, queue_element.allocated_rp,
                                                 queue_element.turns_left, progress / per_turn_cost);

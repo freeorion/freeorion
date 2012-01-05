@@ -1025,7 +1025,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update()
             const ResearchQueue& queue = empire->GetResearchQueue();
             if (queue.InQueue(m_tech_name))
                 queued_tech = true;
-            double rps_spent = empire->ResearchStatus(m_tech_name);
+            double rps_spent = empire->ResearchProgress(m_tech_name);
             if (0.0 <= rps_spent) {
                 m_progress = rps_spent / (time * cost);
                 if (m_progress < 0.0) {

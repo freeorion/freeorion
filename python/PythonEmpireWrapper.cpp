@@ -88,7 +88,7 @@ namespace FreeOrionPython {
             .def("techResearched",                  &Empire::TechResearched)
             .add_property("availableTechs",         make_function(&Empire::AvailableTechs,          return_internal_reference<>()))
             .def("getTechStatus",                   &Empire::GetTechStatus)
-            .def("researchStatus",                  &Empire::ResearchStatus)
+            .def("researchProgress",                &Empire::ResearchProgress)
             .add_property("researchQueue",          make_function(&Empire::GetResearchQueue,        return_internal_reference<>()))
 
             .def("canBuild",                        BuildableItemBuilding)
