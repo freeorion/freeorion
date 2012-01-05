@@ -460,7 +460,7 @@ std::string ValueRef::Variable<T>::Description() const
     case NON_OBJECT_REFERENCE:                  formatter % "";                                     break;
     default:                                    formatter % "???";                                  break;
     }
-    for (unsigned int i = 0; i < m_property_name.size(); ++i)
+    for (unsigned int i = 1; i < m_property_name.size(); ++i)
         formatter % UserString("DESC_VAR_" + boost::to_upper_copy(std::string(m_property_name[i].c_str())));
     return boost::io::str(formatter);
 }

@@ -262,15 +262,11 @@ namespace ValueRef {
 
     template <>
     std::string Constant<int>::Dump() const
-    {
-        return Description();
-    }
+    { return Description(); }
 
     template <>
     std::string Constant<double>::Dump() const
-    {
-        return Description();
-    }
+    { return Description(); }
 
     template <>
     std::string Constant<std::string>::Dump() const
