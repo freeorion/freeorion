@@ -98,7 +98,8 @@ namespace {
 
         /** Renders panel background and border. */
         virtual void    Render() {
-            GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::WndColor(), ClientUI::WndOuterBorderColor(), 1u);
+            GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
+            GG::FlatRectangle(UpperLeft(), LowerRight(), background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
         virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -153,7 +154,8 @@ namespace {
     ////////////////////////////////////////////////
     class ProductionItemRow : public GG::ListBox::Row {
     public:
-        ProductionItemRow(GG::X w, GG::Y h, const std::string& building_name, int empire_id) :
+        ProductionItemRow(GG::X w, GG::Y h, const std::string& building_name, int empire_id,
+                          int production_location = UniverseObject::INVALID_OBJECT_ID) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_item(BT_BUILDING, building_name),
             m_empire_id(empire_id),
@@ -164,9 +166,16 @@ namespace {
             SetDragDropDataType(building_name);
             m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
             push_back(m_panel);
+            if (const Empire* empire = Empires().Lookup(m_empire_id)) {
+                if (!empire->BuildableItem(BT_BUILDING, building_name, production_location)) {
+                    this->Disable(true);
+                    m_panel->Disable(true);
+                }
+            }
         }
 
-        ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id) :
+        ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
+                          int production_location = UniverseObject::INVALID_OBJECT_ID) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_item(BT_SHIP, design_id),
             m_empire_id(empire_id),
@@ -177,6 +186,12 @@ namespace {
             SetDragDropDataType(boost::lexical_cast<std::string>(design_id));
             m_panel = new ProductionItemPanel(w, h, m_item, m_empire_id);
             push_back(m_panel);
+            if (const Empire* empire = Empires().Lookup(m_empire_id)) {
+                if (!empire->BuildableItem(BT_SHIP, design_id, production_location)) {
+                    this->Disable(true);
+                    m_panel->Disable(true);
+                }
+            }
         }
 
         const   ProductionQueue::ProductionItem& Item() const {
@@ -714,14 +729,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             if (!BuildableItemVisible(BT_BUILDING, name)) continue;
 
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, name, m_empire_id);
-
-            // is item buildable?  If not, disable row
-            if (!empire || !empire->BuildableItem(BT_BUILDING, name, m_build_location)) {
-                item_row->Disable(true);
-            } else {
-                item_row->Disable(false);
-            }
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, name,
+                                                                m_empire_id, m_build_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_BUILDING;
@@ -753,14 +762,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList()
 
             // add build item panel
 
-            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, ship_design_id, m_empire_id);
-
-            // is item buildable?  If not, disable row
-            if (!empire || !empire->BuildableItem(BT_SHIP, ship_design_id, m_build_location)) {
-                item_row->Disable(true);
-            } else {
-                item_row->Disable(false);
-            }
+            ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y, ship_design_id,
+                                                                m_empire_id, m_build_location);
 
             GG::ListBox::iterator row_it = m_buildable_items->Insert(item_row);
             m_build_types[row_it] = BT_SHIP;
