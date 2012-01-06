@@ -1970,7 +1970,7 @@ void Empire::RemoveTechFromQueue(const std::string& name) {
 
 void Empire::SetTechResearchProgress(const std::string& name, double progress) {
     const Tech* tech = GetTech(name);
-    if (tech) {
+    if (!tech) {
         Logger().errorStream() << "Empire::SetTechResearchProgress no such tech as: " << name;
         return;
     }
