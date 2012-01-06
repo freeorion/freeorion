@@ -27,6 +27,23 @@ def getOwnedPlanetsByEmpire(planetIDs, empireID):
 
     return result
 
+def getTypePlanetEmpireOwned(planetType):
+    "return list of specific type planets owned by empireID"
+
+    universe = fo.getUniverse()
+    empire = fo.getEmpire()
+    empireID = empire.empireID
+    ownedPlanetIDs = getOwnedPlanetsByEmpire(universe.planetIDs, empireID)
+
+    ownedTypePlanetIDs = []
+
+    for planetID in ownedPlanetIDs:
+        planet = universe.getPlanet(planetID)
+        if planet.type == planetType:
+            ownedTypePlanetIDs.append(planetID)
+
+    return ownedTypePlanetIDs
+
 def getAllOwnedPlanetIDs(planetIDs):
     "return list of all owned and populated planetIDs"
 
@@ -82,11 +99,3 @@ def getSystems(planetIDs):
         systemIDs.append(systemID)
 
     return systemIDs
-
-def getCapitalID(): # to be deleted after update of ResourcesAI module
-    "return planetID of empire capital"
-
-    empire = fo.getEmpire()
-    capitalID = empire.capitalID
-
-    return capitalID

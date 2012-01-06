@@ -1,17 +1,16 @@
 import freeOrionAIInterface as fo
-from EnumsAI import AIPriorityType, AIFleetMissionType, AIExplorableSystemType, getAIPriorityProductionTypes
-import AIstate
-import ColonisationAI
-import EnumsAI
-import FleetUtilsAI
 import FreeOrionAI as foAI
+import AIstate
+import EnumsAI
+from EnumsAI import AIPriorityType, AIFleetMissionType, AIExplorableSystemType, getAIPriorityProductionTypes
+import ColonisationAI
+import FleetUtilsAI
 from ResearchAI import getCompletedTechs
-import InvasionAI 
+import InvasionAI
 import MilitaryAI
 
 def calculatePriorities():
-    "calculates the priorities of the AI player"    
-
+    "calculates the priorities of the AI player"
     ColonisationAI.getColonyFleets() # sets AIstate.colonisablePlanetIDs and AIstate.outpostPlanetIDs
     InvasionAI.getInvasionFleets() # sets AIstate.invasionFleetIDs, AIstate.opponentPlanetIDs, and AIstate.invasionTargetedPlanetIDs
     MilitaryAI.getMilitaryFleets() # sets AIstate.militaryFleetIDs and AIstate.militaryTargetedSystemIDs
@@ -19,7 +18,7 @@ def calculatePriorities():
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_FOOD, calculateFoodPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_MINERALS, calculateMineralsPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_PRODUCTION, calculateIndustryPriority())
-    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, 10)
+    foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_RESEARCH, calculateResearchPriority())
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_TRADE, 0)
     foAI.foAIstate.setPriority(AIPriorityType.PRIORITY_RESOURCE_CONSTRUCTION, 0)
 
@@ -46,14 +45,14 @@ def calculateFoodPriority():
     # foodStockpile == 0 => returns 100, foodStockpile == foodTarget => returns 0
 
     empire = fo.getEmpire()
-    foodProduction = empire.resourceProduction(fo.resourceType.food)    
+    foodProduction = empire.resourceProduction(fo.resourceType.food)
     foodStockpile = empire.resourceStockpile(fo.resourceType.food)
     foodTarget = 10 * empire.population() * AIstate.foodStockpileSize
 
     if (foodTarget == 0):
         return 0
 
-    foodPriority = (foodTarget - foodStockpile) / foodTarget * 100
+    foodPriority = (foodTarget - foodStockpile) / foodTarget * 115
 
     print ""
     print "Food Production:        " + str(foodProduction)
@@ -89,6 +88,45 @@ def calculateMineralsPriority():
     print "Priority for Minerals:      " + str(mineralsPriority)
 
     return mineralsPriority
+
+def calculateIndustryPriority():
+    "calculates the demand for industry"
+
+    empire = fo.getEmpire()
+
+    # get current minerals and industry production
+    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
+    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
+    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
+    industryProduction = empire.resourceProduction(fo.resourceType.industry)
+
+    # increase demand for industry if mineralsProduction is higher
+    industryPriority = 38 * (mineralsProduction - mineralsTurns) / (industryProduction + 0.001)
+
+    print ""
+    # print "minerals production  : " + str(mineralsProduction)
+    # print "minerals stockpile   : " + str(mineralsStockpile)
+    # print "minerals turns       : " + str(mineralsTurns)
+    print "Industry Production  : " + str(industryProduction)
+    print "Priority for Industry: " + str(industryPriority)
+
+    return industryPriority
+
+def calculateResearchPriority():
+    "calculates the AI empire's demand for research"
+
+    empire = fo.getEmpire()
+    totalPP = empire.productionPoints
+    totalRP = empire.resourceProduction(fo.resourceType.research)
+
+    # increase demand for research if significantly lagging production capability
+    researchPriority = 10 * totalPP / (totalRP + 1)
+
+    print  ""
+    print  "Research Production  : " + str(totalRP)
+    print  "Priority for Research: " + str(researchPriority)
+
+    return researchPriority
 
 def calculateExplorationPriority():
     "calculates the demand for scouts by unexplored systems"
@@ -188,29 +226,6 @@ def calculateMilitaryPriority():
     if militaryPriority < 0: return 0
 
     return militaryPriority
-
-def calculateIndustryPriority():
-    "calculates the demand for industry"
-
-    empire = fo.getEmpire()
-
-    # get current minerals and industry production
-    mineralsProduction = empire.resourceProduction(fo.resourceType.minerals)
-    mineralsStockpile = empire.resourceStockpile(fo.resourceType.minerals)
-    mineralsTurns = mineralsStockpile / (mineralsProduction + 0.001)
-    industryProduction = empire.resourceProduction(fo.resourceType.industry)
-
-    # increase demand for industry if mineralsProduction is higher
-    industryPriority = 38 * (mineralsProduction - mineralsTurns) / (industryProduction + 0.001)
-
-    print ""
-    # print "minerals production  : " + str(mineralsProduction)
-    # print "minerals stockpile   : " + str(mineralsStockpile)
-    # print "minerals turns       : " + str(mineralsTurns)
-    print "Industry Production  : " + str(industryProduction)
-    print "Priority for Industry: " + str(industryPriority)
-
-    return industryPriority
 
 def calculateTopProductionQueuePriority():
     "calculates the top production queue priority"
