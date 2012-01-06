@@ -135,7 +135,8 @@ private:
   * or may not themselves match the condition. */
 struct Condition::Number : public Condition::ConditionBase
 {
-    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high, const ConditionBase* condition) :
+    Number(const ValueRef::ValueRefBase<int>* low, const ValueRef::ValueRefBase<int>* high,
+           const ConditionBase* condition) :
         m_low(low),
         m_high(high),
         m_condition(condition)
@@ -219,7 +220,8 @@ struct Condition::SortedNumberOf : public Condition::ConditionBase
         m_condition(condition)
     {}
     virtual ~SortedNumberOf();
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
 
@@ -266,7 +268,8 @@ struct Condition::EmpireAffiliation : public Condition::ConditionBase
        m_affiliation(affiliation)
     {}
     virtual ~EmpireAffiliation();
-    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
+    virtual void        Eval(const ScriptingContext& parent_context, Condition::ObjectSet& matches,
+                             Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const;
     void                Eval(Condition::ObjectSet& matches, Condition::ObjectSet& non_matches,
                              SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }

@@ -636,7 +636,8 @@ std::string Condition::SortedNumberOf::Dump() const {
 ///////////////////////////////////////////////////////////
 // All                                                   //
 ///////////////////////////////////////////////////////////
-void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
+void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+                          ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
     if (search_domain == NON_MATCHES) {
         // move all objects from non_matches to matches
@@ -644,11 +645,10 @@ void Condition::All::Eval(const ScriptingContext& parent_context, ObjectSet& mat
         non_matches.clear();
     }
     // if search_comain is MATCHES, do nothing: all objects in matches set
-    // match this condition, so should remain in mathes set
+    // match this condition, so should remain in matches set
 }
 
-std::string Condition::All::Description(bool negated/* = false*/) const
-{
+std::string Condition::All::Description(bool negated/* = false*/) const {
     std::string description_str = "DESC_ALL";
     if (negated)
         description_str += "_NOT";
