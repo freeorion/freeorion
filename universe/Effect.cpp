@@ -527,11 +527,9 @@ SetMeter::~SetMeter()
 { delete m_value; }
 
 void SetMeter::Execute(const ScriptingContext& context) const {
-    if (!context.effect_target)
-        return;
+    if (!context.effect_target) return;
     Meter* m = context.effect_target->GetMeter(m_meter);
-    if (!m)
-        return;
+    if (!m) return;
 
     double val = m_value->Eval(ScriptingContext(context, m->Current()));
     m->SetCurrent(val);
@@ -776,7 +774,8 @@ SetEmpireMeter::SetEmpireMeter(const std::string& meter, const ValueRef::ValueRe
     m_value(value)
 {}
 
-SetEmpireMeter::SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter, const ValueRef::ValueRefBase<double>* value) :
+SetEmpireMeter::SetEmpireMeter(const ValueRef::ValueRefBase<int>* empire_id, const std::string& meter,
+                               const ValueRef::ValueRefBase<double>* value) :
     m_empire_id(empire_id),
     m_meter(meter),
     m_value(value)
@@ -1501,8 +1500,7 @@ AddStarlanes::AddStarlanes(const Condition::ConditionBase* other_lane_endpoint_c
 AddStarlanes::~AddStarlanes()
 { delete m_other_lane_endpoint_condition; }
 
-void AddStarlanes::Execute(const ScriptingContext& context) const
-{
+void AddStarlanes::Execute(const ScriptingContext& context) const {
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
@@ -1557,8 +1555,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string AddStarlanes::Description() const
-{
+std::string AddStarlanes::Description() const {
     std::string value_str = m_other_lane_endpoint_condition->Description();
     return str(FlexibleFormat(UserString("DESC_ADD_STARLANES")) % value_str);
 }
@@ -1577,8 +1574,7 @@ RemoveStarlanes::RemoveStarlanes(const Condition::ConditionBase* other_lane_endp
 RemoveStarlanes::~RemoveStarlanes()
 { delete m_other_lane_endpoint_condition; }
 
-void RemoveStarlanes::Execute(const ScriptingContext& context) const
-{
+void RemoveStarlanes::Execute(const ScriptingContext& context) const {
     Universe& universe = GetUniverse();
     ObjectMap& objects = universe.Objects();
 
@@ -1633,8 +1629,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string RemoveStarlanes::Description() const
-{
+std::string RemoveStarlanes::Description() const {
     std::string value_str = m_other_lane_endpoint_condition->Description();
     return str(FlexibleFormat(UserString("DESC_REMOVE_STARLANES")) % value_str);
 }
@@ -1653,8 +1648,7 @@ SetStarType::SetStarType(const ValueRef::ValueRefBase<StarType>* type) :
 SetStarType::~SetStarType()
 { delete m_type; }
 
-void SetStarType::Execute(const ScriptingContext& context) const
-{
+void SetStarType::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "SetStarType::Execute given no target object";
         return;
@@ -1665,8 +1659,7 @@ void SetStarType::Execute(const ScriptingContext& context) const
         Logger().errorStream() << "SetStarType::Execute given a non-system target";
 }
 
-std::string SetStarType::Description() const
-{
+std::string SetStarType::Description() const {
     std::string value_str = ValueRef::ConstantExpr(m_type) ?
                                 UserString(lexical_cast<std::string>(m_type->Eval())) :
                                 m_type->Description();
@@ -1687,8 +1680,7 @@ MoveTo::MoveTo(const Condition::ConditionBase* location_condition) :
 MoveTo::~MoveTo()
 { delete m_location_condition; }
 
-void MoveTo::Execute(const ScriptingContext& context) const
-{
+void MoveTo::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
         Logger().errorStream() << "MoveTo::Execute given no target object";
         return;
@@ -1826,8 +1818,7 @@ void MoveTo::Execute(const ScriptingContext& context) const
     }
 }
 
-std::string MoveTo::Description() const
-{
+std::string MoveTo::Description() const {
     std::string value_str = m_location_condition->Description();
     return str(FlexibleFormat(UserString("DESC_MOVE_TO")) % value_str);
 }
@@ -1980,11 +1971,9 @@ void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    double progress = 0.0;
-    if (m_research_progress)
-        progress = m_research_progress->Eval(context);
-
-    empire->SetTechResearchProgress(m_tech_name, progress);
+    double value = m_research_progress->Eval(
+        ScriptingContext(context, empire->ResearchProgress(m_tech_name)));
+    empire->SetTechResearchProgress(m_tech_name, value);
 }
 
 std::string SetEmpireTechProgress::Description() const {
