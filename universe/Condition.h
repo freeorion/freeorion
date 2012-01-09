@@ -94,7 +94,8 @@ namespace Condition {
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
 std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
-                                 const UniverseObject* candidate_object = 0);
+                                 const UniverseObject* candidate_object = 0,
+                                 const UniverseObject* source_object = 0);
 
 /** The base class for all Conditions. */
 struct Condition::ConditionBase
@@ -1364,6 +1365,8 @@ struct Condition::And : public Condition::ConditionBase
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ConditionBase*>&
+                        Operands() const { return m_operands; }
 
 private:
     std::vector<const ConditionBase*> m_operands;
@@ -1388,6 +1391,8 @@ struct Condition::Or : public Condition::ConditionBase
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const std::vector<const ConditionBase*>&
+                        Operands() const { return m_operands; }
 
 private:
     std::vector<const ConditionBase*> m_operands;
@@ -1412,6 +1417,7 @@ struct Condition::Not : public Condition::ConditionBase
     virtual bool        TargetInvariant() const;
     virtual std::string Description(bool negated = false) const;
     virtual std::string Dump() const;
+    const ConditionBase*Operand() const { return m_operand; }
 
 private:
     const ConditionBase* m_operand;

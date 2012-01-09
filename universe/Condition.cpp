@@ -50,23 +50,50 @@ namespace {
         }
     }
 
+    std::vector<const Condition::ConditionBase*> FlattenAndNestedConditions(
+        const std::vector<const Condition::ConditionBase*>& input_conditions)
+    {
+        std::vector<const Condition::ConditionBase*> retval;
+        for (std::vector<const Condition::ConditionBase*>::const_iterator it = input_conditions.begin();
+             it != input_conditions.end(); ++it)
+        {
+            if (const Condition::And* and = dynamic_cast<const Condition::And*>(*it)) {
+                std::vector<const Condition::ConditionBase*> flattened_operands =
+                    FlattenAndNestedConditions(and->Operands());
+                std::copy(flattened_operands.begin(), flattened_operands.end(), std::back_inserter(retval));
+            } else {
+                retval.push_back(*it);
+            }
+        }
+        return retval;
+    }
+
     std::map<std::string, bool> ConditionDescriptionAndTest(const std::vector<const Condition::ConditionBase*>& conditions,
                                                             const ScriptingContext& parent_context,
                                                             const UniverseObject* candidate_object/* = 0*/)
     {
+        std::map<std::string, bool> retval;
         Condition::ObjectSet candidate_set, empty_set;
         if (candidate_object)
             candidate_set.push_back(candidate_object);
 
-        std::map<std::string, bool> retval;
-        for (std::vector<const Condition::ConditionBase*>::const_iterator it = conditions.begin();
-             it != conditions.end(); ++it)
+        std::vector<const Condition::ConditionBase*> flattened_conditions;
+        if (conditions.empty())
+            return retval;
+        else if (conditions.size() > 1 || dynamic_cast<const Condition::And*>(*conditions.begin()))
+            flattened_conditions = FlattenAndNestedConditions(conditions);
+        //else if (dynamic_cast<const Condition::Or*>(*conditions.begin()))
+        //    flattened_conditions = FlattenOrNestedConditions(conditions);
+        //else
+        //    std::cout << "";
+
+        for (std::vector<const Condition::ConditionBase*>::const_iterator it = flattened_conditions.begin();
+             it != flattened_conditions.end(); ++it)
         {
             const Condition::ConditionBase* condition = *it;
             Condition::ObjectSet candidate_set_temp = candidate_set;    // preserve original for reuse
             Condition::ObjectSet matches_set_temp = empty_set;
             condition->Eval(parent_context, matches_set_temp, candidate_set_temp);
-
             retval[condition->Description()] = candidate_set_temp.empty();
         }
         return retval;
@@ -74,9 +101,13 @@ namespace {
 }
 
 std::string ConditionDescription(const std::vector<const Condition::ConditionBase*>& conditions,
-                                 const UniverseObject* candidate_object/* = 0*/)
+                                 const UniverseObject* candidate_object/* = 0*/,
+                                 const UniverseObject* source_object/* = 0*/)
 {
-    ScriptingContext parent_context;
+    if (conditions.empty())
+        return UserString("NONE");
+
+    ScriptingContext parent_context(source_object);
     // test candidate against all input conditions, and store descriptions of each
     std::map<std::string, bool> condition_description_and_test_results =
         ConditionDescriptionAndTest(conditions, parent_context, candidate_object);
@@ -87,13 +118,23 @@ std::string ConditionDescription(const std::vector<const Condition::ConditionBas
         all_conditions_match_candidate = all_conditions_match_candidate && it->second;
         at_least_one_condition_matches_candidate = at_least_one_condition_matches_candidate || it->second;
     }
+
     // concatenate (non-duplicated) single-description results
-    std::string retval = UserString("ALL_OF") + " " +
-        (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+    std::string retval;
+    if (conditions.size() > 1 || dynamic_cast<const Condition::And*>(*conditions.begin())) {
+        retval += UserString("ALL_OF") + " ";
+        retval += (all_conditions_match_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+    } else if (dynamic_cast<const Condition::Or*>(*conditions.begin())) {
+        retval += UserString("ANY_OF") + " ";
+        retval += (at_least_one_condition_matches_candidate ? UserString("PASSED") : UserString("FAILED")) + "\n";
+    }
+    // else just output single condition description and PASS/FAIL text
+
     for (std::map<std::string, bool>::const_iterator it = condition_description_and_test_results.begin();
          it != condition_description_and_test_results.end(); ++it)
     {
-        retval += (it->second ? UserString("PASSED") : UserString("FAILED")) + " " + it->first;
+        retval += (it->second ? UserString("PASSED") : UserString("FAILED"));
+        retval += " " + it->first + "\n";
     }
     return retval;
 }

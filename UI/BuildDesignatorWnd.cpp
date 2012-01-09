@@ -151,15 +151,45 @@ namespace {
         GG::TextControl*    m_desc;
     };
 
-    std::string LocationConditionDescription(const std::string& building_name, int candidate_object_id) {
+    const UniverseObject* GetSourceObjectForEmpire(int empire_id) {
+        // get a source object, which is owned by the empire,
+        // preferably the capital
+        const UniverseObject* source = 0;
+        if (empire_id == ALL_EMPIRES)
+            return source;
+        const Empire* empire = Empires().Lookup(empire_id);
+        if (!empire)
+            return source;
+
+        if (source = GetObject(empire->CapitalID()))
+            return source;
+
+        // not a valid source?!  scan through all objects to find one owned by this empire
+        const ObjectMap& objects = GetUniverse().Objects();
+        for (ObjectMap::const_iterator obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
+            if (obj_it->second->OwnedBy(empire_id)) {
+                source = obj_it->second;
+                break;
+            }
+        }
+
+        // if this empire doesn't own ANYTHING, default to a null source
+        return source;
+    }
+
+    std::string LocationConditionDescription(const std::string& building_name, int candidate_object_id,
+                                             int empire_id)
+    {
         std::vector<const Condition::ConditionBase*> location_conditions;
         if (const BuildingType* building_type = GetBuildingType(building_name))
             location_conditions.push_back(building_type->Location());
-
-        return ConditionDescription(location_conditions, GetObject(candidate_object_id));
+        const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
+        return ConditionDescription(location_conditions, GetObject(candidate_object_id), source);
     }
 
-    std::string LocationConditionDescription(int ship_design_id, int candidate_object_id) {
+    std::string LocationConditionDescription(int ship_design_id, int candidate_object_id,
+                                             int empire_id)
+    {
         std::vector<const Condition::ConditionBase*> location_conditions;
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
             if (const HullType* hull_type = ship_design->GetHull())
@@ -172,24 +202,25 @@ namespace {
                     location_conditions.push_back(part_type->Location());
             }
         }
-
-        return ConditionDescription(location_conditions, GetObject(candidate_object_id));
+        const UniverseObject* source = GetSourceObjectForEmpire(empire_id);
+        return ConditionDescription(location_conditions, GetObject(candidate_object_id), source);
     }
 
     boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemRowBrowseWnd(const ProductionQueue::ProductionItem& item,
-                                                                    int candidate_object_id)
+                                                                    int candidate_object_id,
+                                                                    int empire_id)
     {
         if (item.build_type == BT_BUILDING) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ClientUI::BuildingTexture(item.name), UserString(item.name),
-                LocationConditionDescription(item.name, candidate_object_id)));
+                LocationConditionDescription(item.name, candidate_object_id, empire_id)));
             return browse_wnd;
         } else if (item.build_type == BT_SHIP) {
             const ShipDesign* ship_design = GetShipDesign(item.design_id);
-            const std::string& name = (ship_design ? UserString(ship_design->Name()) : UserString("SHIP_DESIGN"));
+            const std::string& name = (ship_design ? ship_design->Name() : UserString("SHIP_DESIGN"));
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ClientUI::ShipIcon(item.design_id), name,
-                LocationConditionDescription(item.design_id, candidate_object_id)));
+                LocationConditionDescription(item.design_id, candidate_object_id, empire_id)));
             return browse_wnd;
         } else {
             return boost::shared_ptr<GG::BrowseInfoWnd>();
@@ -220,7 +251,7 @@ namespace {
                 }
             }
             m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
         }
 
         ProductionItemRow(GG::X w, GG::Y h, int design_id, int empire_id,
@@ -242,7 +273,7 @@ namespace {
                 }
             }
             m_panel->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location));
+            SetBrowseInfoWnd(ProductionItemRowBrowseWnd(m_item, production_location, m_empire_id));
         }
 
         const   ProductionQueue::ProductionItem& Item() const

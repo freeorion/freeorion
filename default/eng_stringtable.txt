@@ -155,6 +155,18 @@ Planet
 BUILDING
 Building
 
+PASSED
+<rgba 0 255 0 255>(PASSED)</rgba>
+
+FAILED
+<rgba 255 0 0 255>(FAILED)</rgba>
+
+ALL_OF
+All Of:
+
+ANY_OF
+Any Of:
+
 ###########################
 # Predefined Ship Designs #
 ###########################
@@ -2008,7 +2020,7 @@ RP
 ####################
 
 PRODUCTION_WND_BUILD_ITEMS_TITLE
-Buildable Items
+Prodicible Items
 
 PRODUCTION_WND_CATEGORY_BT_BUILDING
 Buildings
